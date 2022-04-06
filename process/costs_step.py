@@ -223,7 +223,7 @@ class CostsStep:
         self.step21 = step2101
 
         # 21.02 Reactor Building
-        step2102 = 8.665e3 * bldgsv.a_reactor_bldg ** 1.2132 * 1.0e-6
+        step2102 = 8.665e3 * bldgsv.a_reactor_bldg**1.2132 * 1.0e-6
         # * 1.0e-6 converts to M$
         self.step21 += step2102
 
@@ -1640,7 +1640,7 @@ class CostsStep:
             2.0e0
             * (hshld + bv.shldtth)
             * constants.pi
-            * (r1 ** 2 - (r1 - shldith_corr) ** 2)
+            * (r1**2 - (r1 - shldith_corr) ** 2)
         )
 
         # Scale shield material volume (allow for 10% volume coolant, 5% steel)
@@ -1961,7 +1961,7 @@ class CostsStep:
         """
         # Cryoplant - will be zero for resistive coils
         # Parametric costing of cryo systems based on refrigeration capacity produced at Helium temp of 4.5K
-        step2203 = 6.14e0 * tfv.cryo_cool_req ** 0.63
+        step2203 = 6.14e0 * tfv.cryo_cool_req**0.63
 
         # Output costs
         if (self.iprint == 1) and (cv.output_costs == 1):

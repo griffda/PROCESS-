@@ -222,4 +222,3 @@ Inputs:
 	- impmodel 0 or 1 doesnt matter
 	- globtau(3) ~ 5 - 10
 	- f_ni or v_loop should be dictated by discharge duration (comes from SYS code)
-

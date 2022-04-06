@@ -208,17 +208,17 @@ def plot_plasma(axis, mfile_data, scan):
     kappa = (1.1 * mfile_data.data["kappa95"].get_scan(scan)) + 0.04
     i_single_null = mfile_data.data["i_single_null"].get_scan(scan)
 
-    x1 = (2.0 * r0 * (1.0 + delta) - a * (delta ** 2 + kappa ** 2 - 1.0)) / (
+    x1 = (2.0 * r0 * (1.0 + delta) - a * (delta**2 + kappa**2 - 1.0)) / (
         2.0 * (1.0 + delta)
     )
-    x2 = (2.0 * r0 * (delta - 1.0) - a * (delta ** 2 + kappa ** 2 - 1.0)) / (
+    x2 = (2.0 * r0 * (delta - 1.0) - a * (delta**2 + kappa**2 - 1.0)) / (
         2.0 * (delta - 1.0)
     )
     r1 = 0.5 * math.sqrt(
-        (a ** 2 * ((delta + 1.0) ** 2 + kappa ** 2) ** 2) / ((delta + 1.0) ** 2)
+        (a**2 * ((delta + 1.0) ** 2 + kappa**2) ** 2) / ((delta + 1.0) ** 2)
     )
     r2 = 0.5 * math.sqrt(
-        (a ** 2 * ((delta - 1.0) ** 2 + kappa ** 2) ** 2) / ((delta - 1.0) ** 2)
+        (a**2 * ((delta - 1.0) ** 2 + kappa**2) ** 2) / ((delta - 1.0) ** 2)
     )
     theta1 = np.arcsin((kappa * a) / r1)
     theta2 = np.arcsin((kappa * a) / r2)
@@ -642,7 +642,7 @@ def toroidal_cross_section(axis, mfile_data, scan, demo_ranges):
         b = tfthko
         c = beamwd + 2 * nbshield
         d = r3
-        e = np.sqrt(a ** 2 + (d + b) ** 2)
+        e = np.sqrt(a**2 + (d + b) ** 2)
         # Coordinates of the inner and outer edges of the beam at its tangency point
         rinner = rtanbeam - beamwd
         router = rtanbeam + beamwd
@@ -779,7 +779,7 @@ def plot_nprofile(prof, demo_ranges):
         rhocore1 = np.linspace(0, 0.95 * rhopedn)
         rhocore2 = np.linspace(0.95 * rhopedn, rhopedn)
         rhocore = np.append(rhocore1, rhocore2)
-        ncore = neped + (ne0 - neped) * (1 - rhocore ** 2 / rhopedn ** 2) ** alphan
+        ncore = neped + (ne0 - neped) * (1 - rhocore**2 / rhopedn**2) ** alphan
 
         rhosep = np.linspace(rhopedn, 1)
         nsep = nesep + (neped - nesep) * (1 - rhosep) / (1 - min(0.9999, rhopedn))
@@ -790,7 +790,7 @@ def plot_nprofile(prof, demo_ranges):
         rho1 = np.linspace(0, 0.95)
         rho2 = np.linspace(0.95, 1)
         rho = np.append(rho1, rho2)
-        ne = ne0 * (1 - rho ** 2) ** alphan
+        ne = ne0 * (1 - rho**2) ** alphan
     ne = ne / 1e19
     prof.plot(rho, ne)
 
@@ -860,7 +860,7 @@ def plot_tprofile(prof, demo_ranges):
         rho1 = np.linspace(0, 0.95)
         rho2 = np.linspace(0.95, 1)
         rho = np.append(rho1, rho2)
-        te = te0 * (1 - rho ** 2) ** alphat
+        te = te0 * (1 - rho**2) ** alphat
     prof.plot(rho, te)
 
     # Ranges
@@ -914,7 +914,7 @@ def plot_qprofile(prof, demo_ranges):
     prof.set_title("q profile")
 
     rho = np.linspace(0, 1)
-    q_r_nevin = q0 + (q95 - q0) * (rho + rho * rho + rho ** 3) / (3.0)
+    q_r_nevin = q0 + (q95 - q0) * (rho + rho * rho + rho**3) / (3.0)
     q_r_sauter = q0 + (q95 - q0) * (rho * rho)
 
     prof.plot(rho, q_r_nevin, label="Nevins")
@@ -1009,7 +1009,7 @@ def synchrotron_rad():
     #!  rpow is the(1-Rsyn) power dependence based on plasma shape
     #!  (see Fidone)
     rpow = 0.62
-    kap = vol / (2.0 * 3.1415 ** 2 * rmajor * rminor ** 2)
+    kap = vol / (2.0 * 3.1415**2 * rmajor * rminor**2)
 
     #!  No account is taken of pedestal profiles here, other than use of
     #!  the correct ne0 and te0...
@@ -1017,14 +1017,14 @@ def synchrotron_rad():
     pao = 6.04e3 * (rminor * de2o) / bt
     gfun = 0.93 * (1.0 + 0.85 * np.exp(-0.82 * rmajor / rminor))
     kfun = (alphan + 3.87e0 * alphat + 1.46) ** (-0.79)
-    kfun = kfun * (1.98 + alphat) ** 1.36 * tbet ** 2.14
-    kfun = kfun * (tbet ** 1.53 + 1.87 * alphat - 0.16) ** (-1.33)
-    dum = 1.0 + 0.12 * (te0 / (pao ** 0.41)) * (1.0 - ssync) ** 0.41
+    kfun = kfun * (1.98 + alphat) ** 1.36 * tbet**2.14
+    kfun = kfun * (tbet**1.53 + 1.87 * alphat - 0.16) ** (-1.33)
+    dum = 1.0 + 0.12 * (te0 / (pao**0.41)) * (1.0 - ssync) ** 0.41
     #!  Very high T modification, from Fidone
     dum = dum ** (-1.51)
 
-    psync = 3.84e-8 * (1.0e0 - ssync) ** rpow * rmajor * rminor ** 1.38
-    psync = psync * kap ** 0.79 * bt ** 2.62 * de2o ** 0.38
+    psync = 3.84e-8 * (1.0e0 - ssync) ** rpow * rmajor * rminor**1.38
+    psync = psync * kap**0.79 * bt**2.62 * de2o**0.38
     psync = psync * te0 * (16.0 + te0) ** 2.61 * dum * gfun * kfun
 
     #!  psyncpv should be per unit volume
@@ -1077,10 +1077,10 @@ def plot_radprofile(prof, mfile_data, scan, impp, demo_ranges):
         rho = np.linspace(0, 1.0)
 
         # The density profile
-        ne = ne0 * (1 - rho ** 2) ** alphan
+        ne = ne0 * (1 - rho**2) ** alphan
 
         # The temperature profile
-        te = te0 * (1 - rho ** 2) ** alphat
+        te = te0 * (1 - rho**2) ** alphat
 
     if ipedestal == 1:
         # Intialise the normalised radius
@@ -1099,7 +1099,7 @@ def plot_radprofile(prof, mfile_data, scan, impp, demo_ranges):
         for q in range(rho.shape[0]):
             if rho[q] <= rhopedn:
                 ne[q] = (
-                    neped + (ne0 - neped) * (1 - rho[q] ** 2 / rhopedn ** 2) ** alphan
+                    neped + (ne0 - neped) * (1 - rho[q] ** 2 / rhopedn**2) ** alphan
                 )
             else:
                 ne[q] = nesep + (neped - nesep) * (1 - rho[q]) / (

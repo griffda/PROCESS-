@@ -157,7 +157,7 @@ class Structure:
 
         #  Intercoil support between TF coils to react overturning moment
         #  (scaled to 1990 ITER fit)
-        aintmass = 1.4e6 * (ai / 2.2e7) * b0 / 4.85e0 * tf_h_width ** 2 / 50.0e0
+        aintmass = 1.4e6 * (ai / 2.2e7) * b0 / 4.85e0 * tf_h_width**2 / 50.0e0
 
         #  Total mass of coils plus support plus vacuum vessel + cryostat
         coilmass = tfmass + pfmass + aintmass + dewmass

@@ -46,9 +46,9 @@ def ohmic():
         * Zeff
         * (1.0 + 1.5 * alphat)
         / fnc
-        / Trat ** 1.5
+        / Trat**1.5
     )
-    Poh = Foh / T0 ** 1.5
+    Poh = Foh / T0**1.5
 
     return Poh
 
@@ -122,7 +122,7 @@ def sync_tnt():
     )
     Psf = fPs * np.sqrt(n0)
     Psf5 = fion / 250.0 / (B * B) / (1.0 + 2.0 * alphan + 2.0 * alphat)
-    s1 = Psf * T0 ** 2.5 * np.sqrt(1.0 + Psf1 / np.sqrt(T0))
+    s1 = Psf * T0**2.5 * np.sqrt(1.0 + Psf1 / np.sqrt(T0))
     s5 = n0 * T0 * Psf5
     Ps = s1 * (1.0 / fp + s4 - s5)
 
@@ -160,14 +160,14 @@ def sync_albajar_fidone():
     pao = 6040.0 * (a * de2o) / B
     gfun = 0.93 * (1.0 + 0.85 * np.exp(-0.82 * R / a))
     kfun = (alphan + 3.87 * alphat + 1.46) ** (-0.79)
-    kfun = kfun * (1.98 + alphat) ** 1.36 * tbet ** 2.14
-    kfun = kfun * (tbet ** 1.53 + 1.87 * alphat - 0.16) ** (-1.33)
-    dum = 1.0 + 0.12 * (teo / (pao ** 0.41)) * (1.0 - refl) ** 0.41
+    kfun = kfun * (1.98 + alphat) ** 1.36 * tbet**2.14
+    kfun = kfun * (tbet**1.53 + 1.87 * alphat - 0.16) ** (-1.33)
+    dum = 1.0 + 0.12 * (teo / (pao**0.41)) * (1.0 - refl) ** 0.41
 
     dum = dum ** (-1.51)  # Very high T modification, from Fidone
 
-    Ps = 3.84e-8 * (1.0 - refl) ** rpow * R * a ** 1.38
-    Ps = Ps * K ** 0.79 * B ** 2.62 * de2o ** 0.38
+    Ps = 3.84e-8 * (1.0 - refl) ** rpow * R * a**1.38
+    Ps = Ps * K**0.79 * B**2.62 * de2o**0.38
     Ps = Ps * teo * (16.0 + teo) ** 2.61 * dum * gfun * kfun
 
     return Ps
@@ -177,14 +177,14 @@ def fusion():
     """Charged particle fusion power"""
     if fuel2 == "T":
         FPalf = 1.52e-6 * fv * n0 * n0 * ((Zimp - Zeff) / (Zimp - 1.0)) ** 2
-        g = 23.9 - 17.87 * T0 ** 0.04
-        GGG = 23.9 - (17.37 + 0.7 * np.log(T0)) * T0 ** 0.04
+        g = 23.9 - 17.87 * T0**0.04
+        GGG = 23.9 - (17.37 + 0.7 * np.log(T0)) * T0**0.04
     else:
         FPalf = 1.16e-7 * fv * n0 * n0 * ((Zimp - Zeff) / (1.8 * Zimp - 2.6)) ** 2
-        g = 14.81 - 10.0 * T0 ** 0.03
-        GGG = 14.81 - (9.79 + 0.3 * np.log(T0)) * T0 ** 0.03
+        g = 14.81 - 10.0 * T0**0.03
+        GGG = 14.81 - (9.79 + 0.3 * np.log(T0)) * T0**0.03
 
-    Palf = FPalf * (T0 ** g) / (1.0 + 2.0 * alphan + GGG * alphat)
+    Palf = FPalf * (T0**g) / (1.0 + 2.0 * alphan + GGG * alphat)
 
     return Palf
 
@@ -209,13 +209,13 @@ def transport():
         ftaue = (
             hfact
             * 0.0562
-            * plascur ** 0.93
-            * B ** 0.15
-            * nbar ** 0.41
-            * R ** 1.39
+            * plascur**0.93
+            * B**0.15
+            * nbar**0.41
+            * R**1.39
             * a ** (0.58)
-            * K ** 0.78
-            * afuel ** 0.19
+            * K**0.78
+            * afuel**0.19
         )
 
         pheat_index = -0.69

@@ -49,7 +49,7 @@ def plot_nprofile(prof, mfdat, scan):
         rhocore1 = np.linspace(0, 0.95 * rhopedn)
         rhocore2 = np.linspace(0.95 * rhopedn, rhopedn)
         rhocore = np.append(rhocore1, rhocore2)
-        ncore = neped + (ne0 - neped) * (1 - rhocore ** 2 / rhopedn ** 2) ** alphan
+        ncore = neped + (ne0 - neped) * (1 - rhocore**2 / rhopedn**2) ** alphan
 
         rhosep = np.linspace(rhopedn, 1)
         nsep = nesep + (neped - nesep) * (1 - rhosep) / (1 - min(0.9999, rhopedn))
@@ -60,7 +60,7 @@ def plot_nprofile(prof, mfdat, scan):
         rho1 = np.linspace(0, 0.95)
         rho2 = np.linspace(0.95, 1)
         rho = np.append(rho1, rho2)
-        ne = ne0 * (1 - rho ** 2) ** alphan
+        ne = ne0 * (1 - rho**2) ** alphan
     ne = ne / 1e19
     prof.plot(rho, ne, label=mfdat.filename)
 
@@ -104,7 +104,7 @@ def plot_tprofile(prof, mfdat, scan):
         te = np.append(tcore, tsep)
     else:
         rho = np.linspace(0, 1)
-        te = te0 * (1 - rho ** 2) ** alphat
+        te = te0 * (1 - rho**2) ** alphat
     prof.plot(rho, te, label=mfdat.filename)
 
 

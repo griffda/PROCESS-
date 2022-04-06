@@ -169,17 +169,17 @@ def plot_plasma(axis, mfile_data, scan):
     kappa = (1.1 * mfile_data.data["kappa95"].get_scan(scan)) + 0.04
     i_single_null = mfile_data.data["i_single_null"].get_scan(scan)
 
-    x1 = (2.0 * r0 * (1.0 + delta) - a * (delta ** 2 + kappa ** 2 - 1.0)) / (
+    x1 = (2.0 * r0 * (1.0 + delta) - a * (delta**2 + kappa**2 - 1.0)) / (
         2.0 * (1.0 + delta)
     )
-    x2 = (2.0 * r0 * (delta - 1.0) - a * (delta ** 2 + kappa ** 2 - 1.0)) / (
+    x2 = (2.0 * r0 * (delta - 1.0) - a * (delta**2 + kappa**2 - 1.0)) / (
         2.0 * (delta - 1.0)
     )
     r1 = 0.5 * math.sqrt(
-        (a ** 2 * ((delta + 1.0) ** 2 + kappa ** 2) ** 2) / ((delta + 1.0) ** 2)
+        (a**2 * ((delta + 1.0) ** 2 + kappa**2) ** 2) / ((delta + 1.0) ** 2)
     )
     r2 = 0.5 * math.sqrt(
-        (a ** 2 * ((delta - 1.0) ** 2 + kappa ** 2) ** 2) / ((delta - 1.0) ** 2)
+        (a**2 * ((delta - 1.0) ** 2 + kappa**2) ** 2) / ((delta - 1.0) ** 2)
     )
     theta1 = sp.arcsin((kappa * a) / r1)
     theta2 = sp.arcsin((kappa * a) / r2)
@@ -991,9 +991,9 @@ def plot_power_info(axis, mfile_data, scan):
     dnla = mfile_data.data["dnla"].get_scan(scan) / 1.0e20
     bt = mfile_data.data["bt"].get_scan(scan)
     surf = mfile_data.data["sarea"].get_scan(scan)
-    pthresh = 0.0488 * dnla ** 0.717 * bt ** 0.803 * surf ** 0.941 * 0.8
+    pthresh = 0.0488 * dnla**0.717 * bt**0.803 * surf**0.941 * 0.8
     err = (
-        0.057 ** 2
+        0.057**2
         + (0.035 * sp.log(dnla)) ** 2
         + (0.032 * sp.log(bt)) ** 2
         + (0.019 * sp.log(surf)) ** 2
@@ -1086,7 +1086,7 @@ def plot_current_drive_info(axis, mfile_data, scan):
     dnla = mfile_data.data["dnla"].get_scan(scan) / 1.0e20
     bt = mfile_data.data["bt"].get_scan(scan)
     surf = mfile_data.data["sarea"].get_scan(scan)
-    pthresh = 0.0488 * dnla ** 0.717 * bt ** 0.803 * surf ** 0.941 * 0.8
+    pthresh = 0.0488 * dnla**0.717 * bt**0.803 * surf**0.941 * 0.8
     flh = pdivt / pthresh
 
     powerht = mfile_data.data["powerht"].get_scan(scan)

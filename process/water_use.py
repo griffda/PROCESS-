@@ -60,8 +60,8 @@ class WaterUse:
         """
         water_usage_variables.evapratio = 1.0e0 - (
             (
-                -0.000279e0 * water_usage_variables.airtemp ** 3
-                + 0.00109e0 * water_usage_variables.airtemp ** 2
+                -0.000279e0 * water_usage_variables.airtemp**3
+                + 0.00109e0 * water_usage_variables.airtemp**2
                 - 0.345e0 * water_usage_variables.airtemp
                 + 26.7e0
             )
@@ -190,9 +190,9 @@ class WaterUse:
                 + (e * water_usage_variables.watertemp)
                 + (f * water_usage_variables.windspeedmph)
                 + (g * heatload)
-                + (h * water_usage_variables.watertemp ** 2)
-                + (i * water_usage_variables.windspeedmph ** 2)
-                + (j * heatload ** 2)
+                + (h * water_usage_variables.watertemp**2)
+                + (i * water_usage_variables.windspeedmph**2)
+                + (j * heatload**2)
             )
 
             # estimate resultant heated water temperature
@@ -204,7 +204,7 @@ class WaterUse:
             windfunction = (
                 a
                 + (b * water_usage_variables.windspeed)
-                + (c * water_usage_variables.windspeed ** 2)
+                + (c * water_usage_variables.windspeed**2)
             ) / 1000.0e0
 
             # difference in saturation vapour pressure (Clausius-Clapeyron approximation)

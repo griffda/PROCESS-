@@ -688,7 +688,7 @@ class Availability:
         # Else number of cycles is inbetween and is given by formula below
         else:
             div_avail = (a0 / (cv.div_nu - cv.div_nref)) * (
-                cv.div_nu - 0.5e0 * cv.div_nref ** 2.0e0 / n - 0.5e0 * n
+                cv.div_nu - 0.5e0 * cv.div_nref**2.0e0 / n - 0.5e0 * n
             )
 
         # Unplanned unavailability for divertor
@@ -778,7 +778,7 @@ class Availability:
             fwbs_avail = 0.0e0
         else:
             fwbs_avail = (a0 / (cv.fwbs_nu - cv.fwbs_nref)) * (
-                cv.fwbs_nu - 0.5e0 * cv.fwbs_nref ** 2.0e0 / n - 0.5e0 * n
+                cv.fwbs_nu - 0.5e0 * cv.fwbs_nref**2.0e0 / n - 0.5e0 * n
             )
 
         # First wall / blanket unplanned unavailability
@@ -954,7 +954,7 @@ class Availability:
             # calculate sum in formula for downtime
             sum_prob = sum_prob + maths_library.binomial(total_pumps, n) * (
                 cryo_nfailure_rate ** (total_pumps - n)
-            ) * (cryo_failure_rate ** n) * (n - cv.redun_vac)
+            ) * (cryo_failure_rate**n) * (n - cv.redun_vac)
 
         # Total down-time in reactor life
         t_down = (n_shutdown + 1.0e0) * cryo_main_time * sum_prob

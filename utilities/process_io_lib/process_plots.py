@@ -241,7 +241,7 @@ def plot_pulse_timings(
         labelspacing=2,
     )
     axis_0.axes.get_yaxis().set_visible(False)
-    axis_0.tick_params(axis=u"both", which=u"both", length=0)
+    axis_0.tick_params(axis="both", which="both", length=0)
 
     xticklabels = (
         axis_0.get_xticklabels() + axis_1.get_xticklabels() + axis_2.get_xticklabels()
@@ -383,7 +383,7 @@ def plasma_profiles_plot(
         rhocore1 = np.linspace(0, 0.95 * rhopedn)
         rhocore2 = np.linspace(0.95 * rhopedn, rhopedn)
         rhocore = np.append(rhocore1, rhocore2)
-        ncore = neped + (ne0 - neped) * (1 - rhocore ** 2 / rhopedn ** 2) ** alphan
+        ncore = neped + (ne0 - neped) * (1 - rhocore**2 / rhopedn**2) ** alphan
 
         rhosep = np.linspace(rhopedn, 1)
         nsep = nesep + (neped - nesep) * (1 - rhosep) / (1 - min(0.9999, rhopedn))
@@ -394,7 +394,7 @@ def plasma_profiles_plot(
         rho1 = np.linspace(0, 0.95)
         rho2 = np.linspace(0.95, 1)
         rho = np.append(rho1, rho2)
-        ne = ne0 * (1 - rho ** 2) ** alphan
+        ne = ne0 * (1 - rho**2) ** alphan
     ne = ne / 1e19
     axis_1.plot(rho, ne)
 
@@ -424,7 +424,7 @@ def plasma_profiles_plot(
         te = np.append(tcore, tsep)
     else:
         rho = np.linspace(0, 1)
-        te = te0 * (1 - rho ** 2) ** alphat
+        te = te0 * (1 - rho**2) ** alphat
     axis_2.plot(rho, te)
 
     # q profile plot
@@ -441,7 +441,7 @@ def plasma_profiles_plot(
     axis_3.set_title("q profile")
 
     rho = np.linspace(0, 1)
-    q_r_nevin = q0 + (q95 - q0) * (rho + rho * rho + rho ** 3) / (3.0)
+    q_r_nevin = q0 + (q95 - q0) * (rho + rho * rho + rho**3) / (3.0)
     q_r_sauter = q0 + (q95 - q0) * (rho * rho)
 
     axis_3.plot(rho, q_r_nevin, label="Nevin")

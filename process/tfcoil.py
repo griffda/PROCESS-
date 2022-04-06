@@ -69,7 +69,7 @@ class TFcoil:
         acool = tfv.a_cp_cool * tfv.n_tf  # Cooling cross-sectional area
         dcool = 2.0e0 * tfv.rcool  # Diameter
         lcool = 2.0e0 * (bv.hmax + bv.tfthko)  # Length
-        tfv.ncool = acool / (constants.pi * tfv.rcool ** 2)  # Number
+        tfv.ncool = acool / (constants.pi * tfv.rcool**2)  # Number
 
         # Average conductor cross-sectional area to cool (with cooling area)
         acpav = 0.5e0 * tfv.vol_cond_cp / (bv.hmax + bv.tfthko) + acool
@@ -160,7 +160,7 @@ class TFcoil:
         # Film temperature difference calculations
         # Originally prandtl was prndtl**0.3e0 but this is incorrect as from
         # Dittus-Boelter correlation where the fluid is being heated it should be as below
-        nuselt = 0.023e0 * reyn ** 0.8e0 * prndtl ** 0.4e0
+        nuselt = 0.023e0 * reyn**0.8e0 * prndtl**0.4e0
         h = nuselt * coolant_th_cond / dcool
         dtfilmav = ptot / (h * 2.0e0 * constants.pi * tfv.rcool * tfv.ncool * lcool)
 
@@ -184,12 +184,12 @@ class TFcoil:
         # Average temperature rise : To be changed with Garry Voss' better documented formula ?
         dtcncpav = (
             (ptot / tfv.vol_cond_cp)
-            / (2.0e0 * conductor_th_cond * (ro ** 2 - tfv.rcool ** 2))
+            / (2.0e0 * conductor_th_cond * (ro**2 - tfv.rcool**2))
             * (
-                ro ** 2 * tfv.rcool ** 2
-                - 0.25e0 * tfv.rcool ** 4
-                - 0.75e0 * ro ** 4
-                + ro ** 4 * np.log(ro / tfv.rcool)
+                ro**2 * tfv.rcool**2
+                - 0.25e0 * tfv.rcool**4
+                - 0.75e0 * ro**4
+                + ro**4 * np.log(ro / tfv.rcool)
             )
         )
 
@@ -197,7 +197,7 @@ class TFcoil:
         dtconcpmx = (
             (ptot / tfv.vol_cond_cp)
             / (2.0e0 * conductor_th_cond)
-            * ((tfv.rcool ** 2 - ro ** 2) / 2.0e0 + ro ** 2 * np.log(ro / tfv.rcool))
+            * ((tfv.rcool**2 - ro**2) / 2.0e0 + ro**2 * np.log(ro / tfv.rcool))
         )
 
         # If the average conductor temperature difference is negative, set it to 0
@@ -240,7 +240,7 @@ class TFcoil:
             tfv.etapump = 0.6e0
 
         # Pressure drop calculation
-        dpres = fricfac * (lcool / dcool) * coolant_density * 0.5e0 * tfv.vcool ** 2
+        dpres = fricfac * (lcool / dcool) * coolant_density * 0.5e0 * tfv.vcool**2
         tfv.ppump = dpres * acool * tfv.vcool / tfv.etapump
 
         # Critical pressure in saturation pressure calculations (Pa)
@@ -256,12 +256,12 @@ class TFcoil:
         sum_ = (
             -741.9242e0
             - 29.721e0 * fc
-            - 11.55286e0 * fc ** 2
-            - 0.8685635e0 * fc ** 3
-            + 0.1094098e0 * fc ** 4
-            + 0.439993e0 * fc ** 5
-            + 0.2520658e0 * fc ** 6
-            + 0.0518684e0 * fc ** 7
+            - 11.55286e0 * fc**2
+            - 0.8685635e0 * fc**3
+            + 0.1094098e0 * fc**4
+            + 0.439993e0 * fc**5
+            + 0.2520658e0 * fc**6
+            + 0.0518684e0 * fc**7
         )
         psat = pcrt * np.exp(0.01e0 / (tclmxs + 273.0e0) * (374.0e0 - tclmxs) * sum_)
         presin = psat + dpres
@@ -377,8 +377,8 @@ class TFcoil:
             density = (
                 217.753831e0
                 - 1.66564525e0 * temp
-                - 0.160654724e0 * temp ** 2
-                + 0.00339003258e0 * temp ** 3
+                - 0.160654724e0 * temp**2
+                + 0.00339003258e0 * temp**3
             )
 
         # Linear interpolation between the fits to avoid discontinuity
@@ -387,7 +387,7 @@ class TFcoil:
 
         # Oder 2 polynomial fit
         else:
-            density = 212.485251e0 - 4.18059786e0 * temp + 0.0289632937e0 * temp ** 2
+            density = 212.485251e0 - 4.18059786e0 * temp + 0.0289632937e0 * temp**2
 
         return density
 
@@ -416,8 +416,8 @@ class TFcoil:
             cp = (
                 -0.834218557e0
                 + 0.637079569e0 * temp
-                - 0.0208839696e0 * temp ** 2
-                + 0.000233433748e0 * temp ** 3
+                - 0.0208839696e0 * temp**2
+                + 0.000233433748e0 * temp**3
             )
 
         # Linear interpolation between the fits to avoid discontinuity
@@ -457,9 +457,9 @@ class TFcoil:
             visco = np.exp(
                 -9.19688182e0
                 - 4.83007225e-1 * temp
-                + 3.47720002e-2 * temp ** 2
-                - 1.17501538e-3 * temp ** 3
-                + 1.54218249e-5 * temp ** 4
+                + 3.47720002e-2 * temp**2
+                - 1.17501538e-3 * temp**3
+                + 1.54218249e-5 * temp**4
             )
 
         # Linear interpolation between the fits to avoid discontinuity
@@ -496,9 +496,9 @@ class TFcoil:
             th_cond = (
                 -7.56066334e-3
                 + 1.62626819e-2 * temp
-                - 1.3633619e-3 * temp ** 2
-                + 4.84227752e-5 * temp ** 3
-                - 6.31264281e-7 * temp ** 4
+                - 1.3633619e-3 * temp**2
+                + 4.84227752e-5 * temp**3
+                - 6.31264281e-7 * temp**4
             )
 
         # Linear interpolation between the fits to avoid discontinuity
@@ -510,8 +510,8 @@ class TFcoil:
             th_cond = (
                 0.0731268577e0
                 - 0.0013826223e0 * temp
-                + 3.55551245e-5 * temp ** 2
-                - 2.32185411e-7 * temp ** 3
+                + 3.55551245e-5 * temp**2
+                - 2.32185411e-7 * temp**3
             )
 
         # Linear interpolation between the fits to avoid discontinuity
@@ -546,8 +546,8 @@ class TFcoil:
             th_cond = (
                 16332.2073e0
                 - 776.91775e0 * temp
-                + 13.405688e0 * temp ** 2
-                - 8.01e-02 * temp ** 3
+                + 13.405688e0 * temp**2
+                - 8.01e-02 * temp**3
             )
 
         # Linear interpolation between the fits to avoid discontinuity
@@ -556,7 +556,7 @@ class TFcoil:
 
         # fit 70 < T < 150 K (order 2 poly)
         elif temp < 150.0e0:
-            th_cond = 1782.77406e0 - 24.7778504e0 * temp + 9.70842050e-2 * temp ** 2
+            th_cond = 1782.77406e0 - 24.7778504e0 * temp + 9.70842050e-2 * temp**2
 
         # constant value after that set with the fit upper limit to avoid discontinuities
         else:

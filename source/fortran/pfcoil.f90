@@ -3145,5 +3145,3 @@ module pfcoil_module
    end subroutine outvolt
 
  end module pfcoil_module
-
-

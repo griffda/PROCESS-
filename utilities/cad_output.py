@@ -1836,19 +1836,19 @@ def write_plasma_shape(data, output_file):
     kappa = data.kappa95 * 1.12
 
     # x position of outside arc
-    x1 = (2 * r0 * (1 + delta) - a * (delta ** 2 + kappa ** 2 - 1)) / (2 * (1 + delta))
+    x1 = (2 * r0 * (1 + delta) - a * (delta**2 + kappa**2 - 1)) / (2 * (1 + delta))
 
     # x position of inside arc
-    x2 = (2 * r0 * (delta - 1) - a * (delta ** 2 + kappa ** 2 - 1)) / (2 * (delta - 1))
+    x2 = (2 * r0 * (delta - 1) - a * (delta**2 + kappa**2 - 1)) / (2 * (delta - 1))
 
     # Radius of outside arc
     r1 = 0.5 * scipy.sqrt(
-        (a ** 2 * ((delta + 1) ** 2 + kappa ** 2) ** 2) / ((delta + 1) ** 2)
+        (a**2 * ((delta + 1) ** 2 + kappa**2) ** 2) / ((delta + 1) ** 2)
     )
 
     # Radius of inside arc
     r2 = 0.5 * scipy.sqrt(
-        (a ** 2 * ((delta - 1) ** 2 + kappa ** 2) ** 2) / ((delta - 1) ** 2)
+        (a**2 * ((delta - 1) ** 2 + kappa**2) ** 2) / ((delta - 1) ** 2)
     )
 
     # Angle for arc for outside arc
@@ -1974,8 +1974,8 @@ def write_cutf_coils(data, output_file):
     output_file.write("\n# TF Coil Centrepost\n")
     r1 = 0.5 * (data.rmid + data.rtop)
     z1 = 0.5 * data.ztop
-    xpost = (r1 - data.rmid) ** 2 + z1 ** 2
-    ypost = data.ztop ** 2 / ((data.rtop - data.rmid) ** 2 + data.ztop ** 2)
+    xpost = (r1 - data.rmid) ** 2 + z1**2
+    ypost = data.ztop**2 / ((data.rtop - data.rmid) ** 2 + data.ztop**2)
     rcpost = data.rmid + (xpost / (1.0 - ypost)) ** 0.5
 
     output_file.write("Centrepost - radius mid = {0:.3f} m\n".format(data.rmid))

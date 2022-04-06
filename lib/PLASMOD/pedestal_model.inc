@@ -30,4 +30,3 @@
 
 !compute pedestal top temperature
 	teb = P_pedtop/neb
-

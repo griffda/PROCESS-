@@ -112,7 +112,7 @@ def plot_nprofile(prof):  # cut-down version from plot_proc.py
     rhocore1 = np.linspace(0, 0.95 * rhopedn)
     rhocore2 = np.linspace(0.95 * rhopedn, rhopedn)
     rhocore = np.append(rhocore1, rhocore2)
-    ncore = neped + (ne0 - neped) * (1 - rhocore ** 2 / rhopedn ** 2) ** alphan
+    ncore = neped + (ne0 - neped) * (1 - rhocore**2 / rhopedn**2) ** alphan
 
     rhosep = np.linspace(rhopedn, 1)
     nsep = nesep + (neped - nesep) * (1 - rhosep) / (1 - min(0.9999, rhopedn))

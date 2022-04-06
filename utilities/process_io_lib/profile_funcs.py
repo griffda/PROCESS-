@@ -21,17 +21,17 @@ def ncore(rhopedn, nped, nsep, nav, alphan):
 
     return (
         (1.0 / 3.0)
-        * (1.0 / rhopedn ** 2)
+        * (1.0 / rhopedn**2)
         * (
             3.0 * nav * (1.0 + alphan)
-            + nsep * (1.0 + alphan) * (-2.0 + rhopedn + rhopedn ** 2)
+            + nsep * (1.0 + alphan) * (-2.0 + rhopedn + rhopedn**2)
             - nped
             * (
                 1.0
                 + alphan
                 + rhopedn
                 + (alphan * rhopedn)
-                + (alphan - 2.0) * rhopedn ** 2
+                + (alphan - 2.0) * rhopedn**2
             )
         )
     )
@@ -45,7 +45,7 @@ def nprofile(rho, rhopedn, nzero, nped, nsep, alphan):
     if rho < 0.0:
         print("Error: rho undefined!")
     elif rho <= rhopedn:
-        return nped + (nzero - nped) * (1.0 - (rho ** 2 / rhopedn ** 2)) ** alphan
+        return nped + (nzero - nped) * (1.0 - (rho**2 / rhopedn**2)) ** alphan
     elif rho <= 1.0:
         return nsep + (nped - nsep) * (1.0 - rho) / (1.0 - rhopedn)
     else:
@@ -60,7 +60,7 @@ def tcore(rhopedt, tped, tsep, tav, alphat, tbeta):
     gamfac = (
         gamma(1.0e0 + alphat + 2.0e0 / tbeta)
         / gamma((2.0e0 + tbeta) / tbeta)
-        / rhopedt ** 2.0e0
+        / rhopedt**2.0e0
     )
 
     if (abs(alphat % 1) <= NUMACC) or (abs((alphat % 1) - 1) <= NUMACC):
@@ -71,7 +71,7 @@ def tcore(rhopedt, tped, tsep, tav, alphat, tbeta):
     return (
         tped
         + (
-            tped * rhopedt ** 2.0e0
+            tped * rhopedt**2.0e0
             - tav
             + (1.0e0 - rhopedt)
             / 3.0e0
@@ -90,7 +90,7 @@ def tprofile(rho, rhopedt, tzero, tped, tsep, alphat, betat):
         print("Error: rho undefined!")
     elif rho <= rhopedt:
         return (
-            tped + (tzero - tped) * (1.0 - (rho ** betat / rhopedt ** betat)) ** alphat
+            tped + (tzero - tped) * (1.0 - (rho**betat / rhopedt**betat)) ** alphat
         )
     elif rho <= 1.0:
         return tsep + (tped - tsep) * (1.0 - rho) / (1.0 - rhopedt)
