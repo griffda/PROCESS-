@@ -2,6 +2,7 @@ import numpy as np
 import copy
 
 from process import fortran as ft
+from process.build import Build
 from process.fortran import tfcoil_variables as tfv
 from process.fortran import sctfcoil_module as sctf
 from process.fortran import build_variables as bv
@@ -9,16 +10,18 @@ from process.fortran import constants
 from process.fortran import fwbs_variables as fwbsv
 from process.fortran import error_handling as eh
 from process.fortran import process_output as po
+from process.sctfcoil import Sctfcoil
 
 
 class TFcoil:
     """Calculates the parameters of a resistive TF coil system for a fusion power plant"""
 
-    def __init__(self, build):
+    def __init__(self, build: Build, sctfcoil: Sctfcoil):
         """Initialise Fortran module variables."""
         self.outfile = ft.constants.nout  # output file unit
         self.iprint = 0  # switch for writing to output file (1=yes)
         self.build = build
+        self.sctfcoil = sctfcoil
 
     def run(self):
         """Run main tfcoil subroutine without outputting."""
@@ -42,7 +45,7 @@ class TFcoil:
         """
 
         # TF coil calculations
-        sctf.sctfcoil(self.outfile, self.iprint)
+        self.sctfcoil.sctfcoil(output=bool(self.iprint))
 
         # Port size calculation
         self.build.portsz()

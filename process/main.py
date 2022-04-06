@@ -1,11 +1,11 @@
 """Run Process by calling into the Fortran.
 
-This uses a Python module called fortran.py, which uses an extension module 
-called "_fortran.cpython... .so", which are both generated from 
-process_module.f90. The process_module module contains the code to actually run 
+This uses a Python module called fortran.py, which uses an extension module
+called "_fortran.cpython... .so", which are both generated from
+process_module.f90. The process_module module contains the code to actually run
 Process.
 
-This file, process.py, is now analogous to process.f90, which contains the 
+This file, process.py, is now analogous to process.f90, which contains the
 Fortran "program" statement. This Python module effectively acts as the Fortran
 "program".
 
@@ -82,6 +82,7 @@ from process.io.process_funcs import (
 )
 from process.vacuum import Vacuum
 from process.water_use import WaterUse
+from process.sctfcoil import Sctfcoil
 
 os.environ["PYTHON_PROCESS_ROOT"] = os.path.join(os.path.dirname(__file__))
 
@@ -476,7 +477,8 @@ class Models:
         """
         self.costs_step = CostsStep()
         self.build = Build()
-        self.tfcoil = TFcoil(build=self.build)
+        self.sctfcoil = Sctfcoil()
+        self.tfcoil = TFcoil(build=self.build, sctfcoil=self.sctfcoil)
         self.divertor = Divertor()
         self.structure = Structure()
         self.availability = Availability()
