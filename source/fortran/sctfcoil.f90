@@ -442,9 +442,9 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
     end if
     ! -------------------
 
+end subroutine sc_tf_internal_geom
 
-    contains
-    subroutine tf_wp_geom(i_tf_wp_geom)
+subroutine tf_wp_geom(i_tf_wp_geom)
         !! Author : S. Kahn, CCFE
         !! Seting the WP geometry and area for SC magnets
 
@@ -574,7 +574,7 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
 
     end subroutine tf_wp_geom
 
-    subroutine tf_case_geom(i_tf_wp_geom, i_tf_case_geom)
+subroutine tf_case_geom(i_tf_wp_geom, i_tf_case_geom)
         !! Author : S. Kahn, CCFE
         !! Seting the case geometry and area for SC magnets
 
@@ -645,7 +645,7 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
         ! --------------
     end subroutine tf_case_geom
 
-    subroutine tf_averaged_turn_geom( jwptf, thwcndut, thicndut, i_tf_sc_mat,    & ! Inputs
+subroutine tf_averaged_turn_geom( jwptf, thwcndut, thicndut, i_tf_sc_mat,    & ! Inputs
                                       acstf, acndttf, insulation_area, n_tf_turn ) ! Outputs
 
         !! Authors : J. Morris, CCFE
@@ -797,7 +797,7 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
 
     end subroutine tf_averaged_turn_geom
 
-    subroutine tf_integer_turn_geom( n_layer, n_pancake, thwcndut, thicndut, & ! Inputs
+subroutine tf_integer_turn_geom( n_layer, n_pancake, thwcndut, thicndut, & ! Inputs
                                      acstf, acndttf, insulation_area, & ! Outputs
                                      cpttf, n_tf_turn )                   ! Outputs
 
@@ -929,20 +929,17 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
 
     end subroutine tf_integer_turn_geom
 
-    subroutine tf_wp_currents()
+subroutine tf_wp_currents()
         !! Author : S. Kahn, CCFE
         !! Turn engineering turn currents/densities
 
-        use tfcoil_variables, only: ritfc, n_tf
+        use tfcoil_variables, only: ritfc, n_tf, jwptf
         implicit none
 
         ! Winding pack current density (forced to be positive) [A/m2]
         jwptf = max(1.0D0, ritfc/(n_tf*awptf))
 
     end subroutine tf_wp_currents
-
-
-end subroutine sc_tf_internal_geom
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
