@@ -16,7 +16,7 @@ module numerics
 
   public
 
-  integer, parameter :: ipnvars = 177
+  integer, parameter :: ipnvars = 175
   !!  ipnvars FIX : total number of variables available for iteration
 
   integer, parameter :: ipeqns = 89
@@ -191,7 +191,8 @@ module numerics
   !!  <LI> (86) Constraint for TF coil turn dimension
   !!  <LI> (87) Constraint for cryogenic power
   !!  <LI> (88) Constraint for TF coil strain absolute value
-  !!  <LI> (89) Constraint for CS coil quench protection (itv 166 f_copperaoh_m2)</UL>
+  !!  <LI> (89) Constraint for CS coil quench protection</UL>
+  
 
   integer, dimension(ipnvars) :: ixc 
   !!  ixc(ipnvars) /0/ :
@@ -365,7 +366,7 @@ module numerics
   !! <LI> (163) f_t_turn_tf : f-value for TF coils WP trurn squared dimension constraint 
   !! <LI> (164) f_crypmw : f-value for cryogenic plant power
   !! <LI> (165) fstr_wp : f-value for TF coil strain absolute value
-  !! <LI> (166) f_copperaoh_m2 : CS coil current / copper area < Maximum value
+  !! <LI> (166) f_copperaoh_m2 : CS coil current /copper area < Maximum value
   !! <LI> (167) EMPTY : Description
   !! <LI> (168) EMPTY : Description
   !! <LI> (169) EMPTY : Description
@@ -375,7 +376,6 @@ module numerics
   !! <LI> (173) EMPTY : Description
   !! <LI> (174) EMPTY : Description
   !! <LI> (175) EMPTY : Description
-
   ! Issue 287 iteration variables are now defined in module define_iteration_variables in iteration variables.f90
 
   character(len=14), dimension(:), allocatable :: name_xc
