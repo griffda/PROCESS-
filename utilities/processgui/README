@@ -31,7 +31,7 @@ machine only) and navigate to 127.0.0.1:8000
 --Using GUI--
 Currently you can upload two files. One file that is available for
 editing, and a reference file that can be used to compare variables
-between one file and another. Differences should be highlighted in 
+between one file and another. Differences should be highlighted in
 red. Both files start at default values when you first open the page.
 
 Each variable is listed with its current value, followed by the
@@ -68,4 +68,3 @@ idensl = 7       * Switch for density limit to enforce * greenwald limit
 If you want to convert an old IN.DAT file to this format without manually
 opening and saving the file in the GUI, running the newindat.py file in lib/
 will do this. Use as ./newindat.py OLD_IN.DAT NEW_IN.DAT
-

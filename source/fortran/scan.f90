@@ -93,10 +93,10 @@ module scan_module
   !!         <LI> 54 GL_nbti upper critical field at 0 Kelvin
   !!         <LI> 55 `shldith` : Inboard neutron shield thickness
   !!         <LI> 56 crypmw_max: Maximum cryogenic power (ixx=164, ixc=87)
-  !!         <LI> 57 `bt` lower boundary 
+  !!         <LI> 57 `bt` lower boundary
   !!         <LI> 58 `scrapli` : Inboard plasma-first wall gap
   !!         <LI> 59 `scraplo` : Outboard plasma-first wall gap
-  !!         <LI> 60 sig_tf_wp_max: Allowable stress in TF Coil conduit (Tresca) 
+  !!         <LI> 60 sig_tf_wp_max: Allowable stress in TF Coil conduit (Tresca)
   !!         <LI> 61 copperaoh_m2_max : CS coil current / copper area
   !!         <LI> 62 coheof : CS coil current density at EOF
   !!         <LI> 63 ohcth : CS thickness (m)
@@ -110,7 +110,7 @@ module scan_module
   real(dp), dimension(ipnscns) :: sweep_2
   !! sweep_2(ipnscns) /../: actual values to use in 2D scan
 
-  ! Vars in subroutines scan_1d and scan_2d requiring re-initialising before 
+  ! Vars in subroutines scan_1d and scan_2d requiring re-initialising before
   ! each new run
   logical :: first_call_1d
   logical :: first_call_2d
@@ -139,7 +139,7 @@ contains
     implicit none
     integer, intent(in) :: iscan
     !! Scan point number
-        
+
     ! Makes iscan available globally (read-only)
     iscan_global = iscan
 
@@ -162,7 +162,7 @@ contains
         ',trim(vlabel),' = ',sweep(iscan)
 20     format(a,i2,a,4a,1pe10.3)
   end subroutine scan_1d_write_point_header
-  
+
   subroutine scan_1d_store_output(iscan, ifail, noutvars_, ipnscns_, outvar)
     use constraint_variables, only: taulimit
     use cost_variables, only: cdirt, coe, coeoam, coefuelt, c222, ireactor, &
@@ -297,7 +297,7 @@ contains
 
     integer, intent(inout) :: iscan
     real(dp), dimension(:,:), intent(in) :: outvar
-    
+
     character(len=48) :: tlabel
     integer :: ivar
     character(len=25), dimension(noutvars), save :: plabel
@@ -393,7 +393,7 @@ contains
         plabel(84) = 'Max_field_on_TF_coil_____'
         call ovarin(mfile,'Number of scan points','(isweep)',isweep)
         call ovarin(mfile,'Scanning variable number','(nsweep)',nsweep)
- 
+
         first_call_1d = .false.
      end if
 
@@ -422,9 +422,9 @@ contains
     call ovarin(mfile,'Number of first variable scan points','(isweep)',isweep)
     call ovarin(mfile,'Number of second variable scan points','(isweep_2)',isweep_2)
     call ovarin(mfile,'Scanning first variable number','(nsweep)',nsweep)
-    call ovarin(mfile,'Scanning second variable number','(nsweep_2)',nsweep_2)     
-    call ovarin(mfile,'Scanning second variable number','(nsweep_2)',nsweep_2)     
-    call ovarin(mfile,'Scanning second variable number','(nsweep_2)',nsweep_2)     
+    call ovarin(mfile,'Scanning second variable number','(nsweep_2)',nsweep_2)
+    call ovarin(mfile,'Scanning second variable number','(nsweep_2)',nsweep_2)
+    call ovarin(mfile,'Scanning second variable number','(nsweep_2)',nsweep_2)
   end subroutine scan_2d_init
 
   subroutine scan_2d_write_point_header(iscan, iscan_1, iscan_2, iscan_R)
@@ -437,7 +437,7 @@ contains
     integer, intent(in) :: iscan_1
     integer, intent(in) :: iscan_2
     integer, intent(out) :: iscan_R
-    
+
     integer :: ifail
 
     if (mod(iscan_1,2)==0) then
@@ -626,7 +626,7 @@ contains
       n_layer, b_crit_upper_nbti, sig_tf_wp_max
     use div_kal_vars, only: lcon_factor, impurity_enrichment, &
       target_spread, lambda_q_omp, qtargettotal, ttarget
-    use heat_transport_variables, only: crypmw_max 
+    use heat_transport_variables, only: crypmw_max
     use rebco_variables, only: copperaoh_m2_max
     use pfcoil_variables, only: coheof, ohhghf
     implicit none
@@ -824,7 +824,7 @@ contains
             vlab = 'scraplo' ; xlab = 'Outboard FW-plasma sep gap'
         case (60)
             sig_tf_wp_max = swp(iscn)
-            vlab = 'sig_tf_wp_max' ; xlab = 'Allowable_stress_in_tf_coil_conduit_Tresca_(pa)'        
+            vlab = 'sig_tf_wp_max' ; xlab = 'Allowable_stress_in_tf_coil_conduit_Tresca_(pa)'
         case (61)
             copperaoh_m2_max = swp(iscn)
             vlab = 'copperaoh_m2_max' ; xlab = 'Max CS coil current / copper area'

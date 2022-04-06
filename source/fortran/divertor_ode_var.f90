@@ -5,7 +5,7 @@ module divertor_ode_var
   !! author: M Kovari, CCFE, Culham Science Centre
   !! N/A
   !! This module contains the PROCESS Kallenbach divertor model
-  !! 
+  !!
 
   ! NEW VERSION! 29/6/18
   ! Using n as variable rather than Ptotal

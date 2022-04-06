@@ -59,7 +59,7 @@ $1 = 24
     gdb python
     >>> run -m pytest
     ```
-    
+
 Further basic GDB commands, like breakpoints, can be found at https://users.ece.utexas.edu/~adnan/gdb-refcard.pdf.
 
 

@@ -1,13 +1,13 @@
 module plasmod_variables
   !! author: J. Morris (UKAEA)
   !!
-  !! Module containing global variables relating to PLASMOD. PLASMOD is a 1-D plasma transport 
+  !! Module containing global variables relating to PLASMOD. PLASMOD is a 1-D plasma transport
   !! solver written by E. Fable (IPP Garching).
   !!
   !!### References
   !!
   !! - E. Fable et al., Fusion Engineering and Design, Volume 130, May 2018, Pages 131-136
-  
+
   use structs, only: geometry, pedestal, inputs, radial_profiles, &
     power_losses, numerics_transp, MHD_EQ, composition
 #ifndef dp
@@ -25,7 +25,7 @@ module plasmod_variables
 
   real(dp) :: plasmod_dtmax
   !! plasmod max time step
-  
+
   real(dp) :: plasmod_dt
   !! plasmod time step
 
@@ -42,11 +42,11 @@ module plasmod_variables
   !! multiplier of etolm which can not be exceeded
 
   real(dp) :: plasmod_eopt
-  !! exponent of jipperdo 
+  !! exponent of jipperdo
   !#TODO: what?
 
   real(dp) :: plasmod_dtmaxmin
-  !! exponent of jipperdo2 
+  !! exponent of jipperdo2
   !#TODO: likewise?
 
   real(dp) :: plasmod_dtmaxmax
@@ -66,12 +66,12 @@ module plasmod_variables
   !!
   !! - =0 use PLASMOD functions
   !! - =1 use PROCESS functions
-  
+
   integer :: plasmod_i_modeltype
   !! switch for the transport model:
   !!
   !! - =1 Simple gyrobohm scaling with imposed H factor > 1. Other values give H factor as output
-  !! - =111 roughly calibrated to give H=1 for DEMO, but not fixed H 
+  !! - =111 roughly calibrated to give H=1 for DEMO, but not fixed H
   !#TODO: why 111?
 
   integer :: plasmod_i_equiltype
@@ -129,7 +129,7 @@ module plasmod_variables
 
   real(dp) :: plasmod_maxpauxor
   !! max allowed auxiliary power / R
-  
+
   real(dp), dimension(2) :: plasmod_x_heat
   !! plasmod auxiliary heating array:
   !!
@@ -258,7 +258,7 @@ module plasmod_variables
   subroutine init_plasmod_variables
     !! Initialise module variables
     implicit none
-  
+
     plasmod_tol = 1.0d-10
     plasmod_dtmin = 0.05d0
     plasmod_dtmax = 0.1d0

@@ -378,7 +378,7 @@ contains
     ! Scale with total TF coil length (m)
     s_k(14) = n_tf * tfleng
     s_kref(14) = 18.0D0*34.1D0
-    s_cost(14) = s_cost_factor(14) * s_cref(14) * (s_k(14) / s_kref(14))**costexp    
+    s_cost(14) = s_cost_factor(14) * s_cref(14) * (s_k(14) / s_kref(14))**costexp
 
     ! TF coil winding costs ($)
     s_label(16) = "TF coil winding"

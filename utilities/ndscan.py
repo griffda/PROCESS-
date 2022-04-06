@@ -15,21 +15,26 @@ ndscan.json (configuration file, per default in working directory)
 from process_io_lib.process_config import NdScanConfig
 import argparse
 
-if __name__ == '__main__':
-############################################################
-#Usage
+if __name__ == "__main__":
+    ############################################################
+    # Usage
 
+    PARSER = argparse.ArgumentParser(
+        description="Program to run a multi-\
+    dimensional parameter scan using PROCESS."
+    )
 
-    PARSER = argparse.ArgumentParser(description='Program to run a multi-\
-    dimensional parameter scan using PROCESS.')
-
-    PARSER.add_argument("-f", "--configfile", default='ndscan.json',
-                        help="configuration file, default = ndscan.json")
+    PARSER.add_argument(
+        "-f",
+        "--configfile",
+        default="ndscan.json",
+        help="configuration file, default = ndscan.json",
+    )
 
     ARGS = PARSER.parse_args()
 
     ############################################################
-    #main program
+    # main program
 
     NDSCANNER = NdScanConfig(ARGS.configfile)
     NDSCANNER.start_scan()

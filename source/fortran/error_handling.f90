@@ -106,7 +106,7 @@ contains
   subroutine init_error_handling
     !! Initialise the error_handling module variables
     implicit none
-    
+
     errors_on = .false.
     error_id = 0
     error_status = ERROR_OKAY
@@ -129,7 +129,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use fson_library, only: fson_parse, fson_value, fson_get, fson_destroy 
+    use fson_library, only: fson_parse, fson_value, fson_get, fson_destroy
     implicit none
 
     !  Arguments
@@ -155,7 +155,7 @@ contains
     !  Allocate memory for error_type array contents
 
     call fson_get(errorfile, "n_errortypes", n_errortypes)
-    
+
     ! Guard against re-allocation
     if (allocated(error_type)) deallocate(error_type)
     allocate(error_type(n_errortypes))
@@ -271,7 +271,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     use constants, only: iotty, nout
-    use process_output, only: oblnkl, oheadr, ocmmnt, ovarin 
+    use process_output, only: oblnkl, oheadr, ocmmnt, ovarin
     implicit none
 
     !  Arguments

@@ -4,6 +4,7 @@ import logging
 import pytest
 from process import fortran
 
+
 def test_log_error(caplog):
     """Test that an error-level log can be written.
 
@@ -14,6 +15,7 @@ def test_log_error(caplog):
     lp.log_error()
     # Check the captured log output contains "ERROR"
     assert "ERROR" in caplog.text
+
 
 def test_log_all_levels(caplog):
     """Test different levels of logging.
@@ -35,6 +37,7 @@ def test_log_all_levels(caplog):
     lp.log_all_levels()
     assert "INFO" in caplog.text
 
+
 def test_log_var(caplog):
     """Test logging a variable.
 
@@ -43,6 +46,7 @@ def test_log_var(caplog):
     """
     lp.log_var()
     assert "11.0" in caplog.text
+
 
 def test_log_exception(caplog):
     """Check an exception is logged.
@@ -56,6 +60,7 @@ def test_log_exception(caplog):
     assert "value isn't acceptable!" in caplog.text
     # Check log contains stack trace of exception
     assert "Traceback" in caplog.text
+
 
 def test_log_fortran(caplog, monkeypatch):
     """Check a Fortran value is logged.

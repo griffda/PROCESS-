@@ -219,11 +219,11 @@ class Build:
         # Find radius of inner and outer plasma arcs
 
         rco = 0.5 * numpy.sqrt(
-            (physics_variables.rminor ** 2 * ((tril + 1.0e0) ** 2 + kap ** 2) ** 2)
+            (physics_variables.rminor**2 * ((tril + 1.0e0) ** 2 + kap**2) ** 2)
             / ((tril + 1.0e0) ** 2)
         )
         rci = 0.5 * numpy.sqrt(
-            (physics_variables.rminor ** 2 * ((tril - 1.0e0) ** 2 + kap ** 2) ** 2)
+            (physics_variables.rminor**2 * ((tril - 1.0e0) ** 2 + kap**2) ** 2)
             / ((tril - 1.0e0) ** 2)
         )
 

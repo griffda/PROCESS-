@@ -30,7 +30,7 @@
                           num%ipedestal=2 !1 - fixed temperature pedestal. 2 - Sareelma scaling
 																										num%i_impmodel=1 !impurity model: 0 - fixed concentration, 1 - concentration fixed at pedestal top, then fixed density.
 																										num%iprocess=0 !impurity model: 0 - fixed concentration, 1 - concentration fixed at pedestal top, then fixed density.
-																										
+
     geom%A = 3.1d0  !aspect ratio
     geom%R = 9.072d0  ! major radius in m
     geom%bt = 5.667 !magnetic field
@@ -39,7 +39,7 @@
     geom%k95 = 1.65d0 !edge elongation
     geom%d95 = 0.333d0 !edge triangularity
     geom%Ip =  19.6 !9.19727561008985 !19.6 !plasma current in MA : USED if equiltype=2, q95 is used if equiltype=1
-				geom%q95 = 3.5 !safety factor. 
+				geom%q95 = 3.5 !safety factor.
 				geom%counter=0.
 
     geom%Aold = geom%A  !aspect ratio
@@ -84,7 +84,7 @@
     ped%rho_n=0.96 !pedestal top position n
     ped%pedscal=1. !pedestal top position n
 
-				inp0%Hfac_inp=1. !input H factor, if imodeltype > 1, this is ignored. 
+				inp0%Hfac_inp=1. !input H factor, if imodeltype > 1, this is ignored.
 
 				inp0%nbcdeff=5. !CD = this * PCD   units: m*MA/MW (MA/m^2 * m^3/MW)
 				inp0%eccdeff=0.3 !CD = this * PCD * TE/NE !not used for now
@@ -154,7 +154,7 @@ inp0%maxpauxor=20. ! maximum Paux/R allowed
 
     geom%k95 =  1.65d0 !edge elongation
     geom%d95 =  0.333d0 !edge triangularity
-    geom%q95 = 3.5 !safety factor. 
+    geom%q95 = 3.5 !safety factor.
 	geom%counter=0.
     geom%k =1.6969830041844367 !edge elongation
     geom%d =  0.38491934960310104  !edge triangularity
@@ -296,7 +296,7 @@ ped%pedscal=1.2
 
     geom%k95 =  1.65d0 !edge elongation
     geom%d95 =  0.333d0 !edge triangularity
-    geom%q95 = 3.88 !safety factor. 
+    geom%q95 = 3.88 !safety factor.
 	   geom%counter=0.
     geom%k =1.6969830041844367 !edge elongation
     geom%d =  0.38491934960310104  !edge triangularity
@@ -318,7 +318,7 @@ ped%pedscal=1.2
 
     comp%pradpos = 0.75d0 ! position after which radiation is counted 0. for tau and other global quantities, i.e. position after which radiation is "edge"
     comp%pradfrac = 0.6d0 ! position after which radiation is counted 0. for tau and other global quantities, i.e. position after which radiation is "edge"
-				
+
 
 
     ped%tesep=0.1  !separatrix temperature
@@ -390,4 +390,3 @@ ped%pedscal=1.2
 				inp0%dx_control(1)=0.2 !nbi
 				inp0%dx_control(2)=0.03 !ech
 				inp0%nbi_energy=1000. !in keV
-

@@ -1,11 +1,11 @@
 """Create Python-Fortran dictionaries JSON.
 
-This module produces the python_fortran_dicts.json file used by Python in 
-Process. Make directs the Ford documentation program to read in the Process 
+This module produces the python_fortran_dicts.json file used by Python in
+Process. Make directs the Ford documentation program to read in the Process
 source, create a project object which contains the structure of Process used for
-documenting the code within Ford, and then creates a pickled file from that 
-project object. Make then calls this module to create dictionaries of variables 
-which are used by Python in Process. The dicts are created from hardcoded 
+documenting the code within Ford, and then creates a pickled file from that
+project object. Make then calls this module to create dictionaries of variables
+which are used by Python in Process. The dicts are created from hardcoded
 values, Process source parsing and the Ford project object, and then dumped into
 the JSON file for later use.
 

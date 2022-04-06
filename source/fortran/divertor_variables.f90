@@ -127,7 +127,7 @@ module divertor_variables
 
   real(dp) :: prn1
   !! n-scrape-off / n-average plasma; (input for `ipedestal=0`, = nesep/dene if `ipedestal>=1`)
-  
+
   real(dp) :: ptpdiv
   !! peak temperature at the plate (eV)
 
@@ -160,7 +160,7 @@ module divertor_variables
 
   real(dp) :: zeffdiv
   !! Zeff in the divertor region (if `divdum/=0`)
-  
+
   contains
 
   subroutine init_divertor_variables

@@ -18,16 +18,18 @@ rule snippet in the Process project on Gitlab.
 from abc import ABC, abstractmethod
 from process_io_lib.obsolete_vars import OBS_VARS
 
+
 class Rule(ABC):
     """Abstract rule class used by individual rule subclasses
-    
-    Each rule to check on the input file data is a subclass of this. This is an 
+
+    Each rule to check on the input file data is a subclass of this. This is an
     abstract base class, so only subclasses of this can be instantiated.
     """
+
     @abstractmethod
     def __init__(self, tags):
         """Initialise a Rule object.
-        
+
         This is an abstract method: it must be overridden in subclasses before
         they can be instantiated.
 
@@ -36,11 +38,11 @@ class Rule(ABC):
         :type tags: list
         """
         self.name = self.__class__.__name__.lower()
-        # Set the rule's name to the name of the class. Lower to match the 
+        # Set the rule's name to the name of the class. Lower to match the
         # variable name that the rule checks
         self.tags = tags
         self.passed = True
-        # Stores result of rule. Set to False in check method in case of 
+        # Stores result of rule. Set to False in check method in case of
         # failure
         self.messages = []
         # List of strings storing reason(s) for check failure
@@ -48,9 +50,9 @@ class Rule(ABC):
         # Data for the rule to run on
 
     def set_data(self, data):
-        """Save the input data onto the Rule object so the check method has 
+        """Save the input data onto the Rule object so the check method has
         access to it.
-        
+
         :param data: The input data object
         :type data: object
         """
@@ -59,7 +61,7 @@ class Rule(ABC):
     @abstractmethod
     def check(self):
         """Method to check the rule, and set the passed attribute.
-        
+
         Decides whether the passed attribute should be set to True or False.
         This is an abstract method: it must be overridden in subclasses before
         they can be instantiated.
@@ -68,8 +70,8 @@ class Rule(ABC):
 
     def check_defined(self, var_name):
         """Checks that a parameter is defined.
-        
-        If the parameter is undefined, sets the self.passed attribute to False 
+
+        If the parameter is undefined, sets the self.passed attribute to False
         and stores a message to record the failure of the check.
 
         :param var_name: The name of the parameter
@@ -85,9 +87,9 @@ class Rule(ABC):
     def check_undefined(self, var_name):
         """Checks that a parameter is undefined.
 
-        If the parameter is defined, sets the self.passed attribute to False 
+        If the parameter is defined, sets the self.passed attribute to False
         and stores a message to record the failure of the check.
-        
+
         :param var_name: The name of the parameter
         :type var_name: str
         """
@@ -100,7 +102,7 @@ class Rule(ABC):
 
     def get_param_value(self, var_name):
         """Gets the value of a parameter in the input data.
-        
+
         :param var_name: Name of the parameter
         :type var_name: str
         :return: Value of the parameter
@@ -108,12 +110,14 @@ class Rule(ABC):
         """
         return self.data.get_param_value(var_name)
 
+
 # Rule classes for checking individual rules
 class Ishape(Rule):
     """Rule subclass for checking the value of ishape and its dependencies
-    
+
     ishape: switch for plasma cross-sectional shape calculation.
     """
+
     def __init__(self):
         """Call Rule's __init__ method with tags specific to Ishape"""
         super().__init__(["ishape", "kappa", "triang", "kappa95", "triang95"])
@@ -123,7 +127,7 @@ class Ishape(Rule):
         # ishape must be defined
         self.check_defined("ishape")
         ishape = self.get_param_value("ishape")
-    
+
         if ishape is 0:
             # Use kappa and triang to calculate 95% kappa and triang
             self.check_defined("kappa")
@@ -169,7 +173,7 @@ class Ishape(Rule):
             self.check_defined("kappa")
             self.check_defined("triang")
             self.check_undefined("kappa95")
-            self.check_undefined("triang95")            
+            self.check_undefined("triang95")
         elif ishape is 7:
             # kappa95 and triang95 are used to calculate kappa and triang
             self.check_defined("kappa95")
@@ -181,34 +185,40 @@ class Ishape(Rule):
             self.check_defined("kappa")
             self.check_defined("triang")
             self.check_undefined("kappa95")
-            self.check_undefined("triang95")      
+            self.check_undefined("triang95")
+
 
 class Aspect(Rule):
     """Aspect ratio"""
+
     def __init__(self):
         """Set tags specific to Aspect"""
         super().__init__(["aspect"])
-    
+
     def check(self):
         """Check that aspect exists in input"""
         self.check_defined("aspect")
-        
+
+
 class Hfact(Rule):
     """Energy confinement time H-factor"""
+
     def __init__(self):
         """Set tags specific to Hfact"""
         super().__init__(["hfact"])
-    
+
     def check(self):
         """Check hfact is defined"""
         self.check_defined("hfact")
 
+
 class Kappa(Rule):
     """Plasma elongation"""
+
     def __init__(self):
         """Set tags specific to Kappa"""
         super().__init__(["kappa", "ishape"])
-    
+
     def check(self):
         """Should kappa be defined, based on value of ishape"""
         # This logic is covered in the Ishape rule
@@ -220,12 +230,14 @@ class Kappa(Rule):
             # kappa is calculated
             self.check_undefined("kappa")
 
+
 class Triang(Rule):
     """Plasma triangularity"""
+
     def __init__(self):
         """Set tags specific to Triang"""
         super().__init__(["triang", "ishape"])
-    
+
     def check(self):
         """Should triang be defined, based on value of ishape"""
         # This logic is covered in the the Ishape rule
@@ -235,32 +247,38 @@ class Triang(Rule):
         else:
             self.check_undefined("triang")
 
+
 class Alphan(Rule):
     """Density profile index"""
+
     def __init__(self):
         """Set tags specific to Alphan"""
         super().__init__(["alphan"])
-    
+
     def check(self):
         """Check alphan is defined"""
         self.check_defined("alphan")
 
+
 class Alphat(Rule):
     """Temperature profile index"""
+
     def __init__(self):
         """Set tags specific to Alphat"""
         super().__init__(["alphat"])
-    
+
     def check(self):
         """Check alphat is defined"""
         self.check_defined("alphat")
 
+
 class Dnbeta(Rule):
     """(Troyon-like) coefficient for beta scaling"""
+
     def __init__(self):
         """Set tags specific to Dnbeta"""
         super().__init__(["dnbeta", "gtscale"])
-    
+
     def check(self):
         """Check if dnbeta input value is required or not"""
         iprofile = self.get_param_value("iprofile")
@@ -276,18 +294,20 @@ class Dnbeta(Rule):
             # dnbeta is calculated
             self.check_undefined("dnbeta")
 
+
 class ObsoleteVarChecker(Rule):
     """Checks for obsolete or renamed vars, and suggests new names."""
+
     def __init__(self):
         """Set tags specific to ObsoleteVarChecker"""
         super().__init__(["obsolete"])
-    
+
     def check(self):
         """Look for obsolete variable names and suggest alternatives."""
         # List of unrecognised vars in the input file
         unrecog_vars = self.data.unrecognised_vars
 
-        # If there are obsolete vars in the input file, fail the rule, warn 
+        # If there are obsolete vars in the input file, fail the rule, warn
         # and suggest alternatives, if available
         for unrecog_var in unrecog_vars:
             # Try to find the unrecognised var in the obsolete vars dict
@@ -295,25 +315,26 @@ class ObsoleteVarChecker(Rule):
 
             if recog_var:
                 # Obsolete var name with new var name suggestion found
-                message = (f"\"{unrecog_var}\" is obsolete; try \"{recog_var}\""
-                    " instead.")
+                message = f'"{unrecog_var}" is obsolete; try "{recog_var}"' " instead."
             elif recog_var is None:
                 # Obsolete var name, no new var name suggestion
                 message = f"{unrecog_var} is deprecated."
             else:
                 # Var name is unrecognised, but not in obsolete list either
                 break
-            
+
             # Fail rule with message
             self.passed = False
             self.messages.append(message)
-            
+
+
 class DuplicateChecker(Rule):
     """Ensures there are no duplicate variable initialisations."""
+
     def __init__(self):
         """Set tags specific to DuplicateChecker"""
         super().__init__(["duplicates"])
-    
+
     def check(self):
         """Find any duplicate variables in the input data."""
         duplicates = self.data.duplicates

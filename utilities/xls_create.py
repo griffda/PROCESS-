@@ -26,7 +26,7 @@ import argparse
 import process.io.mfile as mf
 from process.io.mfile import make_plot_dat
 from openpyxl import Workbook, styles, load_workbook
-from openpyxl.styles import  Font, Border, Side
+from openpyxl.styles import Font, Border, Side
 
 
 def append_line(spreadsheet, custom_keys, mfile_data):
@@ -38,7 +38,7 @@ def append_line(spreadsheet, custom_keys, mfile_data):
     # catch the error, and num_scans will be 0
     if num_scans == 0:
         num_scans = 1
-    print('num_scans', num_scans)
+    print("num_scans", num_scans)
 
     val_keys = []
     mfile_keys = mfile_data.data.keys()
@@ -55,15 +55,13 @@ def append_line(spreadsheet, custom_keys, mfile_data):
         except:
             ws = wb.create_sheet(title=args.n)
             new_sheet_created = True
-            print('New sheet created:',args.n)
+            print("New sheet created:", args.n)
     else:
         # Use whichever worksheet is active
         ws = wb.active
 
-
-
-    var_descriptions = ['']
-    var_names = ['']
+    var_descriptions = [""]
+    var_names = [""]
     for key in custom_keys:
         if key in mfile_keys:
             var_description = mfile_data.data[key].var_description.replace(" ", "_")
@@ -89,54 +87,110 @@ def append_line(spreadsheet, custom_keys, mfile_data):
 
     # Write rows of values. One row for each scan.
     for num in range(num_scans):
-         new_row = ['']
-         value = ""
-         for vkey in val_keys:
-             if vkey in header_variables:
-                 # These are found only once at the top of the MFILE.
-                 value = mfile_data.data[vkey].get_scan(-1)
-             else:
+        new_row = [""]
+        value = ""
+        for vkey in val_keys:
+            if vkey in header_variables:
+                # These are found only once at the top of the MFILE.
+                value = mfile_data.data[vkey].get_scan(-1)
+            else:
                 # These are present in the MFILE for each scan point
-                value = mfile_data.data[vkey].get_scan(num+1)
-             new_row = new_row + [value]
-         ws.append(new_row)
+                value = mfile_data.data[vkey].get_scan(num + 1)
+            new_row = new_row + [value]
+        ws.append(new_row)
 
     # Save the spreadsheet
     wb.save(spreadsheet)
-    print('Data appended to worksheet', ws.title)
+    print("Data appended to worksheet", ws.title)
 
-#-----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
 
 
 if __name__ == "__main__":
 
     # Setup command line arguments
-    parser = argparse.ArgumentParser(description='Append summary data to a spreadsheet data_summary.xlsx or name specified.'+
-    '  Config file xls.conf optional')
+    parser = argparse.ArgumentParser(
+        description="Append summary data to a spreadsheet data_summary.xlsx or name specified."
+        + "  Config file xls.conf optional"
+    )
 
-    parser.add_argument('-p', metavar='p', type=str, nargs='+',
-                        help='add new variables to the output')
+    parser.add_argument(
+        "-p", metavar="p", type=str, nargs="+", help="add new variables to the output"
+    )
 
-    parser.add_argument('-f', metavar='f', type=str, help='File to read as MFILE.DAT')
+    parser.add_argument("-f", metavar="f", type=str, help="File to read as MFILE.DAT")
 
-    parser.add_argument('-x', metavar='x', type=str,
-                        help='Workbook (.xlsx) file to append to')
+    parser.add_argument(
+        "-x", metavar="x", type=str, help="Workbook (.xlsx) file to append to"
+    )
 
-    parser.add_argument('-n', metavar='n', type=str,
-                        help='Use the worksheet (tab) with specified name.  Sheet will be created if it does not exist.')
+    parser.add_argument(
+        "-n",
+        metavar="n",
+        type=str,
+        help="Use the worksheet (tab) with specified name.  Sheet will be created if it does not exist.",
+    )
 
-    parser.add_argument("--defaults", help="run with default params", action="store_true")
+    parser.add_argument(
+        "--defaults", help="run with default params", action="store_true"
+    )
 
     parser.add_argument("--reset-config", help="Reset xls.conf", action="store_true")
 
     args = parser.parse_args()
 
-    default_variables = ['runtitle','username','date','iscan', 'rmajor', 'aspect', 'powfmw',
-    'bt', 'beta', 'te','te0','dene','ralpne','dnz','pradmw','pdivt','hfact','pinjmw','tburn','ttarget',
-    'fmom','qtargetcomplete','qtarget','totalpowerlost','vburn','vsstt','bore','ohcth','tfcth','tmarg','sig_hoop',
-    'sig_axial','sig_axial', 'tesep', 'nesep','ieped','teped','neped']
+    default_variables = [
+        "runtitle",
+        "username",
+        "date",
+        "iscan",
+        "rmajor",
+        "aspect",
+        "powfmw",
+        "bt",
+        "beta",
+        "te",
+        "te0",
+        "dene",
+        "ralpne",
+        "dnz",
+        "pradmw",
+        "pdivt",
+        "hfact",
+        "pinjmw",
+        "tburn",
+        "ttarget",
+        "fmom",
+        "qtargetcomplete",
+        "qtarget",
+        "totalpowerlost",
+        "vburn",
+        "vsstt",
+        "bore",
+        "ohcth",
+        "tfcth",
+        "tmarg",
+        "sig_hoop",
+        "sig_axial",
+        "sig_axial",
+        "tesep",
+        "nesep",
+        "ieped",
+        "teped",
+        "neped",
+    ]
     # Also append these variables by default:
-    header_variables = ['procver','date','time','username','runtitle','tagno','isweep','nsweep']
+    header_variables = [
+        "procver",
+        "date",
+        "time",
+        "username",
+        "runtitle",
+        "tagno",
+        "isweep",
+        "nsweep",
+    ]
 
     # If user has specified an MFILE file that isn't MFILE.DAT pass the filename to
     # MFILE() class.
@@ -149,19 +203,19 @@ if __name__ == "__main__":
     if args.x:
         spreadsheet = args.x
     else:
-        spreadsheet = 'data_summary.xlsx'
+        spreadsheet = "data_summary.xlsx"
 
-    print('Workbook name', spreadsheet)
+    print("Workbook name", spreadsheet)
 
     # Get files in current directory to check for the config file.
     current_directory = os.listdir(".")
     if "xls.conf" not in current_directory or args.reset_config:
-        print('Configuration file xls.conf not found in the local directory')
+        print("Configuration file xls.conf not found in the local directory")
         conf_file = open("xls.conf", "a")
         for item in default_variables:
             conf_file.write(item + "\n")
         conf_file.close()
-        print('A default configuration file xls.conf has been written ')
+        print("A default configuration file xls.conf has been written ")
 
     # Read the config file.
     INPUT_CONFIG = mf.read_mplot_conf("xls.conf")

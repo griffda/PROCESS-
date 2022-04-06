@@ -1,7 +1,7 @@
 module fwbs_variables
   !! author: J. Morris (UKAEA), M. Kovari (UKAEA)
-  !! 
-  !! Module containing global variables relating to the first wall, blanket and 
+  !!
+  !! Module containing global variables relating to the first wall, blanket and
   !! shield components
   !!
   !!### References
@@ -111,10 +111,10 @@ module fwbs_variables
 
   real(dp) :: pnuc_cp
   !! Total nuclear heating in the ST centrepost (MW)
-  
+
   real(dp) :: pnuc_cp_sh
   !! Neutronic shield nuclear heating in the ST centrepost (MW)
-  
+
   real(dp) :: pnuc_cp_tf
   !! TF neutronic nuclear heating in the ST centrepost (MW)
 
@@ -150,19 +150,19 @@ module fwbs_variables
 
   real(dp) :: breeder_f
   !! Volume ratio: Li4SiO4/(Be12Ti+Li4SiO4) (`iteration variable 108`)
-  
+
   real(dp) :: breeder_multiplier
   !! combined breeder/multipler fraction of blanket by volume
-  
+
   real(dp) :: vfcblkt
   !! He coolant fraction of blanket by volume (`iblanket= 1,3` (CCFE HCPB))
-  
+
   real(dp) :: vfpblkt
   !! He purge gas fraction of blanket by volume (`iblanket= 1,3` (CCFE HCPB))
 
   real(dp) :: whtblli4sio4
   !! mass of lithium orthosilicate in blanket (kg) (`iblanket=1,3` (CCFE HCPB))
-  
+
   real(dp) :: whtbltibe12
   !! mass of titanium beryllide in blanket (kg) (`iblanket=1,3` (CCFE HCPB))
 
@@ -175,7 +175,7 @@ module fwbs_variables
   !! Fraction of nuclear power shielded before the CP magnet (ST)
   !! ( neut_absorb = -1 --> a fit on simplified MCNP neutronic
   !! calculation is used assuming water cooled (13%) tungesten carbyde )
-  
+
   !  KIT HCPB blanket model (iblanket = 2)
   ! ----------
 
@@ -206,21 +206,21 @@ module fwbs_variables
 
   real(dp) :: fblhebpo
   !! helium fraction of outboard blanket back plate by volume (`iblanket=2` (KIT HCPB))
-  
+
   integer :: hcdportsize
   !! switch for size of heating/current drive ports (`iblanket=2` (KIT HCPB)):
   !!
   !! - =1 'small'
   !! - =2 'large'
   !#TODO: switch name and also large and small not descriptive enough
-  
+
   real(dp) :: nflutf
   !! peak fast neutron fluence on TF coil superconductor (n/m2) (`iblanket=2` (KIT HCPB))
 
   integer :: npdiv
   !! number of divertor ports (`iblanket=2` (KIT HCPB))
 
-  integer :: nphcdin 
+  integer :: nphcdin
   !! number of inboard ports for heating/current drive (`iblanket=2` (KIT HCPB))
 
   integer :: nphcdout
@@ -233,13 +233,13 @@ module fwbs_variables
   !! tritium production rate (g/day) (`iblanket=2` (KIT HCPB))
 
   real(dp) :: vvhemax
-  !! maximum helium concentration in vacuum vessel at end of plant life (appm) 
+  !! maximum helium concentration in vacuum vessel at end of plant life (appm)
   !! (`iblanket=2` (KIT HCPB))
 
   real(dp) :: wallpf
   !! neutron wall load peaking factor (`iblanket=2` (KIT HCPB))
 
-  real(dp) :: whtblbreed 
+  real(dp) :: whtblbreed
   !! mass of blanket - breeder part (kg) (`iblanket=2` (KIT HCPB))
 
   real(dp) :: whtblbe
@@ -256,7 +256,7 @@ module fwbs_variables
   !! - =3 thick   0.75 m inboard, 1.30 m outboard
 
   integer :: primary_pumping
-  !! Switch for pumping power for primary coolant (mechanical power only and peak first wall 
+  !! Switch for pumping power for primary coolant (mechanical power only and peak first wall
   !! temperature is only calculated if `primary_pumping=2`):
   !!
   !! - =0 User sets pump power directly (htpmw_blkt, htpmw_fw, htpmw_div, htpmw_shld)
@@ -297,7 +297,7 @@ module fwbs_variables
   character(len=6) :: fwcoolant
   !! switch for first wall coolant (can be different from blanket coolant):
   !!
-  !! - 'helium' 
+  !! - 'helium'
   !! - 'water'
 
   real(dp) :: fw_wall
@@ -305,7 +305,7 @@ module fwbs_variables
 
   real(dp) :: afw
   !! radius of first wall cooling channels (m)
-  
+
   real(dp) :: pitch
   !! pitch of first wall cooling channels (m)
 
@@ -330,7 +330,7 @@ module fwbs_variables
 
   real(dp) :: peaking_factor
   !! peaking factor for first wall heat loads. (Applied separately to inboard and outboard loads.
-  !! Applies to both neutron and surface loads. Only used to calculate peak temperature - not 
+  !! Applies to both neutron and surface loads. Only used to calculate peak temperature - not
   !! the coolant flow rate.)
 
   real(dp) :: blpressure
@@ -364,7 +364,7 @@ module fwbs_variables
   !! maximum temperature of first wall material (K) (`secondary_cycle>1`)
 
   real(dp) :: fw_th_conductivity
-  !! thermal conductivity of first wall material at 293 K (W/m/K) (Temperature dependence 
+  !! thermal conductivity of first wall material at 293 K (W/m/K) (Temperature dependence
   !! is as for unirradiated Eurofer)
 
   real(dp) :: fvoldw
@@ -406,7 +406,7 @@ module fwbs_variables
   !! cryostat height (m)
 
   real(dp) :: rpf2dewar
-  !! radial distance between outer edge of largest (`ipfloc=3`) PF coil (or stellarator 
+  !! radial distance between outer edge of largest (`ipfloc=3`) PF coil (or stellarator
   !! modular coil) and cryostat (m)
 
   real(dp) :: vdewex
@@ -441,7 +441,7 @@ module fwbs_variables
 
   real(dp) :: wtshldo
   !! mass of outboard shield (kg)
-  
+
   integer :: irefprop
   !! Switch to use REFPROP routines (stellarator only)
   !#TODO: number of stellarator only items here. Also appear in fispact. Tidy needed
@@ -463,7 +463,7 @@ module fwbs_variables
 
   real(dp) :: wtbllipb
   !! mass of blanket - Li-Pb part (kg)
-  
+
   real(dp) :: whtblvd
   !! mass of blanket - vanadium part (kg)
 
@@ -509,135 +509,135 @@ module fwbs_variables
     !! Initialise fwbs variables
     implicit none
 
-    bktlife = 0.0D0  
-    coolmass = 0.0D0  
-    vvmass = 0.0D0  
+    bktlife = 0.0D0
+    coolmass = 0.0D0
+    vvmass = 0.0D0
     denstl = 7800.0D0
-    denw = 19250.0D0 
+    denw = 19250.0D0
     denwc = 15630.0D0
-    dewmkg = 0.0D0   
-    emult = 1.269D0  
-    emultmw = 0.0D0  
-    fblss = 0.09705D0  
-    fdiv = 0.115D0  
-    fhcd = 0.0D0  
-    fhole = 0.0D0  
+    dewmkg = 0.0D0
+    emult = 1.269D0
+    emultmw = 0.0D0
+    fblss = 0.09705D0
+    fdiv = 0.115D0
+    fhcd = 0.0D0
+    fhole = 0.0D0
     fwbsshape = 2
-    fwlife = 0.0D0  
-    fwmass = 0.0D0  
-    fw_armour_mass = 0.0D0  
-    fw_armour_thickness = 0.005D0  
-    fw_armour_vol = 0.0D0  
-    iblanket = 1  
-    iblnkith = 1  
-    inuclear = 0  
-    qnuc = 0.0D0  
-    li6enrich = 30.0D0  
-    pnucblkt = 0.0D0  
-    pnucdiv = 0.0D0  
-    pnucfw = 0.0D0  
-    pnuchcd = 0.0D0  
-    pnucloss = 0.0D0  
-    pnucvvplus = 0.0D0  
-    pnucshld = 0.0D0  
-    whtblkt = 0.0D0  
-    whtblss = 0.0D0  
-    armour_fw_bl_mass = 0.0D0  
-    breeder_f = 0.5D0    
-    breeder_multiplier = 0.75D0    
-    vfcblkt = 0.05295D0    
-    vfpblkt = 0.1D0  
-    whtblli4sio4 = 0.0D0    
-    whtbltibe12 = 0.0D0  
-    f_neut_shield = -1.0D0    
-    breedmat = 1  
-    densbreed = 0.0D0  
-    fblbe = 0.6D0  
-    fblbreed = 0.154D0  
-    fblhebmi = 0.4D0  
-    fblhebmo = 0.4D0  
-    fblhebpi = 0.6595D0  
-    fblhebpo = 0.6713D0    
+    fwlife = 0.0D0
+    fwmass = 0.0D0
+    fw_armour_mass = 0.0D0
+    fw_armour_thickness = 0.005D0
+    fw_armour_vol = 0.0D0
+    iblanket = 1
+    iblnkith = 1
+    inuclear = 0
+    qnuc = 0.0D0
+    li6enrich = 30.0D0
+    pnucblkt = 0.0D0
+    pnucdiv = 0.0D0
+    pnucfw = 0.0D0
+    pnuchcd = 0.0D0
+    pnucloss = 0.0D0
+    pnucvvplus = 0.0D0
+    pnucshld = 0.0D0
+    whtblkt = 0.0D0
+    whtblss = 0.0D0
+    armour_fw_bl_mass = 0.0D0
+    breeder_f = 0.5D0
+    breeder_multiplier = 0.75D0
+    vfcblkt = 0.05295D0
+    vfpblkt = 0.1D0
+    whtblli4sio4 = 0.0D0
+    whtbltibe12 = 0.0D0
+    f_neut_shield = -1.0D0
+    breedmat = 1
+    densbreed = 0.0D0
+    fblbe = 0.6D0
+    fblbreed = 0.154D0
+    fblhebmi = 0.4D0
+    fblhebmo = 0.4D0
+    fblhebpi = 0.6595D0
+    fblhebpo = 0.6713D0
     hcdportsize = 1
-    nflutf = 0.0D0  
-    npdiv = 2  
-    nphcdin = 2  
-    nphcdout = 2  
-    tbr = 0.0D0  
-    tritprate = 0.0D0  
-    vvhemax = 0.0D0  
-    wallpf = 1.21D0  
-    whtblbreed = 0.0D0  
-    whtblbe = 0.0D0  
-    iblanket_thickness = 2  
-    primary_pumping = 2  
+    nflutf = 0.0D0
+    npdiv = 2
+    nphcdin = 2
+    nphcdout = 2
+    tbr = 0.0D0
+    tritprate = 0.0D0
+    vvhemax = 0.0D0
+    wallpf = 1.21D0
+    whtblbreed = 0.0D0
+    whtblbe = 0.0D0
+    iblanket_thickness = 2
+    primary_pumping = 2
     i_shield_mat = 0
-    secondary_cycle = 0  
+    secondary_cycle = 0
     coolwh = 1
     afwi = 0.008D0
     afwo = 0.008D0
-    fwcoolant = 'helium'  
-    fw_wall = 0.003D0  
-    afw = 0.006D0    
-    pitch = 0.020D0  
-    fwinlet = 573.0D0  
-    fwoutlet = 823.0D0  
-    fwpressure = 15.5D6  
-    tpeak = 873.0D0  
-    roughness = 1.0D-6  
-    fw_channel_length = 4.0D0  
-    peaking_factor = 1.0D0  
-    blpressure = 15.5D6  
-    inlet_temp = 573.0D0  
-    outlet_temp = 823.0D0  
-    coolp = 15.5D6  
-    nblktmodpo = 8  
-    nblktmodpi = 7  
-    nblktmodto = 48  
-    nblktmodti = 32  
-    tfwmatmax = 823.0D0  
-    fw_th_conductivity = 28.34D0  
-    fvoldw = 1.74D0  
-    fvolsi = 1.0D0  
-    fvolso = 0.64D0  
-    fwclfr = 0.15D0  
-    praddiv = 0.0D0  
-    pradfw = 0.0D0  
-    pradhcd = 0.0D0  
-    pradloss = 0.0D0  
-    ptfnuc = 0.0D0  
+    fwcoolant = 'helium'
+    fw_wall = 0.003D0
+    afw = 0.006D0
+    pitch = 0.020D0
+    fwinlet = 573.0D0
+    fwoutlet = 823.0D0
+    fwpressure = 15.5D6
+    tpeak = 873.0D0
+    roughness = 1.0D-6
+    fw_channel_length = 4.0D0
+    peaking_factor = 1.0D0
+    blpressure = 15.5D6
+    inlet_temp = 573.0D0
+    outlet_temp = 823.0D0
+    coolp = 15.5D6
+    nblktmodpo = 8
+    nblktmodpi = 7
+    nblktmodto = 48
+    nblktmodti = 32
+    tfwmatmax = 823.0D0
+    fw_th_conductivity = 28.34D0
+    fvoldw = 1.74D0
+    fvolsi = 1.0D0
+    fvolso = 0.64D0
+    fwclfr = 0.15D0
+    praddiv = 0.0D0
+    pradfw = 0.0D0
+    pradhcd = 0.0D0
+    pradloss = 0.0D0
+    ptfnuc = 0.0D0
     ptfnucpm3 = 0.0D0
-    rdewex = 0.0D0  
-    zdewex = 0.0D0  
-    rpf2dewar = 0.5D0  
-    vdewex = 0.0D0  
-    vdewin = 0.0D0  
-    vfshld = 0.25D0  
-    volblkt = 0.0D0  
-    volblkti = 0.0D0  
-    volblkto = 0.0D0  
-    volshld = 0.0D0  
-    whtshld = 0.0D0  
-    wpenshld = 0.0D0  
-    wtshldi = 0.0D0    
-    wtshldo = 0.0D0    
+    rdewex = 0.0D0
+    zdewex = 0.0D0
+    rpf2dewar = 0.5D0
+    vdewex = 0.0D0
+    vdewin = 0.0D0
+    vfshld = 0.25D0
+    volblkt = 0.0D0
+    volblkti = 0.0D0
+    volblkto = 0.0D0
+    volshld = 0.0D0
+    whtshld = 0.0D0
+    wpenshld = 0.0D0
+    wtshldi = 0.0D0
+    wtshldo = 0.0D0
     irefprop = 1
-    fblli = 0.0D0  
-    fblli2o = 0.08D0  
-    fbllipb = 0.68D0  
-    fblvd = 0.0D0  
-    wtblli2o = 0.0D0  
-    wtbllipb = 0.0D0    
-    whtblvd = 0.0D0  
-    whtblli = 0.0D0  
-    vfblkt = 0.25D0  
+    fblli = 0.0D0
+    fblli2o = 0.08D0
+    fbllipb = 0.68D0
+    fblvd = 0.0D0
+    wtblli2o = 0.0D0
+    wtbllipb = 0.0D0
+    whtblvd = 0.0D0
+    whtblli = 0.0D0
+    vfblkt = 0.25D0
     blktmodel = 0
-    declblkt = 0.075D0  
-    declfw = 0.075D0  
-    declshld = 0.075D0  
+    declblkt = 0.075D0
+    declfw = 0.075D0
+    declshld = 0.075D0
     blkttype = 3
-    etaiso = 0.85D0  
-    etahtp = 0.95D0  
+    etaiso = 0.85D0
+    etahtp = 0.95D0
     pnuc_cp = 0.0D0
     pnuc_cp_sh = 0.0D0
     pnuc_cp_tf = 0.0D0

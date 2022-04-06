@@ -17,7 +17,7 @@ logger.setLevel(logging.DEBUG)
 
 # Create handlers for console and file output
 s_handler = logging.StreamHandler()
-f_handler = logging.FileHandler('tests/integration/utilities.log', mode='w')
+f_handler = logging.FileHandler("tests/integration/utilities.log", mode="w")
 s_handler.setLevel(logging.INFO)
 f_handler.setLevel(logging.DEBUG)
 logger.addHandler(s_handler)
@@ -29,10 +29,11 @@ logger.info("Running utilities integration tests")
 # test_make_plot_dat
 # test_convert_in_dat
 
+
 def get_scenario_paths():
     """Get the paths to the regression scenario directories.
 
-    The regression scenario IN.DATs and MFILE.DATs are used for these 
+    The regression scenario IN.DATs and MFILE.DATs are used for these
     integration tests.
     :return: Path objects for the scenario dirs
     :rtype: list
@@ -40,6 +41,7 @@ def get_scenario_paths():
     scenarios_path = Path(__file__).parent.parent / "regression" / "scenarios"
     scenarios_paths = [path for path in scenarios_path.iterdir()]
     return scenarios_paths
+
 
 @pytest.fixture(params=get_scenario_paths())
 def scenario_path(request):
@@ -53,6 +55,7 @@ def scenario_path(request):
     scenario_path = request.param
     return scenario_path
 
+
 @pytest.fixture
 def mfile_path(scenario_path):
     """Create a path to a scenario's MFile.
@@ -65,6 +68,7 @@ def mfile_path(scenario_path):
     mfile_path = scenario_path / "ref.MFILE.DAT"
     return mfile_path
 
+
 @pytest.fixture
 def input_file_path(scenario_path):
     """Create a path to a scenario's input file.
@@ -76,25 +80,27 @@ def input_file_path(scenario_path):
     """
     input_file_path = scenario_path / "IN.DAT"
     if not input_file_path.exists():
-        # VaryRun input files are called ref_IN.DAT; can't be called IN.DAT as 
+        # VaryRun input files are called ref_IN.DAT; can't be called IN.DAT as
         # intermediate input files are IN.DAT. Try this instead
         input_file_path = scenario_path / "ref_IN.DAT"
         if not input_file_path.exists():
-            raise FileNotFoundError("Scenario directory doesn't contain an "
-                "input file")
+            raise FileNotFoundError(
+                "Scenario directory doesn't contain an " "input file"
+            )
 
     return input_file_path
 
+
 def test_mfile_lib(mfile_path):
     """Test the PROCESS mfile library.
-    
+
     :param mfile_path: Path to the scenario's MFile
     :type mfile_path: Path
     """
     logger.info("Testing mfile.py")
 
     # Test MFile for this scenario
-    # This try/except is not necessary, but allows additional logging to be 
+    # This try/except is not necessary, but allows additional logging to be
     # added for clarity in addition to pytest's own logging
     try:
         assert mf.test(str(mfile_path)) == True
@@ -102,6 +108,7 @@ def test_mfile_lib(mfile_path):
     except AssertionError:
         logger.exception(f"mfile test for {mfile_path.name} has failed")
         raise
+
 
 def test_in_dat_lib(input_file_path):
     """Test the PROCESS in_dat library.
@@ -118,19 +125,27 @@ def test_in_dat_lib(input_file_path):
         logger.error(f"in_dat test for {input_file_path.name} has failed")
         raise
 
+
 def test_plot_proc(mfile_path):
     """Test the PROCESS plot_proc script.
 
     :param mfile_path: Path to the scenario's MFile
     :type mfile_path: Path
     """
-    EXCLUSIONS = ["stellarator", "IFE", "starfire", "QH_mode", "steady_state",
-        "Hybrid_mode", "L_mode"]
+    EXCLUSIONS = [
+        "stellarator",
+        "IFE",
+        "starfire",
+        "QH_mode",
+        "steady_state",
+        "Hybrid_mode",
+        "L_mode",
+    ]
     # Don't run plot_proc tests for some scenarios
     # plot_proc is not intended for stellarator or IFE
     # ZeroDivisionErrors in starfire, QH_mode, steady_state, Hybrid_mode
     # L_mode
-    
+
     if mfile_path.parent.name in EXCLUSIONS:
         return
 

@@ -49,7 +49,7 @@ where the factor $\lambda$ is necessary as only the direction, but not the magni
 
 ![alt text](../images/lagrange_multipliers-eps-converted-to.png "Illustration of Lagrange multiplier method")
 
-Figure 1: *Illustration of Lagrange Multiplier Method (credit Wikipedia) showing two contour lines of the objective function $f(x,y) = d_i$ (dark blue dashed lines) and the nonlinear constraint $g(x,y) = c$ (red solid line) as well as their gradients (blue and red arrows) at various positions including the constrained optimum (light blue and orange arrows).* 
+Figure 1: *Illustration of Lagrange Multiplier Method (credit Wikipedia) showing two contour lines of the objective function $f(x,y) = d_i$ (dark blue dashed lines) and the nonlinear constraint $g(x,y) = c$ (red solid line) as well as their gradients (blue and red arrows) at various positions including the constrained optimum (light blue and orange arrows).*
 
 When expanding the method to several equality and inequality constraints we can make use of the *Lagrange function*. For the non-linear programming problem described by [The General Non-linear Programming Problem](#section-1) it is given by
 
@@ -118,7 +118,7 @@ where `epsvmc` is a user specific error tolerance, $\vec{\delta}^j$ is the vecto
 
 ![alt text](../images/VMCON_flow_chart.svg "VMCON optimisation solver flow chart")
 
-Figure 2: *This is the flow chart of the `VMCON` optimisation solver. The criteria for and the interpretation of the successful (`ifail = 1`) and unsuccessful (`ifail` $\neq$ = 1) return parameters are described in [Table 1](#table-1)* 
+Figure 2: *This is the flow chart of the `VMCON` optimisation solver. The criteria for and the interpretation of the successful (`ifail = 1`) and unsuccessful (`ifail` $\neq$ = 1) return parameters are described in [Table 1](#table-1)*
 
 <a name="table-1"></a>
 
@@ -186,7 +186,7 @@ where the weights are defined as
 
 $$
 \begin{equation}
-\mu_i = 
+\mu_i =
 \begin{cases}
 \label{eqn:equation-8}
 \tag{8}

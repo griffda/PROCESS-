@@ -1,4 +1,4 @@
-# Guide for adding Variabales & Constraints 
+# Guide for adding Variabales & Constraints
 [PDF of webpage](../pdf/add_vars.pdf)
 
 <p style='text-align: justify;'>
@@ -16,7 +16,7 @@ To add a *PROCESS* input, please follow below:
   </p>
 2. <p style='text-align: justify;'>
     Add a description of the input variable below the declaration, using the FORD      formating decribed in the standards section specifying the units.
-  </p> 
+  </p>
 3. <p style='text-align: justify;'>
     Specify a sensible default value in the `init_xx_variables` subroutine.
   </p>
@@ -53,7 +53,7 @@ Code example in the `input.f90` file:
 ## Add an iteration variable
 
 <p style='text-align: justify;'>
-  To add a <em>PROCESS</em> iteration variable please follow the steps below, in 
+  To add a <em>PROCESS</em> iteration variable please follow the steps below, in
   addition to the instructions for adding an input variable:
 </p>
 
@@ -80,7 +80,7 @@ Code example in the `input.f90` file:
     characters long.
   </p>
 6. <p style='text-align: justify;'>
-    Add the variable `use, XX` `only: XX` statement in the relevant functions 
+    Add the variable `use, XX` `only: XX` statement in the relevant functions
     (`itv_XX` and subroutine `set_itv_XX`).
   </p>
 7. <p style='text-align: justify;'>
@@ -94,7 +94,7 @@ Code example in the `input.f90` file:
   the <em>subroutine set_itv_XX</em> where the iteration process itself is performed.
   Otherwise, the numerical procedure cannot adjust the value as it requires, and
   the program will fail. If there no DUMMY slots available, please notify the
-  <em>PROCESS</em> developpement team. 
+  <em>PROCESS</em> developpement team.
 </p>
 
 Here is a code snipet showing how `rmajor` is defined
@@ -105,8 +105,8 @@ Here is a code snipet showing how `rmajor` is defined
     use numerics, only: lablxc, boundl, boundu
     implicit none
     lablxc(3) = 'rmajor        '
-    boundl(3) = 0.100D0 
-    boundu(3) = 50.00D0  
+    boundl(3) = 0.100D0
+    boundu(3) = 50.00D0
   end subroutine init_itv_3
 
   real(kind(1.d0)) function itv_3()
@@ -128,7 +128,7 @@ Here is a code snipet showing how `rmajor` is defined
 New figures of merit are added to *PROCESS* in the following way:
 
 1. <p style='text-align: justify;'>
-    Increment the parameter `ipnfoms` in module `numerics` in source file 
+    Increment the parameter `ipnfoms` in module `numerics` in source file
     `numerics.f90` to accommodate the new figure of merit.
   </p>
 2. <p style='text-align: justify;'>
@@ -139,7 +139,7 @@ New figures of merit are added to *PROCESS* in the following way:
     Add the new figure of merit equation to routine `FUNFOM` in the source file
     `evaluators.f90`, following the method used in the existing examples. The
     value of `fc` should be of order unity, so select a reasonable scaling
-    factor if necessary. 
+    factor if necessary.
   </p>
 4. <p style='text-align: justify;'>
     Add the `use` `only` statements for all the added variables in all modified
@@ -223,7 +223,7 @@ Constraint equations are added to *PROCESS* in the following way:
 </p>
 
 ```fortran
-    do i = i1,i2	   
+    do i = i1,i2
       ! The constraint value in physical units is
       ! a) for consistency equations, the quantity to be equated, or
       ! b) for limit equations, the limiting value.
@@ -239,7 +239,7 @@ Constraint equations are added to *PROCESS* in the following way:
    subroutine constraint_eqn_009(args)
       !! Equation for fusion power upper limit
       !! author: P B Lloyd, CCFE, Culham Science Centre
-      !! args : output structure : residual error; constraint value; 
+      !! args : output structure : residual error; constraint value;
       !! residual error in physical units; output string; units string
       !! Equation for fusion power upper limit
       !! #=# physics
@@ -262,4 +262,3 @@ Constraint equations are added to *PROCESS* in the following way:
 
    end subroutine constraint_eqn_009
 ```
-

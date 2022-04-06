@@ -1,31 +1,33 @@
 import os
 from os.path import abspath
 
-class AToBConfig():
+
+class AToBConfig:
     """Class to read in and store configuration parameters for a_to_b
-       
-       Parameters:
-        wdir --> Working directory in which the .DAT files for process runs
-                 will be created
-        keep_output --> Switch to keep output for intermediate steps
-        outdir --> Directory where the .DAT files for each step will be copied
-                   after completion
-        a_filename --> Name of IN.DAT file for A
-        b_filename --> Name of IN.DAT file for B
-        path_to_process --> Location of process binary
-        vary_niter --> Number of vary_iteration_variables to run when a step
-                       can't be completed
-        nsteps --> Number of steps to travel from A to B. Setting to 0 will
-                   mean only the IN.DAT file for A is run
-        factor --> When vary_iteration_variables is called, variables will
-                   be randomly varied between current_value * factor and
-                   current_value / factor
-        bound_gap --> If a variable is set as iteration variable in A but not
-                      in B, the targets for the upper and lower bounds of that
-                      variable will be set as B_value * bound_gap and
-                      B_vale / bound_gap
-    
+
+    Parameters:
+     wdir --> Working directory in which the .DAT files for process runs
+              will be created
+     keep_output --> Switch to keep output for intermediate steps
+     outdir --> Directory where the .DAT files for each step will be copied
+                after completion
+     a_filename --> Name of IN.DAT file for A
+     b_filename --> Name of IN.DAT file for B
+     path_to_process --> Location of process binary
+     vary_niter --> Number of vary_iteration_variables to run when a step
+                    can't be completed
+     nsteps --> Number of steps to travel from A to B. Setting to 0 will
+                mean only the IN.DAT file for A is run
+     factor --> When vary_iteration_variables is called, variables will
+                be randomly varied between current_value * factor and
+                current_value / factor
+     bound_gap --> If a variable is set as iteration variable in A but not
+                   in B, the targets for the upper and lower bounds of that
+                   variable will be set as B_value * bound_gap and
+                   B_vale / bound_gap
+
     """
+
     wdir = abspath("wdir")
     keep_output = True
     outdir = abspath("steps")
@@ -36,7 +38,7 @@ class AToBConfig():
     nsteps = 10
     factor = 1.2
     bound_gap = 1.001
-    
+
     def __init__(self, configfile="a_to_b.conf"):
         if not os.path.isfile(configfile):
             return
