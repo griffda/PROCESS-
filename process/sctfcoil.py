@@ -17,6 +17,60 @@ class Sctfcoil:
     def __init__(self):
         self.outfile = constants.nout
 
+    def run(self, output: bool):
+        """
+        Routine to call the superconductor module for the TF coils
+        """
+        tfes = sctfcoil_module.estotft / tfcoil_variables.n_tf
+        # Cross-sectional area per turn
+        aturn = tfcoil_variables.ritfc / (
+            tfcoil_variables.jwptf * tfcoil_variables.n_tf * tfcoil_variables.n_tf_turn
+        )
+
+        if tfcoil_variables.i_tf_sc_mat == 6:
+            (
+                tfcoil_variables.jwdgcrt,
+                tfcoil_variables.tmargtf,
+            ) = sctfcoil_module.supercon_croco(
+                aturn,
+                tfcoil_variables.bmaxtfrp,
+                tfcoil_variables.cpttf,
+                tfcoil_variables.tftmp,
+                int(output),
+                self.outfile,
+            )
+
+            tfcoil_variables.vtfskv = (
+                sctfcoil_module.croco_voltage() / 1.0e3
+            )  #  TFC Quench voltage in kV
+
+        else:
+            (
+                tfcoil_variables.jwdgcrt,
+                vdump,
+                tfcoil_variables.tmargtf,
+            ) = sctfcoil_module.supercon(
+                tfcoil_variables.acstf,
+                aturn,
+                tfcoil_variables.bmaxtfrp,
+                tfcoil_variables.vftf,
+                tfcoil_variables.fcutfsu,
+                tfcoil_variables.cpttf,
+                tfcoil_variables.jwptf,
+                tfcoil_variables.i_tf_sc_mat,
+                tfcoil_variables.fhts,
+                tfcoil_variables.tdmptf,
+                tfes,
+                tfcoil_variables.tftmp,
+                tfcoil_variables.tmaxpro,
+                tfcoil_variables.bcritsc,
+                tfcoil_variables.tcritsc,
+                int(output),
+                self.outfile,
+            )
+
+            tfcoil_variables.vtfskv = vdump / 1.0e3  #  TFC Quench voltage in kV
+
     def sctfcoil(self, output: bool):
         """TF coil module
         author: P J Knight, CCFE, Culham Science Centre

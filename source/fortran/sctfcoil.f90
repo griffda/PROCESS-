@@ -5313,60 +5313,6 @@ end subroutine outtf
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine tfspcall(outfile,iprint)
-
-    !! Routine to call the superconductor module for the TF coils
-    !! outfile : input integer : Fortran output unit identifier
-    !! iprint : input integer : Switch to write output to file (1=yes)
-    use rebco_variables, only: copper_area, copper_thick, copperA_m2, &
-        croco_id, croco_od, croco_od, croco_thick, hastelloy_area, &
-        hastelloy_thickness, rebco_area, stack_thickness, tape_thickness, &
-        tape_thickness, tape_width, tapes, rebco_thickness, solder_area
-    use error_handling, only: idiags, fdiags, report_error
-    use process_output, only: ovarre, ocmmnt, oheadr, oblnkl, ovarin
-    use tfcoil_variables, only: tmargmin_tf, n_tf_turn, n_tf, vftf, &
-        temp_margin, jwdgpro, tftmp, vtfskv, acndttf, dhecoil, tmaxpro, &
-        tmargtf, thwcndut, t_conductor, fcutfsu, jwdgcrt, tdmptf, cpttf, &
-        ritfc, jwptf, bmaxtfrp, tcritsc, acstf, str_tf_con_res, fhts, bcritsc, &
-        i_tf_sc_mat, b_crit_upper_nbti, t_crit_nbti, str_wp, i_str_wp
-    use superconductors, only: wstsc, current_sharing_rebco, itersc, jcrit_rebco, &
-        jcrit_nbti, croco, bi2212, GL_nbti, GL_REBCO, HIJC_REBCO
-    use global_variables, only: run_tests
-    use constants, only: pi
-    implicit none
-    integer, intent(in) :: outfile, iprint
-
-    !  Local variables
-    real(dp) :: aturn, tfes, vdump
-
-    ! Simple model REMOVED Issue #781
-    ! if (tfc_model == 0) then
-    !     vtfskv = 20.0D0
-    !     return
-    ! end if
-
-    ! Stored energy (J) per coil (NOT a physical meaningful quantity)
-    tfes = estotft / n_tf
-    ! Cross-sectional area per turn
-    aturn = ritfc/(jwptf*n_tf*n_tf_turn)
-
-    if(i_tf_sc_mat==6)then
-        call supercon_croco(aturn,bmaxtfrp,cpttf,tftmp, &
-        iprint, outfile,  &
-        jwdgcrt,tmargtf)
-
-        vtfskv = croco_voltage()/1.0D3  !  TFC Quench voltage in kV
-
-    else
-        call supercon(acstf,aturn,bmaxtfrp,vftf,fcutfsu,cpttf,jwptf,i_tf_sc_mat, &
-        fhts,tdmptf,tfes,tftmp,tmaxpro,bcritsc,tcritsc,iprint, &
-        outfile,jwdgcrt,vdump,tmargtf)
-
-        vtfskv = vdump/1.0D3            !  TFC Quench voltage in kV
-    end if
-
-end subroutine tfspcall
-
 subroutine supercon(acs,aturn,bmax,fhe,fcu,iop,jwp,isumat,fhts, &
         tdmptf,tfes,thelium,tmax,bcritsc,tcritsc,iprint,outfile, &
         jwdgcrt,vd,tmarg)
@@ -5421,7 +5367,7 @@ subroutine supercon(acs,aturn,bmax,fhe,fcu,iop,jwp,isumat,fhts, &
     use process_output, only: ovarre, ocmmnt, oheadr, oblnkl, ovarin
     use tfcoil_variables, only: tmargmin_tf, n_tf_turn, n_tf, vftf, &
         temp_margin, jwdgpro, tftmp, vtfskv, acndttf, dhecoil, tmaxpro, &
-        tmargtf, thwcndut, t_conductor, fcutfsu, cpttf, &
+        tmargtf, thwcndut, t_conductor, cpttf, &
         ritfc, jwptf, bmaxtfrp, acstf, str_tf_con_res, &
         i_tf_sc_mat, b_crit_upper_nbti, t_crit_nbti, str_wp, i_str_wp
     use superconductors, only: wstsc, current_sharing_rebco, itersc, jcrit_rebco, &
