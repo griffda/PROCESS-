@@ -3779,29 +3779,32 @@ contains
   end subroutine  set_itv_165
 
   !---------------------------------
-  ! DUMMY variables below here
-  !---------------------------------
 
   subroutine init_itv_166
-    !! <LI> (166) DUMMY : Description
+    !! <LI> (166) f_copperaoh_m2 : CS coil current / copper area < Maximum value
+    !! (f-value for equation 89)
     use numerics, only: lablxc, boundl, boundu
     implicit none
-    lablxc(166) = 'DUMMY         '
-    boundl(166) = 1.0d-99
-    boundu(166) = 1.0d99
+    lablxc(166) = 'f_copperaoh_m2'
+    boundl(166) = 0.001D0
+    boundu(166) = 1.000D0
   end subroutine init_itv_166
 
   real(kind(1.d0)) function itv_166()
+  use rebco_variables, only: f_copperaoh_m2
     implicit none
-    itv_166 = DUMMY 
+    itv_166 = f_copperaoh_m2 
   end function itv_166
 
   subroutine set_itv_166(ratio)
+    use rebco_variables, only: f_copperaoh_m2
     implicit none
     real(kind(1.d0)) :: ratio
-    DUMMY = ratio
-  end subroutine set_itv_166
+    f_copperaoh_m2 = ratio
+  end subroutine  set_itv_166
 
+  !---------------------------------
+  ! DUMMY variables below here
   !---------------------------------
 
   subroutine init_itv_167
@@ -3999,7 +4002,9 @@ contains
     real(kind(1.d0)) :: ratio
     DUMMY = ratio
   end subroutine set_itv_175
-
+  
+  !------------------------------------------------------
+  
   subroutine loadxc
     !! Routine to load the physics and engineering variables into the
     !! optimisation variables array
@@ -4201,7 +4206,7 @@ contains
            case (173);  xcm(i) = itv_173()
            case (174);  xcm(i) = itv_174()
            case (175);  xcm(i) = itv_175()
-  
+
        case default
           idiags(1) = i ; idiags(2) = ixc(i)
           call report_error(54)
@@ -4468,7 +4473,7 @@ contains
            case (173);  call set_itv_173(ratio)     
            case (174);  call set_itv_174(ratio)     
            case (175);  call set_itv_175(ratio)     
-  
+ 
            case default
               call report_error(57)
   

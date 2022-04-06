@@ -94,7 +94,7 @@ module pfcoil_module
      use physics_variables, only: bvert, kappa, rli, itartpf, vsres, plascur, &
          triang, rminor, vsind, aspect, itart, betap, rmajor
      use tfcoil_variables, only: tftmp, dcond, i_tf_sup, fhts, &
-         tcritsc, str_pf_con_res, bcritsc,b_crit_upper_nbti, t_crit_nbti 
+         tcritsc, strncon_pf, bcritsc,b_crit_upper_nbti, t_crit_nbti 
      use times_variables, only: tim, tramp, tburn, tohs, tqnch, theat
      use constants, only: pi, nout, dcopper
      implicit none
@@ -617,7 +617,7 @@ module pfcoil_module
            if (ipfres == 0) then
               bmax = max(abs(bpf(i)), abs(bpf2(i)))
               call superconpf(bmax,vf(i),fcupfsu,rjconpf(i),isumatpf,fhts, &
-                   str_pf_con_res,tftmp,bcritsc,tcritsc,rjpfalw(i),jstrand,jsc,tmarg)
+                   strncon_pf,tftmp,bcritsc,tcritsc,rjpfalw(i),jstrand,jsc,tmarg)
            end if
  
            !  Length of conductor
@@ -756,7 +756,7 @@ module pfcoil_module
          bmaxoh0, rjohc, tmargoh, ipfres, rjpfalw, pfclres, vf, ric, bpf, &
          jscoh_eof, zpf, rb, ra, jscoh_bop, cptdin, pfcaseth, rpf, cohbop, zh, &
          wtc, zl, turns, wts, a_oh_turn
-     use tfcoil_variables, only: dcond, tftmp, tcritsc, str_cs_con_res, &
+     use tfcoil_variables, only: dcond, tftmp, tcritsc, strncon_cs, &
          fhts, bcritsc,b_crit_upper_nbti, t_crit_nbti
      use CS_fatigue, only: Ncycle
      use CS_fatigue_variables, only: N_cycle, residual_sig_hoop, t_crack_vertical, &
@@ -914,7 +914,7 @@ module pfcoil_module
         !  (superconducting coils only)
  
         call superconpf(bmaxoh,vfohc,fcuohsu,(abs(ric(nohc))/awpoh)*1.0D6, &
-             isumatoh,fhts,str_cs_con_res,tftmp,bcritsc,tcritsc,jcritwp, &
+             isumatoh,fhts,strncon_cs,tftmp,bcritsc,tcritsc,jcritwp, &
              jstrandoh_eof,jscoh_eof,tmarg1)
  
         rjohc = jcritwp * awpoh/areaoh
@@ -922,7 +922,7 @@ module pfcoil_module
         !  Allowable coil overall current density at BOP
  
         call superconpf(bmaxoh0,vfohc,fcuohsu,(abs(ric(nohc))/awpoh)*1.0D6, &
-             isumatoh,fhts,str_cs_con_res,tftmp,bcritsc,tcritsc,jcritwp, &
+             isumatoh,fhts,strncon_cs,tftmp,bcritsc,tcritsc,jcritwp, &
              jstrandoh_bop,jscoh_bop,tmarg2)
  
         rjpfalw(nohc) = jcritwp * awpoh/areaoh
@@ -1835,7 +1835,7 @@ module pfcoil_module
        use maths_library, only: variable_error, secant_solve
        use rebco_variables, only: copperaoh_m2, copperaoh_m2_max, f_copperaoh_m2
        use build_variables, only: hmax, ohcth
-       use pfcoil_variables, only: ohhghf, coheof, awpoh, vfohc, fcuohsu
+       use pfcoil_variables, only: ohhghf, coheof, awpoh
      implicit none
  
      !  Arguments
@@ -1851,7 +1851,6 @@ module pfcoil_module
      integer :: lap
      real(dp) :: b,bc20m,bcrit,c0,delt,jcrit0,jcritm, &
           jcritp,jsc,jstrand,jtol,t,tc0m,tcrit,ttest,ttestm,ttestp, icrit, iop, ioheof
- 
      real(dp) :: current_sharing_t
      real(dp)::x1,x2         ! Initial guesses for temperature
      logical::error                   ! True if the solver does not converge
@@ -1914,12 +1913,8 @@ module pfcoil_module
      case (6) ! "REBCO" 2nd generation HTS superconductor in CrCo strand
         call jcrit_rebco(thelium,bmax,jcritsc,validity,0)
         jcritstr = jcritsc * (1.0D0-fcu)
-        
-        ! The CS coil current at EOF
-        ioheof = hmax*ohhghf*ohcth*2.0D0*coheof 
-        ! The CS coil current/copper area calculation for quench protection
-        ! Copper area = (area of coil - area of steel)*(1- void fraction)*(fraction of copper in strands)
-        copperaoh_m2 = ioheof / awpoh * (1.0D0-vfohc)* fcuohsu
+        ioheof = hmax*ohhghf*ohcth*2.0D0*coheof  ! The magnitude of the CS coil current at EOF 
+        copperaoh_m2 = ioheof / awpoh * (1.0D0-fcu) ! The copper area required for CS coil quench protection
  
     case (7) ! Durham Ginzburg-Landau Nb-Ti parameterisation
           bc20m = b_crit_upper_nbti
@@ -1933,11 +1928,7 @@ module pfcoil_module
            call GL_REBCO(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit) 
            ! A0 calculated for tape cross section already
            jcritstr = jcritsc * (1.0D0-fcu)
-         
-        ! The CS coil current at EOF
-        ioheof = hmax*ohhghf*ohcth*2.0D0*coheof 
-        ! The CS coil current/copper area calculation for quench protection  
-        copperaoh_m2 = ioheof / awpoh*(1.0D0-vfohc)* fcuohsu
+  
            
        
           
@@ -2682,8 +2673,7 @@ module pfcoil_module
      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
      !
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      
-       use rebco_variables, only: copperaoh_m2, copperaoh_m2_max
+ 
        use build_variables, only: iohcl, ohcth, gapoh, bore
        use error_handling, only: report_error
      use pfcoil_variables, only: whtpfs, cohbop, nohc, jscoh_eof, bmaxoh, &
@@ -2696,8 +2686,8 @@ module pfcoil_module
        use physics_variables, only: rminor, rmajor, kappa, facoh
      use process_output, only: int_to_string2, ovarin, oheadr, &
        ovarre, osubhd, oblnkl, ocmmnt
-     use tfcoil_variables, only: tmargmin_cs, str_cs_con_res, tftmp, b_crit_upper_nbti,&
-       t_crit_nbti, str_pf_con_res
+     use tfcoil_variables, only: tmargmin_cs, strncon_cs, tftmp, b_crit_upper_nbti,&
+       t_crit_nbti, strncon_pf
      use numerics, only: boundu
      use CS_fatigue_variables, only: residual_sig_hoop, t_crack_radial, t_crack_vertical, &
          N_cycle, t_structural_vertical, t_structural_radial
@@ -2741,8 +2731,6 @@ module pfcoil_module
                    '  (ITER Nb3Sn critical surface model, user-defined parameters)')
            case (5)
               call ocmmnt(outfile, ' (WST Nb3Sn critical surface model)')
-           case (6)
-              call ocmmnt(outfile, ' ("REBCO" 2nd generation HTS superconductor in CrCo strand)')
            case (7)
                call ocmmnt(outfile, ' (Durham Ginzburg-Landau critical surface model for Nb-Ti)')
             case (8)
@@ -2805,17 +2793,10 @@ module pfcoil_module
                 '(s_tresca_oh)', s_tresca_oh, 'OP ')
            call ovarre(outfile,'Axial force in CS (N)', &
                 '(axial_force)', axial_force, 'OP ')
-           call ovarre(outfile,'Residual manufacturing strain in CS superconductor material', &
-                '(str_cs_con_res)',str_cs_con_res)
+           call ovarre(outfile,'Strain on CS superconductor', &
+                '(strncon_cs)',strncon_cs)
            call ovarre(outfile,'Copper fraction in strand', &
                 '(fcuohsu)',fcuohsu)
-           ! If REBCO material is used, print copperaoh_m2
-          if (isumatoh == 6 .or. isumatoh == 8 ) then
-             call ovarre(outfile,'CS current/copper area (A/m2)', &
-             '(copperaoh_m2)',copperaoh_m2)
-             call ovarre(outfile,'Max CS current/copper area (A/m2)', &
-             '(copperaoh_m2_max)',copperaoh_m2_max)
-          end if                  
            call ovarre(outfile,'Void (coolant) fraction in conductor', &
                 '(vfohc)',vfohc)
            call ovarre(outfile,'Helium coolant temperature (K)', &
@@ -2848,10 +2829,10 @@ module pfcoil_module
            if (.not.CSlimit) call report_error(135)
  
             !REBCO fractures in strains above ~+/- 0.7%
-            if ((isumatoh == 8) .and. str_cs_con_res > 0.7D-2 .or. str_cs_con_res < -0.7D-2) then
+            if ((isumatoh == 8) .and. strncon_cs > 0.7D-2 .or. strncon_cs < -0.7D-2) then
                call report_error(262)
             end if
-            if ((isumatpf == 8) .and. str_pf_con_res > 0.7D-2 .or. str_pf_con_res < -0.7D-2) then
+            if ((isumatpf == 8) .and. strncon_pf > 0.7D-2 .or. strncon_pf < -0.7D-2) then
                call report_error(263)
             end if
  
