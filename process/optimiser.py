@@ -2,7 +2,8 @@ from process.fortran import optimiz_module
 from process.fortran import numerics
 from process.vmcon import Vmcon
 
-class Optimiser():
+
+class Optimiser:
     def __init__(self, models):
         """Creates and runs a Vmcon instance.
 
@@ -25,26 +26,26 @@ class Optimiser():
         # Write basic info to OPT.DAT, then run vmcon solver
         optimiz_module.write_out(self.vmcon.n, self.vmcon.m)
         self.vmcon.run()
-        
+
         # If fail then alter value of epsfcn - this can be improved
         if self.vmcon.ifail != 1:
-            print('Trying again with new epsfcn')
-            numerics.epsfcn = numerics.epsfcn * 10 # try new larger value
-            print('new epsfcn = ', numerics.epsfcn)
+            print("Trying again with new epsfcn")
+            numerics.epsfcn = numerics.epsfcn * 10  # try new larger value
+            print("new epsfcn = ", numerics.epsfcn)
             self.vmcon.run()
-            numerics.epsfcn = numerics.epsfcn / 10 # reset value
-        
+            numerics.epsfcn = numerics.epsfcn / 10  # reset value
+
         if self.vmcon.ifail != 1:
-            print('Trying again with new epsfcn')
-            numerics.epsfcn = numerics.epsfcn / 10 # try new smaller value
-            print('new epsfcn = ', numerics.epsfcn)
+            print("Trying again with new epsfcn")
+            numerics.epsfcn = numerics.epsfcn / 10  # try new smaller value
+            print("new epsfcn = ", numerics.epsfcn)
             self.vmcon.run()
-            numerics.epsfcn = numerics.epsfcn * 10 # reset value
+            numerics.epsfcn = numerics.epsfcn * 10  # reset value
 
         # If VMCON has exited with error code 5 try another run using a multiple
         # of the identity matrix as input for the Hessian b(n,n)
         # Only do this if VMCON has not iterated (nviter=1)
-        if (self.vmcon.ifail == 5 and numerics.nviter < 2):
+        if self.vmcon.ifail == 5 and numerics.nviter < 2:
             self.vmcon.mode = 1
             self.mod_2nd_derivative()
             self.vmcon.run()
@@ -56,11 +57,12 @@ class Optimiser():
         self.vmcon.b.fill(0)
         bfactor = 2.0
         for i in range(self.vmcon.n):
-            self.vmcon.b[i,i] = bfactor
+            self.vmcon.b[i, i] = bfactor
             # Re-initialise iteration values
             self.vmcon.x[i] = numerics.xcm[i]
 
-        print("VMCON error code = 5.  Rerunning VMCON with a new initial "
+        print(
+            "VMCON error code = 5.  Rerunning VMCON with a new initial "
             "estimate of the second derivative matrix."
         )
 

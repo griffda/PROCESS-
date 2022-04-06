@@ -100,7 +100,7 @@ subroutine run_summary
   use numerics, only: nvar, neqns, ioptimz, nineqns, epsvmc, minmax, icc, &
     lablcc, lablmm
   use process_output, only: ocentr, oblnkl, ocmmnt, ostars, ovarst
-  use physics_variables, only: te 
+  use physics_variables, only: te
   implicit none
 
   !  Local variables
@@ -148,7 +148,7 @@ subroutine run_summary
      else
        call ocmmnt(outfile, '  Tag No. : '//tagno)
      end if
-     call ocmmnt(outfile, '   Branch : '//branch_name) 
+     call ocmmnt(outfile, '   Branch : '//branch_name)
      call ocmmnt(outfile, '  Git log : '// &
      COMMSG)  !  Last git com message
      call ocmmnt(outfile, progid(3))  !  date/time
@@ -181,7 +181,7 @@ subroutine run_summary
      end if
      fom_string = lablmm(abs(minmax))
      call ocmmnt(outfile, '      Figure of merit  : '//minmax_sign//integer2string(abs(minmax))//minmax_string//fom_string) ! Figure of merit
-     
+
      write(eps_string, '(ES8.2)') epsvmc
      call ocmmnt(outfile, ' Convergence parameter : '//eps_string)  !  Convergence parameter
      call oblnkl(outfile)

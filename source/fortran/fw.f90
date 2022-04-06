@@ -144,13 +144,13 @@ contains
     heat_transfer = nusselt * kf / (2.0d0*radius)
 
     ! Check that Reynolds number is in valid range for the Gnielinski correlation
-    if ( ( reynolds <= 3000.0d0 ).or.( reynolds > 5.0d6 ) ) then 
+    if ( ( reynolds <= 3000.0d0 ).or.( reynolds > 5.0d6 ) ) then
       fdiags(1) = reynolds
       call report_error(225)
     end if
 
     ! Check that Prandtl number is in valid range for the Gnielinski correlation
-    if ( ( pr < 0.5d0 ).or.( pr > 2000.0d0) ) then 
+    if ( ( pr < 0.5d0 ).or.( pr > 2000.0d0) ) then
       fdiags(1) = pr
       call report_error(226)
     end if
@@ -378,7 +378,7 @@ contains
     temp_k = (fwoutlet + tpeak) / 2.0d0   ! (K)
 
     ! Print debug info if temperature too low/high or NaN/Inf
-    if ( temp_k /= temp_k ) then 
+    if ( temp_k /= temp_k ) then
       call report_error(223)
     else if ( (temp_k <= 100.0d0 ).or.( temp_k > 1500.0d0 ) ) then
       fdiags(1) = temp_k

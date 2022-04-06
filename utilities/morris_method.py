@@ -1,5 +1,5 @@
 """
-Code to the Morris method of elementary elements to 
+Code to the Morris method of elementary elements to
 investiage the sensistivity of the input parameters in PROCESS
 
 Author: A. Pearce (alexander.pearce@ukaea.uk)
@@ -18,8 +18,8 @@ MFILE.DAT   -  PROCESS output
 process.log -  logfile of PROCESS output to stdout
 capcost_sol.txt - contains lsit of all outputs
 error_log.txt  - contains list of all output with ifail != 1
-morris_method_output - contains the dictorany of the mean and 
-                        variance of the elementary effects 
+morris_method_output - contains the dictorany of the mean and
+                        variance of the elementary effects
 
 """
 

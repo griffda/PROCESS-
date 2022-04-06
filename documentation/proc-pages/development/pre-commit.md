@@ -47,10 +47,10 @@ When running `cmake --build build/` pre-commit should have been installed automa
     To avoid the need to re-add files a second time you could run `black .` which will do the formatting (of Python code) that pre-commit would do.
 
 !!! example "black won't fix all flake8 issues"
-    Flake8 (as has been stressed on this documentation) is a linter and not a formatter. This means flake8 will never make any changes to your Python source code. 
+    Flake8 (as has been stressed on this documentation) is a linter and not a formatter. This means flake8 will never make any changes to your Python source code.
 
     Consider the following file very simple file, `example.py`:
-    
+
     ```python
     from process.fortran import tfcoil_variables, fwbs_variables
 
@@ -66,7 +66,7 @@ When running `cmake --build build/` pre-commit should have been installed automa
 
 
 ## Pre-commit and the `quality` CI stage
-The Process continuous integration system (used to check Process builds and passes tests) also has a `quality` stage. This is where several jobs will run to ensure the quality of your code. If all your commits pass through pre-commit, then these jobs should not fail as your code will be of a high quality. 
+The Process continuous integration system (used to check Process builds and passes tests) also has a `quality` stage. This is where several jobs will run to ensure the quality of your code. If all your commits pass through pre-commit, then these jobs should not fail as your code will be of a high quality.
 
 ## Using black with VSCode
 Although not required, the `black` VSCode extension will ensure that all the Python files you save will be black-compliant and, as such, won't need to modified by pre-commit.

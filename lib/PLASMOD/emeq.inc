@@ -1,7 +1,7 @@
 	integer	NP,       ITER
 	parameter  (NP=101)
 	double precision	WSACC
-	double precision	
+	double precision
      1		WGBJ,      WGB,       WGB0,      WGBST,     WGBD,
      2	        WGMJ,      WGMJEX,    WSQC,      WBBS0,     WBJ0,
      3		WBR00,     WBR0,      WSA(NP),   WSAA(NP),
@@ -23,7 +23,7 @@
      8		WSL1(NP),  WSV1(NP),  WSU1(NP),
      9		WSL22(NP), WSL2(NP),  WSV2(NP),  WSU2(NP),
      &		WSL3(NP),  WSV3(NP),  WSU3(NP)
-	double precision	
+	double precision
      1		WSP(NP),   WDSP(NP),  WSJP(NP),  WDSJP(NP),
      2		WSJ(NP),   WDSJ(NP),  WSQ(NP),   WDSQ(NP),
      3		WDSQRQ(NP),WBF(NP),   WBFF(NP),  WSJSL(NP),

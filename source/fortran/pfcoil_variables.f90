@@ -20,9 +20,9 @@ module pfcoil_variables
 
   integer, parameter :: nclsmx = 2
   !! maximum number of PF coils in a given group
-  
+
   integer, parameter :: nptsmx = 32
-  !! maximum number of points across the midplane of the plasma at which the field from 
+  !! maximum number of points across the midplane of the plasma at which the field from
   !! the PF coils is fixed
 
   integer, parameter :: nfixmx = 64
@@ -63,21 +63,21 @@ module pfcoil_variables
 
   real(dp), dimension(ngc2) :: bpf
   !! peak field at coil i (T)
-  
+
   real(dp), dimension(ngrpmx) :: ccl0_ma
   !! PF group current array, flux-swing cancellation current (MA)
   !! Input if i_pf_current=0, computed otherwise
-  
+
   real(dp), dimension(ngrpmx) :: ccls_ma
   !! PF group current array, equilibrium current (MA)
   !! Input if i_pf_current=0, computed otherwise
-  
+
   real(dp) :: cohbop
   !! Central solenoid overall current density at beginning of pulse (A/m2)
-  
+
   real(dp) :: coheof
   !! Central solenoid overall current density at end of flat-top (A/m2) (`iteration variable 37`)
-  
+
   real(dp), dimension(ngc2,6) :: cpt
   !! current per turn in coil i at time j (A)
 
@@ -113,7 +113,7 @@ module pfcoil_variables
   !! copper fraction of cable conductor (PF coils)
 
   real(dp) :: fvssu
-  !! F-value for `constraint equation 51` 
+  !! F-value for `constraint equation 51`
 
   integer, dimension(ngrpmx) :: ipfloc
   !! Switch for location of PF coil group i:
@@ -128,7 +128,7 @@ module pfcoil_variables
   !!
   !! - =0 superconducting PF coils
   !! - =1 resistive PF coils
-  ! 
+  !
   real(dp) :: itr_sum
   !! total sum of I x turns x radius for all PF coils and CS (Am)
 
@@ -154,20 +154,20 @@ module pfcoil_variables
   !! - =3 NbTi
   !! - =4 ITER Nb3Sn model with user-specified parameters
   !! - =5 WST Nb3Sn parameterisation
-  
+
   integer :: i_pf_current
   !! Switch for controlling the current of the PF coils:
   !!
   !! - =0 Input via the variables curpfb, curpff, curpfs
-  !! - =1 SVD targets zero field across midplane (flux swing 
+  !! - =1 SVD targets zero field across midplane (flux swing
   !!   coils) and the correct vertical field at the plasma
   !!   center (equilibrium coils)
-  
+
   integer :: i_sup_pf_shape
   !! Switch for the placement of Location 3 (outboard) PF coils
   !! when the TF coils are superconducting (i_tf_sup = 1)
   !!
-  !! - =0 (Default) Outboard PF coils follow TF shape 
+  !! - =0 (Default) Outboard PF coils follow TF shape
   !!   in an ellipsoidal winding surface
   !! - =1 Outboard PF coils all have same radius, cylindrical
   !!   winding surface
@@ -191,7 +191,7 @@ module pfcoil_variables
   !! number of PF coils in group j
 
   integer :: nfxfh
-  !! number of filaments the top and bottom of the central solenoid should be broken 
+  !! number of filaments the top and bottom of the central solenoid should be broken
   !! into during scaling (5 - 10 is good)
 
   integer :: ngrp
@@ -199,10 +199,10 @@ module pfcoil_variables
 
   integer :: nohc
   !! number of PF coils (excluding the central solenoid) + 1
-  
+
   real(dp) :: ohhghf
   !! Central solenoid height / TF coil internal height
-  
+
   real(dp) :: oh_steel_frac
   !! central solenoid steel fraction (`iteration variable 122`)
 
@@ -237,7 +237,7 @@ module pfcoil_variables
   !! peak current in coil i (MA-turns)
 
   real(dp), dimension(ngc2) :: rjconpf
-  !! average winding pack current density of PF coil i (A/m2) at time of peak 
+  !! average winding pack current density of PF coil i (A/m2) at time of peak
   !! current in that coil (calculated for `ipfloc=1` coils)
 
   real(dp) :: rjohc
@@ -263,9 +263,9 @@ module pfcoil_variables
   !! the central solenoid
 
   real(dp) :: rpf2
-  !! offset (m) of radial position of `ipfloc=2` PF coils from being at 
+  !! offset (m) of radial position of `ipfloc=2` PF coils from being at
   !! rmajor (offset = rpf2*triang*rminor)
-  
+
   real(dp), dimension(ngrpmx) :: rref
   !! PF coil radial positioning adjuster:
   !!
@@ -280,7 +280,7 @@ module pfcoil_variables
   !! Maximum shear stress (Tresca criterion) coils/central solenoid [MPa]
 
   real(dp) :: sigpfcalw
-  !! maximum permissible tensile stress (MPa) in steel coil cases for superconducting 
+  !! maximum permissible tensile stress (MPa) in steel coil cases for superconducting
   !! PF coils (`ipfres=0`)
 
   real(dp) :: sigpfcf
@@ -312,7 +312,7 @@ module pfcoil_variables
 
   real(dp) :: vseft
   !! total flux swing from PF coils (Wb)
-  
+
   real(dp) :: vsoh
   !! total flux swing from the central solenoid (Wb)
 
@@ -327,7 +327,7 @@ module pfcoil_variables
 
   real(dp) :: vstot
   !! total flux swing for pulse (Wb)
-  
+
   real(dp), dimension(ngc2,6) :: waves
   !! used in current waveform of PF coils/central solenoid
 

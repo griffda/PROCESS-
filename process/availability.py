@@ -83,9 +83,9 @@ class Availability:
             # - the neutron energy spectrum
             # - all of the above and more leading to the dpa/fpy in EUROfer at the FW OMP
             # About a relatively "constant" reference point, we can reasonably assume they all equal to 1.0.
-            ref_powfmw = 1.998e3 # (MW) fusion power used in EFDA_d_2NUZCR
-            f_scale = pv.powfmw / ref_powfmw 
-            ref_dpa_fpy = 9.89e0 # dpa per fpy from EFDA_d_2NUZCR, see figure labelled 'DPA accumulation in the BB external contour during 1.58 FPY'
+            ref_powfmw = 1.998e3  # (MW) fusion power used in EFDA_d_2NUZCR
+            f_scale = pv.powfmw / ref_powfmw
+            ref_dpa_fpy = 9.89e0  # dpa per fpy from EFDA_d_2NUZCR, see figure labelled 'DPA accumulation in the BB external contour during 1.58 FPY'
             dpa_fpy = f_scale * ref_dpa_fpy
 
             # First wall / blanket lifetime (years)
@@ -94,15 +94,17 @@ class Availability:
             if fwbsv.fwlife < 0.0001e0:
                 # Calculate blanket lifetime using neutron fluence model (ibkt_life=0)
                 # or DEMO fusion power model (ibkt_life=1)
-                if cv.ibkt_life == 0: 
+                if cv.ibkt_life == 0:
                     fwbsv.bktlife = min(cv.abktflnc / pv.wallmw, cv.tlife)
                 else:
-                    fwbsv.bktlife = min(cv.life_dpa / dpa_fpy, cv.tlife) # DEMO 
+                    fwbsv.bktlife = min(cv.life_dpa / dpa_fpy, cv.tlife)  # DEMO
             else:
-                if cv.ibkt_life == 0: 
+                if cv.ibkt_life == 0:
                     fwbsv.bktlife = min(fwbsv.fwlife, cv.abktflnc / pv.wallmw, cv.tlife)
                 else:
-                    fwbsv.bktlife = min(fwbsv.fwlife, cv.life_dpa / dpa_fpy , cv.tlife) # DEMO
+                    fwbsv.bktlife = min(
+                        fwbsv.fwlife, cv.life_dpa / dpa_fpy, cv.tlife
+                    )  # DEMO
 
             # TODO Issue #834
             # Add a test for hldiv=0
@@ -130,7 +132,7 @@ class Availability:
 
         # Calculate the number of fusion cycles for a given blanket lifetime
         pulse_fpy = tv.tcycle / YEAR_SECONDS
-        cv.bktcycles = (fwbsv.bktlife/pulse_fpy) + 1
+        cv.bktcycles = (fwbsv.bktlife / pulse_fpy) + 1
 
         # if iavail = 0 use input value for cfactr
 
@@ -213,7 +215,11 @@ class Availability:
                 "OP ",
             )
             po.ovarre(
-                self.outfile, "Divertor lifetime (years)", "(divlife)", cv.divlife, "OP "
+                self.outfile,
+                "Divertor lifetime (years)",
+                "(divlife)",
+                cv.divlife,
+                "OP ",
             )
 
             if pv.itart == 1:
@@ -273,10 +279,16 @@ class Availability:
 
             if cv.iavail == 0:
                 po.ovarre(
-                    self.outfile, "Total plant availability fraction", "(cfactr)", cv.cfactr
+                    self.outfile,
+                    "Total plant availability fraction",
+                    "(cfactr)",
+                    cv.cfactr,
                 )
                 po.ovarre(
-                    self.outfile, "Number of fusion cycles to reach allowable fw/blanket DPA", "(bktcycles)", cv.bktcycles
+                    self.outfile,
+                    "Number of fusion cycles to reach allowable fw/blanket DPA",
+                    "(bktcycles)",
+                    cv.bktcycles,
                 )
             else:
                 po.ovarre(
@@ -290,7 +302,7 @@ class Availability:
     def avail_2(self, output: bool):
         """Routine to calculate component lifetimes and the overall plant availability
         author: J Morris, CCFE, Culham Science Centre
-        
+
         This routine calculates the component lifetimes and the overall
         plant availability using an updated model linked to the 2014 EUROfusion
         RAMI task
@@ -420,18 +432,18 @@ class Availability:
         # - the neutron energy spectrum
         # - all of the above and more leading to the dpa/fpy in EUROfer at the FW OMP
         # About a relatively "constant" reference point, we can reasonably assume they all equal to 1.0.
-        ref_powfmw = 1.998e3 # (MW) fusion power used in EFDA_d_2NUZCR
-        f_scale = pv.powfmw / ref_powfmw 
-        ref_dpa_fpy = 9.89e0 # dpa per fpy from EFDA_d_2NUZCR, see figure labelled 'DPA accumulation in the BB external contour during 1.58 FPY'
+        ref_powfmw = 1.998e3  # (MW) fusion power used in EFDA_d_2NUZCR
+        f_scale = pv.powfmw / ref_powfmw
+        ref_dpa_fpy = 9.89e0  # dpa per fpy from EFDA_d_2NUZCR, see figure labelled 'DPA accumulation in the BB external contour during 1.58 FPY'
         dpa_fpy = f_scale * ref_dpa_fpy
 
         # First wall / blanket lifetime (years)
         # Calculate blanket lifetime using neutron fluence model (ibkt_life=0)
         # or DEMO fusion power model (ibkt_life=1)
-        if cv.ibkt_life == 0: 
-                fwbsv.bktlife = min(cv.abktflnc / pv.wallmw, cv.tlife)
+        if cv.ibkt_life == 0:
+            fwbsv.bktlife = min(cv.abktflnc / pv.wallmw, cv.tlife)
         else:
-                fwbsv.bktlife = min(cv.life_dpa / dpa_fpy, cv.tlife) # DEMO 
+            fwbsv.bktlife = min(cv.life_dpa / dpa_fpy, cv.tlife)  # DEMO
 
         # Divertor lifetime (years)
         cv.divlife = min(cv.adivflnc / dv.hldiv, cv.tlife)

@@ -166,7 +166,7 @@ contains
     call eshellvol(r1,r2,r3,hshld,shldith,shldoth,shldtth, &
             volshldi,volshldo,volshld)
 
-   
+
     !  Apply area (and volume) coverage factors
 
     if (ipowerflow == 0) then
@@ -612,7 +612,7 @@ contains
     !  External cryostat radius (m)
     !  rb(i) = outer radius of PF coil i (tokamaks)
     rdewex = maxval(rb) + rpf2dewar
-    
+
     !  Clearance between uppermost PF coil and cryostat lid
     !  Scaling from ITER by M. Kovari
 

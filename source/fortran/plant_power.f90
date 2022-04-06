@@ -103,7 +103,7 @@ contains
        ! Bus resistance [ohm]
        ! Bus resistivity (rhotfbus) default value : -1.0D0
        ! If this value is chosen, the bus resistivity is the same as the leg one
-       if ( abs(rhotfbus + 1.0D0) < epsilon(rhotfbus) ) rhotfbus = rhotfleg  
+       if ( abs(rhotfbus + 1.0D0) < epsilon(rhotfbus) ) rhotfbus = rhotfleg
        tfbusres = rhotfbus * tfbusl/abus
 
        !  Bus mass (kg)
@@ -119,7 +119,7 @@ contains
        !  Resistive powers (MW):
        tfcpmw  = 1.0D-6 * prescp   !  inboard legs (called centrepost, CP for tart design)
        tflegmw = 1.0D-6 * presleg  !  outboard legs
-       tfjtsmw =  1.0D-6 * pres_joints  ! Joints 
+       tfjtsmw =  1.0D-6 * pres_joints  ! Joints
        tfbusmw = 1.0D-6 * cpttf**2 * tfbusres  !  TF coil bus => Dodgy !
 
        !  TF coil reactive power
@@ -160,7 +160,7 @@ contains
     call ovarre(outfile,'Power dissipation in TF coil set: inboard legs (MW)', '(tfcpmw)',tfcpmw, 'OP ')
     call ovarre(outfile,'Power dissipation in TF coil set: outboard legs (MW)', '(tflegmw)',tflegmw, 'OP ')
     call ovarre(outfile,'Power dissipation in TF coil set: buses','(tfbusmw)', tfbusmw, 'OP ')
-    if (i_cp_joints/=0) then 
+    if (i_cp_joints/=0) then
         call ovarre(outfile,'Power dissipation in TF coil set: joints','(tfjtsmw)', tfjtsmw, 'OP ')
     end if
     ! Reactive poower has been set to zero.
@@ -240,13 +240,13 @@ contains
 
       real(dp), intent(in) :: ntfc
       !! Number of TF coils
-      
+
       real(dp), intent(in) :: ettfmj
       !! Total stored energy of one TF coils [MJ]
 
       real(dp), intent(in) :: itfka
       !! Design current for the TF coils, kA
-      
+
       real(dp), intent(in) :: rptfc
       !! Resistance of a TF coil [ohm]
 
@@ -261,7 +261,7 @@ contains
       ! ---
       real(dp), intent(out) :: tfckw
       !! Available DC power for charging the TF coils [kW]
-      
+
       real(dp), intent(out) :: tfbusl
       !! Total bus length of the TF coil system [m]
 
@@ -577,7 +577,7 @@ contains
     jpf = 0
     poloidalenergy(:) = 0.0d0
     do jjpf = 1,ngrpt           ! Loop over all groups of PF coils.
-       do jjpf2 = 1,ncls(jjpf)  ! Loop over all coils in each group 
+       do jjpf2 = 1,ncls(jjpf)  ! Loop over all coils in each group
           jpf = jpf + 1
           engx = 0.0D0
           inductxcurrent(:) = 0.0d0
@@ -651,7 +651,7 @@ contains
     else
         ! Give up when an interval is small or zero.
         pfpower = 0.d0
-    end if        
+    end if
     pfpowermw = pfpower / 1.d6
 
     !  Compute the maximum stored energy and the maximum dissipative
@@ -681,14 +681,14 @@ contains
        !  Average of the maximum currents in the PF circuits, kA
        acptmax = acptmax + 1.0D-3 * abs(cptdin(jpf))/pfckts
 
-    end do    
+    end do
 
     !  PF wall plug power dissipated in power supply for ohmic heating (MW)
     !  This is additional to that required for moving stored energy around
     !pfwpmw = pohmmw / etapsu
-    wall_plug_ohmicmw  = pohmmw * (1.d0 /etapsu - 1.d0) 
+    wall_plug_ohmicmw  = pohmmw * (1.d0 /etapsu - 1.d0)
     ! Total mean wall plug power dissipated in PFC and CS power supplies.  Issue #713
-    pfwpmw = wall_plug_ohmicmw + pfpowermw    
+    pfwpmw = wall_plug_ohmicmw + pfpowermw
 
     !  Output Section
     if (iprint == 0) return
@@ -701,7 +701,7 @@ contains
     call ovarre(outfile,'Total PF coil resistive power (kW)', '(srcktpm)',srcktpm, 'OP ')
     call ovarre(outfile,'Maximum PF coil voltage (kV)','(vpfskv)',vpfskv)
     call ovarre(outfile,'Efficiency of transfer of PF stored energy into or out of storage','(etapsu)',etapsu)
-    call ocmmnt(outfile,'(Energy is dissipated in PFC power supplies only when total PF energy increases or decreases.)')  
+    call ocmmnt(outfile,'(Energy is dissipated in PFC power supplies only when total PF energy increases or decreases.)')
 
     call ovarre(outfile,'Maximum stored energy in poloidal field (MJ)', '(ensxpfm)',ensxpfm, 'OP ')
     call ovarre(outfile,'Peak absolute rate of change of stored energy in poloidal field (MW)',  &
@@ -876,7 +876,7 @@ contains
     !! Cryogenic plant electrical power requirement due to cryo-aluminium (MW)
 
     !! Cryo-aluminium cryoplant power consumption
-    
+
     !------------------------------------------------------------------------------------
     !- Collate pumping powers
     !------------------------------------------------------------------------------------
@@ -985,7 +985,7 @@ contains
     crypmw = 0.0D0
     p_tf_cryoal_cryo = 0.0D0
     cryo_cool_req = 0.0D0
-    
+
     ! Superconductors TF/PF cryogenic cooling
     if ( i_tf_sup == 1 .or. ipfres == 0 ) then
 
@@ -996,8 +996,8 @@ contains
         ! Rem SK : This ITER efficiency is very low compare to the Strowbridge curve
         !          any reasons why?
         ! Calculate electric power requirement for cryogenic plant at tmpcry (MW)
-        crypmw = 1.0D-6 * (293.0D0 - tmpcry)/(eff_tf_cryo*tmpcry) * helpow   
-    
+        crypmw = 1.0D-6 * (293.0D0 - tmpcry)/(eff_tf_cryo*tmpcry) * helpow
+
     end if
 
     ! Cryogenic alumimium
@@ -1019,7 +1019,7 @@ contains
 
     ! Calculate cryo cooling requirement at 4.5K (kW)
     cryo_cool_req = (helpow * ((293/tmpcry) - 1)/((293/4.5) - 1) + helpow_cryal * ((293/tcoolin) - 1)/((293/4.5) - 1)) / 1.0D3
-  
+
   end subroutine power1
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1083,7 +1083,7 @@ contains
 
     !  Electrical power consumed by fusion power core systems
     !  (excluding heat transport pumps and auxiliary injection power system)
-    !  pfwpmw = Mean electrical energy dissipated in PFC power supplies as they 
+    !  pfwpmw = Mean electrical energy dissipated in PFC power supplies as they
     !  increase or decrease the poloidal field energy AND extra due to ohmic heating
     !  of the plasma.  Issue #713
     pcoresystems = crypmw + fachtmw + ppumpmw + tfacpd + trithtmw + vachtmw + pfwpmw
@@ -1151,17 +1151,17 @@ contains
     call osubhd(outfile,'Assumptions :')
 
     call ovarre(outfile,'Neutron power multiplication in blanket', '(emult)', emult)
-    
+
     if (idivrt == 2) then
         ! Double null configuration
         call ovarre(outfile, 'Double Null Divertor area fraction of whole toroid surface', '(2*fdiv)', 2.0D0*fdiv)
     else
         ! Single null configuration
         call ovarre(outfile, 'Divertor area fraction of whole toroid surface', '(fdiv)', fdiv)
-    end if 
+    end if
 
     call ovarre(outfile,'H/CD apparatus + diagnostics area fraction', '(fhcd)', fhcd)
-    
+
     if (idivrt == 2) then
         ! Double null configuration
         call ovarre(outfile,'First wall area fraction ', '(1-2*fdiv-fhcd)', 1.0D0-2.0D0*fdiv-fhcd)
@@ -1205,12 +1205,12 @@ contains
         call ovarre(outfile, 'Coolant pump power / non-pumping thermal power in first wall', '(fpumpfw)', fpumpfw)
         call ovarre(outfile, 'Coolant pump power / non-pumping thermal power in blanket', '(fpumpblkt)', fpumpblkt)
     end if
-    
+
     if (primary_pumping /= 0) then
         call ovarre(outfile, 'Coolant pump power / non-pumping thermal power in shield', '(fpumpshld)', fpumpshld)
         call ovarre(outfile, 'Coolant pump power / non-pumping thermal power in divertor', '(fpumpdiv)',fpumpdiv)
     end if
-    
+
     call ovarre(outfile, 'Electrical efficiency of heat transport coolant pumps', '(etahtp)', etahtp)
     ! #284
     call osubhd(outfile,'Plant thermodynamics: options :')
@@ -1423,7 +1423,7 @@ contains
             write(*,*) 'WARNING: Power balance across separatrix is in error by more than 5 MW.'
         call ocmmnt(outfile,'WARNING: Power balance across separatrix is in error by more than 5 MW.')
         end if
-    !end if 
+    !end if
 
     call ocmmnt(outfile,'Power Balance for Reactor - Summary :')
     call ocmmnt(outfile,'-------------------------------------')
@@ -1466,7 +1466,7 @@ contains
     call ovarrf(outfile,'All other internal electric power requirements (MW)','(fachtmw)', fachtmw, 'OP ')
     sum = pnetelmw+pinjwp+htpmw+vachtmw+trithtmw+crypmw+tfacpd+fachtmw+pfwpmw
     tot_plant_power=sum
-    call ovarrf(outfile,'Total (MW)','(tot_plant_power)',tot_plant_power, 'OP ')    
+    call ovarrf(outfile,'Total (MW)','(tot_plant_power)',tot_plant_power, 'OP ')
     call ovarrf(outfile,'Total (MW)','',sum, 'OP ')
     call oblnkl(outfile)
     call ovarrf(outfile,'Gross electrical output* (MW)','(pgrossmw)',pgrossmw, 'OP ')

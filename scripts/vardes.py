@@ -1,8 +1,8 @@
 """Creates a variable descriptions markdown file.
 
 Ford outputs a project object that contains information about the Fortran source
-code. This module uses that object to create variable descriptions in 
-markdown format, which can then be used by mkdocs to create the variable 
+code. This module uses that object to create variable descriptions in
+markdown format, which can then be used by mkdocs to create the variable
 descriptions page on the gitpages site.
 
 This script is always called from Ford; when the cmake "dicts" target is run

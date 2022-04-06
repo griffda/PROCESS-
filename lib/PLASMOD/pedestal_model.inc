@@ -22,12 +22,12 @@
 
 	D_ped = 0.1 ! m^2/s
 	V_ped = ped%rho_n*rminor*2.*3.141592*rmajor*2.*3.141592*rminor
-	
+
 !!compute pedestal top density and separatrix density
 !	nsep = (spellet+sfuelling)*tau_sol/V_sol
 !	neb = nsep+spellet*ped%rho_n*2.*rminor**2./(D_ped*V_ped)
 
 
 !compute pedestal top temperature
-	teb = P_pedtop/neb	
-	
+	teb = P_pedtop/neb
+

@@ -14,10 +14,9 @@ from process.io.mfile import MFile, MFileErrorClass
 from process.io.in_dat import InDat
 
 
-NAME_MAPPINGS = {"/": "_slash_",
-                 "*": "_asterisk_",
-                 ".": "_dot_"}
+NAME_MAPPINGS = {"/": "_slash_", "*": "_asterisk_", ".": "_dot_"}
 METADATA = ("procver", "date", "time", "username", "isweep", "nsweep")
+
 
 class NetCDFWriter(object):
 
@@ -38,13 +37,15 @@ class NetCDFWriter(object):
 
     def _open(self):
         try:
-            mode = "a" if (os.path.exists(self.netcdf_filename)
-                           and self._append) else "w"
-            self.root = Dataset(self.netcdf_filename, mode,
-                                clobber=self._overwrite)
+            mode = (
+                "a" if (os.path.exists(self.netcdf_filename) and self._append) else "w"
+            )
+            self.root = Dataset(self.netcdf_filename, mode, clobber=self._overwrite)
         except RuntimeError:
-            raise OSError("Cannot create {} - file may already "
-                          "exist".format(self.netcdf_filename))
+            raise OSError(
+                "Cannot create {} - file may already "
+                "exist".format(self.netcdf_filename)
+            )
 
     def _close(self):
         """Correctly flush data to NetCDF file and close for writing."""
@@ -55,7 +56,7 @@ class NetCDFWriter(object):
 
     def _store_variable(self, var_name, value, var_group):
 
-        if var_name == 'bounds':
+        if var_name == "bounds":
             boundfmt = "bound{}({})"
             var_type = "f8"
             for boundno, bound_dict in value.items():
@@ -70,12 +71,12 @@ class NetCDFWriter(object):
                         print("Please debug this!", file=stderr)
                         print(var_name, value, var_group, file=stderr)
                         print(err, file=stderr)
-        elif var_name in ['fimp', 'zref']:
+        elif var_name in ["fimp", "zref"]:
             arrfmt = "{}({})"
             var_type = "f8"
             for i, a_value in enumerate(value):
-                #fortran starts counting at 1!
-                avar_name = arrfmt.format(var_name, i+1)
+                # fortran starts counting at 1!
+                avar_name = arrfmt.format(var_name, i + 1)
                 avar_val = a_value
                 stored_val = np.array(avar_val, dtype=var_type)
                 stored_var = var_group.createVariable(avar_name, var_type)
@@ -98,8 +99,7 @@ class NetCDFWriter(object):
                 print(err, file=stderr)
                 exit()
 
-    def handle_unknown_vars(self, save_vars, ignore_unknowns, source_data,
-                            source_type):
+    def handle_unknown_vars(self, save_vars, ignore_unknowns, source_data, source_type):
         """
         Common check for handling unspecified variables.
         save_vars       : string/list  : Variables to store
@@ -109,18 +109,27 @@ class NetCDFWriter(object):
             unknown_vars = set(save_vars) - set(source_data.keys())
 
             if any(unknown_vars) and ignore_unknowns:
-                print("Cannot save these variables (not provided in {}"
-                      "instance): {}".format(source_type, unknown_vars))
+                print(
+                    "Cannot save these variables (not provided in {}"
+                    "instance): {}".format(source_type, unknown_vars)
+                )
             elif any(unknown_vars):
-                raise KeyError("Cannot save these variables (not in provided "
-                               "{} instance): {}".format(source_type,
-                                                         unknown_vars))
+                raise KeyError(
+                    "Cannot save these variables (not in provided "
+                    "{} instance): {}".format(source_type, unknown_vars)
+                )
             else:
                 pass
 
-    def handle_unknowns(self, save_vars, ignore_unknowns,
-                        source_data1, source_type1, source_data2,
-                        source_type2):
+    def handle_unknowns(
+        self,
+        save_vars,
+        ignore_unknowns,
+        source_data1,
+        source_type1,
+        source_data2,
+        source_type2,
+    ):
         """Common check for handling unspecified variables."""
         if isinstance(save_vars, list):
             save_vars1 = set(source_data1.keys()) & set(save_vars)
@@ -129,15 +138,18 @@ class NetCDFWriter(object):
             unknown_vars = unknown_vars - save_vars2
 
             if any(unknown_vars) and ignore_unknowns:
-                print("Cannot save these variables (neither provided in {}"
-                      "instance nor in {} instance): {}".format(source_type1,
-                                                                source_type2,
-                                                                unknown_vars))
+                print(
+                    "Cannot save these variables (neither provided in {}"
+                    "instance nor in {} instance): {}".format(
+                        source_type1, source_type2, unknown_vars
+                    )
+                )
             elif any(unknown_vars):
-                raise KeyError("Cannot save these variables (neither provided",
-                               " in {} instance".format(source_type1),
-                               " nor in {} instance): {}".format(source_type2,
-                                                                 unknown_vars))
+                raise KeyError(
+                    "Cannot save these variables (neither provided",
+                    " in {} instance".format(source_type1),
+                    " nor in {} instance): {}".format(source_type2, unknown_vars),
+                )
             else:
                 pass
 
@@ -146,9 +158,7 @@ class NetCDFWriter(object):
         else:
             return "all", "all"
 
-
-    def write_in_data(self, in_dat, run_id, save_vars="all",
-                      ignore_unknowns=False):
+    def write_in_data(self, in_dat, run_id, save_vars="all", ignore_unknowns=False):
         """
         Write the provided InDat instance out as an input group in the NetCDF
         associated with the given run_id.
@@ -177,8 +187,7 @@ class NetCDFWriter(object):
             pattern = re.compile("|".join(rep_key.keys()))
             # Swaps all illegal characters in one go
             if save_vars == "all" or k in save_vars:
-                keys.append(pattern.sub(
-                    lambda m: rep_key[re.escape(m.group(0))], k))
+                keys.append(pattern.sub(lambda m: rep_key[re.escape(m.group(0))], k))
             else:
                 pass
 
@@ -190,8 +199,7 @@ class NetCDFWriter(object):
 
             self._store_variable(val.name, val.value, var_group)
 
-    def write_mfile_data(self, mfile, run_id, save_vars="all",
-                         ignore_unknowns=False):
+    def write_mfile_data(self, mfile, run_id, save_vars="all", ignore_unknowns=False):
         """
         Write the provided MFile instance out as a run within the NetCDF.
 
@@ -208,10 +216,9 @@ class NetCDFWriter(object):
         keys += METADATA
 
         # Stop/warn when there are requested to-save variables that don't exist
-        self.handle_unknown_vars(save_vars, ignore_unknowns, mfile_data,
-                                 "MFile")
+        self.handle_unknown_vars(save_vars, ignore_unknowns, mfile_data, "MFile")
 
-        #for k, val in mfile_data.items():
+        # for k, val in mfile_data.items():
         for k in mfile_data.keys():
             if k.endswith("."):
                 continue
@@ -221,8 +228,7 @@ class NetCDFWriter(object):
             pattern = re.compile("|".join(rep_key.keys()))
             # Swaps all illegal characters in one go
             if save_vars == "all" or k in save_vars:
-                keys.append(pattern.sub(
-                    lambda m: rep_key[re.escape(m.group(0))], k))
+                keys.append(pattern.sub(lambda m: rep_key[re.escape(m.group(0))], k))
             else:
                 pass
 
@@ -234,12 +240,16 @@ class NetCDFWriter(object):
             else:
                 var_group.description = var["var_description"]
                 var_group.group_name = var["var_name"]
-                var_group.unit = var["var_unit"] if (var["var_unit"] is not None) else "None"
-            possible_scans = dict((scan, scanval)
-                                  for scan, scanval in mfile_data[key].items()
-                                  if "scan" in scan)
+                var_group.unit = (
+                    var["var_unit"] if (var["var_unit"] is not None) else "None"
+                )
+            possible_scans = dict(
+                (scan, scanval)
+                for scan, scanval in mfile_data[key].items()
+                if "scan" in scan
+            )
 
-            #uses only latest scan
+            # uses only latest scan
             highest_scan = 0
             latest_scan = None
             for scan_k in possible_scans.keys():
@@ -247,13 +257,9 @@ class NetCDFWriter(object):
                 if scan_num > highest_scan:
                     highest_scan = scan_num
                     latest_scan = scan_k
-            self._store_variable(latest_scan, possible_scans[latest_scan],
-                                 var_group)
+            self._store_variable(latest_scan, possible_scans[latest_scan], var_group)
 
-
-
-    def write_data(self, mfile, in_dat, run_id, save_vars="all",
-                   ignore_unknowns=False):
+    def write_data(self, mfile, in_dat, run_id, save_vars="all", ignore_unknowns=False):
         """
         Write the provided MFile and InDat instances out as into the NetCDF
         associated with the given run_id.
@@ -275,15 +281,11 @@ class NetCDFWriter(object):
         indat_keys = []
 
         # Stop/warn when there are requested to-save variables that don't exist
-        save_vars_mfile, save_vars_indat = self.handle_unknowns(save_vars,
-                                                               ignore_unknowns,
-                                                               mfile_data,
-                                                               "MFile",
-                                                               in_data,
-                                                               "InDat")
+        save_vars_mfile, save_vars_indat = self.handle_unknowns(
+            save_vars, ignore_unknowns, mfile_data, "MFile", in_data, "InDat"
+        )
 
-        
-        #MFILE
+        # MFILE
         for k in mfile_data.keys():
             if k.endswith("."):
                 continue
@@ -293,15 +295,16 @@ class NetCDFWriter(object):
             pattern = re.compile("|".join(rep_key.keys()))
             # Swaps all illegal characters in one go
             if save_vars_mfile == "all" or k in save_vars_mfile:
-                mfile_keys.append(pattern.sub(
-                    lambda m: rep_key[re.escape(m.group(0))], k))
+                mfile_keys.append(
+                    pattern.sub(lambda m: rep_key[re.escape(m.group(0))], k)
+                )
             else:
                 pass
 
         for key in mfile_keys:
             var_group = mfile_vars.createGroup(key)
             var = mfile_data[key]
-            
+
             if isinstance(var, MFileErrorClass):
                 continue
             else:
@@ -310,13 +313,13 @@ class NetCDFWriter(object):
                 var_group.group_name = var.var_name
                 var_group.unit = var.var_unit if (var.var_unit is not None) else "None"
 
-                    
-                possible_scans = dict((scan, scanval)
-                                      for scan, scanval in mfile_data[key].items()
-                                      if "scan" in scan)
+                possible_scans = dict(
+                    (scan, scanval)
+                    for scan, scanval in mfile_data[key].items()
+                    if "scan" in scan
+                )
 
-                
-            #using latest scan only
+            # using latest scan only
             highest_scan = 0
             latest_scan = None
             for scan_k in possible_scans.keys():
@@ -324,12 +327,9 @@ class NetCDFWriter(object):
                 if scan_num > highest_scan:
                     highest_scan = scan_num
                     latest_scan = scan_k
-            self._store_variable(latest_scan, possible_scans[latest_scan],
-                                 var_group)
+            self._store_variable(latest_scan, possible_scans[latest_scan], var_group)
 
-
-
-        #INDAT
+        # INDAT
         for k in in_data.keys():
             if k.endswith("."):
                 continue
@@ -339,8 +339,9 @@ class NetCDFWriter(object):
             pattern = re.compile("|".join(rep_key.keys()))
             # Swaps all illegal characters in one go
             if save_vars_indat == "all" or k in save_vars_indat:
-                indat_keys.append(pattern.sub(
-                    lambda m: rep_key[re.escape(m.group(0))], k))
+                indat_keys.append(
+                    pattern.sub(lambda m: rep_key[re.escape(m.group(0))], k)
+                )
             else:
                 pass
 
@@ -351,7 +352,6 @@ class NetCDFWriter(object):
             var_group.comment = val.comment
 
             self._store_variable(val.name, val.value, var_group)
-
 
 
 class NetCDFReader(object):
@@ -375,8 +375,7 @@ class NetCDFReader(object):
         try:
             self.root = Dataset(self.netcdf_filename, "r")
         except RuntimeError:
-            raise FileNotFoundError("Cannot read"
-                                    " {}".format(self.netcdf_filename))
+            raise FileNotFoundError("Cannot read" " {}".format(self.netcdf_filename))
 
     def _close(self):
         """Correctly close NetCDF file handle."""
@@ -385,15 +384,15 @@ class NetCDFReader(object):
         except AttributeError:
             print("File not initially opened by NetCDFReader")
 
-
     def _get_mfiledict(self, path):
         """Return a dict of variable, {datadict} from the output parameters."""
         mfile_dict = dict()
         try:
             mfile_data = self.root.groups[path]
         except:
-            raise KeyError("Cannot access {} in "
-                           "{}".format(path, self.netcdf_filename))
+            raise KeyError(
+                "Cannot access {} in " "{}".format(path, self.netcdf_filename)
+            )
         for group in mfile_data.groups.values():
             for variable in group.variables.values():
                 mfile_dict[group.group_name] = variable.getValue()
@@ -405,16 +404,21 @@ class NetCDFReader(object):
         try:
             mfile_data = self.root.groups[path]
         except:
-            raise KeyError("Cannot access {} in "
-                           "{}".format(path, self.netcdf_filename))
+            raise KeyError(
+                "Cannot access {} in " "{}".format(path, self.netcdf_filename)
+            )
         for group in mfile_data.groups.values():
             for var_name, variable in group.variables.items():
                 scan_num = None
                 if "scan" in var_name:
                     scan_num = int(re.search(r"\d+", var_name).group())
-                m_file.add_to_mfile_variable(group.description, group.group_name,
-                                             variable.getValue(), group.unit,
-                                             scan_num)
+                m_file.add_to_mfile_variable(
+                    group.description,
+                    group.group_name,
+                    variable.getValue(),
+                    group.unit,
+                    scan_num,
+                )
         return m_file
 
     def _get_indatdict(self, path):
@@ -425,8 +429,9 @@ class NetCDFReader(object):
         try:
             input_data = self.root.groups[path]
         except:
-            raise KeyError("Cannot access {} in "
-                           "{}".format(path, self.netcdf_filename))
+            raise KeyError(
+                "Cannot access {} in " "{}".format(path, self.netcdf_filename)
+            )
         for group in input_data.groups.values():
             for var_name, variable in group.variables.items():
                 indat_dict[var_name] = variable.getValue()
@@ -442,8 +447,9 @@ class NetCDFReader(object):
         try:
             input_data = self.root.groups[path]
         except:
-            raise KeyError("Cannot access {} in "
-                           "{}".format(path, self.netcdf_filename))
+            raise KeyError(
+                "Cannot access {} in " "{}".format(path, self.netcdf_filename)
+            )
         for group in input_data.groups.values():
             for var_name, variable in group.variables.items():
                 indat.add_parameter(var_name, variable.getValue())
@@ -478,7 +484,7 @@ class NetCDFReader(object):
         """returns dict with input and output data"""
         mfiledict = self._get_mfiledict("output_{}".format(run_id))
         indatdict = self._get_indatdict("input_{}".format(run_id))
-        indatdict.update(mfiledict)#in conflict takes mfile value!
+        indatdict.update(mfiledict)  # in conflict takes mfile value!
         return indatdict
 
     def runs(self, start_run=1):
@@ -499,12 +505,12 @@ class NetCDFReader(object):
         for run in self.root.groups.keys():
             try:
                 run_id = int(run.split("output_")[1])
-            except IndexError: #for input_run_id to avoid double counting!
+            except IndexError:  # for input_run_id to avoid double counting!
                 continue
             if run_id >= start_run:
                 mfiledict = self._get_mfiledict("output_{}".format(run_id))
                 indatdict = self._get_indatdict("input_{}".format(run_id))
-                indatdict.update(mfiledict) #in conflict takes mfile value!
+                indatdict.update(mfiledict)  # in conflict takes mfile value!
                 yield indatdict
             else:
                 pass
@@ -514,13 +520,12 @@ if __name__ == "__main__":
 
     mf = MFile("/home/edwardsj/example_MFILE.DAT")
 
-
     if sys.argv[1] == "write":
         # Writer example - now uses context manager (i.e. with statement)
-        with NetCDFWriter("/home/edwardsj/tester.nc", append=True,
-                          overwrite=False) as ncdf_writer:
-            ncdf_writer.write_mfile_data(mf, 3, save_vars="all",
-                                         latest_scan_only=True)
+        with NetCDFWriter(
+            "/home/edwardsj/tester.nc", append=True, overwrite=False
+        ) as ncdf_writer:
+            ncdf_writer.write_mfile_data(mf, 3, save_vars="all", latest_scan_only=True)
     elif sys.argv[1] == "read":
         # Reader example - gives back MFile instances
         with NetCDFReader("/home/edwardsj/tester.nc") as ncdf_reader:
@@ -530,4 +535,3 @@ if __name__ == "__main__":
             # Get multiple runs in a loop, starting at run 1
             # for mfile in ncdf_reader.runs(start_run=2):
             #     print(mfile)
-

@@ -16,7 +16,7 @@ Inputs:
 																						    num%tol=0.00001d0 !tolerance to be reached, in % variation at each time step
                           num%dtmin=0.001d0 !min time step
                           num%dtmax=0.5d0 !max time step
-                          num%dt=0.01d0 !time step 
+                          num%dt=0.01d0 !time step
                           num%dtinc=2.d0 !decrease of dt
                           num%Ainc=1.1d0 !increase of dt
                           num%test=100000. !max iteration number
@@ -33,16 +33,16 @@ Inputs:
                           num%nchannels=3  !leave this at 3
                           num%ipedestal=2 !1 - fixed temperature pedestal ped%teped. 2 - Saarelma scaling
 																										num%i_impmodel=1 !impurity model: 0 - fixed concentration, 1 - concentration fixed at pedestal top, then fixed density.
-																										
+
     geom%A = 3.1d0  !aspect ratio R/a
     geom%R = 9.072d0  ! major radius in m
     geom%bt = 5.667 !magnetic field in T
-    geom%k = 1.7513d0 !edge elongation 
+    geom%k = 1.7513d0 !edge elongation
     geom%d = 0.383d0 !edge triangularity
     geom%k95 = 1.65d0 !edge elongation at 95% of flux
     geom%d95 = 0.333d0 !edge triangularity at 95% of flux
     geom%Ip =  19.6 ! plasma current in MA : USED if i_equiltype=2, q95 is used if i_equiltype=1
-				geom%q95 = 3.5 !safety factor at 95% of flux, used if i_equiltype=1. 
+				geom%q95 = 3.5 !safety factor at 95% of flux, used if i_equiltype=1.
 				geom%counter=0. !dont touch this
 
 !this is just for first initialization
@@ -100,7 +100,7 @@ Inputs:
 				inp0%qcd=0.d0 !nbi power
 				inp0%qfus=0.d0 !nbi power
 
-!depositions and widths				
+!depositions and widths
 				inp0%x_heat(1)=0. !nbi
 				inp0%x_heat(2)=0. !ech
 				inp0%x_cd(1)=0. !nbi
@@ -118,8 +118,8 @@ Inputs:
 				inp0%dx_control(1)=0.2 !nbi
 				inp0%dx_control(2)=0.03 !ech
 				inp0%nbi_energy=1000. !in keV !beam energy
-				
-				
+
+
 
 				inp0%spellet=0.d0 !pellet mass in particles of D in 10^19
 				inp0%fpellet=0.5d0 !pellet frequency in Hz !pellet source is computed as inp0%spellet*inp0%fpellet in p/s
@@ -145,17 +145,17 @@ Inputs:
 	comp%che --> Helium concentration (computed if globtau(3) is finite)
 	comp%cxe --> Xenon concentration (computed if comp%psepplh_sup finite)
 	comp%car --> Argon concentration (computed if comp%qdivt finite)
-	
+
 
 	ped%teped --> computed if num%ipedestal=2
 	ped%nped --> computed according to inp0%fgw
 	ped%nsep --> computed according to inp0%fgws
 
-	
+
 	mhd%equilcheck = 0. if equilibrium crashed, 1 if ok
 	mhd%betan : total beta_N (thermal + alphas)
-	
-	loss%pfus : fusion power in MW (5* alpha power)	
+
+	loss%pfus : fusion power in MW (5* alpha power)
 	loss%taueff : confinement time taue in s
 	loss%H : H factor
 				tau_scal = loss%taueff/loss%H
@@ -170,7 +170,7 @@ Inputs:
 	loss%piepv: volume averaged equipartition power MW/m^3
 	loss%peaux: effective auxiliary electron heating in MW
 	loss%piaux: effective auxiliary ion heating in MW
-	
+
 	loss%pdiv : divertor power in MW/m^2
 
 	loss%Psep: separatrix power	MW
@@ -180,7 +180,7 @@ Inputs:
 	loss%tfuelreq : requested fueling in p/s for T
 
 	loss%hepumpreq = He production globally in p/s (to be pumped)
-	
+
 	mhd%vp : plasma volume in m^3
 	mhd%q_sep : separatrix q
 	mhd%vloop : loop voltage in V
@@ -192,8 +192,8 @@ Inputs:
 
 
 
-* profiles	
-	radp%x : normalized coordinate r/a 
+* profiles
+	radp%x : normalized coordinate r/a
 	radp%ne : electron density profile in 10^19 m^-3
 	radp%te : electorn temperature profile in keV
 	radp%ti : ion temperature profile in keV
@@ -205,7 +205,7 @@ Inputs:
 	radp%ipol : poloidal current R*BT profile in T*m
 	radp%psi : poloidal flux profile in Wb
 	radp%volum : plasma volum profile in m^3
-	
+
 
 
 
@@ -222,10 +222,4 @@ Inputs:
 	- impmodel 0 or 1 doesnt matter
 	- globtau(3) ~ 5 - 10
 	- f_ni or v_loop should be dictated by discharge duration (comes from SYS code)
-	
-
-
-
-
-
 

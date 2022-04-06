@@ -82,7 +82,7 @@ module process_input
   logical :: subscript_present
   logical :: error
   character(len=78) :: error_message
-  
+
   ! Vars for subroutine input() requiring re-initialisation before each new run
   integer :: show_changes
   logical :: constraints_exist
@@ -269,11 +269,11 @@ contains
       kallenbach_scan_end, kallenbach_scan_start, target_spread, &
       fractionwidesol, impurity_enrichment, mach0, kallenbach_scan_var, &
       abserr_sol, qtargettotal, lambda_q_omp, ttarget, kallenbach_tests, &
-      kallenbach_switch, netau_sol, neratio, targetangle 
+      kallenbach_switch, netau_sol, neratio, targetangle
     use divertor_variables, only: fdfs, anginc, divdens, divclfr, c4div, &
       c5div, ksic, fififi, divplt, delld, c2div, betao, divdum, tdiv, c6div, &
       omegan, prn1, fgamp, frrp, xpertin, c1div, betai, bpsout, xparain, fdiva, &
-      zeffdiv, hldivlim, rlenmax, divfix, c3div 
+      zeffdiv, hldivlim, rlenmax, divfix, c3div
     use fwbs_variables, only: fblhebpo, vfblkt, fdiv, fvolso, fwcoolant, &
       pitch, iblanket, blktmodel, afwi, fblli2o, nphcdin, breeder_multiplier, &
       fw_armour_thickness, roughness, fwclfr, breedmat, fblli, fblvd, &
@@ -285,7 +285,7 @@ contains
       npdiv, peaking_factor, primary_pumping, rpf2dewar, secondary_cycle, &
       denstl, declfw, nphcdout, iblnkith, vfpblkt, fwinlet, wallpf, fblbe, &
       fhole, fwbsshape, coolp, tfwmatmax, irefprop, fw_channel_length, &
-      li6enrich, etaiso, nblktmodto, fvoldw, i_shield_mat 
+      li6enrich, etaiso, nblktmodto, fvoldw, i_shield_mat
     use heat_transport_variables, only: htpmw_fw, baseel, fmgdmw, htpmw_div, &
       pwpm2, etath, vachtmw, iprimshld, fpumpdiv, pinjmax, htpmw_blkt, etatf, &
       htpmw_min, fpumpblkt, ipowerflow, htpmw_shld, fpumpshld, trithtmw, &
@@ -319,7 +319,7 @@ contains
       iradloss, te, alphan, rmajor, kappa, ifispact, iinvqd, fkzohm, beamfus0, &
       tauratio, idensl, ieped, bt, iscrp, ipnlaws, betalim, betalim_lower, &
       idia, ips, m_s_limit
-    use pf_power_variables, only: iscenr, maxpoloidalpower 
+    use pf_power_variables, only: iscenr, maxpoloidalpower
     use plasmod_variables, only: plasmod_x_control, plasmod_i_modeltype, &
       plasmod_nx, plasmod_chisaw, plasmod_contrpovr, plasmod_dtmax, &
       plasmod_eccdeff, plasmod_isawt, plasmod_dtinc, plasmod_eopt, &
@@ -334,13 +334,13 @@ contains
       plasmod_x_heat, plasmod_fradc, plasmod_tolmin, plasmod_pech, &
       plasmod_globtau, plasmod_pfus, plasmod_nbi_energy, plasmod_nxt, &
       plasmod_x_cd, plasmod_chisawpos, plasmod_cxe_psepfac, plasmod_dx_control, &
-      plasmod_car_qdivt 
+      plasmod_car_qdivt
     use pulse_variables, only: lpulse, dtstor, itcycl, istore, bctmp
-    
-    use primary_pumping_variables, only: t_in_bb, t_out_bb, dp_he, p_he, gamma_he 
-    
+
+    use primary_pumping_variables, only: t_in_bb, t_out_bb, dp_he, p_he, gamma_he
+
     use scan_module, only: isweep_2, nsweep, isweep, scan_dim, nsweep_2, &
-      sweep_2, sweep, ipnscns, ipnscnv 
+      sweep_2, sweep, ipnscns, ipnscnv
     use stellarator_variables, only: f_asym, isthtr, n_res, iotabar, fdivwet, &
       f_w, bmn, shear, m_res, f_rad, flpitch, istell
     use tfcoil_variables, only: fcoolcp, tfinsgap, vftf, &
@@ -362,19 +362,19 @@ contains
       i_cp_joints, n_tf_turn, f_t_turn_tf, t_turn_tf_max, t_cable_tf, &
       sig_tf_wp_max, eyoung_cond_trans, i_tf_cond_eyoung_axial, i_tf_cond_eyoung_trans, &
       str_wp_max, str_tf_con_res, i_str_wp
-      
+
     use times_variables, only: tohs, pulsetimings, tqnch, theat, tramp, tburn, &
-      tdwell, tohsin 
+      tdwell, tohsin
     use vacuum_variables, only: dwell_pump, pbase, tn, pumpspeedfactor, &
       initialpressure, outgasfactor, prdiv, pumpspeedmax, rat, outgasindex, &
-      pumpareafraction, ntype, vacuum_model, pumptp 
+      pumpareafraction, ntype, vacuum_model, pumptp
     use rebco_variables, only: hastelloy_thickness, f_coppera_m2, &
       rebco_thickness, tape_thickness, tape_width, &
-      copper_rrr, coppera_m2_max, croco_thick, copper_thick 
-    use reinke_variables, only: reinke_mode, fzactual, impvardiv, lhat 
+      copper_rrr, coppera_m2_max, croco_thick, copper_thick
+    use reinke_variables, only: reinke_mode, fzactual, impvardiv, lhat
     use water_usage_variables, only: airtemp, watertemp, windspeed
     use CS_fatigue_variables, only: residual_sig_hoop, t_crack_radial, t_crack_vertical, &
-      t_structural_vertical, t_structural_radial 
+      t_structural_vertical, t_structural_radial
     implicit none
 
     !  Arguments
@@ -392,8 +392,8 @@ contains
     character(len=32) :: varnam
 
     logical :: obsolete_var
-    character(len=400) :: imp_dir 
-    
+    character(len=400) :: imp_dir
+
     imp_dir = impdir()
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -402,7 +402,7 @@ contains
     no_constraints = 0
     no_iteration = 0
     obsolete_var = .false.
-    
+
     !  Initialise module-wide variables
 
     infile = in_file
@@ -1615,7 +1615,7 @@ contains
          else
             call parse_real_variable('blnkith', blnkith, 0.0D0, 10.0D0, &
                 'Inboard blanket thickness (m)')
-	  ! Inboard blanket does not exist if the thickness is below a certain limit.  
+	  ! Inboard blanket does not exist if the thickness is below a certain limit.
             if(blnkith>=0.0D00.and.blnkith<=1.0D-3) then
               blnkith = 0.0D00 ! Inboard blanket thickness is zero
 	      iblnkith = 0     ! Inboard blanket does not exist
@@ -1878,11 +1878,11 @@ contains
        case ('sig_tf_case_max')
           call parse_real_variable('sig_tf_case_max', sig_tf_case_max, 1.0D6, 1.0D11, &
                'Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)')
-               
+
        case ('sig_tf_wp_max')
           call parse_real_variable('sig_tf_wp_max', sig_tf_wp_max, 1.0D6, 1.0D11, &
                'Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa)')
-               
+
        case ('alstroh')
           call parse_real_variable('alstroh', alstroh, 1.0D6, 1.0D11, &
                'Allowable hoop stress in Central Solenoid structural material (Pa)')
@@ -1980,7 +1980,7 @@ contains
                'Number of joints per turn')
        case ('eff_tf_cryo')
           call parse_real_variable('eff_tf_cryo', eff_tf_cryo, 0.0D0, 1.0D0, &
-               'TF coil cryo-plane efficiency')  
+               'TF coil cryo-plane efficiency')
        case ('i_tf_stress_model')
          call parse_int_variable('i_tf_stress_model', i_tf_stress_model, 0, 2, &
                'Switch for the TF stress model')
@@ -2131,7 +2131,7 @@ contains
                'number of turns per TF coil')
        case ('tftmp')
           call parse_real_variable('tftmp', tftmp, 0.01D0, 293.0D0, &
-               'Peak TF coil He coolant temp. (K)')      
+               'Peak TF coil He coolant temp. (K)')
        case ('t_turn_tf')
           call parse_real_variable('t_turn_tf', t_turn_tf, 0.0D0, 0.1D0, &
                'TF turn square dimensions (m)')
@@ -2563,7 +2563,7 @@ contains
        case ('li6enrich')
           call parse_real_variable('li6enrich', li6enrich, 7.40D0, 100.0D0, &
                'Li-6 enrichment')
-       
+
        ! CCFE hcpb BB module (also includes the CP shielding for ST)
        case ('breeder_f')
           call parse_real_variable('breeder_f', breeder_f, 0.00D0, 1.0D0, &
@@ -2684,8 +2684,8 @@ contains
               'Helium Pressure drop or Gas Pressure drop (Pa)')
        case ('p_he')
           call parse_real_variable('p_he', p_he, 0.0D0, 100.0D6, &
-              'Pressure in FW and blanket coolant at pump exit')	      
-      
+              'Pressure in FW and blanket coolant at pump exit')
+
        case ('gamma_he')
           call parse_real_variable('gamma_he', gamma_he, 1.0D0, 2.0D0, &
               'Ratio of specific heats for helium or for another Gas')
@@ -2753,19 +2753,19 @@ contains
        case('step_uccase')
          call parse_real_variable('step_uccase', step_uccase, 0.0D0, 3.0D2, &
                'cost of superconductor case ($/kg) (if cost model = 2)' )
-       case('step_uccu') 
+       case('step_uccu')
          call parse_real_variable('step_uccu', step_uccu, 0.0D0, 3.0D2, &
-               'unit cost for copper in superconducting cable ($/kg) (if cost model = 2)' ) 
+               'unit cost for copper in superconducting cable ($/kg) (if cost model = 2)' )
        case ('step_ucfwa')
          call parse_real_variable('step_ucfwa', step_ucfwa, 0.0D0, 1.0D5, &
-         'first wall armour cost ($/kg) (if cost model = 2)' ) 
+         'first wall armour cost ($/kg) (if cost model = 2)' )
       case ('step_ucfws')
          call parse_real_variable('step_ucfws', step_ucfws, 0.0D0, 1.0D5, &
-         'first wall structure cost ($/kg) (if cost model = 2)' ) 
+         'first wall structure cost ($/kg) (if cost model = 2)' )
       case ('step_ucfwps')
          call parse_real_variable('step_ucfwps', step_ucfwps, 0.0D0, 1.0D9, &
-         'first wall passive stabiliser cost ($) (if cost model = 2)' ) 
-       case('step_ucsc') 
+         'first wall passive stabiliser cost ($) (if cost model = 2)' )
+       case('step_ucsc')
          call parse_real_array('step_ucsc', step_ucsc, isub1, 7, &
               'cost of superconductor ($/kg) (if cost model = 2)', icode)
        case('step_ucfnc')
@@ -2903,7 +2903,7 @@ contains
                'Percentage of cdirt used in calculating step92 (3.0D-1 = 30%)')
        case ('step93_per')
           call parse_real_variable('step93_per', step93_per, 1.0D0, 1.0D2, &
-               'Percentage of cdirt used in calculating step93 (3.0D-1 = 30%)')              
+               'Percentage of cdirt used in calculating step93 (3.0D-1 = 30%)')
        case ('site_imp_uc')
           call parse_real_array('site_imp_uc', site_imp_uc, isub1, 62, &
                'Site improvement reference values for cost model 2', icode)
@@ -3266,7 +3266,7 @@ contains
                'aux building supporting tokamak processes, height (m)')
        case ('auxcool_l')
          call parse_real_variable('auxcool_l', auxcool_l, 10.0D0, 1000.0D0, &
-               'Site-Wide Auxiliary Cooling Water facility, length (m)')     
+               'Site-Wide Auxiliary Cooling Water facility, length (m)')
        case ('auxcool_w')
          call parse_real_variable('auxcool_w', auxcool_w, 10.0D0, 1000.0D0, &
                'Site-Wide Auxiliary Cooling Water facility, width (m)')
@@ -3296,7 +3296,7 @@ contains
                'control building, height (m)')
        case ('crane_arm_h')
          call parse_real_variable('crane_arm_h', crane_arm_h, 1.0D0, 100.0D0, &
-               'vertical dimension of crane arm, operating over reactor (m)')     
+               'vertical dimension of crane arm, operating over reactor (m)')
        case ('crane_clrnc_h')
          call parse_real_variable('crane_clrnc_h', crane_clrnc_h, 0.0D0, 10.0D0, &
                'horizontal clearance to building wall for crane operation (m)')
@@ -3326,7 +3326,7 @@ contains
                'vertical clearance from TF coil to cryostat (m)')
        case ('elecdist_l')
          call parse_real_variable('elecdist_l', elecdist_l, 10.0D0, 1000.0D0, &
-               'Transformers and electrical distribution facilities, length (m)')     
+               'Transformers and electrical distribution facilities, length (m)')
        case ('elecdist_w')
          call parse_real_variable('elecdist_w', elecdist_w, 10.0D0, 1000.0D0, &
                'Transformers and electrical distribution facilities, width (m)')
@@ -3416,7 +3416,7 @@ contains
                'ILW waste storage building, length (m)')
        case ('ilw_storage_w')
          call parse_real_variable('ilw_storage_w', ilw_storage_w, 10.0D0, 1000.0D0, &
-               'ILW waste storage building, width (m)')     
+               'ILW waste storage building, width (m)')
        case ('ilw_storage_h')
          call parse_real_variable('ilw_storage_h', ilw_storage_h, 1.0D0, 100.0D0, &
                'ILW waste storage building, height (m)')
@@ -3506,7 +3506,7 @@ contains
                'security & safety buildings, height (m)')
        case ('staff_buildings_h')
          call parse_real_variable('staff_buildings_h', staff_buildings_h, 1.0D0, 100.0D0, &
-               'staff buildings height (m)')     
+               'staff buildings height (m)')
        case ('staff_buildings_area')
          call parse_real_variable('staff_buildings_area', staff_buildings_area, 1.0D4, 1.0D6, &
                'footprint of staff buildings (m2)')
@@ -3776,7 +3776,7 @@ contains
                     'IFE target gain vs driver energy', icode)
        case ('htpmw_ife')
           call parse_real_variable('htpmw_ife', htpmw_ife, 0.0D0, 1.0D3, &
-                    'IFE heat transport system electrical pump power (MW)')          
+                    'IFE heat transport system electrical pump power (MW)')
        case ('ifedrv')
           call parse_int_variable('ifedrv', ifedrv, -1, 3, &
                     'IFE driver type')
@@ -3873,7 +3873,7 @@ contains
        case ('v3matf')  !  N.B. actually a 2-D array
           call parse_real_array('v3matf', v3matf, isub1, 3*(maxmat+1), &
                     'IFE void 3 material fraction', icode)
-     
+
        ! Water usage settings
 
        case ('airtemp')
@@ -3903,7 +3903,7 @@ contains
        case('t_structural_vertical')
          call parse_real_variable('t_structural_vertical',t_structural_vertical, 1.0D-3, 1.0D0, &
             'CS structural vertical thickness (m)')
- 
+
        case default
           error_message = 'Unknown variable in input file: '//varnam(1:varlen)
           write(*,*) error_message
@@ -4182,7 +4182,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Check whether a subscript was found by the preceding call to GET_VARIABLE_NAME
-    
+
     if (subscript_present) then
 
        oldval = varval(isub1)

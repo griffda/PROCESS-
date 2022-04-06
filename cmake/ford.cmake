@@ -40,7 +40,7 @@ MACRO(DICTS)
         # Custom command needs to re-run whenever the Fortran add_library target
         # detects changes and is recompiled (e.g. Fortran changes are detected)
         # This keeps the dictionaries up-to-date with the Fortran source
-        # Python sources should also trigger a re-run to keep the dictionaries up-to-date 
+        # Python sources should also trigger a re-run to keep the dictionaries up-to-date
         # with Python-defined variables
         DEPENDS ${PROJECT_NAME} ${PROCESS_SRC_PATHS} ${PROCESS_PYTHON_SRC_PATHS} ${F2PY_NAME}
         # depends on f2py so that process.fortran exists

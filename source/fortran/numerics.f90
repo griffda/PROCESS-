@@ -21,7 +21,7 @@ module numerics
 
   integer, parameter :: ipeqns = 88
   !!  ipeqns  FIX : number of constraint equations available
-  
+
   integer, parameter :: ipnfoms = 19
   !!  ipnfoms FIX : number of available figures of merit
 
@@ -92,7 +92,7 @@ module numerics
   logical, dimension(ipeqns) :: active_constraints
   !!  active_constraints(ipeqns) : Logical array showing which constraints are active
 
-  ! #TODO Do not change the comments for lablcc: they are used to create the 
+  ! #TODO Do not change the comments for lablcc: they are used to create the
   ! Python-Fortran dictionaries. This must be improved on.
   character(len=33), dimension(ipeqns) :: lablcc
   !!  lablcc(ipeqns) : labels describing constraint equations (corresponding itvs)<UL>
@@ -192,11 +192,11 @@ module numerics
   !!  <LI> (87) Constraint for cryogenic power
   !!  <LI> (88) Constraint for TF coil strain absolute value</UL>
 
-  integer, dimension(ipnvars) :: ixc 
+  integer, dimension(ipnvars) :: ixc
   !!  ixc(ipnvars) /0/ :
   !!               array defining which iteration variables to activate
   !!               (see lablxc for descriptions)
-  
+
   character(len=14), dimension(ipnvars) :: lablxc
   !! lablxc(ipnvars) : labels describing iteration variables<UL>
   !!  <LI> ( 1) aspect
@@ -308,12 +308,12 @@ module numerics
   !! <LI> (107) favail (f-value for equation 61)
   !! <LI> (108) breeder_f: Volume of Li4SiO4 / (Volume of Be12Ti + Li4SiO4)
   !! <LI> (109) ralpne: thermal alpha density / electron density
-  !! <LI> (110) ftaulimit: Lower limit on taup/taueff the ratio of alpha 
+  !! <LI> (110) ftaulimit: Lower limit on taup/taueff the ratio of alpha
   !! <LI> (111) fniterpump: f-value for constraint that number
   !! <LI> (112) fzeffmax: f-value for max Zeff (f-value for equation 64)
   !! <LI> (113) ftaucq: f-value for minimum quench time (f-value for equation 65)
   !! <LI> (114) fw_channel_length: Length of a single first wall channel
-  !! <LI> (115) fpoloidalpower: f-value for max rate of change of 
+  !! <LI> (115) fpoloidalpower: f-value for max rate of change of
   !! <LI> (116) fradwall: f-value for radiation wall load limit (eq. 67)
   !! <LI> (117) fpsepbqar: f-value for  Psep*Bt/qar upper limit (eq. 68)
   !! <LI> (118) fpsep: f-value to ensure separatrix power is less than
@@ -342,13 +342,13 @@ module numerics
   !! <LI> (141) fcqt : TF coil quench temperature < tmax_croco (f-value for equation 74)
   !! <LI> (142) nesep : electron density at separatrix [m-3]
   !! <LI> (143) f_copperA_m2 : TF coil current / copper area < Maximum value
-  !! <LI> (144) fnesep : Eich critical electron density at separatrix 
+  !! <LI> (144) fnesep : Eich critical electron density at separatrix
   !! <LI> (145) fgwped :  fraction of Greenwald density to set as pedestal-top density
   !! <LI> (146) fcpttf : F-value for TF coil current per turn limit (constraint equation 77)
   !! <LI> (147) freinke : F-value for Reinke detachment criterion (constraint equation 78)
   !! <LI> (148) fzactual : fraction of impurity at SOL with Reinke detachment criterion
   !! <LI> (149) fbmaxcs : F-value for max peak CS field (con. 79, itvar 149)
-  !! <LI> (150) plasmod_fcdp : (P_CD - Pheat)/(Pmax-Pheat) 
+  !! <LI> (150) plasmod_fcdp : (P_CD - Pheat)/(Pmax-Pheat)
   !! <LI> (151) plasmod_fradc : Pline_Xe / (Palpha + Paux - PlineAr - Psync - Pbrad)
   !! <LI> (152) fbmaxcs : Ratio of separatrix density to Greenwald density
   !! <LI> (153) fpdivlim : F-value for minimum pdivt (con. 80)
@@ -361,7 +361,7 @@ module numerics
   !! <LI> (160) f_avspace (f-value for equation 83)
   !! <LI> (161) fbetatry_lower (f-value for equation 84)
   !! <LI> (162) r_cp_top : Top outer radius of the centropost (ST only) (m)
-  !! <LI> (163) f_t_turn_tf : f-value for TF coils WP trurn squared dimension constraint 
+  !! <LI> (163) f_t_turn_tf : f-value for TF coils WP trurn squared dimension constraint
   !! <LI> (164) f_crypmw : f-value for cryogenic plant power
   !! <LI> (165) fstr_wp : f-value for TF coil strain absolute value
   !! <LI> (166) EMPTY : Description
@@ -395,7 +395,7 @@ module numerics
 
   ! Issue #287 These bounds now defined in initial.f90
   real(dp), dimension(ipnvars) :: boundu
-  ! !!  boundu(ipnvars) /../ : upper bounds used on ixc variables 
+  ! !!  boundu(ipnvars) /../ : upper bounds used on ixc variables
 
   real(dp), dimension(ipnvars) :: bondl
   real(dp), dimension(ipnvars) :: bondu
@@ -544,7 +544,7 @@ contains
 
     ! Issue #495.  Remove default iteration variables
     ixc = 0
-    
+
     ! WARNING These labels are used as variable names by write_new_in_dat.py, and possibly
     ! other python utilities, so they cannot easily be changed.
     lablxc = ''
@@ -575,7 +575,7 @@ contains
 
 ! eqsolv() has been temporarily commented out. Please see the comment in
 ! function_evaluator.fcnhyb() for an explanation.
-  
+
   ! subroutine eqsolv(fcnhyb,n,x,fvec,tol,epsfcn,factor,nprint,info, &
   !      wa,lwa,resdl,nfev)
 
@@ -665,7 +665,7 @@ contains
   !       integer, intent(inout) :: iflag
   !     end subroutine fcnhyb
   !   end interface
-    
+
   !   !  Arguments
 
   !   external :: fcnhyb
