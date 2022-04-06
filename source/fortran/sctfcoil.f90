@@ -5331,9 +5331,9 @@ subroutine tfspcall(outfile,iprint)
         vtfskv = vdump/1.0D3            !  TFC Quench voltage in kV
     end if
 
-contains
+end subroutine tfspcall
 
-    subroutine supercon(acs,aturn,bmax,fhe,fcu,iop,jwp,isumat,fhts, &
+subroutine supercon(acs,aturn,bmax,fhe,fcu,iop,jwp,isumat,fhts, &
         tdmptf,tfes,thelium,tmax,bcritsc,tcritsc,iprint,outfile, &
         jwdgcrt,vd,tmarg)
 
@@ -5378,6 +5378,23 @@ contains
         !! <P>The routine calculates the critical current density (winding pack)
         !! and also the protection information (for a quench).
         !! NOT used for the Croco conductor
+
+        use rebco_variables, only: copper_area, copper_thick, copperA_m2, &
+        croco_id, croco_od, croco_od, croco_thick, hastelloy_area, &
+        hastelloy_thickness, rebco_area, stack_thickness, tape_thickness, &
+        tape_thickness, tape_width, tapes, rebco_thickness, solder_area
+    use error_handling, only: idiags, fdiags, report_error
+    use process_output, only: ovarre, ocmmnt, oheadr, oblnkl, ovarin
+    use tfcoil_variables, only: tmargmin_tf, n_tf_turn, n_tf, vftf, &
+        temp_margin, jwdgpro, tftmp, vtfskv, acndttf, dhecoil, tmaxpro, &
+        tmargtf, thwcndut, t_conductor, fcutfsu, cpttf, &
+        ritfc, jwptf, bmaxtfrp, acstf, str_tf_con_res, &
+        i_tf_sc_mat, b_crit_upper_nbti, t_crit_nbti, str_wp, i_str_wp
+    use superconductors, only: wstsc, current_sharing_rebco, itersc, jcrit_rebco, &
+        jcrit_nbti, croco, bi2212, GL_nbti, GL_REBCO, HIJC_REBCO
+    use global_variables, only: run_tests
+    use constants, only: pi
+
         implicit none
 
         integer, intent(in) :: isumat, iprint, outfile
@@ -5693,11 +5710,26 @@ contains
         call ovarre(outfile,'Actual current / critical current','(iooic)', iooic, 'OP ')
 
     end subroutine supercon
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    subroutine supercon_croco(aturn,bmax,iop,thelium,     &
-        iprint,outfile, &
-        jwdgcrt,tmarg)
+
+subroutine supercon_croco(aturn,bmax,iop,thelium,     &
+        iprint,outfile, jwdgcrt,tmarg)
+
+        use rebco_variables, only: copper_area, copper_thick, copperA_m2, &
+        croco_id, croco_od, croco_od, croco_thick, hastelloy_area, &
+        hastelloy_thickness, rebco_area, stack_thickness, tape_thickness, &
+        tape_thickness, tape_width, tapes, rebco_thickness, solder_area
+    use error_handling, only: idiags, fdiags, report_error
+    use process_output, only: ovarre, ocmmnt, oheadr, oblnkl, ovarin
+    use tfcoil_variables, only: tmargmin_tf, n_tf_turn, n_tf, vftf, &
+        temp_margin, jwdgpro, tftmp, vtfskv, acndttf, dhecoil, tmaxpro, &
+        tmargtf, thwcndut, t_conductor, fcutfsu, tdmptf, cpttf, &
+        ritfc, jwptf, bmaxtfrp, tcritsc, acstf, str_tf_con_res, fhts, bcritsc, &
+        i_tf_sc_mat, b_crit_upper_nbti, t_crit_nbti, str_wp, i_str_wp
+    use superconductors, only: wstsc, current_sharing_rebco, itersc, jcrit_rebco, &
+        jcrit_nbti, croco, bi2212, GL_nbti, GL_REBCO, HIJC_REBCO
+    use global_variables, only: run_tests
+    use constants, only: pi
 
         !! TF superconducting CroCo conductor using REBCO tape
         !! author: M Kovari, CCFE, Culham Science Centre
@@ -5848,9 +5880,7 @@ contains
     end subroutine supercon_croco
 
 
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    subroutine protect(aio,tfes,acs,aturn,tdump,fcond,fcu,tba,tmax,ajwpro,vd)
+subroutine protect(aio,tfes,acs,aturn,tdump,fcond,fcu,tba,tmax,ajwpro,vd)
 
         !! Finds the current density limited by the protection limit
         !! author: P J Knight, CCFE, Culham Science Centre
@@ -5952,8 +5982,6 @@ contains
         ajwpro = ajcp*(acs/aturn)
 
     end subroutine protect
-
-end subroutine tfspcall
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
