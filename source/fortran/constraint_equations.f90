@@ -282,6 +282,8 @@ contains
         case (87); call constraint_eqn_087(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
          ! Constraint for TF coil strain
         case (88); call constraint_eqn_088(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
+         ! ensure that OH coil current / copper area < Maximum value ONLY used for croco HTS coil
+        case (89); call constraint_eqn_089(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
        case default
 
         idiags(1) = icc(i)
@@ -3328,5 +3330,33 @@ contains
       tmp_symbol = '<'
       tmp_units = ''
    end subroutine constraint_eqn_088
+
+   subroutine constraint_eqn_089(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
+      !! Ensure that the Central Solenoid [OH] coil current / copper area < Maximum value
+      !! author: G Turkington, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value;
+      !! residual error in physical units; output string; units string
+      !! #=# physics
+      !! #=#=# f_copperaoh_m2, copperaoh_m2_max
+      !! and hence also optional here.
+      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
+      !! copperaoh_m2 : input real : CS coil current at EOF / copper area [A/m2]
+      !! copperaoh_m2_max : input real : maximum coil current / copper area [A/m2]
+      !! f_copperaoh_m2 : input real : f-value for CS coil current / copper area
+      use rebco_variables, only: copperaoh_m2, copperaoh_m2_max, f_copperaoh_m2
+      implicit none
+                  real(dp), intent(out) :: tmp_cc
+      real(dp), intent(out) :: tmp_con
+      real(dp), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
+
+      tmp_cc = 1.0d0 - f_copperaoh_m2 * copperaoh_m2_max / copperaoh_m2
+      tmp_con = copperaoh_m2
+      tmp_err = copperaoh_m2 * tmp_cc
+      tmp_symbol = '<'
+      tmp_units = 'A/m2'
+
+   end subroutine constraint_eqn_089
 
 end module constraints

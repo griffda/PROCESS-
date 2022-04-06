@@ -198,6 +198,16 @@ def main(args=None):
     labels["dnla"] = r"$\bar{n}_{\mathrm{e}}$[$m^{-3}$]"
     labels["dnla_gw"] = r"$f_{\mathrm{GW}}$"
     labels["normalised_toroidal_beta"] = r"$\beta_{N,\mathrm{tor}}$"
+    labels["copperaoh_m2"] = r"$\frac{I_{\mathrm{CS}}}{CuA} [$A m$^{-2}$$]$"
+    labels["copperaoh_m2_max"] = r"$max\frac{I_{\mathrm{CS}}}{CuA} [$A m$^{-2}$$]$"
+    labels["coreradius"] = r"$r_{core} [M]$"
+    labels[
+        "fcuohsu"
+    ] = r"$f_{\mathrm{Cu}}^{\mathrm{CS}}$"  # copper fraction of strand in central solenoid
+    labels["coheof"] = r"$J [A M^{-2}]$"
+    labels["ohcth"] = r"$ ohcth [m]$"
+    labels["ohhghf"] = r"$ ohghf [m]$"
+
     # ------------
 
     # nsweep varible dict
@@ -269,6 +279,10 @@ def main(args=None):
     nsweep_dict[58] = "scrapli"
     nsweep_dict[59] = "scraplo"
     nsweep_dict[60] = "sig_tf_wp_max"
+    nsweep_dict[61] = "copperaoh_m2_max"
+    nsweep_dict[62] = "coheof"
+    nsweep_dict[63] = "ohcth"
+    nsweep_dict[64] = "ohhghf"
     # -------------------
 
     # Load PROCESS dicts from JSON files

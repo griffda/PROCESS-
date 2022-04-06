@@ -76,7 +76,7 @@ module pfcoil_variables
   !! Central solenoid overall current density at beginning of pulse (A/m2)
 
   real(dp) :: coheof
-  !! Central solenoid overall current density at end of flat-top (A/m2) (`iteration variable 37`)
+  !! Central solenoid overall current density at end of flat-top (A/m2) (`iteration variable 37`) (`sweep variable 62`)
 
   real(dp), dimension(ngc2,6) :: cpt
   !! current per turn in coil i at time j (A)
