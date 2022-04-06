@@ -22,13 +22,13 @@ implicit none
 ! Module variables
 !-----------------
 
-real(dp), private :: tf_fit_t
+real(dp) :: tf_fit_t
 !! Dimensionless winding pack width
 
-real(dp), private :: tf_fit_z
+real(dp) :: tf_fit_z
 !! Dimensionless winding pack radial thickness
 
-real(dp), private :: tf_fit_y
+real(dp) :: tf_fit_y
 !! Ratio of peak field with ripple to nominal axisymmetric peak field
 
 real(dp) :: tfc_current
@@ -5690,174 +5690,6 @@ subroutine supercon(acs,aturn,bmax,fhe,fcu,iop,jwp,isumat,fhts, &
         call ovarre(outfile,'Actual current / critical current','(iooic)', iooic, 'OP ')
 
     end subroutine supercon
-
-
-subroutine supercon_croco(aturn,bmax,iop,thelium,     &
-        iprint,outfile, jwdgcrt,tmarg)
-
-        use rebco_variables, only: copper_area, copper_thick, copperA_m2, &
-        croco_id, croco_od, croco_od, croco_thick, hastelloy_area, &
-        hastelloy_thickness, rebco_area, stack_thickness, tape_thickness, &
-        tape_thickness, tape_width, tapes, rebco_thickness, solder_area
-    use error_handling, only: idiags, fdiags, report_error
-    use process_output, only: ovarre, ocmmnt, oheadr, oblnkl, ovarin
-    use tfcoil_variables, only: tmargmin_tf, n_tf_turn, n_tf, vftf, &
-        temp_margin, jwdgpro, tftmp, vtfskv, acndttf, dhecoil, tmaxpro, &
-        tmargtf, thwcndut, t_conductor, fcutfsu, tdmptf, cpttf, &
-        ritfc, jwptf, bmaxtfrp, tcritsc, acstf, str_tf_con_res, fhts, bcritsc, &
-        i_tf_sc_mat, b_crit_upper_nbti, t_crit_nbti, str_wp, i_str_wp
-    use superconductors, only: wstsc, current_sharing_rebco, itersc, jcrit_rebco, &
-        jcrit_nbti, croco, bi2212, GL_nbti, GL_REBCO, HIJC_REBCO
-    use global_variables, only: run_tests
-    use constants, only: pi
-
-        !! TF superconducting CroCo conductor using REBCO tape
-        !! author: M Kovari, CCFE, Culham Science Centre
-        !! bmax : input real : Peak field at conductor (T)
-        !! iop : input real : Operating current per turn (A)
-        !! thelium : input real : He temperature at peak field point (K)
-        !! iprint : input integer : Switch for printing (1 = yes, 0 = no)
-        !! outfile : input integer : Fortran output unit identifier
-        !! jwdgcrt : output real : Critical winding pack current density (A/m2)
-        !! tmarg : output real : Temperature margin (K)
-
-        implicit none
-
-        real(dp), intent(in) :: aturn, bmax, iop, thelium
-        integer, intent(in) :: iprint, outfile
-        real(dp), intent(out) :: jwdgcrt, tmarg
-
-        !  Local variables
-        real(dp) :: icrit,iooic, jcritsc,jcritstr,jsc,jwdgop, total
-        real(dp) :: current_sharing_t
-        logical:: validity
-
-        ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        !  Find critical current density in superconducting strand, jcritstr
-        call jcrit_rebco(thelium,bmax,jcritsc,validity,iprint)
-        ! acstf : Cable space - inside area (m2)
-        ! Set new croco_od - allowing for scaling of croco_od
-        croco_od = t_conductor / 3.0d0 - thwcndut * ( 2.0d0 / 3.0d0 )
-        conductor_acs =  9.d0/4.d0 * pi * croco_od**2
-        acstf = conductor_acs
-        conductor_area =  t_conductor**2 ! does this not assume it's a sqaure???
-
-        conductor_jacket_area = conductor_area - conductor_acs
-        acndttf = conductor_jacket_area
-
-        conductor_jacket_fraction = conductor_jacket_area / conductor_area
-        call croco(jcritsc, croco_strand_area, croco_strand_critical_current, &
-            conductor_copper_area, conductor_copper_fraction, conductor_copper_bar_area, &
-            conductor_hastelloy_area, conductor_hastelloy_fraction, conductor_helium_area, &
-            conductor_helium_fraction, conductor_solder_area, conductor_solder_fraction, &
-            conductor_rebco_area, conductor_rebco_fraction, conductor_critical_current, &
-            conductor_area, croco_od,croco_thick)
-        copperA_m2 = iop / conductor_copper_area
-        icrit = conductor_critical_current
-        jcritstr = croco_strand_critical_current / croco_strand_area
-
-        ! Critical current density in winding pack
-        ! aturn : Area per turn (i.e. entire jacketed conductor with insulation) (m2)
-        jwdgcrt = icrit / aturn
-        !  Ratio of operating / critical current
-        iooic = iop / icrit
-        !  Operating current density
-        jwdgop = iop / aturn
-        !  Actual current density in superconductor, which should be equal to jcrit(thelium+tmarg)
-        !  when we have found the desired value of tmarg
-        jsc = iooic * jcritsc
-
-        ! Temperature margin using secant solver
-        call current_sharing_rebco(current_sharing_t, bmax, jsc)
-        tmarg = current_sharing_t - thelium
-        temp_margin = tmarg         ! Only used in the availabilty routine - see comment to Issue #526
-
-        if (iprint == 0) return     ! Output ----------------------------------
-
-        total = conductor_copper_area+conductor_hastelloy_area+conductor_solder_area+ &
-        conductor_jacket_area+conductor_helium_area+conductor_rebco_area
-
-        if (temp_margin <= 0.0D0) then
-            write(*,*)'ERROR: Negative TFC temperature margin'
-            write(*,*)'temp_margin  ', temp_margin, '  bmax   ', bmax
-        endif
-
-        call oheadr(outfile,'Superconducting TF Coils')
-        call ovarin(outfile,'Superconductor switch', '(isumat)',6)
-        call ocmmnt(outfile,'Superconductor used: REBCO HTS tape in CroCo strand')
-
-        call ovarre(outfile,'Thickness of REBCO layer in tape (m)','(rebco_thickness)',rebco_thickness)
-        call ovarre(outfile,'Thickness of copper layer in tape (m)','(copper_thick  )', copper_thick)
-        call ovarre(outfile,'Thickness of Hastelloy layer in tape (m) ','(hastelloy_thickness)', hastelloy_thickness)
-
-        call ovarre(outfile,'Mean width of tape (m)','(tape_width)', tape_width , 'OP ')
-        call ovarre(outfile,'Outer diameter of CroCo copper tube (m) ','(croco_od)', croco_od , 'OP ')
-        call ovarre(outfile,'Inner diameter of CroCo copper tube (m) ','(croco_id)',croco_id , 'OP ')
-        call ovarre(outfile,'Thickness of CroCo copper tube (m) ','(croco_thick)',croco_thick)
-
-        call ovarre(outfile,'Thickness of each HTS tape ','(tape_thickness)',tape_thickness , 'OP ')
-        call ovarre(outfile,'Thickness of stack of tapes (m) ','(stack_thickness)',stack_thickness , 'OP ')
-        call ovarre(outfile,'Number of tapes in strand','(tapes)',tapes , 'OP ')
-        call oblnkl(outfile)
-        call ovarre(outfile,'Area of REBCO in strand (m2)','(rebco_area)',rebco_area , 'OP ')
-        call ovarre(outfile,'Area of copper in strand (m2)','(copper_area)',copper_area , 'OP ')
-        call ovarre(outfile,'Area of hastelloy substrate in strand (m2) ','(hastelloy_area)',hastelloy_area , 'OP ')
-        call ovarre(outfile,'Area of solder in strand (m2)  ','(solder_area)',solder_area , 'OP ')
-        call ovarre(outfile,'Total: area of CroCo strand (m2)  ','(croco_strand_area)',croco_strand_area , 'OP ')
-        if(abs(croco_strand_area-(rebco_area+copper_area+hastelloy_area+solder_area))>1d-6)then
-            call ocmmnt(outfile, "ERROR: Areas in CroCo strand do not add up")
-            write(*,*)'ERROR: Areas in CroCo strand do not add up - see OUT.DAT'
-        endif
-
-        call oblnkl(outfile)
-        call ocmmnt(outfile,'Cable information')
-        call ovarin(outfile,'Number of CroCo strands in the cable (fixed) ','',6 , 'OP ')
-        call ovarre(outfile,'Total area of cable space (m2)','(acstf)',acstf , 'OP ')
-
-        call oblnkl(outfile)
-        call ocmmnt(outfile,'Conductor information (includes jacket, not including insulation)')
-        call ovarre(outfile,'Width of square conductor (cable + steel jacket) (m)', &
-            '(t_conductor)', t_conductor , 'OP ')
-        call ovarre(outfile,'Area of conductor (m2)','(area)', conductor_area , 'OP ')
-        call ovarre(outfile,'REBCO area of conductor (mm2)','(rebco_area)',conductor_rebco_area , 'OP ')
-        call ovarre(outfile,'Area of central copper bar (mm2)', '(copper_bar_area)', conductor_copper_bar_area, 'OP ')
-        call ovarre(outfile,'Total copper area of conductor, total (mm2)','(copper_area)',conductor_copper_area, 'OP ')
-        call ovarre(outfile,'Hastelloy area of conductor (mm2)','(hastelloy_area)',conductor_hastelloy_area, 'OP ')
-        call ovarre(outfile,'Solder area of conductor (mm2)','(solder_area)',conductor_solder_area, 'OP ')
-        call ovarre(outfile,'Jacket area of conductor (mm2)','(jacket_area)',conductor_jacket_area, 'OP ')
-        call ovarre(outfile,'Helium area of conductor (mm2)','(helium_area)',conductor_helium_area, 'OP ')
-        if(abs(total-conductor_area)>1d-8) then
-            call ovarre(outfile, "ERROR: conductor areas do not add up:",'(total)',total , 'OP ')
-        endif
-        call ovarre(outfile,'Critical current of CroCo strand (A)','(croco_strand_critical_current)', &
-        croco_strand_critical_current , 'OP ')
-        call ovarre(outfile,'Critical current of conductor (A) ','(conductor_critical_current)', &
-        conductor_critical_current , 'OP ')
-
-        if (run_tests==1) then
-            call oblnkl(outfile)
-            call ocmmnt(outfile, "PROCESS TF Coil peak field fit. Values for t, z and y:")
-            call oblnkl(outfile)
-            call ovarre(outfile,'Dimensionless winding pack width','(tf_fit_t)', tf_fit_t, 'OP ')
-            call ovarre(outfile,'Dimensionless winding pack radial thickness','(tf_fit_z)', tf_fit_z, 'OP ')
-            call ovarre(outfile,'Ratio of actual peak field to nominal axisymmetric peak field','(tf_fit_y)', tf_fit_y, 'OP ')
-        end if
-
-        call oblnkl(outfile)
-        call ovarre(outfile,'Helium temperature at peak field (= superconductor temperature) (K)','(thelium)',thelium)
-        call ovarre(outfile,'Critical current density in superconductor (A/m2)','(jcritsc)',jcritsc, 'OP ')
-        call ovarre(outfile,'Critical current density in strand (A/m2)','(jcritstr)',jcritstr, 'OP ')
-        call ovarre(outfile,'Critical current density in winding pack (A/m2)', '(jwdgcrt)',jwdgcrt, 'OP ')
-        call ovarre(outfile,'Actual current density in winding pack (A/m2)','(jwdgop)',jwdgop, 'OP ')
-
-        call ovarre(outfile,'Minimum allowed temperature margin in superconductor (K)','(tmargmin_tf)',tmargmin_tf)
-        call ovarre(outfile,'Actual temperature margin in superconductor (K)','(tmarg)',tmarg, 'OP ')
-        call ovarre(outfile,'Current sharing temperature (K)','(current_sharing_t)',current_sharing_t, 'OP ')
-        call ovarre(outfile,'Critical current (A)','(icrit)',icrit, 'OP ')
-        call ovarre(outfile,'Actual current (A)','(cpttf)',cpttf, 'OP ')
-        call ovarre(outfile,'Actual current / critical current','(iooic)', iooic, 'OP ')
-
-    end subroutine supercon_croco
 
 
 subroutine protect(aio,tfes,acs,aturn,tdump,fcond,fcu,tba,tmax,ajwpro,vd)
