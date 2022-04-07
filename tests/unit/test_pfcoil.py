@@ -2058,11 +2058,14 @@ def test_hoop_stress(pfcoil, monkeypatch):
     assert pytest.approx(s_hoop) == s_hoop_exp
 
 
-def test_selfinductance():
+def test_selfinductance(pfcoil):
     """Test selfinductance function.
 
     selfinductance() uses values discovered using gdb to break on the first
     function call when running the baseline 2018 IN.DAT.
+
+    :param pfcoil: PFCoil object
+    :type pfcoil: process.pfcoil.PFCoil
     """
     a = 2.6084100000000001
     b = 16.331562038811658
@@ -2070,12 +2073,16 @@ def test_selfinductance():
     n = 4348.5468837135222
     selfinductance_exp = 2.501393e1
 
-    selfinductance = pf.selfinductance(a, b, c, n)
+    selfinductance = pfcoil.selfinductance(a, b, c, n)
     assert pytest.approx(selfinductance) == selfinductance_exp
 
 
-def test_brookscoil():
-    """Unit test of self-inductance formula."""
+def test_brookscoil(pfcoil):
+    """Unit test of self-inductance formula.
+    
+    :param pfcoil: PFCoil object
+    :type pfcoil: process.pfcoil.PFCoil
+    """
     c = 1.0e0
     a = 1.5e0 * c
     b = c
@@ -2083,7 +2090,7 @@ def test_brookscoil():
 
     l = 0.025491e0 * c * 100.0e0 * N ** 2 * 1.0e-6
     # Self-inductance of 1m Brooks coil: standard formula
-    lp = pf.selfinductance(a, b, c, N)
+    lp = pfcoil.selfinductance(a, b, c, N)
     # Self-inductance of 1m Brooks coil: PROCESS formula
 
     assert (l / lp < 1.05e0) and (l / lp > 0.95e0)

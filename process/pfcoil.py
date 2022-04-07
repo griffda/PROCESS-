@@ -1509,7 +1509,7 @@ class PFCoil:
             a = pfv.rohc  #  mean radius of coil
             b = 2.0e0 * pfv.zh[pfv.nohc - 1]  #  length of coil
             c = pfv.rb[pfv.nohc - 1] - pfv.ra[pfv.nohc - 1]  #  radial winding thickness
-            pfv.sxlg[pfv.nohc - 1, pfv.nohc - 1] = pf.selfinductance(
+            pfv.sxlg[pfv.nohc - 1, pfv.nohc - 1] = self.selfinductance(
                 a, b, c, pfv.turns[pfv.nohc - 1]
             )
 
@@ -2319,3 +2319,29 @@ class PFCoil:
                     circuit_var_name,
                     pfv.cpt[k, jjj] * pfv.turns[k],
                 )
+
+    def selfinductance(self, a, b, c, N):
+        """Calculates the selfinductance using Bunet's formula.
+
+        author: M. Kovari, CCFE
+        This routine calculates the self inductance in Henries
+        Radiotron Designers Handbook (4th Edition) chapter 10
+
+        :param a: mean radius of coil (m)
+        :type a: float
+        :param b: length of coil (m) (given as l in the reference)
+        :type b: float
+        :param c: radial winding thickness (m)
+        :type c: float
+        :param N: number of turns
+        :type N: float
+        :return selfinductance: the self inductance in Henries
+        :rtype: float
+        """
+        selfinductance = (
+            (1.0e-6 / 0.0254e0)
+            * a ** 2
+            * N ** 2
+            / (9.0e0 * a + 10.0e0 * b + 8.4e0 * c + 3.2e0 * c * b / a)
+        )
+        return selfinductance
