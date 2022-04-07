@@ -900,7 +900,7 @@ class Sctfcoil:
         #  (N.B. Unclear of this routine's relevance for Bi-2212 (isumat=2), due
         #  to presence of fcu argument, which is not used for this model above)
 
-        tfcoil_variables.jwdgpro, vd = sctfcoil_module.protect(
+        tfcoil_variables.jwdgpro, vd = self.protect(
             iop, tfes, acs, aturn, tdump, fcond, fcu, thelium, tmax
         )
 
@@ -1249,3 +1249,90 @@ class Sctfcoil:
 
         if output:
             sctfcoil_module.outtf(self.outfile, peaktfflag)
+
+    def protect(self, aio, tfes, acs, aturn, tdump, fcond, fcu, tba, tmax):
+        """Finds the current density limited by the protection limit
+        author: P J Knight, CCFE, Culham Science Centre
+        author: J Miller, ORNL
+        aio : input real : Operating current (A)
+        tfes : input real : Energy stored in one TF coil (J)
+        acs : input real : Cable space - inside area (m2)
+        aturn : input real : Area per turn (i.e.  entire cable) (m2)
+        tdump : input real : Dump time (sec)
+        fcond : input real : Fraction of cable space containing conductor
+        fcu : input real : Fraction of conductor that is copper
+        tba : input real : He temperature at peak field point (K)
+        tmax : input real : Max conductor temperature during quench (K)
+        ajwpro : output real :  Winding pack current density from temperature
+        rise protection (A/m2)
+        vd : output real :  Discharge voltage imposed on a TF coil (V)
+        This routine calculates maximum conductor current density which
+        limits the peak temperature in the winding to a given limit (tmax).
+        It also finds the dump voltage.
+        <P>These calculations are based on Miller's formulations.
+        AEA FUS 251: A User's Guide to the PROCESS Systems Code
+        """
+        # Integration coefficients p1,p2,p3
+        p1 = (
+            0.0e0,
+            0.8e0,
+            1.75e0,
+            2.4e0,
+            2.7e0,
+            2.95e0,
+            3.1e0,
+            3.2e0,
+            3.3e0,
+            3.4e0,
+            3.5e0,
+        )
+        p2 = (
+            0.0e0,
+            0.05e0,
+            0.5e0,
+            1.4e0,
+            2.6e0,
+            3.7e0,
+            4.6e0,
+            5.3e0,
+            5.95e0,
+            6.55e0,
+            7.1e0,
+        )
+        p3 = (
+            0.0e0,
+            0.05e0,
+            0.5e0,
+            1.4e0,
+            2.6e0,
+            3.7e0,
+            4.6e0,
+            5.4e0,
+            6.05e0,
+            6.8e0,
+            7.2e0,
+        )
+
+        #  Dump voltage
+
+        vd = 2.0e0 * tfes / (tdump * aio)
+
+        #  Current density limited by temperature rise during quench
+
+        tav = 1.0e0 + (tmax - tba) / 20.0e0
+        no = int(tav)
+        np = no + 1
+        np = min(np, 11)
+
+        ai1 = 1.0e16 * (p1[no - 1] + (p1[np - 1] - p1[no - 1]) * (tav - no))
+        ai2 = 1.0e16 * (p2[no - 1] + (p2[np - 1] - p2[no - 1]) * (tav - no))
+        ai3 = 1.0e16 * (p3[no - 1] + (p3[np - 1] - p3[no - 1]) * (tav - no))
+
+        aa = vd * aio / tfes
+        bb = (1.0e0 - fcond) * fcond * fcu * ai1
+        cc = (fcu * fcond) ** 2 * ai2
+        dd = (1.0e0 - fcu) * fcu * fcond ** 2 * ai3
+        ajcp = numpy.sqrt(aa * (bb + cc + dd))
+        ajwpro = ajcp * (acs / aturn)
+
+        return ajwpro, vd

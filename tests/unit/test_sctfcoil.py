@@ -60,7 +60,7 @@ class ProtectParam(NamedTuple):
         ),
     ),
 )
-def test_protect(protectparam, monkeypatch):
+def test_protect(protectparam, sctfcoil):
     """
     Automatically generated Regression Unit Test for protect.
 
@@ -69,11 +69,11 @@ def test_protect(protectparam, monkeypatch):
     :param protectparam: the data used to mock and assert in this test.
     :type protectparam: protectparam
 
-    :param monkeypatch: pytest fixture used to mock module/class variables
-    :type monkeypatch: _pytest.monkeypatch.monkeypatch
+    :param sctfcoil: initialised Sctfcoil object
+    :type sctfcoil: process.sctfcoil.Sctfcoil
     """
 
-    ajwpro, vd = sctfcoil_module.protect(
+    ajwpro, vd = sctfcoil.protect(
         aio=protectparam.aio,
         tfes=protectparam.tfes,
         acs=protectparam.acs,
