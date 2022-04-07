@@ -12,6 +12,7 @@ from process.fortran import cs_fatigue_variables as csfv
 from process.fortran import maths_library as ml
 from process.fortran import process_output as op
 from process.fortran import numerics
+from process.utilities.f2py_string_patch import f2py_compatible_to_string
 from process import fortran as ft
 import math
 import numpy as np
@@ -39,7 +40,7 @@ class PFCoil:
     def output(self):
         """Output results to output file."""
         self.outpf()
-        ft.pfcoil_module.outvolt(self.outfile)
+        self.outvolt()
 
     def output_induct(self):
         """Output poloidal field coil inductance calculation."""
@@ -1196,13 +1197,13 @@ class PFCoil:
         """
         if bv.iohcl == 0:
             #  No Central Solenoid
-            nef = pfv.ncirt - 1
+            pf.nef = pfv.ncirt - 1
         else:
-            nef = pfv.ncirt - 2
+            pf.nef = pfv.ncirt - 2
 
         pfv.vsefsu = 0.0e0
 
-        for i in range(nef):
+        for i in range(pf.nef):
             pf.vsdum[i, 0] = pfv.sxlg[pfv.ncirt - 1, i] * pfv.cpt[i, 1]
             pf.vsdum[i, 1] = pfv.sxlg[pfv.ncirt - 1, i] * pfv.cpt[i, 2]
             pfv.vsefsu = pfv.vsefsu + (pf.vsdum[i, 1] - pf.vsdum[i, 0])
@@ -1229,7 +1230,7 @@ class PFCoil:
 
         #  PF volt-seconds during burn
         pfv.vsefbn = 0.0e0
-        for i in range(nef):
+        for i in range(pf.nef):
             pf.vsdum[i, 2] = pfv.sxlg[pfv.ncirt - 1, i] * pfv.cpt[i, 4]
             pfv.vsefbn = pfv.vsefbn + (pf.vsdum[i, 2] - pf.vsdum[i, 1])
 
@@ -1539,13 +1540,13 @@ class PFCoil:
 
         #  PF coil - PF coil inductances
         if bv.iohcl == 0:
-            nef = pfv.nohc
+            pf.nef = pfv.nohc
         else:
-            nef = pfv.nohc - 1
+            pf.nef = pfv.nohc - 1
 
-        nc = nef - 1
-        for i in range(nef):
-            for j in range(nef - 1):
+        nc = pf.nef - 1
+        for i in range(pf.nef):
+            for j in range(pf.nef - 1):
                 if j >= i:
                     jj = j + 1 + 1
                 else:
@@ -1557,7 +1558,7 @@ class PFCoil:
             rp = pfv.rpf[i]
             zp = pfv.zpf[i]
             xc, br, bz, psi = pf.bfield(rc, zc, cc, rp, zp)
-            for k in range(nef):
+            for k in range(pf.nef):
                 if k < i:
                     pfv.sxlg[i, k] = xc[k] * pfv.turns[k] * pfv.turns[i]
                 elif k == i:
@@ -1580,7 +1581,7 @@ class PFCoil:
         op.oblnkl(self.outfile)
 
         with np.printoptions(precision=1):
-            for ig in range(nef):
+            for ig in range(pf.nef):
                 op.write(self.outfile, f"{ig}\t\t\t{pfv.sxlg[:pfv.ncirt,ig]}")
 
             if bv.iohcl != 0:
@@ -1991,10 +1992,10 @@ class PFCoil:
                     "OP ",
                 )
 
-        #  nef is the number of coils excluding the Central Solenoid
-        nef = pfv.nohc
+        #  pf.nef is the number of coils excluding the Central Solenoid
+        pf.nef = pfv.nohc
         if bv.iohcl != 0:
-            nef = nef - 1
+            pf.nef = pf.nef - 1
 
         op.osubhd(self.outfile, "Geometry of PF coils, central solenoid and plasma:")
         op.write(
@@ -2004,13 +2005,13 @@ class PFCoil:
         op.oblnkl(self.outfile)
 
         # PF coils
-        for k in range(nef):
+        for k in range(pf.nef):
             op.write(
                 self.outfile,
                 f"PF {k}\t\t\t{pfv.rpf[k]:.2e}\t{pfv.zpf[k]:.2e}\t{pfv.rb[k]-pfv.ra[k]:.2e}\t{abs(pfv.zh[k]-pfv.zl[k]):.2e}\t{pfv.turns[k]:.2e}\t{pfv.pfcaseth[k]:.2e}",
             )
 
-        for k in range(nef):
+        for k in range(pf.nef):
             op.ovarre(
                 self.mfile,
                 f"PF coil {k} radius (m)",
@@ -2120,7 +2121,7 @@ class PFCoil:
         op.oblnkl(self.outfile)
 
         # PF coils
-        for k in range(nef):
+        for k in range(pf.nef):
             if pfv.ipfres == 0:
                 op.write(
                     self.outfile,
@@ -2165,3 +2166,156 @@ class PFCoil:
             self.outfile, "Sum of squares of residuals ", "(pf.ssq0)", pf.ssq0, "OP "
         )
         op.ovarre(self.outfile, "Smoothing parameter ", "(pfv.alfapf)", pfv.alfapf)
+
+    def outvolt(self):
+        """Writes volt-second information to output file.
+
+        author: P J Knight, CCFE, Culham Science Centre
+        author: R Kemp, CCFE, Culham Science Centre
+        This routine writes the PF coil volt-second data to the
+        output file.
+        """
+        op.oheadr(self.outfile, "Volt Second Consumption")
+
+        op.write(self.outfile, "\t" * 4 + "volt-sec\t\t\tvolt-sec\t\tvolt-sec")
+        op.write(self.outfile, "\t" * 4 + "start-up\t\t\tburn\t\t\ttotal")
+        op.write(
+            self.outfile,
+            f"PF coils:\t\t{pfv.vsefsu:.2f}\t\t\t\t{pfv.vsefbn:.2f}\t\t\t{pfv.vseft:.2f}",
+        )
+        op.write(
+            self.outfile,
+            f"CS coil:\t\t{pfv.vsohsu:.2f}\t\t\t\t{pfv.vsohbn:.2f}\t\t\t{pfv.vsoh:.2f}",
+        )
+        op.write(
+            self.outfile, "\t" * 4 + "-" * 7 + "\t" * 4 + "-" * 7 + "\t" * 3 + "-" * 7
+        )
+        op.write(
+            self.outfile,
+            f"Total:\t\t\t{pfv.vssu:.2f}\t\t\t\t{pfv.vsbn:.2f}\t\t\t{pfv.vstot:.2f}",
+        )
+
+        op.oblnkl(self.outfile)
+        op.ovarre(
+            self.outfile,
+            "Total volt-second consumption by coils (Wb)",
+            "(pfv.vstot)",
+            f"{pfv.vstot:.2}",
+            "OP",
+        )
+
+        op.osubhd(self.outfile, "Summary of volt-second consumption by circuit (Wb):")
+
+        op.write(self.outfile, "circuit\t\tBOP\t\t\t\tBOF\t\t\t\tEOF")
+        op.oblnkl(self.outfile)
+
+        for k in range(pf.nef):
+            op.write(
+                self.outfile,
+                f"\t{k}\t\t\t{pf.vsdum[k,0]:.3f}\t\t\t{pf.vsdum[k,1]:.3f}\t\t{pf.vsdum[k,2]:.3f}",
+            )
+
+        op.write(
+            self.outfile,
+            f"CS coil\t\t{pf.vsdum[pfv.nohc-1,0]:.3f}\t\t\t{pf.vsdum[pfv.nohc-1,1]:.3f}\t\t{pf.vsdum[pfv.nohc-1,2]:.3f}",
+        )
+
+        op.oshead(self.outfile, "Waveforms")
+        op.ocmmnt(self.outfile, "Currents (Amps/coil) as a function of time:")
+        op.oblnkl(self.outfile)
+
+        op.write(self.outfile, "\t" * 12 + "time (sec)")
+        line = "\t"
+        for k in range(6):
+            line += f"\t\t\t{tv.tim[k]:.2f}"
+        op.write(self.outfile, line)
+
+        line = ""
+        for k in range(6):
+            label = f2py_compatible_to_string(tv.timelabel[k])
+            line += f"\t\t\t\t\t{label}"
+        op.write(self.outfile, line)
+
+        op.ocmmnt(self.outfile, "circuit")
+
+        for k in range(pfv.ncirt - 1):
+            line = f"\t{k}\t\t"
+            for jj in range(6):
+                line += f"\t{pfv.cpt[k,jj]*pfv.turns[k]:.3e}"
+            op.write(self.outfile, line)
+
+        line = "Plasma (A)"
+        for jj in range(6):
+            line += f"\t{pfv.cpt[pfv.ncirt-1,jj]:.3e}"
+
+        op.write(self.outfile, line)
+
+        op.oblnkl(self.outfile)
+        op.ocmmnt(self.outfile, "This consists of: CS coil field balancing:")
+        for k in range(pfv.ncirt - 1):
+            op.write(
+                self.outfile,
+                (
+                    f"{k}\t\t\t{pfv.cpt[k,0]*pfv.turns[k]:.3e}\t"
+                    f"{pfv.cpt[k,1]*pfv.turns[k]:.3e}\t"
+                    f"{-pfv.cpt[k,1]*pfv.turns[k]*(pfv.fcohbof/pfv.fcohbop):.3e}\t"
+                    f"{-pfv.cpt[k,1]*pfv.turns[k]*(pfv.fcohbof/pfv.fcohbop):.3e}\t"
+                    f"{-pfv.cpt[k,1]*pfv.turns[k]*(1.0e0/pfv.fcohbop):.3e}\t"
+                    f"{pfv.cpt[k,5]*pfv.turns[k]:.3e}"
+                ),
+            )
+
+        op.oblnkl(self.outfile)
+        op.ocmmnt(self.outfile, "And: equilibrium field:")
+        for k in range(pfv.ncirt - 1):
+            op.write(
+                self.outfile,
+                (
+                    f"{k}\t\t\t{0.0:.3e}\t{0.0:.3e}\t"
+                    f"{pfv.cpt[k,2]+pfv.cpt[k,1]*(pfv.fcohbof/pfv.fcohbop)*pfv.turns[k]:.3e}\t"
+                    f"{pfv.cpt[k,3]+pfv.cpt[k,1]*pfv.fcohbof/pfv.fcohbop*pfv.turns[k]:.3e}\t"
+                    f"{pfv.cpt[k,4]+pfv.cpt[k,1]*(1.0e0/pfv.fcohbop)*pfv.turns[k]:.3e}\t"
+                    "0.0e0"
+                ),
+            )
+
+        op.oblnkl(self.outfile)
+        op.ovarre(
+            self.outfile,
+            "Ratio of central solenoid current at beginning of Pulse / end of flat-top",
+            "(pfv.fcohbop)",
+            pfv.fcohbop,
+        )
+        op.ovarre(
+            self.outfile,
+            "Ratio of central solenoid current at beginning of Flat-top / end of flat-top",
+            "(pfv.fcohbof)",
+            pfv.fcohbof,
+            "OP ",
+        )
+
+        op.oshead(self.outfile, "PF Circuit Waveform Data")
+        op.ovarin(
+            self.outfile,
+            "Number of PF circuits including CS and plasma",
+            "(pfv.ncirt)",
+            pfv.ncirt,
+        )
+        for k in range(pfv.ncirt):
+            for jjj in range(6):
+                if k == pfv.ncirt - 1:
+                    circuit_name = f"Plasma Time point {jjj} (A)"
+                    circuit_var_name = f"(plasmat{jjj})"
+                elif k == pfv.ncirt - 2:
+                    circuit_name = f"CS Circuit Time point {jjj} (A)"
+                    circuit_var_name = f"(cs t{jjj})"
+                else:
+                    circuit_name = f"PF Circuit {k} Time point {jjj} (A)"
+                    circuit_var_name = f"(pfc{k}t{jjj})"
+
+                op.ovarre(
+                    self.outfile,
+                    circuit_name,
+                    circuit_var_name,
+                    pfv.cpt[k, jjj] * pfv.turns[k],
+                )

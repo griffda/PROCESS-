@@ -42,10 +42,10 @@ module times_variables
   real(dp), dimension(6) :: tim
   !! array of time points during plasma pulse (s)
 
-  character(len=11), dimension(6) :: timelabel
+  character*11, dimension(6) :: timelabel
   !! array of time labels during plasma pulse (s)
 
-  character(len=11), dimension(5) :: intervallabel
+  character*11, dimension(5) :: intervallabel
   !! time intervals - as strings (s)
 
   real(dp) :: tohs
