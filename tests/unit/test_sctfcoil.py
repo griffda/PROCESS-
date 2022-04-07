@@ -4,6 +4,17 @@ from typing import NamedTuple, Any
 from process.fortran import sctfcoil_module
 from process.fortran import tfcoil_variables
 from process.fortran import global_variables
+from process.sctfcoil import Sctfcoil
+
+
+@pytest.fixture
+def sctfcoil():
+    """Provides Sctfcoil object for testing.
+
+    :returns: initialised Sctfcoil object
+    :rtype: process.sctfcoil.Sctfcoil
+    """
+    return Sctfcoil()
 
 
 class ProtectParam(NamedTuple):
@@ -283,7 +294,7 @@ class SuperconParam(NamedTuple):
         ),
     ),
 )
-def test_supercon(superconparam, monkeypatch):
+def test_supercon(superconparam, monkeypatch, sctfcoil):
     """
     Automatically generated Regression Unit Test for supercon.
 
@@ -294,6 +305,9 @@ def test_supercon(superconparam, monkeypatch):
 
     :param monkeypatch: pytest fixture used to mock module/class variables
     :type monkeypatch: _pytest.monkeypatch.monkeypatch
+
+    :param sctfcoil: initialised Sctfcoil object
+    :type sctfcoil: process.sctfcoil.Sctfcoil
     """
 
     monkeypatch.setattr(tfcoil_variables, "tmargmin_tf", superconparam.tmargmin_tf)
@@ -332,10 +346,8 @@ def test_supercon(superconparam, monkeypatch):
 
     monkeypatch.setattr(global_variables, "run_tests", superconparam.run_tests)
 
-    jwdgcrt, vd, tmarg = sctfcoil_module.supercon(
+    jwdgcrt, vd, tmarg = sctfcoil.supercon(
         isumat=superconparam.isumat,
-        iprint=superconparam.iprint,
-        outfile=superconparam.outfile,
         acs=superconparam.acs,
         aturn=superconparam.aturn,
         bmax=superconparam.bmax,
@@ -350,6 +362,7 @@ def test_supercon(superconparam, monkeypatch):
         tmax=superconparam.tmax,
         bcritsc=superconparam.bcritsc,
         tcritsc=superconparam.tcritsc,
+        output=False,
     )
 
     assert tfcoil_variables.temp_margin == pytest.approx(

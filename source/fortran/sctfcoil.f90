@@ -5359,18 +5359,12 @@ subroutine supercon(acs,aturn,bmax,fhe,fcu,iop,jwp,isumat,fhts, &
         !! and also the protection information (for a quench).
         !! NOT used for the Croco conductor
 
-        use rebco_variables, only: copper_area, copper_thick, copperA_m2, &
-        croco_id, croco_od, croco_od, croco_thick, hastelloy_area, &
-        hastelloy_thickness, rebco_area, stack_thickness, tape_thickness, &
-        tape_thickness, tape_width, tapes, rebco_thickness, solder_area
     use error_handling, only: idiags, fdiags, report_error
     use process_output, only: ovarre, ocmmnt, oheadr, oblnkl, ovarin
-    use tfcoil_variables, only: tmargmin_tf, n_tf_turn, n_tf, vftf, &
-        temp_margin, jwdgpro, tftmp, vtfskv, acndttf, dhecoil, tmaxpro, &
-        tmargtf, thwcndut, t_conductor, cpttf, &
-        ritfc, jwptf, bmaxtfrp, acstf, str_tf_con_res, &
-        i_tf_sc_mat, b_crit_upper_nbti, t_crit_nbti, str_wp, i_str_wp
-    use superconductors, only: wstsc, current_sharing_rebco, itersc, jcrit_rebco, &
+    use tfcoil_variables, only: tmargmin_tf, n_tf, &
+        temp_margin, jwdgpro, dhecoil, cpttf, &
+        bmaxtfrp, str_tf_con_res, b_crit_upper_nbti, i_str_wp, str_wp, t_crit_nbti
+    use superconductors, only: wstsc, itersc, &
         jcrit_nbti, croco, bi2212, GL_nbti, GL_REBCO, HIJC_REBCO
     use global_variables, only: run_tests
     use constants, only: pi
@@ -5608,6 +5602,8 @@ subroutine supercon(acs,aturn,bmax,fhe,fcu,iop,jwp,isumat,fhts, &
         !  to presence of fcu argument, which is not used for this model above)
 
         call protect(iop,tfes,acs,aturn,tdump,fcond,fcu,thelium,tmax,jwdgpro,vd)
+
+        !!! end break
 
 
         if (iprint == 0) return       ! Output --------------------------
