@@ -3,7 +3,6 @@ from process.fortran import costs_module as cm
 from process.fortran import cost_variables as cv
 from process.fortran import fwbs_variables as fv
 from process.fortran import heat_transport_variables as htv
-from process.fortran import ife_variables as ifev
 from process import fortran
 import pytest
 from pytest import approx

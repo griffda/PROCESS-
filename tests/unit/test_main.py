@@ -1,14 +1,10 @@
 """Unit tests for the main.py module."""
-import numpy as np
 from process import main
 from process.main import Process
 from process.main import SingleRun
 from process.main import VaryRun
 from process import fortran
-from process import scan
-from process import final
 from process.utilities.f2py_string_patch import (
-    string_to_f2py_compatible,
     f2py_compatible_to_string,
 )
 import pytest

@@ -12,7 +12,6 @@
 """
 
 import math
-import random
 import scipy as sp
 import numpy as np
 
@@ -810,8 +809,8 @@ def plot_geometry_info(axis, mfile_data, scan):
         ("rmajor", "$R_0$", "m"),
         ("rminor", "a", "m"),
         ("aspect", "A", ""),
-        ("kappa95", "$\kappa_{95}$", ""),
-        ("triang95", "$\delta_{95}$", ""),
+        ("kappa95", r"$\kappa_{95}$", ""),
+        ("triang95", r"$\delta_{95}$", ""),
         ("sarea", "Surface area", "m$^2$"),
         ("vol", "Plasma volume", "m$^3$"),
         ("n_tf", "No. of TF coils", ""),
@@ -942,7 +941,7 @@ def plot_magnetics_info(axis, mfile_data, scan):
         ("", "", ""),
         ("#TF coil type is {}".format(tftype), "", ""),
         ("bmaxtf", "Peak field at conductor", "T"),
-        ("iooic", "I/I$_{\mathrm{crit}}$", ""),
+        ("iooic", r"I/I$_{\mathrm{crit}}$", ""),
         ("tmarg", "Temperature margin", "K"),
         ("sig_tf_case", "TF case maximum shear stress (Tresca criterion)", "Pa"),
         ("sig_tf_wp", "TF conduit maximum shear stress (Tresca criterion)", "Pa"),
@@ -958,9 +957,9 @@ def plot_magnetics_info(axis, mfile_data, scan):
         ),
         ("", "", ""),
         ("#Costs", "", ""),
-        ("coe", "Cost of electricity", "\$MWh"),
-        ("concost", "Constructed cost", "M\$"),
-        ("capcost", "Total capex", "M\$"),
+        ("coe", "Cost of electricity", r"\$MWh"),
+        ("concost", "Constructed cost", r"M\$"),
+        ("capcost", "Total capex", r"M\$"),
     ]
 
     plot_info(axis, data, mfile_data, scan)
@@ -1029,7 +1028,7 @@ def plot_power_info(axis, mfile_data, scan):
         ("pnucblkt", "Nuclear heating in blanket", "MW"),
         ("pnucshld", "Nuclear heating in shield", "MW"),
         ("pdivt", "Psep / Pdiv", "MW"),
-        (pthresh, "H-mode threshold (M=2.5)", "$\pm${:.3f} MW".format(err)),
+        (pthresh, "H-mode threshold (M=2.5)", r"$\pm${:.3f} MW".format(err)),
         ("fwbllife", "FW/Blanket life", "years"),
         ("divlife", "Divertor life", "years"),
         ("pthermmw", "Thermal Power", "MW"),

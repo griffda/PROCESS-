@@ -18,10 +18,8 @@ morris_output.pdf     -  scatter plot of mean and variance of
 
 import argparse
 import numpy as np
-import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.backends.backend_pdf as bpdf
-from matplotlib import rc
 
 if __name__ == "__main__":
 
@@ -64,8 +62,8 @@ if __name__ == "__main__":
     for i, txt in enumerate(n):
         plt.annotate(txt, (z[i], y[i]), fontsize=16)
 
-    plt.ylabel("$\sigma$", fontsize=22)
-    plt.xlabel("$\mu^{*}$", fontsize=22)
+    plt.ylabel(r"$\sigma$", fontsize=22)
+    plt.xlabel(r"$\mu^{*}$", fontsize=22)
     plt.tick_params(labelsize=20)
 
     pdf.savefig(page)

@@ -11,7 +11,8 @@ import pathlib
 import importlib.util
 import sys
 from typing import Any, List, NamedTuple
-
+from process.main import Models
+from process.variables import AnnotatedVariable
 
 # the directory which this script resides (scripts/)
 CURRENT_DIR = pathlib.Path(__file__).resolve().parent
@@ -37,8 +38,6 @@ process_spec.loader.exec_module(process_module)
 
 # now that "process" is temporarily available to import
 # as a package (despite being a directory) we can install what we need
-from process.main import Models
-from process.variables import AnnotatedVariable
 
 
 class AnnotatedVariableData(NamedTuple):

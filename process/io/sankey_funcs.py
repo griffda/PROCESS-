@@ -92,30 +92,9 @@ def plot_full_sankey(
     # porbitloss = m_file.data['porbitloss'].get_scan(-1) # Charged P. on FW before thermalising
     # nbshinemw = m_file.data['nbshinemw'].get_scan(-1) # Injection shine-through to 1st wall
 
-    # Used in [BLANKET]
-    pthermblkt = (
-        pthermfw_blkt - htpmwfw - pnucfw - pradfw - palpfwmw
-    )  # Power extracted blanket (MW)
-
-    # Used in [SHIELD]
-    htpmw_shld = m_file.data["htpmw_shld"].get_scan(-1)  # Coolant pumping power (MW)
-    pthermshld = m_file.data["pthermshld"].get_scan(-1)  # Total power from shield (MW)
-
-    # Used in [HEAT]
-    pthermmw = m_file.data["pthermmw"].get_scan(-1)  # Total thermal power (MW)
-
-    # Used in [GROSS]
-    etath = m_file.data["etath"].get_scan(-1)  # Thermal to electricity conversion (MW)
-    pelectloss = pthermmw * (1 - etath)  # Power lost in electricity conversion (MW)
-    pgrossmw = m_file.data["pgrossmw"].get_scan(-1)  # Gross electricity (MW)
-
-    # Used in [HCD]
-    pinjht = m_file.data["pinjht"].get_scan(-1)  # Power dissipated in HCD system (MW)
-
     # Initialising x and y variables for adjusting 'Plasma Heating' branch tip location
-    x_adj_1, y_adj_1 = 0, 0
-    x_adj_2, y_adj_2 = 0, 0
-    x_adj_3, y_adj_3 = 0, 0
+    y_adj_1 = 0
+    y_adj_2 = 0
 
     # Loop 1 to get 'Plasma Heating' branch tip coords; loop 2 to match 'PLASMA' branch
     for _ in range(2):
@@ -401,7 +380,6 @@ def plot_full_sankey(
                    pathlengths=[0.25, 0.25, 0.25],
                    labels=['H&CD power', None, 'H&CD loss'])"""
 
-        diagrams = sankey.finish()
         fig.tight_layout()
 
         if _ == 0:

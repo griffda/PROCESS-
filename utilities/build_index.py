@@ -116,7 +116,7 @@ if __name__ == "__main__":
 
     ############################################################
 
-    if ARGS.suffix != None:
+    if ARGS.suffix is not None:
         SUFFIXLIST = create_suffixlist(ARGS.suffix)
         SUFFIXLIST = erase_duplicates_from_list(SUFFIXLIST)
 

@@ -153,74 +153,47 @@ def populate_ctf_ellipse_data(shape_objs, mf_data):
     )
 
     # Upper shield mid-section
-    vertical_thickness_shield_u = t_shield_o
     horizontal_thickness_shield_u = r_c - (t_tf + t_shield_i + t_fw_i)
     z_upper_shield_u = h_plasma + t_scrape_o + t_fw_o + t_blanket_o + t_shield_o
-    z_lower_shield_u = h_plasma + t_scrape_o + t_fw_o + t_blanket_o
-    r_inner_shield_u = t_tf + t_shield_i + t_fw_i
     r_outer_shield_u = t_tf + t_shield_i + t_fw_i + horizontal_thickness_shield_u
     shape_objs["p1"] = ProcessPlane(r_outer_shield_u, z_upper_shield_u)
 
     # Upper blanket mid-section
-    vertical_thickness_blanket_u = t_blanket_o
-    horizontal_thickness_blanket_u = r_c - (t_tf + t_shield_i + t_fw_i)
     z_upper_blanket_u = h_plasma + t_scrape_o + t_fw_o + t_blanket_o
-    z_lower_blanket_u = h_plasma + t_scrape_o + t_fw_o
-    r_inner_blanket_u = t_tf + t_shield_i + t_fw_i
     r_outer_blanket_u = t_tf + t_shield_i + t_fw_i + horizontal_thickness_shield_u
     shape_objs["p2"] = ProcessPlane(r_outer_blanket_u, z_upper_blanket_u)
 
     # Upper first wall mid-section
-    vertical_thickness_fw_u = t_fw_o
-    horizontal_thickness_fw_u = r_c - (t_tf + t_shield_i + t_fw_i)
     z_upper_fw_u = h_plasma + t_scrape_o + t_fw_o
     z_lower_fw_u = h_plasma + t_scrape_o
-    r_inner_fw_u = t_tf + t_shield_i + t_fw_i
     r_outer_fw_u = t_tf + t_shield_i + t_fw_i + horizontal_thickness_shield_u
     shape_objs["p3"] = ProcessPlane(r_outer_fw_u, z_upper_fw_u)
 
     # Upper first wall mid-section lower edge
-    vertical_thickness_fw_u = t_fw_o
-    horizontal_thickness_fw_u = r_c - (t_tf + t_shield_i + t_fw_i)
     z_upper_fw_u = h_plasma + t_scrape_o + t_fw_o
     z_lower_fw_u = h_plasma + t_scrape_o
-    r_inner_fw_u = t_tf + t_shield_i + t_fw_i
     r_outer_fw_u = t_tf + t_shield_i + t_fw_i + horizontal_thickness_shield_u
     shape_objs["p4"] = ProcessPlane(r_outer_fw_u, z_lower_fw_u)
 
     # Lower first wall mid-section
-    vertical_thickness_fw_l = t_fw_o
-    horizontal_thickness_fw_l = r_c - (t_tf + t_shield_i + t_fw_i)
     z_upper_fw_l = -h_plasma - t_scrape_o
     z_lower_fw_l = -h_plasma - t_scrape_o - t_fw_o
-    r_inner_fw_l = t_tf + t_shield_i + t_fw_i
     r_outer_fw_l = t_tf + t_shield_i + t_fw_i + horizontal_thickness_shield_u
     shape_objs["p4"] = ProcessPlane(r_outer_fw_l, z_upper_fw_l)
 
     # Lower first wall mid-section
-    vertical_thickness_fw_l = t_fw_o
-    horizontal_thickness_fw_l = r_c - (t_tf + t_shield_i + t_fw_i)
     z_upper_fw_l = -h_plasma - t_scrape_o
     z_lower_fw_l = -h_plasma - t_scrape_o - t_fw_o
-    r_inner_fw_l = t_tf + t_shield_i + t_fw_i
     r_outer_fw_l = t_tf + t_shield_i + t_fw_i + horizontal_thickness_shield_u
     shape_objs["p5"] = ProcessPlane(r_outer_fw_l, z_lower_fw_l)
 
     # Lower blanket mid-section
-    vertical_thickness_fw_l = t_blanket_o
-    horizontal_thickness_fw_l = r_c - (t_tf + t_shield_i + t_fw_i)
-    z_upper_blanket_l = -h_plasma - t_scrape_o - t_fw_o
     z_lower_blanket_l = -h_plasma - t_scrape_o - t_fw_o - t_blanket_o
-    r_inner_blanket_l = t_tf + t_shield_i + t_fw_i
     r_outer_blanket_l = t_tf + t_shield_i + t_fw_i + horizontal_thickness_shield_u
     shape_objs["p6"] = ProcessPlane(r_outer_blanket_l, z_lower_blanket_l)
 
     # Lower shield mid-section
-    vertical_thickness_fw_l = t_shield_o
-    horizontal_thickness_fw_l = r_c - (t_tf + t_shield_i + t_fw_i)
-    z_upper_shield_l = -h_plasma - t_scrape_o - t_fw_o - t_blanket_o
     z_lower_shield_l = -h_plasma - t_scrape_o - t_fw_o - t_blanket_o - t_shield_o
-    r_inner_shield_l = t_tf + t_shield_i + t_fw_i
     r_outer_shield_l = t_tf + t_shield_i + t_fw_i + horizontal_thickness_shield_u
     shape_objs["p7"] = ProcessPlane(r_outer_shield_l, z_lower_shield_l)
 
@@ -424,7 +397,6 @@ def populate_tok_ellipse_data(shape_objs, mf_data):
 def write_shapes_to_file(shape_data, filename):
     """Function to write the ellipse data to a MCNP file."""
     output_file = open(filename, "w")
-    n = len(shape_data)
     output_file.write("TZ x y z a b c\n")
     for shape in shape_data:
         if "e" in shape:

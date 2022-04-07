@@ -130,7 +130,6 @@ def check_empty(key):
     """
     Check not an empty section
     """
-    title = key
     con_mods = DATA["projects"][key]["icc_modules"]
     mod_names = DATA["projects"][key]["in_dat_modules"]
     tot_count = 0
@@ -167,7 +166,6 @@ def check_empty(key):
 
     for item in MFILE_LIST:
         if item in MODULE_VAR_LIST:
-            item_value = MFILE.data[item].get_scan(-1)
             if item not in INPUTS_LIST:
                 tot_count += 1
                 out_count += 1
@@ -263,7 +261,6 @@ def output_constraints(k):
     """
 
     con_mods = DATA["projects"][k]["icc_modules"]
-    mod_names = DATA["projects"][k]["mfile_sections"]
     MODULE_ICC_LIST = sum(
         [MODULES[key] for key in MODULES.keys() if key in con_mods], []
     )
@@ -688,7 +685,7 @@ def output_diagrams():
     heading(1, "Diagrams")
     try:
         output_png("alt text", "process_diagram.png", "PROCESS output diagrams")
-    except:
+    except Exception:
         pass
 
 

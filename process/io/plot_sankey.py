@@ -10,12 +10,11 @@ MFILE.DAT
 
 """
 import matplotlib
-
-matplotlib.use("Agg")
-
 import argparse
 from pylab import show, savefig
 from process.io.sankey_funcs import plot_full_sankey, plot_sankey
+
+matplotlib.use("Agg")
 
 
 def main(args=None):

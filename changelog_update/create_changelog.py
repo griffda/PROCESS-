@@ -3,11 +3,8 @@ import jinja2
 from pathlib import Path
 from subprocess import run
 
-from changelog_update.changelog_upversion import CURRENTDIR
-
-
 CURRENTDIR = Path(__file__).resolve().parent
-# Defining the currentdir such that the script is always execcuted within the correct 'ChangeLog_Update' directory and
+# Defining the currentdir such that the script is always executed within the correct 'ChangeLog_Update' directory and
 # that the YAML files are output here.
 
 
@@ -24,7 +21,7 @@ if __name__ == "__main__":
     git_branch_name = branch_name.stdout.decode()
     git_branch_no = branch_name.stdout.decode().split("-")[0]
 
-    if git_branch_no.isdigit() == True:
+    if git_branch_no.isdigit() is True:
         git_branch_no == git_branch_no
     else:
         git_branch_no == git_branch_name

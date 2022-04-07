@@ -14,6 +14,8 @@ List of MFILE.DATs
 
 import argparse
 from matplotlib import rc
+from pylab import figure, xlabel, ylabel, plot, show, savefig
+import process.io.mfile as mf
 
 rc("font", size=25)
 rc("lines", lw=1.5)  # is overwritten by setting coulours/linestylies
@@ -22,10 +24,6 @@ rc("figure", figsize=(8, 6))
 rc("figure.subplot", bottom=0.18)  # was 0.12
 rc("figure.subplot", left=0.19)
 rc("figure.subplot", right=0.81)
-
-
-from pylab import figure, xlabel, ylabel, plot, show, savefig
-import process.io.mfile as mf
 
 
 if __name__ == "__main__":

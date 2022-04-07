@@ -19,23 +19,23 @@ import sys
 import argparse
 import process.io.mfile as mf
 import matplotlib
-
-if os.name == "posix" and "DISPLAY" not in os.environ:
-    matplotlib.use("Agg")
-matplotlib.rcParams["figure.max_open_warning"] = 40
 import matplotlib.pyplot as plt
 import matplotlib.backends.backend_pdf as bpdf
 import math
 from matplotlib.path import Path
 import matplotlib.patches as patches
 import numpy as np
+from process.io.python_fortran_dicts import get_dicts
+
+if os.name == "posix" and "DISPLAY" not in os.environ:
+    matplotlib.use("Agg")
+matplotlib.rcParams["figure.max_open_warning"] = 40
 
 if sys.version_info >= (3, 7):
     from importlib import resources
 else:
     import importlib_resources as resources
 
-from process.io.python_fortran_dicts import get_dicts
 
 solenoid = "pink"
 cscompression = "red"
@@ -308,7 +308,7 @@ def cumulative_radial_build(section, mfile_data, scan):
             complete = True
             break
 
-    if complete == False:
+    if complete is False:
         print("radial build parameter ", section, " not found")
     return cumulative_build
 
@@ -772,7 +772,7 @@ def plot_nprofile(prof, demo_ranges):
     """
 
     prof.set_xlabel("r/a")
-    prof.set_ylabel("$n_{e}\cdot 10^{19}$ $[\mathrm{m}^{-3}]$")
+    prof.set_ylabel(r"$n_{e}\cdot 10^{19}$ $[\mathrm{m}^{-3}]$")
     prof.set_title("Density profile")
 
     if ipedestal == 1:
@@ -814,7 +814,7 @@ def plot_plasmod_nprofile(prof, demo_ranges):
     """
 
     prof.set_xlabel("r/a")
-    prof.set_ylabel("$n_{e}\cdot 10^{19} \mathrm{m}^{-3}$")
+    prof.set_ylabel(r"$n_{e}\cdot 10^{19} \mathrm{m}^{-3}$")
     prof.set_title("Density profile")
     prof.plot(pmod_r, pmod_ne, label="plasmod $n_e$")
     prof.plot(pmod_r, pmod_ni, label="plasmod $n_i$")
@@ -1003,16 +1003,16 @@ def synchrotron_rad():
 
     Arguments:
     """
-    #!  tbet is betaT in Albajar, not to be confused with plasma beta
+    # tbet is betaT in Albajar, not to be confused with plasma beta
 
     tbet = 2.0
-    #!  rpow is the(1-Rsyn) power dependence based on plasma shape
-    #!  (see Fidone)
+    # rpow is the(1-Rsyn) power dependence based on plasma shape
+    # (see Fidone)
     rpow = 0.62
     kap = vol / (2.0 * 3.1415**2 * rmajor * rminor**2)
 
-    #!  No account is taken of pedestal profiles here, other than use of
-    #!  the correct ne0 and te0...
+    # No account is taken of pedestal profiles here, other than use of
+    # the correct ne0 and te0...
     de2o = 1.0e-20 * ne0
     pao = 6.04e3 * (rminor * de2o) / bt
     gfun = 0.93 * (1.0 + 0.85 * np.exp(-0.82 * rmajor / rminor))
@@ -1020,14 +1020,14 @@ def synchrotron_rad():
     kfun = kfun * (1.98 + alphat) ** 1.36 * tbet**2.14
     kfun = kfun * (tbet**1.53 + 1.87 * alphat - 0.16) ** (-1.33)
     dum = 1.0 + 0.12 * (te0 / (pao**0.41)) * (1.0 - ssync) ** 0.41
-    #!  Very high T modification, from Fidone
+    # Very high T modification, from Fidone
     dum = dum ** (-1.51)
 
     psync = 3.84e-8 * (1.0e0 - ssync) ** rpow * rmajor * rminor**1.38
     psync = psync * kap**0.79 * bt**2.62 * de2o**0.38
     psync = psync * te0 * (16.0 + te0) ** 2.61 * dum * gfun * kfun
 
-    #!  psyncpv should be per unit volume
+    # psyncpv should be per unit volume
     # Albajar gives it as total
     psyncpv = psync / vol
     print("psyncpv = ", psyncpv * vol)  # matches the out.dat file
@@ -1046,7 +1046,7 @@ def plot_radprofile(prof, mfile_data, scan, impp, demo_ranges):
     """
 
     prof.set_xlabel("r/a")
-    prof.set_ylabel("$P_{\mathrm{rad}}$ $[\mathrm{MW.m}^{-3}]$")
+    prof.set_ylabel(r"$P_{\mathrm{rad}}$ $[\mathrm{MW.m}^{-3}]$")
     prof.set_title("Radiation profile")
 
     # read in the impurity data
@@ -1126,11 +1126,8 @@ def plot_radprofile(prof, mfile_data, scan, impp, demo_ranges):
 
     # Intailise the radiation profile arrays
     pimpden = np.zeros([imp_data.shape[0], te.shape[0]])
-    pbremden = np.zeros([imp_data.shape[0], te.shape[0]])
     lz = np.zeros([imp_data.shape[0], te.shape[0]])
     prad = np.zeros(te.shape[0])
-    pbrem = np.zeros(te.shape[0])
-    Zav = np.zeros([imp_data.shape[0], te.shape[0]])
 
     # psyncpv = synchrotron_rad()
 
@@ -1162,8 +1159,6 @@ def plot_radprofile(prof, mfile_data, scan, impp, demo_ranges):
             # pbrem[k] = pbrem[k] + pbremden[l][k] * 2.0e-6
 
     # benchmark prad again outfile so mod prad
-    drho = np.array([rho[n + 1] - rho[n] for n in range(te.shape[0] - 1)])
-    pradint = np.dot((rho[1:] * prad[1:]), drho)
     # pbremint = (rho[1:] * pbrem[1:]) @ drho
     # pradint = prad[1:] @ drho * 2.0e-5
     # pbremint = pbrem[1:] @ drho * 2.0e-5
@@ -1958,8 +1953,8 @@ def plot_geometry_info(axis, mfile_data, scan):
         ("rmajor", "$R_0$", "m"),
         ("rminor", "a", "m"),
         ("aspect", "A", ""),
-        ("kappa95", "$\kappa_{95}$", ""),
-        ("triang95", "$\delta_{95}$", ""),
+        ("kappa95", r"$\kappa_{95}$", ""),
+        ("triang95", r"$\delta_{95}$", ""),
         ("sarea", "Surface area", "m$^2$"),
         ("vol", "Plasma volume", "m$^3$"),
         ("n_tf", "No. of TF coils", ""),
@@ -2017,7 +2012,7 @@ def plot_physics_info(axis, mfile_data, scan):
     data = [
         ("plascur/1d6", "$I_p$", "MA"),
         ("bt", "Vacuum $B_T$ at $R_0$", "T"),
-        ("q95", "$q_{\mathrm{95}}$", ""),
+        ("q95", r"$q_{\mathrm{95}}$", ""),
         ("normalised_thermal_beta", r"$\beta_N$, thermal", "% m T MA$^{-1}$"),
         ("normalised_toroidal_beta", r"$\beta_N$, toroidal", "% m T MA$^{-1}$"),
         ("thermal_poloidal_beta", r"$\beta_P$, thermal", ""),
@@ -2136,7 +2131,7 @@ def plot_magnetics_info(axis, mfile_data, scan):
             ("", "", ""),
             ("#TF coil type is {}".format(tftype), "", ""),
             ("bmaxtfrp", "Peak field at conductor (w. rip.)", "T"),
-            ("iooic", "I/I$_{\mathrm{crit}}$", ""),
+            ("iooic", r"I/I$_{\mathrm{crit}}$", ""),
             ("tmargtf", "TF Temperature margin", "K"),
             ("tmargoh", "CS Temperature margin", "K"),
             (sig_cond, "TF Cond max TRESCA stress", "MPa"),
@@ -2201,10 +2196,6 @@ def plot_power_info(axis, mfile_data, scan):
     axis.set_autoscaley_on(False)
     axis.set_autoscalex_on(False)
 
-    dnla = mfile_data.data["dnla"].get_scan(scan) / 1.0e20
-    bt = mfile_data.data["bt"].get_scan(scan)
-    surf = mfile_data.data["sarea"].get_scan(scan)
-
     gross_eff = 100.0 * (
         mfile_data.data["pgrossmw"].get_scan(scan)
         / mfile_data.data["pthermmw"].get_scan(scan)
@@ -2228,7 +2219,6 @@ def plot_power_info(axis, mfile_data, scan):
 
     # Define appropriate pedestal and impurity parameters
     coredescription = ("coreradius", "Normalised radius of 'core' region", "")
-    impurity = ("coreradius", "Normalised radius of 'core' region", "")
     if ipedestal == 1:
         ped_height = ("neped", "Electron density at pedestal", "m$^{-3}$")
         ped_pos = ("rhopedn", "r/a at density pedestal", "")
@@ -2236,9 +2226,6 @@ def plot_power_info(axis, mfile_data, scan):
         ped_height = ("", "No pedestal model used", "")
         ped_pos = ("", "", "")
 
-    dnalp = mfile_data.data["dnalp"].get_scan(scan)
-    dene = mfile_data.data["dene"].get_scan(scan)
-    ralpne = dnalp / dene
     crypmw = mfile_data.data["crypmw"].get_scan(scan)
 
     data = [
@@ -2323,9 +2310,6 @@ def plot_current_drive_info(axis, mfile_data, scan):
         )
     )
 
-    dnla = mfile_data.data["dnla"].get_scan(scan) / 1.0e20
-    bt = mfile_data.data["bt"].get_scan(scan)
-    surf = mfile_data.data["sarea"].get_scan(scan)
     # Assume Martin scaling if pthresh is not printed
     # Accounts for pthresh not being written prior to issue #679 and #680
     if "plhthresh" in mfile_data.data.keys():
@@ -2404,7 +2388,7 @@ def plot_current_drive_info(axis, mfile_data, scan):
     else:
         data.append(("", "", ""))
         data.append(("#Costs", "", ""))
-        data.append((coe, "Cost of electricity", "\$/MWh"))
+        data.append((coe, "Cost of electricity", r"\$/MWh"))
 
     plot_info(axis, data, mfile_data, scan)
 
@@ -2542,12 +2526,12 @@ def save_plots(m_file_data, scan):
     # Plot profiles
     fig = plt.figure(figsize=(12, 9), dpi=80)
     plot = fig.add_subplot(223, aspect=0.05)
-    plot_nprofile(plot, demo_ranges)
+    plot_nprofile(plot, False)
     fig.savefig("nprofile.svg", format="svg", dpi=1200)
 
     fig = plt.figure(figsize=(12, 9), dpi=80)
     plot = fig.add_subplot(224, aspect=1 / 35)
-    plot_tprofile(plot, demo_ranges)
+    plot_tprofile(plot, False)
     fig.savefig("tprofile.svg", format="svg", dpi=1200)
 
 
@@ -2760,7 +2744,7 @@ def test(f):
         plt.close(page2)
 
         return True
-    except:
+    except Exception:
         print("FTest failure for file : {}".format(f))
         return False
 
@@ -2872,7 +2856,6 @@ def main(args=None):
     gapoh = m_file.data["gapoh"].get_scan(scan)
     tfcth = m_file.data["tfcth"].get_scan(scan)
     gapds = m_file.data["gapds"].get_scan(scan)
-    d_vv_in = m_file.data["d_vv_in"].get_scan(scan)
     shldith = m_file.data["shldith"].get_scan(scan)
     blnkith = m_file.data["blnkith"].get_scan(scan)
     fwith = m_file.data["fwith"].get_scan(scan)
@@ -2883,7 +2866,6 @@ def main(args=None):
     fwoth = m_file.data["fwoth"].get_scan(scan)
     blnkoth = m_file.data["blnkoth"].get_scan(scan)
     shldoth = m_file.data["shldoth"].get_scan(scan)
-    d_vv_out = m_file.data["d_vv_out"].get_scan(scan)
     gapsto = m_file.data["gapsto"].get_scan(scan)
     tfthko = m_file.data["tfthko"].get_scan(scan)
     rdewex = m_file.data["rdewex"].get_scan(scan)

@@ -62,13 +62,13 @@ class Divertor:
 
         #  Scale plasma quantities
 
-        delne = dv.prn1 * pv.dene * 1.0e-20  #  scrapeoff density by main plasma
-        pwr = pv.pdivt  #  power flow to divertor (MW)
-        aionso = pv.afuel  #  scrape-off layer ion mass
+        delne = dv.prn1 * pv.dene * 1.0e-20  # scrapeoff density by main plasma
+        pwr = pv.pdivt  # power flow to divertor (MW)
+        aionso = pv.afuel  # scrape-off layer ion mass
 
-        if dv.divdum == 0:  #  Divertor Zeff: scaled
+        if dv.divdum == 0:  # Divertor Zeff: scaled
             zeffso = 1.0e0 + 0.8e0 * (pv.zeff - 1.0e0)
-        else:  #  use input value
+        else:  # use input value
             zeffso = dv.zeffdiv
 
         #  Strike point field values
@@ -312,7 +312,7 @@ class Divertor:
         facdenom = max(facdenom, 0.04e0)
         omlarg = 1.0e0 / (rsrd * math.exp(-facdenom))
         omlarg = min(omlarg, 2.0e0)
-        coefl = 1.0e0 / delld + rconl / omlarg  #  little 'l' in Harrison model
+        coefl = 1.0e0 / delld + rconl / omlarg  # little 'l' in Harrison model
 
         #  Start iteration on 2 simultaneous equations (Newton's method)
 
@@ -453,11 +453,11 @@ class Divertor:
 
         ct = max(0.1e0, (c1div + c2div / (tdiv)))
         ptpdiv = tdiv * ct
-        gamdiv = self.gammash(fififi, tdiv)  #  sheath coefficient
+        gamdiv = self.gammash(fififi, tdiv)  # sheath coefficient
         dendiv = delne / (omegan * tpts)
         eier = self.erprcy(
             tdiv, dendiv
-        )  #  ionization + radiation energy / recycle event
+        )  # ionization + radiation energy / recycle event
 
         tsep = (
             251.0e0

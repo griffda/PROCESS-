@@ -127,7 +127,7 @@ class VarDes(object):
         # Replace "$" signs with escaped ones "\$", as otherwise these act as
         # unintentional inline Mathjax delimiters, which cause havoc. These are
         # used elsewhere in the docs, but exclude them here
-        value = re.sub(r"\$", "\$", value)
+        value = re.sub(r"\$", r"\$", value)
 
         # Replace "\n"s with "<br>"s; these interfere with the table formatting
         # otherwise

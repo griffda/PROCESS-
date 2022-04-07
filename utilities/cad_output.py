@@ -2144,7 +2144,6 @@ def write_tf_coils(data, output_file):
         x2 = data.__dict__["xarc_2"]
         y2 = data.__dict__["yarc_2"]
         x3 = data.__dict__["xarc_3"]
-        y3 = data.__dict__["yarc_3"]
         x4 = data.__dict__["xarc_4"]
         y4 = data.__dict__["yarc_4"]
         x5 = data.__dict__["xarc_5"]

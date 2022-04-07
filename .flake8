@@ -5,4 +5,9 @@ output-file = flake8.txt
 max-line-length = 88
 statistics = True
 ; E203 is disabled as per black docs
-extend-ignore = E203
+extend-ignore = E203, E501, E741 #Line too long error does not need to be adjusted and for E741 we need to use some of these variable names for elements etc
+exclude =
+    .venv #Do not use flake8 on virtual environmet- will cause it to be incredibly slow
+    build #Do not use flake8 on build directory- these files are in git ignore anyway
+    env #Do not use flake8 on virtual environmet- will cause it to be incredibly slow
+    .env #Do not use flake8 on virtual environmet- will cause it to be incredibly slow

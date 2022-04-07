@@ -1,4 +1,4 @@
-from process import fortran as ft, output
+from process import fortran as ft
 
 
 class Caller:
