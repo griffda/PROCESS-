@@ -2072,3 +2072,18 @@ def test_selfinductance():
 
     selfinductance = pf.selfinductance(a, b, c, n)
     assert pytest.approx(selfinductance) == selfinductance_exp
+
+
+def test_brookscoil():
+    """Unit test of self-inductance formula."""
+    c = 1.0e0
+    a = 1.5e0 * c
+    b = c
+    N = 1.0e0
+
+    l = 0.025491e0 * c * 100.0e0 * N ** 2 * 1.0e-6
+    # Self-inductance of 1m Brooks coil: standard formula
+    lp = pf.selfinductance(a, b, c, N)
+    # Self-inductance of 1m Brooks coil: PROCESS formula
+
+    assert (l / lp < 1.05e0) and (l / lp > 0.95e0)

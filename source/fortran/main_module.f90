@@ -622,11 +622,12 @@ end subroutine verror
 
 
 subroutine runtests
+   ! These tests should gradually be moved to pytest
   use hare, only: hare_calc
   use constants, only: nout
   use maths_library, only: nearly_equal, binomial, test_secant_solve
   use process_output, only: ocmmnt, ovarre
-  use pfcoil_module, only: brookscoil
+!   use pfcoil_module, only: brookscoil
   use superconductors, only: test_quench
   use reinke_module, only: test_reinke
   implicit none
@@ -640,7 +641,7 @@ subroutine runtests
   call ovarre(nout,'Binomial coefficients C(5,5): 1', '(binomial(5,5))', binomial(5,5))
 
   call test_quench()
-  call brookscoil(nout)
+   !   call brookscoil(nout) Moved to pytest
   call test_secant_solve()
   call test_reinke()
 

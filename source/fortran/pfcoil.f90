@@ -1052,36 +1052,5 @@ module pfcoil_module
      ! end if
  
    end function selfinductance
- 
-   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- 
-   subroutine brookscoil(outfile)
-     ! http://www.nessengr.com/techdata/brooks/brooks.html
-       use process_output, only: ovarre, oblnkl, ocmmnt
-     implicit none
-     real(dp) :: a,b,c, N, l, lp
-     character(len=10) :: test
-     integer, intent(in) :: outfile
- 
-     c = 1.0d0
-     a = 1.5d0 * c
-     b = c
-     N = 1.0d0
- 
-     l = 0.025491d0 * c * 100.0d0 * N**2 * 1.0d-6
-     lp = selfinductance(a,b,c,N)
-     if ((l/lp < 1.05d0).and.(l/lp > 0.95d0)) then
-         test = 'PASS'
-     else
-         test = 'FAIL'
-     end if
-     call ocmmnt(outfile,'Unit test of self-inductance formula: '//test)
-     call ovarre(outfile,'Self-inductance of 1m Brooks coil: standard formula', '(l)',l, 'OP ')
-     call ovarre(outfile,'Self-inductance of 1m Brooks coil: PROCESS formula', '(lp)',lp, 'OP ')
-     call oblnkl(outfile)
-     write(*,*) 'Test of self-inductance formula: '//test
- 
-   end subroutine brookscoil
  end module pfcoil_module
- 
  
