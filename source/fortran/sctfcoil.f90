@@ -54,13 +54,13 @@ real(dp), private :: f_tf_steel
 real(dp), private :: f_tf_ins
 !! Inboard coil insulation fraction [-]
 
-real(dp), private :: h_cp_top
+real(dp) :: h_cp_top
 !! Vertical distance from the midplane to the top of the tapered section [m]
 
-real(dp), private :: r_tf_outboard_in
+real(dp) :: r_tf_outboard_in
 !! Radial position of plasma-facing edge of TF coil outboard leg [m]
 
-real(dp), private :: r_tf_outboard_out
+real(dp) :: r_tf_outboard_out
 !! Radial position of outer edge of TF coil inboard leg [m]
 
 real(dp), private :: r_wp_inner
@@ -115,7 +115,7 @@ real(dp), private :: a_leg_cond
 real(dp), private :: theta_coil
 !! Half toroidal angular extent of a single TF coil inboard leg
 
-real(dp), private :: tan_theta_coil
+real(dp) :: tan_theta_coil
 !! Tan half toroidal angular extent of a single TF coil inboard leg
 
 real(dp), private :: t_conductor_radial, t_conductor_toroidal
@@ -239,14 +239,15 @@ subroutine tf_global_geometry()
     !! This includes:
     !!   - Overall geometry of coil (radii and toroidal planes area)
     !!   - Winding Pack NOT included
-    use physics_variables, only: rmajor, bt, kappa, itart, rminor
-    use build_variables, only: tfcth, tfthko, r_tf_outboard_mid, r_cp_top, &
-        r_tf_inboard_in, r_tf_inboard_mid, r_tf_inboard_out
+
+    use build_variables, only: r_tf_outboard_mid, r_cp_top, &
+        r_tf_inboard_in, r_tf_inboard_out, tfthko
     use tfcoil_variables, only: tinstf, tfc_sidewall_is_fraction, tfareain, &
         ritfc, tftort, n_tf, casthi_is_fraction, bmaxtf, arealeg, &
-        casthi_fraction, casths_fraction, tfinsgap, rbmax, casthi, casths, i_tf_sup, &
-        dztop, tinstf, tftort, tfinsgap, i_tf_case_geom
+        casthi_fraction, casths_fraction, tfinsgap, casthi, casths, i_tf_sup, &
+        dztop, tinstf, tfinsgap, i_tf_case_geom
     use constants, only: pi
+    use physics_variables, only: itart, kappa, rminor
     implicit none
 
 
@@ -296,6 +297,8 @@ subroutine tf_global_geometry()
     arealeg = tftort * tfthko
     ! ---
 
+    !!! end break
+
 end subroutine tf_global_geometry
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -343,6 +346,8 @@ subroutine tf_current()
 
     ! Global inboard leg average current in TF coils [A/m2]
     oacdcp = ritfc / tfareain
+
+    !-! end break
 
 end subroutine tf_current
 
@@ -452,7 +457,6 @@ subroutine tf_wp_geom(i_tf_wp_geom)
         use build_variables, only: tfcth, r_tf_inboard_in, r_tf_inboard_out
         use tfcoil_variables, only: dr_tf_wp, casthi, thkcas, casths, &
             wwp1, wwp2, tinstf, tfinsgap
-        use numerics, only: nvar, ixc
 
         implicit none
 
@@ -572,6 +576,8 @@ subroutine tf_wp_geom(i_tf_wp_geom)
             call report_error(99)
         end if
 
+        !-! end break
+
     end subroutine tf_wp_geom
 
 subroutine tf_case_geom(i_tf_wp_geom, i_tf_case_geom)
@@ -643,6 +649,8 @@ subroutine tf_case_geom(i_tf_wp_geom, i_tf_case_geom)
             t_lat_case_av = casths
         end if
         ! --------------
+
+        !-! end break
     end subroutine tf_case_geom
 
 subroutine tf_averaged_turn_geom( jwptf, thwcndut, thicndut, i_tf_sc_mat,    & ! Inputs
@@ -795,6 +803,8 @@ subroutine tf_averaged_turn_geom( jwptf, thwcndut, thicndut, i_tf_sc_mat,    & !
 
         end if
 
+        !!- end break
+
     end subroutine tf_averaged_turn_geom
 
 subroutine tf_integer_turn_geom( n_layer, n_pancake, thwcndut, thicndut, & ! Inputs
@@ -927,6 +937,9 @@ subroutine tf_integer_turn_geom( n_layer, n_pancake, thwcndut, thicndut, & ! Inp
         insulation_area = t_turn_radial*t_turn_toroidal - acndttf - acstf
         ! -------------
 
+
+        !-! end break
+
     end subroutine tf_integer_turn_geom
 
 subroutine tf_wp_currents()
@@ -938,6 +951,8 @@ subroutine tf_wp_currents()
 
         ! Winding pack current density (forced to be positive) [A/m2]
         jwptf = max(1.0D0, ritfc/(n_tf*awptf))
+
+        !-! end break
 
     end subroutine tf_wp_currents
 
@@ -1030,6 +1045,8 @@ subroutine res_tf_internal_geom()
         fdiags(1) = awptf
         call report_error(101)
     end if
+
+    !-! end break
 
 
 end subroutine res_tf_internal_geom
@@ -1154,6 +1171,8 @@ subroutine tf_res_heating()
 
     end if
 
+    !-! end break
+
 end subroutine tf_res_heating
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1165,7 +1184,7 @@ subroutine tf_field_and_force()
     use build_variables, only: r_tf_outboard_mid, r_vv_inboard_out, &
         r_tf_inboard_mid, r_cp_top
     use tfcoil_variables, only: vforce, n_tf, taucq, sigvvall, cforce, &
-        ritfc, bmaxtf, rbmax, i_tf_sup, f_vforce_inboard, vforce_outboard, &
+        ritfc, bmaxtf, i_tf_sup, f_vforce_inboard, vforce_outboard, &
         tinstf, thicndut, dr_tf_wp, tfinsgap, i_cp_joints, casthi
 
     implicit none
@@ -1271,6 +1290,8 @@ subroutine tf_field_and_force()
 
     ! Total vertical force
     vforce_inboard_tot = vforce * n_tf
+
+    !-! end break
 
 end subroutine tf_field_and_force
 
@@ -1516,6 +1537,8 @@ subroutine tf_coil_area_and_masses()
     end if
     ! ---
 
+    !-! end break
+
 end subroutine tf_coil_area_and_masses
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1618,6 +1641,8 @@ subroutine peak_tf_with_ripple(n_tf,wwp1,dr_tf_wp,tfin,bmaxtf,bmaxtfrp,flag)
     tf_fit_y = a(1) + a(2)*exp(-tf_fit_t) + a(3)*tf_fit_z + a(4)*tf_fit_z*tf_fit_t
 
     bmaxtfrp = tf_fit_y * bmaxtf
+
+    !-! end break
 
 end subroutine peak_tf_with_ripple
 
@@ -2609,6 +2634,9 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
     sig_tf_t, sig_tf_tresca, sig_tf_vmises, sig_tf_z, str_tf_r, str_tf_t, str_tf_z, &
     n_radial_array, n_tf_bucking, outfile, sig_file)
 
+
+    !-! end break
+
 end subroutine stresscl
 
 subroutine out_stress(sig_tf_r_max, sig_tf_t_max, sig_tf_z_max, sig_tf_vmises_max, &
@@ -3014,6 +3042,8 @@ subroutine plane_stress( nu, rad, ey, j,          & ! Inputs
         end do
     end do
    ! ---
+
+   !-! end break
 
 end subroutine plane_stress
 
@@ -3497,6 +3527,8 @@ subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_forc
     end do ! Layer loop
     ! ------
 
+    !-! end break
+
 end subroutine generalized_plane_strain
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -3968,6 +4000,8 @@ subroutine extended_plane_strain( nu_t, nu_zt, ey_t, ey_z, rad, d_curr, v_force,
     end do ! Layer loop
     ! ------
 
+    !-! end break
+
 end subroutine extended_plane_strain
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -4021,6 +4055,9 @@ function eyngeff(estl,eins,tins,tstl,tcs)
 
     eyngeff = 1.0D0/ttot * 2.0D0*tstl*ed
 
+
+    !-! end break
+
 end function eyngeff
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -4070,6 +4107,8 @@ function edoeeff(estl,eins,tins,tstl,tcs)
     ed = ttot / (2.0D0*tins/eins + (tcs+2.0D0*tstl)/estl)
     eeff = 1.0D0/ttot * 2.0D0*tstl*ed
     edoeeff = ed/eeff
+
+    !-! end break
 
 end function edoeeff
 
@@ -4122,6 +4161,8 @@ function eyngzwp(estl,eins,ewp,tins,tstl,tcs)
               + eins*( (tcs + 2.0D0*(tstl + tins))**2 - (tcs + 2.0D0*tstl)**2 )
 
     eyngzwp = eyngzwp / (ttot*ttot)
+
+    !-! end break
 
 end function eyngzwp
 
@@ -4199,6 +4240,8 @@ subroutine eyoung_parallel(eyoung_j_1, a_1, poisson_j_perp_1, & ! Inputs
     poisson_j_perp_3 = (poisson_j_perp_1 * a_1 + poisson_j_perp_2 * a_2) / (a_1 + a_2)
     eyoung_j_3 = (eyoung_j_1 * a_1 + eyoung_j_2 * a_2) / (a_1 + a_2)
     a_3 = a_1 + a_2
+
+    !-! end break
 
 end subroutine eyoung_parallel
 
@@ -4291,6 +4334,9 @@ subroutine eyoung_series(eyoung_j_1, l_1, poisson_j_perp_1, & ! Inputs
       eyoung_j_3 = (l_1 + l_2) / (l_1/eyoung_j_1 + l_2/eyoung_j_2)
       l_3 = l_1 + l_2
     end if
+
+
+    !-! end break
 
 end subroutine eyoung_series
 
@@ -4403,6 +4449,8 @@ subroutine eyoung_t_nested_squares(n,eyoung_j_in, l_in, poisson_j_perp_in, & ! I
                 eyoung_j_out,l_out,poisson_j_perp_out)
     end do
 
+    !-! end break
+
 end subroutine eyoung_t_nested_squares
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -4466,6 +4514,8 @@ subroutine eyoung_parallel_array(n,eyoung_j_in, a_in, poisson_j_perp_in, & ! Inp
                 eyoung_j_out,a_out,poisson_j_perp_out)
     end do
 
+    !-! end break
+
 end subroutine eyoung_parallel_array
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -4492,6 +4542,8 @@ function sig_tresca(sx,sy,sz)
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     sig_tresca = max(ABS(sx-sy), ABS(sx-sz), ABS(sy-sz))
+
+    !-! end break
 
 end function sig_tresca
 
@@ -4535,6 +4587,8 @@ function sigvm(sx,sy,sz,txy,txz,tyz)
 
     sigvm = sqrt( 0.5D0 * ( (sx-sy)**2 + (sx-sz)**2 + (sz-sy)**2 &
                 + 6.0D0*(txy**2 + txz**2 + tyz**2) ) )
+
+    !-! end break
 
 end function sigvm
 
@@ -4668,6 +4722,8 @@ subroutine coilshap
     end if
     ! ---
 
+    !-! end break
+
 end subroutine coilshap
 
 function circumference(aaa,bbb)
@@ -4681,6 +4737,8 @@ function circumference(aaa,bbb)
         real(dp) :: hh
         hh = ( aaa - bbb )**2 / ( aaa + bbb )**2
         circumference = pi* ( aaa + bbb ) * ( 1.0D0 + (3.0D0*hh)/(10.0D0 + sqrt(4.0D0 - 3.0D0*hh)) )
+
+        !-! end break
 
     end function
 
@@ -4772,6 +4830,8 @@ subroutine tfcind(tfthk)
         tfind = tfind + b*dr*(2.0D0*h_bore + h_thick)
         r=r+dr
     end do
+
+    !-! end break
 
 end subroutine tfcind
 
@@ -5692,5 +5752,6 @@ subroutine cpost( r_tf_inboard_in, r_tf_inboard_out, r_cp_top, ztop,          & 
     respow = 2.0D0 * ( res_cyl + res_taped )
     ! --------------------------------------------------------------------
 
+    !-! end break
 end subroutine cpost
 end module sctfcoil_module

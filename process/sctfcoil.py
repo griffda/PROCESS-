@@ -1336,3 +1336,71 @@ class Sctfcoil:
         ajwpro = ajcp * (acs / aturn)
 
         return ajwpro, vd
+
+    def tf_global_geometry(self):
+        """Subroutine for calculating the TF coil geometry
+        This includes:
+        - Overall geometry of coil (radii and toroidal planes area)
+        - Winding Pack NOT included
+        """
+
+        theta_coil = numpy.pi / tfcoil_variables.n_tf
+        sctfcoil_module.tan_theta_coil = numpy.tan(theta_coil)
+
+        # TF coil inboard legs mid-plane cross-section area (WP + casing ) [m2]
+        if tfcoil_variables.i_tf_case_geom == 0:
+            # Circular front case
+            tfcoil_variables.tfareain = numpy.pi * (
+                build_variables.r_tf_inboard_out ** 2
+                - build_variables.r_tf_inboard_in ** 2
+            )
+        else:
+            # Straight front case
+            tfcoil_variables.tfareain = (
+                tfcoil_variables.n_tf
+                * numpy.sin(theta_coil)
+                * numpy.cos(theta_coil)
+                * build_variables.r_tf_inboard_out ** 2
+                - numpy.pi * build_variables.r_tf_inboard_in ** 2
+            )
+
+        # Vertical distance from the midplane to the top of the tapered section [m]
+        if physics_variables.itart == 1:
+            sctfcoil_module.h_cp_top = (
+                physics_variables.rminor * physics_variables.kappa
+                + tfcoil_variables.dztop
+            )
+        # ---
+
+        # Outer leg geometry
+        # ---
+        # Mid-plane inner/out radial position of the TF coil outer leg [m]
+
+        sctfcoil_module.r_tf_outboard_in = (
+            build_variables.r_tf_outboard_mid - build_variables.tfthko * 0.5e0
+        )
+        sctfcoil_module.r_tf_outboard_out = (
+            build_variables.r_tf_outboard_mid + build_variables.tfthko * 0.5e0
+        )
+
+        # TF coil width in toroidal direction at inboard leg outer edge [m]
+        # ***
+        # Sliding joints geometry
+        if physics_variables.itart == 1 and tfcoil_variables.i_tf_sup != 1:
+            tfcoil_variables.tftort = (
+                2.0e0 * build_variables.r_cp_top * numpy.sin(theta_coil)
+            )
+
+        # Default thickness, initially written for DEMO SC magnets
+        elif physics_variables.itart == 1 and tfcoil_variables.i_tf_sup == 1:
+            tfcoil_variables.tftort = (
+                2.0e0 * build_variables.r_tf_inboard_out * numpy.sin(theta_coil)
+            )
+        else:
+            tfcoil_variables.tftort = (
+                2.0e0 * build_variables.r_tf_inboard_out * numpy.sin(theta_coil)
+            )
+
+        # Area of rectangular cross-section TF outboard leg [m2]
+        tfcoil_variables.arealeg = tfcoil_variables.tftort * build_variables.tfthko
+        # ---
