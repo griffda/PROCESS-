@@ -11,8 +11,7 @@ import pathlib
 import importlib.util
 import sys
 from typing import Any, List, NamedTuple
-from process.main import Models
-from process.variables import AnnotatedVariable
+
 
 # the directory which this script resides (scripts/)
 CURRENT_DIR = pathlib.Path(__file__).resolve().parent
@@ -22,6 +21,8 @@ CURRENT_DIR = pathlib.Path(__file__).resolve().parent
 # code changes
 # This means the installation of process does not need to be a build dependency
 # of this script and a potential race condition can be removed
+from process.main import Models  # noqa: E402
+from process.variables import AnnotatedVariable  # noqa: E402
 
 # find import information for the process directory sitting above this scripts directory
 process_spec = importlib.util.spec_from_file_location(
