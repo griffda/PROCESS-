@@ -1154,7 +1154,7 @@ def plot_radprofile(prof, mfile_data, scan, impp, demo_ranges):
             # The Bremsstrahlung
             # pbremden[i][k] = imp_frac[i] * ne[k] * ne[k] * Zav[i][k] * Zav[i][k] * 5.355e-37 * np.sqrt(te[k])
 
-        for l in range(imp_data.shape[0]):
+        for l in range(imp_data.shape[0]):  # noqa: E741
             prad[k] = prad[k] + pimpden[l][k] * 2.0e-6
             # pbrem[k] = pbrem[k] + pbremden[l][k] * 2.0e-6
 
@@ -1846,7 +1846,7 @@ def plot_header(axis, mfile_data, scan):
     Be = mfile_data.data["fimp(03"].get_scan(scan)
     C = mfile_data.data["fimp(04"].get_scan(scan)
     N = mfile_data.data["fimp(05"].get_scan(scan)
-    O = mfile_data.data["fimp(06"].get_scan(scan)
+    O = mfile_data.data["fimp(06"].get_scan(scan)  # noqa: E741
     Ne = mfile_data.data["fimp(07"].get_scan(scan)
     Si = mfile_data.data["fimp(08"].get_scan(scan)
     Ar = mfile_data.data["fimp(09"].get_scan(scan)
