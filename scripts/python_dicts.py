@@ -21,8 +21,6 @@ CURRENT_DIR = pathlib.Path(__file__).resolve().parent
 # code changes
 # This means the installation of process does not need to be a build dependency
 # of this script and a potential race condition can be removed
-from process.main import Models  # noqa: E402
-from process.variables import AnnotatedVariable  # noqa: E402
 
 # find import information for the process directory sitting above this scripts directory
 process_spec = importlib.util.spec_from_file_location(
@@ -39,6 +37,9 @@ process_spec.loader.exec_module(process_module)
 
 # now that "process" is temporarily available to import
 # as a package (despite being a directory) we can install what we need
+
+from process.main import Models  # noqa: E402
+from process.variables import AnnotatedVariable  # noqa: E402
 
 
 class AnnotatedVariableData(NamedTuple):
