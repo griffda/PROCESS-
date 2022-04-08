@@ -49,7 +49,7 @@ def feasible_point(filename, position):
     else:
         checkPoint = numScans
 
-    while finished == False:
+    while finished is False:
         for value in mfile_data.data.keys():
             # Look for feasible scan points (with ifail = 1)
             if "ifail" in value and "vmcon_error_flag_(ifail)" not in value:

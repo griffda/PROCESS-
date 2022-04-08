@@ -14,6 +14,12 @@
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from shutil import copy
+from process.main import SingleRun
+from process.io import plot_proc
+from pdf2image import convert_from_path
+from process.main import VaryRun
+import os
+from process.io import plot_scans
 
 # Define project root dir; when running a notebook, the cwd is the dir the notebook is in
 PROJ_DIR = Path.cwd().parent
@@ -56,7 +62,6 @@ def copy_to_temp_dir(input_rel):
 # Run Process on an input file using the `SingleRun` class. This outputs an `MFILE.DAT` and an `OUT.DAT`.
 
 # %%
-from process.main import SingleRun
 
 # Define input file name relative to project dir, then copy to temp dir
 input_rel = "tracking/baseline_2018/baseline_2018_IN.DAT"
@@ -71,8 +76,6 @@ single_run = SingleRun(str(temp_input_path))
 # Create a summary PDF of the generated `MFILE.DAT` using `plot_proc`.
 
 # %%
-from process.io import plot_proc
-from pdf2image import convert_from_path
 
 # Create a summary PDF
 plot_proc.main(args=["-f", str(single_run.mfile_path)])
@@ -127,8 +130,7 @@ temp_dir.cleanup()
 # Vary iteration parameters until a feasible solution is found, using the `VaryRun` class.
 
 # %%
-from process.main import VaryRun
-import os
+
 
 input_rel = "tests/integration/data/run_process.conf"
 temp_dir, temp_input_path = copy_to_temp_dir(input_rel)
@@ -156,7 +158,7 @@ temp_dir.cleanup()
 # Plot a scanned MFILE.
 
 # %%
-from process.io import plot_scans
+
 
 # Define working directory relative to project dir and input file name
 input_rel = "tests/integration/data/scan_MFILE.DAT"

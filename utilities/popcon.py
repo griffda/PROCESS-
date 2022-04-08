@@ -34,6 +34,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 
+
 # Functions
 def ohmic():
     """Ohmic Power"""
@@ -105,7 +106,7 @@ def brem_process():
     pfe = 44800.0 * rnfene * (dene / 7.0e19) ** 2.5 * vr
 
     pbremdt = 0.016 * radexp * den20 * den20 * (deni / dene) * np.sqrt(t10)  # D-T Brem
-    pbremz = fbhe * phe + fbc * pc + fbo * po + fbfe * pfe  #  High Z Bremsstrahlung
+    pbremz = fbhe * phe + fbc * pc + fbo * po + fbfe * pfe  # High Z Bremsstrahlung
 
     return (pbremz + pbremdt) * vol
 
@@ -439,13 +440,13 @@ if __name__ == "__main__":
         xplot = T0[0, :] / (1.0 + alphat)
 
     if dens == 0:
-        ytitle = "Central electron density / $10^{19} \mathrm{m}^3$"
+        ytitle = r"Central electron density / $10^{19} \mathrm{m}^3$"
         yplot = nbar[:, 0] * np.sqrt(1.0 + alphan)
     elif dens == 1:
-        ytitle = "Volume averaged electron density / $10^{19} \mathrm{m}^3$"
+        ytitle = r"Volume averaged electron density / $10^{19} \mathrm{m}^3$"
         yplot = nbar[:, 0] / np.sqrt(1.0 + alphan)
     elif dens == 2:
-        ytitle = "Line-averaged electron density / $10^{19} \mathrm{m}^3$"
+        ytitle = r"Line-averaged electron density / $10^{19} \mathrm{m}^3$"
         yplot = nbar[:, 0]
 
     # Plotting

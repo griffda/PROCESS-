@@ -37,8 +37,6 @@ def test_calc_u_unplanned_bop(monkeypatch, availability):
     :param availability: fixture containing an initialised `Availability` object
     :type availability: tests.unit.test_availability.availability (functional fixture)
     """
-    outfile = 0
-    iprint = 0
 
     # Mock module variable t_operation
     monkeypatch.setattr(cv, "t_operation", 25.0)
@@ -145,8 +143,6 @@ def test_calc_u_planned(calc_u_planned_fix, availability):
     :type availability: tests.unit.test_availability.availability (functional fixture)
     """
     # Arguments
-    outfile = 0
-    iprint = 0
 
     # Run calc_u_planned() with the current fixture, then assert the result
     # is the expected one
@@ -238,8 +234,6 @@ def test_calc_u_unplanned_magnets(calc_u_unplanned_magnets_fix, availability):
     :param availability: fixture containing an initialised `Availability` object
     :type availability: tests.unit.test_availability.availability (functional fixture)
     """
-    outfile = 0
-    iprint = 0
 
     result = availability.calc_u_unplanned_magnets(output=False)
     assert result == calc_u_unplanned_magnets_fix
@@ -313,9 +307,6 @@ def test_calc_u_unplanned_divertor(calc_u_unplanned_divertor_fix, availability):
     :param availability: fixture containing an initialised `Availability` object
     :type availability: tests.unit.test_availability.availability (functional fixture)
     """
-    # Arguments
-    outfile = 0
-    iprint = 0
 
     # Run calc_u_unplanned_divertor() with the current fixture,
     # then assert the result is the expected one
@@ -389,9 +380,6 @@ def test_calc_u_unplanned_fwbs(calc_u_unplanned_fwbs_fix, availability):
     :param availability: fixture containing an initialised `Availability` object
     :type availability: tests.unit.test_availability.availability (functional fixture)
     """
-    # Arguments
-    outfile = 0
-    iprint = 0
 
     # Run calc_u_unplanned_fwbs() with the current fixture,
     # then assert the result is the expected one

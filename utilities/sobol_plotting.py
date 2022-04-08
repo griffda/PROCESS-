@@ -17,10 +17,8 @@ sobol_output.pdf     -  bar chart of sobol indices
 
 import argparse
 import numpy as np
-import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.backends.backend_pdf as bpdf
-from matplotlib import rc
 
 if __name__ == "__main__":
 
@@ -68,7 +66,7 @@ if __name__ == "__main__":
     plt.xticks(x, names)
     plt.tick_params(labelsize=16)
     plt.legend(fontsize=16)
-    plt.ylabel("$S_{Sobol}(B_{\$})$", fontsize=22)
+    plt.ylabel(r"$S_{Sobol}(B_{\$})$", fontsize=22)
     # plt.xlabel('$\mu^{*}$', fontsize=22)
 
     pdf.savefig(page)

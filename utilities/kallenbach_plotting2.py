@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import os
 import sys
 import argparse
 import numpy as np
@@ -191,7 +190,7 @@ p1r4.set_xlim(xmin=0.0002)
 p1r4.set_xlim(xmax=x_max)
 p1r4.set_ylim(ymin=0.01)
 p1r4.tick_params(axis="x", labelsize="11")
-p1r4.set_xlabel("Connection length from target $x_{\parallel}$ (m)", fontsize=10)
+p1r4.set_xlabel(r"Connection length from target $x_{\parallel}$ (m)", fontsize=10)
 p1r4.legend(loc=4, prop={"size": 10})
 
 # Second page plots------------------------------------
@@ -263,7 +262,7 @@ p2r4.set_xlim(xmin=0.0002)
 p2r4.set_xlim(xmax=x_max)
 p2r4.tick_params(axis="y", labelsize="9")
 p2r4.tick_params(axis="x", labelsize="11")
-p2r4.set_xlabel("Connection length from target $x_{\parallel}$ (m)", fontsize=10)
+p2r4.set_xlabel(r"Connection length from target $x_{\parallel}$ (m)", fontsize=10)
 p2r4.legend(loc=1, prop={"size": 10})
 
 # Save as a single two-page file

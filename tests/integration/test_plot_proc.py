@@ -1,6 +1,4 @@
 """Integration tests for plot_proc.py."""
-import pytest
-from pathlib import Path
 from process.io import plot_proc
 from shutil import copy
 

@@ -1,16 +1,14 @@
 #! /usr/bin/env python
 """
-Outputs a file with set of data very similar to plot proc.py, but to a 
-comma-delimited format for inclusion in spreadsheets. 
-
-Input:  MFILE.DAT
-Output: process\_summary.txt  (or as specified by user)
+Outputs a file with set of data very similar to plot proc.py,
+but to a comma-delimited format for inclusion in spreadsheets.
+Input: MFILE.DAT
+Output: process/_summary.txt (or as specified by user)
 Optional arguments:
         # change the input file name
         python plot_proc.py -f MFILE.DAT
         # change the output file name
         python plot_proc.py -o out.txt
-        
 Richard Kemp, 08/10/2014, CCFE
 Based on plot_proc.py by James Morris
 Latest update 07/08/2015 MDK
@@ -22,8 +20,6 @@ Revisions
 import argparse
 import process.io.mfile as mf
 from dict_tools import proc_dict
-import scipy as sp
-import numpy as np
 
 
 def write_data(data, mfile_data, f, scan):
@@ -132,11 +128,7 @@ def main(mfile_data, output_file, scan=-1):
         ("tauelaw", "Scaling law"),
     ]
 
-    dnla = mfile_data.data["dnla"].get_scan(scan) / 1.0e20
-    bt = mfile_data.data["bt"].get_scan(scan)
-    surf = mfile_data.data["sarea"].get_scan(scan)
     pthresh = mfile_data.data["pthrmw(6)"].get_scan(scan)
-    err = pthresh - mfile_data.data["pthrmw(7)"].get_scan(scan)
     gross_eff = 100.0 * (
         mfile_data.data["pgrossmw"].get_scan(scan)
         / mfile_data.data["pthermmw"].get_scan(scan)
@@ -185,9 +177,6 @@ def main(mfile_data, output_file, scan=-1):
             * mfile_data.data["dene"].get_scan(scan)
         )
     )
-    dnla = mfile_data.data["dnla"].get_scan(scan) / 1.0e20
-    bt = mfile_data.data["bt"].get_scan(scan)
-    surf = mfile_data.data["sarea"].get_scan(scan)
     pthresh = mfile_data.data["pthrmw(6)"].get_scan(scan)
     flh = pdivt / pthresh
     powerht = mfile_data.data["powerht"].get_scan(scan)
@@ -226,7 +215,6 @@ def main(mfile_data, output_file, scan=-1):
                 )
             )
     tburn = mfile_data.data["tburn"].get_scan(scan) / 3600.0
-    tftype = proc_dict.DICT_TF_TYPE[mfile_data.data["i_tf_sc_mat"].get_scan(scan)]
     vssoft = mfile_data.data["vsres"].get_scan(scan) + mfile_data.data[
         "vsind"
     ].get_scan(scan)
@@ -239,7 +227,7 @@ def main(mfile_data, output_file, scan=-1):
         ("vstot", "Available flux swing"),
         (tburn, "Burn time"),
         ("bmaxtf", "Peak field at conductor"),
-        ("iooic", "I/I$_{\mathrm{crit}}$"),
+        ("iooic", r"I/I$_{\mathrm{crit}}$"),
         ("tmarg", "Temperature margin"),
         ("sig_tf_case", "TF case maximum shear stress (Tresca criterion)"),
         ("sig_tf_wp", "TF conduit maximum shear stress (Tresca criterion)"),

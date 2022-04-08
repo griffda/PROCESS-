@@ -1,10 +1,9 @@
 """Validate an input file using a set of rules.
-
 This script checks an input file to make sure it is valid before it is read in
 by the Fortran in Process. The thinking behind this is that it's a lot easier
-to make an input validator in Python than Fortran! This aims to catch obvious 
-static (i.e. pre-run-time) problems in the input to Process and provide clear 
-feedback. This validation is based on a set of rules, which are defined in 
+to make an input validator in Python than Fortran! This aims to catch obvious
+static (i.e. pre-run-time) problems in the input to Process and provide clear
+feedback. This validation is based on a set of rules, which are defined in
 input_validator_rules.
 """
 import inspect

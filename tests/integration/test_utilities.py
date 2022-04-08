@@ -103,7 +103,7 @@ def test_mfile_lib(mfile_path):
     # This try/except is not necessary, but allows additional logging to be
     # added for clarity in addition to pytest's own logging
     try:
-        assert mf.test(str(mfile_path)) == True
+        assert mf.test(str(mfile_path)) is True
         # mf.test returns True on success
     except AssertionError:
         logger.exception(f"mfile test for {mfile_path.name} has failed")
@@ -120,7 +120,7 @@ def test_in_dat_lib(input_file_path):
 
     # Test MFile for this scenario
     try:
-        assert indat.test(str(input_file_path)) == True
+        assert indat.test(str(input_file_path)) is True
     except AssertionError:
         logger.error(f"in_dat test for {input_file_path.name} has failed")
         raise
@@ -153,7 +153,7 @@ def test_plot_proc(mfile_path):
 
     # Test plot_proc on an MFile
     try:
-        assert pp.test(str(mfile_path)) == True
+        assert pp.test(str(mfile_path)) is True
     except AssertionError:
         logger.exception(f"plot_proc test for {mfile_path.name} has failed")
         raise

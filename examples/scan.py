@@ -19,6 +19,7 @@
 # %%
 from process.main import SingleRun
 from pathlib import Path
+from process.io import plot_scans
 
 prefix = "baseline_2018_scan_"
 input_name = Path(prefix + "IN.DAT")
@@ -32,7 +33,6 @@ single_run = SingleRun(str(input_name))
 # Use `plot_scans.py` to plot the resulting `MFILE.DAT`.
 
 # %%
-from process.io import plot_scans
 
 # Define working directory relative to project dir and input file name
 mfile_name = Path(prefix + "MFILE.DAT")

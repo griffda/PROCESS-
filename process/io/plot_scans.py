@@ -32,7 +32,6 @@ from argparse import RawTextHelpFormatter
 from pathlib import Path
 
 # PROCESS libraries
-from process.io.python_fortran_dicts import get_dicts
 import process.io.mfile as mf
 
 
@@ -285,9 +284,6 @@ def main(args=None):
     nsweep_dict[64] = "ohhghf"
     # -------------------
 
-    # Load PROCESS dicts from JSON files
-    proc_dict = get_dicts()
-
     # Getting the scanned variable name
     m_file = mf.MFile(filename=input_files[-1])
     nsweep_ref = int(m_file.data["nsweep"].get_scan(-1))
@@ -311,14 +307,14 @@ def main(args=None):
         exit()
 
     # Check if the scan variable is present in the
-    if not scan_var_name in m_file.data.keys():
+    if scan_var_name not in m_file.data.keys():
         print("ERROR : `{}` does not exist in PROCESS dicts".format(scan_var_name))
         print("ERROR : The scan variable is probably an upper/lower boundary")
         print("ERROR : Please modify 'nsweep_dict' dict with the constrained var")
         exit()
 
     # Check if the (first) scan variable LaTeX label is set
-    if not scan_var_name in labels:
+    if scan_var_name not in labels:
         print(
             "WARNING: The {} variable LaTeX label is not defined".format(scan_var_name)
         )
@@ -327,7 +323,7 @@ def main(args=None):
 
     if is_2D_scan:
         # Check if the second scan variable is present in the
-        if not scan_2_var_name in m_file.data.keys():
+        if scan_2_var_name not in m_file.data.keys():
             print(
                 "ERROR : `{}` does not exist in PROCESS dicts".format(scan_2_var_name)
             )
@@ -336,7 +332,7 @@ def main(args=None):
             exit()
 
         # Check if the second scan variable LaTeX label is set
-        if not scan_2_var_name in labels:
+        if scan_2_var_name not in labels:
             print("The {} variable LaTeX label is not defined".format(scan_2_var_name))
             print("Please update the 'label' dict")
             labels[scan_var_name] = scan_var_name
@@ -421,7 +417,7 @@ def main(args=None):
                 ouput_array = np.zeros(n_scan)
 
                 # Check if the output variable exists in the MFILE
-                if not output_name in m_file.data.keys():
+                if output_name not in m_file.data.keys():
                     print(
                         "Warning : `{}` does not exist in PROCESS dicts".format(
                             output_name
@@ -431,7 +427,7 @@ def main(args=None):
                     continue
 
                 # Check if the output LaTeX variable label exist
-                if not output_name in labels:
+                if output_name not in labels:
                     print(
                         "Warning : The {} variable LaTeX label is not defined".format(
                             output_name
@@ -454,7 +450,7 @@ def main(args=None):
                 for output_name in output_names:
 
                     # Check if the output variable exists in the MFILE
-                    if not output_name in m_file.data.keys():
+                    if output_name not in m_file.data.keys():
                         continue
 
                     print(
@@ -469,7 +465,7 @@ def main(args=None):
         for output_name in output_names:
 
             # Check if the output variable exists in the MFILE
-            if not output_name in m_file.data.keys():
+            if output_name not in m_file.data.keys():
                 continue
 
             # Loop over inputs
@@ -555,7 +551,7 @@ def main(args=None):
         for output_name in output_names:
 
             # Check if the output variable exists in the MFILE
-            if not output_name in m_file.data.keys():
+            if output_name not in m_file.data.keys():
                 print(
                     "Warning : `{}` does not exist in PROCESS dicts".format(output_name)
                 )
@@ -563,7 +559,7 @@ def main(args=None):
                 continue
 
             # Check if the output LaTeX variable label exist
-            if not output_name in labels:
+            if output_name not in labels:
                 print(
                     "Warning : The {} variable LaTeX label is not defined".format(
                         output_name
@@ -573,8 +569,6 @@ def main(args=None):
                 labels[output_name] = output_name
 
             # Declaring the outputs
-            scan_1_var_arrays = list()
-            scan_2_var_arrays = list()
             output_arrays = list()
 
             # Converged indexes

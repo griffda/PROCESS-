@@ -9,15 +9,14 @@
 
 """
 
-import sys
 import argparse
 import process.io.mfile as mf
 import matplotlib
-
-matplotlib.rcParams["figure.max_open_warning"] = 40
 import matplotlib.pyplot as plt
 import matplotlib.backends.backend_pdf as bpdf
 import numpy as np
+
+matplotlib.rcParams["figure.max_open_warning"] = 40
 
 
 def plot_nprofile(prof, mfdat, scan):

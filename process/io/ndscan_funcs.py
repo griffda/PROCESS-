@@ -121,7 +121,7 @@ def backup_in_file(setting, destination="IN.DATBACKUP"):
         subprocess
 
     """
-    if setting is "w":
+    if setting == "w":
         subprocess.call(["cp", "IN.DAT", destination])
-    if setting is "r":
+    if setting == "r":
         subprocess.call(["cp", destination, "IN.DAT"])

@@ -1332,7 +1332,6 @@ class CostsStep:
         # Add shield cost to total cost, step2201, in M$
         step2201 += step220102
         # STARFIRE percentage for spares
-        step2298 = 9.985e-2 * step220102
         spares = 9.985e-2 * step220102
 
         # 22.01.03.01 TF Coils
@@ -1885,7 +1884,7 @@ class CostsStep:
         # (tech adjusted from 1990 $ is costed as per Cost Model 0)
         # Note: NBI and EC/EBW acounts will be zero if this tech is not included.
 
-        ## HCD requirements for flat-top operation
+        # HCD requirements for flat-top operation
 
         # NBI cost per injected Watt (adjusted from 2020 $):
         step220104 = cdv.pnbitot * cv.step_ref[68] * (229.0e0 / 258.84e0)
@@ -1912,7 +1911,7 @@ class CostsStep:
             # ...use calculation for Lower Hybrid system (adjusted from 1990 $):
             step220104 += 1.0e-6 * cv.uclh * (1.0e6 * cdv.plhybd) * (229.0e0 / 76.7e0)
 
-        ## HCD requirements for start-up and ramp-down
+        # HCD requirements for start-up and ramp-down
         cv.startuppwr = step220104 * cv.startupratio
         step220104 += cv.startuppwr
 

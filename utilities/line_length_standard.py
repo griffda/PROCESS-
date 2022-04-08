@@ -14,7 +14,6 @@
 """
 
 import os
-import sys
 
 # Get repository root directory
 import pathlib

@@ -1,5 +1,4 @@
 import argparse
-import os
 import sys
 import yaml
 import jinja2
@@ -41,7 +40,7 @@ if __name__ == "__main__":
                 for header in changelog_dict:
                     changelog_dict[header] += yaml_file[header]
 
-            except yaml.YAMLError as exc:
+            except yaml.YAMLError:
                 print(
                     f"Failed to open and include content of {file} - please check headers match changelog_dict and that the structure of your yaml file matches that in `README.md` (i.e. space between hyphen and entry)."
                 )

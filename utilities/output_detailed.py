@@ -11,9 +11,7 @@
 import os
 import sys
 import json
-import subprocess
 import argparse
-import collections
 from collections import OrderedDict
 from grip import export
 
@@ -188,7 +186,7 @@ def get_indat_comments():
                 key = split_line[0][2:].replace(" ", "")
                 value = split_line[1].strip(" ").strip("\n")
                 COMMENTS.setdefault(key, []).append(value)
-            except:
+            except Exception:
                 print("Error with comment for line in IN.DAT :: {0}".format(line))
 
 
@@ -283,7 +281,7 @@ def include_diagram(filename, caption):
         output_pic(caption, filename, caption)
         output_line("Figure {0}: {1}".format(CAPTIONNUMBER, caption))
         CAPTIONNUMBER += 1
-    except:
+    except Exception:
         print("Cannot find image {0}".format(filename))
         pass
 
@@ -789,8 +787,8 @@ def output_radial_build():
         radial_plot_file = DATA["Builds"]["radial_diagram"]["filename"]
         radial_plot_caption = DATA["Builds"]["radial_diagram"]["caption"]
         include_diagram(radial_plot_file, radial_plot_caption)
-    except:
-        print("Cannot find image {0}".format(filename))
+    except Exception:
+        print("Cannot find image {0}".format(radial_plot_file["filename"]))
         pass
 
     table_heading(["Name", "Thickness [m]", "Radial Position [m]", "Description"])
@@ -953,7 +951,7 @@ if __name__ == "__main__":
     except ValueError as e:
         print("Error in JSON config file. Please correct error: {0}".format(e))
         sys.exit()
-    except FileNotFoundError as fe:
+    except FileNotFoundError:
         print(
             "Cannot find JSON config file. Expecting file in: {0}".format(
                 COMMAND_ARGS.j
