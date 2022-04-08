@@ -3,23 +3,23 @@ module final_module
   use, intrinsic :: iso_fortran_env, only: dp=>real64
 #endif
   implicit none
-  
+
   contains
-  
+
   subroutine final_header(ifail)
     use process_output, only: oheadr
     use constants, only: nout
     implicit none
-    
-    integer, intent(in) :: ifail  
-    
+
+    integer, intent(in) :: ifail
+
     if (ifail == 1) then
       call oheadr(nout,'Final Feasible Point')
     else
       call oheadr(nout,'Final UNFEASIBLE Point')
     end if
   end subroutine final_header
-  
+
   subroutine no_optimisation()
     use constants, only: mfile, nout
     use numerics, only: neqns, nineqns, ipeqns, icc, lablcc, rcm
@@ -28,18 +28,18 @@ module final_module
     use constraints, only: constraint_eqns
 
     implicit none
-  
+
     integer :: inn
     real(dp), dimension(ipeqns) :: con1, con2, err
     character(len=1), dimension(ipeqns) :: sym
     character(len=10), dimension(ipeqns) :: lab
-  
+
     !call funfom(objfun)
-    
+
     call oheadr(nout,'Numerics')
     call ocmmnt(nout,'PROCESS has performed a run witout optimisation.')
     call oblnkl(nout)
-    
+
     ! Print the residuals of the constraint equations
     call constraint_eqns(neqns+nineqns,-1,con1,con2,err,sym,lab)
     write(nout,120)
@@ -53,13 +53,13 @@ module final_module
       call ovarre(mfile,lablcc(icc(inn))//' normalised residue', &
       '(normres'//int_to_string3(inn)//')',con1(inn))
     end do
-    
+
     140 format(t2,i4,t8,a33,t46,a1,t47,1pe12.4,t60,a10,t71,1pe12.4,t84,a10,t98,1pe12.4)
-    
+
     if (nineqns > 0) then
       call osubhd(nout, &
       'The following inequality constraint residues should be greater than or approximately equal to zero :')
-      
+
       do inn = neqns+1,neqns+nineqns
         write(nout,140) inn,lablcc(icc(inn)),sym(inn),con2(inn), &
         lab(inn), err(inn), lab(inn)
@@ -74,7 +74,7 @@ module final_module
       nvar
     use define_iteration_variables, only: loadxc
     implicit none
-    
+
     if (nfev1 == 0) then  !  no HYBRD call
       !if (nviter == 1) then
       !    write(iotty,10) nviter,ncalls

@@ -210,13 +210,13 @@ module build_variables
   !! Switch selecting the he parametrization of the outer radius of the top of the CP part of the TF coil
   !!  0 : `r_cp_top` is set by the plasma shape
   !!  1 : `r_cp_top` is a user input
-  !!  2 : `r_cp_top` is set using the CP top and midplane CP radius ratio 
+  !!  2 : `r_cp_top` is set using the CP top and midplane CP radius ratio
 
   real(dp) :: r_cp_top
   !! Top outer radius of the centropost (ST only) (m)
 
   real(dp) :: f_r_cp
-  !! Ratio between the top and the midplane TF CP outer radius [-] 
+  !! Ratio between the top and the midplane TF CP outer radius [-]
   !! Not used by default (-1) must be larger than 1 otherwise
 
   real(dp) :: dr_tf_inner_bore
@@ -226,7 +226,7 @@ module build_variables
   !! TF coil vertical inner bore (m)
 
   real(dp) :: scrapli
-  !! Gap between plasma and first wall, inboard side (m) (if `iscrp=1`) 
+  !! Gap between plasma and first wall, inboard side (m) (if `iscrp=1`)
   !! Iteration variable: ixc = 73
   !! Scan variable: nsweep = 58
 

@@ -1,7 +1,7 @@
 module global_variables
   !! author: J. Morris (UKAEA)
   !!
-  !! This module contains miscellaneous global variables not well-suited to any 
+  !! This module contains miscellaneous global variables not well-suited to any
   !! of the other 'variables' modules.
   !!
   !!### References
@@ -12,7 +12,7 @@ module global_variables
   use, intrinsic :: iso_fortran_env, only: dp=>real64
 #endif
   implicit none
-  
+
   public
 
   character(len=48) :: icase
@@ -44,7 +44,7 @@ module global_variables
 
   character(len=25) :: vlabel
   !! scan value name label
-  
+
   character(len=25) :: xlabel_2
   !! scan parameter description label (2nd dimension)
 
@@ -58,7 +58,7 @@ module global_variables
   !! VMCON convergence parameter "sum"
 
   contains
-  
+
   subroutine init_global_variables
     !! Initialise global variables
     implicit none
@@ -68,7 +68,7 @@ module global_variables
     verbose = 0
     run_tests = 0
     maxcal = 200
-    fileprefix = "" 
+    fileprefix = ""
     output_prefix = ""
     xlabel = ""
     vlabel = ""

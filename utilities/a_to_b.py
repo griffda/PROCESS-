@@ -48,25 +48,37 @@ import argparse
 
 import process.io.in_dat as inmod
 import process.io.mfile as mfmod
+
 try:
-    from process_io_lib.process_dicts import DICT_IXC_SIMPLE, DICT_VAR_TYPE, \
-        DICT_DEFAULT, DICT_IXC_BOUNDS, IFAIL_SUCCESS, \
-        DICT_INPUT_BOUNDS, DICT_DESCRIPTIONS
+    from process_io_lib.process_dicts import (
+        DICT_IXC_SIMPLE,
+        DICT_VAR_TYPE,
+        DICT_DEFAULT,
+        DICT_IXC_BOUNDS,
+        IFAIL_SUCCESS,
+        DICT_INPUT_BOUNDS,
+    )
 except ImportError:
-    print("The Python dictionaries have not yet been created. Please run \
-'make dicts'!")
+    print(
+        "The Python dictionaries have not yet been created. Please run \
+'make dicts'!"
+    )
     exit()
-from process_io_lib.process_funcs import check_logfile, \
-    process_warnings, process_stopped, vary_iteration_variables
+from process_io_lib.process_funcs import (
+    check_logfile,
+    process_warnings,
+    process_stopped,
+    vary_iteration_variables,
+)
 from process_io_lib.a_to_b_config import AToBConfig
 
 
 def is_bound(var_name):
     """Function that tests if var_name is a valid upper
-       or lower bound name eg. 'boundu(12)' or 'BOUNDL(3)'
-       if the name is valid, returns +number in brackets for
-       upper bounds, -number for lower bounds. If the name is
-       not valid, returns False.
+    or lower bound name eg. 'boundu(12)' or 'BOUNDL(3)'
+    if the name is valid, returns +number in brackets for
+    upper bounds, -number for lower bounds. If the name is
+    not valid, returns False.
 
     """
     var_name = var_name.lower()
@@ -88,8 +100,8 @@ def is_bound(var_name):
 
 def get_default_value(var):
     """Returns the default value of var. Looks in dictionary DICT_DEFAULT
-       for iteration variables and DICT_IXC_BOUNDS for bounds. Returns None if
-       no value can be found
+    for iteration variables and DICT_IXC_BOUNDS for bounds. Returns None if
+    no value can be found
 
     """
     if var in DICT_DEFAULT.keys():
@@ -106,10 +118,10 @@ def get_default_value(var):
 
 def get_val(varname, in_dat):
     """Returns value of variable in in_dat if specified, otherwise returns
-       default value of variable
-       Args
-            varname --> String name of variable
-            in_dat --> InDat object
+    default value of variable
+    Args
+         varname --> String name of variable
+         in_dat --> InDat object
 
     """
     if varname in in_dat.data.keys():
@@ -120,15 +132,15 @@ def get_val(varname, in_dat):
 
 def get_mfile_dict(filename="MFILE.DAT", filt=None):
     """Function to get a dictionary of the variables and their values from
-       MFILE.DAT. Only variables that appear in filt are returned.
+    MFILE.DAT. Only variables that appear in filt are returned.
 
-       Args:
-           filename --> Name of MFILE.DAT to read
-           filt --> List of variable names to allow. Pass None to
-                 disable filter
+    Args:
+        filename --> Name of MFILE.DAT to read
+        filt --> List of variable names to allow. Pass None to
+              disable filter
 
-       Returns:
-           mfile_dict --> dictionary of variables in MFILE and their values.
+    Returns:
+        mfile_dict --> dictionary of variables in MFILE and their values.
 
     """
     mfile = mfmod.MFile(filename)
@@ -143,12 +155,12 @@ def get_mfile_dict(filename="MFILE.DAT", filt=None):
 
 def update_infile(var_dict, in_dat):
     """Function to update the variables in in_dat to the value in the
-       given dictionary
+    given dictionary
 
-       Args:
-           var_dict --> dictionary of variables and the value to be
-                   updated to
-           in_dat --> IN.DAT data object.
+    Args:
+        var_dict --> dictionary of variables and the value to be
+                updated to
+        in_dat --> IN.DAT data object.
 
     """
     for key in var_dict.keys():
@@ -169,15 +181,15 @@ def update_infile(var_dict, in_dat):
 
 def update_dict(original_dict, target_dict, frac):
     """Function that takes two dictionaries that have identical keys and
-       returns a new dicionary with values interpolated between the two.
-       Only works for floats
+    returns a new dicionary with values interpolated between the two.
+    Only works for floats
 
-       Args:
-           original_dict --> dictionary of original values
-           target_dict --> dictionary of target values ie. values when
-                      iteration_number == iteration_limit
-           frac --> interpolation fraction between original and target ie.
-               frac = 0.0 -> original value, frac = 1.0 -> target value
+    Args:
+        original_dict --> dictionary of original values
+        target_dict --> dictionary of target values ie. values when
+                   iteration_number == iteration_limit
+        frac --> interpolation fraction between original and target ie.
+            frac = 0.0 -> original value, frac = 1.0 -> target value
 
     """
     if sorted(original_dict.keys()) != sorted(target_dict.keys()):
@@ -196,18 +208,18 @@ def update_dict(original_dict, target_dict, frac):
 
 def run_process(path_to_process, niter=100, bound_spread=1.2):
     """Runs PROCESS in the current directory. If the run is not succesful,
-       varies the iteration variables randomly between
-       bound_spread * current value and current_value / bound_spread
-       loops niter times before giving up. Returns True if a succesful
-       run is carried out, False if niter is exceeded.
+    varies the iteration variables randomly between
+    bound_spread * current value and current_value / bound_spread
+    loops niter times before giving up. Returns True if a succesful
+    run is carried out, False if niter is exceeded.
 
     """
     in_dat = inmod.InDat("IN.DAT")
     # get list of itervars
-    ixc_list = in_dat.data['ixc'].value
+    ixc_list = in_dat.data["ixc"].value
     itervars = []
     for var in ixc_list:
-        if var != '':
+        if var != "":
             itervars += [DICT_IXC_SIMPLE[str(var)]]
 
     # get the lower and upper bounds between which each itervar will be varied
@@ -229,12 +241,16 @@ def run_process(path_to_process, niter=100, bound_spread=1.2):
         # returncode = os.system(path_to_process + " >& process.log")
         # returncode = subprocess.call(["{0}/process.exe >& process.log".
         # format(path_to_process)])
-        returncode = subprocess.call(["{0}/process.exe >> process.log".
-                                     format(path_to_process)], shell=True)
+        returncode = subprocess.call(
+            ["{0}/process.exe >> process.log".format(path_to_process)], shell=True
+        )
         if returncode != 0:
-            print('\n Error: There was a problem with PROCESS \
-                        execution %i!' % returncode)
-            print('Refer to process.log for more information')
+            print(
+                "\n Error: There was a problem with PROCESS \
+                        execution %i!"
+                % returncode
+            )
+            print("Refer to process.log for more information")
             exit()
         # exit if process reported an error
         check_logfile()
@@ -245,8 +261,10 @@ def run_process(path_to_process, niter=100, bound_spread=1.2):
             if ifail == IFAIL_SUCCESS:
                 # if the run was succesful, return True
                 if process_warnings():
-                    print("There were warnings in the PROCESS run. Please"
-                          " check the log file!")
+                    print(
+                        "There were warnings in the PROCESS run. Please"
+                        " check the log file!"
+                    )
                 print("")
                 return True
         # if process stopped prematurely or didn't find a solution, rerun
@@ -259,7 +277,7 @@ def run_process(path_to_process, niter=100, bound_spread=1.2):
 
 def copy_files(from_dir, target_dir, count=None):
     """Copies MFILE.DAT, OUT.DAT, IN.DAT and process.log from from_dir to
-       to_dir, prepending count to each file if given.
+    to_dir, prepending count to each file if given.
 
     """
     files = ["MFILE.DAT", "OUT.DAT", "IN.DAT", "process.log"]
@@ -284,19 +302,19 @@ def copy_files(from_dir, target_dir, count=None):
 
 def get_step_dicts(a_dat, b_dat, allowed_diffs=None):
     """Works out which values are to be stepped from the value in A to the
-       value in B. Also checks that all integer switches that do not appear
-       in allowed_diffs are identical in both input files.
-       Returns two dictionaries of the variables to be stepped. original_dict
-       contains the values of the variables in A, target_dict contains the
-       values of the variables in B. Any variable that appears in B and a
-       value cannot be found in A will be added to a_dat.
-       Args
-            a_dat --> InDat object corresponding to A IN.DAT
-            b_dat --> InDat object corresponding to B IN.DAT
-            allowed_diffs --> Set of integer switches that are allowed to
-                              differ between A and B
-       returns
-            (original_dict, target_dict)
+    value in B. Also checks that all integer switches that do not appear
+    in allowed_diffs are identical in both input files.
+    Returns two dictionaries of the variables to be stepped. original_dict
+    contains the values of the variables in A, target_dict contains the
+    values of the variables in B. Any variable that appears in B and a
+    value cannot be found in A will be added to a_dat.
+    Args
+         a_dat --> InDat object corresponding to A IN.DAT
+         b_dat --> InDat object corresponding to B IN.DAT
+         allowed_diffs --> Set of integer switches that are allowed to
+                           differ between A and B
+    returns
+         (original_dict, target_dict)
 
     """
     if allowed_diffs is None:
@@ -316,12 +334,16 @@ def get_step_dicts(a_dat, b_dat, allowed_diffs=None):
             target_val = get_val(var, b_dat)
 
             if original_val is None:
-                print("No initial value for %s in A and could"
-                      " not find default value in dictionaries" % var)
+                print(
+                    "No initial value for %s in A and could"
+                    " not find default value in dictionaries" % var
+                )
                 exit()
             if target_val is None:
-                print("No target value for %s in B and could"
-                      " not find default value in dictionaries" % var)
+                print(
+                    "No target value for %s in B and could"
+                    " not find default value in dictionaries" % var
+                )
                 exit()
 
             if isinstance(b_dat.data[var].get_value, float):
@@ -340,48 +362,44 @@ def get_step_dicts(a_dat, b_dat, allowed_diffs=None):
                 # same, nothing needs to be done
                 if var in allowed_diffs or target_val == original_val:
                     continue
-                print("Warning, differing values for %s " % var +
-                      "in A and B")
+                print("Warning, differing values for %s " % var + "in A and B")
                 print("A:", original_val, "  B:", target_val)
                 print("Using value in B\n")
                 if var in a_dat.data.keys():
                     a_dat.remove_parameter(var)
-                param_group = inmod.find_parameter_group(var)
-                comment = DICT_DESCRIPTIONS[var].replace(",", ";").\
-                    replace(".", ";").replace(":", ";")
-                new_variable = inmod.INVariable(var, target_val,
-                                                "real_variable", param_group,
-                                                "")
                 a_dat.add_parameter(var, target_val)
+
     return original_dict, target_dict
 
 
 def set_iter_vals(a_dat, b_dat, original_dict, target_dict, bound_fac=1.001):
     """Finds and deals with cases where different iteration variables are
-       set in A and B.
-       If variable is set as iteration variable:
-        In B but not A -> Set as iteration variable in A immediately
-        In A but not B -> Gradually narrow the upper and lower bounds to
-                           converge on the value set in B. Upper and lower
-                           bounds will end up as b_val * bound_fac and
-                           b_val / bound_fac.
-        In A and B -> If the variable appears in the dictionaries of values to
-                      be stepped, remove it
-        Neither -> Nothing to be done
-       Args
-            a_dat --> InDat object corresponding to A IN.DAT
-            b_dat --> InDat object corresponding to B IN.DAT
-            original_dict --> Dictionary of values to be stepped and value in A
-            target_dict --> Dictionary of values to be stepped and value in B
-            bound_fac --> Separation factor of target bounds. Default = 1.001
+    set in A and B.
+    If variable is set as iteration variable:
+     In B but not A -> Set as iteration variable in A immediately
+     In A but not B -> Gradually narrow the upper and lower bounds to
+                        converge on the value set in B. Upper and lower
+                        bounds will end up as b_val * bound_fac and
+                        b_val / bound_fac.
+     In A and B -> If the variable appears in the dictionaries of values to
+                   be stepped, remove it
+     Neither -> Nothing to be done
+    Args
+         a_dat --> InDat object corresponding to A IN.DAT
+         b_dat --> InDat object corresponding to B IN.DAT
+         original_dict --> Dictionary of values to be stepped and value in A
+         target_dict --> Dictionary of values to be stepped and value in B
+         bound_fac --> Separation factor of target bounds. Default = 1.001
 
     """
     for num in b_dat.data["ixc"].value:
         if num not in a_dat.data["ixc"].value:
             # if the variable is an iteration variable in B but not in
             # A, then make it an iteration variable in A
-            print(DICT_IXC_SIMPLE[str(num)], "is set as iteration variable" +
-                  " in B but not in A.")
+            print(
+                DICT_IXC_SIMPLE[str(num)],
+                "is set as iteration variable" + " in B but not in A.",
+            )
             print("Setting as iteration variable\n")
             a_dat.add_iteration_variable(num)
 
@@ -402,13 +420,14 @@ def set_iter_vals(a_dat, b_dat, original_dict, target_dict, bound_fac=1.001):
             if not tar_val:
                 print("Could not find a target value for %s" % name)
                 exit()
-            print(name, "is set as iteration variable in A but" +
-                        " not in B")
+            print(name, "is set as iteration variable in A but" + " not in B")
 
             tar_uplimit = tar_val * bound_fac
             tar_downlimit = tar_val / bound_fac
-            print("Target limits on %s set as %f and %f\n" %
-                  (name, tar_downlimit, tar_uplimit))
+            print(
+                "Target limits on %s set as %f and %f\n"
+                % (name, tar_downlimit, tar_uplimit)
+            )
 
             upname = "boundu(%i)" % num
             target_dict[upname] = tar_uplimit
@@ -421,13 +440,13 @@ def set_iter_vals(a_dat, b_dat, original_dict, target_dict, bound_fac=1.001):
 
 def get_icc_changes(a_dat, b_dat):
     """Returns a list of changes to ICC to make while stepping between
-       A and B. Positive numbers indicate an equation to be added, negative
-       numbers indicate an equation to be removed
-       Args
-            a_dat --> InDat object corresponding to A
-            b_dat --> InDat object corresponding to B
-       Returns
-            icc_changes --> List of equation numbers to be changed
+    A and B. Positive numbers indicate an equation to be added, negative
+    numbers indicate an equation to be removed
+    Args
+         a_dat --> InDat object corresponding to A
+         b_dat --> InDat object corresponding to B
+    Returns
+         icc_changes --> List of equation numbers to be changed
 
     """
     a_icc = a_dat.data["icc"].value
@@ -444,21 +463,21 @@ def get_icc_changes(a_dat, b_dat):
 
 def make_icc_changes(i, nsteps, icc_changes, in_dat):
     """Makes the changes to the icc array of in_dat for a particular step
-       Slices the array according to the step number to calculate which
-       icc changes should be made this step.
-       Args
-            i --> Current step counter
-            nsteps --> Final number of steps
-            icc_changes --> Array of all icc changes to be made from A to B
-            in_dat --> InDat object
-       Returns
-            changes_made --> icc changes made this step
+    Slices the array according to the step number to calculate which
+    icc changes should be made this step.
+    Args
+         i --> Current step counter
+         nsteps --> Final number of steps
+         icc_changes --> Array of all icc changes to be made from A to B
+         in_dat --> InDat object
+    Returns
+         changes_made --> icc changes made this step
 
     """
-    down_index = round(((i-1) * len(icc_changes)) / nsteps)
+    down_index = round(((i - 1) * len(icc_changes)) / nsteps)
     up_index = round(((i) * len(icc_changes)) / nsteps)
     changes_made = []
-    for num in icc_changes[down_index: up_index]:
+    for num in icc_changes[down_index:up_index]:
         changes_made.append(num)
         if num < 0:
             print("Removing constraint equation %i ..." % -num)
@@ -474,11 +493,11 @@ def make_icc_changes(i, nsteps, icc_changes, in_dat):
 
 def setup():
     """Sets up the directories for use. Reads A and B to determine
-       what the program should do.
-       Returns
-           original_dict --> intial values of stepped variables
-           target_dict --> target values of stepped variables
-           icc_changes --> list of icc changes to make
+    what the program should do.
+    Returns
+        original_dict --> intial values of stepped variables
+        target_dict --> target values of stepped variables
+        icc_changes --> list of icc changes to make
 
     """
     # if the folders needed don't exist, make them
@@ -520,13 +539,11 @@ def setup():
         print(key, original_dict[key], "-->", target_dict[key])
 
     if len(icc_changes) > 0:
-        print("\nThe following constraint equations will be added"
-              " during the run:")
+        print("\nThe following constraint equations will be added" " during the run:")
         for num in icc_changes:
             if num > 0:
                 print(num)
-        print("The following constraint equations will be removed"
-              " during the run:")
+        print("The following constraint equations will be removed" " during the run:")
         for num in icc_changes:
             if num < 0:
                 print(-num)
@@ -539,9 +556,7 @@ def setup():
 
 
 def main():
-    """Main program routine
-
-    """
+    """Main program routine"""
     original_dict, target_dict, icc_changes = setup()
 
     os.chdir(CONF.wdir)
@@ -562,7 +577,7 @@ def main():
     # used for debugging
     icc_changes_made = []
 
-    for i in range(1, CONF.nsteps+1):
+    for i in range(1, CONF.nsteps + 1):
 
         print("doing step %i ..." % i)
 
@@ -575,8 +590,7 @@ def main():
         mfile_dict.update(current_dict)
         in_dat = update_infile(mfile_dict, in_dat)
 
-        icc_changes_made += make_icc_changes(i, CONF.nsteps, icc_changes,
-                                             in_dat)
+        icc_changes_made += make_icc_changes(i, CONF.nsteps, icc_changes, in_dat)
 
         # write the new IN.DAT and run process
         in_dat.write_in_dat("IN.DAT")
@@ -591,12 +605,15 @@ def main():
 
     assert icc_changes_made == icc_changes
 
+
 if __name__ == "__main__":
 
     print("")
-    PARSER = argparse.ArgumentParser(description="Steps a PROCESS solution " +
-                                     "between two input files.\nRequires " +
-                                     "a_to_b.conf in the working directory")
+    PARSER = argparse.ArgumentParser(
+        description="Steps a PROCESS solution "
+        + "between two input files.\nRequires "
+        + "a_to_b.conf in the working directory"
+    )
     ARGS = PARSER.parse_args()
     CONF = AToBConfig("a_to_b.conf")
 

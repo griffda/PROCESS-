@@ -22,7 +22,7 @@ module vacuum_variables
   !#TODO: old and simple not suitable names.
 
   real(dp) :: niterpump
-  !! number of high vacuum pumps (real number), each with the throughput of one 
+  !! number of high vacuum pumps (real number), each with the throughput of one
   !! ITER cryopump (50 Pa m3 s-1), all operating at the same time (`vacuum_model='simple'`)
 
   integer :: ntype
@@ -85,7 +85,7 @@ module vacuum_variables
 
   real(dp) :: initialpressure
   !! initial neutral pressure at the beginning of the dwell phase (Pa)
-  
+
   real(dp) :: outgasindex
   !! outgassing decay index
 

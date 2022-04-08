@@ -1,13 +1,13 @@
 
 
   program main
-  
+
     use grad_func
     use structs
     implicit none
-      
-    ! solver controls  
-    
+
+    ! solver controls
+
     real(kind(1.0D0)) :: tol, dtmin, dtminmin, dtminmax, dtinc, tolopt, etol, eopt, dtmin0, dt0
     real(kind(1.0d0)) :: dtmax, dtmaxmin, dtmaxmax, tolmax, tolmin, dgy, etol0, etolm, dtmax0
     integer :: jiter, nitermax, Pf0, jipperdo, jipper, redo, jnit, redo0,i_modeltype,i_equiltype
@@ -15,19 +15,19 @@
     real(kind(1.0d0)),dimension(8) :: rscan
 				real(kind(1.0d0)),dimension(7) :: btscan
     real(kind(1.0d0)),dimension(8,7) :: fusscan,vlopscan,volscan,hscan,nbiscan
-    
+
     ! grid
-    
+
  !   integer, parameter :: nx = 41, nxt = 5, nchannels = 3
-    
+
     ! others
-    
+
     ! set physics constants
-    
+
     real(kind(1.0d0)) :: Hfactor,chi00,chipow,Hnow,tau_scal,chifac,chifac0
-    
+
 				integer :: i_flag,jloop,j1scan,j2scan
-				
+
     type (geometry) :: geom
     type (composition) :: comp
     type (pedestal) :: ped
@@ -42,13 +42,13 @@
 	rscan=(/8.7,8.8,8.9,9.,9.1,9.2,9.3,9.4/)
 	btscan=(/5.5,5.6,5.7,5.8,5.9,6.,6.1/)
 
-    
-    
+
+
     ! Initialise plasma stuff -- to be obtained from rest of PROCESS!
 				pi=3.141592
-	include 'defaults_inputs.f90'				
-	mhd%equilcheck =0.d0    
-				
+	include 'defaults_inputs.f90'
+	mhd%equilcheck =0.d0
+
 				!	pause
     ! set up grid
 
@@ -76,14 +76,14 @@
 
 !				inp0%f_ni=0. !required fraction of non inductive current, if 0, dont use CD
 !				inp0%Hfac_inp=1. !input H factor, if 0., this is not used. This is radiation corrected H factor
-!				geom%q95 = 3.5 !safety factor. 
-								
+!				geom%q95 = 3.5 !safety factor.
+
 !write(*,*) 'first iteration'
-	include 'DEMOlike.dat'				
-	include 'ITERlike.dat'				
-	include 'DEMO1.dat'				
-	include 'FPALSCANS.dat'				
-	include 'DEMOlike.dat'				
+	include 'DEMOlike.dat'
+	include 'ITERlike.dat'
+	include 'DEMO1.dat'
+	include 'FPALSCANS.dat'
+	include 'DEMOlike.dat'
 !pause
 	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
 	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
@@ -116,7 +116,7 @@ hscan(j1scan,j2scan)=loss%H
 nbiscan(j1scan,j2scan)=loss%pnbi
 
 	open(32,file='fort.9911')
-	write(32,'(722E25.11)') rscan,btscan,fusscan,& 
+	write(32,'(722E25.11)') rscan,btscan,fusscan,&
 	& vlopscan,volscan,hscan,nbiscan
 	close(32)
 
@@ -185,7 +185,7 @@ write(*,*) 'second iteration',i_flag
 
 	call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
 
-	
+
 	endif
 
 
@@ -214,8 +214,8 @@ write(1555,*) 'loss',loss
 	!write outputs
 ! geom%ip --> if i_equiltype = 1, ip is an output
 
-! radp%x --> normalized minor radius 
-! radp%ne --> electron density profiule in 10^19 m^-3 
+! radp%x --> normalized minor radius
+! radp%ne --> electron density profiule in 10^19 m^-3
 ! radp%te --> electron temperature profile in kev
 ! radp%ti --> ion temperature profile in kev
 
@@ -242,10 +242,10 @@ write(1555,*) 'loss',loss
 ! loss%taueff --> plasma confinement time in s
 
 ! loss%pdiv --> divertor power in MW/m^2
-! loss%Hcorr --> H factor with radiation correction	
+! loss%Hcorr --> H factor with radiation correction
 
 ! loss%pradcore --> core radiation in MW
-! loss%pradedge --> edge radiation in MW	
+! loss%pradedge --> edge radiation in MW
 ! loss%psepe --> electron separatrix power
 ! loss%psync --> synchrotron radiation in MW
 ! loss%pbrehms --> brehm radiation in MW
@@ -256,13 +256,13 @@ write(1555,*) 'loss',loss
 write(*,*) ' geom%ip   ped%teped ped%nped   mhd%betan  mhd%vp'
 write(*,'(911E25.11)')  geom%ip ,  ped%teped ,ped%nped  , mhd%betan , mhd%vp
 
-write(*,*) 'mhd%sp , mhd%q 	,mhd%ip_out,	mhd%vloop ,	mhd%fbs, 	mhd%f_ni	'			 
-write(*,'(911E25.11)')  mhd%sp , mhd%q 	,mhd%ip_out,	mhd%vloop ,	mhd%fbs, 	mhd%f_ni				 
+write(*,*) 'mhd%sp , mhd%q 	,mhd%ip_out,	mhd%vloop ,	mhd%fbs, 	mhd%f_ni	'
+write(*,'(911E25.11)')  mhd%sp , mhd%q 	,mhd%ip_out,	mhd%vloop ,	mhd%fbs, 	mhd%f_ni
 
 write(*,*) 'inp0%qheat  ,inp0%qcd ,  inp0%qfus   '
-write(*,'(911E25.11)')  inp0%qheat  ,inp0%qcd ,  inp0%qfus   
+write(*,'(911E25.11)')  inp0%qheat  ,inp0%qcd ,  inp0%qfus
 
-write(*,*) ' loss%psep  ,  loss%prad   ,loss%wth ,loss%taueff , loss%pdiv   , loss%Hcorr , loss%pfus  , loss%chifac0' 
+write(*,*) ' loss%psep  ,  loss%prad   ,loss%wth ,loss%taueff , loss%pdiv   , loss%Hcorr , loss%pfus  , loss%chifac0'
 write(*,'(911E25.11)')   loss%psep  ,  loss%prad   ,loss%wth ,loss%taueff , loss%pdiv   , loss%Hcorr, loss%pfus  , loss%chifac0
 
 
@@ -279,6 +279,5 @@ write(*,*) (mhd%f_ni-mhd%fbs)*geom%ip/loss%pnbi*1e3
 
 
 
-    
-  end
 
+  end

@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.3.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "15/02/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "11:42"
+ Date_of_run_____________________________________________________________ (date)________________________     "30/03/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "10:49"
  User____________________________________________________________________ (username)____________________     "jg6173"  
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "FNSF (Menard et al. 2016)                                                                          
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1240-g7124046d"                                                                               
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1511-update-heating-and-current-drive-costs"                                                       
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge\ branch\ |develop|\ into\ 1511-update-heating-an"                                            
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-jg6173/pytest-24/test_scenario_FNSF_0/IN.DAT                                                                                                                                             "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1456-ge3dc2ccc"                                                                               
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1336-update-cryoplant-cost-22-03-for-cost-model-2"                                                 
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge\ branch\ |develop|\ into\ 1336-update-cryoplant-"                                            
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-jg6173/pytest-57/test_scenario_FNSF_0/IN.DAT                                                                                                                                             "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -103,6 +103,7 @@
  Heating/CD_system_lifetime_(years)______________________________________ (cdrlife)_____________________      2.6195E+01 OP 
  Total_plant_lifetime_(years)____________________________________________ (tlife)_______________________      3.0000E+01    
  Total_plant_availability_fraction_______________________________________ (cfactr)______________________      7.5000E-01    
+ Number_of_fusion_cycles_to_reach_allowable_fw/blanket_DPA_______________ (bktcycles)___________________      5.3160E+05    
  # Plasma #
  Tokamak_aspect_ratio_=_Spherical,_itart_=_1_____________________________ (itart)_______________________      1.0000E+00    
  Major_radius_(m)________________________________________________________ (rmajor)______________________      1.7000E+00    
@@ -369,7 +370,7 @@
  Divertor_surface_area_(m2)______________________________________________ (areadv)______________________      8.8925E+01    
  Divertor_heat_load_(MW/m2)______________________________________________ (hldiv)_______________________      1.9214E-01    
  # Radial Build #
- Machine_bore_(m)________________________________________________________ (bore)________________________      0.0000E+00    
+ Machine_build_variables.bore_(m)________________________________________ (bore)________________________      0.0000E+00    
  CS_radial_thickness_(m)_________________________________________________ (ohcth)_______________________      0.0000E+00    
  CS_precompression_(m)___________________________________________________ (precomp)_____________________      0.0000E+00    
  CS_precompresion_to_TF_coil_radial_gap_(m)______________________________ (gapoh)_______________________      0.0000E+00    
@@ -409,18 +410,20 @@
  # TF coils  #
  Allowable_maximum_shear_stress_in_TF_coil_case_(Tresca_criterion)_(Pa)__ (sig_tf_case_max)_____________      6.0000E+08    
  Allowable_maximum_shear_stress_in_TF_coil_conduit_(Tresca_criterion)_(Pa (sig_tf_wp_max)_______________      6.0000E+08    
- WP_toroidal_modulus_(GPa)_______________________________________________ (eyoung_wp_t*1.0D-9)__________      1.1700E+02 OP 
- WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_z*1.0D-9)__________      9.9029E+01 OP 
- Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________     -6.8441E+07    
- toroidal__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_t_max(1))_____________     -6.8441E+07    
- Vertical__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_z_max(1))_____________      3.9918E+07    
- Von-Mises_stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_vmises_max(1))________      1.0836E+08    
- Maximum_shear_stress_for_the_Tresca_yield_criterion_1_(Pa)______________ (sig_tf_tresca_max(1))________      1.0836E+08    
- Radial____stress_at_maximum_shear_of_layer_2_(Pa)_______________________ (sig_tf_r_max(2))_____________      1.7704E+06    
- toroidal__stress_at_maximum_shear_of_layer_2_(Pa)_______________________ (sig_tf_t_max(2))_____________     -3.4546E+07    
- Vertical__stress_at_maximum_shear_of_layer_2_(Pa)_______________________ (sig_tf_z_max(2))_____________      1.5929E+08    
- Von-Mises_stress_at_maximum_shear_of_layer_2_(Pa)_______________________ (sig_tf_vmises_max(2))________      1.7847E+08    
- Maximum_shear_stress_for_the_Tresca_yield_criterion_2_(Pa)______________ (sig_tf_tresca_max(2))________      1.9383E+08    
+ WP_transverse_modulus_(GPa)_____________________________________________ (eyoung_wp_trans*1.0D-9)______      1.1700E+02 OP 
+ WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_axial*1.0D-9)______      9.9029E+01 OP 
+ WP_transverse_Poisson's_ratio___________________________________________ (poisson_wp_trans)____________      3.5000E-01 OP 
+ WP_vertical-transverse_Pois._rat._______________________________________ (poisson_wp_axial)____________      3.4985E-01 OP 
+ Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________     -6.8437E+07    
+ toroidal__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_t_max(1))_____________     -6.8438E+07    
+ Vertical__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_z_max(1))_____________      3.9935E+07    
+ Von-Mises_stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_vmises_max(1))________      1.0837E+08    
+ Maximum_shear_stress_for_the_Tresca_yield_criterion_1_(Pa)______________ (sig_tf_tresca_max(1))________      1.0837E+08    
+ Radial____stress_at_maximum_shear_of_layer_2_(Pa)_______________________ (sig_tf_r_max(2))_____________      1.7699E+06    
+ toroidal__stress_at_maximum_shear_of_layer_2_(Pa)_______________________ (sig_tf_t_max(2))_____________     -3.4535E+07    
+ Vertical__stress_at_maximum_shear_of_layer_2_(Pa)_______________________ (sig_tf_z_max(2))_____________      1.5927E+08    
+ Von-Mises_stress_at_maximum_shear_of_layer_2_(Pa)_______________________ (sig_tf_vmises_max(2))________      1.7844E+08    
+ Maximum_shear_stress_for_the_Tresca_yield_criterion_2_(Pa)______________ (sig_tf_tresca_max(2))________      1.9381E+08    
  Conductor_technology____________________________________________________ (i_tf_sup)____________________              0    
  Presence_of_TF_demountable_joints_______________________________________ (itart)_______________________              1    
  TF_inboard_leg_support_strategy_________________________________________ (i_tf_bucking)________________              0    
@@ -453,7 +456,7 @@
  Inboard_leg_case_plasma_side_wall_thickness_(m)_________________________ (casthi)______________________      2.7029E-02    
  Inboard_leg_bucking_cylinder_thickness_(m)______________________________ (thkcas)______________________      0.0000E+00    
  Inboard_TFC_conductor_sector_area_with_gr_insulation_(per_leg)_(m2)_____ (awpc))_______________________      6.9043E-02    
- Inboard_TFC_conductor_sector_area_(per_leg)_(m2)________________________ (aswp)________________________      6.9043E-02    
+ Inboard_TFC_conductor_sector_area,_NO_ground_&_gap_(per_leg)_(m2)_______ (awptf)_______________________      6.9043E-02    
  Inboard_conductor_sector_radial_thickness_(m)___________________________ (dr_tf_wp)____________________      5.1354E-01    
  Central_collumn_top_conductor_sector_radial_thickness_(m)_______________ (dr_tf_wp_top)________________      7.5926E-01    
  Ground_wall_insulation_thickness_(m)____________________________________ (tinstf)______________________      0.0000E+00    
@@ -830,9 +833,11 @@
  AC_losses_in_cryogenic_components_(MW)__________________________________ (qac/1.0D6)___________________      0.0000E+00 OP 
  Resistive_losses_in_current_leads_(MW)__________________________________ (qcl/1.0D6)___________________      0.0000E+00 OP 
  45%_allowance_for_heat_loads_in_transfer_lines,_storage_tanks_etc_(MW)__ (qmisc/1.0D6)_________________      0.0000E+00 OP 
- Sum_=_Total_heat_removal_at_cryogenic_temperatures_(W)__________________ (helpow/1.0D6)________________      0.0000E+00 OP 
- Temperature_of_cryogenic_components_(K)_________________________________ (tmpcry)______________________      4.5000E+00    
- Efficiency_(figure_of_merit)_of_cryogenic_plant_is_13%_of_ideal_Carnot_v ______________________________      2.0277E-03 OP 
+ Sum_=_Total_heat_removal_at_cryogenic_temperatures_(tmpcry_&_tcoolin)_(M (helpow_+_helpow_cryal/1.0D6)_      0.0000E+00 OP 
+ Temperature_of_cryogenic_superconducting_components_(K)_________________ (tmpcry)______________________      4.5000E+00    
+ Temperature_of_cryogenic_aluminium_components_(K)_______________________ (tcoolin)_____________________      3.1315E+02    
+ Efficiency_(figure_of_merit)_of_cryogenic_plant_is_13%_of_ideal_Carnot_v ______________________________     -1.5598E-02 OP 
+ Efficiency_(figure_of_merit)_of_cryogenic_aluminium_plant_is_40%_of_idea ______________________________      1.5541E+01 OP 
  Electric_power_for_cryogenic_plant_(MW)_________________________________ (crypmw)______________________      0.0000E+00 OP 
  # Plant Power / Heat Transport Balance #
  Neutron_power_multiplication_in_blanket_________________________________ (emult)_______________________      1.2690E+00    
@@ -874,7 +879,7 @@
  Ohmic_heating_(MW)______________________________________________________ (pohmmw.)_____________________      1.8021E-10    
  Injected_power_deposited_in_plasma_(MW)_________________________________ (pinjmw)______________________      8.0002E+01    
  Total_(MW)______________________________________________________________ ______________________________      1.1085E+02    
- Fusion_power_(MW)_______________________________________________________ (powfmw.)_____________________      1.6200E+02    
+ Fusion_power_(MW)_______________________________________________________ (powfmw)______________________      1.6200E+02    
  Power_from_energy_multiplication_in_blanket_and_shield_(MW)_____________ (emultmw)_____________________      2.2592E+01    
  Injected_power_(MW)_____________________________________________________ (pinjmw.)_____________________      8.0002E+01    
  Ohmic_power_(MW)________________________________________________________ (pohmmw.)_____________________      1.8021E-10    
@@ -899,7 +904,7 @@
  Total_(MW)______________________________________________________________ (tot_plant_power)_____________      7.7589E+01    
  Total_(MW)______________________________________________________________ ______________________________      7.7589E+01    
  Gross_electrical_output*_(MW)___________________________________________ (pgrossmw)____________________      7.8122E+01    
- Fusion_power_(MW)_______________________________________________________ (powfmw.)_____________________      1.6200E+02    
+ Fusion_power_(MW)_______________________________________________________ (powfmw)______________________      1.6200E+02    
  Power_from_energy_multiplication_in_blanket_and_shield_(MW)_____________ (emultmw)_____________________      2.2592E+01    
  Total_(MW)______________________________________________________________ ______________________________      1.8459E+02    
  Net_electrical_output_(MW)	_____________________________________________ (pnetelmw)____________________     -5.0690E+02    

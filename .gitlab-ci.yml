@@ -1,3 +1,4 @@
+---
 #
 #  GitLab CI configuration file for PROCESS repository
 #
@@ -10,7 +11,7 @@
 #
 #-----------------------------------------------------
 
-# All jobs are run on ubuntu-tagged runners; freia-tagged runners are not 
+# All jobs are run on ubuntu-tagged runners; freia-tagged runners are not
 # supported due to modifying the Docker containers used here after they are run
 
 #-----------------
@@ -24,74 +25,72 @@
 # When set in conjunction with CI_TEST_BUILD=true, setting CI_DOCKER_BUILD as "true" will cause the docker containers to be rebuilt
 # When set in conjunction with CI_TEST_BUILD=true, setting CI_TEST_EXTERNAL as "true" will cause the STEP trigger to run
 # The Docker image used by all the jobs can be set using DOCKER_CI_IMAGE where it defaults to "ci-image"; this corresponds to git.ccfe.ac.uk:4567/process/process/ci-image
-# The Docker image tag used by all the jobs can be set using DOCKER_CI_IMAGE_VERSION where it defaults to "latest". 
+# The Docker image tag used by all the jobs can be set using DOCKER_CI_IMAGE_VERSION where it defaults to "latest".
   # This means that when neither DOCKER_CI_IMAGE or DOCKER_CI_IMAGE_VERSION are set the default image used will be "ci-image:latest"
 
 
 stages:
-  - containers
-  - build
-  - testing
-  - step
-  - quality
-  - tracking
-  - pages
+    - containers
+    - build
+    - testing
+    - step
+    - quality
+    - tracking
+    - pages
 
 variables:
-  DOCKER_CI_IMAGE: ci-image
-  DOCKER_CI_IMAGE_VERSION: latest
+    DOCKER_CI_IMAGE: ci-image
+    DOCKER_CI_IMAGE_VERSION: latest
 
 image: $CI_REGISTRY_IMAGE/$DOCKER_CI_IMAGE:$DOCKER_CI_IMAGE_VERSION
 
 default:
-  tags:
-      - ubuntu
+    tags:
+        - ubuntu
 
 #-----------------
 #  Containers
 #-----------------
 # should be first because the rest of the CI system uses the CI image
 .build_docker_image:
-  stage: containers
-  image: docker:19.03.12
-  services:
-    - docker:19.03.12-dind
-  script:
-    - docker login $CI_REGISTRY -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN
-    - docker build -t $CI_REGISTRY_IMAGE/$IMAGE_NAME:$IMAGE_TAG .
-    - docker push $CI_REGISTRY_IMAGE/$IMAGE_NAME:$IMAGE_TAG
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "develop"'
-      changes: 
-        - docker/ci/Dockerfile
-        - requirements.txt
+    stage: containers
+    image: docker:19.03.12
+    script:
+        - docker login $CI_REGISTRY -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN
+        - docker build -t $CI_REGISTRY_IMAGE/$IMAGE_NAME:$IMAGE_TAG .
+        - docker push $CI_REGISTRY_IMAGE/$IMAGE_NAME:$IMAGE_TAG
+    rules:
+        - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "develop"
+          changes:
+              - docker/ci/Dockerfile
+              - requirements.txt
     # when testing CI, re-build the containers
-    - if: $CI_TEST_BUILD && $CI_DOCKER_BUILD
-  
+        - if: $CI_TEST_BUILD && $CI_DOCKER_BUILD
+
 
 build_docker_ci_image:
-  extends: ".build_docker_image"
-  variables:
-     IMAGE_NAME: $DOCKER_CI_IMAGE
-     IMAGE_TAG: $DOCKER_CI_IMAGE_VERSION
-  before_script:
-    - cp requirements.txt docker/ci/
-    - cd docker/ci
+    extends: .build_docker_image
+    variables:
+        IMAGE_NAME: $DOCKER_CI_IMAGE
+        IMAGE_TAG: $DOCKER_CI_IMAGE_VERSION
+    before_script:
+        - cp requirements.txt docker/ci/
+        - cd docker/ci
 
 build_docker_dev_image:
-  extends: ".build_docker_image"
-  variables:
-    IMAGE_NAME: dev
-    IMAGE_TAG: latest
-  before_script:
-    - cd docker/dev
+    extends: .build_docker_image
+    variables:
+        IMAGE_NAME: dev
+        IMAGE_TAG: latest
+    before_script:
+        - cd docker/dev
 
 
 # a CI deploy token only allows registry access, but not repository write access (it can provide read)
 # https://docs.gitlab.com/ee/user/project/deploy_tokens/
 #
 # For the CI system to read/write to the repository it must have an SSH identity. This SSH identity (public key)
-# can then be added as a Deploy Key (Settings/Repository/Deploy Keys) to provide read (and optionally write) 
+# can then be added as a Deploy Key (Settings/Repository/Deploy Keys) to provide read (and optionally write)
 # access to the repository.
 #
 # Put the private key as a CI/CD variable (protected), e.g. CI_RUNNER_PRIVATE_KEY
@@ -132,252 +131,275 @@ build_docker_dev_image:
 #  Build
 #-----------------
 make-py38:
-  stage: build
-  artifacts:
-    when: on_success
-    untracked: true
-    paths:
-      - process_dist/process-*.tar.gz
-      - process_dist/process-*.whl
-      - build/CMakeFiles/process.dir/source/fortran/*.gcno
-      - lcov_results
-      - python_modules.txt
+    stage: build
+    artifacts:
+        when: on_success
+        untracked: true
+        paths:
+            - process_dist/process-*.tar.gz
+            - process_dist/process-*.whl
+            - build/CMakeFiles/process.dir/source/fortran/*.gcno
+            - lcov_results
+            - python_modules.txt
       # keeping untracked process files (ie .so and .json files)
       # allows a quick reinstall of Process to be made when
       # _fortran.py is created in the pages job
-      - process/
-    expire_in: 1 week
-  script:
-    - cmake -H. -Bbuild
-    - cmake --build build
-    - python3 setup.py sdist -d process_dist
-    - python3 setup.py bdist_wheel -d process_dist
-    - python -m pip freeze > python_modules.txt
+            - process/
+        expire_in: 1 week
+    script:
+        - cmake -H. -Bbuild
+        - cmake --build build
+        - python3 setup.py sdist -d process_dist
+        - python3 setup.py bdist_wheel -d process_dist
+        - python -m pip freeze > python_modules.txt
 
 
 #-----------------
 #  Testing
 #-----------------
 .test_template:
-  stage: testing
-  before_script:
-    - python -m pip install --find-links=process_dist process
-    - apt install lcov -y
-  dependencies:
-    - make-py38
+    stage: testing
+    before_script:
+        - python -m pip install --find-links=process_dist process
+        - apt install lcov -y
+    dependencies:
+        - make-py38
 
 unit-py38:
-  extends: ".test_template"
-  script:
-    - pytest tests/unit/ -vs | tee tests/unit/pytest.log
-  artifacts:
-    when: on_failure
-    paths:
-      - tests/unit/pytest.log
-    expire_in: 1 week
-  
+    extends: .test_template
+    script:
+        - pytest tests/unit/ -vs | tee tests/unit/pytest.log
+    artifacts:
+        when: on_failure
+        paths:
+            - tests/unit/pytest.log
+        expire_in: 1 week
+
 integration-py38:
-  extends: ".test_template"
-  script:
-    - pytest tests/integration/ -vs | tee tests/integration/pytest.log
-  artifacts:
-    when: on_failure
-    paths:
-      - tests/integration/pytest.log
-    expire_in: 1 week
+    extends: .test_template
+    script:
+        - pytest tests/integration/ -vs | tee tests/integration/pytest.log
+    artifacts:
+        when: on_failure
+        paths:
+            - tests/integration/pytest.log
+        expire_in: 1 week
 
 regression-py38:
-  extends: ".test_template"
-  script:
-    - pytest tests/regression -vs | tee tests/regression/pytest.log
-    - lcov --gcov-tool gcov --capture --directory build/CMakeFiles/process.dir/source/fortran/ --output-file lcov_results/coverage.info
-    - genhtml --output-directory lcov_results/html lcov_results/coverage.info
-  artifacts:
-    when: on_failure
-    paths:
-      - lcov_results
-      - tests/regression/pytest.log
-    expire_in: 1 week
+    extends: .test_template
+    script:
+        - pytest tests/regression -vs | tee tests/regression/pytest.log
+        - lcov --gcov-tool gcov --capture --directory build/CMakeFiles/process.dir/source/fortran/ --output-file lcov_results/coverage.info
+        - genhtml --output-directory lcov_results/html lcov_results/coverage.info
+    artifacts:
+        when: on_failure
+        paths:
+            - lcov_results
+            - tests/regression/pytest.log
+        expire_in: 1 week
 
 
 regression-py38-5-percent:
-  extends: ".test_template"
-  script:
-    - pytest tests/regression -vs --reg-tolerance=5 | tee tests/regression/pytest.log
-  artifacts:
-    when: on_failure
-    paths:
-      - tests/regression/pytest.log
-    expire_in: 1 week
+    extends: .test_template
+    script:
+        - pytest tests/regression -vs --reg-tolerance=5 | tee tests/regression/pytest.log
+    artifacts:
+        when: on_failure
+        paths:
+            - tests/regression/pytest.log
+        expire_in: 1 week
 
 
 baseline_2019-py38:
-  extends: ".test_template"
-  stage: testing
-  script:
-    - process -i tracking/baseline_2019/baseline_2019_IN.DAT
-  artifacts:
-    paths:
-      - tracking/baseline_2019/baseline_2019_MFILE.DAT
-    expire_in: 1 week
-  rules:
-    - if: $CI_COMMIT_BRANCH == "develop"
-      when: on_success
+    extends: .test_template
+    stage: testing
+    script:
+        - process -i tracking/baseline_2019/baseline_2019_IN.DAT
+    artifacts:
+        paths:
+            - tracking/baseline_2019/baseline_2019_MFILE.DAT
+        expire_in: 1 week
+    rules:
+        - if: $CI_COMMIT_BRANCH == "develop"
+          when: on_success
     # when testing CI, baseline 2019 is needed for tracking
-    - if: $CI_TEST_BUILD
+        - if: $CI_TEST_BUILD
 
 baseline_2018-py38:
-  extends: ".test_template"
-  stage: testing
-  script:
-    - process -i tracking/baseline_2018/baseline_2018_IN.DAT
-  artifacts:
-    paths:
-      - tracking/baseline_2018/baseline_2018_MFILE.DAT
-    expire_in: 1 week
-  rules:
-    - if: $CI_COMMIT_BRANCH == "develop"
-      when: on_success
+    extends: .test_template
+    stage: testing
+    script:
+        - process -i tracking/baseline_2018/baseline_2018_IN.DAT
+    artifacts:
+        paths:
+            - tracking/baseline_2018/baseline_2018_MFILE.DAT
+        expire_in: 1 week
+    rules:
+        - if: $CI_COMMIT_BRANCH == "develop"
+          when: on_success
     # when testing CI, baseline 2018 is needed for tracking
-    - if: $CI_TEST_BUILD
+        - if: $CI_TEST_BUILD
 
 
 starfire-py38:
-  extends: ".test_template"
-  stage: testing
-  script:
-    - process -i tests/regression/scenarios/starfire/IN.DAT
-    - mv tests/regression/scenarios/starfire/MFILE.DAT tracking/starfire_MFILE.DAT 
-  artifacts:
-    paths:
-      - tracking/starfire_MFILE.DAT 
-    expire_in: 1 week
-  rules:
-    - if: $CI_COMMIT_BRANCH == "develop"
-      when: on_success
+    extends: .test_template
+    stage: testing
+    script:
+        - process -i tests/regression/scenarios/starfire/IN.DAT
+        - mv tests/regression/scenarios/starfire/MFILE.DAT tracking/starfire_MFILE.DAT
+    artifacts:
+        paths:
+            - tracking/starfire_MFILE.DAT
+        expire_in: 1 week
+    rules:
+        - if: $CI_COMMIT_BRANCH == "develop"
+          when: on_success
     # when testing CI, starfire is needed for tracking
-    - if: $CI_TEST_BUILD
+        - if: $CI_TEST_BUILD
 
 #-----------------
 #  Quality
 #-----------------
 
-line_length:
-  stage: quality
-  script:
-    - pwd
-    - python3 utilities/line_length_standard.py
+# Python linting
+# Job will fail if ANY violations are detected
+Flake8:
+    when: on_success
+    stage: quality
+    allow_failure: true
+    script:
+        - python3.8 -m pip install flake8
+        - python3.8 -m flake8 --tee . > flake8.log
+    artifacts:
+        when: always
+        paths:
+            - flake8.log
+
+# black style checks
+# Job will fail if black thinks ANY changes are required
+Black:
+    when: on_success
+    stage: quality
+    allow_failure: true
+    before_script:
+        - python3.8 -m pip install black==22.3.0
+    script:
+        - python3.8 -m black --check . > black.log
+    artifacts:
+        when: always
+        paths:
+            - black.log
 
 #-----------------
 #  Tracking
 #-----------------
 
 tracking_rtv:
-  extends: ".test_template"
-  stage: tracking
-  allow_failure: true
-  script:
-    - *setup-ssh
-    - pip install pandas
-    - pip install bokeh
+    extends: .test_template
+    stage: tracking
+    allow_failure: true
+    script:
+        - *setup-ssh
+        - pip install pandas
+        - pip install bokeh
     # clone the database repo into a known location
-    - git clone git@git.ccfe.ac.uk:tnunn/process-tracking-database.git ${CI_PROJECT_DIR}/process_rtv_data/
+        - git clone git@git.ccfe.ac.uk:tnunn/process-tracking-database.git ${CI_PROJECT_DIR}/process_rtv_data/
     # write new tracking json files for each of our baseline tracking jobs
-    - python ${CI_PROJECT_DIR}/tracking/tracking_data.py track ${CI_PROJECT_DIR}/process_rtv_data/ --mfile ${CI_PROJECT_DIR}/tracking/baseline_2018/baseline_2018_MFILE.DAT
-    - python ${CI_PROJECT_DIR}/tracking/tracking_data.py track ${CI_PROJECT_DIR}/process_rtv_data/ --mfile ${CI_PROJECT_DIR}/tracking/baseline_2019/baseline_2019_MFILE.DAT
-    - python ${CI_PROJECT_DIR}/tracking/tracking_data.py track ${CI_PROJECT_DIR}/process_rtv_data/ --mfile ${CI_PROJECT_DIR}/tracking/starfire_MFILE.DAT 
+        - python ${CI_PROJECT_DIR}/tracking/tracking_data.py track ${CI_PROJECT_DIR}/process_rtv_data/ --mfile ${CI_PROJECT_DIR}/tracking/baseline_2018/baseline_2018_MFILE.DAT
+        - python ${CI_PROJECT_DIR}/tracking/tracking_data.py track ${CI_PROJECT_DIR}/process_rtv_data/ --mfile ${CI_PROJECT_DIR}/tracking/baseline_2019/baseline_2019_MFILE.DAT
+        - python ${CI_PROJECT_DIR}/tracking/tracking_data.py track ${CI_PROJECT_DIR}/process_rtv_data/ --mfile ${CI_PROJECT_DIR}/tracking/starfire_MFILE.DAT
     # create the new tracking dashboard
-    - python ${CI_PROJECT_DIR}/tracking/tracking_data.py plot ${CI_PROJECT_DIR}/process_rtv_data/ --out ${CI_PROJECT_DIR}/tracking.html
+        - python ${CI_PROJECT_DIR}/tracking/tracking_data.py plot ${CI_PROJECT_DIR}/process_rtv_data/ --out ${CI_PROJECT_DIR}/tracking.html
     # commit the new .json data files to the database repo and pushes them
-    - cd ${CI_PROJECT_DIR}/process_rtv_data/
-    - git add .
-    - git commit -m "${CI_PIPELINE_URL} - ${CI_PIPELINE_CREATED_AT}" 
-    - git push
-  artifacts:
-    when: always
-    paths:
-      - ${CI_PROJECT_DIR}/tracking.html
-  rules:
-    - if: $CI_COMMIT_BRANCH == "develop"
-      when: on_success
+        - cd ${CI_PROJECT_DIR}/process_rtv_data/
+        - git add .
+        - git commit -m "${CI_PIPELINE_URL} - ${CI_PIPELINE_CREATED_AT}"
+        - git push
+    artifacts:
+        when: always
+        paths:
+            - ${CI_PROJECT_DIR}/tracking.html
+    rules:
+        - if: $CI_COMMIT_BRANCH == "develop"
+          when: on_success
     # when testing CI, run the tracker
-    - if: $CI_TEST_BUILD
-  dependencies:
-    - make-py38
-    - baseline_2018-py38
-    - baseline_2019-py38
-    - starfire-py38
+        - if: $CI_TEST_BUILD
+    dependencies:
+        - make-py38
+        - baseline_2018-py38
+        - baseline_2019-py38
+        - starfire-py38
 
 
 #-----------------
 #  Pages
 #-----------------
 pages:
-  extends: ".test_template"
-  stage: pages
-  variables:
-    PY_VERSION: py38
-  script:
+    extends: .test_template
+    stage: pages
+    variables:
+        PY_VERSION: py38
+    script:
     # FORD documentation
-    - ford documentation/ford/index.md
+        - ford documentation/ford/index.md
 
     # python docs documentation
-    - python3 -m pip install mkdocstrings
-    - python3 ${CI_PROJECT_DIR}/scripts/document_fortran_interface.py
-    - python3 ${CI_PROJECT_DIR}/scripts/vardes.py
+        - python3 -m pip install mkdocstrings
+        - python3 ${CI_PROJECT_DIR}/scripts/document_fortran_interface.py
+        - python3 ${CI_PROJECT_DIR}/scripts/vardes.py
     # mkdocstrings imports process to write its documentation,
     # process must be reinstalled with _fortran.py available
     # otherwise mkdcostrings won't be able to find it
-    - python3 -m pip install -e .
-    
+        - python3 -m pip install -e .
+
     # Build the MkDocs site (after FORD has been used to create the vardes)
-    - mkdocs build
-    
+        - mkdocs build
+
     # Publish the MkDocs and FORD sites
-    - ls site
-    - mv site public
-    - mv ford_site public
+        - ls site
+        - mv site public
+        - mv ford_site public
     # if tracking.html doesn't exist, put an error404 in its place
-    - mv tracking.html public || cp public/404.html public/tracking.html
+        - mv tracking.html public || cp public/404.html public/tracking.html
 
     # Install requirements for Code Quality
-    - python3 -m pip install flinter==0.3.0
-    - apt-get install bc -y
+        - python3 -m pip install flinter==0.3.0
+        - apt-get install bc -y
 
     # Setup badges
-    - git clone https://github.com/jmorris-uk/anybadge.git
+        - git clone https://github.com/jmorris-uk/anybadge.git
     # checks for the tag on the most up-to-date branch (master)
-    - MASTER_VERSION=$(git describe $(git rev-list --tags --max-count=1))
-    - DEVELOP_VERSION=$(git describe)
-    - declare -i CONTRIBUTORS=$(git shortlog -s -n --all | wc -l)
-    - echo $CONTRIBUTORS
-    - bash scripts/coverage_badge.sh source/fortran/ anybadge/
-    - cp coverage.svg public/
-    - bash scripts/code_quality.sh source/fortran/ anybadge/
-    - cp quality.svg public/
-    - cp -r code_quality public/
-    - cd anybadge
-    - python3 anybadge.py -v $MASTER_VERSION -l master -c blue -f mversion.svg
-    - python3 anybadge.py -v $DEVELOP_VERSION -l develop -c blue -f dversion.svg
-    - python3 anybadge.py -v $CONTRIBUTORS -l contributors -c blue -f contributors.svg -m "%d"
-    - cp mversion.svg ../public
-    - cp dversion.svg ../public
-    - cp contributors.svg ../public
-    - ls ../public
-    - du -shc ../public/*
-    - du -shc ../public/ford_site/*
-  artifacts:
-    expire_in: 1 week
-    paths:
-    - public
-  rules:
-    - if: $CI_COMMIT_BRANCH == "develop"
-      when: on_success
+        - MASTER_VERSION=$(git describe $(git rev-list --tags --max-count=1))
+        - DEVELOP_VERSION=$(git describe)
+        - declare -i CONTRIBUTORS=$(git shortlog -s -n --all | wc -l)
+        - echo $CONTRIBUTORS
+        - bash scripts/coverage_badge.sh source/fortran/ anybadge/
+        - cp coverage.svg public/
+        - bash scripts/code_quality.sh source/fortran/ anybadge/
+        - cp quality.svg public/
+        - cp -r code_quality public/
+        - cd anybadge
+        - python3 anybadge.py -v $MASTER_VERSION -l master -c blue -f mversion.svg
+        - python3 anybadge.py -v $DEVELOP_VERSION -l develop -c blue -f dversion.svg
+        - python3 anybadge.py -v $CONTRIBUTORS -l contributors -c blue -f contributors.svg -m "%d"
+        - cp mversion.svg ../public
+        - cp dversion.svg ../public
+        - cp contributors.svg ../public
+        - ls ../public
+        - du -shc ../public/*
+        - du -shc ../public/ford_site/*
+    artifacts:
+        expire_in: 1 week
+        paths:
+            - public
+    rules:
+        - if: $CI_COMMIT_BRANCH == "develop"
+          when: on_success
     # when testing CI, generate the documentation
-    - if: $CI_TEST_BUILD
-  dependencies:
-    - make-py38
-    - tracking_rtv # needed to ensure tracking.html is present in this job
+        - if: $CI_TEST_BUILD
+    dependencies:
+        - make-py38
+        - tracking_rtv # needed to ensure tracking.html is present in this job
 
 
 
@@ -386,13 +408,13 @@ pages:
 #-----------------
 
 step_trigger:
-  image: $CI_REGISTRY/tnunn/gitlab-multi-project-pipeline/trigger:latest
-  stage: step
-  allow_failure: true
-  script:
-    - trigger -u $CI_API_V4_URL/projects/4023 -b master -T $CI_JOB_TOKEN -P $CI_JOB_PRIVATE_TOKEN
-  rules:
-    - if: $CI_COMMIT_BRANCH == "develop"
-      when: on_success
+    image: $CI_REGISTRY/tnunn/gitlab-multi-project-pipeline/trigger:latest
+    stage: step
+    allow_failure: true
+    script:
+        - trigger -u $CI_API_V4_URL/projects/4023 -b master -T $CI_JOB_TOKEN -P $CI_JOB_PRIVATE_TOKEN
+    rules:
+        - if: $CI_COMMIT_BRANCH == "develop"
+          when: on_success
     # when testing CI, test this hook only if also CI_TEST_EXTERNAL
-    - if: $CI_TEST_BUILD && $CI_TEST_EXTERNAL
+        - if: $CI_TEST_BUILD && $CI_TEST_EXTERNAL

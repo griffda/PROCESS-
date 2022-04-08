@@ -2,7 +2,7 @@
 
 !update the profiles with the last calculation of the gradients
  call update_profiles(dx, nxt, nchannels, gy0, y0, rpmajor, y, N_e(1:nxt), T_e(1:nxt), T_i(1:nxt))
-	
+
 
 !interpolate to the finer grid
 	nepr=interp1_ef(nxt+2,nx,[0.0d0, xtrt], [N_e0(1), N_e0],xr)
@@ -51,7 +51,7 @@
 	nwol = nwol(jped)
 	endif
 
-!call radiation functions for impurities		
+!call radiation functions for impurities
 	call prxe_func(nx, tepr, prxe, zavxe)
 	call prar_func(nx, tepr, prne, zavne)
 	call prwol_func(nx, tepr, prwol, zavwol)
@@ -61,12 +61,12 @@
 
 !quasi-neutrality equations
 	ndeut = fuelmix*(nepr - nNe*zavne - nXe*zavxe - 2.0d0*(nHe+nhe3)-nprot-zavwol*nwol)
-	ntrit = (1.0d0-fuelmix)*(nepr - nNe*zavne - nXe*zavxe - & 
+	ntrit = (1.0d0-fuelmix)*(nepr - nNe*zavne - nXe*zavxe - &
 	&  2.0d0*(nHe+nhe3)-nprot-zavwol*nwol)
 	nions = ndeut + ntrit + nNe + nXe + nHe + nhe3 + nprot+nwol
 
 !Z effective
-	zepff = (1.0d0/nepr) * (ndeut+ntrit+4.0d0*(nHe+nhe3)+zavne**2*nNe+ & 
+	zepff = (1.0d0/nepr) * (ndeut+ntrit+4.0d0*(nHe+nhe3)+zavne**2*nNe+ &
 	& zavxe**2*nXe+nprot+zavwol**2.d0*nwol)
     coulg = 15.9d0 - 0.5d0*log(nepr) + log(tepr)
 
@@ -78,21 +78,21 @@
   totse(nx)=trapz(tepr*dV)/V(nx)
   totsi(nx)=trapz(nepr*dV)/V(nx)
 
-	
+
 	! Calculate fusion power and other powers
 	do jrad = 1, size(x)
 
 !cross section of DT
 !PLASMOD function
 !	  svdt = tipr(jrad)**(-0.333333333d0)
-!	  svdt = 8.972d0*exp(-19.9826d0*svdt)*svdt*svdt*((tipr(jrad)+1.0134d0) & 
-!			& /(1.0d0+6.386d-3*(tipr(jrad)+1.0134d0)**2)     & 
+!	  svdt = 8.972d0*exp(-19.9826d0*svdt)*svdt*svdt*((tipr(jrad)+1.0134d0) &
+!			& /(1.0d0+6.386d-3*(tipr(jrad)+1.0134d0)**2)     &
 !			& +1.877d0*exp(-0.16176d0*tipr(jrad)*sqrt(tipr(jrad))))
 		 svdt = bosch_hale(tipr(jrad),1)*1.d19 !PROCESS function
 
 !PLASMOD function
 !	sv_dd=0.16247+0.001741*TIpr(Jrad)-0.029*EXP(-0.3843*SQRT(TIpr(Jrad)))
-!	sv_dd=sv_dd*EXP(-18.8085/(tipr(jrad)**.333333))/(tipr(jrad)**.333333)**2	
+!	sv_dd=sv_dd*EXP(-18.8085/(tipr(jrad)**.333333))/(tipr(jrad)**.333333)**2
 		 sv_dd = bosch_hale(tipr(jrad),3)*1.d19 !PROCESS function
 		 sv_dd = sv_dd+bosch_hale(tipr(jrad),4)*1.d19 !PROCESS function
 
@@ -110,7 +110,7 @@
 YVALP=1.2960e+07
 YLLAME=23.9+LOG(1.e3*tepr(jrad)/SQRT(1.e19*nepr(jrad)))
 YY6=SQRT(1.e3*tepr(jrad)/1.e19*nepr(jrad))
-YY6=YY6*(4.*AMAIN*YVALP)/(4.+AMAIN)	 
+YY6=YY6*(4.*AMAIN*YVALP)/(4.+AMAIN)
   	  if(YY6.lt..1)YY6=0.1
  YLLAMI=14.2+LOG(YY6)
  YY6=SQRT(1.0e3*tepr(jrad)/1.0e19*nepr(jrad))*2.0*YVALP
@@ -121,7 +121,7 @@ YLLAMA=14.2+LOG(YY6)
  if(YY6.lt.0.0001)YY6=.0001
   YVC=YY6**0.33*SQRT(2.0*tepr(jrad)*1.7564e+14)
 YEPS=YVALP/(YVC+0.0001)
-YY6=atan(0.577*(2.*YEPS-1.))	   
+YY6=atan(0.577*(2.*YEPS-1.))
 YY7=log((1.+YEPS)**2/(1.-YEPS+YEPS**2))
 PAION=2./YEPS**2*(0.577*YY6-0.167*YY7+0.3)
 
@@ -178,24 +178,24 @@ yllama=1.d0
 !interpolate on transport grid
  DdnVne = 625.d0*interp1_ef(nx,nxt,xr, totSe/G1/vprime/nepr, xtr)
  DdnVni = 625.d0*interp1_ef(nx,nxt,xr, totSi/G1/vprime/nions, xtr)
-	
+
 	! Fuelling
 	Sn = exp(-(x-0.85d0)**2 / 0.05d0)  ! No fuelling now, but this is pellet
 	totS = cumint1(Sn*dV)
-	totS = totS/totS(nx) 
+	totS = totS/totS(nx)
 !interpolate on transport grid
 	DdnVn = interp1(xr, inp0%spellet*inp0%fpellet*totS/Vprime/G1, xtr)
-	
+
 !assignment
 	c(:,1) = DdnVn
 	c(:,2) = DdnVne
 	c(:,3) = DdnVni
-	
+
 	! define transport coefficients
 	if (i_modeltype.ne.9999) then
-	call trmodel(i_modeltype,nx,nxt, nchannels,vprime,2.5d0,1.d0,1.+0.*amin,1.+0.*amin,1.+0.*amin, & 
+	call trmodel(i_modeltype,nx,nxt, nchannels,vprime,2.5d0,1.d0,1.+0.*amin,1.+0.*amin,1.+0.*amin, &
 			& nepr,tepr,nepr,0.5*nepr,0.*nepr,tipr,1.+0.*nepr,0.*nepr,2.5+0.*nepr,1./qprf,RHO,x*rpminor, &
-			& SHIF,k,d,0.*shif,0.*shif,0.*shif,0.*shif,IPOL,g1*vprime,vprime,1.+0.*vprime, & 
+			& SHIF,k,d,0.*shif,0.*shif,0.*shif,0.*shif,IPOL,g1*vprime,vprime,1.+0.*vprime, &
 			& SHEAR,0.*nepr,0.*nepr,palpph,0.*nepr,0.*nepr,0.*nepr,y0, gy0, xtr,x, amin, rpmajor, btor,num%capA, q_tr, sh_tr, a, b, &
 			& Hfactor,chi00,chipow,Hnow,chifac0)
 
@@ -206,11 +206,11 @@ yllama=1.d0
 	else
 	!TGLF, not used in PROCESS
 
-!include "neo_inc.f90"	
-!include "tglf_inc.f90"	
-!include "tglf_inc_parallel.f90"	
+!include "neo_inc.f90"
+!include "tglf_inc.f90"
+!include "tglf_inc_parallel.f90"
 !stop
-		
+
 	endif
 
 
@@ -218,6 +218,3 @@ yllama=1.d0
 	chat = aa * gy0 * y0/rpmajor + bb * y0  ! To compare to c
 
 	F = chat-c  ! New residual, norm of F must go to zero at steady-state
-
-
-

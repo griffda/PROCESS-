@@ -14,8 +14,8 @@ The (absolute value of the) central solenoid current density at the end-of-flat-
 
 <figure>
     <center>
-    <img src="../../images/current_vs_time.png" alt="current-vs-time-plot" 
-    title="Current waveform for Plasma, PF coil and Central Solenoid" 
+    <img src="../../images/current_vs_time.png" alt="current-vs-time-plot"
+    title="Current waveform for Plasma, PF coil and Central Solenoid"
     width="650" height="100" />
     <br><br>
     <figcaption><i>Figure 2: Plot showing schematically the current waveforms for the plasma, a typical PF coil, and the central solenoid. Note that the currents in some of the PF coils may be the opposite sign to that shown, and the central solenoid current may remain positive during the I<sub>p</sub> ramp-up period, although it will pass through zero during the burn phase.</i></figcaption>

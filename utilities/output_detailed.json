@@ -43,7 +43,7 @@
         },
         "children":[
             "Plasma Physics",
-            "Divertor Physics"            
+            "Divertor Physics"
         ],
         "diagrams":[],
         "constraints":[
@@ -363,7 +363,7 @@
             }
         ],
         "constraints":[
-            
+
         ],
         "iteration-variables":[
             119
@@ -455,7 +455,7 @@
         "constraints":[
             17,
             67
-        ],  
+        ],
         "iteration-variables":[
              28,
             102,
@@ -832,7 +832,7 @@
             51,
             52,
             54,
-            56   
+            56
         ],
         "input-sections":[],
         "inputs":[
@@ -856,7 +856,7 @@
         "children":[],
         "diagrams":[],
         "constraints":[
-            
+
         ],
         "iteration-variables":[
             58
@@ -1077,7 +1077,7 @@
         ],
         "diagrams":[
             {
-                "filename": "documentation/figures/PowerFlow.png", 
+                "filename": "documentation/figures/PowerFlow.png",
                 "caption": "PROCESS power balance"
             }
         ],

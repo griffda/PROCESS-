@@ -9,7 +9,7 @@ module optimiz_module
     use constants, only: opt_file
     use numerics, only: icc, ixc
     implicit none
-      
+
     integer, intent(in) :: n
     !! Number of variables
     integer, intent(in) :: m
@@ -27,7 +27,7 @@ module optimiz_module
     do i = 1, n
       ixc_opt_out(i) = ixc(i)
     end do
-    
+
     write(opt_file, *) ' number of constrains'
     write(opt_file, '(I4)') m
     write(opt_file, *) ' '
@@ -37,7 +37,7 @@ module optimiz_module
     write(opt_file, *) ' number of variables'
     write(opt_file, '(I4)') n
     write(opt_file, *) ' '
-    write(opt_file, *) ' Variables selection'    
+    write(opt_file, *) ' Variables selection'
     write(opt_file, '(I3,*(I4))') ixc_opt_out
     write(opt_file, *) ' '
     write(opt_file, *) ' '
