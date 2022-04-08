@@ -26,7 +26,7 @@ module stellarator_configuration
       real(kind(1.0D0)) ::  rminor_ref
       real(kind(1.0D0)) ::  aspect_ref
       real(kind(1.0D0)) ::  bt_ref
-      
+
       !  Coil current needed for 1T on axis at outer radius 1m
       real(kind(1.0D0)) :: i0
       !  Magnetic field fit parameter a1
@@ -44,7 +44,7 @@ module stellarator_configuration
       !  Port size in toroidal direction
       real(kind(1.0D0)) :: max_portsize_width
       !  Average minor Coil Radius (as r/R) to get it dimensionless.
-      real(kind(1.0D0)) :: coil_epsilon 
+      real(kind(1.0D0)) :: coil_epsilon
 
       !  The ratio of the coil to plasma radius.
       !  (Average midpoint of the coils to average maj. radius. Will be approx. 1)
@@ -60,7 +60,7 @@ module stellarator_configuration
       real(kind(1.0D0)) :: vr2r
 
       !  2 surface parameters s0 and s1. They are the leading taylor orders.
-      real(kind(1.0D0)) :: s0 
+      real(kind(1.0D0)) :: s0
 
       !  Ratio radial to toroidal length of the winding pack. (a1 and a2 should be calculated using this value)
       real(kind(1.0D0)) :: WP_ratio
@@ -107,20 +107,20 @@ contains
             new_stella_config%a2 = 0.027D0
             new_stella_config%vr2r = 19.816D0  ! This value is for Helias 5
             new_stella_config%dmin = 0.84D0
-            new_stella_config%max_portsize_width = 2.12D0 
+            new_stella_config%max_portsize_width = 2.12D0
 
             new_stella_config%s0 = 49.228D0 ! Plasma Surface
 
             new_stella_config%maximal_coil_height = 12.7 ! [m] Full height max point to min point
 
             new_stella_config%coilsurface = 4817.7D0 ! Coil surface, dimensionfull. At reference point
-      
+
             new_stella_config%coil_epsilon = 4.7D0 / 22.46D0
 
             new_stella_config%coillength = 1681.0D0 ! Central filament length of machine with outer radius 1m.
 
             new_stella_config%coil_to_plasma_ratio = 22.46D0/22.0D0 ! Approximately
-      
+
             new_stella_config%I0 = 13.06D0/5.6D0/22.46D0 ! Coil Current needed to produce 1T on axis in [MA] at outer radius 1m
             new_stella_config%inductivity = 1655.76D-6/22.0D0* 12.5D0**2 ! Inductivity/R*A^2 in muH/m
 
@@ -152,13 +152,13 @@ contains
             new_stella_config%maximal_coil_height = 13.34D0  ! [m] Full height max point to min point
 
             new_stella_config%coilsurface =  4019.0D0! Coil surface, dimensionfull. At reference point
-      
+
             new_stella_config%coil_epsilon = 4.95D0 / 18.41D0
 
             new_stella_config%coillength = 1435.07D0 ! Central filament length of machine with outer radius 1m.
 
             new_stella_config%coil_to_plasma_ratio = 1.0D0 ! Approximately
-      
+
             new_stella_config%I0 = 13.146D0/5.6D0/18.0D0 ! Coil Current needed to produce 1T on axis in [MA] at outer radius 1m
             new_stella_config%inductivity = 1290.4D-6/18.0D0*(18.0D0/2.1D0)**2 ! Inductivity/R*A^2 in muH/m
 
@@ -166,7 +166,7 @@ contains
 
             new_stella_config%max_force_density = 0.37 ! Multiply with I^2 [MA] A_wp^(-1) [m^2] to obtain [MN/m^3]
 
-            new_stella_config%min_plasma_coil_distance = (4.95D0-2.1D0)/18.0D0 
+            new_stella_config%min_plasma_coil_distance = (4.95D0-2.1D0)/18.0D0
 
 
         case(3)
@@ -176,7 +176,7 @@ contains
             ! Plasma outer radius
             new_stella_config%rmajor_ref = 15.0D0
             new_stella_config%rminor_ref = 2.5D0
-            new_stella_config%aspect_ref =  15.0D0/2.5D0  
+            new_stella_config%aspect_ref =  15.0D0/2.5D0
             new_stella_config%bt_ref = 5.6D0
 
             new_stella_config%symmetry = 3
@@ -192,13 +192,13 @@ contains
             new_stella_config%maximal_coil_height = 17.74D0! [m] Full height max point to min point
 
             new_stella_config%coilsurface = 4114.0D0 ! Coil surface, dimensionfull. At reference point
-      
+
             new_stella_config%coil_epsilon = 6.12D0/14.58D0
 
             new_stella_config%coillength = 1287.3D0 ! Central filament length of machine with outer radius 1m.
 
             new_stella_config%coil_to_plasma_ratio = 1.0D0 ! Approximately
-      
+
             new_stella_config%I0 = 14.23D0/5.6D0/15.0D0 ! Coil Current needed to produce 1T on axis in [MA] at outer radius 1m
             new_stella_config%inductivity = 1250.7D-6/15.0D0*(15.0D0/2.5D0)**2 ! Inductivity/R*A^2 in muH/m
 
@@ -206,7 +206,7 @@ contains
 
             new_stella_config%max_force_density = 0.37 ! Multiply with I^2 [MA] A_wp^(-1) [m^2] to obtain [MN/m^3]
 
-            new_stella_config%min_plasma_coil_distance = (6.12D0-2.5D0)/15.0D0 
+            new_stella_config%min_plasma_coil_distance = (6.12D0-2.5D0)/15.0D0
 
         case default
             ! Return some error here. The index is not implemented yet.

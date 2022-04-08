@@ -27,7 +27,7 @@ for line in lines:
         new_line = line.split("]")[0].replace("[", "").replace("\_", " ")
     else:
         new_line = line
-    
+
     new_lines.append(new_line)
     counter += 1
 
@@ -35,5 +35,3 @@ new_vardes = open(sys.argv[1], "w")
 for item in new_lines:
     new_vardes.write(item)
 new_vardes.close()
-
-    

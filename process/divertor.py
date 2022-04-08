@@ -169,7 +169,7 @@ class Divertor:
 
         #  Ratio of collision length to connection length
 
-        dv.rlclolcn = 1.44e-3 * dv.tsep ** 2 / (delne * 15.0e0 * tconl)
+        dv.rlclolcn = 1.44e-3 * dv.tsep**2 / (delne * 15.0e0 * tconl)
 
         # output deleted as per discussion in #242.
         # tnunn: 19/01/2022
@@ -463,7 +463,7 @@ class Divertor:
             251.0e0
             * (
                 (qdiv * tconl) ** 2
-                / (c27 * xpara * (1.0e0 - tpts ** 3.5e0))
+                / (c27 * xpara * (1.0e0 - tpts**3.5e0))
                 * coefl
                 / (xperp * delne)
             )
@@ -481,8 +481,8 @@ class Divertor:
             * (qdiv) ** 1.55556e0
             / (xperp * delne) ** 0.777778e0
             * (c27 * xpara) ** 0.2222222e0
-            * tconl ** 0.555556e0
-            * ((1.0e0 - tpts ** 3.5e0) / coefl) ** 0.222222e0
+            * tconl**0.555556e0
+            * ((1.0e0 - tpts**3.5e0) / coefl) ** 0.222222e0
             / omlarg
             * (1.0e0 + ei / (gamdiv * tdiv))
             / (1.0e0 + eier / (gamdiv * tdiv))
@@ -495,11 +495,11 @@ class Divertor:
         delw = (
             4.01e-3
             * (delne * xperp) ** 0.7777778e0
-            * tconl ** 0.4444444e0
-            * coefl ** 0.2222222e0
+            * tconl**0.4444444e0
+            * coefl**0.2222222e0
             / (
                 (qdiv) ** 0.55555556e0
-                * (c27 * xpara * (1.0e0 - tpts ** 3.5e0)) ** 0.22222e0
+                * (c27 * xpara * (1.0e0 - tpts**3.5e0)) ** 0.22222e0
             )
         )
         lamp = pdiv * rsrd / (2.0e0 * constants.pi * rmaj * ppdiv)
@@ -622,10 +622,10 @@ class Divertor:
             * (
                 (qdiv) ** 10
                 * (c27 * xpara) ** 4
-                / (xperp ** 5 * delne ** 14)
+                / (xperp**5 * delne**14)
                 * tconl
-                * (1.0e0 - xxs ** 3.5e0) ** 4
-                / coefl ** 4
+                * (1.0e0 - xxs**3.5e0) ** 4
+                / coefl**4
             )
             ** 0.22222e0
             / (omegan * gamdiv * omlarg * (1.0e0 + eier / (gamdiv * yys))) ** 2
@@ -705,15 +705,15 @@ class Divertor:
         eier = self.erprcy(yys, dendiv)
 
         ff = (
-            xxs ** 3.5e0
+            xxs**3.5e0
             + 9.66e0
             * (xxs / aion) ** 0.9e0
             * (xperp / (qdiv) ** 2) ** 0.8e0
             * coefl
             / (2.0e0 * xpara / 7.0e0)
-            * tconl ** 0.2e0
+            * tconl**0.2e0
             * (omlarg * omegan * gamdiv * (1.0e0 + eier / (gamdiv * yys))) ** 1.8e0
-            * delne ** 2.6e0
+            * delne**2.6e0
         )
 
         return 1.0e0 - ff

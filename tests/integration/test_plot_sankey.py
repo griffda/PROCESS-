@@ -1,6 +1,7 @@
 """Integration tests for plot_sankey.py."""
 from process.io import plot_sankey
 
+
 def test_plot_sankey(temp_data_cwd, mfile_name):
     """Assert plot_sankey can make a pdf in the cwd from an mfile.
 

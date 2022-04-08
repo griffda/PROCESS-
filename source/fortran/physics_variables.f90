@@ -94,7 +94,7 @@ module physics_variables
   !! multiplying factor times plasma volume (normally=1)
 
   real(dp) :: cwrmax
-  !! maximum ratio of conducting wall distance to plasma minor radius for 
+  !! maximum ratio of conducting wall distance to plasma minor radius for
   !! vertical stability (`constraint equation 23`)
 
   real(dp) :: dene
@@ -122,7 +122,7 @@ module physics_variables
   !! hot beam ion density from calculation (/m3)
 
   real(dp) :: dnbeta
-  !! Troyon-like coefficient for beta scaling calculated 
+  !! Troyon-like coefficient for beta scaling calculated
   !! as 4*rli if `iprofile=1` (see also gtscale option)
 
   real(dp) :: dnelimt
@@ -172,20 +172,20 @@ module physics_variables
   !! deuterium fuel fraction
 
   real(dp) :: ftar
-  !! fraction of power to the lower divertor in double null configuration 
+  !! fraction of power to the lower divertor in double null configuration
   !! (`i_single_null = 0` only) (default assumes SN)
 
   real(dp) :: ffwal
-  !! factor to convert plasma surface area to first wall area in neutron wall 
+  !! factor to convert plasma surface area to first wall area in neutron wall
   !! load calculation (`iwalld=1`)
 
   real(dp) :: fgwped
-  !! fraction of Greenwald density to set as pedestal-top density. If `<0`, pedestal-top 
+  !! fraction of Greenwald density to set as pedestal-top density. If `<0`, pedestal-top
   !! density set manually using neped (`ipedestal>=1`). Needs to be `>0` if `ipedestal = 3`.
   !! (`iteration variable 145`)
 
   real(dp) :: fgwsep
-  !! fraction of Greenwald density to set as separatrix density. If `<0`, separatrix 
+  !! fraction of Greenwald density to set as separatrix density. If `<0`, separatrix
   !! density set manually using nesep (`ipedestal>=1`). Needs to be `>0` if `ipedestal = 3`.
   !! (`iteration variable 152`)
 
@@ -197,16 +197,16 @@ module physics_variables
 
   real(dp) :: fkzohm
   !! Zohm elongation scaling adjustment factor (`ishape=2, 3`)
-  
+
   real(dp) :: fplhsep
   !! F-value for Psep >= Plh + Paux (`constraint equation 73`)
-  
+
   real(dp) :: fpdivlim
   !! F-value for minimum pdivt (`constraint equation 80`)
 
   real(dp) :: fne0
   !! f-value for the constraint ne(0) > ne(sep) (`constraint equation 81`)
-  !! (`Iteration variable 154`) 
+  !! (`Iteration variable 154`)
 
   real(dp) :: ftrit
   !! tritium fuel fraction
@@ -225,7 +225,7 @@ module physics_variables
 
   integer :: gtscale
   !! switch for a/R scaling of dnbeta (`iprofile=0` only):
-  !! 
+  !!
   !! - =0 do not scale dnbeta with eps
   !! - =1 scale dnbeta with eps, original scaling
   !! - =2 scale dnbeta with eps, Menard scaling
@@ -234,7 +234,7 @@ module physics_variables
   !! H factors for an ignited plasma for each energy confinement time scaling law
 
   real(dp) :: hfact
-  !! H factor on energy confinement times, radiation corrected (`iteration variable 10`). If 
+  !! H factor on energy confinement times, radiation corrected (`iteration variable 10`). If
   !! `ipedestal=2,3` and `hfact=0`, not used in PLASMOD (see also `plasmod_i_modeltype`) issue #219
 
   real(dp) :: taumax
@@ -309,13 +309,13 @@ module physics_variables
   !! - =1 improved (and traceable) method
 
   integer :: ignite
-  !! switch for ignition assumption. Obviously, ignite must be zero if current drive 
-  !! is required. If ignite is 1, any auxiliary power is assumed to be used only during 
+  !! switch for ignition assumption. Obviously, ignite must be zero if current drive
+  !! is required. If ignite is 1, any auxiliary power is assumed to be used only during
   !! plasma start-up, and is excluded from all steady-state power balance calculations.
   !!
   !! - =0 do not assume plasma ignition
   !! - =1 assume ignited (but include auxiliary power in costs)</UL
-  
+
   integer :: iinvqd
   !! switch for inverse quadrature in L-mode scaling laws 5 and 9:
   !!
@@ -340,11 +340,11 @@ module physics_variables
   !! switch for scaling pedestal-top temperature with plasma parameters (issue #730):
   !!
   !! - =0 set pedestal-top temperature manually using teped
-  !! - =1 set pedestal-top temperature using EPED scaling (PLASMOD implementation 
+  !! - =1 set pedestal-top temperature using EPED scaling (PLASMOD implementation
   !!   of scaling within PLASMOD, `ipedestal =2,3 (ttps://idm.euro-fusion.org/?uid=2MSZ4T)
 
   real(dp) :: eped_sf
-  !! Adjustment factor for EPED scaling to reduce pedestal temperature or pressure 
+  !! Adjustment factor for EPED scaling to reduce pedestal temperature or pressure
   !! to mitigate or prevent ELMs
 
   real(dp) :: neped
@@ -375,7 +375,7 @@ module physics_variables
   !! electron temperature of pedestal (keV) (`ipedestal>=1, ieped=0, calculated for ieped=1`)
 
   real(dp) :: tesep
-  !! electron temperature at separatrix (keV) (`ipedestal>=1`) calculated if reinke 
+  !! electron temperature at separatrix (keV) (`ipedestal>=1`) calculated if reinke
   !! criterion is used (`icc=78`)
 
   integer :: iprofile
@@ -552,7 +552,7 @@ module physics_variables
   real(dp) :: ni0
   !! central ion density (/m3)
 
-  real(dp) :: m_s_limit 
+  real(dp) :: m_s_limit
   !! margin to vertical stability
 
   real(dp) :: p0
@@ -560,7 +560,7 @@ module physics_variables
 
   real(dp) :: palppv
   !! alpha power per volume (MW/m3)
-  
+
   real(dp) :: palpepv
   !! alpha power per volume to electrons (MW/m3)
 
@@ -679,7 +679,7 @@ module physics_variables
   !! switch for L-H mode power threshold scaling to use (see pthrmw for list)
 
   real(dp) :: plhthresh
-  !! L-H mode power threshold (MW) (chosen via ilhthresh, and enforced if 
+  !! L-H mode power threshold (MW) (chosen via ilhthresh, and enforced if
   !! constraint equation 15 is on)
 
   real(dp), dimension(21) :: pthrmw
@@ -709,7 +709,7 @@ module physics_variables
 
   real(dp) :: ptremw
   !! electron transport power (MW)
-  
+
   real(dp) :: ptrepv
   !! electron transport power per volume (MW/m3)
 
@@ -723,7 +723,7 @@ module physics_variables
   !! ion transport power per volume (MW/m3)
 
   real(dp) :: q
-  !! safety factor 'near' plasma edge (`iteration variable 18`) equal to q95 
+  !! safety factor 'near' plasma edge (`iteration variable 18`) equal to q95
   !! (unless `icurr=2` (ST current scaling), in which case q = mean edge safety factor qbar)
 
   real(dp) :: q0
@@ -745,7 +745,7 @@ module physics_variables
   !! cylindrical safety factor
 
   real(dp) :: rad_fraction_sol
-  !! SoL radiation fraction 
+  !! SoL radiation fraction
 
   real(dp) :: rad_fraction
   !! Radiation fraction = total radiation / total power deposited in plasma
@@ -887,219 +887,219 @@ module physics_variables
   !! mass weighted plasma effective charge
 
   contains
-  
+
   subroutine init_physics_variables
     !! Initialise module variables
     implicit none
 
-    abeam = 0.0D0  
-    afuel = 0.0D0  
-    aion = 0.0D0  
-    alphaj = 1.0D0  
-    alphan = 0.25D0  
-    alphap = 0.0D0  
-    alpharate = 0.0D0  
-    alphat = 0.5D0  
-    aspect = 2.907D0  
-    beamfus0 = 1.0D0  
-    beta = 0.042D0  
-    betaft = 0.0D0  
-    betalim = 0.0D0  
-    betalim_lower = 0.0D0  
-    betanb = 0.0D0  
-    betap = 0.0D0  
-    normalised_total_beta = 0.0D0  
-    betbm0 = 1.5D0  
-    bp = 0.0D0  
-    bt = 5.68D0  
-    btot = 0.0D0  
-    burnup = 0.0D0  
-    bvert = 0.0D0  
-    csawth = 1.0D0  
-    cvol = 1.0D0  
-    cwrmax = 1.35D0  
-    dene = 9.8D19  
-    deni = 0.0D0  
-    dlamee = 0.0D0  
-    dlamie = 0.0D0  
-    dlimit = 0.0D0  
-    dnalp = 0.0D0  
-    dnbeam = 0.0D0  
-    dnbeam2 = 0.0D0  
-    dnbeta = 3.5D0  
-    dnelimt = 0.0D0  
-    dnitot = 0.0D0  
-    dnla = 0.0D0  
-    dnprot = 0.0D0  
-    dntau = 0.0D0  
-    dnz = 0.0D0  
-    epbetmax = 1.38D0  
-    eps = 0.34399724802D0  
-    faccd = 0.0D0  
-    facoh = 0.0D0  
-    falpe = 0.0D0  
-    falpha = 0.95D0  
-    falpi = 0.0D0  
-    fdeut = 0.5D0  
-    ftar = 1.0D0  
-    ffwal = 0.92D0  
-    fgwped = 0.85D0  
-    fgwsep = 0.50D0  
-    fhe3 = 0.0D0  
-    figmer = 0.0D0  
-    fkzohm = 1.0D0    
-    fplhsep = 1.0D0    
-    fpdivlim = 1.0D0  
-    fne0 = 1.0D0  
-    ftrit = 0.5D0  
-    fusionrate = 0.0D0  
-    fvsbrnni = 1.0D0  
-    gamma = 0.4D0  
-    gammaft = 0.0D0  
-    gtscale = 0  
-    hfac = 0.0D0  
-    hfact = 1.0D0  
-    taumax = 10.0D0  
-    ibss = 3  
-    iculbl = 0  
-    icurr = 4  
-    idia = 0  
-    idensl = 7  
-    idivrt = 2  
-    ifalphap = 1  
-    ifispact = 0  
-    igeom = 1  
-    ignite = 0    
-    iinvqd = 1  
-    ipedestal = 1  
-    ips = 0  
-    ieped = 0  
-    eped_sf = 1.0D0  
-    neped = 4.0D19  
-    nesep = 3.0D19  
-    alpha_crit = 0.0D0  
-    nesep_crit = 0.0D0  
-    plasma_res_factor = 1.0D0  
-    rhopedn = 1.0D0  
-    rhopedt = 1.0D0  
-    tbeta = 2.0D0  
-    teped = 1.0D0  
-    tesep = 0.1D0  
-    iprofile = 1  
-    iradloss = 1  
-    isc = 34  
-    iscrp = 1  
-    ishape = 0  
-    itart = 0  
-    itartpf = 0  
-    iwalld = 1  
-    kappa = 1.792D0  
-    kappa95 = 1.6D0  
-    kappaa = 0.0D0  
-    kappaa_IPB = 0.d0  
-    ne0 = 0.0D0  
-    ni0 = 0.0D0  
+    abeam = 0.0D0
+    afuel = 0.0D0
+    aion = 0.0D0
+    alphaj = 1.0D0
+    alphan = 0.25D0
+    alphap = 0.0D0
+    alpharate = 0.0D0
+    alphat = 0.5D0
+    aspect = 2.907D0
+    beamfus0 = 1.0D0
+    beta = 0.042D0
+    betaft = 0.0D0
+    betalim = 0.0D0
+    betalim_lower = 0.0D0
+    betanb = 0.0D0
+    betap = 0.0D0
+    normalised_total_beta = 0.0D0
+    betbm0 = 1.5D0
+    bp = 0.0D0
+    bt = 5.68D0
+    btot = 0.0D0
+    burnup = 0.0D0
+    bvert = 0.0D0
+    csawth = 1.0D0
+    cvol = 1.0D0
+    cwrmax = 1.35D0
+    dene = 9.8D19
+    deni = 0.0D0
+    dlamee = 0.0D0
+    dlamie = 0.0D0
+    dlimit = 0.0D0
+    dnalp = 0.0D0
+    dnbeam = 0.0D0
+    dnbeam2 = 0.0D0
+    dnbeta = 3.5D0
+    dnelimt = 0.0D0
+    dnitot = 0.0D0
+    dnla = 0.0D0
+    dnprot = 0.0D0
+    dntau = 0.0D0
+    dnz = 0.0D0
+    epbetmax = 1.38D0
+    eps = 0.34399724802D0
+    faccd = 0.0D0
+    facoh = 0.0D0
+    falpe = 0.0D0
+    falpha = 0.95D0
+    falpi = 0.0D0
+    fdeut = 0.5D0
+    ftar = 1.0D0
+    ffwal = 0.92D0
+    fgwped = 0.85D0
+    fgwsep = 0.50D0
+    fhe3 = 0.0D0
+    figmer = 0.0D0
+    fkzohm = 1.0D0
+    fplhsep = 1.0D0
+    fpdivlim = 1.0D0
+    fne0 = 1.0D0
+    ftrit = 0.5D0
+    fusionrate = 0.0D0
+    fvsbrnni = 1.0D0
+    gamma = 0.4D0
+    gammaft = 0.0D0
+    gtscale = 0
+    hfac = 0.0D0
+    hfact = 1.0D0
+    taumax = 10.0D0
+    ibss = 3
+    iculbl = 0
+    icurr = 4
+    idia = 0
+    idensl = 7
+    idivrt = 2
+    ifalphap = 1
+    ifispact = 0
+    igeom = 1
+    ignite = 0
+    iinvqd = 1
+    ipedestal = 1
+    ips = 0
+    ieped = 0
+    eped_sf = 1.0D0
+    neped = 4.0D19
+    nesep = 3.0D19
+    alpha_crit = 0.0D0
+    nesep_crit = 0.0D0
+    plasma_res_factor = 1.0D0
+    rhopedn = 1.0D0
+    rhopedt = 1.0D0
+    tbeta = 2.0D0
+    teped = 1.0D0
+    tesep = 0.1D0
+    iprofile = 1
+    iradloss = 1
+    isc = 34
+    iscrp = 1
+    ishape = 0
+    itart = 0
+    itartpf = 0
+    iwalld = 1
+    kappa = 1.792D0
+    kappa95 = 1.6D0
+    kappaa = 0.0D0
+    kappaa_IPB = 0.d0
+    ne0 = 0.0D0
+    ni0 = 0.0D0
     m_s_limit = 0.3D0
-    p0 = 0.0D0  
-    palppv = 0.0D0    
-    palpepv = 0.0D0  
-    palpfwmw = 0.0D0  
-    palpipv = 0.0D0  
-    palpmw = 0.0D0  
-    palpnb = 0.0D0  
-    pbrempv = 0.0D0  
-    pchargemw = 0.0D0  
-    pchargepv = 0.0D0  
-    pcoef = 0.0D0  
-    pcoreradmw = 0.0D0  
-    pcoreradpv = 0.0D0  
-    pdd = 0.0D0  
-    pdhe3 = 0.0D0  
-    pdivt = 0.0D0  
-    pdivl = 0.0D0  
-    pdivu = 0.0D0  
-    pdivmax = 0.0D0  
-    pdt = 0.0D0  
-    pedgeradmw = 0.0D0  
-    pedgeradpv = 0.0D0  
-    pfuscmw = 0.0D0  
-    phiint = 0.0D0  
-    photon_wall = 0.0D0  
-    piepv = 0.0D0  
-    plascur = 0.0D0  
-    plinepv = 0.0D0  
-    pneutmw = 0.0D0  
-    pneutpv = 0.0D0  
-    pohmmw = 0.0D0  
-    pohmpv = 0.0D0  
-    powerht = 0.0D0  
-    powfmw = 0.0D0  
-    pperim = 0.0D0  
-    pradmw = 0.0D0  
-    pradpv = 0.0D0  
-    protonrate = 0.0D0  
-    psolradmw = 0.0D0  
-    psyncpv = 0.0D0  
-    ilhthresh = 19  
-    plhthresh = 0.0D0  
-    pthrmw = 0.0D0  
-    ptremw = 0.0D0    
-    ptrepv = 0.0D0  
-    ptrimw = 0.0D0  
-    pscalingmw = 0.0D0  
-    ptripv = 0.0D0  
-    q = 3.0D0  
-    q0 = 1.0D0  
-    q95 = 0.0D0  
-    qfuel = 0.0D0  
-    tauratio = 1.0D0  
-    qlim = 0.0D0  
-    qstar = 0.0D0  
-    rad_fraction_sol = 0.8D0  
-    rad_fraction = 0.0D0  
-    ralpne = 0.10D0  
-    protium = 0.0D0  
-    rli = 0.9D0  
-    rlp = 0.0D0  
-    rmajor = 8.14D0  
-    rminor = 0.0D0  
-    rnbeam = 0.005D0  
-    rncne = 0.0D0  
-    rndfuel = 0.0D0  
-    rnfene = 0.0D0  
-    rnone = 0.0D0  
-    rpfac = 0.0D0  
-    rplas = 0.0D0  
-    res_time = 0.0D0  
-    sarea = 0.0D0  
-    sareao = 0.0D0  
-    sf = 0.0D0  
-    i_single_null = 1  
-    ssync = 0.6D0  
-    tauee = 0.0D0  
-    tauee_in = 0.0D0  
-    taueff = 0.0D0  
-    tauei = 0.0D0  
-    taup = 0.0D0  
-    te = 12.9D0  
-    te0 = 0.0D0  
-    ten = 0.0D0  
-    ti = 12.9D0  
-    ti0 = 0.0D0  
-    tin = 0.0D0  
-    tratio = 1.0D0  
-    triang = 0.36D0  
-    triang95 = 0.24D0  
-    vol = 0.0D0  
-    vsbrn = 0.0D0  
-    vshift = 0.0D0  
-    vsind = 0.0D0  
-    vsres = 0.0D0  
-    vsstt = 0.0D0  
-    wallmw = 0.0D0  
-    wtgpd = 0.0D0  
-    xarea = 0.0D0  
-    zeff = 0.0D0  
-    zeffai = 0.0D0  
+    p0 = 0.0D0
+    palppv = 0.0D0
+    palpepv = 0.0D0
+    palpfwmw = 0.0D0
+    palpipv = 0.0D0
+    palpmw = 0.0D0
+    palpnb = 0.0D0
+    pbrempv = 0.0D0
+    pchargemw = 0.0D0
+    pchargepv = 0.0D0
+    pcoef = 0.0D0
+    pcoreradmw = 0.0D0
+    pcoreradpv = 0.0D0
+    pdd = 0.0D0
+    pdhe3 = 0.0D0
+    pdivt = 0.0D0
+    pdivl = 0.0D0
+    pdivu = 0.0D0
+    pdivmax = 0.0D0
+    pdt = 0.0D0
+    pedgeradmw = 0.0D0
+    pedgeradpv = 0.0D0
+    pfuscmw = 0.0D0
+    phiint = 0.0D0
+    photon_wall = 0.0D0
+    piepv = 0.0D0
+    plascur = 0.0D0
+    plinepv = 0.0D0
+    pneutmw = 0.0D0
+    pneutpv = 0.0D0
+    pohmmw = 0.0D0
+    pohmpv = 0.0D0
+    powerht = 0.0D0
+    powfmw = 0.0D0
+    pperim = 0.0D0
+    pradmw = 0.0D0
+    pradpv = 0.0D0
+    protonrate = 0.0D0
+    psolradmw = 0.0D0
+    psyncpv = 0.0D0
+    ilhthresh = 19
+    plhthresh = 0.0D0
+    pthrmw = 0.0D0
+    ptremw = 0.0D0
+    ptrepv = 0.0D0
+    ptrimw = 0.0D0
+    pscalingmw = 0.0D0
+    ptripv = 0.0D0
+    q = 3.0D0
+    q0 = 1.0D0
+    q95 = 0.0D0
+    qfuel = 0.0D0
+    tauratio = 1.0D0
+    qlim = 0.0D0
+    qstar = 0.0D0
+    rad_fraction_sol = 0.8D0
+    rad_fraction = 0.0D0
+    ralpne = 0.10D0
+    protium = 0.0D0
+    rli = 0.9D0
+    rlp = 0.0D0
+    rmajor = 8.14D0
+    rminor = 0.0D0
+    rnbeam = 0.005D0
+    rncne = 0.0D0
+    rndfuel = 0.0D0
+    rnfene = 0.0D0
+    rnone = 0.0D0
+    rpfac = 0.0D0
+    rplas = 0.0D0
+    res_time = 0.0D0
+    sarea = 0.0D0
+    sareao = 0.0D0
+    sf = 0.0D0
+    i_single_null = 1
+    ssync = 0.6D0
+    tauee = 0.0D0
+    tauee_in = 0.0D0
+    taueff = 0.0D0
+    tauei = 0.0D0
+    taup = 0.0D0
+    te = 12.9D0
+    te0 = 0.0D0
+    ten = 0.0D0
+    ti = 12.9D0
+    ti0 = 0.0D0
+    tin = 0.0D0
+    tratio = 1.0D0
+    triang = 0.36D0
+    triang95 = 0.24D0
+    vol = 0.0D0
+    vsbrn = 0.0D0
+    vshift = 0.0D0
+    vsind = 0.0D0
+    vsres = 0.0D0
+    vsstt = 0.0D0
+    wallmw = 0.0D0
+    wtgpd = 0.0D0
+    xarea = 0.0D0
+    zeff = 0.0D0
+    zeffai = 0.0D0
   end subroutine init_physics_variables
 end module physics_variables

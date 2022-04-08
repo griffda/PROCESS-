@@ -3,7 +3,7 @@ A selection of functions for using the PROCESS code
 
 Author: Hanni Lux (Hanni.Lux@ccfe.ac.uk)
 
-Compatible with PROCESS version 368 
+Compatible with PROCESS version 368
 
 24/11/2021: Global dictionary variables moved within the functions
             to avoid cyclic dependencies. This is because the dicts
@@ -24,7 +24,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def get_neqns_itervars(wdir='.'):
+def get_neqns_itervars(wdir="."):
 
     """
     returns the number of equations and a list of variable
@@ -34,23 +34,22 @@ def get_neqns_itervars(wdir='.'):
     dicts = get_dicts()
     in_dat = InDat(pjoin(wdir, "IN.DAT"))
 
-    ixc_list = in_dat.data['ixc'].get_value
+    ixc_list = in_dat.data["ixc"].get_value
 
     itervars = []
     for var in ixc_list:
-        if var != '':
-            itervars += [dicts['DICT_IXC_SIMPLE'][str(var)]]
-
+        if var != "":
+            itervars += [dicts["DICT_IXC_SIMPLE"][str(var)]]
 
     assert in_dat.number_of_itvars == len(itervars)
 
     return in_dat.number_of_constraints, itervars
 
 
-
 ###############################
 
-def update_ixc_bounds(wdir='.'):
+
+def update_ixc_bounds(wdir="."):
 
     """
     updates the lower and upper bounds in DICT_IXC_BOUNDS
@@ -60,19 +59,21 @@ def update_ixc_bounds(wdir='.'):
     dicts = get_dicts()
     in_dat = InDat(pjoin(wdir, "IN.DAT"))
 
-    bounds = in_dat.data['bounds'].get_value
+    bounds = in_dat.data["bounds"].get_value
 
     for key, value in bounds.items():
-        name = dicts['DICT_IXC_SIMPLE'][key]
+        name = dicts["DICT_IXC_SIMPLE"][key]
 
-        if 'l' in value:
-            dicts['DICT_IXC_BOUNDS'][name]['lb'] = float(value['l'])
-        if 'u' in value:
-            dicts['DICT_IXC_BOUNDS'][name]['ub'] = float(value['u'])
+        if "l" in value:
+            dicts["DICT_IXC_BOUNDS"][name]["lb"] = float(value["l"])
+        if "u" in value:
+            dicts["DICT_IXC_BOUNDS"][name]["ub"] = float(value["u"])
+
 
 ###############################
 
-def  get_variable_range(itervars, factor, wdir='.'):
+
+def get_variable_range(itervars, factor, wdir="."):
 
     """
     Returns the lower and upper bounds of the variable range
@@ -96,110 +97,129 @@ def  get_variable_range(itervars, factor, wdir='.'):
 
     for varname in itervars:
 
-        #for f-values we set the same range as in process
-        if varname[0] == 'f' and (varname not in dicts['NON_F_VALUES']):
-            lbs += [dicts['DICT_IXC_BOUNDS'][varname]['lb']]
-            ubs += [dicts['DICT_IXC_BOUNDS'][varname]['ub']]
+        # for f-values we set the same range as in process
+        if varname[0] == "f" and (varname not in dicts["NON_F_VALUES"]):
+            lbs += [dicts["DICT_IXC_BOUNDS"][varname]["lb"]]
+            ubs += [dicts["DICT_IXC_BOUNDS"][varname]["ub"]]
 
-        #for non-f-values we modify the range with the factor
+        # for non-f-values we modify the range with the factor
         else:
             value = get_from_indat_or_default(in_dat, varname)
 
             if value == None:
-                print('Error: Iteration variable {} has None value!'.format(
-                        varname))
+                print("Error: Iteration variable {} has None value!".format(varname))
                 exit()
 
             # to allow the factor to have some influence
-            if value == 0.:
-                value = 1.
+            if value == 0.0:
+                value = 1.0
 
-            #assure value is within bounds!
-            if value < dicts['DICT_IXC_BOUNDS'][varname]['lb']:
-                value = dicts['DICT_IXC_BOUNDS'][varname]['lb']
-            elif value > dicts['DICT_IXC_BOUNDS'][varname]['ub']:
-                value = dicts['DICT_IXC_BOUNDS'][varname]['ub']
+            # assure value is within bounds!
+            if value < dicts["DICT_IXC_BOUNDS"][varname]["lb"]:
+                value = dicts["DICT_IXC_BOUNDS"][varname]["lb"]
+            elif value > dicts["DICT_IXC_BOUNDS"][varname]["ub"]:
+                value = dicts["DICT_IXC_BOUNDS"][varname]["ub"]
 
-            if value > 0 :
-                lbs += [max(value/factor, dicts['DICT_IXC_BOUNDS'][varname]['lb'])]
-                ubs += [min(value*factor, dicts['DICT_IXC_BOUNDS'][varname]['ub'])]
-            else :
-                lbs += [min(value/factor, dicts['DICT_IXC_BOUNDS'][varname]['lb'])]
-                ubs += [max(value*factor, dicts['DICT_IXC_BOUNDS'][varname]['ub'])]
+            if value > 0:
+                lbs += [max(value / factor, dicts["DICT_IXC_BOUNDS"][varname]["lb"])]
+                ubs += [min(value * factor, dicts["DICT_IXC_BOUNDS"][varname]["ub"])]
+            else:
+                lbs += [min(value / factor, dicts["DICT_IXC_BOUNDS"][varname]["lb"])]
+                ubs += [max(value * factor, dicts["DICT_IXC_BOUNDS"][varname]["ub"])]
 
         if lbs[-1] > ubs[-1]:
-            print('Error: Iteration variable {0} has BOUNDL={1} >\
- BOUNDU={2}\n Update process_dicts or input file!'.format(varname,
-                                                           lbs[-1], ubs[-1]),
-                  file=stderr)
+            print(
+                "Error: Iteration variable {0} has BOUNDL={1} >\
+ BOUNDU={2}\n Update process_dicts or input file!".format(
+                    varname, lbs[-1], ubs[-1]
+                ),
+                file=stderr,
+            )
 
             exit()
-        #assert lbs[-1] < ubs[-1]
+        # assert lbs[-1] < ubs[-1]
 
     return lbs, ubs
 
 
 ###############################
 
+
 def check_in_dat():
 
-    """ Tests IN.DAT during setup:
-    1)Are ixc bounds outside of allowed input ranges?  """
+    """Tests IN.DAT during setup:
+    1)Are ixc bounds outside of allowed input ranges?"""
     # Load dicts from dicts JSON file
     dicts = get_dicts()
 
     in_dat = InDat()
 
-    #Necessary for the correct use of this function as well as
-    #get_variable_range
+    # Necessary for the correct use of this function as well as
+    # get_variable_range
     update_ixc_bounds()
 
-    #1) Are ixc bounds outside of allowed input ranges?
+    # 1) Are ixc bounds outside of allowed input ranges?
 
-    ixc_list = in_dat.data['ixc'].get_value
+    ixc_list = in_dat.data["ixc"].get_value
 
     for itervarno in ixc_list:
-        itervarname = dicts['DICT_IXC_SIMPLE'][str(itervarno)]
-        try: 
-            lowerinputbound = dicts['DICT_INPUT_BOUNDS'][itervarname]['lb']
+        itervarname = dicts["DICT_IXC_SIMPLE"][str(itervarno)]
+        try:
+            lowerinputbound = dicts["DICT_INPUT_BOUNDS"][itervarname]["lb"]
         except KeyError as err:
-            #arrays do not have input bound checks
-            if '(' in itervarname: 
+            # arrays do not have input bound checks
+            if "(" in itervarname:
                 continue
 
-            print('Error in check_in_dat():')
-            print('There seems to be some information missing from the dicts.')
-            print('Please flag this up for a developer to investigate!')
+            print("Error in check_in_dat():")
+            print("There seems to be some information missing from the dicts.")
+            print("Please flag this up for a developer to investigate!")
             print(itervarname, err)
-            print(dicts['DICT_INPUT_BOUNDS'][itervarname])
+            print(dicts["DICT_INPUT_BOUNDS"][itervarname])
             exit()
 
-        if dicts['DICT_IXC_BOUNDS'][itervarname]['lb'] < lowerinputbound:
-            print("Warning: boundl for ", itervarname,
-                  " lies out of allowed input range!\n Reset boundl(",
-                  itervarno, ") to ", lowerinputbound, file=stderr)
-            dicts['DICT_IXC_BOUNDS'][itervarname]['lb'] = lowerinputbound
-            set_variable_in_indat(in_dat, "boundl("+str(itervarno)+")",
-                                  lowerinputbound)
+        if dicts["DICT_IXC_BOUNDS"][itervarname]["lb"] < lowerinputbound:
+            print(
+                "Warning: boundl for ",
+                itervarname,
+                " lies out of allowed input range!\n Reset boundl(",
+                itervarno,
+                ") to ",
+                lowerinputbound,
+                file=stderr,
+            )
+            dicts["DICT_IXC_BOUNDS"][itervarname]["lb"] = lowerinputbound
+            set_variable_in_indat(
+                in_dat, "boundl(" + str(itervarno) + ")", lowerinputbound
+            )
             sleep(1)
 
-        upperinputbound = dicts['DICT_INPUT_BOUNDS'][itervarname]['ub']
+        upperinputbound = dicts["DICT_INPUT_BOUNDS"][itervarname]["ub"]
 
-        if dicts['DICT_IXC_BOUNDS'][itervarname]['ub'] > upperinputbound:
-            print("Warning: boundu for", itervarname,
-                  "lies out of allowed input range!\n Reset boundu({}) \
-to".format(itervarno), upperinputbound, file=stderr)
-            dicts['DICT_IXC_BOUNDS'][itervarname]['ub'] = upperinputbound
-            set_variable_in_indat(in_dat, "boundu("+str(itervarno)+")",
-                                  upperinputbound)
+        if dicts["DICT_IXC_BOUNDS"][itervarname]["ub"] > upperinputbound:
+            print(
+                "Warning: boundu for",
+                itervarname,
+                "lies out of allowed input range!\n Reset boundu({}) \
+to".format(
+                    itervarno
+                ),
+                upperinputbound,
+                file=stderr,
+            )
+            dicts["DICT_IXC_BOUNDS"][itervarname]["ub"] = upperinputbound
+            set_variable_in_indat(
+                in_dat, "boundu(" + str(itervarno) + ")", upperinputbound
+            )
             sleep(1)
 
-    in_dat.write_in_dat(output_filename='IN.DAT')
+    in_dat.write_in_dat(output_filename="IN.DAT")
 
 
 ###############################
 
-def check_logfile(logfile='process.log'):
+
+def check_logfile(logfile="process.log"):
 
     """
     Checks the log file of the PROCESS output.
@@ -208,16 +228,19 @@ def check_logfile(logfile='process.log'):
     XXX should be deprecated!! and replaced by check_input_error!
     """
 
-    with open(logfile, 'r') as outlogfile:
-        errormessage = 'Please check the output file for further information.'
+    with open(logfile, "r") as outlogfile:
+        errormessage = "Please check the output file for further information."
         for line in outlogfile:
             if errormessage in line:
-                print('An Error has occured. Please check the output \
-                       file for more information.', file=stderr)
+                print(
+                    "An Error has occured. Please check the output \
+                       file for more information.",
+                    file=stderr,
+                )
                 exit()
 
 
-def check_input_error(wdir='.'):
+def check_input_error(wdir="."):
 
     """
     Checks, if an input error has occurred.
@@ -236,11 +259,14 @@ def check_input_error(wdir='.'):
         else:
             raise FileNotFoundError("MFile doesn't exist")
 
-        error_id = mfile.data['error_id'].get_scan(-1)
+        error_id = mfile.data["error_id"].get_scan(-1)
 
         if error_id == 130:
-            print('Error in input file. Please check OUT.DAT \
-    for more information.', file=stderr)
+            print(
+                "Error in input file. Please check OUT.DAT \
+    for more information.",
+                file=stderr,
+            )
             exit()
     except:
         logger.exception("Check input error exception")
@@ -249,7 +275,8 @@ def check_input_error(wdir='.'):
 
 ########################################
 
-def process_stopped(wdir='.'):
+
+def process_stopped(wdir="."):
 
     """
     Checks the process Mfile whether it has
@@ -266,7 +293,7 @@ def process_stopped(wdir='.'):
     # Get error status; missing key indicates premature exit of Process
     # (usually a STOP 1)
     try:
-        error_status = m_file.data['error_status'].get_scan(-1)
+        error_status = m_file.data["error_status"].get_scan(-1)
     except KeyError:
         return True
 
@@ -277,9 +304,11 @@ def process_stopped(wdir='.'):
     # Process did not prematurely exit
     return False
 
+
 ########################################
 
-def process_warnings(wdir='.'):
+
+def process_warnings(wdir="."):
 
     """
     Checks the process Mfile whether any
@@ -287,12 +316,13 @@ def process_warnings(wdir='.'):
     """
 
     m_file = MFile(filename=pjoin(wdir, "MFILE.DAT"))
-    error_status = m_file.data['error_status'].get_scan(-1)
+    error_status = m_file.data["error_status"].get_scan(-1)
 
     if error_status >= 2:
         return True
 
     return False
+
 
 ############################################
 
@@ -302,7 +332,7 @@ def mfile_exists():
     """checks whether MFILE.DAT exists"""
 
     try:
-        m_file = open('MFILE.DAT', 'r')
+        m_file = open("MFILE.DAT", "r")
         m_file.close()
         return True
 
@@ -312,7 +342,8 @@ def mfile_exists():
 
 ############################################
 
-def no_unfeasible_mfile(wdir='.'):
+
+def no_unfeasible_mfile(wdir="."):
 
     """
     returns the number of unfeasible points
@@ -323,19 +354,19 @@ def no_unfeasible_mfile(wdir='.'):
     # Load dicts from dicts JSON file
     dicts = get_dicts()
 
-    #no scans
-    if not m_file.data['isweep'].exists:
+    # no scans
+    if not m_file.data["isweep"].exists:
 
-        if m_file.data['ifail'].get_scan(-1) == dicts['IFAIL_SUCCESS']:
+        if m_file.data["ifail"].get_scan(-1) == dicts["IFAIL_SUCCESS"]:
             return 0
         else:
             return 1
 
     else:
 
-        ifail = m_file.data['ifail'].get_scans()
+        ifail = m_file.data["ifail"].get_scans()
         try:
-            return len(ifail) - ifail.count(dicts['IFAIL_SUCCESS'])
+            return len(ifail) - ifail.count(dicts["IFAIL_SUCCESS"])
         except TypeError:
             # This seems to occur, if ifail is not in MFILE!
             # This probably means in the mfile library a KeyError
@@ -343,8 +374,8 @@ def no_unfeasible_mfile(wdir='.'):
             return 100000
 
 
-
 ################################
+
 
 def vary_iteration_variables(itervars, lbs, ubs):
 
@@ -366,14 +397,15 @@ def vary_iteration_variables(itervars, lbs, ubs):
         new_values += [new_value]
         in_dat.add_parameter(varname, new_value)
 
-    in_dat.write_in_dat(output_filename='IN.DAT')
+    in_dat.write_in_dat(output_filename="IN.DAT")
 
     return new_values
 
 
 ###################################
 
-def get_solution_from_mfile(neqns, nvars, wdir='.'):
+
+def get_solution_from_mfile(neqns, nvars, wdir="."):
 
     """
     returns
@@ -390,37 +422,35 @@ def get_solution_from_mfile(neqns, nvars, wdir='.'):
     dicts = get_dicts()
     m_file = MFile(filename=pjoin(wdir, "MFILE.DAT"))
 
-    ifail = m_file.data['ifail'].get_scan(-1)
+    ifail = m_file.data["ifail"].get_scan(-1)
 
-    #figure of merit objective function
-    objective_function = m_file.data['f'].get_scan(-1)
+    # figure of merit objective function
+    objective_function = m_file.data["f"].get_scan(-1)
 
-    #estimate of the constraints
-    constraints = m_file.data['sqsumsq'].get_scan(-1)
+    # estimate of the constraints
+    constraints = m_file.data["sqsumsq"].get_scan(-1)
 
     table_sol = []
     for var_no in range(nvars):
-        table_sol.append(
-            m_file.data['itvar{:03}'.format(var_no+1)].get_scan(-1))
+        table_sol.append(m_file.data["itvar{:03}".format(var_no + 1)].get_scan(-1))
 
     table_res = []
     for con_no in range(neqns):
-        table_res.append(
-            m_file.data['normres{:03}'.format(con_no+1)].get_scan(-1))
+        table_res.append(m_file.data["normres{:03}".format(con_no + 1)].get_scan(-1))
 
-    if ifail != dicts['IFAIL_SUCCESS']:
-        return ifail, '0', '0', ['0']*nvars, ['0']*neqns
+    if ifail != dicts["IFAIL_SUCCESS"]:
+        return ifail, "0", "0", ["0"] * nvars, ["0"] * neqns
 
     return ifail, objective_function, constraints, table_sol, table_res
 
 
-
 ############################################
+
 
 def get_from_indat_or_default(in_dat, varname):
 
-    """ quick function to get variable value from IN.DAT
-        or PROCESS default value """
+    """quick function to get variable value from IN.DAT
+    or PROCESS default value"""
 
     dicts = get_dicts()
 
@@ -430,31 +460,24 @@ def get_from_indat_or_default(in_dat, varname):
         return dicts["DICT_DEFAULT"][varname]
 
 
-
 def set_variable_in_indat(in_dat, varname, value):
 
-    """ quick function that sets a variable value in
-        IN.DAT and creates it if necessary """
+    """quick function that sets a variable value in
+    IN.DAT and creates it if necessary"""
 
     varname = varname.lower()
-    if 'bound' in varname:
-        number = (varname.split('('))[1].split(')')[0]
-        if 'boundu' in varname:
-            in_dat.add_bound(number, 'u', value)
+    if "bound" in varname:
+        number = (varname.split("("))[1].split(")")[0]
+        if "boundu" in varname:
+            in_dat.add_bound(number, "u", value)
         else:
-            in_dat.add_bound(number, 'l', value)
-    
-    elif '(' in varname:
-        name = varname.split('(')[0]
-        #Fortran numbering converted to Python numbering!
-        id   = int((varname.split('('))[1].split(')')[0])-1
+            in_dat.add_bound(number, "l", value)
+
+    elif "(" in varname:
+        name = varname.split("(")[0]
+        # Fortran numbering converted to Python numbering!
+        id = int((varname.split("("))[1].split(")")[0]) - 1
         in_dat.change_array(name, id, float(value))
-        
+
     else:
         in_dat.add_parameter(varname, value)
-
-
-
-
-
-

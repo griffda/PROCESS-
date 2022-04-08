@@ -7,13 +7,13 @@ import shutil
 import re
 
 # TODO This isn't good: put MFile into process package?
-sys.path.append(os.path.join(os.path.dirname(__file__), '../utilities/'))
+sys.path.append(os.path.join(os.path.dirname(__file__), "../utilities/"))
 
 from process.main import main
 from process.io.mfile import MFile
 
 # Variables and patterns to ignore when comparing differences (set and list)
-# These variables can differ substantially from their reference values when 
+# These variables can differ substantially from their reference values when
 # Process is run in different environments (e.g. local vs. CI system). These
 # differences are accepted, but not fully understood, and should be treated
 # with suspicion as rounding error alone cannot account for all of them.
@@ -23,12 +23,19 @@ from process.io.mfile import MFile
 # error-prone comparison, which was masked in the old version of the test suite.
 # TODO This is a bug that needs to be resolved, and is excluded only to get
 # the regression tests passing as before.
-EXCLUSIONS = {"itvar", "xcm", "balance", "convergence_parameter", 
-    "sig_tf_r_max(1)", "sqsumsq", "ric(nohc)"}
+EXCLUSIONS = {
+    "itvar",
+    "xcm",
+    "balance",
+    "convergence_parameter",
+    "sig_tf_r_max(1)",
+    "sqsumsq",
+    "ric(nohc)",
+}
 EXCLUSION_PATTERNS = [
-    r"normres\d{3}", # normres and 3 digits
-    r"nitvar\d{3}" # nitvar and 3 digits
-    ]
+    r"normres\d{3}",  # normres and 3 digits
+    r"nitvar\d{3}",  # nitvar and 3 digits
+]
 
 # Set up logging
 # Set logger name to name of module
@@ -38,7 +45,7 @@ logger.setLevel(logging.DEBUG)
 
 # Create log handlers for console and file output at different levels
 s_handler = logging.StreamHandler()
-f_handler = logging.FileHandler('tests/regression/scenarios.log', mode='w')
+f_handler = logging.FileHandler("tests/regression/scenarios.log", mode="w")
 # Log to scenarios.log and overwrite on each test run
 s_handler.setLevel(logging.INFO)
 f_handler.setLevel(logging.DEBUG)
@@ -47,24 +54,26 @@ f_handler.setLevel(logging.DEBUG)
 logger.addHandler(s_handler)
 logger.addHandler(f_handler)
 
-class Scenario():
+
+class Scenario:
     """A scenario for a single regression test."""
+
     def __init__(self, ref_dir):
         """Initialise with reference directory to test.
 
         :param ref_dir: reference directory
         :type ref_dir: Path
         """
-        self.ref_dir = ref_dir # Dir containing the test files
-        self.test_dir = None # Where the actual test takes place
-        self.name = ref_dir.name # Name of the scenario
-        self.version = None # Process version
-        self.ref_mfile = None # Reference MFile (expected)
-        self.new_mfile = None # Newly-created MFile (observed)
-        self.vars_unique_ref = set() # Vars unique to reference
-        self.vars_unique_new = set() # Vars unique to new
-        self.vars_common_both = set() # Vars in both reference and new
-        self.over_tolerance_diff_items = [] # Differences over tolerance
+        self.ref_dir = ref_dir  # Dir containing the test files
+        self.test_dir = None  # Where the actual test takes place
+        self.name = ref_dir.name  # Name of the scenario
+        self.version = None  # Process version
+        self.ref_mfile = None  # Reference MFile (expected)
+        self.new_mfile = None  # Newly-created MFile (observed)
+        self.vars_unique_ref = set()  # Vars unique to reference
+        self.vars_unique_new = set()  # Vars unique to new
+        self.vars_common_both = set()  # Vars in both reference and new
+        self.over_tolerance_diff_items = []  # Differences over tolerance
 
     def run(self, test_dir):
         """Run Process for this scenario.
@@ -84,16 +93,17 @@ class Scenario():
             args = ["--varyiterparams", "--varyiterparamsconfig", conf_path_str]
         else:
             # No .conf file: normal run
-            input_path_str = str(self.test_dir / 'IN.DAT')
-            args = ['--input', input_path_str]
+            input_path_str = str(self.test_dir / "IN.DAT")
+            args = ["--input", input_path_str]
 
         # Run Process using the input or config file in the test_dir
         # directory, catching any errors
         try:
             main(args=args)
         except:
-            logger.exception(f"Process threw an exception when running "
-                f"scenario: {self.name}")
+            logger.exception(
+                f"Process threw an exception when running " f"scenario: {self.name}"
+            )
             raise
 
     def check_mfile_length(self):
@@ -102,7 +112,7 @@ class Scenario():
         :return: True if is has non-zero length, False if not
         :rtype: bool
         """
-        with open(self.test_dir / 'MFILE.DAT', "r", encoding="utf-8") as mfile:
+        with open(self.test_dir / "MFILE.DAT", "r", encoding="utf-8") as mfile:
             mfile_len = len(mfile.readlines())
 
         if mfile_len == 0:
@@ -112,8 +122,8 @@ class Scenario():
 
     def read_mfiles(self):
         """Read in reference and newly-output MFILEs, creating MFile objects."""
-        ref_mfile_path_str = str(self.test_dir / 'ref.MFILE.DAT')
-        new_mfile_path_str = str(self.test_dir / 'MFILE.DAT')
+        ref_mfile_path_str = str(self.test_dir / "ref.MFILE.DAT")
+        new_mfile_path_str = str(self.test_dir / "MFILE.DAT")
 
         try:
             self.ref_mfile = MFile(ref_mfile_path_str)
@@ -154,7 +164,7 @@ class Scenario():
         ref_vars = set(self.ref_mfile.data.keys())
         new_vars = set(self.new_mfile.data.keys())
 
-        # Filter out the excluded vars using set difference; ones we aren't 
+        # Filter out the excluded vars using set difference; ones we aren't
         # interested in
         ref_vars = ref_vars - EXCLUSIONS
         new_vars = new_vars - EXCLUSIONS
@@ -168,7 +178,7 @@ class Scenario():
         self.vars_unique_new = new_vars - ref_vars
         self.vars_unique_ref = ref_vars - new_vars
         self.vars_common_both = new_vars & ref_vars
-        
+
     def get_mfile_diffs(self):
         """Generator for differences between the ref and new MFiles.
 
@@ -189,10 +199,10 @@ class Scenario():
                 exp = float(self.ref_mfile.data[var_name].get_scan(scan_number))
                 obs = float(self.new_mfile.data[var_name].get_scan(scan_number))
             except ValueError:
-                # This is to catch (and ignore) values that can't be converted 
+                # This is to catch (and ignore) values that can't be converted
                 # to floats, e.g. strings in the MFILE (fileprefix = 'IN.DAT')
                 continue
-            
+
             # Calulate percentage change
             if exp == 0:
                 # Relative change is nonsensical
@@ -212,41 +222,46 @@ class Scenario():
         sorted_diffs = sorted(self.over_tolerance_diff_items)
         sorted_ref_vars = sorted(self.vars_unique_ref)
         sorted_new_vars = sorted(self.vars_unique_new)
-        
+
         # Log differences outside tolerance
-        logger.warning(f"\nTotal of {len(sorted_diffs)} "
-            "differences outside tolerance")
+        logger.warning(
+            f"\nTotal of {len(sorted_diffs)} " "differences outside tolerance"
+        )
 
         # Create table if there's content
         if len(sorted_diffs) > 0:
-            logger.warning(f"{'Variable':20}\t{'Ref':>10}\t{'New':>10}\t"
-                f"{'Diff (%)':>10}")
-            logger.warning("-"*60)
+            logger.warning(
+                f"{'Variable':20}\t{'Ref':>10}\t{'New':>10}\t" f"{'Diff (%)':>10}"
+            )
+            logger.warning("-" * 60)
             for diff_item in sorted_diffs:
                 var_name, exp, obs, chg = diff_item
-                logger.warning(f"{var_name:20}\t{exp:10.3g}\t{obs:10.3g}\t"
-                    f"{chg:10.2f}")
+                logger.warning(
+                    f"{var_name:20}\t{exp:10.3g}\t{obs:10.3g}\t" f"{chg:10.2f}"
+                )
 
         # Log variables in ref but not in new
-        logger.warning(f"\nThere are {len(sorted_ref_vars)} variables in "
-            "ref not in new")
+        logger.warning(
+            f"\nThere are {len(sorted_ref_vars)} variables in " "ref not in new"
+        )
         for var in sorted_ref_vars:
             logger.warning(var)
 
         # Log variables in new but not in ref
-        logger.warning(f"\nThere are {len(sorted_new_vars)} variables in "
-            "new not in ref")
+        logger.warning(
+            f"\nThere are {len(sorted_new_vars)} variables in " "new not in ref"
+        )
         for var in sorted_new_vars:
             logger.warning(var)
 
     def overwrite_ref_files(self):
         """Overwrite reference MFILES and OUT files.
-        
+
         When a change to the scenario's reference result is justified, overwrite
         the ref.MFILE.DAT and ref.OUT.DAT files.
         """
-        # Copy the newly output MFILE.DAT and OUT.DAT from the test dir 
-        # (temporary), and overwrite the ref.MFILE.DAT and ref.OUT.DAT in the 
+        # Copy the newly output MFILE.DAT and OUT.DAT from the test dir
+        # (temporary), and overwrite the ref.MFILE.DAT and ref.OUT.DAT in the
         # reference directory (permanent)
         for file in ["MFILE", "OUT"]:
             src_path = self.test_dir / (file + ".DAT")

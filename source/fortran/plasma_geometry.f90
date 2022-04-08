@@ -54,7 +54,7 @@ contains
     !  Local variables
 
     real(dp) :: sa,so,xsi,xso,thetai,thetao,xi,xo
-    real(dp) :: a, b, c, d, e, f 
+    real(dp) :: a, b, c, d, e, f
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -71,7 +71,7 @@ contains
 
        !  Rough estimate of 95% values
        !  ITER Physics Design Guidlines: 1989 (Uckan et al. 1990)
-       !  (close to previous estimate of (kappa - 0.04) / 1.1 
+       !  (close to previous estimate of (kappa - 0.04) / 1.1
        !  over a large kappa range)
        !  Recommended by Hartmann & Zohm
 
@@ -100,28 +100,28 @@ contains
     case (3)  !  Zohm et al. ITER scaling for elongation, input triang95
 
        kappa = fkzohm * min(2.0D0, 1.5D0 + 0.5D0/(aspect-1.0D0))
-       
+
        !  ITER Physics Design Guidlines: 1989 (Uckan et al. 1990)
        triang = 1.5D0 * triang95
 
-       kappa95 = kappa / 1.12D0 
+       kappa95 = kappa / 1.12D0
 
     case (4)  !  Use input kappa95, triang95 values
 
        !  ITER Physics Design Guidlines: 1989 (Uckan et al. 1990)
-       kappa = 1.12D0 * kappa95 
+       kappa = 1.12D0 * kappa95
        triang = 1.5D0 * triang95
 
     case (5)  !  Use input kappa95, triang95 values
 
        !  Fit to MAST data (Issue #1086)
-       kappa = 0.91300D0 * kappa95 + 0.38654D0 
+       kappa = 0.91300D0 * kappa95 + 0.38654D0
        triang = 0.77394D0 * triang95 + 0.18515D0
 
     case (6)  !  Use input kappa, triang values
 
        !  Fit to MAST data (Issue #1086)
-       kappa95 = (kappa - 0.38654D0) / 0.91300D0 
+       kappa95 = (kappa - 0.38654D0) / 0.91300D0
        triang95 = (triang - 0.18515D0) / 0.77394D0
 
     case (7)  !  Use input kappa95, triang95 values
@@ -133,7 +133,7 @@ contains
     case (8)  !  Use input kappa, triang values
 
        !  Fit to FIESTA (Issue #1086)
-       kappa95 = (kappa - 0.39467D0) / 0.90698D0 
+       kappa95 = (kappa - 0.39467D0) / 0.90698D0
        triang95 = (triang - 0.048306D0) / 1.3799D0
 
     case (9)  !  Use input triang, rli values
@@ -155,18 +155,18 @@ contains
       d = -37.17364535D0
       e = -2.54598909D0
       f = 38.75101822D0
-  
+
       kappa95 = ( ( -d - c * aspect - sqrt( (c ** 2.0d0 - 4.0d0 * a * b) * aspect ** 2.0d0 &
              + (2.0d0 * d * c - 4.0d0 * a * e) * aspect + d ** 2.0d0 - 4.0d0 * a * f &
              + 4.0d0 * a * m_s_limit) ) / (2.0d0 * a) ) **0.98D0
-      
+
       kappa = 1.12d0 * kappa95
       triang95 = triang / 1.50D0
-      
+
     case (11)
-    
+
       ! See Issue #1439
-      ! triang is an input 
+      ! triang is an input
       ! kappa found from aspect ratio scaling on p32 of Menard:
       ! Menard, et al. "Fusion Nuclear Science Facilities
       ! and Pilot Plants Based on the Spherical Tokamak."
@@ -192,8 +192,8 @@ contains
        sf = pperim / (2.0D0*pi*rminor)
 
        vol = cvol * fvol(rmajor,rminor,kappa,triang)
-       
-       call surfa(rminor,rmajor,kappa,triang,sa,so)  !  [STAR Code]    
+
+       call surfa(rminor,rmajor,kappa,triang,sa,so)  !  [STAR Code]
        sareao = so
        sarea = sa
 

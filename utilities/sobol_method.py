@@ -1,5 +1,5 @@
 """
-Code to perform the Sobols sensistivity analysis to 
+Code to perform the Sobols sensistivity analysis to
 investiage the sensistivity of the input parameters in PROCESS
 
 Author: A. Pearce (alexander.pearce@ukaea.uk)

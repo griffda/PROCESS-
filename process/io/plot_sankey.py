@@ -10,44 +10,45 @@ MFILE.DAT
 
 """
 import matplotlib
-matplotlib.use('Agg')
+
+matplotlib.use("Agg")
 
 import argparse
 from pylab import show, savefig
 from process.io.sankey_funcs import plot_full_sankey, plot_sankey
 
+
 def main(args=None):
     ###########################################################
-    #Usage
+    # Usage
 
-    PARSER = argparse.ArgumentParser(description='Program to plot\
-     the power flow in PROCESS using a Sankey diagram.')
+    PARSER = argparse.ArgumentParser(
+        description="Program to plot\
+     the power flow in PROCESS using a Sankey diagram."
+    )
 
-    PARSER.add_argument("-e", "--end",
-                        default='pdf',
-                        help="file format, default = pdf")
+    PARSER.add_argument("-e", "--end", default="pdf", help="file format, default = pdf")
 
-    PARSER.add_argument("-m", "--mfile",
-                        default='MFILE.DAT',
-                        help="mfile name, default = MFILE.DAT")
+    PARSER.add_argument(
+        "-m", "--mfile", default="MFILE.DAT", help="mfile name, default = MFILE.DAT"
+    )
 
-    PARSER.add_argument("-f", "--full",
-                        action="store_true",
-                        help="Plot full version")
+    PARSER.add_argument("-f", "--full", action="store_true", help="Plot full version")
 
     ARGS = PARSER.parse_args(args)
 
     #########################################################
-    #main program
+    # main program
 
     if ARGS.full:
         plot_full_sankey(ARGS.mfile)
-        savefig("SankeyPowerFlow_full."+ARGS.end)
+        savefig("SankeyPowerFlow_full." + ARGS.end)
     else:
         plot_sankey(ARGS.mfile)
-        savefig("SankeyPowerFlow."+ARGS.end)
+        savefig("SankeyPowerFlow." + ARGS.end)
 
     show()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

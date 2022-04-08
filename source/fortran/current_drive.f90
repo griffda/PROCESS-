@@ -62,7 +62,7 @@ contains
     real(dp) :: dene20, effnbss, effrfss, gamnb, gamrf, power1
     real(dp) :: effcdfix, effrfssfix, effnbssfix, pinjwp1
     real(dp) :: pnbitotfix, nbshinemwfix, porbitlossmwfix, cnbeamfix
-    real(dp) :: pinjimw1, pinjemw1, pinjimwfix, pinjemwfix, pinjmw1, pinjmwfix 
+    real(dp) :: pinjimw1, pinjemw1, pinjimwfix, pinjemwfix, pinjmw1, pinjmwfix
     real(dp) :: auxiliary_cdfix, faccdfix, gamcdfix
     real(dp) :: fshift, xf, enpa,ftherm,fpp,cdeff, ampperwatt
     real(dp) :: dens_at_rho, te_at_rho
@@ -84,14 +84,14 @@ contains
     pinjmwfix = 0.0
     pinjimw1 = 0.0
     pinjemw1 = 0.0
-    pinjemwfix = 0.0 
-    pinjimwfix = 0.0 
+    pinjemwfix = 0.0
+    pinjimwfix = 0.0
     auxiliary_cdfix = 0.0
     faccdfix = 0.0
     gamcdfix = 0.0D0
 
     ! To stop issues with input file we force
-    ! zero secondary heating if no injection method  
+    ! zero secondary heating if no injection method
     if (iefrffix == 0) then
       pheatfix = 0.0
     end if
@@ -100,8 +100,8 @@ contains
     ! secondary injected power source
     if (pheatfix > pinjfixmw) then
       pheatfix = pinjfixmw
-    end if 
-    
+    end if
+
     ! irfcd |  switch for current drive calculation
     ! = 0   |  turned off
     ! = 1   |  turned on
@@ -192,31 +192,31 @@ contains
           gamcd = effcdfix * dene20 * rmajor
           effrfssfix = effcdfix
 
-       case (12)  
+       case (12)
        ! EBW scaling
        ! Scaling author Simon Freethy
        ! Ref : PROCESS issue 1262
-   
+
           !  Normalised current drive efficiency gamma
           gamcd = (xi_ebw/32.7D0) * te
-            
+
           ! Absolute current drive efficiency
           effrfssfix = gamcd / (dene20 * rmajor)
           effcdfix = effrfssfix
-   
+
           ! EBWs can only couple to plasma if cyclotron harmonic is above plasma density cut-off;
           !  this behaviour is captured in the following function (ref issue #1262):
           ! harnum = cyclotron harmonic number (fundamental used as default)
           ! constant 'a' controls sharpness of transition
           a = 0.1D0
-   
+
           fc = 1.0D0/(2.0D0*pi) * harnum * echarge * bt / emass
           fp = 1.0D0/(2.0D0*pi) * sqrt( dene * echarge**2 / ( emass * epsilon0 ) )
-            
+
           density_factor = 0.5D0 * ( 1.0D0 + tanh( (2.0D0/a) * ( ( fp - fc )/fp - a) ) )
-   
+
           effcdfix = effcdfix * density_factor
-   
+
           effrfssfix = effrfssfix * density_factor
 
 
@@ -228,7 +228,7 @@ contains
 
        ! find the current drive wall plug and injected powers (MW)
        ! and efficiencies for secondary current drive mechanisms
-       ! using the fixed injected power from the user input 
+       ! using the fixed injected power from the user input
        select case (iefrffix)
 
        case (1,2,4,6)  ! LHCD or ICCD
@@ -253,13 +253,13 @@ contains
 
           !  Injected power
           pinjemwfix = pinjfixmw
-          
+
           !  Wall plug power
           pinjwpfix = pinjfixmw / etaech
 
           !  Wall plug to injector efficiency
           etacdfix = etaech
-          
+
           ! the fixed auxiliary current
           auxiliary_cdfix = effrfssfix * ( pinjfixmw - pheatfix) * 1.0d6
           faccdfix = auxiliary_cdfix / plascur
@@ -360,7 +360,7 @@ contains
        case (10)  ! ECRH user input gamma
 
           gamcd = gamma_ecrh
-          
+
           ! Absolute current drive efficiency
           effrfss = gamcd / (dene20 * rmajor)
           effcd = effrfss
@@ -380,14 +380,14 @@ contains
           gamcd = effcd * dene20 * rmajor
           effrfss = effcd
 
-       case (12)  
+       case (12)
        ! EBW scaling
        ! Scaling author Simon Freethy
        ! Ref : PROCESS issue 1262
 
           !  Normalised current drive efficiency gamma
           gamcd = (xi_ebw/32.7D0) * te
-         
+
           ! Absolute current drive efficiency
           effrfss = gamcd / (dene20 * rmajor)
           effcd = effrfss
@@ -402,13 +402,13 @@ contains
 
          !  fc = 1.0D0/(2.0D0*pi) * harnum * echarge * bt / emass
          !  fp = 1.0D0/(2.0D0*pi) * sqrt( dene * echarge**2 / ( emass * epsilon0 ) )
-          
+
          !  density_factor = 0.5D0 * ( 1.0D0 + tanh( (2.0D0/a) * ( ( fp - fc )/fp - a) ) )
 
          !  effcd = effcd * density_factor
 
          !  effrfss = effrfss * density_factor
-          
+
 
        case default
           idiags(1) = iefrf
@@ -443,10 +443,10 @@ contains
           !  Injected power (set to close to close the Steady-state current equilibrium)
           echpwr = 1.0D-6 * (faccd - faccdfix) * plascur / effrfss + pheat
           pinjemw1 = echpwr
-          
+
           !  Wall plug power
           echwpow = echpwr / etaech
-          
+
           !  Wall plug to injector efficiency
           pinjwp1 = echwpow
           etacd = etaech
@@ -494,7 +494,7 @@ contains
 
        ! Total injected power
        ! sum contributions from primary and secondary systems
-       pinjmw = pinjemw1 + pinjimw1 + pinjemwfix + pinjimwfix 
+       pinjmw = pinjemw1 + pinjimw1 + pinjemwfix + pinjimwfix
        pinjmw1 = pinjemw1 + pinjimw1
        pinjmwfix = pinjemwfix + pinjimwfix
        pinjemw = pinjemw1 + pinjemwfix
@@ -550,7 +550,7 @@ contains
 
     call ovarin(outfile,'Current drive efficiency model','(iefrf)',iefrf)
 
-    if (iefrffix.NE.0) then 
+    if (iefrffix.NE.0) then
       select case (iefrffix)
 
       case (1,4,6)
@@ -572,7 +572,7 @@ contains
       end select
 
       call ovarin(outfile,'Secondary current drive efficiency model','(iefrffix)',iefrffix)
-    end if 
+    end if
 
     if (ignite == 1) then
        call ocmmnt(outfile, &
@@ -588,9 +588,9 @@ contains
 
     call ovarre(outfile,'Auxiliary power used for plasma heating only (MW)', '(pheat)', pheat + pheatfix)
     call ovarre(outfile,'Power injected for current drive (MW)','(pcurrentdrivemw)', pinjmw - pheat - pheatfix)
-    call ovarre(outfile,'Maximum Allowed Bootstrap current fraction', '(bscfmax)', bscfmax)    
+    call ovarre(outfile,'Maximum Allowed Bootstrap current fraction', '(bscfmax)', bscfmax)
     if (iefrffix.NE.0) then
-      call ovarre(outfile,'Power injected for main current drive (MW)','(pcurrentdrivemw1)', pinjmw1 - pheat) 
+      call ovarre(outfile,'Power injected for main current drive (MW)','(pcurrentdrivemw1)', pinjmw1 - pheat)
       call ovarre(outfile,'Power injected for secondary current drive (MW)','(pcurrentdrivemw2)', pinjmwfix - pheatfix)
     end if
     call ovarre(outfile,'Fusion gain factor Q','(bigq)',bigq, 'OP ')
@@ -602,37 +602,37 @@ contains
     call ovarre(outfile,'Normalised current drive efficiency, gamma (10^20 A/W-m2)', &
          '(gamcd)',gamcd, 'OP ')
     call ovarre(outfile,'Wall plug to injector efficiency','(etacd)',etacd)
-    
+
     select case(iefrf) ! Select plasma heating choice for output in the mfile
     ! Other heating cases to be added when necessary
-       
+
     case(1,2,3,4)
-    
+
     case(5,8) !NBI  case(5) and Case(8) NBI is covered elsewhere
-    
+
     case(6,7,9,11)
-    
+
     case(10) !ECRH/ECCD Heating of Plasma
-    
+
           call ovarre(outfile,'ECRH plasma heating efficiency','(gamma_ecrh)',gamma_ecrh)
-	    
+
     case(12) !EBW Heating of Plasma
-    
+
           call ovarre(outfile,'EBW plasma heating efficiency','(xi_ebw)',xi_ebw)
-	    
+
     case default
           idiags(1) = iefrf
           call report_error(126)
 
-    end select        
-    
+    end select
+
 
     if (iefrffix.NE.0) then
       call ovarre(outfile,'Secondary current drive efficiency (A/W)','(effcdfix)',effcdfix, 'OP ')
       call ovarre(outfile,'Seconday wall plug to injector efficiency','(etacdfix)',etacdfix)
       call ovarre(outfile,'Normalised secondary current drive efficiency, gamma (10^20 A/W-m2)', &
          '(gamcdfix)',gamcdfix, 'OP ')
-    end if 
+    end if
 
     call osubhd(outfile,'Fractions of current drive :')
     call ovarrf(outfile,'Bootstrap fraction','(bootipf)',bootipf, 'OP ')
@@ -656,9 +656,9 @@ contains
     call oblnkl(outfile)
 
     if (abs(plhybd) > 1.0D-8) then
-       !if (iefrffix.NE.0) then ! needs updating 
+       !if (iefrffix.NE.0) then ! needs updating
        !  call ovarre(outfile,'Secondary RF efficiency (A/W)','(effrfssfix)',effrfssfix, 'OP ')
-       !end if 
+       !end if
        call ovarre(outfile,'RF efficiency (A/W)','(effrfss)',effrfss, 'OP ')
        call ovarre(outfile,'RF gamma (10^20 A/W-m2)','(gamrf)',gamrf, 'OP ')
        call ovarre(outfile,'Lower hybrid injected power (MW)','(plhybd)',plhybd, 'OP ')
@@ -678,7 +678,7 @@ contains
        end if
        if ((iefrf == 5).or.(iefrf == 8)) then
          call ovarre(outfile,'Beam efficiency (A/W)','(effnbss)',effnbss, 'OP ')
-       end if 
+       end if
        if ((iefrffix == 5).or.(iefrffix == 8)) then
          call ovarre(outfile,'Secondary fixed beam efficiency (A/W)','(effnbssfix)',effnbssfix, 'OP ')
        end if
@@ -695,23 +695,23 @@ contains
          call ovarrf(outfile,'Beam first orbit loss power (MW)','(porbitlossmw)', porbitlossmw, 'OP ')
          call ovarrf(outfile,'Beam shine-through power [MW]','(nbshinemw)',nbshinemw, 'OP ')
          call ovarrf(outfile,'Beam power deposited in plasma (MW)','(pinjmw)',pinjmw1, 'OP ')
-         call ovarrf(outfile,'Maximum allowable beam power (MW)','(pinjalw)',pinjalw) 
+         call ovarrf(outfile,'Maximum allowable beam power (MW)','(pinjalw)',pinjalw)
          call ovarrf(outfile,'Total (MW)', &
                            '(porbitlossmw+nbshinemw+pinjmw)',porbitlossmw+nbshinemw+pinjmw1)
          call oblnkl(outfile)
          call ovarrf(outfile,'Beam power entering vacuum vessel (MW)','(pnbitot)',pnbitot, 'OP ')
-       end if 
+       end if
        if ((iefrffix == 5).or.(iefrffix == 8)) then
          call oblnkl(outfile)
          call ocmmnt(outfile,'Secondary fixed neutral beam power balance :')
          call ocmmnt(outfile,'----------------------------')
          call ovarrf(outfile,'Secondary fixed beam first orbit loss power (MW)','(porbitlossmwfix)', porbitlossmwfix, 'OP ')
          call ovarrf(outfile,'Secondary fixed beam shine-through power [MW]','(nbshinemwfix)',nbshinemwfix, 'OP ')
-         call ovarrf(outfile,'Secondary fixed beam power deposited in plasma (MW)','(pinjmwfix)',pinjmwfix, 'OP ') 
-         call ovarrf(outfile,'Maximum allowable beam power (MW)','(pinjalw)',pinjalw) 
+         call ovarrf(outfile,'Secondary fixed beam power deposited in plasma (MW)','(pinjmwfix)',pinjmwfix, 'OP ')
+         call ovarrf(outfile,'Maximum allowable beam power (MW)','(pinjalw)',pinjalw)
          call ovarrf(outfile,'Secondary fixed total (MW)', &
                            '(porbitlossmwfixed+nbshinemwfix+pinjmwfix)',porbitlossmwfix+nbshinemwfix+pinjmwfix)
-         call oblnkl(outfile) 
+         call oblnkl(outfile)
          call ovarrf(outfile,'Secondary beam power entering vacuum vessel (MW)','(pnbitotfix)',pnbitotfix, 'OP ')
        end if
        call oblnkl(outfile)
@@ -729,7 +729,7 @@ contains
        call ovarre(outfile,'ECH wall plug efficiency','(etaech)',etaech)
        call ovarre(outfile,'ECH wall plug power (MW)','(echwpow)',echwpow, 'OP ')
     end if
-    if (abs(pinjfixmw) > 1.0D-8) then 
+    if (abs(pinjfixmw) > 1.0D-8) then
        call ovarrf(outfile,'Fixed ECRH power (MW)','(pinjmwfix)',pinjmwfix)
        call ovarre(outfile,'ECH wall plug efficiency','(etaech)',etaech)
        call ovarre(outfile,'Secondary fixed ECH wall plug power (MW)','(pinjwpfix)',pinjwpfix, 'OP ')

@@ -21,33 +21,40 @@ README.txt  - contains comments from config file
 """
 
 #######################
-#imported libraries
+# imported libraries
 
 import argparse
 from process_io_lib.process_config import UncertaintiesConfig
-from process_io_lib.process_funcs import get_neqns_itervars,\
-    get_variable_range, check_input_error, process_stopped, \
-    no_unfeasible_mfile, vary_iteration_variables
+from process_io_lib.process_funcs import (
+    get_neqns_itervars,
+    get_variable_range,
+    check_input_error,
+    process_stopped,
+    no_unfeasible_mfile,
+    vary_iteration_variables,
+)
 
-if __name__ == '__main__':
-############################################################
-#Usage
+if __name__ == "__main__":
+    ############################################################
+    # Usage
 
-    PARSER = argparse.ArgumentParser(description='Program to evaluate\
- uncertainties in a given PROCESS design point.')
+    PARSER = argparse.ArgumentParser(
+        description="Program to evaluate\
+ uncertainties in a given PROCESS design point."
+    )
 
-    PARSER.add_argument("-f", "--configfile",
-                        default='evaluate_uncertainties.json',
-                        help="configuration file, default =\
- evaluate_uncertainties.json")
+    PARSER.add_argument(
+        "-f",
+        "--configfile",
+        default="evaluate_uncertainties.json",
+        help="configuration file, default =\
+ evaluate_uncertainties.json",
+    )
 
     ARGS = PARSER.parse_args()
 
-
-############################################################
-#main program
-
-
+    ############################################################
+    # main program
 
     CONFIG = UncertaintiesConfig(ARGS.configfile)
     CONFIG.setup()
@@ -64,12 +71,12 @@ if __name__ == '__main__':
 
     for j in range(CONFIG.no_samples):
 
-        print('sample point', j, ':')
+        print("sample point", j, ":")
         CONFIG.go2newsamplepoint(j)
 
         for i in range(CONFIG.niter):
 
-            print('  ', i, end=' ')
+            print("  ", i, end=" ")
             CONFIG.run_process()
 
             check_input_error()
@@ -80,17 +87,23 @@ if __name__ == '__main__':
 
                 if no_unfeasible <= CONFIG.no_allowed_unfeasible:
                     if no_unfeasible > 0:
-                        print('WARNING: %i non feasible point(s) in sweep,' % no_unfeasible,
-                              'but finished anyway! Allowed  %i. ' % CONFIG.no_allowed_unfeasible)
+                        print(
+                            "WARNING: %i non feasible point(s) in sweep,"
+                            % no_unfeasible,
+                            "but finished anyway! Allowed  %i. "
+                            % CONFIG.no_allowed_unfeasible,
+                        )
                     CONFIG.add_results2netcdf(RUN_ID)
                     RUN_ID += 1
                     break
                 else:
-                    print('WARNING: %i non feasible point(s) in sweep!\
-                    Rerunning!' % no_unfeasible)
+                    print(
+                        "WARNING: %i non feasible point(s) in sweep!\
+                    Rerunning!"
+                        % no_unfeasible
+                    )
             else:
-                print('PROCESS has stopped without finishing!')
-
+                print("PROCESS has stopped without finishing!")
 
             vary_iteration_variables(ITERVARS, LBS, UBS)
 

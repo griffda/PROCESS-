@@ -1,4 +1,4 @@
-module define_iteration_variables 
+module define_iteration_variables
    !! Module to define iteration variables
 
 #ifndef dp
@@ -18,18 +18,18 @@ contains
 
     DUMMY = 0.0D0
   end subroutine init_define_iteration_variables
-   
+
   !! lablxc(ipnvars) : labels describing iteration variables<UL>
 
   !---------------------------------
-  
+
   subroutine init_itv_1
     !! <LI> ( 1) aspect
     use numerics, only: lablxc, boundl, boundu
     implicit none
     lablxc(1) = 'aspect        '
     boundl(1) = 1.100D0
-    boundu(1) = 10.00D0 
+    boundu(1) = 10.00D0
   end subroutine init_itv_1
 
   real(kind(1.d0)) function itv_1()
@@ -52,7 +52,7 @@ contains
     use numerics, only: lablxc, boundl, boundu
     implicit none
     lablxc(2) = 'bt            '
-    boundl(2) = 0.010D0 
+    boundl(2) = 0.010D0
     boundu(2) = 30.00D0
   end subroutine init_itv_2
 
@@ -76,8 +76,8 @@ contains
     use numerics, only: lablxc, boundl, boundu
     implicit none
     lablxc(3) = 'rmajor        '
-    boundl(3) = 0.100D0 
-    boundu(3) = 50.00D0  
+    boundl(3) = 0.100D0
+    boundu(3) = 50.00D0
   end subroutine init_itv_3
 
   real(kind(1.d0)) function itv_3()
@@ -100,8 +100,8 @@ contains
     use numerics, only: lablxc, boundl, boundu
     implicit none
     lablxc(4) = 'te            '
-    boundl(4) = 5.000D0 
-    boundu(4) = 150.0D0  
+    boundl(4) = 5.000D0
+    boundu(4) = 150.0D0
   end subroutine init_itv_4
 
   real(kind(1.d0)) function itv_4()
@@ -124,8 +124,8 @@ contains
     use numerics, only: lablxc, boundl, boundu
     implicit none
     lablxc(5) = 'beta          '
-    boundl(5) = 0.001D0 
-    boundu(5) = 1.000D0  
+    boundl(5) = 0.001D0
+    boundu(5) = 1.000D0
   end subroutine init_itv_5
 
   real(kind(1.d0)) function itv_5()
@@ -148,8 +148,8 @@ contains
     use numerics, only: lablxc, boundl, boundu
     implicit none
     lablxc(6) = 'dene          '
-    boundl(6) = 1.00D19 
-    boundu(6) = 1.00D21 
+    boundl(6) = 1.00D19
+    boundu(6) = 1.00D21
   end subroutine init_itv_6
 
   real(kind(1.d0)) function itv_6()
@@ -172,7 +172,7 @@ contains
     use numerics, only: lablxc, boundl, boundu
     implicit none
     lablxc(7) = 'rnbeam        '
-    boundl(7) = 1.00D-6 
+    boundl(7) = 1.00D-6
     boundu(7) = 1.000D0
   end subroutine init_itv_7
 
@@ -196,8 +196,8 @@ contains
     use numerics, only: lablxc, boundl, boundu
     implicit none
     lablxc(8) = 'fbeta         '
-    boundl(8) = 0.001D0 
-    boundu(8) = 1.000D0  
+    boundl(8) = 0.001D0
+    boundu(8) = 1.000D0
   end subroutine init_itv_8
 
   real(kind(1.d0)) function itv_8()
@@ -215,12 +215,12 @@ contains
 
   !---------------------------------
 
-  subroutine init_itv_9  
+  subroutine init_itv_9
     !! <LI> ( 9) fdene (f-value for equation 5)
     use numerics, only: lablxc, boundl, boundu
     implicit none
     lablxc(9) = 'fdene         '
-    boundl(9) = 0.001D0 
+    boundl(9) = 0.001D0
     boundu(9) = 1.000D0
   end subroutine init_itv_9
 
@@ -236,7 +236,7 @@ contains
     real(kind(1.d0)) :: ratio
     fdene = ratio
   end subroutine set_itv_9
-  
+
   !---------------------------------
 
   subroutine init_itv_10
@@ -244,8 +244,8 @@ contains
     use numerics, only: lablxc, boundl, boundu
     implicit none
     lablxc(10) = 'hfact         '
-    boundl(10) = 0.100D0 
-    boundu(10) = 3.000D0  
+    boundl(10) = 0.100D0
+    boundu(10) = 3.000D0
   end subroutine init_itv_10
 
   real(kind(1.d0)) function itv_10()
@@ -260,15 +260,15 @@ contains
     real(kind(1.d0)) :: ratio
     hfact = ratio
   end subroutine set_itv_10
-  
+
   !---------------------------------
 
-  subroutine init_itv_11 
+  subroutine init_itv_11
     !! <LI> (11) pheat
     use numerics, only: lablxc, boundl, boundu
     implicit none
     lablxc(11) = 'pheat         '
-    boundl(11) = 1.00D-3 
+    boundl(11) = 1.00D-3
     boundu(11) = 1.000D3
   end subroutine init_itv_11
 
@@ -284,7 +284,7 @@ contains
     real(kind(1.d0)) :: ratio
     pheat = ratio
   end subroutine set_itv_11
-  
+
   !---------------------------------
 
   subroutine init_itv_12
@@ -292,8 +292,8 @@ contains
     use numerics, only: lablxc, boundl, boundu
     implicit none
     lablxc(12) = 'oacdcp        '
-    boundl(12) = 1.000D5 
-    boundu(12) =  1.500D8 
+    boundl(12) = 1.000D5
+    boundu(12) =  1.500D8
   end subroutine init_itv_12
 
   real(kind(1.d0)) function itv_12()
@@ -316,7 +316,7 @@ contains
     use numerics, only: lablxc, boundl, boundu
     implicit none
     lablxc(13) = 'tfcth         '
-    boundl(13) = 0.100D0 
+    boundl(13) = 0.100D0
     boundu(13) = 5.000D0
   end subroutine init_itv_13
 
@@ -326,8 +326,8 @@ contains
     use stellarator_variables, only: istell
     implicit none
     itv_13 = tfcth
-    if (istell /= 0) then 
-        call report_error(46)   
+    if (istell /= 0) then
+        call report_error(46)
     end if
   end function itv_13
 
@@ -345,7 +345,7 @@ contains
     use numerics, only: lablxc, boundl, boundu
     implicit none
     lablxc(14) = 'fwalld        '
-    boundl(14) = 0.001D0 
+    boundl(14) = 0.001D0
     boundu(14) = 1.000D0
   end subroutine init_itv_14
 
@@ -369,7 +369,7 @@ contains
     use numerics, only: lablxc, boundl, boundu
     implicit none
     lablxc(15) = 'fvs           '
-    boundl(15) = 0.001D0 
+    boundl(15) = 0.001D0
     boundu(15) = 1.000
   end subroutine init_itv_15
 
@@ -393,7 +393,7 @@ contains
     use numerics, only: lablxc, boundl, boundu
     implicit none
     lablxc(16) = 'ohcth         '
-    boundl(16) = 0.010D0 
+    boundl(16) = 0.010D0
     boundu(16) = 10.00D0
   end subroutine init_itv_16
 
@@ -417,7 +417,7 @@ contains
     use numerics, only: lablxc, boundl, boundu
     implicit none
     lablxc(17) = 'tdwell        '
-    boundl(17) = 0.100D0 
+    boundl(17) = 0.100D0
     boundu(17) = 1.000D8
   end subroutine init_itv_17
 
@@ -441,7 +441,7 @@ contains
     use numerics, only: lablxc, boundl, boundu
     implicit none
     lablxc(18) = 'q             '
-    boundl(18) = 2.000D0 
+    boundl(18) = 2.000D0
     boundu(18) = 50.00D0
   end subroutine init_itv_18
 
@@ -465,7 +465,7 @@ contains
     use numerics, only: lablxc, boundl, boundu
     implicit none
     lablxc(19) = 'enbeam        '
-    boundl(19) = 1.000D0 
+    boundl(19) = 1.000D0
     boundu(19) = 1.000D6
   end subroutine init_itv_19
 
@@ -489,14 +489,14 @@ contains
     use numerics, only: lablxc, boundl, boundu
     implicit none
     lablxc(20) = 'tcpav         '
-    boundl(20) = 40.00D0 
+    boundl(20) = 40.00D0
     boundu(20) = 3.000D2
   end subroutine init_itv_20
 
   real(kind(1.d0)) function itv_20()
     use tfcoil_variables, only: tcpav
     implicit none
-    itv_20 = tcpav 
+    itv_20 = tcpav
   end function itv_20
 
   subroutine set_itv_20(ratio)
@@ -513,7 +513,7 @@ contains
     use numerics, only: lablxc, boundl, boundu
     implicit none
     lablxc(21) = 'ftburn        '
-    boundl(21) = 0.001D0 
+    boundl(21) = 0.001D0
     boundu(21) = 1.000D0
   end subroutine init_itv_21
 
@@ -529,13 +529,13 @@ contains
     real(kind(1.d0)) :: ratio
     ftburn = ratio
   end subroutine set_itv_21
-  
+
   !! <LI> (22) NOT USED
   !---------------------------------
 
   real(kind(1.d0)) function itv_22()
     implicit none
-    write(*,*) 'Iteration variable 22 is no longer in use.'   
+    write(*,*) 'Iteration variable 22 is no longer in use.'
   end function itv_22
 
   !---------------------------------
@@ -545,7 +545,7 @@ contains
     use numerics, only: lablxc, boundl, boundu
     implicit none
     lablxc(23) = 'fcoolcp       '
-    boundl(23) = 0.100D0 
+    boundl(23) = 0.100D0
     boundu(23) = 0.500D0
   end subroutine init_itv_23
 
@@ -761,7 +761,7 @@ contains
     real(kind(1.d0)) :: ratio
     frminor = ratio
   end subroutine set_itv_32
-  
+
   !---------------------------------
 
   subroutine init_itv_33
@@ -905,7 +905,7 @@ contains
     real(kind(1.d0)) :: ratio
     fjohc = ratio
   end subroutine set_itv_38
-  
+
   !---------------------------------
 
   subroutine init_itv_39
@@ -953,7 +953,7 @@ contains
     real(kind(1.d0)) :: ratio
     fgamcd = ratio
   end subroutine set_itv_40
-  
+
   !---------------------------------
 
   subroutine init_itv_41
@@ -1007,7 +1007,7 @@ contains
 
   real(kind(1.d0)) function itv_43()
     implicit none
-    write(*,*) 'Iteration variable 43 is no longer in use.'   
+    write(*,*) 'Iteration variable 43 is no longer in use.'
   end function itv_43
 
   !---------------------------------
@@ -1096,7 +1096,7 @@ contains
   real(kind(1.d0)) function itv_47()
     use current_drive_variables, only: feffcd
     implicit none
-    itv_47 = feffcd 
+    itv_47 = feffcd
   end function itv_47
 
   subroutine set_itv_47(ratio)
@@ -1177,7 +1177,7 @@ contains
     real(kind(1.d0)) :: ratio
     fiooic = ratio
   end subroutine set_itv_50
-  
+
   !---------------------------------
 
   subroutine init_itv_51
@@ -1225,7 +1225,7 @@ contains
     real(kind(1.d0)) :: ratio
     vdalw = ratio
   end subroutine set_itv_52
-  
+
   !---------------------------------
 
   subroutine init_itv_53
@@ -1240,7 +1240,7 @@ contains
   real(kind(1.d0)) function itv_53()
     use constraint_variables, only: fjprot
     implicit none
-    itv_53 = fjprot 
+    itv_53 = fjprot
   end function itv_53
 
   subroutine set_itv_53(ratio)
@@ -1264,7 +1264,7 @@ contains
   real(kind(1.d0)) function itv_54()
     use constraint_variables, only: ftmargtf
     implicit none
-    itv_54 = ftmargtf 
+    itv_54 = ftmargtf
   end function itv_54
 
   subroutine set_itv_54(ratio)
@@ -1279,7 +1279,7 @@ contains
 
   real(kind(1.d0)) function itv_55()
     implicit none
-    write(*,*) 'Iteration variable 55 is no longer in use.'   
+    write(*,*) 'Iteration variable 55 is no longer in use.'
   end function itv_55
 
   !---------------------------------
@@ -1322,7 +1322,7 @@ contains
     use stellarator_variables, only: istell
     use tfcoil_variables, only: thkcas
     implicit none
-    itv_57 = thkcas 
+    itv_57 = thkcas
     if (istell /= 0) then
         call report_error(48)
     end if
@@ -1349,7 +1349,7 @@ contains
   real(kind(1.d0)) function itv_58()
     use tfcoil_variables, only: thwcndut
     implicit none
-    itv_58 = thwcndut 
+    itv_58 = thwcndut
   end function itv_58
 
   subroutine set_itv_58(ratio)
@@ -1373,7 +1373,7 @@ contains
   real(kind(1.d0)) function itv_59()
     use tfcoil_variables, only: fcutfsu
     implicit none
-    itv_59 = fcutfsu 
+    itv_59 = fcutfsu
   end function itv_59
 
   subroutine set_itv_59(ratio)
@@ -1399,7 +1399,7 @@ contains
     use stellarator_variables, only: istell
     use tfcoil_variables, only: i_tf_sup, cpttf
     implicit none
-    itv_60 = cpttf 
+    itv_60 = cpttf
     if ((istell /= 0).or.(i_tf_sup /= 1)) then
         call report_error(49)
     end if
@@ -1426,7 +1426,7 @@ contains
   real(kind(1.d0)) function itv_61()
     use build_variables, only: gapds
     implicit none
-    itv_61 = gapds 
+    itv_61 = gapds
   end function itv_61
 
   subroutine set_itv_61(ratio)
@@ -1450,7 +1450,7 @@ contains
   real(kind(1.d0)) function itv_62()
     use constraint_variables, only: fdtmp
     implicit none
-    itv_62 = fdtmp 
+    itv_62 = fdtmp
   end function itv_62
 
   subroutine set_itv_62(ratio)
@@ -1474,7 +1474,7 @@ contains
   real(kind(1.d0)) function itv_63()
     use constraint_variables, only: ftpeak
     implicit none
-    itv_63 = ftpeak 
+    itv_63 = ftpeak
   end function itv_63
 
   subroutine set_itv_63(ratio)
@@ -1498,7 +1498,7 @@ contains
   real(kind(1.d0)) function itv_64()
     use constraint_variables, only: fauxmn
     implicit none
-    itv_64 = fauxmn 
+    itv_64 = fauxmn
   end function itv_64
 
   subroutine set_itv_64(ratio)
@@ -1509,7 +1509,7 @@ contains
   end subroutine set_itv_64
 
   !---------------------------------
-  
+
   subroutine init_itv_65
     !! <LI> (65) tohs
     use numerics, only: lablxc, boundl, boundu
@@ -1524,7 +1524,7 @@ contains
     use pulse_variables, only: lpulse
     use times_variables, only: tohs
     implicit none
-    itv_65 = tohs 
+    itv_65 = tohs
     if (lpulse /= 1) then
         call report_error(50)
     end if
@@ -1551,7 +1551,7 @@ contains
   real(kind(1.d0)) function itv_66()
     use constraint_variables, only: ftohs
     implicit none
-    itv_66 = ftohs 
+    itv_66 = ftohs
   end function itv_66
 
   subroutine set_itv_66(ratio)
@@ -1560,7 +1560,7 @@ contains
     real(kind(1.d0)) :: ratio
     ftohs = ratio
   end subroutine set_itv_66
-  
+
   !---------------------------------
 
   subroutine init_itv_67
@@ -1575,7 +1575,7 @@ contains
   real(kind(1.d0)) function itv_67()
     use constraint_variables, only: ftcycl
     implicit none
-    itv_67 = ftcycl 
+    itv_67 = ftcycl
   end function itv_67
 
   subroutine set_itv_67(ratio)
@@ -1599,7 +1599,7 @@ contains
   real(kind(1.d0)) function itv_68()
     use constraint_variables, only: fptemp
     implicit none
-    itv_68 = fptemp 
+    itv_68 = fptemp
   end function itv_68
 
   subroutine set_itv_68(ratio)
@@ -1623,7 +1623,7 @@ contains
   real(kind(1.d0)) function itv_69()
     use tfcoil_variables, only: rcool
     implicit none
-    itv_69 = rcool 
+    itv_69 = rcool
   end function itv_69
 
   subroutine set_itv_69(ratio)
@@ -1647,7 +1647,7 @@ contains
   real(kind(1.d0)) function itv_70()
     use tfcoil_variables, only: vcool
     implicit none
-    itv_70 = vcool 
+    itv_70 = vcool
   end function itv_70
 
   subroutine set_itv_70(ratio)
@@ -1671,7 +1671,7 @@ contains
   real(kind(1.d0)) function itv_71()
     use constraint_variables, only: fq
     implicit none
-    itv_71 = fq 
+    itv_71 = fq
   end function itv_71
 
   subroutine set_itv_71(ratio)
@@ -1695,7 +1695,7 @@ contains
   real(kind(1.d0)) function itv_72()
     use constraint_variables, only: fipir
     implicit none
-    itv_72 = fipir 
+    itv_72 = fipir
   end function itv_72
 
   subroutine set_itv_72(ratio)
@@ -1719,7 +1719,7 @@ contains
   real(kind(1.d0)) function itv_73()
     use build_variables, only: scrapli
     implicit none
-    itv_73 = scrapli 
+    itv_73 = scrapli
   end function itv_73
 
   subroutine set_itv_73(ratio)
@@ -1743,7 +1743,7 @@ contains
   real(kind(1.d0)) function itv_74()
     use build_variables, only: scraplo
     implicit none
-    itv_74 = scraplo 
+    itv_74 = scraplo
   end function itv_74
 
   subroutine set_itv_74(ratio)
@@ -1767,7 +1767,7 @@ contains
   real(kind(1.d0)) function itv_75()
     use build_variables, only: tfootfi
     implicit none
-    itv_75 = tfootfi 
+    itv_75 = tfootfi
   end function itv_75
 
   subroutine set_itv_75(ratio)
@@ -1782,23 +1782,23 @@ contains
 
   real(kind(1.d0)) function itv_76()
     implicit none
-    write(*,*) 'Iteration variable 76 is no longer in use.'   
+    write(*,*) 'Iteration variable 76 is no longer in use.'
   end function itv_76
-  
+
   !! <LI> (77) NOT USED
   !---------------------------------
 
   real(kind(1.d0)) function itv_77()
     implicit none
-    write(*,*) 'Iteration variable 77 is no longer in use.'   
+    write(*,*) 'Iteration variable 77 is no longer in use.'
   end function itv_77
-  
+
   !! <LI> (78) NOT USED
   !---------------------------------
 
   real(kind(1.d0)) function itv_78()
     implicit none
-    write(*,*) 'Iteration variable 78 is no longer in use.'   
+    write(*,*) 'Iteration variable 78 is no longer in use.'
   end function  itv_78
 
   !---------------------------------
@@ -1815,7 +1815,7 @@ contains
   real(kind(1.d0)) function itv_79()
     use constraint_variables, only: fbetap
     implicit none
-    itv_79 = fbetap 
+    itv_79 = fbetap
   end function itv_79
 
   subroutine set_itv_79(ratio)
@@ -1827,10 +1827,10 @@ contains
 
   !! <LI> (80) NOT USED
   !---------------------------------
-  
+
   real(kind(1.d0)) function itv_80()
     implicit none
-    write(*,*) 'Iteration variable 80 is no longer in use.'   
+    write(*,*) 'Iteration variable 80 is no longer in use.'
   end function itv_80
 
   !---------------------------------
@@ -1996,7 +1996,7 @@ contains
   real(kind(1.d0)) function itv_89()
     use constraint_variables, only: ftbr
     implicit none
-    itv_89 = ftbr 
+    itv_89 = ftbr
   end function itv_89
 
   subroutine set_itv_89(ratio)
@@ -2020,7 +2020,7 @@ contains
   real(kind(1.d0)) function itv_90()
     use build_variables, only: blbuith
     implicit none
-    itv_90 = blbuith 
+    itv_90 = blbuith
   end function itv_90
 
   subroutine set_itv_90(ratio)
@@ -2044,7 +2044,7 @@ contains
   real(kind(1.d0)) function itv_91()
     use build_variables, only: blbuoth
     implicit none
-    itv_91 = blbuoth 
+    itv_91 = blbuoth
   end function itv_91
 
   subroutine set_itv_91(ratio)
@@ -2068,7 +2068,7 @@ contains
   real(kind(1.d0)) function itv_92()
     use constraint_variables, only: fflutf
     implicit none
-    itv_92 = fflutf 
+    itv_92 = fflutf
   end function itv_92
 
   subroutine set_itv_92(ratio)
@@ -2092,7 +2092,7 @@ contains
   real(kind(1.d0)) function itv_93()
     use build_variables, only: shldith
     implicit none
-    itv_93 = shldith 
+    itv_93 = shldith
   end function itv_93
 
   subroutine set_itv_93(ratio)
@@ -2116,7 +2116,7 @@ contains
   real(kind(1.d0)) function itv_94()
     use build_variables, only: shldoth
     implicit none
-    itv_94 = shldoth 
+    itv_94 = shldoth
   end function itv_94
 
   subroutine set_itv_94(ratio)
@@ -2140,7 +2140,7 @@ contains
   real(kind(1.d0)) function itv_95()
     use constraint_variables, only: fptfnuc
     implicit none
-    itv_95 = fptfnuc 
+    itv_95 = fptfnuc
   end function itv_95
 
   subroutine set_itv_95(ratio)
@@ -2164,7 +2164,7 @@ contains
   real(kind(1.d0)) function itv_96()
     use constraint_variables, only: fvvhe
     implicit none
-    itv_96 = fvvhe 
+    itv_96 = fvvhe
   end function itv_96
 
   subroutine set_itv_96(ratio)
@@ -2188,7 +2188,7 @@ contains
   real(kind(1.d0)) function itv_97()
     use constraint_variables, only: fpsepr
     implicit none
-    itv_97 = fpsepr 
+    itv_97 = fpsepr
   end function itv_97
 
   subroutine set_itv_97(ratio)
@@ -2212,7 +2212,7 @@ contains
   real(kind(1.d0)) function itv_98()
     use fwbs_variables, only: li6enrich
     implicit none
-    itv_98 = li6enrich 
+    itv_98 = li6enrich
   end function itv_98
 
   subroutine set_itv_98(ratio)
@@ -2240,20 +2240,20 @@ contains
   end subroutine init_itv_102
 
   real(kind(1.d0)) function itv_102()
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     use impurity_radiation_module, only: impvar
     implicit none
-    itv_102 =  impurity_arr(impvar)%frac
+    itv_102 =  impurity_arr_frac(impvar)
   end function itv_102
 
   subroutine set_itv_102(ratio)
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     use impurity_radiation_module, only: impvar
     use impurity_radiation_module, only: fimpvar
     implicit none
     real(kind(1.d0)) :: ratio
     fimpvar = ratio
-    impurity_arr(impvar)%frac = fimpvar
+    impurity_arr_frac(impvar) = fimpvar
   end subroutine set_itv_102
 
   !---------------------------------
@@ -2270,7 +2270,7 @@ contains
   real(kind(1.d0)) function itv_103()
     use constraint_variables, only: flhthresh
     implicit none
-    itv_103 = flhthresh 
+    itv_103 = flhthresh
   end function itv_103
 
   subroutine set_itv_103(ratio)
@@ -2294,7 +2294,7 @@ contains
   real(kind(1.d0)) function itv_104()
     use constraint_variables, only: fcwr
     implicit none
-    itv_104 = fcwr 
+    itv_104 = fcwr
   end function itv_104
 
   subroutine set_itv_104(ratio)
@@ -2318,7 +2318,7 @@ contains
   real(kind(1.d0)) function itv_105()
     use constraint_variables, only: fnbshinef
     implicit none
-    itv_105 = fnbshinef 
+    itv_105 = fnbshinef
   end function itv_105
 
   subroutine set_itv_105(ratio)
@@ -2329,7 +2329,7 @@ contains
   end subroutine set_itv_105
 
   !---------------------------------
-  
+
   subroutine init_itv_106
     !! <LI> (106) ftmargoh (f-value for equation 60)
     use numerics, only: lablxc, boundl, boundu
@@ -2342,7 +2342,7 @@ contains
   real(kind(1.d0)) function itv_106()
     use constraint_variables, only: ftmargoh
     implicit none
-    itv_106 = ftmargoh 
+    itv_106 = ftmargoh
   end function itv_106
 
   subroutine set_itv_106(ratio)
@@ -2366,7 +2366,7 @@ contains
   real(kind(1.d0)) function itv_107()
     use cost_variables, only: favail
     implicit none
-    itv_107 = favail 
+    itv_107 = favail
   end function itv_107
 
   subroutine set_itv_107(ratio)
@@ -2390,7 +2390,7 @@ contains
   real(kind(1.d0)) function itv_108()
     use fwbs_variables, only: breeder_f
     implicit none
-    itv_108 = breeder_f 
+    itv_108 = breeder_f
   end function itv_108
 
   subroutine set_itv_108(ratio)
@@ -2414,7 +2414,7 @@ contains
   real(kind(1.d0)) function itv_109()
     use physics_variables, only: ralpne
     implicit none
-    itv_109 = ralpne 
+    itv_109 = ralpne
   end function itv_109
 
   subroutine set_itv_109(ratio)
@@ -2425,9 +2425,9 @@ contains
   end subroutine set_itv_109
 
   !---------------------------------
-  
+
   subroutine init_itv_110
-    !! <LI> (110) ftaulimit: Lower limit on taup/taueff the ratio of alpha 
+    !! <LI> (110) ftaulimit: Lower limit on taup/taueff the ratio of alpha
     use numerics, only: lablxc, boundl, boundu
     implicit none
     !!      particle to energy confinement times (f-value for equation 62)
@@ -2439,7 +2439,7 @@ contains
   real(kind(1.d0)) function itv_110()
     use constraint_variables, only: ftaulimit
     implicit none
-    itv_110 = ftaulimit 
+    itv_110 = ftaulimit
   end function itv_110
 
   subroutine set_itv_110(ratio)
@@ -2464,7 +2464,7 @@ contains
   real(kind(1.d0)) function itv_111()
     use constraint_variables, only: fniterpump
     implicit none
-    itv_111 = fniterpump 
+    itv_111 = fniterpump
   end function itv_111
 
   subroutine set_itv_111(ratio)
@@ -2512,7 +2512,7 @@ contains
   real(kind(1.d0)) function itv_113()
     use constraint_variables, only: ftaucq
     implicit none
-    itv_113 = ftaucq 
+    itv_113 = ftaucq
   end function itv_113
 
   subroutine set_itv_113(ratio)
@@ -2549,7 +2549,7 @@ contains
   !---------------------------------
 
   subroutine init_itv_115
-    !! <LI> (115) fpoloidalpower: f-value for max rate of change of 
+    !! <LI> (115) fpoloidalpower: f-value for max rate of change of
     use numerics, only: lablxc, boundl, boundu
     implicit none
     !!            energy in poloidal field (f-value for equation 66)
@@ -2561,7 +2561,7 @@ contains
   real(kind(1.d0)) function itv_115()
     use constraint_variables, only: fpoloidalpower
     implicit none
-    itv_115 = fpoloidalpower 
+    itv_115 = fpoloidalpower
   end function itv_115
 
   subroutine set_itv_115(ratio)
@@ -2585,7 +2585,7 @@ contains
   real(kind(1.d0)) function itv_116()
     use constraint_variables, only: fradwall
     implicit none
-    itv_116 = fradwall 
+    itv_116 = fradwall
   end function itv_116
 
   subroutine set_itv_116(ratio)
@@ -2609,7 +2609,7 @@ contains
   real(kind(1.d0)) function itv_117()
     use constraint_variables, only: fpsepbqar
     implicit none
-    itv_117 = fpsepbqar 
+    itv_117 = fpsepbqar
   end function itv_117
 
   subroutine set_itv_117(ratio)
@@ -2634,7 +2634,7 @@ contains
   real(kind(1.d0)) function itv_118()
     use constraint_variables, only: fpsep
     implicit none
-    itv_118 = fpsep 
+    itv_118 = fpsep
   end function itv_118
 
   subroutine set_itv_118(ratio)
@@ -2658,7 +2658,7 @@ contains
   real(kind(1.d0)) function itv_119()
     use physics_variables, only: tesep
     implicit none
-    itv_119 = tesep 
+    itv_119 = tesep
   end function itv_119
 
   subroutine set_itv_119(ratio)
@@ -2730,7 +2730,7 @@ contains
   real(kind(1.d0)) function itv_122()
     use pfcoil_variables, only: oh_steel_frac
     implicit none
-    itv_122 = oh_steel_frac 
+    itv_122 = oh_steel_frac
   end function itv_122
 
   subroutine set_itv_122(ratio)
@@ -2754,7 +2754,7 @@ contains
   real(kind(1.d0)) function itv_123()
     use constraint_variables, only: foh_stress
     implicit none
-    itv_123 = foh_stress 
+    itv_123 = foh_stress
   end function itv_123
 
   subroutine set_itv_123(ratio)
@@ -2778,7 +2778,7 @@ contains
   real(kind(1.d0)) function itv_124()
     use div_kal_vars, only: qtargettotal
     implicit none
-    itv_124 = qtargettotal 
+    itv_124 = qtargettotal
   end function itv_124
 
   subroutine set_itv_124(ratio)
@@ -2800,16 +2800,16 @@ contains
   end subroutine init_itv_125
 
   real(kind(1.d0)) function itv_125()
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
-    itv_125 = impurity_arr(3)%frac 
+    itv_125 = impurity_arr_frac(3)
   end function itv_125
 
   subroutine set_itv_125(ratio)
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
     real(kind(1.d0)) :: ratio
-    impurity_arr(3)%frac = ratio
+    impurity_arr_frac(3) = ratio
   end subroutine set_itv_125
 
   !---------------------------------
@@ -2824,16 +2824,16 @@ contains
   end subroutine init_itv_126
 
   real(kind(1.d0)) function itv_126()
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
-    itv_126 = impurity_arr(4)%frac 
+    itv_126 = impurity_arr_frac(4)
   end function itv_126
 
   subroutine set_itv_126(ratio)
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
     real(kind(1.d0)) :: ratio
-    impurity_arr(4)%frac = ratio
+    impurity_arr_frac(4) = ratio
   end subroutine set_itv_126
 
   !---------------------------------
@@ -2848,16 +2848,16 @@ contains
   end subroutine init_itv_127
 
   real(kind(1.d0)) function itv_127()
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
-    itv_127 = impurity_arr(5)%frac 
+    itv_127 = impurity_arr_frac(5)
   end function itv_127
 
   subroutine set_itv_127(ratio)
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
     real(kind(1.d0)) :: ratio
-    impurity_arr(5)%frac = ratio
+    impurity_arr_frac(5) = ratio
   end subroutine set_itv_127
 
   !---------------------------------
@@ -2872,16 +2872,16 @@ contains
   end subroutine init_itv_128
 
   real(kind(1.d0)) function itv_128()
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
-    itv_128 = impurity_arr(6)%frac 
+    itv_128 = impurity_arr_frac(6)
   end function itv_128
 
   subroutine set_itv_128(ratio)
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
     real(kind(1.d0)) :: ratio
-    impurity_arr(6)%frac = ratio
+    impurity_arr_frac(6) = ratio
   end subroutine set_itv_128
 
   !---------------------------------
@@ -2896,16 +2896,16 @@ contains
   end subroutine init_itv_129
 
   real(kind(1.d0)) function itv_129()
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
-    itv_129 = impurity_arr(7)%frac 
+    itv_129 = impurity_arr_frac(7)
   end function itv_129
 
   subroutine set_itv_129(ratio)
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
     real(kind(1.d0)) :: ratio
-    impurity_arr(7)%frac = ratio
+    impurity_arr_frac(7) = ratio
   end subroutine set_itv_129
 
   !---------------------------------
@@ -2920,16 +2920,16 @@ contains
   end subroutine init_itv_130
 
   real(kind(1.d0)) function itv_130()
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
-    itv_130 = impurity_arr(8)%frac 
+    itv_130 = impurity_arr_frac(8)
   end function itv_130
 
   subroutine set_itv_130(ratio)
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
     real(kind(1.d0)) :: ratio
-    impurity_arr(8)%frac = ratio
+    impurity_arr_frac(8) = ratio
   end subroutine set_itv_130
 
   !---------------------------------
@@ -2944,16 +2944,16 @@ contains
   end subroutine init_itv_131
 
   real(kind(1.d0)) function itv_131()
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
-    itv_131 = impurity_arr(9)%frac 
+    itv_131 = impurity_arr_frac(9)
   end function itv_131
 
   subroutine set_itv_131(ratio)
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
     real(kind(1.d0)) :: ratio
-    impurity_arr(9)%frac = ratio
+    impurity_arr_frac(9) = ratio
   end subroutine set_itv_131
 
   !---------------------------------
@@ -2968,16 +2968,16 @@ contains
   end subroutine init_itv_132
 
   real(kind(1.d0)) function itv_132()
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
-    itv_132 = impurity_arr(10)%frac 
+    itv_132 = impurity_arr_frac(10)
   end function itv_132
 
   subroutine set_itv_132(ratio)
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
     real(kind(1.d0)) :: ratio
-    impurity_arr(10)%frac = ratio
+    impurity_arr_frac(10) = ratio
   end subroutine set_itv_132
 
   !---------------------------------
@@ -2992,16 +2992,16 @@ contains
   end subroutine init_itv_133
 
   real(kind(1.d0)) function itv_133()
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
-    itv_133 = impurity_arr(11)%frac 
+    itv_133 = impurity_arr_frac(11)
   end function itv_133
 
   subroutine set_itv_133(ratio)
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
     real(kind(1.d0)) :: ratio
-    impurity_arr(11)%frac = ratio
+    impurity_arr_frac(11) = ratio
   end subroutine set_itv_133
 
   !---------------------------------
@@ -3016,16 +3016,16 @@ contains
   end subroutine init_itv_134
 
   real(kind(1.d0)) function itv_134()
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
-    itv_134 = impurity_arr(12)%frac 
+    itv_134 = impurity_arr_frac(12)
   end function itv_134
 
   subroutine set_itv_134(ratio)
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
     real(kind(1.d0)) :: ratio
-    impurity_arr(12)%frac = ratio
+    impurity_arr_frac(12) = ratio
   end subroutine set_itv_134
 
   !---------------------------------
@@ -3040,16 +3040,16 @@ contains
   end subroutine init_itv_135
 
   real(kind(1.d0)) function itv_135()
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
-    itv_135 = impurity_arr(13)%frac 
+    itv_135 = impurity_arr_frac(13)
   end function itv_135
 
   subroutine set_itv_135(ratio)
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
     real(kind(1.d0)) :: ratio
-    impurity_arr(13)%frac = ratio
+    impurity_arr_frac(13) = ratio
   end subroutine set_itv_135
 
   !---------------------------------
@@ -3064,16 +3064,16 @@ contains
   end subroutine init_itv_136
 
   real(kind(1.d0)) function itv_136()
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
-    itv_136 = impurity_arr(14)%frac 
+    itv_136 = impurity_arr_frac(14)
   end function itv_136
 
   subroutine set_itv_136(ratio)
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
     real(kind(1.d0)) :: ratio
-    impurity_arr(14)%frac = ratio
+    impurity_arr_frac(14) = ratio
   end subroutine set_itv_136
 
   !---------------------------------
@@ -3090,7 +3090,7 @@ contains
   real(kind(1.d0)) function itv_137()
     use physics_variables, only: fplhsep
     implicit none
-    itv_137 = fplhsep 
+    itv_137 = fplhsep
   end function itv_137
 
   subroutine set_itv_137(ratio)
@@ -3114,7 +3114,7 @@ contains
   real(kind(1.d0)) function itv_138()
     use physics_variables, only: fplhsep
     implicit none
-    itv_138 = fplhsep 
+    itv_138 = fplhsep
   end function itv_138
 
   subroutine set_itv_138(ratio)
@@ -3138,7 +3138,7 @@ contains
   real(kind(1.d0)) function itv_139()
     use rebco_variables, only: copper_thick
     implicit none
-    itv_139 = copper_thick 
+    itv_139 = copper_thick
   end function itv_139
 
   subroutine set_itv_139(ratio)
@@ -3162,7 +3162,7 @@ contains
   real(kind(1.d0)) function itv_140()
     use tfcoil_variables, only: dr_tf_wp
     implicit none
-    itv_140 = dr_tf_wp 
+    itv_140 = dr_tf_wp
   end function itv_140
 
   subroutine set_itv_140(ratio)
@@ -3186,7 +3186,7 @@ contains
   real(kind(1.d0)) function itv_141()
     use constraint_variables, only: fcqt
     implicit none
-    itv_141 = fcqt 
+    itv_141 = fcqt
   end function itv_141
 
   subroutine set_itv_141(ratio)
@@ -3210,7 +3210,7 @@ contains
   real(kind(1.d0)) function itv_142()
     use physics_variables, only: nesep
     implicit none
-    itv_142 = nesep 
+    itv_142 = nesep
   end function itv_142
 
   subroutine set_itv_142(ratio)
@@ -3235,7 +3235,7 @@ contains
   real(kind(1.d0)) function itv_143()
     use rebco_variables, only: f_coppera_m2
     implicit none
-    itv_143 = f_copperA_m2 
+    itv_143 = f_copperA_m2
   end function itv_143
 
   subroutine set_itv_143(ratio)
@@ -3248,7 +3248,7 @@ contains
   !---------------------------------
 
   subroutine init_itv_144
-    !! <LI> (144) fnesep : Eich critical electron density at separatrix 
+    !! <LI> (144) fnesep : Eich critical electron density at separatrix
     use numerics, only: lablxc, boundl, boundu
     implicit none
     !!                     (f-value for constraint equation 76) [m-3]
@@ -3260,7 +3260,7 @@ contains
   real(kind(1.d0)) function itv_144()
     use constraint_variables, only: fnesep
     implicit none
-    itv_144 = fnesep 
+    itv_144 = fnesep
   end function itv_144
 
   subroutine set_itv_144(ratio)
@@ -3284,7 +3284,7 @@ contains
   real(kind(1.d0)) function itv_145()
     use physics_variables, only: fgwped
     implicit none
-    itv_145 = fgwped 
+    itv_145 = fgwped
   end function itv_145
 
   subroutine set_itv_145(ratio)
@@ -3308,7 +3308,7 @@ contains
   real(kind(1.d0)) function itv_146()
     use constraint_variables, only: fcpttf
     implicit none
-    itv_146 = fcpttf 
+    itv_146 = fcpttf
   end function itv_146
 
   subroutine set_itv_146(ratio)
@@ -3332,7 +3332,7 @@ contains
   real(kind(1.d0)) function itv_147()
     use constraint_variables, only: freinke
     implicit none
-    itv_147 = freinke 
+    itv_147 = freinke
   end function itv_147
 
   subroutine set_itv_147(ratio)
@@ -3355,22 +3355,22 @@ contains
 
   real(kind(1.d0)) function itv_148()
     use div_kal_vars, only: impurity_enrichment
-    use impurity_radiation_module, only: impurity_arr
+    use impurity_radiation_module, only: impurity_arr_frac
     use reinke_variables, only: impvardiv
     implicit none
     ! TODO This needs to be clarified!! MDK
     ! It looks like fzactual is not really an iteration variable.
-    itv_148 = impurity_arr(impvardiv)%frac*impurity_enrichment(impvardiv)   !fzactual
+    itv_148 = impurity_arr_frac(impvardiv)*impurity_enrichment(impvardiv)   !fzactual
   end function itv_148
 
   subroutine set_itv_148(ratio)
     use div_kal_vars, only: impurity_enrichment
-    use impurity_radiation_module, only: fimpvar, impurity_arr
+    use impurity_radiation_module, only: fimpvar, impurity_arr_frac
     use reinke_variables, only: fzactual, impvardiv
     implicit none
     real(kind(1.d0)) :: ratio
     fzactual = ratio
-    impurity_arr(impvardiv)%frac = fzactual / impurity_enrichment(impvardiv)
+    impurity_arr_frac(impvardiv) = fzactual / impurity_enrichment(impvardiv)
   end subroutine set_itv_148
 
   !---------------------------------
@@ -3387,7 +3387,7 @@ contains
   real(kind(1.d0)) function itv_149()
     use pfcoil_variables, only: fbmaxcs
     implicit none
-    itv_149 = fbmaxcs 
+    itv_149 = fbmaxcs
   end function itv_149
 
   subroutine set_itv_149(ratio)
@@ -3400,7 +3400,7 @@ contains
   !---------------------------------
 
   subroutine init_itv_150
-    !! <LI> (150) plasmod_fcdp : (P_CD - Pheat)/(Pmax-Pheat) 
+    !! <LI> (150) plasmod_fcdp : (P_CD - Pheat)/(Pmax-Pheat)
     use numerics, only: lablxc, boundl, boundu
     implicit none
     !!            i.e. ratio of CD power over available power
@@ -3412,7 +3412,7 @@ contains
   real(kind(1.d0)) function itv_150()
     use plasmod_variables, only: plasmod_fcdp
     implicit none
-    itv_150 = plasmod_fcdp 
+    itv_150 = plasmod_fcdp
   end function itv_150
 
   subroutine set_itv_150(ratio)
@@ -3436,7 +3436,7 @@ contains
   real(kind(1.d0)) function itv_151()
     use plasmod_variables, only: plasmod_fradc
     implicit none
-    itv_151 = plasmod_fradc 
+    itv_151 = plasmod_fradc
   end function itv_151
 
   subroutine set_itv_151(ratio)
@@ -3460,7 +3460,7 @@ contains
   real(kind(1.d0)) function itv_152()
     use physics_variables, only: fgwsep
     implicit none
-    itv_152 = fgwsep 
+    itv_152 = fgwsep
   end function itv_152
 
   subroutine set_itv_152(ratio)
@@ -3500,7 +3500,7 @@ contains
     !! <LI> (154) fne0 : F-value for ne(0) > ne(ped) (con. 81)
     use numerics, only: lablxc, boundl, boundu
     implicit none
-    lablxc(154) = 'fne0          ' 
+    lablxc(154) = 'fne0          '
     boundl(154) = 0.001D0
     boundu(154) = 1.000D0
   end subroutine init_itv_154
@@ -3508,7 +3508,7 @@ contains
   real(kind(1.d0)) function itv_154()
     use physics_variables, only: fpdivlim
     implicit none
-    itv_154 = fpdivlim 
+    itv_154 = fpdivlim
   end function itv_154
 
   subroutine set_itv_154(ratio)
@@ -3519,7 +3519,7 @@ contains
   end subroutine set_itv_154
 
   !---------------------------------
-  
+
   subroutine init_itv_155
     !! <LI> (155) pfusife : IFE input fusion power (MW) (ifedrv=3 only)
     use numerics, only: lablxc, boundl, boundu
@@ -3528,11 +3528,11 @@ contains
     boundl(155) = 5.000d2
     boundu(155) = 3.000d3
   end subroutine init_itv_155
-  
+
   real(kind(1.d0)) function itv_155()
     use ife_variables, only: pfusife
     implicit none
-    itv_155 = pfusife 
+    itv_155 = pfusife
   end function itv_155
 
   subroutine set_itv_155(ratio)
@@ -3556,7 +3556,7 @@ contains
   real(kind(1.d0)) function itv_156()
     use ife_variables, only: rrin
     implicit none
-    itv_156 = rrin 
+    itv_156 = rrin
   end function itv_156
 
   subroutine set_itv_156(ratio)
@@ -3580,7 +3580,7 @@ contains
   real(kind(1.d0)) function itv_157()
     use pfcoil_variables, only: fvssu
     implicit none
-    itv_157 = fvssu 
+    itv_157 = fvssu
   end function itv_157
 
   subroutine set_itv_157(ratio)
@@ -3619,7 +3619,7 @@ contains
   subroutine init_itv_159
     !! <LI> (159) ftoroidalgap : F-value for toroidalgap >  tftort constraint (con. 82)
     use numerics, only: lablxc, boundl, boundu
-    lablxc(159) = 'ftoroidalgap  ' 
+    lablxc(159) = 'ftoroidalgap  '
     boundl(159) = 1.0D-4
     boundu(159) = 1.0D0
   end subroutine init_itv_159
@@ -3627,7 +3627,7 @@ contains
   real(kind(1.d0)) function itv_159()
     use tfcoil_variables, only: ftoroidalgap
     implicit none
-    itv_159 = ftoroidalgap 
+    itv_159 = ftoroidalgap
   end function itv_159
 
   subroutine set_itv_159(ratio)
@@ -3650,7 +3650,7 @@ contains
   real(kind(1.d0)) function itv_160()
     use build_variables, only: f_avspace
     implicit none
-    itv_160 = f_avspace 
+    itv_160 = f_avspace
   end function itv_160
 
   subroutine set_itv_160(ratio)
@@ -3675,7 +3675,7 @@ contains
   real(kind(1.d0)) function itv_161()
     use constraint_variables, only: fbetatry_lower
     implicit none
-    itv_161 = fbetatry_lower 
+    itv_161 = fbetatry_lower
   end function itv_161
 
   subroutine set_itv_161(ratio)
@@ -3698,7 +3698,7 @@ contains
   real(kind(1.d0)) function itv_162()
   use build_variables, only: r_cp_top
     implicit none
-    itv_162 = r_cp_top 
+    itv_162 = r_cp_top
   end function itv_162
 
   subroutine set_itv_162(ratio)
@@ -3721,7 +3721,7 @@ contains
   real(kind(1.d0)) function itv_163()
   use tfcoil_variables, only: f_t_turn_tf
     implicit none
-    itv_163 = f_t_turn_tf 
+    itv_163 = f_t_turn_tf
   end function itv_163
 
   subroutine set_itv_163(ratio)
@@ -3737,8 +3737,8 @@ contains
     use numerics, only: lablxc, boundl, boundu
     implicit none
     lablxc(164) = 'f_crypmw         '
-    boundl(164) = 0.001D0 
-    boundu(164) = 1.000D0  
+    boundl(164) = 0.001D0
+    boundu(164) = 1.000D0
   end subroutine init_itv_164
 
   real(kind(1.d0)) function itv_164()
@@ -3768,7 +3768,7 @@ contains
   real(kind(1.d0)) function itv_165()
     use constraint_variables, only: fstr_wp
     implicit none
-    itv_165 = fstr_wp 
+    itv_165 = fstr_wp
   end function itv_165
 
   subroutine set_itv_165(ratio)
@@ -3779,29 +3779,32 @@ contains
   end subroutine  set_itv_165
 
   !---------------------------------
-  ! DUMMY variables below here
-  !---------------------------------
 
   subroutine init_itv_166
-    !! <LI> (166) DUMMY : Description
+    !! <LI> (166) f_copperaoh_m2 : CS coil current / copper area < Maximum value
+    !! (f-value for equation 89)
     use numerics, only: lablxc, boundl, boundu
     implicit none
-    lablxc(166) = 'DUMMY         '
-    boundl(166) = 1.0d-99
-    boundu(166) = 1.0d99
+    lablxc(166) = 'f_copperaoh_m2'
+    boundl(166) = 0.001D0
+    boundu(166) = 1.000D0
   end subroutine init_itv_166
 
   real(kind(1.d0)) function itv_166()
+  use rebco_variables, only: f_copperaoh_m2
     implicit none
-    itv_166 = DUMMY 
+    itv_166 = f_copperaoh_m2
   end function itv_166
 
   subroutine set_itv_166(ratio)
+    use rebco_variables, only: f_copperaoh_m2
     implicit none
     real(kind(1.d0)) :: ratio
-    DUMMY = ratio
-  end subroutine set_itv_166
+    f_copperaoh_m2 = ratio
+  end subroutine  set_itv_166
 
+  !---------------------------------
+  ! DUMMY variables below here
   !---------------------------------
 
   subroutine init_itv_167
@@ -3815,7 +3818,7 @@ contains
 
   real(kind(1.d0)) function itv_167()
     implicit none
-    itv_167 = DUMMY 
+    itv_167 = DUMMY
   end function itv_167
 
   subroutine set_itv_167(ratio)
@@ -3837,7 +3840,7 @@ contains
 
   real(kind(1.d0)) function itv_168()
     implicit none
-    itv_168 = DUMMY 
+    itv_168 = DUMMY
   end function itv_168
 
   subroutine set_itv_168(ratio)
@@ -3859,7 +3862,7 @@ contains
 
   real(kind(1.d0)) function itv_169()
     implicit none
-    itv_169 = DUMMY 
+    itv_169 = DUMMY
   end function itv_169
 
   subroutine set_itv_169(ratio)
@@ -3881,7 +3884,7 @@ contains
 
   real(kind(1.d0)) function itv_170()
     implicit none
-    itv_170 = DUMMY 
+    itv_170 = DUMMY
   end function itv_170
 
   subroutine set_itv_170(ratio)
@@ -3891,7 +3894,7 @@ contains
   end subroutine set_itv_170
 
   !---------------------------------
-  
+
   subroutine init_itv_171
     !! <LI> (171) DUMMY : Description
     use numerics, only: lablxc, boundl, boundu
@@ -3903,7 +3906,7 @@ contains
 
   real(kind(1.d0)) function itv_171()
     implicit none
-    itv_171 = DUMMY 
+    itv_171 = DUMMY
   end function itv_171
 
   subroutine set_itv_171(ratio)
@@ -3925,7 +3928,7 @@ contains
 
   real(kind(1.d0)) function itv_172()
     implicit none
-    itv_172 = DUMMY 
+    itv_172 = DUMMY
   end function itv_172
 
   subroutine set_itv_172(ratio)
@@ -3947,7 +3950,7 @@ contains
 
   real(kind(1.d0)) function itv_173()
     implicit none
-    itv_173 = DUMMY 
+    itv_173 = DUMMY
   end function itv_173
 
   subroutine set_itv_173(ratio)
@@ -3957,7 +3960,7 @@ contains
   end subroutine set_itv_173
 
   !---------------------------------
-  
+
   subroutine init_itv_174
     !! <LI> (174) DUMMY : Description
     use numerics, only: lablxc, boundl, boundu
@@ -3969,7 +3972,7 @@ contains
 
   real(kind(1.d0)) function itv_174()
     implicit none
-    itv_174 = DUMMY 
+    itv_174 = DUMMY
   end function itv_174
 
   subroutine set_itv_174(ratio)
@@ -3991,7 +3994,7 @@ contains
 
   real(kind(1.d0)) function itv_175()
     implicit none
-    itv_175 = DUMMY 
+    itv_175 = DUMMY
   end function itv_175
 
   subroutine set_itv_175(ratio)
@@ -3999,6 +4002,8 @@ contains
     real(kind(1.d0)) :: ratio
     DUMMY = ratio
   end subroutine set_itv_175
+
+  !------------------------------------------------------
 
   subroutine loadxc
     !! Routine to load the physics and engineering variables into the
@@ -4010,7 +4015,7 @@ contains
     !! into the optimisation variables array <CODE>XCM</CODE>.
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    
+
     use constants, only: nout
     use maths_library, only: variable_error
     use error_handling, only: idiags, fdiags, report_error
@@ -4018,12 +4023,12 @@ contains
     use physics_variables, only: icurr
     use global_variables, only: vlabel
     implicit none
-  
+
     !  Local variables
     integer :: i
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     do i = 1,nvar
-  
+
        select case (ixc(i))
            case (1);  xcm(i) = itv_1()
            case (2);  xcm(i) = itv_2()
@@ -4067,7 +4072,7 @@ contains
            case (40);  xcm(i) = itv_40()
            case (41);  xcm(i) = itv_41()
            case (42);  xcm(i) = itv_42()
-           case (43);  
+           case (43);
            case (44);  xcm(i) = itv_44()
            case (45);  xcm(i) = itv_45()
            case (46);  xcm(i) = itv_46()
@@ -4111,8 +4116,8 @@ contains
            case (84);  xcm(i) = itv_84()
            case (85);  xcm(i) = itv_85()
            case (86);  xcm(i) = itv_86()
-           case (87);  
-           case (88);  
+           case (87);
+           case (88);
            case (89);  xcm(i) = itv_89()
            case (90);  xcm(i) = itv_90()
            case (91);  xcm(i) = itv_91()
@@ -4123,9 +4128,9 @@ contains
            case (96);  xcm(i) = itv_96()
            case (97);  xcm(i) = itv_97()
            case (98);  xcm(i) = itv_98()
-           case (99);  
-           case (100);  
-           case (101);  
+           case (99);
+           case (100);
+           case (101);
            case (102);  xcm(i) = itv_102()
            case (103);  xcm(i) = itv_103()
            case (104);  xcm(i) = itv_104()
@@ -4201,46 +4206,46 @@ contains
            case (173);  xcm(i) = itv_173()
            case (174);  xcm(i) = itv_174()
            case (175);  xcm(i) = itv_175()
-  
+
        case default
           idiags(1) = i ; idiags(2) = ixc(i)
           call report_error(54)
-  
+
        end select
-       
-  
+
+
         ! Simple list of iteration variable names
         name_xc(i) = lablxc(ixc(i))
         ! Note that iteration variable 18 has more than one name:
         if ((ixc(i) == 18).and.(icurr /= 2)) name_xc(i) = 'q95'
         if ((ixc(i) == 18).and.(icurr == 2)) name_xc(i) = 'qbar'
-  
-  
+
+
          ! MDK Check if sweep variable is also an iteration variable
          if (name_xc(i) == vlabel) then
               write(nout,*) 'WARNING: The sweep variable is also an iteration variable.'
               write(nout,*) 'The values of the sweep variable will be overwritten by the optimiser.'
               write(*,*) 'WARNING: The sweep variable is also an iteration variable.'
          end if
-  
+
        !  Check that no iteration variable is zero
-  
+
        if (abs(xcm(i)) <= 1.0D-12) then
           idiags(1) = i ; idiags(2) = ixc(i)
           write(*,*) 'Iteration variable ',ixc(i),'(',trim(lablxc(ixc(i))),') is zero.'
           call report_error(55)
        end if
-  
+
        !  Crude method of catching NaN errors
-  
+
        !if ( (abs(xcm(i)) > 9.99D99).or.(xcm(i) /= xcm(i)) ) then
        if ( variable_error(xcm(i)) ) then
           idiags(1) = i ; idiags(2) = ixc(i) ; fdiags(1) = xcm(i)
           call report_error(56)
        end if
-  
+
     end do
-  
+
     do i = 1,nvar
        if (abs(xcm(i)) > 1.0D-99) then
           scale(i) = 1.0D0/xcm(i)
@@ -4250,12 +4255,12 @@ contains
        scafc(i) = 1.0D0/scale(i)
        xcm(i) = xcm(i)*scale(i)
     end do
-  
+
   end subroutine loadxc
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+
   subroutine convxc(xc,nn)
-    
+
     !! Routine to convert scaled iteration variables back to
     !! their real values
     !! author: P J Knight, CCFE, Culham Science Centre
@@ -4266,31 +4271,31 @@ contains
     !! their real values.
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    
+
     use error_handling, only: idiags, fdiags, report_error
     use numerics, only: ipnvars, scale, ixc, lablxc
     use maths_library, only: variable_error
 #ifndef dp
     use, intrinsic :: iso_fortran_env, only: dp=>real64
 #endif
-  
+
     implicit none
-  
+
     !  Arguments
-  
+
     integer, intent(in) :: nn
     real(dp), dimension(:), intent(in) :: xc
-  
+
     !  Local variables
-  
+
     integer :: i
     real(dp)::ratio
-  
+
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+
     do i = 1,nn
        ratio = xc(i)/scale(i)
-  
+
        select case (ixc(i))
            case (1);  call set_itv_1(ratio)
            case (2);  call set_itv_2(ratio)
@@ -4313,9 +4318,9 @@ contains
            case (19);  call set_itv_19(ratio)
            case (20);  call set_itv_20(ratio)
            case (21);  call set_itv_21(ratio)
-           case (22);  
+           case (22);
            case (23);  call set_itv_23(ratio)
-           case (24);  
+           case (24);
            case (25);  call set_itv_25(ratio)
            case (26);  call set_itv_26(ratio)
            case (27);  call set_itv_27(ratio)
@@ -4334,7 +4339,7 @@ contains
            case (40);  call set_itv_40(ratio)
            case (41);  call set_itv_41(ratio)
            case (42);  call set_itv_42(ratio)
-           case (43);  
+           case (43);
            case (44);  call set_itv_44(ratio)
            case (45);  call set_itv_45(ratio)
            case (46);  call set_itv_46(ratio)
@@ -4346,7 +4351,7 @@ contains
            case (52);  call set_itv_52(ratio)
            case (53);  call set_itv_53(ratio)
            case (54);  call set_itv_54(ratio)
-           case (55);  
+           case (55);
            case (56);  call set_itv_56(ratio)
            case (57);  call set_itv_57(ratio)
            case (58);  call set_itv_58(ratio)
@@ -4367,19 +4372,19 @@ contains
            case (73);  call set_itv_73(ratio)
            case (74);  call set_itv_74(ratio)
            case (75);  call set_itv_75(ratio)
-           case (76);  
-           case (77);  
-           case (78);  
+           case (76);
+           case (77);
+           case (78);
            case (79);  call set_itv_79(ratio)
-           case (80);  
+           case (80);
            case (81);  call set_itv_81(ratio)
            case (82);  call set_itv_82(ratio)
            case (83);  call set_itv_83(ratio)
            case (84);  call set_itv_84(ratio)
            case (85);  call set_itv_85(ratio)
            case (86);  call set_itv_86(ratio)
-           case (87);  
-           case (88);  
+           case (87);
+           case (88);
            case (89);  call set_itv_89(ratio)
            case (90);  call set_itv_90(ratio)
            case (91);  call set_itv_91(ratio)
@@ -4390,9 +4395,9 @@ contains
            case (96);  call set_itv_96(ratio)
            case (97);  call set_itv_97(ratio)
            case (98);  call set_itv_98(ratio)
-           case (99);  
-           case (100);  
-           case (101);  
+           case (99);
+           case (100);
+           case (101);
            case (102);  call set_itv_102(ratio)
            case (103);  call set_itv_103(ratio)
            case (104);  call set_itv_104(ratio)
@@ -4464,45 +4469,45 @@ contains
            case (169);  call set_itv_169(ratio)
            case (170);  call set_itv_170(ratio)
            case (171);  call set_itv_171(ratio)
-           case (172);  call set_itv_172(ratio)    
-           case (173);  call set_itv_173(ratio)     
-           case (174);  call set_itv_174(ratio)     
-           case (175);  call set_itv_175(ratio)     
-  
+           case (172);  call set_itv_172(ratio)
+           case (173);  call set_itv_173(ratio)
+           case (174);  call set_itv_174(ratio)
+           case (175);  call set_itv_175(ratio)
+
            case default
               call report_error(57)
-  
+
        end select
-  
+
        !  Check that no iteration variable is zero
-  
+
        if (abs(xc(i)) <= 1.0D-12) then
           idiags(1) = i ; idiags(2) = ixc(i)
           write(*,*) 'Iteration variable ',ixc(i),'(',trim(lablxc(ixc(i))),') is zero.'
           call report_error(58)
        end if
-  
+
        !  Crude method of catching NaN errors
-  
+
        !if ((abs(xc(i)) > 9.99D99).or.(xc(i) /= xc(i))) then
        if(variable_error(xc(i)))then
           idiags(1) = i ; idiags(2) = ixc(i) ; fdiags(1) = xc(i)
           call report_error(59)
        end if
-  
+
        if (abs(scale(i)) < 1.0D-99) then
           idiags(1) = i ; idiags(2) = ixc(i)
           call report_error(60)
        end if
-  
+
     end do
-  
+
   end subroutine convxc
-  
+
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+
   subroutine boundxc
-  
+
     !! Routine to convert variable bounds to their real values
     !! author: P J Knight, CCFE, Culham Science Centre
     !! None
@@ -4511,24 +4516,24 @@ contains
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+
     use numerics, only: nvar, bondl, bondu, scale, ixc, boundl, boundu
-  
+
     implicit none
-  
+
     !  Local variables
-  
+
     integer :: i
-  
+
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+
     do i = 1,nvar
        bondl(i) = boundl(ixc(i))*scale(i)
        bondu(i) = boundu(ixc(i))*scale(i)
     end do
-  
+
   end subroutine boundxc
-  
+
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 end module define_iteration_variables
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

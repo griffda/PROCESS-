@@ -4,32 +4,32 @@ module grad_func
 contains
 
     function gradient(x, y)
-    
-        ! Arguments 
-	
+
+        ! Arguments
+
 	real(kind(1.0D0)), intent(in) :: x(:), y(:)
 	real(kind(1.0D0)), dimension(size(x)) :: gradient
 
         !  Local variables
-	
+
 	integer :: i, npts
         real(kind(1.0D0)) :: dx, dy
 	real(kind(1.0d0)), dimension(size(x)) :: r
-	
+
 	npts = size(x)
 	dy = y(2)-y(1)
 	r(1) = (x(2)-x(1))/dy
 	dy = y(npts)-y(npts-1)
 	r(npts) = (x(npts)-x(npts-1))/dy
-	
+
 	do i = 2, npts-1
 	  dx = (x(i+1) - x(i-1))/2
 	  dy = (y(i+1) - y(i-1))/2
 	  r(i) = dx/dy
 	end do
-	
+
 	gradient = r
-	
+
     end function gradient
 
 	function integrcc(nx,x,y)
@@ -63,7 +63,7 @@ contains
 
 	! not used
 	! integer j
-	
+
 	dy=0.
 	do i=2,nx-1
 		dy(i)=(y(i+1)-y(i-1))/(x(i+1)-x(i-1))
@@ -83,12 +83,12 @@ contains
 	double precision x(3),y(3),P(3)
 	double precision y21,y32,x21,x32,h21,h32
 
-	y32=y(3)-y(2)				 
-	y21=y(2)-y(1)				 
-	x32=x(3)-x(2)				 
-	x21=x(2)-x(1)				 
-	h32=x(3)+x(2)				 
-	h21=x(2)+x(1)				 
+	y32=y(3)-y(2)
+	y21=y(2)-y(1)
+	x32=x(3)-x(2)
+	x21=x(2)-x(1)
+	h32=x(3)+x(2)
+	h21=x(2)+x(1)
 
 	P(1)=(x21*y32-x32*y21)/(x21*x32*(h32-h21))
 	P(2)=y21/x21-P(1)*h21
@@ -96,54 +96,54 @@ contains
 
 
 	end subroutine polyfitcc
-    
+
     function gradient1(x)
-    
+
         ! Arguments
-       
+
         real(kind(1.0d0)), intent(in) :: x(:)
         real(kind(1.0d0)), dimension(size(x)) :: gradient1
 
         !  Local variables
-       
+
         integer :: i, npts
         real(kind(1.0D0)) :: dx
         real(kind(1.0d0)), dimension(size(x)) :: r
-       
+
 	npts = size(x)
 	do i = 2, npts-1
 	  dx = (x(i+1) - x(i-1))/2
 	  r(i) = dx
 	end do
-	
+
 	r(1) = x(2)-x(1)
 	r(npts) = x(npts)-x(npts-1)
-	
+
 	gradient1 = r
-	
-    end function gradient1   
-    
+
+    end function gradient1
+
     function cumint(x, y)
-    
-        ! Arguments 
-	
+
+        ! Arguments
+
 	real(kind(1.0D0)), intent(in) :: x(:), y(:)
 	real(kind(1.0D0)), dimension(size(x)) :: cumint
 
         !  Local variables
-	
+
 	integer :: i, npts
 	real(kind(1.0d0)), dimension(size(x)) :: r, dx
-	
+
 	npts = size(x)
 	dx = gradient1(x)
 	r(1) = y(1) * dx(1)
 	do i = 2, npts
 	  r(i) = y(i)*dx(i) + r(i-1)
 	end do
-	
+
 	cumint = r
-	
+
     end function cumint
 !C----------------------------------------------------------------------|
 		function linterp_ef(x1,y1,Nx1, &
@@ -170,13 +170,13 @@ contains
 
 	do i=1,Nx2
 		jdone=0
-		
+
 		t1=x2(i)
 
 		do j=2,Nx1
 		z1=x1(j-1)
 		z2=x1(j)
-		
+
 	if (t1.eq.z1 .and. jdone.eq.0) then
 		y2(i)=y1(j-1)
 		jdone=1
@@ -186,13 +186,13 @@ contains
 		y2(i)=y1(j)
 		jdone=1
 	endif
-	
+
 	if (t1.gt.z1 .and. t1.lt.z2 .and. jdone.eq.0) then
 		z3=y1(j-1)
 		z4=y1(j)
 		t3=x1(j-1)
 		t4=x1(j)
-		
+
 		A=(z4-z3)/(t4-t3)
 		B=z3-t3*A
 		y2(i)=A*t1+B
@@ -206,7 +206,7 @@ contains
 		z4=y1(j)
 		t3=x1(j-1)**2.0
 		t4=x1(j)**2.0
-		
+
 		A=(z4-z3)/(t4-t3)
 		B=z3-t3*A
 		y2(i)=A*t1**2.0+B
@@ -219,7 +219,7 @@ contains
 		z4=y1(j)
 		t3=x1(j-1)
 		t4=x1(j)
-		
+
 		A=(z4-z3)/(t4-t3)
 		B=z3-t3*A
 		y2(i)=A*t1+B
@@ -235,9 +235,9 @@ contains
 
 	end  function linterp_ef
 !C end of GS SOLVER EF
- 
-	
-	
+
+
+
 		function	INTEGR_CDE(x_input,y_input, &
      &    nagrid)
 	implicit none
@@ -263,132 +263,132 @@ contains
 
 	integr_cde=ys_output
 
-end function integr_cde	
-	
-	   
+end function integr_cde
+
+
     function cumint1(x)
-    
-        ! Arguments 
-	
+
+        ! Arguments
+
 	real(kind(1.0D0)), intent(in) :: x(:)
 	real(kind(1.0D0)), dimension(size(x)) :: cumint1
 
         !  Local variables
-	
+
 	integer :: i, npts
 	real(kind(1.0d0)), dimension(size(x)) :: r
-	
+
 	npts = size(x)
 	r(1) = x(1)
 	do i = 2, npts
 	  r(i) = x(i) + r(i-1)
 	end do
-	
+
 	cumint1 = r
-	
+
     end function cumint1
-    
+
     function trapz(x)
-    
+
         ! Arguments
-	
+
 	real(kind(1.0D0)), intent(in) :: x(:)
 	real(kind(1.0D0)) :: trapz
-	
+
 	! Local variables
-	
+
 	integer :: i, npts
 	real(kind(1.0d0)) :: dum
-	
+
 	npts = size(x)
 	dum = 0.0
 	do i = 2, npts
 	  dum = dum + (x(i)+x(i-1))/2.
 	end do
-	
+
 	trapz = dum
 
     end function trapz
-    
+
     function maxvec(x, y)
-        
+
 	! Arguments
-	
+
 	real(kind(1.0D0)), intent(in) :: x(:), y(:)
 	real(kind(1.0d0)), dimension(size(x)) :: maxvec
-	
+
 	! Local variables
-	
+
 	real(kind(1.0d0)), dimension(size(x)) :: dum
 	integer :: i, npts
-	
+
 	npts = size(x)
 	do i = 1, npts
 	  dum(i) = max(x(i), y(i))
 	end do
-	
+
 	maxvec = dum
-	
+
     end function maxvec
-    
+
     function linspace(x, y, nx)
-    
+
         ! Arguments
-	
+
 	real(kind(1.0D0)), intent(in) :: x, y
 	integer, intent(in) :: nx
 	real(kind(1.0d0)), dimension(nx) :: linspace
-	
+
 	! Local variables
-	
+
 	real(kind(1.0d0)) :: dx
 	real(kind(1.0d0)), dimension(nx) :: dum
 	integer :: i
-	
+
 	dx = (y - x)/(nx - 1.0d0)
 	do i = 1, nx
 	  dum(i) = x + (i-1.0d0)*dx
 	end do
-	
+
 	linspace = dum
-    
+
     end function linspace
 
-    
+
     function interp1(x, y1, x2)
-    
+
         ! Arguments
-	
+
 	real(kind(1.0d0)), intent(in) :: x(:), y1(:), x2(:)
 	real(kind(1.0d0)), dimension(size(x2)) :: interp1
 	real(kind(1.0d0)), dimension(size(x)) :: x1
-	
+
 	! Local variables
 
 	real(kind(1.0d0)), dimension(size(x2)) :: y2
 	integer :: i, j,nx1,nx2,jdone
 	real(kind(1.0d0)) ::  z1,z2,z3
 	real(kind(1.0d0)) ::  t1,t2,t3,t4,A,B,C
-	
+
 	! Not used
 	! real(kind(1.0d0)) :: dx, dy, dv
 	! real(kind(1.0d0)) :: t5, t11, z4, z5, z11
 
 	Nx2=size(x2)
 	Nx1=size(x)
-	
+
 	x1=x
 
 	do i=1,Nx2
 		jdone=0
-		
+
 		t4=x2(i)
 
 		do j=2,Nx1-1
 		z1=x1(j-1)
 		z2=x1(j)
 		z3=x1(j+1)
-		
+
 	if (t4.eq.z1 .and. jdone.eq.0) then
 		y2(i)=y1(j-1)
 		jdone=1
@@ -403,12 +403,12 @@ end function integr_cde
 		y2(i)=y1(j+1)
 		jdone=1
 	endif
-	
+
 	if (t4.gt.z1 .and. t4.lt.z3 .and. jdone.eq.0) then
 		t1=y1(j-1)
 		t2=y1(j)
 		t3=y1(j+1)
-		
+
 				A=(t3-t2-(z3-z2)*(t1-t2)/(z1-z2)) &
      &     /((z3-z2)*(z3-z1))
 				B=(t1-t2)/(z1-z2) &
@@ -428,7 +428,7 @@ end function integr_cde
 		t1=y1(j-1)
 		t2=y1(j)
 !		t3=y1(j+1)
-		
+
 
 !				A=(t3-t2-(z3-z2)*(t1-t2)/(z1-z2))
 !     &     /((z3-z2)*(z3-z1))
@@ -453,7 +453,7 @@ end function integr_cde
 		t1=y1(j-1)
 		t2=y1(j)
 		t3=y1(j+1)
-		
+
 
 				A=(t3-t2-(z3-z2)*(t1-t2)/(z1-z2)) &
      &     /((z3-z2)*(z3-z1))
@@ -469,20 +469,20 @@ end function integr_cde
 		enddo
 	enddo
 
-	
+
 	interp1 = y2
-    
+
     end function interp1
 
 
     function interp1_ef(nx1,nx2,x, y1, x2)
-    
+
         ! Arguments
-	
+
 	real(kind(1.0d0)), intent(in) :: x(:), y1(:), x2(:)
 	real(kind(1.0d0)), dimension(size(x2)) :: interp1_ef
 	real(kind(1.0d0)), dimension(size(x)) :: x1
-	
+
 	! Local variables
 
 	real(kind(1.0d0)), dimension(size(x2)) :: y2
@@ -495,12 +495,12 @@ end function integr_cde
 
 	Nx2=size(x2)
 	Nx1=size(x)
-	
+
 	x1=x
 
 	do i=1,Nx2
 		jdone=0
-		
+
 		t4=x2(i)
 
 	if (t4.gt.x(nx1).and.jdone.eq.0) then
@@ -514,7 +514,7 @@ end function integr_cde
 		z1=x1(j-1)
 		z2=x1(j)
 		z3=x1(j+1)
-		
+
 	if (t4.eq.z1 .and. jdone.eq.0) then
 		y2(i)=y1(j-1)
 		jdone=1
@@ -529,12 +529,12 @@ end function integr_cde
 		y2(i)=y1(j+1)
 		jdone=1
 	endif
-	
+
 	if (t4.gt.z1 .and. t4.lt.z3 .and. jdone.eq.0) then
 		t1=y1(j-1)
 		t2=y1(j)
 		t3=y1(j+1)
-		
+
 				A=(t3-t2-(z3-z2)*(t1-t2)/(z1-z2)) &
      &     /((z3-z2)*(z3-z1))
 				B=(t1-t2)/(z1-z2) &
@@ -554,7 +554,7 @@ end function integr_cde
 		t1=y1(j-1)
 		t2=y1(j)
 !		t3=y1(j+1)
-		
+
 
 !				A=(t3-t2-(z3-z2)*(t1-t2)/(z1-z2))
 !     &     /((z3-z2)*(z3-z1))
@@ -579,7 +579,7 @@ end function integr_cde
 		t1=y1(j-1)
 		t2=y1(j)
 		t3=y1(j+1)
-		
+
 
 				A=(t3-t2-(z3-z2)*(t1-t2)/(z1-z2)) &
      &     /((z3-z2)*(z3-z1))
@@ -595,54 +595,53 @@ end function integr_cde
 		enddo
 	enddo
 
-	
+
 	interp1_ef = y2
-    
+
     end function interp1_ef
-    
+
     function eye2(nx)
-    
+
         ! Arguments
-	
+
 	integer, intent(in) :: nx
 	real(kind(1.0d0)), dimension(nx, nx) :: eye2
-	
+
 	! Local variables
-	
+
 	integer :: i
 	real(kind(1.0d0)), dimension(nx, nx) :: dum
-	
+
 	dum = 0.0d0
 	do i = 1, nx
 	  dum(i, i) = 1.0d0
 	end do
-	
+
 	eye2 = dum
-    
+
     end function eye2
-    
+
     function sign1(x)
-    
+
         ! Arguments
-	
+
 	real(kind(1.0d0)), intent(in) :: x(:)
 	real(kind(1.0d0)), dimension(size(x)) :: sign1
-	
+
 	! Local variables
-	
+
 	integer :: i
 	real(kind(1.0d0)), dimension(size(x)) :: dum
-	
+
 	dum = x/abs(x)
 	do i = 1, size(x)
 	  if (x(i) == 0.0d0) then
 	    dum(i) = 0.0d0
           end if
 	end do
-	
-	sign1 = dum
-    
-    end function sign1
-        
-end module grad_func
 
+	sign1 = dum
+
+    end function sign1
+
+end module grad_func

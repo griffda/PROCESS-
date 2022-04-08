@@ -1,6 +1,6 @@
 """
 Documentation tools cannot document the fortan shared object file
-due. However, f2py auto-documents the entire interface. 
+due. However, f2py auto-documents the entire interface.
 
 This file processes that interface into a dummy-Python format,
 _fortran.py with all the same names and docstrings, however

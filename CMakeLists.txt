@@ -125,7 +125,6 @@ LIST(APPEND PROCESS_SRCS
     water_usage_variables.f90
     constraint_equations.f90
     stellarator.f90
-    pulse.f90
     divertor_ode.f90
     constants.f90
     hcll.f90
@@ -141,6 +140,9 @@ LIST(APPEND PROCESS_SRCS
     global_variables.f90
     constraint_variables.f90
     vacuum_variables.f90
+    impurity_radiation.f90
+    pulse_variables.f90
+    pf_power_variables.f90
 )
 
 PREPROCESS()
@@ -152,7 +154,7 @@ PIP_INSTALL()
 # Stage 1: Compile Fortran sources to a shared library
 # (libprocess.so on Linux)
 ADD_LIBRARY(${PROJECT_NAME} SHARED ${PROCESS_SRC_PATHS} ${PLASMOD_SRC_PATHS} ${REFPROP_SRC_PATHS})
-SET_TARGET_PROPERTIES(${PROJECT_NAME} 
+SET_TARGET_PROPERTIES(${PROJECT_NAME}
     PROPERTIES LINKER_LANGUAGE Fortran
     LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/process/lib
 )
@@ -183,7 +185,7 @@ GET_GFORTRANLIBS()
 SET(PROCESS_MODULE_DIST ${CMAKE_SOURCE_DIR}/process_dist)
 
 # Delete any existing .gcda files
-ADD_CUSTOM_TARGET(coverage_cleanup 
+ADD_CUSTOM_TARGET(coverage_cleanup
     COMMAND echo "-- Deleting any existing .gcda coverage files..."
     COMMAND find ${CMAKE_SOURCE_DIR}/build/ -name '*.gcda' -exec rm -rf {} \\\;
 )

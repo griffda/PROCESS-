@@ -45,7 +45,7 @@ module tfcoil_variables
   real(dp) :: sig_tf_wp_max
   !! Allowable maximum shear stress (Tresca criterion) in TF coil conduit (Pa)
 
-  ! TODO remove below IF not needed 
+  ! TODO remove below IF not needed
   ! real(dp) :: alstrtf
   !! Allowable Tresca stress in TF coil structural material (Pa)
 
@@ -62,7 +62,7 @@ module tfcoil_variables
   !! winding pack He coil area (m2)
 
   real(dp) :: bcritsc
-  !! upper critical field (T) for Nb3Sn superconductor at zero temperature and 
+  !! upper critical field (T) for Nb3Sn superconductor at zero temperature and
   !! strain (`i_tf_sc_mat=4, =bc20m`)
 
   real(dp) :: bmaxtf
@@ -94,10 +94,10 @@ module tfcoil_variables
 
   real(dp) :: t_conductor
   !! Conductor (cable + steel conduit) area averaged dimension [m]
-  
+
   real(dp) :: t_turn_tf
   !! TF coil turn edge length including turn insulation [m]
-  !!   If the turn is not a square (i_tf_turns_integer = 1) a squared turn of 
+  !!   If the turn is not a square (i_tf_turns_integer = 1) a squared turn of
   !!   equivelent size is use to calculated this quantity
   !!   If the t_turn_tf is non zero, cpttf is calculated
 
@@ -106,21 +106,21 @@ module tfcoil_variables
   !! Not an input
 
   real(dp) :: f_t_turn_tf
-  !! f-value for TF turn edge length constraint 
-  !!  If the turn is not a square (i_tf_turns_integer = 1) a squared turn of 
+  !! f-value for TF turn edge length constraint
+  !!  If the turn is not a square (i_tf_turns_integer = 1) a squared turn of
   !!  equivelent size is use for this constraint
   !!  iteration variable ixc = 175
   !!  constraint equation icc = 86
 
   real(dp) :: t_turn_tf_max
-  !! TF turn edge length including turn insulation upper limit [m] 
-  !! If the turn is not a square (i_tf_turns_integer = 1) a squared turn of 
+  !! TF turn edge length including turn insulation upper limit [m]
+  !! If the turn is not a square (i_tf_turns_integer = 1) a squared turn of
   !! equivelent size is use for this constraint
   !! constraint equation icc = 86
 
   real(dp) :: t_cable_tf
   !! TF coil superconducting cable squared/rounded dimensions [m]
-  !!   If the turn is not a square (i_tf_turns_integer = 1) a squared cable of 
+  !!   If the turn is not a square (i_tf_turns_integer = 1) a squared cable of
   !!   equivelent size is use to calculated this quantity
   !!   If the t_cable_tf is non zero, cpttf is calculated
 
@@ -133,7 +133,7 @@ module tfcoil_variables
 
   real(dp) :: cdtfleg
   !! TF outboard leg current density (A/m2) (resistive coils only)
-  
+
   real(dp) :: cforce
   !! centering force on inboard leg (per coil) (N/m)
 
@@ -141,11 +141,11 @@ module tfcoil_variables
   !! length of TF coil inboard leg ('centrepost') (`i_tf_sup = 1`)
 
   real(dp) :: cpttf
-  !! TF coil current per turn (A). (calculated for stellarators) (calculated for 
+  !! TF coil current per turn (A). (calculated for stellarators) (calculated for
   !! integer-turn TF coils `i_tf_turns_integer=1`) (`iteration variable 60`)
 
   real(dp) :: cpttf_max
-  !! Max TF coil current per turn [A]. (for stellarators and `i_tf_turns_integer=1`) 
+  !! Max TF coil current per turn [A]. (for stellarators and `i_tf_turns_integer=1`)
   !! (`constraint equation 77`)
 
   real(dp) :: dcase
@@ -153,7 +153,7 @@ module tfcoil_variables
 
   real(dp), dimension(9) :: dcond
   !! density of superconductor type given by i_tf_sc_mat/isumatoh/isumatpf (kg/m3)
-  
+
   real(dp) :: dcondins
   !! density of conduit + ground-wall insulation (kg/m3)
 
@@ -175,11 +175,11 @@ module tfcoil_variables
   !! copper fraction of cable conductor (TF coils)
   !! (iteration variable 59)
   real(dp) :: fhts
-  !! technology adjustment factor for critical current density fit for isumat..=2 
-  !! Bi-2212 superconductor, to describe the level of technology assumed (i.e. to 
-  !! account for stress, fatigue, radiation, AC losses, joints or manufacturing 
+  !! technology adjustment factor for critical current density fit for isumat..=2
+  !! Bi-2212 superconductor, to describe the level of technology assumed (i.e. to
+  !! account for stress, fatigue, radiation, AC losses, joints or manufacturing
   !! variations; 1.0 would be very optimistic)
-  
+
   real(dp) :: insstrain
   !! Radial strain in insulator
 
@@ -193,15 +193,15 @@ module tfcoil_variables
   !! Switch for TF coil conduit Tresca stress criterion:
   !!   0 : Tresca (no adjustment);
   !!   1 : Tresca with CEA adjustment factors (radial+2%, vertical+60%) </UL>
-  
+
   integer :: i_tf_wp_geom
   !! Switch for TF WP geometry selection
-  !!   0 : Rectangular geometry 
-  !!   1 : Double rectangular geometry 
+  !!   0 : Rectangular geometry
+  !!   1 : Double rectangular geometry
   !!   2 : Trapezoidal geometry (constant lateral casing thickness)
-  !! Default setting for backward compatibility 
+  !! Default setting for backward compatibility
   !!   if i_tf_turns_integer = 0 : Double rectangular
-  !!   if i_tf_turns_integer = 1 : Rectangular 
+  !!   if i_tf_turns_integer = 1 : Rectangular
 
   integer :: i_tf_case_geom
   !! Switch for TF case geometry selection
@@ -239,28 +239,28 @@ module tfcoil_variables
   !! Switch for TF coil toroidal shape:
   !!
   !! - =0  Default value : Picture frame coil for TART / PROCESS D-shape for non itart
-  !! - =1  PROCESS D-shape : parametrise with 2 arcs 
-  !! - =2  Picture frame coils 
-  
+  !! - =1  PROCESS D-shape : parametrise with 2 arcs
+  !! - =2  Picture frame coils
+
   integer :: i_tf_cond_eyoung_axial
   !! Switch for the behavior of the TF coil conductor elastic axial properties
   !!
   !! - =0  Young's modulus is set to zero, and the conductor is not considered
-  !!       in the stress calculation. This corresponds to the case that the 
+  !!       in the stress calculation. This corresponds to the case that the
   !!       conductor is much less stiff than the conduit, or the case that the
   !!       conductor is prevented (isolated) from taking axial loads.
   !! - =1  Elastic properties are set by user input, using the variable
   !!       `eyoung_cond_axial`
   !! - =2  Elastic properties are set to reasonable defaults taking into
   !!       account the superconducting material `i_tf_sc_mat`
-  
+
   integer :: i_tf_cond_eyoung_trans
   !! Switch for the behavior of the elastic properties of the TF coil
-  !! conductorin the transverse direction. Only active if 
+  !! conductorin the transverse direction. Only active if
   !! `i_tf_cond_eyoung_axial == 2`
   !!
   !! - =0  Cable not potted in solder. Transverse Young's modulus set to zero.
-  !! - =1  Cable potted in solder. If `i_tf_cond_eyoung_axial == 2`, the 
+  !! - =1  Cable potted in solder. If `i_tf_cond_eyoung_axial == 2`, the
   !!       transverse Young's modulus of the conductor is equal to the axial,
   !!       which is set to a sensible material-dependent default.
 
@@ -269,21 +269,21 @@ module tfcoil_variables
 
   integer :: n_layer
   !! Number of layers in TF coil. Only used if `i_tf_turns_integer=1`
-  
+
   integer :: n_rad_per_layer
-  !! Size of the arrays per layers storing the radial dependent stress 
+  !! Size of the arrays per layers storing the radial dependent stress
   !! quantities (stresses, strain displacement etc..)
 
   integer :: i_tf_bucking
   !! Switch for TF inboard suport structure design:
-  !! 
+  !!
   !! Default setting for backward compatibility
-  !!     - if copper resistive TF (i_tf_sup = 0) : Free standing TF without bucking structure 
-  !!     - if Superconducting TF  (i_tf_sup = 1) : Free standing TF with a steel casing  
+  !!     - if copper resistive TF (i_tf_sup = 0) : Free standing TF without bucking structure
+  !!     - if Superconducting TF  (i_tf_sup = 1) : Free standing TF with a steel casing
   !!     - if aluminium  TF       (i_tf_sup = 2) : Free standing TF with a bucking structure
   !!     Rem : the case is a bucking structure
   !! - =0 : Free standing TF without case/bucking cyliner (only a conductor layer)
-  !! - =1 : Free standing TF with a case/bucking cylinder made of 
+  !! - =1 : Free standing TF with a case/bucking cylinder made of
   !!     - if copper resistive     TF (i_tf_sup = 0) : used defined bucking cylinder
   !!     - if Superconducting      TF (i_tf_sup = 1) : Steel casing
   !!     - if aluminium resisitive TF (i_tf_sup = 2) : used defined bucking cylinder
@@ -296,21 +296,21 @@ module tfcoil_variables
   !!                      axial tension
 
   integer :: n_tf_graded_layers
-  !! Number of layers of different stress properties in the WP. If `n_tf_graded_layers > 1`, 
+  !! Number of layers of different stress properties in the WP. If `n_tf_graded_layers > 1`,
   !! a graded coil is condidered
 
   integer :: n_tf_stress_layers
   !! Number of layers considered for the inboard TF stress calculations
   !! set in initial.f90 from i_tf_bucking and n_tf_graded_layers
-  
+
   integer :: n_tf_wp_layers
-  !! Maximum number of layers that can be considered in the TF coil composited/smeared 
-  !! stress analysis. This is the layers of one turn, not the entire WP. 
+  !! Maximum number of layers that can be considered in the TF coil composited/smeared
+  !! stress analysis. This is the layers of one turn, not the entire WP.
   !! Default: 5. void, conductor, copper, conduit, insulation.
 
   real(dp) :: jbus
   !! bussing current density (A/m2)
-  
+
   real(dp) :: jwdgcrt
   !! critical current density for winding pack (A/m2)
 
@@ -338,12 +338,12 @@ module tfcoil_variables
   !! direction [Pa]
   !! Set by user input only if `i_tf_cond_eyoung_axial == 1`; otherwise
   !! set by the behavior of that switch.
-  
+
   real(dp) :: eyoung_cond_trans
   !! SC TF coil conductor Young's modulus in the transverse direction [Pa]
   !! Set by user input only if `i_tf_cond_eyoung_axial == 1`; otherwise
   !! set by the behavior of that switch.
-  
+
   real(dp) :: eyoung_res_tf_buck
   !! Resistive TF magnets bucking cylinder young modulus (Pa)
 
@@ -352,15 +352,15 @@ module tfcoil_variables
 
   real(dp) :: eyoung_al
   !! Aluminium young modulus.  Default value taken from wikipedia
-  
+
   real(dp) :: poisson_steel
-  !! Steel Poisson's ratio 
-  
+  !! Steel Poisson's ratio
+
   real(dp):: poisson_copper
   !! Copper Poisson's ratio. Source : https://www.engineeringtoolbox.com/poissons-ratio-d_1224.html
 
   real(dp):: poisson_al
-  !! Aluminium Poisson's ratio. 
+  !! Aluminium Poisson's ratio.
   !! Source : https://www.engineeringtoolbox.com/poissons-ratio-d_1224.html
 
   real(dp):: poisson_ins
@@ -369,10 +369,10 @@ module tfcoil_variables
 
   real(dp) :: poisson_cond_axial
   !! SC TF coil conductor Poisson's ratio in the parallel-transverse direction
-  
+
   real(dp) :: poisson_cond_trans
   !! SC TF coil conductor Poisson's ratio in the transverse-transverse direction
-  
+
   real(dp) :: rbmax
   !! Radius of maximum TF B-field (m)
 
@@ -393,7 +393,7 @@ module tfcoil_variables
 
   real(dp) :: ritfc
   !! total (summed) current in TF coils (A)
-  
+
   integer, parameter :: n_radial_array = 50
   !! Size of the radial distribution arrays per layers
   !! used for stress, strain and displacement distibution
@@ -403,19 +403,19 @@ module tfcoil_variables
 
   real(dp), dimension(2*n_radial_array) :: sig_tf_r
   !! TF Inboard leg radial stress in steel r distribution at mid-plane [Pa]
-  
+
   real(dp), dimension(2*n_radial_array) :: sig_tf_t
   !! TF Inboard leg tangential stress in steel r distribution at mid-plane [Pa]
-  
+
   real(dp), dimension(2*n_radial_array) :: deflect
   !! TF coil radial deflection (displacement) radial distribution [m]
 
   real(dp) :: sig_tf_z
   !! TF Inboard leg vertical tensile stress in steel at mid-plane [Pa]
-    
+
   real(dp), dimension(2*n_radial_array) :: sig_tf_vmises
   !! TF Inboard leg Von-Mises stress in steel r distribution at mid-plane [Pa]
-      
+
   real(dp), dimension(2*n_radial_array) :: sig_tf_tresca
   !! TF Inboard leg maximum shear stress (Tresca criterion) in steel r distribution at mid-plane [Pa]
 
@@ -426,29 +426,29 @@ module tfcoil_variables
   !! Maximum shear stress (Tresca criterion) in CS structures at CS flux swing [Pa]:
   !!
   !!  - If superconducting CS (ipfres = 0): turn steel conduits stress
-  !!  - If resistive       CS (ipfres = 1): copper conductor stress 
+  !!  - If resistive       CS (ipfres = 1): copper conductor stress
   !!
   !! Quantity only computed for bucked and wedged design (`i_tf_bucking >= 2`)
-  !! Def : CS Flux swing, instant when the current changes sign in CS (null current) 
+  !! Def : CS Flux swing, instant when the current changes sign in CS (null current)
 
   real(dp) :: sig_tf_case
   !! Maximum shear stress (Tresca criterion) in TF casing steel structures (Pa)
-  
+
   real(dp) :: sig_tf_wp
 
   ! TODO is this needed?
   ! real(dp) :: strtf1
   ! !! Maximum TRESCA stress in TF casing steel structures (Pa)
-  
+
   ! real(dp) :: strtf2
   ! !! Maximum TRESCA stress in TF WP conduit steel structures (Pa)
   ! !! This is the TF stress condition used in the case of stellarators
-  
+
   real(dp) :: sigvvall
   !! allowable stress from TF quench in vacuum vessel (Pa)
 
   real(dp) :: str_cs_con_res
-  !! Residual manufacturing strain in CS superconductor material 
+  !! Residual manufacturing strain in CS superconductor material
 
   real(dp) :: str_pf_con_res
   !! Residual manufacturing strain in PF superconductor material
@@ -457,7 +457,7 @@ module tfcoil_variables
   !! Residual manufacturing strain in TF superconductor material
   !! If `i_str_wp == 0`, used to compute the critical surface.
   !! Otherwise, the self-consistent winding pack `str_wp` is used.
-  
+
   real(dp) :: str_wp
   !! Axial (vertical) strain in the TF coil winding pack found by
   !! self-consistent stress/strain calculation.
@@ -465,13 +465,13 @@ module tfcoil_variables
   !! Otherwise, the input value `str_tf_con_res` is used.
   !! Constrain the absolute value using `constraint equation 88`
   !! You can't have constraint 88 and i_str_wp = 0 at the same time
-  
+
   real(dp) :: str_wp_max
   !! Maximum allowed absolute value of the strain in the TF coil
   !! (`Constraint equation 88`)
-  
+
   integer :: i_str_wp
-  !! Switch for the behavior of the TF strain used to compute 
+  !! Switch for the behavior of the TF strain used to compute
   !! the strain-dependent critical surface:
   !!
   !! - =0  str_tf_con_res is used
@@ -523,7 +523,7 @@ module tfcoil_variables
 
   real(dp) :: tfcmw
   !! Peak power per TF power supply (MW)
-  
+
   real(dp) :: tfcpmw
   !! Peak resistive TF coil inboard leg power (MW)
 
@@ -541,12 +541,12 @@ module tfcoil_variables
 
   real(dp) :: tfinsgap
   !! TF coil WP insertion gap (m)
-  
+
   real(dp) :: tflegmw
   !! TF coil outboard leg resistive power (MW)
 
   real(dp) :: rhocp
-  !! TF coil inboard leg resistivity [Ohm-m]. If `itart=0`, this variable is the 
+  !! TF coil inboard leg resistivity [Ohm-m]. If `itart=0`, this variable is the
   !! average resistivity over the whole magnet
 
   real(dp) :: rhotfleg
@@ -556,18 +556,18 @@ module tfcoil_variables
   !! Resistivity of a TF coil bus (Ohm-m). Default value takes the same res as the leg one
 
   real(dp) :: frhocp
-  !! Centrepost resistivity enhancement factor. For `itart=0`, this factor 
-  !! is used for the whole magnet 
-  
+  !! Centrepost resistivity enhancement factor. For `itart=0`, this factor
+  !! is used for the whole magnet
+
   real(dp) :: frholeg
   !! Ouboard legs resistivity enhancement factor. Only used for `itart=1`.
-  
+
   integer :: i_cp_joints
   !! Switch for CP demoutable joints type
   !!  -= 0 : Clampled joints
   !!  -= 1 : Sliding joints
-  !! Default value (-1) choses : 
-  !!   Sliding joints for resistive magnets (i_tf_sup = 0, 2)  
+  !! Default value (-1) choses :
+  !!   Sliding joints for resistive magnets (i_tf_sup = 0, 2)
   !!   Clampled joints for superconducting magents (i_tf_sup = 1)
 
   real(dp) :: rho_tf_joints
@@ -629,9 +629,9 @@ module tfcoil_variables
 
   real(dp) :: thwcndut
   !! TF coil conduit case thickness (m) (`iteration variable 58`)
-  
+
   real(dp) :: tinstf
-  !! Thickness of the ground insulation layer surrounding (m) 
+  !! Thickness of the ground insulation layer surrounding (m)
   !!   - Superconductor TF (`i_tf_sup == 1`) : The TF coil Winding packs
   !!   - Resistive magnets (`i_tf_sup /= 1`) : The TF coil wedges
   !! Rem : Thickness calculated for stellarators.
@@ -671,7 +671,7 @@ module tfcoil_variables
 
   real(dp) :: vforce
   !! vertical tension on inboard leg/coil (N)
-  
+
   real(dp) :: f_vforce_inboard
   !! Fraction of the total vertical force taken by the TF inboard leg tension
   !! Not used for resistive `itart=1` (sliding joints)
@@ -701,11 +701,11 @@ module tfcoil_variables
   real(dp) :: whtconcu
   !! copper mass in TF coil conductor (kg/coil).
   !! For `itart=1`, coil is return limb plus centrepost/n_tf
-  
+
   real(dp) :: whtconal
   !! Aluminium mass in TF coil conductor (kg/coil).
   !! For `itart=1`, coil is return limb plus centrepost/n_tf
-  
+
   real(dp) :: whtconin
   !! conduit insulation mass in TF coil conductor (kg/coil)
 
@@ -775,7 +775,7 @@ module tfcoil_variables
 
   real(dp) :: fcoolleg
   !! coolant fraction of TF coil outboard legs
-  
+
   real(dp) :: a_cp_cool
   !! Centrepost cooling area toroidal cross-section (constant over the whole CP)
 
@@ -791,7 +791,7 @@ module tfcoil_variables
 
   real(dp) :: presleg
   !! Summed resistive power in the TF coil legs [W]. Remain 0 if `itart=0`.
-  
+
   real(dp) :: ptempalw
   !! maximum peak centrepost temperature (K) (`constraint equation 44`)
 
@@ -802,29 +802,29 @@ module tfcoil_variables
   !! centrepost coolant inlet temperature (K)
 
   real(dp) :: dtiocool
-  !! inlet / outlet TF coil coolant temperature rise (K)  
+  !! inlet / outlet TF coil coolant temperature rise (K)
 
   real(dp) :: tcpav
-  !! Average temperature of centrepost called CP (K). Only used for resistive coils 
-  !! to compute the resisitive heating. Must be an iteration variable for 
+  !! Average temperature of centrepost called CP (K). Only used for resistive coils
+  !! to compute the resisitive heating. Must be an iteration variable for
   !! ST (`itart=1`) (`iteration variable 20`)
 
   real(dp) :: tcpav2
   !! Computed centrepost average temperature (K) (for consistency)
 
   real(dp) :: tlegav
-  !! Average temperature of the TF outboard legs [K]. If `tlegav=-1.0`, the ouboard 
-  !! legs and CP temperatures are the same. Fixed for now, should use a contraints eq like tcpav 
+  !! Average temperature of the TF outboard legs [K]. If `tlegav=-1.0`, the ouboard
+  !! legs and CP temperatures are the same. Fixed for now, should use a contraints eq like tcpav
 
   real(dp) :: tcpmax
   !! peak centrepost temperature (K)
-  
+
   real(dp) :: vcool
   !! inlet centrepost coolant flow speed at midplane (m/s) (`iteration variable 70`)
 
   real(dp) :: vol_cond_cp
   !! Exact conductor volume in the centrepost (m3)
-  
+
   real(dp) :: whtcp
   !! mass of TF coil inboard legs (kg)
 
@@ -914,9 +914,9 @@ module tfcoil_variables
     eyoung_steel = 2.05D11
     eyoung_cond_axial = 6.6D8
     eyoung_cond_trans = 0.0D0
-    eyoung_res_tf_buck = 150.0D9 
+    eyoung_res_tf_buck = 150.0D9
     eyoung_copper = 117.0D9
-    eyoung_al = 69.0D9 
+    eyoung_al = 69.0D9
     poisson_steel = 0.3D0
     poisson_copper = 0.35D0
     poisson_al = 0.35D0
@@ -936,7 +936,7 @@ module tfcoil_variables
     deflect = 0.0D0
     sig_tf_z = 0.0D0
     sig_tf_vmises = 0.0D0
-    sig_tf_tresca = 0.0D0 
+    sig_tf_tresca = 0.0D0
     sig_tf_cs_bucked = 0.0D0
     sig_tf_case = 0.0D0
     sig_tf_wp = 0.0D0
@@ -1042,7 +1042,7 @@ module tfcoil_variables
     dtiocool = 0.0D0
     tcpav = 373.15D0     ! 100 C
     tcpav2 = 0.0D0
-    tlegav = -1.0D0 
+    tlegav = -1.0D0
     tcpmax = 0.0D0
     vcool = 20.0D0
     vol_cond_cp = 0.0D0

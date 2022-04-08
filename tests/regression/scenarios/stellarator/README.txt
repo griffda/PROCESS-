@@ -18,4 +18,4 @@ HELIAS-5B Stellarator
 SIM 09/12/19: vmec_info.dat, vmec_Rmn.dat and vmec_Zmn.dat removed following
 Jorrit Lion's update (see Issue #965)
 
-CPSS 2022/02/21: tftmp was set to 4.2, but tmpcry was not. Setting tmpcry also. 
+CPSS 2022/02/21: tftmp was set to 4.2, but tmpcry was not. Setting tmpcry also.

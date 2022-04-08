@@ -73,7 +73,7 @@ class Vacuum:
                 pv.idivrt,
                 qtorus,
                 gasld,
-                output=output
+                output=output,
             )
             # MDK pumpn is real: convert to integer by rounding.
             vacv.vpumpn = math.floor(pumpn + 0.5e0)
@@ -498,7 +498,7 @@ class Vacuum:
         #  snet(4) - snet(2)
         snet = []
         for i in range(ITERATIONS_OVER_I):
-            ceff1 = ceff[imax]* nduct
+            ceff1 = ceff[imax] * nduct
             snet.append(
                 1.0e0
                 / (1.0e0 / (ceff1 * xmult[imax] / xmult[i]) + 1.0e0 / sp[i] / pumpn)
@@ -512,12 +512,12 @@ class Vacuum:
 
         #  Information for costing routine
 
-        dlscalc = l1 * d[imax]** 1.4e0 + (ltot - l1) * (d[imax]* 1.2e0) ** 1.4e0
+        dlscalc = l1 * d[imax] ** 1.4e0 + (ltot - l1) * (d[imax] * 1.2e0) ** 1.4e0
 
         #  Mass of duct shielding
 
         arsh = (
-            0.25e0 * math.pi * ((d[imax]* 1.2e0 + thdsh) ** 2 - (d[imax]* 1.2e0) ** 2)
+            0.25e0 * math.pi * ((d[imax] * 1.2e0 + thdsh) ** 2 - (d[imax] * 1.2e0) ** 2)
         )
         mvdsh = arsh * (ltot - l1) * densh * fsolid
 
@@ -670,4 +670,4 @@ class Vacuum:
             po.oblnkl(self.outfile)
             po.ocmmnt(self.outfile, f"The vacuum system uses {ipump} pumps.")
 
-        return pumpn, nduct, dlscalc, mvdsh, dimax  
+        return pumpn, nduct, dlscalc, mvdsh, dimax
