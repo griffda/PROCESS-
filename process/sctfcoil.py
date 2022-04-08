@@ -798,6 +798,7 @@ class Sctfcoil:
                     error_handling.idiags[0] = lap
                     error_handling.fdiags[1] = ttest
                     error_handling.report_error(157)
+                    break
 
                 # Calculate derivative numerically
                 ttestm = ttest - delt
