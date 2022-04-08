@@ -267,12 +267,15 @@ def test_ohcalc(monkeypatch, reinitialise_error_module, pfcoil):
     assert pytest.approx(pfv.rjohc) == -7.728453e9
 
 
-def test_efc(monkeypatch):
+def test_efc(pfcoil, monkeypatch):
     """Test efc subroutine.
 
     efc() requires specific arguments in order to work; these were discovered
     using gdb to break on the first call of efc() when running the baseline 2019
     IN.DAT.
+
+    :param pfcoil: a PFCoil instance
+    :type pfcoil: process.pfcoil.PFCoil
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
     """
@@ -415,7 +418,7 @@ def test_efc(monkeypatch):
     sigma = np.full(ngrpmx, 0.0)
     work2 = np.full(ngrpmx, 0.0)
 
-    ssq, ccls = pf.efc(
+    ssq, ccls = pfcoil.efc(
         npts,
         rpts,
         zpts,

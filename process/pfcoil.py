@@ -249,7 +249,7 @@ class PFCoil:
                 bzin[i] = 0.0e0
 
                 #  Calculate currents in coils to produce the given field
-            pf.ssq0, pf.ccl0 = pf.efc(
+            pf.ssq0, pf.ccl0 = self.efc(
                 npts,
                 rpts,
                 zpts,
@@ -399,7 +399,7 @@ class PFCoil:
 
                 pv.bvert = bzin[0]
 
-                ssqef, pf.ccls0 = pf.efc(
+                ssqef, pf.ccls0 = self.efc(
                     npts0,
                     rpts,
                     zpts,
@@ -755,6 +755,121 @@ class PFCoil:
         pfv.cpt[pfv.ncirt - 1, 3] = pv.plascur
         pfv.cpt[pfv.ncirt - 1, 4] = pv.plascur
         pfv.cpt[pfv.ncirt - 1, 5] = 0.0e0
+
+    def efc(
+        self,
+        npts,
+        rpts,
+        zpts,
+        brin,
+        bzin,
+        nfix,
+        rfix,
+        zfix,
+        cfix,
+        ngrp,
+        ncls,
+        rcls,
+        zcls,
+        alfa,
+        bfix,
+        gmat,
+        bvec,
+        rc,
+        zc,
+        cc,
+        xc,
+        umat,
+        vmat,
+        sigma,
+        work2,
+    ):
+        """Calculates field coil currents.
+
+        author: P J Knight, CCFE, Culham Science Centre
+        author: D Strickler, ORNL
+        author: J Galambos, ORNL
+        author: P C Shipe, ORNL
+        This routine calculates the currents required in a group
+        of ring coils to produce a fixed field at prescribed
+        locations. Additional ring coils with fixed currents are
+        also allowed.
+
+        :param npts: number of data points at which field is to be fixed; should
+        be <= nptsmx
+        :type npts: int
+        :param rpts: coords of data points (m)
+        :type rpts: np.ndarray
+        :param zpts: coords of data points (m)
+        :type zpts: np.ndarray
+        :param brin: field components at data points (T)
+        :type brin: np.ndarray
+        :param bzin: field components at data points (T)
+        :type bzin: np.ndarray
+        :param nfix: number of coils with fixed currents, <= nfixmx
+        :type nfix: int
+        :param rfix: coordinates of coils with fixed currents (m)
+        :type rfix: np.ndarray
+        :param zfix: coordinates of coils with fixed currents (m)
+        :type zfix: np.ndarray
+        :param cfix: Fixed currents (A)
+        :type cfix: np.ndarray
+        :param ngrp: number of coil groups, where all coils in a group have the
+        same current, <= ngrpmx
+        :type ngrp: int
+        :param ncls: number of coils in each group, each value <= nclsmx
+        :type ncls: np.ndarray
+        :param rcls: coords R(i,j), Z(i,j) of coil j in group i (m)
+        :type rcls: np.ndarray
+        :param zcls: coords R(i,j), Z(i,j) of coil j in group i (m)
+        :type zcls: np.ndarray
+        :param alfa: smoothing parameter (0 = no smoothing, 1.0D-9 = large
+        smoothing)
+        :type alfa: float
+        :param bfix: work array
+        :type bfix: np.ndarray
+        :param gmat: work array
+        :type gmat: np.ndarray
+        :param bvec: work array
+        :type bvec: np.ndarray
+        :param rc: work array
+        :type rc: np.ndarray
+        :param zc: work array
+        :type zc: np.ndarray
+        :param cc: work array
+        :type cc: np.ndarray
+        :param xc: work array
+        :type xc: np.ndarray
+        :param umat: work array
+        :type umat: np.ndarray
+        :param vmat: work array
+        :type vmat: np.ndarray
+        :param sigma: work array
+        :type sigma: np.ndarray
+        :param work2: work array
+        :type work2: np.ndarray
+        :return: sum of squares of elements of residual vector, solution vector
+        of coil currents in each group (A)
+        :rtype: tuple[float, np.ndarray]
+        """
+        lrow1 = bfix.shape[0]
+        lcol1 = gmat.shape[1]
+        bfix = pf.fixb(lrow1, npts, rpts, zpts, nfix, rfix, zfix, cfix)
+
+        # Set up matrix equation
+        nrws, gmat, bvec, rc, zc, cc, xc = pf.mtrx(
+            lcol1, npts, rpts, zpts, brin, bzin, ngrp, ncls, rcls, zcls, alfa, bfix
+        )
+
+        # Solve matrix equation
+        ccls, umat, vmat, sigma, work2 = pf.solv(pfv.ngrpmx, ngrp, nrws, gmat, bvec)
+
+        # Calculate the norm of the residual vectors
+        brssq, brnrm, bzssq, bznrm, ssq = pf.rsid(
+            npts, brin, bzin, nfix, ngrp, ccls, bfix, gmat
+        )
+
+        return ssq, ccls
 
     def ohcalc(self):
         """Routine to perform calculations for the Central Solenoid solenoid.
