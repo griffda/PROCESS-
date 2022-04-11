@@ -266,7 +266,6 @@ starfire-py38:
 Flake8:
     when: on_success
     stage: quality
-    allow_failure: true
     script:
         - python3.8 -m pip install flake8
         - python3.8 -m flake8 --tee . > flake8.log
@@ -280,7 +279,6 @@ Flake8:
 Black:
     when: on_success
     stage: quality
-    allow_failure: true
     before_script:
         - python3.8 -m pip install black==22.3.0
     script:
