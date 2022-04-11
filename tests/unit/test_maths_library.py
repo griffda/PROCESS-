@@ -1,6 +1,5 @@
 """Unit tests for maths_library.f90."""
 import pytest
-from pytest import approx
 from process import fortran
 
 

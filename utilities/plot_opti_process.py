@@ -1,18 +1,4 @@
 #!/usr/bin/env python
-import matplotlib
-
-matplotlib.use("Agg")
-import os
-import argparse
-from argparse import RawTextHelpFormatter
-import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.lines as mlines
-from create_dicts import get_dicts
-
-# Load dicts from dicts JSON file
-p_dicts = get_dicts()
-
 """ Set of macro that plots information about the VMNCON optimization
     WARNING : YOU HAVE TO CREATE THE PROCESS DICT IN ORDER TO USE THIS MACRO !!
 
@@ -75,12 +61,24 @@ p_dicts = get_dicts()
      - The output file naming convention still has to be discussed
     _____________
  """
+import matplotlib
+import os
+import argparse
+from argparse import RawTextHelpFormatter
+import numpy as np
+import matplotlib.pyplot as plt
+from create_dicts import get_dicts
+
+matplotlib.use("Agg")
+
+
+# Load dicts from dicts JSON file
+p_dicts = get_dicts()
 
 
 if __name__ == "__main__":
-    #####################################################
-    ##            PARSING USER PARAMETERS              ##
-    #####################################################
+
+    # PARSING USER PARAMETERS
     # please execute 'python plot_opti_process.py -h' for input information
     # Option definition
     # -----------------
@@ -178,7 +176,7 @@ if __name__ == "__main__":
         "m:",
     ]
 
-    ## Boolean swiches for plot selection
+    # Boolean swiches for plot selection
     # -----------------------------------
     plot_FoM = ("FoM" in plot_selection) or "all" == plot_selection
     plot_conv = ("conv" in plot_selection) or "all" == plot_selection
@@ -194,7 +192,7 @@ if __name__ == "__main__":
     axis_font_size = int(args.axis_font_size)
     #####################################################
 
-    ## Step 1 : Data extraction
+    # Step 1 : Data extraction
     # ----------------------------------------------------------------------------------------------
     plot_indexes = list()
     vmcon_indexes = list()
@@ -213,7 +211,7 @@ if __name__ == "__main__":
             line.strip("\n") for line in opt_data_lines
         ]  # Just removing the \n statment
 
-        ## Optimization setup information extraction
+        # Optimization setup information extraction
         # ------------------------------------------
         # Constrains
         n_constraints = int(opt_data_lines[1])
@@ -242,7 +240,7 @@ if __name__ == "__main__":
         plot_indexes = [ii + 1 for ii in range(n_vmcon)]
         # ------------------------------------------
 
-        ## VMCON data extraction
+        # VMCON data extraction
         # ----------------------
         # Full data extraction
         data = list()
@@ -297,13 +295,13 @@ if __name__ == "__main__":
         constraints = constraints[:-1]
         # ---------------------
 
-    ## Step 2 : Plotting
+    # Step 2 : Plotting
     # ----------------------------------------------------------------------------------------------
     tolerance = float(1e-7)
     if not os.path.isdir("OPT_plots"):
         os.mkdir("OPT_plots")
 
-    ## PLOT 1 : Figure of merit evolution
+    # PLOT 1 : Figure of merit evolution
     # -----------------------------------
     if plot_FoM:
 
@@ -329,7 +327,7 @@ if __name__ == "__main__":
         plt.close()
     # -----------------------------------
 
-    ## Plot 2 : Convergence parameters
+    # Plot 2 : Convergence parameters
     # --------------------------------
     if plot_conv:
 
@@ -359,7 +357,7 @@ if __name__ == "__main__":
         plt.close()
     # --------------------------------
 
-    ## Plots 3 : Domimant constraints parameters
+    # Plots 3 : Domimant constraints parameters
     # ------------------------------------------
     # This graph will show the n_ploted_const constrains that dominates sqsumsq at the last iteration, their quadratic sum and sqsumsq
     # ---
@@ -618,7 +616,7 @@ if __name__ == "__main__":
         plt.close()
     # ------------------------------------
 
-    ## Plot 7 : plot all each inputs variables evolution
+    # Plot 7 : plot all each inputs variables evolution
     # --------------------------------------------------
     # Creating the folder containing the variables plots
     if plot_var_all:
@@ -644,7 +642,7 @@ if __name__ == "__main__":
             ii += 1
     # --------------------------------------------------
 
-    ## Plot 8 : plot all each inputs constraint evolution
+    # Plot 8 : plot all each inputs constraint evolution
     # ---------------------------------------------------
     # Creating the folder containing the variables plots
     if plot_const_all:

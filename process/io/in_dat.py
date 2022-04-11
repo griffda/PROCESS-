@@ -10,11 +10,10 @@
     Notes:
         + 24/11/2021: Global dictionary variables moved within the functions
                     to avoid cyclic dependencies. This is because the dicts
-                    generation script imports, and inspects, process. 
+                    generation script imports, and inspects, process.
 """
 
 import subprocess
-import numpy as np
 from sys import stderr
 from process.io.python_fortran_dicts import get_dicts
 
@@ -398,7 +397,7 @@ def get_parameters(data, use_string_values=True):
                             if len(split_line) > 1:
 
                                 line_value = ", ".join([entry for entry in split_line])
-                        except:
+                        except Exception:
                             pass
 
                     else:
@@ -808,7 +807,9 @@ def variable_constraint_type_check(item_number, var_type):
     # Value not recognised
     else:
         print(
-            "Value {0} for {1} not a recognised format. Check value!".format(var_type)
+            "Value {0} for {1} not a recognised format. Check value!".format(
+                item_number, var_type
+            )
         )
 
 
@@ -858,7 +859,7 @@ def variable_bound_check(bound_number, bound_type):
             bound_number = int(bound_number)
             print(
                 "Bound number {0} not an integer. "
-                "Value rounded to {2}".format(bound_number, int(bound_number))
+                "Value rounded to {1}".format(bound_number, int(bound_number))
             )
             return bound_number, bound_type
 
@@ -1251,7 +1252,6 @@ class InDat(object):
         # in light of increasing Python f2py conversion.
 
         if "*" in line:
-            array_comment = line.split("*")[1]
             line_commentless = line.split("*")[0]
         else:
             line_commentless = line
@@ -1503,7 +1503,7 @@ def test(f):
         i.write_in_dat(output_filename="test_out_IN.DAT")
         subprocess.call(["rm", "test_out_IN.DAT"])
         return True
-    except:
+    except Exception:
         return False
 
 

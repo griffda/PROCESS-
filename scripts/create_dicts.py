@@ -19,7 +19,6 @@ import re
 import logging
 import argparse
 import json
-import argparse
 import pickle
 import create_dicts_config
 from pathlib import Path
@@ -31,6 +30,7 @@ output_dict = {}
 # Dict of nested dicts e.g. output_dict['DICT_DESCRIPTIONS'] =
 # {descriptions_dict}
 # Dicts stored in output_dict are used to create other derivative dicts
+
 
 # Classes for the various dictionary types
 class Dictionary(object):
@@ -326,7 +326,7 @@ class DefaultValues(ProjectDictionary):
             value = value.replace("d", "E")
             value = float(value)
             return value
-        except:
+        except Exception:
             # Failed conversion; don't change anything
             return original_value
 
@@ -460,7 +460,7 @@ class DefaultValues(ProjectDictionary):
             # This probably means that something was picked up by the init
             # subroutine regex in error
             return
-        elif self.dict[self.name][var] == None:
+        elif self.dict[self.name][var] is None:
             # Only overwrite the value if Ford has produced a None, which is
             # stored on self.dict
             # Find the var in the Ford project again
@@ -491,7 +491,7 @@ class DefaultValues(ProjectDictionary):
                                 self.dict[self.name][var] = mod_var.initial
 
             # If it's not an array, set it to the value in the init subroutine
-            if self.dict[self.name][var] == None:
+            if self.dict[self.name][var] is None:
                 self.dict[self.name][var] = value
 
 
@@ -594,7 +594,7 @@ def slice_file(file, re1, re2):
         if re.search(re1, filetext[i]):
             start = i
             break
-    if start == None:
+    if start is None:
         logging.warning("Could not match %s in file %s\n", re1, file)
         return ""
     end = None
@@ -603,7 +603,7 @@ def slice_file(file, re1, re2):
         if re.search(re2, filetext[i]):
             end = i
             break
-    if end == None:
+    if end is None:
         logging.warning("Could not match %s in file %s\n", re2, file)
         return ""
     # return slice

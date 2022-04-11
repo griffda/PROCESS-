@@ -132,7 +132,7 @@ def test_scenario(scenario, tmp_path, reg_tolerance, overwrite_refs_opt):
         return
 
     # Assert mfile contains something
-    assert scenario.check_mfile_length() == True
+    assert scenario.check_mfile_length() is True
 
     # Read in the reference (expected) and new (observed) MFiles
     scenario.read_mfiles()
@@ -142,7 +142,7 @@ def test_scenario(scenario, tmp_path, reg_tolerance, overwrite_refs_opt):
     scenario.set_version()
 
     # Assert that the ifail value indicates solver success
-    assert scenario.check_ifail() == True
+    assert scenario.check_ifail() is True
 
     # Compare expected and observed MFiles and yield diff items
     for diff_item in scenario.get_mfile_diffs():

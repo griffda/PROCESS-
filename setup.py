@@ -1,7 +1,7 @@
-from setuptools import setup, find_packages, Extension
-from setuptools.command.test import test as TestCommand
-
-import sys, site, os, subprocess, platform
+from setuptools import setup, find_packages
+import site
+import os
+import platform
 
 MODULE_NAME = "process"
 _install_loc = os.path.join(site.getsitepackages()[0], MODULE_NAME)

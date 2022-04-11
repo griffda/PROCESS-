@@ -57,7 +57,6 @@ try:
         DICT_IXC_BOUNDS,
         IFAIL_SUCCESS,
         DICT_INPUT_BOUNDS,
-        DICT_DESCRIPTIONS,
     )
 except ImportError:
     print(
@@ -368,17 +367,8 @@ def get_step_dicts(a_dat, b_dat, allowed_diffs=None):
                 print("Using value in B\n")
                 if var in a_dat.data.keys():
                     a_dat.remove_parameter(var)
-                param_group = inmod.find_parameter_group(var)
-                comment = (
-                    DICT_DESCRIPTIONS[var]
-                    .replace(",", ";")
-                    .replace(".", ";")
-                    .replace(":", ";")
-                )
-                new_variable = inmod.INVariable(
-                    var, target_val, "real_variable", param_group, ""
-                )
                 a_dat.add_parameter(var, target_val)
+
     return original_dict, target_dict
 
 

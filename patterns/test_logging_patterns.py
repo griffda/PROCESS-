@@ -1,7 +1,6 @@
 """Unit tests for the logging_patterns.py module."""
 import logging_patterns as lp
 import logging
-import pytest
 from process import fortran
 
 

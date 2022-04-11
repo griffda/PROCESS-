@@ -7,9 +7,9 @@
   CCFE
 
 """
+# flake8: noqa
 
 import numpy as np
-import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 
@@ -50,16 +50,6 @@ try:
     import process.io.mfile as mfile
 except ImportError:
     print("The PROCESS python libraries are not in your path. Please check PYTHONPATH")
-    exit()
-
-# PROCESS dictionaries import
-try:
-    import process_io_lib.process_dicts as process_dictionaries
-except ImportError:
-    print(
-        "The Python dictionaries have not yet been created. Please run",
-        " 'make dicts'!",
-    )
     exit()
 
 
@@ -149,9 +139,7 @@ def plot_pulse_timings(
     # Plotting
 
     # Axis 1
-    plot_cs_current = axis_1.plot(
-        time, current_arrays[-2], color=color_sequence[0], label="Central Solenoid"
-    )
+
     axis_1.axhline(y=0, color="k")
     axis_1.set_ylabel("Current [MA]")
     axis_1.legend(loc="upper left", bbox_to_anchor=(1, 1.05))
@@ -165,9 +153,7 @@ def plot_pulse_timings(
         axis_1.axvline(x=time[ti], color="k", linestyle="--", linewidth=0.5, alpha=0.5)
 
     # Axis 2
-    plot_plasma = axis_2.plot(
-        time, current_arrays[-1], color=color_sequence[2], label="Plasma"
-    )
+
     axis_2.axhline(y=0, color="k")
     axis_2.set_ylabel("Current [MA]")
     axis_2.set_ylim([0, 25])

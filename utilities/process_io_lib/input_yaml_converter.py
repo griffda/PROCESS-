@@ -34,7 +34,7 @@ output_file = open(OUTPUT_FILE_PATH, "w")
 try:
     yaml.dump(input_data, output_file)
     print("Successfully converted input file to YAML, saved as " f"{OUTPUT_FILE_PATH}")
-except:
+except Exception:
     print("Failed to write YAML input file")
 
 output_file.close()

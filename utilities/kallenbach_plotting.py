@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 
-import os
 import argparse
 import numpy as np
-import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.backends.backend_pdf as bpdf
 from matplotlib.ticker import NullFormatter
@@ -177,7 +175,7 @@ p1r4left.semilogy(per_column[1], per_column[7], label="mach")
 # p1r4left.set_ylim([0.1, 100])
 p1r4left.set_xlim([0.0, 0.015])
 p1r4left.set_ylim(ymin=0.01)
-p1r4left.set_xlabel("$x\parallel B$ (m)", fontsize=14)
+p1r4left.set_xlabel(r"$x\parallel B$ (m)", fontsize=14)
 
 
 # Row 1, Right
@@ -232,7 +230,7 @@ p1r4right.loglog(per_column[1], per_column[7], label="mach")
 # p1r4right.set_ylim([0.1, 10])
 p1r4right.set_xlim([0.015, x_max])
 # p1r4right.set_ylim(ymin=0.1)
-p1r4right.set_xlabel("$x\parallel B$ (m)", fontsize=14)
+p1r4right.set_xlabel(r"$x\parallel B$ (m)", fontsize=14)
 p1r4right.legend(loc=1, prop={"size": 10})
 # no labels
 p1r4right.yaxis.set_major_formatter(nullfmt)
@@ -375,13 +373,13 @@ p2r4left.plot(per_column[1], v, label="Plasma speed [ms$^{-1}$]")
 p2r4left.set_xlim([0.0, 0.015])
 ylim = p2r4left.get_ylim()
 p2r4left.tick_params(axis="y", labelsize="9")
-p2r4left.set_xlabel("$x\parallel B$ (m)", fontsize=14)
+p2r4left.set_xlabel(r"$x\parallel B$ (m)", fontsize=14)
 
 # Row 4 Right
 p2r4right = page2.add_subplot(428)
 p2r4right.semilogx(per_column[1], v, label="Plasma speed [ms$^{-1}$]")
 p2r4right.set_xlim([0.015, x_max])
-p2r4right.set_xlabel("$x\parallel B$ (m)", fontsize=14)
+p2r4right.set_xlabel(r"$x\parallel B$ (m)", fontsize=14)
 p2r4right.set_ylim([0, ylim[1]])
 p2r4right.legend(loc=1, prop={"size": 10})
 p2r4right.tick_params(axis="y", labelsize="9")

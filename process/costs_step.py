@@ -1332,7 +1332,6 @@ class CostsStep:
         # Add shield cost to total cost, step2201, in M$
         step2201 += step220102
         # STARFIRE percentage for spares
-        step2298 = 9.985e-2 * step220102
         spares = 9.985e-2 * step220102
 
         # 22.01.03.01 TF Coils

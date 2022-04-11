@@ -92,10 +92,10 @@ class ProcessConfig(object):
         print("PROCESS binary:      {}".format(self.process))
         print("Number of iterations {}".format(self.niter))
 
-        if self.u_seed != None:
+        if self.u_seed is not None:
             print("random seed          {}".format(self.u_seed))
         print("variable range factor {}".format(self.factor))
-        if self.filename != None:
+        if self.filename is not None:
             print("Config file          {}".format(self.filename))
         if self.comment != "":
             print("Comment  {}".format(self.comment))
@@ -260,11 +260,11 @@ class ProcessConfig(object):
             # run_process is not being run by the test suite
             # Get working dir and input files from run_process.conf
             buf = self.get_attribute("wdir")
-            if buf != None:
+            if buf is not None:
                 self.wdir = buf
 
             buf = self.get_attribute("ORIGINAL_IN_DAT")
-            if buf != None:
+            if buf is not None:
                 self.or_in_dat = buf
 
         try:
@@ -279,22 +279,22 @@ class ProcessConfig(object):
             raise
 
         buf = self.get_attribute("process")
-        if buf != None:
+        if buf is not None:
             self.process = buf
 
         buf = self.get_attribute("niter")
-        if buf != None:
+        if buf is not None:
             self.niter = int(buf)
 
         buf = self.get_attribute("seed")
-        if buf != None:
+        if buf is not None:
             if buf == "None":
                 self.u_seed = None
             else:
                 self.u_seed = int(buf)
 
         buf = self.get_attribute("factor")
-        if buf != None:
+        if buf is not None:
             self.factor = float(buf)
 
         if not self.get_comment():
@@ -358,19 +358,19 @@ class TestProcessConfig(ProcessConfig):
         super().set_attributes()
 
         buf = self.get_attribute("ioptimz")
-        if buf != None:
+        if buf is not None:
             self.ioptimz = buf
 
         buf = self.get_attribute("epsvmc")
-        if buf != None:
+        if buf is not None:
             self.epsvmc = buf
 
         buf = self.get_attribute("epsfcn")
-        if buf != None:
+        if buf is not None:
             self.epsfcn = buf
 
         buf = self.get_attribute("minmax")
-        if buf != None:
+        if buf is not None:
             self.minmax = buf
 
     def echo(self):
@@ -464,11 +464,11 @@ class RunProcessConfig(ProcessConfig):
         super().set_attributes()
 
         buf = self.get_attribute("no_allowed_unfeasible")
-        if buf != None:
+        if buf is not None:
             self.no_allowed_unfeasible = int(buf)
 
         buf = self.get_attribute("create_itervar_diff")
-        if buf != None:
+        if buf is not None:
             if buf.lower() in ["true", "y", "yes"]:
                 self.create_itervar_diff = True
             elif buf.lower() in ["false", "n", "no"]:
@@ -751,12 +751,12 @@ class UncertaintiesConfig(ProcessConfig, Config):
         nvar = in_dat.number_of_itvars
         for i in range(1, nvar + 1):
             nitvar = "nitvar{:03}".format(i)
-            if not nitvar in self.output_vars:
+            if nitvar not in self.output_vars:
                 self.output_vars += [nitvar]
         neqns = in_dat.number_of_constraints
         for i in range(1, neqns + 1):
             normres = "normres{:03}".format(i)
-            if not normres in self.output_vars:
+            if normres not in self.output_vars:
                 self.output_vars += [normres]
 
         # treat special cases (bounds, fimp, zref)

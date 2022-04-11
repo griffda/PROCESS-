@@ -11,6 +11,7 @@ test_exception_patterns unit test module.
 """
 from process import fortran
 
+
 # Simple functions to be run in different ways by the exception-example
 # functions
 def one_over(some_int):
@@ -83,7 +84,7 @@ def handled_all_python_raised_exceptions(who_knows):
     except TypeError:
         # Catch errors due to trying to do things to the wrong type
         print("You might have the wrong type.")
-    except:
+    except Exception:
         # This will catch any exception, regardless of type
         print("Something went wrong.")
 

@@ -6,8 +6,6 @@ common entry point to the code in Python, and to automate a standard workflow.
 """
 # TODO This requires converting to run the Python-wrapped version of Process
 import subprocess
-import os
-import sys
 import argparse
 from shutil import copy
 from pathlib import Path

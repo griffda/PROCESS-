@@ -17,15 +17,6 @@ evaluate_uncertainties.json
 
 
 from matplotlib import rc
-
-rc("font", size=25)
-rc("lines", lw=1.5)  # is overwritten by setting coulours/linestylies
-rc(("xtick", "ytick"), labelsize=20)
-rc("figure", figsize=(8, 6))
-rc("figure.subplot", bottom=0.18)  # was 0.12
-rc("figure.subplot", left=0.19)
-rc("figure.subplot", right=0.81)
-
 import argparse
 import matplotlib.mlab as mlab
 from numpy import linspace, argwhere, logical_or, zeros, mean
@@ -34,6 +25,14 @@ from pylab import figure, hist, show, savefig, gca, plot, xlabel
 from sys import stderr
 from process_io_lib.process_config import UncertaintiesConfig
 from process_io_lib.process_dicts import DICT_INPUT_BOUNDS
+
+rc("font", size=25)
+rc("lines", lw=1.5)  # is overwritten by setting coulours/linestylies
+rc(("xtick", "ytick"), labelsize=20)
+rc("figure", figsize=(8, 6))
+rc("figure.subplot", bottom=0.18)  # was 0.12
+rc("figure.subplot", left=0.19)
+rc("figure.subplot", right=0.81)
 
 
 def plot_distribution(xarr, labelx, unc_dict):

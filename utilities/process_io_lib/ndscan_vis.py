@@ -42,9 +42,9 @@ class VisUtility(object):
         """
 
         print("xdim is", xdim, "ydim is", ydim)
-        if xdim[0:4] is not "SCAN":
+        if xdim[0:4] != "SCAN":
             xdim = "SCAN" + xdim
-        if ydim[0:4] is not "SCAN":
+        if ydim[0:4] != "SCAN":
             ydim = "SCAN" + ydim
         xcoords = self.ncfile.variables[xdim][:]
         ycoords = self.ncfile.variables[ydim][:]
@@ -77,9 +77,9 @@ class VisUtility(object):
         ."""
 
         print("xdim is", xdim, "ydim is", ydim)
-        if xdim[0:4] is not "SCAN":
+        if xdim[0:4] != "SCAN":
             xdim = "SCAN" + xdim
-        if ydim[0:4] is not "SCAN":
+        if ydim[0:4] != "SCAN":
             ydim = "SCAN" + ydim
         xcoords = self.ncfile.variables[xdim]
         ycoords = self.ncfile.variables[ydim]
