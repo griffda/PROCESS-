@@ -854,7 +854,7 @@ class PFCoil:
         """
         lrow1 = bfix.shape[0]
         lcol1 = gmat.shape[1]
-        bfix = pf.fixb(lrow1, npts, rpts, zpts, nfix, rfix, zfix, cfix)
+        bfix = self.fixb(lrow1, npts, rpts, zpts, nfix, rfix, zfix, cfix)
 
         # Set up matrix equation
         nrws, gmat, bvec, rc, zc, cc, xc = pf.mtrx(
@@ -870,6 +870,54 @@ class PFCoil:
         )
 
         return ssq, ccls
+
+    def fixb(self, lrow1, npts, rpts, zpts, nfix, rfix, zfix, cfix):
+        """Calculates the field from the fixed current loops.
+
+        author: P J Knight, CCFE, Culham Science Centre
+        author: D Strickler, ORNL
+        author: J Galambos, ORNL
+        This routine calculates the fields at the points specified by
+        (rpts,zpts) from the set of coils with fixed currents.
+
+        :param lrow1: row length of array bfix; should be >= nptsmx
+        :type lrow1: int
+        :param npts: number of data points at which field is to be fixed;
+        should be <= nptsmx
+        :type npts: int
+        :param rpts: coords of data points (m)
+        :type rpts: numpy.ndarray
+        :param zpts: coords of data points (m)
+        :type zpts: numpy.ndarray
+        :param nfix: number of coils with fixed currents, <= nfixmx
+        :type nfix: int
+        :param rfix: coordinates of coils with fixed currents (m)
+        :type rfix: numpy.ndarray
+        :param zfix: coordinates of coils with fixed currents (m)
+        :type zfix: numpy.ndarray
+        :param cfix: Fixed currents (A)
+        :type cfix: numpy.ndarray
+        :return: Fields at data points (T)
+        :rtype: numpy.ndarray
+        """
+        bfix = np.zeros(lrow1)
+        for i in range(npts):
+            bfix[i] = 0.0e0
+            bfix[npts + i] = 0.0e0
+
+        if nfix <= 0:
+            return bfix
+
+        for i in range(npts):
+            # bfield() only operates correctly on nfix slices of array 
+            # arguments, not entire arrays
+            work1, brw, bzw, psw = pf.bfield(
+                rfix[:nfix], zfix[:nfix], cfix[:nfix], rpts[i], zpts[i], nfix
+            )
+            bfix[i] = brw
+            bfix[npts + i] = bzw
+
+        return bfix
 
     def ohcalc(self):
         """Routine to perform calculations for the Central Solenoid solenoid.

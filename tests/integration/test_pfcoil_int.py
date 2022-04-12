@@ -1683,12 +1683,15 @@ def test_solv():
     )
 
 
-def test_fixb():
+def test_fixb(pfcoil):
     """Test fixb subroutine.
 
     fixb() requires specific arguments in order to work; these were discovered
     using gdb to break on the first subroutine call when running the baseline
     2018 IN.DAT.
+
+    :param pfcoil: a PFCoil instance
+    :type pfcoil: process.pfcoil.PFCoil
     """
     nptsmx = 32
     lrow1 = 74
@@ -2015,7 +2018,7 @@ def test_fixb():
         ]
     )
 
-    bfix = pf.fixb(lrow1, npts, rpts, zpts, nfix, rfix, zfix, cfix)
+    bfix = pfcoil.fixb(lrow1, npts, rpts, zpts, nfix, rfix, zfix, cfix)
 
     assert_array_almost_equal(bfix, bfix_exp)
 

@@ -75,63 +75,6 @@ module pfcoil_module
      vsdum = 0.0D0
    end subroutine init_pfcoil_module
  
-   subroutine fixb(nptsmx,nfixmx,lrow1,npts,rpts,zpts,nfix,rfix, &
-      zfix,cfix,bfix)
-
-      !! Calculates the field from the fixed current loops
-      !! author: P J Knight, CCFE, Culham Science Centre
-      !! author: D Strickler, ORNL
-      !! author: J Galambos, ORNL
-      !! nptsmx : input integer : maximum number of points across the
-      !! plasma midplane at which the magnetic
-      !! field is fixed
-      !! nfixmx : input integer : maximum number of fixed current coils
-      !! lrow1 : input integer : row length of array bfix; should be >= nptsmx
-      !! npts : input integer : number of data points at which field is
-      !! to be fixed; should be <= nptsmx
-      !! rpts(nptsmx),zpts(nptsmx) : input real arrays : coords of data points (m)
-      !! nfix : input integer : number of coils with fixed currents, <= nfixmx
-      !! rfix(nfixmx),zfix(nfixmx) : input real arrays : coordinates of coils
-      !! with fixed currents (m)
-      !! cfix(nfixmx) : input real array : Fixed currents (A)
-      !! bfix(lrow1) : output real array : Fields at data points (T)
-      !! This routine calculates the fields at the points specified by
-      !! (rpts,zpts) from the set of coils with fixed currents.
-      !! None
-      !
-      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-      implicit none
-
-      !  Arguments
-
-      integer, intent(in) :: nptsmx, nfixmx, lrow1, npts, nfix
-      real(dp), dimension(nptsmx), intent(in) :: rpts, zpts
-      real(dp), dimension(nfixmx), intent(in) :: rfix, zfix, cfix
-      real(dp), dimension(lrow1), intent(out) :: bfix
-
-      !  Local variables
-
-      integer :: i
-      real(dp) brw,bzw,psw
-      real(dp), dimension(nfixmx) :: work1
-
-      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-      do i = 1,npts
-         bfix(i) = 0.0D0
-         bfix(npts + i) = 0.0D0
-      end do
-
-      if (nfix <= 0) return
-
-      do i = 1,npts
-         call bfield(nfix,rfix,zfix,cfix,work1,rpts(i),zpts(i),brw,bzw,psw)
-         bfix(i) = brw
-         bfix(npts + i) = bzw
-      end do
-   end subroutine fixb
-
    subroutine mtrx(nptsmx,ngrpmx,nclsmx,lrow1,lcol1,npts,rpts,zpts, &
       brin,bzin,ngrp,ncls,rcls,zcls,alfa,nrws,bfix,gmat,bvec, &
       rc,zc,cc,xc)
