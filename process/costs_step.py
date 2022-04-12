@@ -1568,7 +1568,7 @@ class CostsStep:
 
         step2201010201 = cv.fkind * step2201010201
         step2201010202 = cv.fkind * step2201010202
-        
+
         # Account 22.01.01.02.03 : Blanket Steel Costs
         step2201010203 = 1.0e-6 * fwbsv.whtblss * cv.step_ucblss
         step2201010203 = cv.fkind * step2201010203
