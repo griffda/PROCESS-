@@ -12,6 +12,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 def get_dicts():
     """Return dicts loaded from the JSON file for use in Python.
 
@@ -20,10 +21,10 @@ def get_dicts():
     """
     # Get the dicts filename from the package data
     dicts_filename = resource_filename("process", "io/python_fortran_dicts.json")
-    
+
     # Return loaded dicts
     try:
-        with open(dicts_filename, 'r') as dicts_file:
+        with open(dicts_filename, "r") as dicts_file:
             return json.load(dicts_file)
     except FileNotFoundError as error:
         logger.exception("Can't find the dicts JSON file")

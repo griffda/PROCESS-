@@ -37,7 +37,7 @@ module refprop_interface
   real(kind(1.0D0)), dimension(ncmax) :: x = 1.0D0
   character(len=255) :: herr
   integer :: ierr
-  real(kind(1.0D0)), public :: molarmass  
+  real(kind(1.0D0)), public :: molarmass
 
 contains
   character(len=300) function fluids_dir()

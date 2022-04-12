@@ -1,11 +1,11 @@
 """Run Process by calling into the Fortran.
 
-This uses a Python module called fortran.py, which uses an extension module 
-called "_fortran.cpython... .so", which are both generated from 
-process_module.f90. The process_module module contains the code to actually run 
+This uses a Python module called fortran.py, which uses an extension module
+called "_fortran.cpython... .so", which are both generated from
+process_module.f90. The process_module module contains the code to actually run
 Process.
 
-This file, process.py, is now analogous to process.f90, which contains the 
+This file, process.py, is now analogous to process.f90, which contains the
 Fortran "program" statement. This Python module effectively acts as the Fortran
 "program".
 
@@ -44,26 +44,24 @@ Box file T&amp;M/PKNIGHT/PROCESS (from 24/01/12)
 from process import fortran
 from process.buildings import Buildings
 from process.io import plot_proc
+from process.pulse import Pulse
 from process.scan import Scan
 from process import final
 from process.stellarator import Stellarator
-from process.utilities.f2py_string_patch import (
-    string_to_f2py_compatible,
-    f2py_compatible_to_string,
-)
+from process.structure import Structure
+from process.build import Build
+from process.utilities.f2py_string_patch import string_to_f2py_compatible
 import argparse
 from process.costs_step import CostsStep
 from process.tfcoil import TFcoil
 from process.divertor import Divertor
 from process.availability import Availability
 from process.ife import IFE
-from process.stellarator import Stellarator
 from process.caller import Caller
 
 from pathlib import Path
 import sys
 import os
-import subprocess
 import logging
 
 # For VaryRun
@@ -78,6 +76,7 @@ from process.io.process_funcs import (
     process_warnings,
 )
 from process.vacuum import Vacuum
+from process.water_use import WaterUse
 
 os.environ["PYTHON_PROCESS_ROOT"] = os.path.join(os.path.dirname(__file__))
 
@@ -471,11 +470,15 @@ class Models:
         This also initialises module variables in the Fortran for that module.
         """
         self.costs_step = CostsStep()
-        self.tfcoil = TFcoil()
+        self.build = Build()
+        self.tfcoil = TFcoil(build=self.build)
         self.divertor = Divertor()
+        self.structure = Structure()
         self.availability = Availability()
         self.buildings = Buildings()
         self.vacuum = Vacuum()
+        self.water_use = WaterUse()
+        self.pulse = Pulse()
         self.ife = IFE(availability=self.availability)
         self.stellarator = Stellarator(
             availability=self.availability, buildings=self.buildings, vacuum=self.vacuum

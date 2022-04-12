@@ -2,6 +2,7 @@
 from pytest import approx
 from process import fortran
 
+
 def test_ifetgt(monkeypatch):
     """Test ifetgt.
 

@@ -2,7 +2,7 @@
   "version":  [ "PROCESS version 2.1.1" ],
   "comment1": [ "List of error messages used via error_handling.f90" ],
   "comment2": [ "Increment n_errortypes if an error is added to this list" ],
-  "n_errortypes": 274,
+  "n_errortypes": 276,
   "errors": [
    { "no": 1, "level": 3, "message": "CONSTRAINTS: Do not use constraint 7 if ignite=1" },
    { "no": 2, "level": 3, "message": "CONSTRAINTS: Constraint equation 15 is redundant" },
@@ -143,7 +143,7 @@
    { "no": 137, "level": 3, "message": "CHECK: Insufficient iteration variables to solve the problem! NVAR < NEQNS" },
    { "no": 138, "level": 2, "message": "CHECK: Beware; ion power balance may not be correct with new radiation model" },
    { "no": 139, "level": 3, "message": "CHECK: The number of iteration variables specified is smaller than the number stated in ixc" },
-   { "no": 140, "level": 3, "message": "CHECK: The number of constraints specified is smaller than the unumber stated in neqns+nineqns" },
+   { "no": 140, "level": 3, "message": "CHECK: The number of constraints specified is smaller than the number stated in neqns+nineqns" },
    { "no": 141, "level": 1, "message": "RADIALB: (TF coil ripple calculation) Dimensionless coil width X out of fitted range" },
    { "no": 142, "level": 1, "message": "RADIALB: (TF coil ripple calculation) No of TF coils not between 16 and 20 inclusive" },
    { "no": 143, "level": 1, "message": "RADIALB: (TF coil ripple calculation) (R+a)/rtot out of fitted range" },
@@ -247,7 +247,7 @@
    {"no": 241, "level": 3, "message": "CHECK: Too low CP conductor temperature (tcpav). Lower limit for copper > 273.15 K"},
    {"no": 242, "level": 2, "message": "PHYSICS: Bootstrap fraction upper limit enforced"},
    {"no": 243, "level": 2, "message": "PHYSICS: Predicted plasma driven current is more than upper limit on non-inductive fraction."},
-   {"no": 244, "level": 2, "message": "PHYSICS: Diamagnetic fraction is more than 1%, but not calculated. Consider using idia=2 and ips=1."}, 
+   {"no": 244, "level": 2, "message": "PHYSICS: Diamagnetic fraction is more than 1%, but not calculated. Consider using idia=2 and ips=1."},
    {"no": 245, "level": 2, "message": "[sctfcoil] Invalid stress model (r_tf_inboard = 0), stress constraint switched off"},
    {"no": 246, "level": 3, "message": "CHECK: Invalid stress model if bore + gapoh + ohcth = 0. Don't use constraint 31"},
    {"no": 247, "level": 3, "message": "CHECK: Bucked and wedged TF design not yet implemented"},
@@ -264,7 +264,7 @@
    {"no": 258, "level": 2, "message": "[tfcoil] : Aluminium temperature out of the th conductivity fit range [15-60] K"},
    {"no": 259, "level": 3, "message": "CHECK: Constraint equation 10 (CP lifetime) to used with ST desing (itart=1)"},
    {"no": 260, "level": 3, "message": "CHECK: Al TF coil fluence not calculated properly for Al CP, do not use constraint 85"},
-   {"no": 261, "level": 2, "message": "REBCO : Non physical strain used in TF. Use superconductor strain < +/- 0.7% "},
+   {"no": 261, "level": 2, "message": "[tfcoil]: TF strain was outside the region of applicability. Used lower strain"},
    {"no": 262, "level": 2, "message": "REBCO : Non physical strain used in CS. Use superconductor strain < +/- 0.7% "},
    {"no": 263, "level": 2, "message": "REBCO : Non physical strain used in PF. Use superconductor strain < +/- 0.7% "},
    {"no": 264, "level": 3, "message": "REBCO : turn off CS temperature margin constraint icc = 60 when using REBCO"},
@@ -274,9 +274,11 @@
    {"no": 268, "level": 2, "message": "[radialb]: TF CP top radius (r_cp_top) replaced by 1.01*r_tf_inboard_out -> potential top rbuild issue"},
    {"no": 269, "level": 3, "message": "CHECK: Impossible to set the TF turn/cable size with the integer turn option (i_tf_turns_integer: 1) "},
    {"no": 270, "level": 3, "message": "CHECK: The LTS conductor temperature (tftmp) has to be lower than 10"},
-   {"no": 271, "level": 3, "message": "CHECK: Impossible to set the TF coil turn and cable size simultaneously"}, 
-   {"no": 272, "level": 2, "message": "Double-null: Upper vertical build forced to match lower"}, 
-   {"no": 273, "level": 2, "message": "CHECK: tmpcry should be lower than tftmp"}, 
-   {"no": 274, "level": 2, "message": "[HCPB]: Blanket heating is <1 MW or NaN. Is something wrong?"}
+   {"no": 271, "level": 3, "message": "CHECK: Impossible to set the TF coil turn and cable size simultaneously"},
+   {"no": 272, "level": 2, "message": "Double-null: Upper vertical build forced to match lower"},
+   {"no": 273, "level": 3, "message": "[tfcoil]: tmpcry should be lower than tftmp"},
+   {"no": 274, "level": 2, "message": "[HCPB]: Blanket heating is <1 MW or NaN. Is something wrong?"},
+   {"no": 275, "level": 3, "message": "CONSTRAINTS: Can't use constraint 88 if i_strain_tf == 0"},
+   {"no": 276, "level": 2, "message": "CHECK: One of the areas or fractions is negative in the internal SC TF coil geometry"}
    ]
  }

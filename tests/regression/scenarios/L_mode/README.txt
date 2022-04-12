@@ -8,7 +8,7 @@ PROCESS version created: 1.0.17
 
 Summary
 
-    Test case is to test the L mode plasma scenario 
+    Test case is to test the L mode plasma scenario
 
 Additional Notes
 

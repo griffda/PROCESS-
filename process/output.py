@@ -59,7 +59,7 @@ def write(models, outfile):
     ft.current_drive_module.cudriv(outfile, 1)
 
     # Pulsed reactor model
-    ft.pulse_module.pulse(outfile, 1)
+    models.pulse.run(output=True)
     ft.physics_module.outtim(outfile)
 
     # Divertor Model
@@ -101,10 +101,10 @@ def write(models, outfile):
 
     # Machine Build Model
     # Radial build
-    ft.build_module.radialb(outfile, 1)
+    models.build.radialb(output=True)
 
     # Vertical build
-    ft.build_module.vbuild(outfile, 1)
+    models.build.vbuild(output=True)
 
     # Toroidal field coil model
     models.tfcoil.output()
@@ -126,7 +126,7 @@ def write(models, outfile):
     ft.pfcoil_module.outvolt(outfile)
 
     # Structure Model
-    ft.structure_module.strucall(outfile, 1)
+    models.structure.run(output=True)
 
     # Poloidal field coil inductance calculation
     ft.pfcoil_module.induct(outfile, 1)
@@ -187,4 +187,4 @@ def write(models, outfile):
     ft.power_module.power3(ft.constants.nout, 1)
 
     # Water usage in secondary cooling system
-    ft.water_use_module.waterusecall(outfile, 1)
+    models.water_use.run(output=True)

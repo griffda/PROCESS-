@@ -40,6 +40,8 @@ VFILE.DAT
 MFILE.DAT
 PLOT.DAT
 OUT.DAT
+OPT.DAT
+SIG_TF.DAT
 tag.num
 tests.x
 *.xml

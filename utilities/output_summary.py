@@ -15,14 +15,9 @@ from collections import OrderedDict
 from grip import export
 
 # PROCESS libraries
-from process_io_lib.in_dat import InDat
-from process_io_lib.mfile import MFile
-try:
-    import process_io_lib.process_dicts as proc_dict
-except ImportError:
-    print("The Python dictionaries have not yet been created. Please run",
-          " 'make dicts'!")
-    exit()
+from process.io.in_dat import InDat
+from process.io.mfile import MFile
+from dict_tools import proc_dict
 
 # Constants
 MODULES = dict()
@@ -39,20 +34,21 @@ DESCRIPTIONS = proc_dict.DICT_DESCRIPTIONS
 
 # Markdown
 
+
 def bold(x):
-    return("**" + str(x) + "**")
+    return "**" + str(x) + "**"
 
 
 def unbold(x):
-    return(x.replace("*", ""))
+    return x.replace("*", "")
 
 
 def code(x):
-    return("`" + str(x) + "`")
+    return "`" + str(x) + "`"
 
 
 def bold_italics(x):
-    return("**_" + str(x) + "_**")
+    return "**_" + str(x) + "_**"
 
 
 def output_line(x):
@@ -60,11 +56,11 @@ def output_line(x):
 
 
 def heading(x, y):
-    OUTFILE.write("{0} {1}\n\n".format("#"*x, y))
+    OUTFILE.write("{0} {1}\n\n".format("#" * x, y))
 
 
 def output_below_table_comment(x, y, z):
-    OUTFILE.write("> **{0}** : **{1}** : {2}\n\n".format(x,y, z))
+    OUTFILE.write("> **{0}** : **{1}** : {2}\n\n".format(x, y, z))
 
 
 def output_newline():
@@ -73,8 +69,7 @@ def output_newline():
 
 def heading_comment(x):
     if x in COMMENTS:
-        OUTFILE.write("> {0}\n\n".
-            format(" ".join(COMMENTS[x])))
+        OUTFILE.write("> {0}\n\n".format(" ".join(COMMENTS[x])))
 
 
 def return_to_top():
@@ -112,7 +107,7 @@ def table_heading(headings):
 
 def table_line(items, form):
     item_line = "|"
-    item_format = "{0:"+ "{0}".format(form) + "}"
+    item_format = "{0:" + "{0}".format(form) + "}"
     for item in items:
         if type(item) == float:
             item_line += item_format.format(item) + " |"
@@ -127,13 +122,14 @@ def table_line(items, form):
                 item_line += " {0} |".format(item)
     OUTFILE.write(item_line + "\n")
 
+
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 
 def check_empty(key):
     """
     Check not an empty section
     """
-    title = key
     con_mods = DATA["projects"][key]["icc_modules"]
     mod_names = DATA["projects"][key]["in_dat_modules"]
     tot_count = 0
@@ -147,28 +143,33 @@ def check_empty(key):
     IT_VARS = INFILE.data["ixc"].value
     IT_VAR_LIST = [IXC_FULL[str(itvar)]["name"] for itvar in IT_VARS]
     MODULE_VAR_LIST = sum([MODULES_FULL[mod_name] for mod_name in mod_names], [])
-    MODULE_ICC_LIST = sum([MODULES[key] for key in MODULES.keys() if key in con_mods], [])
+    MODULE_ICC_LIST = sum(
+        [MODULES[key] for key in MODULES.keys() if key in con_mods], []
+    )
 
     for item in CONSTRAINTS:
         if item in MODULE_ICC_LIST:
-           tot_count += 1; con_count += 1
+            tot_count += 1
+            con_count += 1
 
     for item in IT_VARS:
         item_name = IXC_FULL[str(item)]["name"]
         if item_name in MODULE_VAR_LIST:
-            tot_count += 1; it_count += 1
-    
+            tot_count += 1
+            it_count += 1
+
     for item in INPUTS_LIST:
         if item in MODULE_VAR_LIST:
             if item not in IT_VAR_LIST:
-                tot_count += 1; in_count += 1
+                tot_count += 1
+                in_count += 1
 
     for item in MFILE_LIST:
         if item in MODULE_VAR_LIST:
-            item_value = MFILE.data[item].get_scan(-1)
             if item not in INPUTS_LIST:
-                tot_count += 1; out_count += 1
-    
+                tot_count += 1
+                out_count += 1
+
     result["tot_count"] = tot_count
     result["con_count"] = con_count
     result["it_count"] = it_count
@@ -183,7 +184,7 @@ def get_itvar_values():
     Get iteration variable values from MFILE
     """
     itvar_vals = dict()
-    
+
     for item in MFILE_LIST:
         if item[:5] == "itvar":
             name = MFILE.data[item].var_description
@@ -197,13 +198,13 @@ def get_indat_comments():
     Get IN.DAT #tag comments
     """
     lines = open(COMMAND_ARGS.f).readlines()
-    
+
     for line in lines:
         if line[:2] == "*#":
             split_line = line.split(":")
             key = split_line[0][2:].replace(" ", "")
             value = split_line[1].strip(" ")
-            COMMENTS.setdefault(key,[]).append(value)
+            COMMENTS.setdefault(key, []).append(value)
 
 
 def output_contents():
@@ -260,13 +261,23 @@ def output_constraints(k):
     """
 
     con_mods = DATA["projects"][k]["icc_modules"]
-    mod_names = DATA["projects"][k]["mfile_sections"]
-    MODULE_ICC_LIST = sum([MODULES[key] for key in MODULES.keys() if key in con_mods], [])
+    MODULE_ICC_LIST = sum(
+        [MODULES[key] for key in MODULES.keys() if key in con_mods], []
+    )
 
     heading(3, "Constraints")
 
-    table_heading(["Constraint", "Description", "F-Value Name", "F-Value Value", 
-        "Limit Name", "Limit", "Value"])
+    table_heading(
+        [
+            "Constraint",
+            "Description",
+            "F-Value Name",
+            "F-Value Value",
+            "Limit Name",
+            "Limit",
+            "Value",
+        ]
+    )
 
     for item in CONSTRAINTS:
         if item in MODULE_ICC_LIST:
@@ -302,21 +313,31 @@ def output_constraints(k):
                 con_lim_name = "consistency"
                 con_f_val = "-"
                 con_lim = "-"
-            
+
             if con_f_val != "-" and con_lim != "-" and con_lim != bold("calculated"):
                 if type(con_lim) == str:
                     con_lim = unbold(con_lim)
                 if type(con_f_val) == str:
                     con_f_val = unbold(con_f_val)
-                actual_value = "{0:.2e}".format(float(con_lim)*float(con_f_val))
+                actual_value = "{0:.2e}".format(float(con_lim) * float(con_f_val))
                 con_lim = "{0:.2e}".format(float(con_lim))
                 con_f_val = "{0:.2e}".format(float(con_f_val))
             else:
                 actual_value = "-"
 
             # if item in MODULES[con_mod]:
-            table_line([str(item), con_name, con_f_val_name, con_f_val, 
-                con_lim_name, con_lim, actual_value], ".4g")
+            table_line(
+                [
+                    str(item),
+                    con_name,
+                    con_f_val_name,
+                    con_f_val,
+                    con_lim_name,
+                    con_lim,
+                    actual_value,
+                ],
+                ".4g",
+            )
 
     constraint_comments(k, MODULE_ICC_LIST)
 
@@ -341,31 +362,51 @@ def output_itvars(k):
     """
 
     mod_names = DATA["projects"][k]["in_dat_modules"]
-    MODULES_IXC_NAMES_LIST = [IXC_FULL[str(ixc)]["name"] for ixc in IT_VARS 
-        if any(IXC_FULL[str(ixc)]["name"] in MODULES_FULL[mod_name] 
-            for mod_name in mod_names)]
+    MODULES_IXC_NAMES_LIST = [
+        IXC_FULL[str(ixc)]["name"]
+        for ixc in IT_VARS
+        if any(
+            IXC_FULL[str(ixc)]["name"] in MODULES_FULL[mod_name]
+            for mod_name in mod_names
+        )
+    ]
 
-    MODULES_IXC_NUMBERS_LIST = [ixc for ixc in IT_VARS 
-        if any(IXC_FULL[str(ixc)]["name"] in MODULES_FULL[mod_name] 
-            for mod_name in mod_names)]
+    MODULES_IXC_NUMBERS_LIST = [
+        ixc
+        for ixc in IT_VARS
+        if any(
+            IXC_FULL[str(ixc)]["name"] in MODULES_FULL[mod_name]
+            for mod_name in mod_names
+        )
+    ]
 
     heading(3, "Iteration Variables")
     output_line("* Values in **bold** are **not default** but user inputs.")
-    table_heading(["No.", "Name", "Final Value", "Description", "Starting Value", "Lower Bound", "Upper Bound"])
+    table_heading(
+        [
+            "No.",
+            "Name",
+            "Final Value",
+            "Description",
+            "Starting Value",
+            "Lower Bound",
+            "Upper Bound",
+        ]
+    )
 
     for item in IT_VARS:
-    
+
         item_name = IXC_FULL[str(item)]["name"]
         if "fimp(" in item_name:
             item_description = DES_FIMP[item_name]
         else:
             item_description = DESCRIPTIONS[item_name].split("\n")[0]
-        
+
         if item_name in IT_VAR_VALUES.keys():
             item_value = IT_VAR_VALUES[item_name]
         else:
             item_value = MFILE.data[item_name].get_scan(-1)
-        
+
         if item_name in INPUTS_LIST:
             starting_value = INFILE.data[item_name].value
             starting_value = bold(starting_value)
@@ -374,7 +415,7 @@ def output_itvars(k):
                 starting_value = item_value
             else:
                 starting_value = IXC_DEF[item_name]
-        
+
         if item_name in MODULES_IXC_NAMES_LIST:
 
             if str(item) in BOUNDS.keys():
@@ -389,12 +430,23 @@ def output_itvars(k):
                     up_bound = bold(up_bound)
                 else:
                     up_bound = IXC_FULL[str(item)]["ub"]
-                
+
             else:
                 low_bound = IXC_FULL[str(item)]["lb"]
                 up_bound = IXC_FULL[str(item)]["ub"]
 
-            table_line([str(item), code(item_name), item_value, item_description, starting_value, low_bound, up_bound], ".4g")
+            table_line(
+                [
+                    str(item),
+                    code(item_name),
+                    item_value,
+                    item_description,
+                    starting_value,
+                    low_bound,
+                    up_bound,
+                ],
+                ".4g",
+            )
 
     iteration_comments(k, MODULES_IXC_NUMBERS_LIST)
 
@@ -405,7 +457,11 @@ def output_inputs(k):
     """
 
     mod_names = DATA["projects"][k]["in_dat_modules"]
-    MODULE_INPUT_LIST = [item for item in INPUTS_LIST if any(item in MODULES_FULL[mod_name] for mod_name in mod_names)]
+    MODULE_INPUT_LIST = [
+        item
+        for item in INPUTS_LIST
+        if any(item in MODULES_FULL[mod_name] for mod_name in mod_names)
+    ]
 
     heading(3, "Inputs")
     table_heading(["Input", "Value", "Description", "Comment"])
@@ -418,7 +474,7 @@ def output_inputs(k):
                 item_des = DESCRIPTIONS[item].split("\n")[0]
 
                 if "in-" + item in COMMENTS.keys():
-                    comment = COMMENTS["in-"+item][0].replace("\n", "")
+                    comment = COMMENTS["in-" + item][0].replace("\n", "")
                     if comment == "":
                         comment = ""
                 else:
@@ -434,13 +490,29 @@ def output_inputs(k):
                             item_des = i_des[i]
                         else:
                             item_des = "-"
-                        table_line([code(item) + "[{0}]".format(i), item_value[i], item_des[4:], comment], ".4g")
+                        table_line(
+                            [
+                                code(item) + "[{0}]".format(i),
+                                item_value[i],
+                                item_des[4:],
+                                comment,
+                            ],
+                            ".4g",
+                        )
                 elif "," in item_value:
                     table_line([code(item), bold("array"), item_des], ".4g")
                     item_value = item_value.split(",")
                     for i in range(len(item_value)):
                         if item_value[i] != "":
-                            table_line([code(item) + "[{0}]".format(i), item_value[i], "-", comment], ".4g")
+                            table_line(
+                                [
+                                    code(item) + "[{0}]".format(i),
+                                    item_value[i],
+                                    "-",
+                                    comment,
+                                ],
+                                ".4g",
+                            )
                 else:
                     table_line([code(item), item_value, item_des, comment], ".4g")
 
@@ -451,7 +523,11 @@ def output_outputs(k):
     """
 
     mod_names = DATA["projects"][k]["mfile_sections"]
-    MODULE_OUTPUTS_LIST = [item for item in MFILE_LIST if any(MFILE.data[item].var_mod == mod_name for mod_name in mod_names)]
+    MODULE_OUTPUTS_LIST = [
+        item
+        for item in MFILE_LIST
+        if any(MFILE.data[item].var_mod == mod_name for mod_name in mod_names)
+    ]
 
     heading(3, "Outputs")
     table_heading(["Output", "Value", "Description"])
@@ -468,7 +544,9 @@ def output_outputs(k):
                         item_name = ""
                     else:
                         item_name = code(item)
-                    table_line([item_name.replace(" ", "_"), item_value, item_des], ".4g")
+                    table_line(
+                        [item_name.replace(" ", "_"), item_value, item_des], ".4g"
+                    )
                 except AttributeError:
                     print("Warning: Skipping item:  {0}".format(item))
                     pass
@@ -487,11 +565,18 @@ def vertical_build():
     else:
         vert_build = DATA["machine build"]["vertical"]["double"]
 
-    tot_height = MFILE.data["hmax"].get_scan(-1) - MFILE.data["shldlth"].get_scan(-1) \
-        - MFILE.data["divfix"].get_scan(-1) - MFILE.data["vgap"].get_scan(-1) \
-        + MFILE.data["vgaptop"].get_scan(-1) + MFILE.data["shldtth"].get_scan(-1) \
-        + MFILE.data["fwtth"].get_scan(-1) + MFILE.data["blnktth"].get_scan(-1) \
-        + MFILE.data["vvblgap"].get_scan(-1) + MFILE.data["tfcth"].get_scan(-1)
+    tot_height = (
+        MFILE.data["hmax"].get_scan(-1)
+        - MFILE.data["shldlth"].get_scan(-1)
+        - MFILE.data["divfix"].get_scan(-1)
+        - MFILE.data["vgap"].get_scan(-1)
+        + MFILE.data["vgaptop"].get_scan(-1)
+        + MFILE.data["shldtth"].get_scan(-1)
+        + MFILE.data["fwtth"].get_scan(-1)
+        + MFILE.data["blnktth"].get_scan(-1)
+        + MFILE.data["vvblgap"].get_scan(-1)
+        + MFILE.data["tfcth"].get_scan(-1)
+    )
 
     v_build_sum = tot_height
 
@@ -500,7 +585,7 @@ def vertical_build():
         item_name = vert_build[k]["name"]
         item_des = vert_build[k]["des"]
         item_combined = vert_build[k]["combination"]
-        
+
         if item_combined:
             combo_type = vert_build[k]["combo_type"]
             items = item_name.replace(" ", "").split(combo_type)
@@ -512,7 +597,7 @@ def vertical_build():
                 item_value = item_1_value * item_2_value
         else:
             item_value = MFILE.data[item_name].get_scan(-1)
-        
+
         if int(k) < 10:
             table_line([code(item_name), item_value, v_build_sum, item_des], ".3f")
             v_build_sum -= item_value
@@ -541,7 +626,7 @@ def radial_build():
         item_name = rad_build[k]["name"]
         item_des = rad_build[k]["des"]
         item_combined = rad_build[k]["combination"]
-        
+
         if item_combined:
             if rad_build[k]["combo_type"] == "+":
                 item_1 = item_name.split("+")[0].replace(" ", "")
@@ -557,9 +642,9 @@ def radial_build():
                 item_value = item_1_value * item_2_value
         else:
             item_value = MFILE.data[item_name].get_scan(-1)
-        
+
         r_build_sum += item_value
-        
+
         table_line([code(item_name), item_value, r_build_sum, item_des], ".3f")
 
     return
@@ -581,10 +666,10 @@ def output_project(key, result):
     # Constraints
     if result["con_count"] != 0:
         output_constraints(key)
-    
+
     if result["it_count"] != 0:
         output_itvars(key)
-    
+
     if result["in_count"] != 0:
         output_inputs(key)
 
@@ -596,23 +681,24 @@ def output_diagrams():
     """
     Embed plot_proc output
     """
-    
-    heading(1,"Diagrams")
+
+    heading(1, "Diagrams")
     try:
         output_png("alt text", "process_diagram.png", "PROCESS output diagrams")
-    except:
+    except Exception:
         pass
+
 
 def output_modules():
     """
     Output the modules to markdown
     """
 
-    icc = INFILE.data["icc"].value 
+    icc = INFILE.data["icc"].value
 
     for item in icc:
         module = proc_dict.DICT_ICC_MODULE[str(item)]
-        MODULES.setdefault(module,[]).append(item)
+        MODULES.setdefault(module, []).append(item)
 
     get_indat_comments()
 
@@ -621,7 +707,7 @@ def output_modules():
     output_diagrams()
 
     for k, v in DATA["projects"].items():
-        
+
         result = check_empty(k)
 
         if result["tot_count"] != 0:
@@ -638,14 +724,19 @@ def main(cargs):
 
     output_modules()
 
-    export(path="output_summary.md", 
-        password="e35a21bfce5462bebbecc2e43d12bf4ec2ba469d", render_wide=True, 
-        render_inline=True, out_filename=cargs.o+".html", 
-        title="PROCESS Output")
+    export(
+        path="output_summary.md",
+        password="e35a21bfce5462bebbecc2e43d12bf4ec2ba469d",
+        render_wide=True,
+        render_inline=True,
+        out_filename=cargs.o + ".html",
+        title="PROCESS Output",
+    )
 
     print("Over...")
 
     return
+
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -653,20 +744,26 @@ if __name__ == "__main__":
 
     PARSER = argparse.ArgumentParser(
         description="Create PROCESS output document."
-        "For info contact james.morris2@ukaea.uk")
+        "For info contact james.morris2@ukaea.uk"
+    )
 
-    PARSER.add_argument("-f", metavar='MFILENAME', type=str,
-                        default="", help='specify PROCESS MFILE')
-    
-    PARSER.add_argument("-o", metavar='OUTFILENAME', type=str,
-                        default="output_summary", help='specify output file')
+    PARSER.add_argument(
+        "-f", metavar="MFILENAME", type=str, default="", help="specify PROCESS MFILE"
+    )
+
+    PARSER.add_argument(
+        "-o",
+        metavar="OUTFILENAME",
+        type=str,
+        default="output_summary",
+        help="specify output file",
+    )
 
     COMMAND_ARGS = PARSER.parse_args()
 
     # read json
     try:
-        DATA = json.load(open('output_summary.json'), 
-            object_pairs_hook=OrderedDict)
+        DATA = json.load(open("output_summary.json"), object_pairs_hook=OrderedDict)
     except ValueError as e:
         print("Error in JSON config file. Please correct error: {0}".format(e))
         sys.exit()

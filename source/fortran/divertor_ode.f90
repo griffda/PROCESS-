@@ -5,8 +5,8 @@ module divertor_ode
   !! author: M Kovari, CCFE, Culham Science Centre
   !! N/A
   !! This module contains the PROCESS Kallenbach divertor model
-  !! 
-  
+  !!
+
 #ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
 #endif
@@ -125,12 +125,12 @@ contains
       exchangepowerlost, fractionwidesol, target_spread, fmom, totalpowerlost, &
       relerr_sol, hydrogenicpowerlost, ionisationpowerlost, impuritypowerlost, &
       mach0, impurity_enrichment, lcon_factor, pressure0, abserr_sol, &
-      lambda_q_omp, kallenbach_switch 
-		use build_variables, only: rspo 
+      lambda_q_omp, kallenbach_switch
+		use build_variables, only: rspo
 		use physics_variables, only: tesep_keV => tesep
-		use divertor_ode_var, only: nimp, imp_label, &
-      impurity_concs, impurity_arr
-		use divertor_variables, only: hldiv 
+		use divertor_ode_var, only: impurity_concs
+		use divertor_variables, only: hldiv
+        use impurity_radiation_module, only: impurity_arr_frac, impurity_arr_Label, nimp, imp_label
     implicit none
 
     logical::verbose
@@ -436,7 +436,7 @@ contains
 
         ! Loop over the remaining PROCESS impurities
         do i = 3, nimp
-            if (impurity_arr(i)%frac .gt. 1.d-10) then
+            if (impurity_arr_frac(i) .gt. 1.d-10) then
                 impurities_present(i) = .true.
             end if
         end do
@@ -447,7 +447,7 @@ contains
     ! Get impurity concentrations every time, as they can change
     do i = 2, nimp
         if(impurities_present(i)) then
-           impurity_concs(i)= impurity_arr(i)%frac * impurity_enrichment(i)
+           impurity_concs(i)= impurity_arr_frac(i) * impurity_enrichment(i)
         else
             impurity_concs(i)=0.0d0
         endif
@@ -646,7 +646,7 @@ do i = 2, nimp
     y(2) = n020*1.d-20   ! y(2) = neutral density (group 2) [1e20 m-3]
     y(3) = te0           ! y(3) = temperature [eV]
     y(4) = nv0*1.d-24    ! y(4) = ion flux [1e24 m-3 s-1]
-    y(5) = pressure0  
+    y(5) = pressure0
     y(6) = Power0/1.d6   ! y(6) = power in SOL [MW]
     y(7) =1.0D0          ! Y(7) = 1 + integral of impurity radiation loss [MW]
     y(8) =1.0D0          ! Y(8) = 1 + integral of radiation loss from hydrogenic species [MW]
@@ -678,7 +678,7 @@ do i = 2, nimp
               'v_[m/s]', 'mach ',                                                     &
               'n0/1e20/m3', 'Power_[W]', 'perp_area', 'qtot_W/m2', 'qconv_W/m2', 'qcond_W/m2',         &
               'CX_W/m3', 'Ion_W/m3' , 'H_rad_W/m3', 'im_rad_W/m3', 'Y7', 'Y8', 'Y9', 'Y10',    &
-              (impurity_arr(i)%Label, i=2,nimp),'n01/1e20/m3','n02/1e20m-3','nv24','v/ms-1'
+              (impurity_arr_Label(i), i=2,nimp),'n01/1e20/m3','n02/1e20m-3','nv24','v/ms-1'
         !open(unit=10, file='divertor_diagnostics.txt', status='replace')
     endif   ! (iprint.eq.1)
 
@@ -717,7 +717,7 @@ do i = 2, nimp
         te  = Y(3)
         nv24 = Y(4)
         nv  = nv24*1.d24
-        pressure = Y(5) 
+        pressure = Y(5)
         Power   = Y(6)*1.d6
 
         ! The area of the flux tube, measured perpendicular to B
@@ -728,14 +728,14 @@ do i = 2, nimp
             A_cross = area_omp
         end if
 
-        ! Calculate density [m-3] 
+        ! Calculate density [m-3]
         bracket = max( (pressure**2.0D0 - eightemi48*te*nv24**2.0D0), 0.0D0)
         n = (pressure + sqrt(bracket))/(4.0D0*echarge*te)
         nel20 = n/1.d20
         nelsquared = n**2.0D0
-        
+
         Pthermal = 2.0D0*n*te*echarge               ! Thermal pressure [Pa]
-        
+
         v = nv/n
         ! Neutral density = sum of the two velocity groups [1e20.m-3]
         n0e20 = Y(1) + Y(2)
@@ -1000,13 +1000,14 @@ do i = 2, nimp
     !! differential supplies the right hand side of the ODE
     !! Note that t is only used here because the area is a function of x.
     !! Y(7-10) are the power loss integrals
-    !! 
+    !!
 
     use read_radiation, only: read_lz
     use read_and_get_atomic_data, only: get_h_rates
     use constants, only: echarge
-		use div_kal_vars, only: abserr_sol, netau_sol 
-		use divertor_ode_var, only: impurity_concs, imp_label, nimp
+		use div_kal_vars, only: abserr_sol, netau_sol
+		use divertor_ode_var, only: impurity_concs
+        use impurity_radiation_module, only: nimp, imp_label
     implicit none
 
     real(dp),intent(in) :: t       ! T, the independent variable
@@ -1028,11 +1029,11 @@ do i = 2, nimp
     n02 = Y(2)*1.d20
     te  = Y(3)
     nv  = Y(4)*1.d24
-    pressure = Y(5) 
+    pressure = Y(5)
     Power = Y(6)*1.d6                             ! Q
     nv24 = Y(4)               ! Ion flux
 
-    bracket = pressure**2 - eightemi48*te*nv24**2 
+    bracket = pressure**2 - eightemi48*te*nv24**2
 
     if ((bracket .lt. 0.0)) then
 
@@ -1048,7 +1049,7 @@ do i = 2, nimp
 
     endif
 
-    n = (pressure + sqrt(bracket))/(4.0d0*echarge*te) 
+    n = (pressure + sqrt(bracket))/(4.0d0*echarge*te)
 
     v = nv/n                ! Plasma velocity
     n0 = n01 + n02            ! neutral density = sum of the two velocity groups
@@ -1146,7 +1147,7 @@ do i = 2, nimp
     !                       mi*v**2, 'v', v, 'nv',nv
     !end if
 
-    yp(5) =-(cxrate/n + al*n)*nv*mi 
+    yp(5) =-(cxrate/n + al*n)*nv*mi
 
     ! dPowerdx - energy conservation
     yp(6) =1.d-6*(raddens + radHdens + plossdenscx + plossion)*A_cross

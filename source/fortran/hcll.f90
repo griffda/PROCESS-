@@ -387,10 +387,10 @@ contains
     bzfllengi = 0.0D0
     bzfllengo = 0.0D0
     cf = 0.0D0
-    
+
     ! Specific heat at constant pressure for He at 8 MPa and 400C (J/kg/K)
     cp_he = 5190.0D0
-    
+
     ! Density of Helium (kg/m3 at 8MPa, 400 C)
     denhe = 5.4D0
 
@@ -424,7 +424,7 @@ contains
     dt_bb_ob_max = 1.5D0
 
     dt_bu_ib = 0.0D0
-    
+
     ! Max allowed toroidal/poloidal dimension of BU (m)
     dt_bu_max = 0.2D0
     dp_bu_max = 0.2D0
@@ -435,7 +435,7 @@ contains
     dt_mf_ib = 0.0D0
     dt_mf_ob = 0.0D0
     emult_all = 1.17D0
-    
+
     ! TBR Formula correction Factors
     ff_ib = 0.8572D0
     ff_ob = 0.8026D0
@@ -445,24 +445,24 @@ contains
 
     ! Volume fraction of He in BZ (%)
     frac_vol_he_bz = 7.0D0
-    
+
     ! volume fraction of helium in the FW (calculated in the CEA version) (%)
     frac_vol_he_fw = 26.3D0
 
     frac_vol_he_mf = 0.0D0
     frac_vol_pbli_bz = 0.0D0
-    
+
     ! Volume fraction of PbLi in manifold region (%)
     frac_vol_pbli_mf = 6.8D0
-    
+
     ! Volume fraction of steel in BZ (%)
     frac_vol_steel_bz = 14.7D0
 
     frac_vol_steel_fw = 0.0D0
-    
+
     ! Volume of steel in the manifold region (%)
     frac_vol_steel_mf = 42.0D0
-    
+
     ! Volume fraction of tungsten in the FW (%)
     frac_vol_w_fw = 4.8D0
 
@@ -526,10 +526,10 @@ contains
 
     ! Reference He pumping power, DEMO 2007 (MW)
     P_pump_0 = 245.0D0
-    
+
     ! Reference thermal blanket power, DEMO 2007 (MW)
     P_th_0 = 2394.0D0
-    
+
     phi_tfc_ib = 0.0D0
     phi_tfc_ob = 0.0D0
     pnuc_bkt_ratio = 0.0D0
@@ -548,7 +548,7 @@ contains
     ! Set the blanket inlet and outlet temperatures (K)
     T_he_in = 300.0D0
     T_he_out = 500.0D0
-    
+
     TBR_ib = 0.0D0
     TBR_ob = 0.0D0
     thick_bp_ib = 0.0D0
@@ -560,14 +560,14 @@ contains
 
     thick_bz_ib = 0.0D0
     thick_bz_ob = 0.0D0
-    
+
     ! Inboard/outboard blanket module cap thickness (m)
     thick_cap_ib = 0.025D0
     thick_cap_ob = 0.025D0
-    
+
     thick_fw_ib = 0.0D0
     thick_fw_ob = 0.0D0
-    
+
     ! Inboard/outboard blanket module side wall thickness
     thick_sw_ib = 0.025D0
     thick_sw_ob = 0.025D0
@@ -1145,7 +1145,7 @@ contains
       ! User sets mechanical pumping power as a fraction of thermal power removed by coolant
       htpmw_fw = fpumpfw*(pnucfw + psurffwi + psurffwo)
       htpmw_blkt = fpumpblkt*pnucblkt
-      htpmw_shld = fpumpshld*0.0D0 
+      htpmw_shld = fpumpshld*0.0D0
       ! pnucshld is not available and is very small compared to other powers so set to zero.
       htpmw_div = fpumpdiv*(pdivt + pnucdiv + praddiv)
 
@@ -1154,7 +1154,7 @@ contains
       ! Mechanical pumping power is calculated for first wall and blanket
       call thermo_hydraulic_model
 
-      ! For divertor and shield, mechanical pumping power is a fraction of 
+      ! For divertor and shield, mechanical pumping power is a fraction of
       ! thermal power removed by coolant
       htpmw_div = fpumpdiv * (pdivt + pnucdiv + praddiv)
 
@@ -1178,7 +1178,7 @@ contains
     !! Calculations for detailed powerflow model secondary_cycle > 0
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    
+
     use constants, only: pi
     use build_variables, only: blnkith, blnkoth, scraplo, scrapli, fwareaib, &
       fwareaob, fwarea, fwith, fwoth
@@ -1187,7 +1187,7 @@ contains
       inlet_temp, vfblkt, fwcoolant, fwpressure, etaiso, blpressure, coolwh, &
       pnucfw, volblkto, tpeak, fw_wall, roughness, primary_pumping, tfwmatmax
     use process_output, only: ovarin, oheadr, ovarre, ovarrf, ovarst, ocmmnt
-    use heat_transport_variables, only: htpmw_fw, htpmw_blkt, htpmw_div, & 
+    use heat_transport_variables, only: htpmw_fw, htpmw_blkt, htpmw_div, &
       htpmw_shld, htpmw
     use fw_module, only: fw_temp
     use physics_variables, only: rmajor, rminor
@@ -1237,7 +1237,7 @@ contains
     bzfllengi = 4.0D0*bldepti + 2.0D0*bllengi
     bzfllengo = 4.0D0*bldepto + 2.0D0*bllengo
 
-    ! Number of angle turns in FW and blanket flow channels, consistent 
+    ! Number of angle turns in FW and blanket flow channels, consistent
     ! with flow lengths defined
     no90fw = 2
     no180fw = 0
@@ -1261,7 +1261,7 @@ contains
     ! First wall flow is just along the first wall, with no allowance for radial
     ! pipes, manifolds etc.
     ! The outputs are mean quantities of inlet and outlet
-    call fw_temp(ip, ofile, afw, fwith, fwareaib, psurffwi, pnucfwi, tpeakfwi, & 
+    call fw_temp(ip, ofile, afw, fwith, fwareaib, psurffwi, pnucfwi, tpeakfwi, &
       cf, rhof, mffwpi, 'Inboard first wall')
     ! Recalculate the mass flow rates here using the heat capacity output by fw_temp
 
@@ -1310,7 +1310,7 @@ contains
     ! !!!!!!!!!!!
 
     ! Maximum FW temperature. (27/11/2015) Issue #348.
-    call fw_temp(ip, ofile, afw, fwoth, fwareaob, psurffwo, pnucfwo, tpeakfwo, & 
+    call fw_temp(ip, ofile, afw, fwoth, fwareaob, psurffwo, pnucfwo, tpeakfwo, &
       cf, rhof, mffwo, 'Outboard first wall')
 
     ! Recalculate the mass flow rates here using the heat capacity output by fw_temp
@@ -1389,7 +1389,7 @@ contains
     call ovarre(ofile, 'First wall coolant pressure (Pa)', '(fwpressure)', fwpressure)
     call ovarre(ofile, 'Blanket coolant pressure (Pa)', '(blpressure)', blpressure)
 
-    call ovarrf(ofile, 'Allowable temperature of first wall material, excluding armour (K)', & 
+    call ovarrf(ofile, 'Allowable temperature of first wall material, excluding armour (K)', &
       '(tfwmatmax)', tfwmatmax)
     call ovarrf(ofile, 'Actual peak temperature of first wall material (K)', '(tpeak)', &
       tpeak, 'OP ')
@@ -1681,11 +1681,11 @@ contains
 
       ! Calculate outboard blanket poloidal length and segment, subtracting divertor length (m)
       bllengo = 0.5D0*ptor * (1.0D0 - fdiv) / nblktmodpo
-      
+
     end if
-    
+
   end subroutine blanket_mod_pol_height
-     
+
   subroutine fast_neutron_flux(dr_fw, dr_bz, dr_mf, dr_sh, dr_vv, f_vol_steel_bz, &
     f_vol_pbli_bz, fnflux)
     !! KIT HCLL blanket model fast_neutron_flux
@@ -1694,20 +1694,20 @@ contains
     !! the KIT HCLL blanket model.
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    
+
     use physics_variables, only: powfmw
 
     implicit none
 
     ! Arguments !
     ! !!!!!!!!!!!!
-    
+
     ! Radial thicknesses of FW, BZ, MF, shield, VV for inboard or outboard (m)
     real(dp), intent(in) :: dr_fw, dr_bz, dr_mf, dr_sh, dr_vv
-  
+
     ! Volume fraction of steel and PbLi in BZ (%)
     real(dp), intent(in) :: f_vol_steel_bz, f_vol_pbli_bz
-  
+
     ! Fast Neutron Flux (cm-2 sec-1)
     real(dp), intent(out) :: fnflux
     ! Local variables
@@ -1754,7 +1754,7 @@ contains
       '(dp_bb_ib)', dp_bb_ib, 'OP ')
     call ovarrf(ofile, 'Radial length of inboard  blanket module (m)', &
       '(dr_bb_ib)', dr_bb_ib, 'OP ')
-    call ovarrf(ofile, 'Toroidal length of outboard  blanket module (m)', & 
+    call ovarrf(ofile, 'Toroidal length of outboard  blanket module (m)', &
       '(dt_bb_ob)', dt_bb_ob, 'OP ')
     call ovarrf(ofile, 'Poloidal length of outboard  blanket module (m)', &
       '(dp_bb_ob)', dp_bb_ob, 'OP ')

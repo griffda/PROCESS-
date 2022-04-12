@@ -17,7 +17,7 @@ module maths_library
 #ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
 #endif
- 
+
   !use process_output
 
   implicit none
@@ -5079,11 +5079,11 @@ contains
     implicit none
 
     !  Arguments
-    real(kind=double), intent(in) :: rmajor,rminor,zminor
-    real(kind=double), intent(out) :: ain,aout,atot
+    real(dp), intent(in) :: rmajor,rminor,zminor
+    real(dp), intent(out) :: ain,aout,atot
 
     !  Local variables
-    real(kind=double) :: elong
+    real(dp) :: elong
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -5126,11 +5126,11 @@ contains
     implicit none
 
     !  Arguments
-    real(kind=double), intent(in) :: rshell,rmini,rmino,zminor
-    real(kind=double), intent(out) :: ain,aout,atot
+    real(dp), intent(in) :: rshell,rmini,rmino,zminor
+    real(dp), intent(out) :: ain,aout,atot
 
     !  Local variables
-    real(kind=double) :: elong
+    real(dp) :: elong
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -5203,7 +5203,7 @@ contains
       ! https://en.wikipedia.org/wiki/Secant_method
       ! Requires two initial values, x0 and x1, which should ideally be chosen to lie close to the root.
       !external:: f
-      
+
       interface
         function f(x)
 #ifndef dp

@@ -15,7 +15,7 @@
 
 import argparse
 import matplotlib.pyplot as plt
-import process_io_lib.mfile as mf
+import process.io.mfile as mf
 
 
 def plot_scan(cargs, m_file_data):
@@ -27,12 +27,12 @@ def plot_scan(cargs, m_file_data):
     """
 
     nscans = int(m_file_data.data["isweep"].get_scan(-1))
-    x = range(1, nscans+1)
+    x = range(1, nscans + 1)
     data = {}
     for param in cargs.p:
         values = m_file_data.data[param].get_scans()[:nscans]
         if values[0] != 0.0:
-            values = [val/values[0] for val in values]
+            values = [val / values[0] for val in values]
         if param not in data.keys():
             data[param] = values
 
@@ -49,24 +49,41 @@ def plot_scan(cargs, m_file_data):
     else:
         plt.savefig(cargs.o, orientation="landscape")
 
+
 if __name__ == "__main__":
 
     # Setup command line arguments
-    parser = argparse.ArgumentParser(description='Plot sweep values from '
-                                                 'MFILE.DAT')
+    parser = argparse.ArgumentParser(description="Plot sweep values from " "MFILE.DAT")
 
-    parser.add_argument('-f', metavar='f', type=str, default="MFILE.DAT",
-                        help='File to read as MFILE.DAT')
+    parser.add_argument(
+        "-f",
+        metavar="f",
+        type=str,
+        default="MFILE.DAT",
+        help="File to read as MFILE.DAT",
+    )
 
-    parser.add_argument('-o', metavar='o', type=str, default="sweep_fig.pdf",
-                        help='File to save plot to')
+    parser.add_argument(
+        "-o",
+        metavar="o",
+        type=str,
+        default="sweep_fig.pdf",
+        help="File to save plot to",
+    )
 
-    parser.add_argument('-p', metavar='p', type=str, nargs='+',
-                        help='Variables for the plot (e.g. -p rmajor bt te ...'
-                             ')')
+    parser.add_argument(
+        "-p",
+        metavar="p",
+        type=str,
+        nargs="+",
+        help="Variables for the plot (e.g. -p rmajor bt te ..." ")",
+    )
 
-    parser.add_argument("--show", help="Show plot to screen instead of saving "
-                                       "to file", action="store_true")
+    parser.add_argument(
+        "--show",
+        help="Show plot to screen instead of saving " "to file",
+        action="store_true",
+    )
 
     args = parser.parse_args()
 

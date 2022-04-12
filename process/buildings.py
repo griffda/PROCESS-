@@ -49,7 +49,7 @@ class Buildings:
 
         if buildings_variables.i_bldgs_size == 1:
             # STEP building estimates
-            self.bldgs_sizes(self, tf_radial_dim, tf_vertical_dim)
+            self.bldgs_sizes(output, tf_radial_dim, tf_vertical_dim)
 
         else:
             # Previous estimation work
@@ -235,16 +235,11 @@ class Buildings:
 
         # Decontamination cell size
         dcw = 2.0e0 * tcw + 1.0e0
-        dcl = 2.0e0 * tcw + 1.0e0
 
         # Hot cell size
         # hccl : clearance around components in hot cell, m
         hcw = shro - shri + 3.0e0 * buildings_variables.hccl + 2.0e0
         hcl = 3.0e0 * (shro - shri) + 4.0e0 * buildings_variables.hccl + tcw
-
-        # Radioactive waste treatment
-        rww = dcw
-        rwl = hcl - dcl - buildings_variables.hcwt
 
         # Maintenance building dimensions
         rmbw = hcw + dcw + 3.0e0 * buildings_variables.hcwt
@@ -277,7 +272,7 @@ class Buildings:
         wsv = buildings_variables.wsvfac * wsa * rmbh
 
         # Cryogenic building volume
-        cryv = 55.0e0 * helpow ** 0.5
+        cryv = 55.0e0 * helpow**0.5
         # Other building volumes
         # pibv : power injection building volume, m3
         # esbldgm3 is forced to be zero if no energy storage is required (lpulse=0)
@@ -452,9 +447,6 @@ class Buildings:
 
         # Fuel Cycle facilities: include within reactor building
         # Dimensions based upon estimates from W. Smith
-        fc_building_area = (
-            buildings_variables.fc_building_l * buildings_variables.fc_building_w
-        )
         buildings_variables.reactor_hall_l = (
             buildings_variables.reactor_hall_l + buildings_variables.fc_building_l
         )
@@ -659,7 +651,7 @@ class Buildings:
         hotcell_area = hotcell_vol / buildings_variables.hotcell_h
 
         # derive estimates for length and width by assuming a square building
-        hotcell_l = hotcell_area ** 0.5
+        hotcell_l = hotcell_area**0.5
         hotcell_w = hotcell_l
 
         # external dimensions include same wall and roof thicknesses as reactor building

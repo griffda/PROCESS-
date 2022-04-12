@@ -1,7 +1,7 @@
   !       !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+
   !       module e3m
-  
+
   !! MHD Equilibrium Solver
   !! author: ""
   !! N/A
@@ -9,9 +9,9 @@
   !! L.E. Zakharov,"Method of Electrodynamic Moments for Equilibrium Calculations in a Toroidal Plasma", Preprint of the Kurchatov Institute of Atomic Energy IAE-4114/6, Moscow (1985)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
-  
-  
+
+
+
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   !! ""
   ! INPUT
@@ -43,17 +43,17 @@
   !! BMODEQ                : output real :  <B/BTOR>
   !! FOFBEQ                : output real :  <(BTOR/B)**2*(1.-SQRT(1-B/Bmax)*(1+.5B/Bmax))>
   !! GRDAEQ                : output real :  <grad a>
-  !! TIME                  : output real : 
-  !! Everywhere above 
-  !! (i)  the same equidistant grid with respect to the "radial" 
+  !! TIME                  : output real :
+  !! Everywhere above
+  !! (i)  the same equidistant grid with respect to the "radial"
   !! variable "a" is assumed to be used both for input and output.
-  !! (ii) average <f> is an [0.5/\pi] integral over the poloidal angle \tau 
-  !! of the quantity [f\sqrt{g}], where g_{ij} is the metric tensor 
+  !! (ii) average <f> is an [0.5/\pi] integral over the poloidal angle \tau
+  !! of the quantity [f\sqrt{g}], where g_{ij} is the metric tensor
   !! of {a,\tau,\zeta}.
   !! (iii) r is the current polar radius (the distance to the major axis)
-  !! 
+  !!
   !! None
-  
+
 	subroutine EMEQ(redo,BA,BB,   ! j_zeta = BA*(R00/r) + BB*(r/R00-R00/r)
      &   BR00, 	! R00 = R_0+\Delta_edge		! RTOR+SHIFT
      &            SA0, 	! a_edge			! ABC
@@ -89,33 +89,33 @@
     ! 	\Delta' =WDSD1(I)*WSA(I)
     ! 	\lambda'=WDGL(I)*WGL(I)*WSAA(I)
     ! 	\delta' =WDSD3(I)*WSA(I)
-    
+
 	implicit none
 	include 'emeq.inc'
 	integer ::	NA1,NAOLD,NA,NT,NT1,I,I1,J,K,NITER,redo
 	integer :: jiter
 	 real(kind(1.0d0)) ::	BR00,SA0,GL0,GD30,ACC,B0T,PLCUR,TIME
-	real(kind(1.0d0)) ::	BA(NA1),BB(NA1),GR(NA1),GBD(NA1),GL(NA1) 
-     & ,GSD(NA1),GRA(NA1),SQGRA(NA1),GRAR(NA1),AVR2(NA1) 
+	real(kind(1.0d0)) ::	BA(NA1),BB(NA1),GR(NA1),GBD(NA1),GL(NA1)
+     & ,GSD(NA1),GRA(NA1),SQGRA(NA1),GRAR(NA1),AVR2(NA1)
      & ,AI0(NA1),dgrda(NA1),avsqg(NA1),Vol(NA1),GR2AUX(NA1)
-	real(kind(1.0d0)) ::	B2B0EQ(NA1),B0B2EQ(NA1),BMAXEQ(NA1), 
-     & BMINEQ(NA1),BMODEQ(NA1),FOFBEQ(NA1),GRDAEQ(NA1), 
-     & A,AA,C,CC,S,SS,SR,SX,SX1,T,Y,Y1,SDT,SDT0, 
-     & DRDA,DZDA,DRDT,DZDT,DMETR,DA2,DGR2,FI,FJ,D0,CGP, 
-     & GP,GP2,GR2,GLOLD,G3DOLD,AOLD,G22A2,SKGGG, 
-     & SQG,YLIN,YVOL,YMIN,YMAX 
+	real(kind(1.0d0)) ::	B2B0EQ(NA1),B0B2EQ(NA1),BMAXEQ(NA1),
+     & BMINEQ(NA1),BMODEQ(NA1),FOFBEQ(NA1),GRDAEQ(NA1),
+     & A,AA,C,CC,S,SS,SR,SX,SX1,T,Y,Y1,SDT,SDT0,
+     & DRDA,DZDA,DRDT,DZDT,DMETR,DA2,DGR2,FI,FJ,D0,CGP,
+     & GP,GP2,GR2,GLOLD,G3DOLD,AOLD,G22A2,SKGGG,
+     & SQG,YLIN,YVOL,YMIN,YMAX
      & ,SKDR,SKGA,SQG22R
 !	save AOLD,GLOLD,G3DOLD,NAOLD,NITER,cgp
 	common /EMEQMR/SKDR(NP),SKGA(NP),SQG22R(NP)
 	data AOLD/0.d0/GLOLD/0.d0/G3DOLD/0.d0/NAOLD/1/
 	data NITER/1e4/
-	data cgp/3.14159265359d0/	
-    
+	data cgp/3.14159265359d0/
+
     !*************************************************
     ! 	if (TIME .gt. .1)	then
     ! 	write(*,*)BR00	! R_0+\Delta_edge		! RTOR+SHIFT
-    ! 	write(*,*)SA0	! a_edge			! ABC	   
-    ! 	write(*,*)GL0	! \lambda_edge			! ELONG	   
+    ! 	write(*,*)SA0	! a_edge			! ABC
+    ! 	write(*,*)GL0	! \lambda_edge			! ELONG
     ! 	write(*,*)GD30	! \delta_edge			! TRIAN*ABC0
     ! 	write(*,*)NA1
     ! 	write(*,*)B0T	! B_tor_vac @ BR00	 ! B_0*R_0/(R_0+SHIFT)
@@ -241,7 +241,7 @@ C                                        ( Y=B^2 )
 C R,Z derivatives
             DRDA=-WDSD1(I)*A+C-WDSD3(I)*A*SS
             DZDA=S*WGL(I)*(AA*WDGL(I)+1)
-            DRDT=-A*S-2.*AA*WSD3(I)*C*S	
+            DRDT=-A*S-2.*AA*WSD3(I)*C*S
             DZDT=WGL(I)*A*C
 C metric tensor components
             DMETR=DRDA*DZDT-DRDT*DZDA
@@ -330,7 +330,7 @@ C	close(33)
  30   format(5(f10.4))
       END subroutine EMEQ
 
-C - 3 MOMENT EQUILIBRIUM SOLVER			AUGUST 17,1988 
+C - 3 MOMENT EQUILIBRIUM SOLVER			AUGUST 17,1988
 C NITER - max number of iterations
 C ACC   - relative tolerance parameter
       subroutine EQAB3(NA,NT,NITER,ACC
@@ -520,19 +520,19 @@ C----------------------------------------------------------------------|
 C Parameters used:
 C Input:
 C	Variables:	NA,BR00,SA0,GL0,GD30
-C	Arrays:		
+C	Arrays:
 C Output
 C	Arrays defined here and used elsewhere
 C   WSA  = j*SA0/NA	current minor radius, a
 C   WSAA = WSA**2	a^2
-C   WSCI1 = 
-C   WSCI3 = 
-C   WSCI5 = 
-C   WSCI7 = 
-C   WSCJ1 = 
-C   WSCJ3 = 
-C   WSCJ5 = 
-C   WSCJ7 = 
+C   WSCI1 =
+C   WSCI3 =
+C   WSCI5 =
+C   WSCI7 =
+C   WSCJ1 =
+C   WSCJ3 =
+C   WSCJ5 =
+C   WSCJ7 =
 C	Arrays first defined here and modified in EQAB3
 C   WGL  = \lambda
 C   WSD3 = \delta/a^2
@@ -596,9 +596,9 @@ C----------------------------------------------------------------------|
 C Parameters used:
 C Input:
 C	Variables:	NA,WBR0
-C	Arrays:		
+C	Arrays:
 C Output (arrays):
-C			
+C
 C----------------------------------------------------------------------|
 	implicit none
 	include	'emeq.inc'
@@ -709,7 +709,7 @@ C  ODD EQUATIONS
 C HERE ZAKHAROV'S AUTHOR RIGHTS ARE CANCELED WITHOUT ANY CEREMONY
 c	DRDA=-WDSD1(I)*A+C-WDSD3(I)*A*SS
 c	DZDA=S*WGL(I)*(AA*WDGL(I)+1.)
-c	DRDT=-A*S-2.*AA*WSD3(I)*C*S	
+c	DRDT=-A*S-2.*AA*WSD3(I)*C*S
 c	DZDT=WGL(I)*A*C
 C METRIC (SUBSRIPT) TENSOR COMPONENTS
 c	G11=DRDA**2+DZDA**2
@@ -726,7 +726,7 @@ C---- ASTRA METRIC COMBINATIONS -------
 C D**2/A**2
         DA2=(C-A*(WDSD1(I)+WDSD3(I)*SS))*WGL(I)*C+
      +  WGL(I)*SS*(WDGL(I)*AA+1.)*(1.+2.*A*C*WSD3(I))
-        SKDR(I)=SKDR(I)+SDT*DA2/SR      
+        SKDR(I)=SKDR(I)+SDT*DA2/SR
  2    CONTINUE
       WBG332(I)=WBG332(I)+(WSD1(I)+0.5*WSD3(I))*RI
 	WBG222(I)=WBG222(I)+WBK02(I)-(WBK10(I)+
@@ -753,7 +753,7 @@ C----------------------------------------------------------------------|
 C Parameters used:
 C Input:
 C	Variables:	NA,WBR0
-C	Arrays:	
+C	Arrays:
 C   WSAA(*)
 C   WGL(*)
 C   WSD1(*)
@@ -867,7 +867,7 @@ C      Arrays:
 C   WBA   Zakharov's function A
 C   WBB   Zakharov's function B
 C   WDBA  h/a*dA/da
-C   WDBB  
+C   WDBB
 C----------------------------------------------------------------------|
 	implicit none
 !	include 'emeq.inc'
@@ -923,7 +923,7 @@ C----------------------------------------------------------------------|
 C Parameters used:
 C Input:
 C	Variables:	NA,WBR0,WBR00,WBJ0,WBBS0
-C	Arrays:	
+C	Arrays:
 C   WSA(*)
 C   WSAA(*)
 C   WGL(*)

@@ -11,12 +11,11 @@ Compatible with PROCESS version 319
 """
 
 
-from process_io_lib.mfile import MFile
+from process.io.mfile import MFile
 from pylab import figure, plot, xticks, subplots_adjust, grid
 
 
-
-def plot_normalised_ixc(mfilename='MFILE.DAT'):
+def plot_normalised_ixc(mfilename="MFILE.DAT"):
 
     """
     Plots the normalised values of the iteration variables of a given MFILE
@@ -27,25 +26,24 @@ def plot_normalised_ixc(mfilename='MFILE.DAT'):
     list_nitvar = []
     list_labels = []
 
-    nvar = int(m_file.data['nvar'].get_scan(-1))
-    for i in range(1, nvar+1):
+    nvar = int(m_file.data["nvar"].get_scan(-1))
+    for i in range(1, nvar + 1):
 
-        nitvar = m_file.data['nitvar{:03}'.format(i)].get_scan(-1)
+        nitvar = m_file.data["nitvar{:03}".format(i)].get_scan(-1)
         list_nitvar += [nitvar]
 
-        label = m_file.data['nitvar{:03}'.format(i)].var_description
+        label = m_file.data["nitvar{:03}".format(i)].var_description
 
-        list_labels += [label.replace('_(range_normalised)', '')]
+        list_labels += [label.replace("_(range_normalised)", "")]
 
     figure()
     subplots_adjust(bottom=0.2)
-    plot(list_nitvar, 'ks')
-    xticks(range(len(list_nitvar)), list_labels, rotation='vertical')
+    plot(list_nitvar, "ks")
+    xticks(range(len(list_nitvar)), list_labels, rotation="vertical")
     grid(True)
 
 
-
-def plot_normalised_icc_res(mfilename='MFILE.DAT'):
+def plot_normalised_icc_res(mfilename="MFILE.DAT"):
 
     """
     Plots the normalised values of the costraint residuals of a given MFILE
@@ -56,19 +54,18 @@ def plot_normalised_icc_res(mfilename='MFILE.DAT'):
     list_normres = []
     list_labels = []
 
-    neqns = int(m_file.data['neqns+nineqns'].get_scan(-1))
-    for i in range(1, neqns+1):
+    neqns = int(m_file.data["neqns+nineqns"].get_scan(-1))
+    for i in range(1, neqns + 1):
 
-        normres = m_file.data['normres{:03}'.format(i)].get_scan(-1)
+        normres = m_file.data["normres{:03}".format(i)].get_scan(-1)
         list_normres += [normres]
 
-        label = m_file.data['normres{:03}'.format(i)].var_description
+        label = m_file.data["normres{:03}".format(i)].var_description
 
-        list_labels += [label.replace('_normalised_residue', '')]
-
+        list_labels += [label.replace("_normalised_residue", "")]
 
     figure()
     subplots_adjust(bottom=0.55)
-    plot(list_normres, 'ks')
-    xticks(range(len(list_normres)), list_labels, rotation='vertical')
+    plot(list_normres, "ks")
+    xticks(range(len(list_normres)), list_labels, rotation="vertical")
     grid(True)

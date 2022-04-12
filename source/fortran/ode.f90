@@ -5,9 +5,9 @@ module ode_mod
 #endif
 
   implicit none
-  
+
 contains
-    
+
 subroutine ode ( f, neqn, y, t, tout, relerr, abserr, iflag, work, iwork )
 
 !*****************************************************************************
@@ -122,9 +122,9 @@ subroutine ode ( f, neqn, y, t, tout, relerr, abserr, iflag, work, iwork )
 !      abs ( local error ) <= abs ( y ) * relerr + abserr
 !    for each component of the local error and solution vectors.
 !
-!    Input/output, integer ( kind = 4 ) IFLAG, indicates the status of 
-!    integration.  On input, IFLAG is normally 1 (or -1 in the special case 
-!    where TOUT is not to be exceeded.)  On normal output, IFLAG is 2.  Other 
+!    Input/output, integer ( kind = 4 ) IFLAG, indicates the status of
+!    integration.  On input, IFLAG is normally 1 (or -1 in the special case
+!    where TOUT is not to be exceeded.)  On normal output, IFLAG is 2.  Other
 !    output values are:
 !    * 3, integration did not reach TOUT because the error tolerances
 !      were too small.  But RELERR and ABSERR were increased appropriately
@@ -278,9 +278,9 @@ subroutine de ( f, neqn, y, t, tout, relerr, abserr, iflag, yy, wt, p, yp, &
 !      abs ( local error ) <= abs ( Y ) * RELERR + ABSERR
 !    for each component of the local error and solution vectors.
 !
-!    Input/output, integer ( kind = 4 ) IFLAG, indicates the status of 
-!    integration.  On input, IFLAG is normally 1 (or -1 in the special case 
-!    where TOUT is not to be exceeded.)  On normal output, IFLAG is 2.  Other 
+!    Input/output, integer ( kind = 4 ) IFLAG, indicates the status of
+!    integration.  On input, IFLAG is normally 1 (or -1 in the special case
+!    where TOUT is not to be exceeded.)  On normal output, IFLAG is 2.  Other
 !    output values are:
 !    * 3, integration did not reach TOUT because the error tolerances were
 !         too small.
@@ -333,17 +333,17 @@ subroutine de ( f, neqn, y, t, tout, relerr, abserr, iflag, yy, wt, p, yp, &
 !    Input/output, real ( kind = 8 ) DELSGN, the sign (+1 or -1) of
 !    TOUT - T.
 !
-!    Input/output, integer ( kind = 4 ) NS, the number of steps taken with 
+!    Input/output, integer ( kind = 4 ) NS, the number of steps taken with
 !    stepsize H.
 !
 !    Input/output, logical NORND, ?
 !
 !    Input, integer ( kind = 4 ) K, the order of the current ODE method.
 !
-!    Input, integer ( kind = 4 ) KOLD, the order of the ODE method on the 
+!    Input, integer ( kind = 4 ) KOLD, the order of the ODE method on the
 !    previous step.
 !
-!    Input/output, integer ( kind = 4 ) ISNOLD, the previous value of ISN, the 
+!    Input/output, integer ( kind = 4 ) ISNOLD, the previous value of ISN, the
 !    sign of IFLAG.
 !
 !  Local parameters:
@@ -690,7 +690,7 @@ subroutine step ( x, y, f, neqn, h, eps, wt, start, hold, k, kold, crash, &
 !    Input/output, real ( kind = 8 ) HOLD, the step size used on the last
 !    successful step.
 !
-!    Input/output, integer ( kind = 4 ) K, the appropriate order for the 
+!    Input/output, integer ( kind = 4 ) K, the appropriate order for the
 !    next step.
 !
 !    Input/output, integer ( kind = 4 ) KOLD, the order used on the last

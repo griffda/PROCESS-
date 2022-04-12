@@ -18,7 +18,7 @@ module costs_module
   !  Various cost account values (M$)
   real(dp) :: c228, c229, c23, c25, c26, cindrt, ccont
 
-  !  Account 226 - Heat transport system 
+  !  Account 226 - Heat transport system
   real(dp) :: c226, c2261, c2262, c2263
 
   !  Account 227 - Fuel handling
@@ -43,7 +43,7 @@ contains
    subroutine init_costs_module
       !! Initialise module variables
       implicit none
-      
+
       c228 = 0.0D0
       c229 = 0.0D0
       c23 = 0.0D0
@@ -161,13 +161,12 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     use cost_variables, only: concost, crctcore, fkind, ireactor, moneyint, &
-      c222, cdirt, output_costs, ifueltyp, capcost, c221, lsa, ipnet 
-    use fwbs_variables, only: blkttype 
-    use ife_variables, only: ife 
-    use heat_transport_variables, only: ipowerflow 
-    use physics_variables, only: itart 
-    use process_output, only: ovarin, ovarre, oshead, oblnkl, oheadr, ocosts 
-    use tfcoil_variables, only: i_tf_sup 
+      c222, cdirt, output_costs, ifueltyp, capcost, c221, lsa, ipnet
+    use fwbs_variables, only: iblanket
+    use ife_variables, only: ife
+    use physics_variables, only: itart
+    use process_output, only: ovarin, ovarre, oshead, oblnkl, oheadr, ocosts
+    use tfcoil_variables, only: i_tf_sup
     implicit none
 
     !  Arguments
@@ -241,12 +240,12 @@ contains
     call oshead(outfile,'Reactor Systems')
     call ocosts(outfile,'(c2211)','First wall cost (M$)',c2211)
     if (ife /= 1) then
-    if ((ipowerflow == 0).or.(blkttype == 3)) then
-      call ocosts(outfile,'(c22121)','Blanket beryllium cost (M$)',c22121)
-      call ocosts(outfile,'(c22122)','Blanket breeder material cost (M$)',c22122)
-    else
+    if (iblanket == 4) then
       call ocosts(outfile,'(c22121)','Blanket lithium-lead cost (M$)',c22121)
       call ocosts(outfile,'(c22122)','Blanket lithium cost (M$)',c22122)
+    else
+      call ocosts(outfile,'(c22121)','Blanket beryllium cost (M$)',c22121)
+      call ocosts(outfile,'(c22122)','Blanket breeder material cost (M$)',c22122)
     end if
     call ocosts(outfile,'(c22123)','Blanket stainless steel cost (M$)',c22123)
     call ocosts(outfile,'(c22124)','Blanket vanadium cost (M$)',c22124)
@@ -272,7 +271,7 @@ contains
 20     format(t2, &
             'First wall, total blanket and divertor direct costs',/, &
             t2,'are zero as they are assumed to be fuel costs.')
-    elseif (ifueltyp == 2) then 
+    elseif (ifueltyp == 2) then
          call oblnkl(outfile)
          write(outfile,31)
 21     format(t2, &
@@ -467,12 +466,12 @@ contains
       coeoam, coecap, output_costs, coe, lsa, cfactr, divcst, ucfuel, divlife, &
       coefuelt, moneyint, cdrlife, capcost, cplife, fwallcst, fcr0, discount_rate, &
       decomf, cdcost, fcap0, fcap0cp, ucwst, ucoam, dtlife, blkcst, dintrt, &
-      concost, cfind 
-		use fwbs_variables, only: bktlife 
+      concost, cfind
+		use fwbs_variables, only: bktlife
 		use ife_variables, only: uctarg, ife, reprat
-		use heat_transport_variables, only: pnetelmw 
+		use heat_transport_variables, only: pnetelmw
 		use physics_variables, only: itart, wtgpd, fhe3
-		use process_output, only: oheadr, osubhd, ovarrf, oshead 
+		use process_output, only: oheadr, osubhd, ovarrf, oshead
       use times_variables, only: tcycle, tburn
       use constants, only: n_day_year
 
@@ -489,7 +488,7 @@ contains
          coecp,coedecom,coediv,coefuel,coefwbl,coewst,crfcdr,crfcp, &
          crfdiv,crffwbl,fefcdr,fefcp,fefdiv,feffwbl,fwbllife,kwhpy
          ! annoam1,
-         
+
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Number of kWh generated each year
@@ -845,7 +844,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		use buildings_variables, only: shovol, triv, elevol, rbvol, cryvol, &
-      rmbvol, admvol, convol, wsvol 
+      rmbvol, admvol, convol, wsvol
 		use cost_variables, only: uctr, uccr, ucel, ucrb, ireactor, ucad, ucmb, &
       ucws, cturbb, ucsh, ucco, lsa, csi, cland
     implicit none
@@ -989,7 +988,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-		use cost_variables, only: c221 
+		use cost_variables, only: c221
     implicit none
 
     !  Arguments
@@ -1041,7 +1040,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-		use build_variables, only: fwarea 
+		use build_variables, only: fwarea
 		use cost_variables, only: ucblss, ucfws, fkind, fwallcst, ucblli2o, &
       ifueltyp, ucfwps, ucfwa,lsa
 		use ife_variables, only: fwmatm, uccarb, ife, ucconc
@@ -1108,10 +1107,9 @@ contains
 
 		use cost_variables, only: ucblss, ucblbreed, ucblbe, ucblli, ucblvd, &
       ucblli2o, blkcst, ucbllipb, ifueltyp, lsa, fkind
-		use fwbs_variables, only: blktmodel, whtblli, blkttype, wtblli2o, &
-      whtblbreed, whtblvd, whtblbe, whtblss, wtbllipb 
+		use fwbs_variables, only: iblanket, whtblli, wtblli2o, whtblbreed, whtblvd, whtblbe, &
+      whtblss, wtbllipb
 		use ife_variables, only: ucflib, blmatm, ife, ucconc, mflibe, uccarb
-		use heat_transport_variables, only: ipowerflow 
     implicit none
 
     !  Arguments
@@ -1138,21 +1136,21 @@ contains
 
     if (ife /= 1) then
 
-       if (ipowerflow == 0) then
-          c22121 = 1.0D-6 * whtblbe * ucblbe
-          if (blktmodel == 0) then
-             c22122 = 1.0D-6 * wtblli2o * ucblli2o
-          else
-             c22122 = 1.0D-6 * whtblbreed * ucblbreed
-          end if
+      ! iblanket=4 is used for KIT HCLL model. iblanket<4 are all
+      ! HCPB (CCFE, KIT and CCFE + Shimwell TBR calculation).
+
+       if (iblanket == 4) then
+         !  Liquid blanket (LiPb + Li)
+         c22121 = 1.0D-6 * wtbllipb * ucbllipb
+         c22122 = 1.0D-6 * whtblli * ucblli
        else
-          if ((blkttype == 1).or.(blkttype == 2)) then
-             !  Liquid blanket (LiPb + Li)
-             c22121 = 1.0D-6 * wtbllipb * ucbllipb
-             c22122 = 1.0D-6 * whtblli * ucblli
+         !  Solid blanket (Li2O + Be)
+         c22121 = 1.0D-6 * whtblbe * ucblbe
+          if (iblanket == 2) then
+          ! KIT model
+            c22122 = 1.0D-6 * whtblbreed * ucblbreed
           else
-             !  Solid blanket (Li2O + Be)
-             c22121 = 1.0D-6 * whtblbe * ucblbe
+          ! CCFE model
              c22122 = 1.0D-6 * wtblli2o * ucblli2o
           end if
        end if
@@ -1166,8 +1164,8 @@ contains
     else
 
        !  IFE blanket; materials present are Li2O, steel, carbon, concrete,
-       !  FLiBe and lithium 
-  
+       !  FLiBe and lithium
+
        c22121 = 0.0D0
        c22122 = 1.0D-6 * wtblli2o * ucblli2o
        c22123 = 1.0D-6 * whtblss * ucblss
@@ -1176,7 +1174,7 @@ contains
        c22126 = 1.0D-6 * ucconc * (blmatm(1,5)+blmatm(2,5)+blmatm(3,5))
        c22127 = 1.0D-6 * ucflib * mflibe
        c22128 = 1.0D-6 * ucblli * whtblli
-  
+
     end if
 
     c22121 = fkind * c22121 * cmlsa(lsa)
@@ -1214,7 +1212,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		use cost_variables, only: ucpens, ucshld, fkind, ucblli2o, lsa
-		use fwbs_variables, only: wpenshld, whtshld 
+		use fwbs_variables, only: wpenshld, whtshld
 		use ife_variables, only: shmatm, uccarb, ife, ucconc
     implicit none
 
@@ -1277,7 +1275,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		use cost_variables, only: fkind, ucgss, lsa
-		use structure_variables, only: gsmass 
+		use structure_variables, only: gsmass
     implicit none
 
     !  Arguments
@@ -1320,9 +1318,9 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-		use cost_variables, only: ifueltyp, divcst, fkind, ucdiv 
-		use divertor_variables, only: divsur 
-		use ife_variables, only: ife 
+		use cost_variables, only: ifueltyp, divcst, fkind, ucdiv
+		use divertor_variables, only: divsur
+		use ife_variables, only: ife
     implicit none
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1335,7 +1333,7 @@ contains
           divcst = c2215
           c2215 = 0.0D0
        elseif (ifueltyp == 2) then
-          divcst = c2215 
+          divcst = c2215
        else
           divcst = 0.0D0
        end if
@@ -1359,8 +1357,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-		use cost_variables, only: c222 
-		use ife_variables, only: ife 
+		use cost_variables, only: c222
+		use ife_variables, only: ife
     implicit none
 
     !  Arguments
@@ -1411,9 +1409,9 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		use cost_variables, only: uccpclb, uccase, uccu, fkind, ucgss, ucint, &
-      cconshtf, ucsc, ifueltyp, uccpcl1, ucwindtf, cpstcst, lsa, cconfix 
-		use physics_variables, only: itart 
-		use structure_variables, only: clgsmass, aintmass 
+      cconshtf, ucsc, ifueltyp, uccpcl1, ucwindtf, cpstcst, lsa, cconfix
+		use physics_variables, only: itart
+		use structure_variables, only: clgsmass, aintmass
 		use tfcoil_variables, only: whtconcu, whtconsc, whtcas, n_tf, whttflgs, &
       whtcp, i_tf_sup, n_tf_turn, tfleng, i_tf_sc_mat
     implicit none
@@ -1531,13 +1529,13 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-		use build_variables, only: iohcl 
+		use build_variables, only: iohcl
 		use constants, only: twopi, dcopper
 		use cost_variables, only: uccase, uccu, cconshpf, ucfnc, cconfix, ucsc, &
       ucwindpf, lsa, fkind
 		use pfcoil_variables, only: rjconpf, ipfres, vfohc, nohc, turns, isumatpf, &
-      whtpfs, ric, rpf, isumatoh, fcupfsu, fcuohsu, vf, awpoh 
-		use structure_variables, only: fncmass 
+      whtpfs, ric, rpf, isumatoh, fcupfsu, fcuohsu, vf, awpoh
+		use structure_variables, only: fncmass
 		use tfcoil_variables, only: dcond
     implicit none
 
@@ -1693,7 +1691,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		use cost_variables, only: uccryo, lsa, fkind
-		use fwbs_variables, only: vvmass 
+		use fwbs_variables, only: vvmass
     implicit none
 
     !  Arguments
@@ -1738,9 +1736,9 @@ contains
 
 		use cost_variables, only: ucich, fkind, ucnbi, ucech, uclh, ifueltyp, &
       cdcost, fcdfuel
-		use current_drive_variables, only: plhybd, iefrf, echpwr, pnbitot 
+		use current_drive_variables, only: plhybd, iefrf, echpwr, pnbitot
 		use ife_variables, only: dcdrv2, mcdriv, cdriv2, dcdrv0, edrive, etadrv, &
-      ifedrv, ife, dcdrv1, cdriv1, cdriv3, cdriv0 
+      ifedrv, ife, dcdrv1, cdriv1, cdriv3, cdriv0
     implicit none
 
     !  Arguments
@@ -1813,13 +1811,13 @@ contains
        else
           c2231 = mcdriv * (cdriv0 + dcdrv0*1.0D-6*edrive)
        end if
-  
+
        if (ifueltyp == 1) c2231 = (1.0D0-fcdfuel) * c2231
        c2231 = fkind * c2231
        c2232 = 0.0D0
        c2233 = 0.0D0
        c2234 = 0.0D0
-  
+
     end if
 
     !  Total account 223
@@ -1843,9 +1841,9 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		use cost_variables, only: ucduct, uctpmp, fkind, ucbpmp, ucvalv, ucvdsh, &
-      uccpmp, ucviac 
+      uccpmp, ucviac
 		use vacuum_variables, only: dlscal, vacdshm, vpumpn, vcdimax, ntype, &
-      nvduct 
+      nvduct
     implicit none
 
     !  Arguments
@@ -1907,7 +1905,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-		use ife_variables, only: ife 
+		use ife_variables, only: ife
     implicit none
 
     !  Arguments
@@ -2026,10 +2024,10 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		use cost_variables, only: ucpfcb, ucpfbk, fkind, ucpfb, ucpfdr1, ucpfic, &
-      ucpfbs, ucpfps 
-		use heat_transport_variables, only: peakmva 
+      ucpfbs, ucpfps
+		use heat_transport_variables, only: peakmva
 		use pf_power_variables, only: ensxpfm, spfbusl, pfckts, srcktpm, vpfskv, &
-		  acptmax 
+		  acptmax
     implicit none
 
     !  Arguments
@@ -2096,11 +2094,11 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-		use cost_variables, only: ucblss, fkind 
+		use cost_variables, only: ucblss, fkind
 		use error_handling, only: idiags, report_error
-		use heat_transport_variables, only: pthermmw, pnetelmw 
-		use pulse_variables, only: lpulse, dtstor, istore 
-		use times_variables, only: tdown 
+		use heat_transport_variables, only: pthermmw, pnetelmw
+		use pulse_variables, only: lpulse, dtstor, istore
+		use times_variables, only: tdown
     implicit none
 
     !  Arguments
@@ -2244,7 +2242,7 @@ contains
     !! Account 2261 : Reactor cooling system
     !! author: J Morris, CCFE, Culham Science Centre
     !! None
-    !! This routine evaluates the Account 2261 - 
+    !! This routine evaluates the Account 2261 -
     !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2296,8 +2294,8 @@ contains
 
 		use cost_variables, only: lsa, ucahts, fkind
 		use ife_variables, only: tfacmw, ife, tdspmw
-		use heat_transport_variables, only: pinjht, vachtmw, trithtmw, fachtmw, crypmw 
-    implicit none 
+		use heat_transport_variables, only: pinjht, vachtmw, trithtmw, fachtmw, crypmw
+    implicit none
 
     !  Local variables
     real(dp), parameter :: exphts = 0.7D0
@@ -2338,8 +2336,8 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		use cost_variables, only: uccry, lsa, fkind
-		use heat_transport_variables, only: helpow 
-		use tfcoil_variables, only: tftmp 
+		use heat_transport_variables, only: helpow
+		use tfcoil_variables, only: tmpcry
     implicit none
 
     !  Local variables
@@ -2354,7 +2352,7 @@ contains
     cmlsa(3) = 0.8500D0
     cmlsa(4) = 1.0000D0
 
-    c2263 = 1.0D-6 * uccry * 4.5D0/tftmp * helpow**expcry
+    c2263 = 1.0D-6 * uccry * 4.5D0/tmpcry * helpow**expcry
 
     !  Apply Nth kind and safety factors
     c2263 = fkind * c2263 * cmlsa(lsa)
@@ -2391,7 +2389,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-		use cost_variables, only: ucf1, fkind 
+		use cost_variables, only: ucf1, fkind
     implicit none
 
     !  Local variables
@@ -2403,7 +2401,7 @@ contains
 
     !  Apply Nth kind factor
     c2271 = fkind * c2271
-  
+
   end subroutine acc2271
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2417,8 +2415,8 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-		use constants, only: umass 
-		use cost_variables, only: ucfpr, fkind 
+		use constants, only: umass
+		use cost_variables, only: ucfpr, fkind
 		use ife_variables, only: fburn, reprat, ife, gain, edrive
 		use physics_variables, only: wtgpd, rndfuel, afuel
     implicit none
@@ -2444,7 +2442,7 @@ contains
     c2272 = 1.0D-6 * ucfpr * (0.5D0 + 0.5D0*(wtgpd/60.0D0)**0.67D0)
 
     c2272 = fkind * c2272
- 
+
   end subroutine acc2272
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2459,8 +2457,8 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		use buildings_variables, only: wsvol, volrci
-		use cost_variables, only: ucdtc, fkind 
-		use physics_variables, only: ftrit 
+		use cost_variables, only: ucdtc, fkind
+		use physics_variables, only: ftrit
     implicit none
 
     !  Local variables
@@ -2469,7 +2467,7 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    ! ? 
+    ! ?
     cfrht = 1.0D5
 
     !  No detritiation needed if purely D-He3 reaction
@@ -2496,7 +2494,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		use buildings_variables, only: wsvol, volrci
-		use cost_variables, only: ucnbv, fkind 
+		use cost_variables, only: ucnbv, fkind
     implicit none
 
     !  Account 227.4 : Nuclear building ventilation
@@ -2521,7 +2519,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-		use cost_variables, only: uciac, fkind 
+		use cost_variables, only: uciac, fkind
     implicit none
 
     c228 = 1.0D-6 * uciac
@@ -2541,7 +2539,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-		use cost_variables, only: ucme, fkind 
+		use cost_variables, only: ucme, fkind
     implicit none
 
     c229 = 1.0D-6 * ucme
@@ -2561,9 +2559,9 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-		use cost_variables, only: ucturb, ireactor 
-		use fwbs_variables, only: coolwh 
-		use heat_transport_variables, only: pgrossmw 
+		use cost_variables, only: ucturb, ireactor
+		use fwbs_variables, only: coolwh
+		use heat_transport_variables, only: pgrossmw
     implicit none
 
     !  Local variables
@@ -2596,7 +2594,7 @@ contains
     c24 = c241 + c242 + c243 + c244 + c245
 
   end subroutine acc24
- 
+
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine acc241()
@@ -2625,7 +2623,7 @@ contains
 
     !  Account 241 : Switchyard
     c241 = 1.0D-6 * ucswyd * cmlsa(lsa)
-   
+
   end subroutine acc241
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2661,7 +2659,7 @@ contains
 
     !  Apply safety assurance factor
     c242 = c242 * cmlsa(lsa)
- 
+
   end subroutine acc242
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2676,7 +2674,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		use cost_variables, only: uclv, lsa
-		use heat_transport_variables, only: tlvpmw 
+		use heat_transport_variables, only: tlvpmw
     implicit none
 
     !  Local variables
@@ -2809,8 +2807,8 @@ contains
 
 		use cost_variables, only: ireactor, uchrs, lsa
 		use heat_transport_variables, only: pthermmw, pinjwp, pgrossmw
-		use physics_variables, only: powfmw 
-		use tfcoil_variables, only: tfcmw 
+		use physics_variables, only: powfmw
+		use tfcoil_variables, only: tfcmw
     implicit none
 
     !  Local variables
