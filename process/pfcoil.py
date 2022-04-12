@@ -857,8 +857,20 @@ class PFCoil:
         bfix = self.fixb(lrow1, npts, rpts, zpts, nfix, rfix, zfix, cfix)
 
         # Set up matrix equation
-        nrws, gmat, bvec, rc, zc, cc, xc = pf.mtrx(
-            lcol1, npts, rpts, zpts, brin, bzin, ngrp, ncls, rcls, zcls, alfa, bfix
+        nrws, gmat, bvec, rc, zc, cc, xc = self.mtrx(
+            lrow1,
+            lcol1,
+            npts,
+            rpts,
+            zpts,
+            brin,
+            bzin,
+            ngrp,
+            ncls,
+            rcls,
+            zcls,
+            alfa,
+            bfix,
         )
 
         # Solve matrix equation
@@ -909,7 +921,7 @@ class PFCoil:
             return bfix
 
         for i in range(npts):
-            # bfield() only operates correctly on nfix slices of array 
+            # bfield() only operates correctly on nfix slices of array
             # arguments, not entire arrays
             work1, brw, bzw, psw = pf.bfield(
                 rfix[:nfix], zfix[:nfix], cfix[:nfix], rpts[i], zpts[i], nfix
@@ -918,6 +930,110 @@ class PFCoil:
             bfix[npts + i] = bzw
 
         return bfix
+
+    def mtrx(
+        self,
+        lrow1,
+        lcol1,
+        npts,
+        rpts,
+        zpts,
+        brin,
+        bzin,
+        ngrp,
+        ncls,
+        rcls,
+        zcls,
+        alfa,
+        bfix,
+    ):
+        """Calculate the currents in a group of ring coils.
+
+        Set up the matrix equation to calculate the currents in a group of ring
+        coils.
+        author: P J Knight, CCFE, Culham Science Centre
+        author: D Strickler, ORNL
+        author: J Galambos, ORNL
+
+        :param lrow1: row length of arrays bfix, bvec, gmat, umat, vmat; should 
+        be >= (2*nptsmx + ngrpmx)
+        :type lrow1: int
+        :param lcol1: column length of arrays gmat, umat, vmat; should be >= 
+        ngrpmx
+        :type lcol1: int
+        :param npts: number of data points at which field is to be fixed; should
+        be <= nptsmx
+        :type npts: int
+        :param rpts: coords of data points (m)
+        :type rpts: numpy.ndarray
+        :param zpts: coords of data points (m)
+        :type zpts: numpy.ndarray
+        :param brin: field components at data points (T)
+        :type brin: numpy.ndarray
+        :param bzin: field components at data points (T)
+        :type bzin: numpy.ndarray
+        :param ngrp: number of coil groups, where all coils in a group have the
+        same current, <= ngrpmx
+        :type ngrp: int
+        :param ncls: number of coils in each group, each value <= nclsmx
+        :type ncls: numpy.ndarray
+        :param rcls: coords R(i,j), Z(i,j) of coil j in group i (m)
+        :type rcls: numpy.ndarray
+        :param zcls: coords R(i,j), Z(i,j) of coil j in group i (m)
+        :type zcls: numpy.ndarray
+        :param alfa: smoothing parameter (0 = no smoothing, 1.0D-9 = large 
+        smoothing)
+        :type alfa: float
+        :param bfix: Fields at data points (T)
+        :type bfix: numpy.ndarray
+        :return: actual number of rows to use, work array, work array,
+        Coordinates of conductor loops (m), Coordinates of conductor loops (m),
+        Currents in conductor loops (A), Mutual inductances (H)
+        :rtype: tuple[int, numpy.ndarray, numpy.ndarray, numpy.ndarray
+        numpy.ndarray, numpy.ndarray, numpy.ndarray]
+        """
+        bvec = np.zeros(lrow1)
+        gmat = np.zeros((lrow1, lcol1), order="F")
+        rc = np.zeros(pfv.nclsmx)
+        zc = np.zeros(pfv.nclsmx)
+        cc = np.zeros(pfv.nclsmx)
+
+        for i in range(npts):
+            bvec[i] = brin[i] - bfix[i]
+            bvec[i + npts] = bzin[i] - bfix[i + npts]
+            for j in range(ngrp):
+                nc = ncls[j]
+                for k in range(nc):
+                    rc[k] = rcls[j, k]
+                    zc[k] = zcls[j, k]
+                    cc[k] = 1.0e0
+
+                # bfield() requires slices of array arguments of length nc
+                # nc can equal 0, however!
+                if nc > 0:
+                    xc, brw, bzw, psw = pf.bfield(
+                        rc, zc[:nc], cc[:nc], rpts[i], zpts[i], nc
+                    )
+                else:
+                    xc, brw, bzw, psw = pf.bfield(rc, 0.0, 0.0, rpts[i], zpts[i], nc)
+
+                gmat[i, j] = brw
+                gmat[i + npts, j] = bzw
+
+        # Add constraint equations
+        nrws = 2 * npts
+
+        for j in range(ngrp):
+            bvec[nrws + j] = 0.0e0
+            for i in range(ngrp):
+                gmat[nrws + j, i] = 0.0e0
+
+            nc = ncls[j]
+            gmat[nrws + j, j] = nc * alfa
+
+        nrws = 2 * npts + ngrp
+
+        return nrws, gmat, bvec, rc, zc, cc, xc
 
     def ohcalc(self):
         """Routine to perform calculations for the Central Solenoid solenoid.

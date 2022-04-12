@@ -457,15 +457,19 @@ def test_efc(pfcoil, monkeypatch):
     )
 
 
-def test_mtrx():
+def test_mtrx(pfcoil):
     """Test mtrx subroutine.
 
     mtrx() requires specific arguments in order to work; these were discovered
     using gdb to break on the first call of mtrx() when running the baseline 2019
     IN.DAT.
+
+    :param pfcoil: a PFCoil instance
+    :type pfcoil: process.pfcoil.PFCoil
     """
-    nptsmx = 32
+    lrow1 = 74
     lcol1 = 10
+    nptsmx = 32
     npts = 32
     rpts = np.array(
         [
@@ -640,7 +644,9 @@ def test_mtrx():
         ]
     )
 
-    nrws, gmat, bvec, rc, zc, cc, xc = pf.mtrx(
+
+    nrws, gmat, bvec, rc, zc, cc, xc = pfcoil.mtrx(
+        lrow1,
         lcol1,
         npts,
         rpts,
