@@ -1166,7 +1166,7 @@ class Sctfcoil:
         """
         peaktfflag = 0
 
-        sctfcoil_module.tf_global_geometry()
+        self.tf_global_geometry()
 
         # Calculation of the TF current from bt
         self.tf_current()
@@ -1345,8 +1345,8 @@ class Sctfcoil:
         - Winding Pack NOT included
         """
 
-        theta_coil = numpy.pi / tfcoil_variables.n_tf
-        sctfcoil_module.tan_theta_coil = numpy.tan(theta_coil)
+        sctfcoil_module.theta_coil = numpy.pi / tfcoil_variables.n_tf
+        sctfcoil_module.tan_theta_coil = numpy.tan(sctfcoil_module.theta_coil)
 
         # TF coil inboard legs mid-plane cross-section area (WP + casing ) [m2]
         if tfcoil_variables.i_tf_case_geom == 0:
@@ -1359,8 +1359,8 @@ class Sctfcoil:
             # Straight front case
             tfcoil_variables.tfareain = (
                 tfcoil_variables.n_tf
-                * numpy.sin(theta_coil)
-                * numpy.cos(theta_coil)
+                * numpy.sin(sctfcoil_module.theta_coil)
+                * numpy.cos(sctfcoil_module.theta_coil)
                 * build_variables.r_tf_inboard_out**2
                 - numpy.pi * build_variables.r_tf_inboard_in**2
             )
@@ -1389,17 +1389,21 @@ class Sctfcoil:
         # Sliding joints geometry
         if physics_variables.itart == 1 and tfcoil_variables.i_tf_sup != 1:
             tfcoil_variables.tftort = (
-                2.0e0 * build_variables.r_cp_top * numpy.sin(theta_coil)
+                2.0e0 * build_variables.r_cp_top * numpy.sin(sctfcoil_module.theta_coil)
             )
 
         # Default thickness, initially written for DEMO SC magnets
         elif physics_variables.itart == 1 and tfcoil_variables.i_tf_sup == 1:
             tfcoil_variables.tftort = (
-                2.0e0 * build_variables.r_tf_inboard_out * numpy.sin(theta_coil)
+                2.0e0
+                * build_variables.r_tf_inboard_out
+                * numpy.sin(sctfcoil_module.theta_coil)
             )
         else:
             tfcoil_variables.tftort = (
-                2.0e0 * build_variables.r_tf_inboard_out * numpy.sin(theta_coil)
+                2.0e0
+                * build_variables.r_tf_inboard_out
+                * numpy.sin(sctfcoil_module.theta_coil)
             )
 
         # Area of rectangular cross-section TF outboard leg [m2]
