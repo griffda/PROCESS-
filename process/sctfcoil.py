@@ -119,11 +119,11 @@ class Sctfcoil:
             - tfcoil_variables.thwcndut * (2.0e0 / 3.0e0)
         )
         sctfcoil_module.conductor_acs = (
-            9.0e0 / 4.0e0 * numpy.pi * rebco_variables.croco_od ** 2
+            9.0e0 / 4.0e0 * numpy.pi * rebco_variables.croco_od**2
         )
         tfcoil_variables.acstf = sctfcoil_module.conductor_acs
         sctfcoil_module.conductor_area = (
-            tfcoil_variables.t_conductor ** 2
+            tfcoil_variables.t_conductor**2
         )  # does this not assume it's a sqaure???
 
         sctfcoil_module.conductor_jacket_area = (
@@ -1166,7 +1166,7 @@ class Sctfcoil:
         """
         peaktfflag = 0
 
-        sctfcoil_module.tf_global_geometry()
+        self.tf_global_geometry()
 
         # Calculation of the TF current from bt
         sctfcoil_module.tf_current()
@@ -1213,7 +1213,7 @@ class Sctfcoil:
 
         # Total TF coil stored magnetic energy [J]
         sctfcoil_module.estotft = (
-            0.5e0 * tfcoil_variables.tfind * tfcoil_variables.ritfc ** 2
+            0.5e0 * tfcoil_variables.tfind * tfcoil_variables.ritfc**2
         )
 
         # Total TF coil stored magnetic energy [Gigajoule]
@@ -1332,7 +1332,7 @@ class Sctfcoil:
         aa = vd * aio / tfes
         bb = (1.0e0 - fcond) * fcond * fcu * ai1
         cc = (fcu * fcond) ** 2 * ai2
-        dd = (1.0e0 - fcu) * fcu * fcond ** 2 * ai3
+        dd = (1.0e0 - fcu) * fcu * fcond**2 * ai3
         ajcp = numpy.sqrt(aa * (bb + cc + dd))
         ajwpro = ajcp * (acs / aturn)
 
@@ -1352,8 +1352,8 @@ class Sctfcoil:
         if tfcoil_variables.i_tf_case_geom == 0:
             # Circular front case
             tfcoil_variables.tfareain = numpy.pi * (
-                build_variables.r_tf_inboard_out ** 2
-                - build_variables.r_tf_inboard_in ** 2
+                build_variables.r_tf_inboard_out**2
+                - build_variables.r_tf_inboard_in**2
             )
         else:
             # Straight front case
@@ -1361,8 +1361,8 @@ class Sctfcoil:
                 tfcoil_variables.n_tf
                 * numpy.sin(theta_coil)
                 * numpy.cos(theta_coil)
-                * build_variables.r_tf_inboard_out ** 2
-                - numpy.pi * build_variables.r_tf_inboard_in ** 2
+                * build_variables.r_tf_inboard_out**2
+                - numpy.pi * build_variables.r_tf_inboard_in**2
             )
 
         # Vertical distance from the midplane to the top of the tapered section [m]
