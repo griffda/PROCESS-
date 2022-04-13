@@ -4475,138 +4475,6 @@ end function sigvm
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine coilshap
-
-    !! Calculates the TF coil shape
-    !! Calculates the shape of the INSIDE of the TF coil. The coil is
-    !! approximated by a straight inboard section and four elliptical arcs
-    !! This is a totally ad hoc model, with no physics or engineering basis.
-    !!
-    !! The referenced equations can be found in draft/unpublished document
-    !! attached in GitLab to issue #1328.
-    use physics_variables, only: i_single_null, rminor, rmajor, itart
-    use build_variables, only: hmax, hpfu, tfcth, r_tf_outboard_mid, &
-        r_tf_inboard_mid, tfthko, r_cp_top, r_tf_inboard_out
-    use tfcoil_variables, only: yarc, xarc, tfleng, tfa, tfb, i_tf_shape
-    use constants, only: pi
-    implicit none
-
-    !  Arguments
-    !  Local variables
-    real(dp), parameter :: fstraight = 0.6D0
-    real(dp) :: aa, bb
-    integer :: ii
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-    if ( i_tf_shape == 1 .and. itart == 0 ) then
-    ! PROCESS D-shape parametrisation
-
-        ! X position of the arcs, eq(21)
-        ! The xarc/yarc are defined in the INSIDE part of the TF
-        xarc(1) = r_tf_inboard_out
-        xarc(2) = rmajor - 0.2D0*rminor
-        xarc(3) = r_tf_outboard_in
-        xarc(4) = xarc(2)
-        xarc(5) = xarc(1)
-
-        ! Height of straight section as a fraction of the coil inner height
-        if ( i_single_null == 0 ) then
-            ! Double null
-            yarc(1) = fstraight * hmax
-            yarc(2) = hmax
-            yarc(3) = 0
-            yarc(4) = -hmax
-            yarc(5) = -fstraight * hmax
-        else
-            ! Single null
-            yarc(1) = fstraight * (hpfu - tfcth)
-            yarc(2) = hpfu - tfcth
-            yarc(3) = 0
-            yarc(4) = -hmax
-            yarc(5) = -fstraight * hmax
-        end if
-
-        ! Horizontal and vertical radii of inside edge of TF coil
-        ! Arcs are numbered clockwise:
-        ! 1=upper inboard, 2=upper outboard, 3=lower ouboard, 4=lower inboard
-        ! 'tfleng' is the length of the coil midline.
-        tfleng = yarc(1) - yarc(5)
-        do ii = 1, 4
-            tfa(ii) = abs(xarc(ii+1) - xarc(ii))
-            tfb(ii) = abs(yarc(ii+1) - yarc(ii))
-            ! Radii and length of midline of coil segments
-            aa = tfa(ii) + 0.5D0*tfcth
-            bb = tfb(ii) + 0.5D0*tfcth
-            tfleng = tfleng + 0.25d0 * circumference(aa,bb)
-            ! note: final tfleng includes inboard leg length; eq(22)
-        end do
-
-
-    ! Centrepost with D-shaped
-    ! ---
-    else if ( i_tf_shape == 1 .and. itart == 1  ) then
-
-        ! X position of the arcs, eq(23) and text before it
-        xarc(1) = r_cp_top
-        xarc(2) = rmajor - 0.2D0*rminor
-        xarc(3) = r_tf_outboard_in
-        xarc(4) = xarc(2)
-        xarc(5) = xarc(1)
-
-        ! Double null, eq(23) and text before it
-        yarc(1) = hpfu - tfcth
-        yarc(2) = hpfu - tfcth
-        yarc(3) = 0
-        yarc(4) = -hmax
-        yarc(5) = -hmax
-
-        ! TF middle circumference
-        tfleng = 2*(xarc(2) - xarc(1))
-
-        do ii = 2, 3
-           tfa(ii) = abs(xarc(ii+1) - xarc(ii))
-           tfb(ii) = abs(yarc(ii+1) - yarc(ii))
-
-           ! Radii and length of midline of coil segments
-           aa = tfa(ii) + 0.5D0 * tfthko
-           bb = tfb(ii) + 0.5D0 * tfthko
-           tfleng = tfleng + 0.25d0 * circumference(aa,bb)
-           ! IMPORTANT : THE CENTREPOST LENGTH IS NOT INCLUDED IN TFLENG FOR TART; eq(24)
-        end do
-    ! ---
-
-
-    ! Picture frame coil
-    ! ---
-    else if ( i_tf_shape == 2 ) then
-
-        ! X position of the arcs
-        if ( itart == 0 ) xarc(1) = r_tf_inboard_out
-        if ( itart == 1 ) xarc(1) = r_cp_top
-        xarc(2) = r_tf_outboard_in
-        xarc(3) = xarc(2)
-        xarc(4) = xarc(2)
-        xarc(5) = xarc(1)
-
-        ! Y position of the arcs
-        yarc(1) = hpfu - tfcth
-        yarc(2) = hpfu - tfcth
-        yarc(3) = 0
-        yarc(4) = -hmax
-        yarc(5) = -hmax
-
-        ! TF middle circumference
-        ! IMPORTANT : THE CENTREPOST LENGTH IS NOT INCLUDED IN TFLENG FOR TART
-        if ( itart == 0 ) tfleng = 2.0D0 * ( 2.0D0*hmax + tfcth  + r_tf_outboard_mid - r_tf_inboard_mid )  ! eq(25)
-        if ( itart == 1 ) tfleng = hmax + hpfu + 2.0D0 * ( r_tf_outboard_mid - r_cp_top )  ! eq(26)
-    end if
-    ! ---
-
-    !-! end break
-
-end subroutine coilshap
-
 function circumference(aaa,bbb)
         !! Calculate ellipse arc circumference using Ramanujan approximation (m)
         !!  See https://www.johndcook.com/blog/2013/05/05/ramanujan-circumference-ellipse/
@@ -4621,7 +4489,7 @@ function circumference(aaa,bbb)
 
         !-! end break
 
-    end function
+end function
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
