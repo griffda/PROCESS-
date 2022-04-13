@@ -112,7 +112,7 @@ real(dp), private :: a_leg_gr_ins
 real(dp), private :: a_leg_cond
 !! Exact TF ouboard leg conductor area [m2]
 
-real(dp), private :: theta_coil
+real(dp) :: theta_coil
 !! Half toroidal angular extent of a single TF coil inboard leg
 
 real(dp) :: tan_theta_coil
@@ -234,53 +234,72 @@ end subroutine initialise_cables
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine tf_current()
-    !! Calculation of the maximum B field and the corresponding TF current
-    use tfcoil_variables, only: casthi, ritfc, rbmax, i_tf_sup, casths_fraction, &
-        tinstf, tftort, bmaxtf, tfinsgap, tfc_sidewall_is_fraction, casths, &
-        casthi_is_fraction, casthi_fraction, n_tf, thicndut, thkcas, oacdcp, &
-        tfareain
-    use build_variables, only: r_tf_inboard_out, r_tf_inboard_in, tfcth
-    use physics_variables, only: bt, rmajor
+subroutine tf_global_geometry()
+    !! Subroutine for calculating the TF coil geometry
+    !! This includes:
+    !!   - Overall geometry of coil (radii and toroidal planes area)
+    !!   - Winding Pack NOT included
+
+    use build_variables, only: r_tf_outboard_mid, r_cp_top, &
+        r_tf_inboard_in, r_tf_inboard_out, tfthko
+    use tfcoil_variables, only: tinstf, tfc_sidewall_is_fraction, tfareain, &
+        ritfc, tftort, n_tf, casthi_is_fraction, bmaxtf, arealeg, &
+        casthi_fraction, casths_fraction, tfinsgap, casthi, casths, i_tf_sup, &
+        dztop, tinstf, tfinsgap, i_tf_case_geom
     use constants, only: pi
+    use physics_variables, only: itart, kappa, rminor
     implicit none
 
 
-    ! Plasma-facing wall thickness if fraction option selected [m]
-    if (casthi_is_fraction) casthi = casthi_fraction * tfcth
 
-    ! Case thickness of side wall [m]
-    if ( tfc_sidewall_is_fraction ) then
-        casths = casths_fraction * ( r_tf_inboard_in + thkcas ) * tan(pi/n_tf)
-    end if
+    ! Inner leg geometry
+    ! ---
+    ! Half toroidal angular extent of a single TF coil inboard leg
+    theta_coil = pi / n_tf
+    tan_theta_coil = tan(theta_coil)
 
-    ! Radial position of peak toroidal field [m]
-    if ( i_tf_sup == 1 ) then
-        ! SC : conservative assumption as the radius is calculated with the
-        ! WP radial distances defined at the TF middle (cos)
-        rbmax = r_tf_inboard_out * cos(theta_coil) - casthi - tinstf - tfinsgap
+    ! TF coil inboard legs mid-plane cross-section area (WP + casing ) [m2]
+    if ( i_tf_case_geom == 0 ) then
+        ! Circular front case
+        tfareain = pi * ( r_tf_inboard_out**2 - r_tf_inboard_in**2 )
     else
-        ! Resistive coils : No approx necessary as the symmetry is cylindrical
-        ! The turn insulation th (thicndut) is also subtracted too here
-        rbmax = r_tf_inboard_out - casthi - thicndut - tinstf
+        ! Straight front case
+        tfareain = n_tf * sin(theta_coil)*cos(theta_coil) * r_tf_inboard_out**2  &
+                 - pi * r_tf_inboard_in**2
     end if
 
-    ! Calculation of the maximum B field on the magnet [T]
-    bmaxtf = bt * rmajor / rbmax
+    ! Vertical distance from the midplane to the top of the tapered section [m]
+    if ( itart ==  1 ) h_cp_top = rminor * kappa + dztop
+    ! ---
 
-    ! Total current in TF coils [A]
-    ! rem SK : ritcf is no longer an input
-    ritfc = bmaxtf * rbmax * 5.0D6
 
-    ! Current per TF coil [A]
-    tfc_current = ritfc/n_tf
+    ! Outer leg geometry
+    ! ---
+    ! Mid-plane inner/out radial position of the TF coil outer leg [m]
+    r_tf_outboard_in =  r_tf_outboard_mid - tfthko * 0.5D0
+    r_tf_outboard_out = r_tf_outboard_mid + tfthko * 0.5D0
 
-    ! Global inboard leg average current in TF coils [A/m2]
-    oacdcp = ritfc / tfareain
+
+    ! TF coil width in toroidal direction at inboard leg outer edge [m]
+    ! ***
+    ! Sliding joints geometry
+    if ( itart == 1 .and. i_tf_sup /= 1 ) then
+        tftort = 2.0D0 * r_cp_top * sin(theta_coil)
+
+    ! Default thickness, initially written for DEMO SC magnets
+    else if ( itart == 1 .and. i_tf_sup ==  1 ) then
+        tftort = 2.0D0 * r_tf_inboard_out * sin(theta_coil)
+    else
+        tftort = 2.0D0 * r_tf_inboard_out * sin(theta_coil)
+    end if
+
+    ! Area of rectangular cross-section TF outboard leg [m2]
+    arealeg = tftort * tfthko
+    ! ---
 
     !-! end break
 
-end subroutine tf_current
+end subroutine tf_global_geometry
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

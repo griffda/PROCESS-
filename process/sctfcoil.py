@@ -1166,10 +1166,10 @@ class Sctfcoil:
         """
         peaktfflag = 0
 
-        self.tf_global_geometry()
+        sctfcoil_module.tf_global_geometry()
 
         # Calculation of the TF current from bt
-        sctfcoil_module.tf_current()
+        self.tf_current()
 
         # Conductor section internal geometry
         # ---
@@ -1405,3 +1405,57 @@ class Sctfcoil:
         # Area of rectangular cross-section TF outboard leg [m2]
         tfcoil_variables.arealeg = tfcoil_variables.tftort * build_variables.tfthko
         # ---
+
+    def tf_current(self):
+        """
+        Calculation of the maximum B field and the corresponding TF current
+        """
+        if tfcoil_variables.casthi_is_fraction:
+            tfcoil_variables.casthi = (
+                tfcoil_variables.casthi_fraction * build_variables.tfcth
+            )
+
+        # Case thickness of side wall [m]
+        if tfcoil_variables.tfc_sidewall_is_fraction:
+            tfcoil_variables.casths = (
+                tfcoil_variables.casths_fraction
+                * (build_variables.r_tf_inboard_in + tfcoil_variables.thkcas)
+                * numpy.tan(numpy.pi / tfcoil_variables.n_tf)
+            )
+
+        # Radial position of peak toroidal field [m]
+        if tfcoil_variables.i_tf_sup == 1:
+            # SC : conservative assumption as the radius is calculated with the
+            # WP radial distances defined at the TF middle (cos)
+            tfcoil_variables.rbmax = (
+                build_variables.r_tf_inboard_out * numpy.cos(sctfcoil_module.theta_coil)
+                - tfcoil_variables.casthi
+                - tfcoil_variables.tinstf
+                - tfcoil_variables.tfinsgap
+            )
+        else:
+            # Resistive coils : No approx necessary as the symmetry is cylindrical
+            # The turn insulation th (tfcoil_variables.thicndut) is also subtracted too here
+            tfcoil_variables.rbmax = (
+                build_variables.r_tf_inboard_out
+                - tfcoil_variables.casthi
+                - tfcoil_variables.thicndut
+                - tfcoil_variables.tinstf
+            )
+
+        # Calculation of the maximum B field on the magnet [T]
+        tfcoil_variables.bmaxtf = (
+            physics_variables.bt * physics_variables.rmajor / tfcoil_variables.rbmax
+        )
+
+        # Total current in TF coils [A]
+        # rem SK : ritcf is no longer an input
+        tfcoil_variables.ritfc = (
+            tfcoil_variables.bmaxtf * tfcoil_variables.rbmax * 5.0e6
+        )
+
+        # Current per TF coil [A]
+        sctfcoil_module.tfc_current = tfcoil_variables.ritfc / tfcoil_variables.n_tf
+
+        # Global inboard leg average current in TF coils [A/m2]
+        tfcoil_variables.oacdcp = tfcoil_variables.ritfc / tfcoil_variables.tfareain
