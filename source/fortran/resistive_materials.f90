@@ -1,8 +1,8 @@
 module resistive_materials
   !! author: M. Kovari
-  !!  
+  !!
   !! Variables relating to resistive materials in superconducting conductors
-  
+
 #ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
 #endif
@@ -10,19 +10,19 @@ module resistive_materials
   implicit none
 
   type resistive_material
-    real(dp) :: cp            
+    real(dp) :: cp
     !! Specific heat capacity J/(K kg)
 
-    real(dp) :: rrr           
+    real(dp) :: rrr
     !! Residual resistivity ratio
 
-    real(dp) :: resistivity   
+    real(dp) :: resistivity
     !! Resistivity [ohm.m]
 
-    real(dp) :: density       
+    real(dp) :: density
     !! kg/m3
 
-    real(dp) :: cp_density    
+    real(dp) :: cp_density
     !! Cp x density J/K/m3
   end type resistive_material
 
@@ -44,7 +44,7 @@ module resistive_materials
     real(dp) :: jacket_area, jacket_fraction
     real(dp) :: rebco_area,  rebco_fraction
     real(dp) :: critical_current
-    real(dp) :: acs                  
+    real(dp) :: acs
     !! Area of cable space inside jacket
     real(dp) :: area
   end type volume_fractions

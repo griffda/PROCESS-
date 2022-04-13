@@ -1,8 +1,8 @@
 """Creates a variable descriptions markdown file.
 
 Ford outputs a project object that contains information about the Fortran source
-code. This module uses that object to create variable descriptions in 
-markdown format, which can then be used by mkdocs to create the variable 
+code. This module uses that object to create variable descriptions in
+markdown format, which can then be used by mkdocs to create the variable
 descriptions page on the gitpages site.
 
 This script is always called from Ford; when the cmake "dicts" target is run
@@ -127,7 +127,7 @@ class VarDes(object):
         # Replace "$" signs with escaped ones "\$", as otherwise these act as
         # unintentional inline Mathjax delimiters, which cause havoc. These are
         # used elsewhere in the docs, but exclude them here
-        value = re.sub(r"\$", "\$", value)
+        value = re.sub(r"\$", r"\$", value)
 
         # Replace "\n"s with "<br>"s; these interfere with the table formatting
         # otherwise

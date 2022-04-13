@@ -14,7 +14,7 @@
 !
 !--Reference
 !  None
-!  
+!
 !--History
 !  01/12/93 PJK 1.000 Initial version
 !  25/02/94 PJK 1.100 Corrected error in WFLUX for inboard blanket
@@ -145,16 +145,16 @@
 ! *** Elemental composition (same for both inboard and
 ! *** outboard blankets)
 
-      ! iblanket=4 is used for KIT HCLL model. iblanket<4 are all 
-      ! HCPB (CCFE, KIT and CCFE + Shimwell TBR calculation). 
-      ! These calculations where originally selected using the 
-      ! ipowerflow and blkttype switches and so there is still an 
-      ! option to select cololant type using the coolwh switch. 
+      ! iblanket=4 is used for KIT HCLL model. iblanket<4 are all
+      ! HCPB (CCFE, KIT and CCFE + Shimwell TBR calculation).
+      ! These calculations where originally selected using the
+      ! ipowerflow and blkttype switches and so there is still an
+      ! option to select cololant type using the coolwh switch.
 
       if (iblanket == 4) then
-            !  Liquid blanket (LiPb + Li)    
-            if (coolwh.eq.1) then    
-                  ! He Coolant    
+            !  Liquid blanket (LiPb + Li)
+            if (coolwh.eq.1) then
+                  ! He Coolant
                   do j = 1,83
                         welemp(j) = 100.0 * REAL( &
                         fblss*(1.0D0-fmsbl)*ecss(j) + &
@@ -163,9 +163,9 @@
                         fbllipb*eclipb(j) + &
                         fblli*ecli(j) + &
                         vfblkt*eche(j) )
-                  end do        
-            else	    
-                  ! H2O Coolant 
+                  end do
+            else
+                  ! H2O Coolant
                   do j = 1,83
                         welemp(j) = 100.0 * REAL( &
                         fblss*(1.0D0-fmsbl)*ecss(j) + &
@@ -174,12 +174,12 @@
                         fbllipb*eclipb(j) + &
                         fblli*ecli(j) + &
                         vfblkt*ech2o(j) )
-                   end do      
-            end if    
+                   end do
+            end if
       else
-            !  Solid blanket (Li2O + Be)    
-            if (coolwh.eq.1) then    
-                  ! He Coolant       
+            !  Solid blanket (Li2O + Be)
+            if (coolwh.eq.1) then
+                  ! He Coolant
                   do j = 1,83
                         welemp(j) = 100.0 * REAL( &
                         fblss*(1.0D0-fmsbl)*ecss(j) + &
@@ -188,9 +188,9 @@
                         fblli2o*ecli2o(j) + &
                         fblbe*ecbe(j) + &
                         vfblkt*eche(j) )
-                  end do        
-            else	        
-                  ! H2O Coolant    
+                  end do
+            else
+                  ! H2O Coolant
                   do j = 1,83
                         welemp(j) = 100.0 * REAL( &
                         fblss*(1.0D0-fmsbl)*ecss(j) + &
@@ -199,7 +199,7 @@
                         fblli2o*ecli2o(j) + &
                         fblbe*ecbe(j) + &
                         vfblkt*ech2o(j) )
-                  end do        
+                  end do
             endif
       end if
 
@@ -223,23 +223,23 @@
 ! *** Neutron flux (neutrons per cm**2 per second)
 !+**PJK 19/02/97 Include energy multiplication, and an e-folding
 !+**PJK 19/02/97 factor for attenuation through half the blanket
- 
+
       ! Previously the ipowerflow and blkttype swithces where being used
-      ! below. For ipowerflow=1, the post-2014 model, you could select 
+      ! below. For ipowerflow=1, the post-2014 model, you could select
       ! liquid or solid breeder blanket material equations using blkttype.
-      ! For ipowerflow=0, the pre-2014 model, only the solid breeder 
-      ! equation was used. For both ipowerflow=0 and ipowerflow=1 this 
-      ! solid type equation was the same and so the ipowerflow switch has 
-      ! been removed. The old switch blkttype has also been replaced with 
-      ! iblanket. N.B. Previous comment stated: "Strictly, this is not 
-      ! correct for ipowerflow=1, but currently I have simply replaced the 
-      ! old usage of lblnkt etc.", so (FIXME) these equations 
+      ! For ipowerflow=0, the pre-2014 model, only the solid breeder
+      ! equation was used. For both ipowerflow=0 and ipowerflow=1 this
+      ! solid type equation was the same and so the ipowerflow switch has
+      ! been removed. The old switch blkttype has also been replaced with
+      ! iblanket. N.B. Previous comment stated: "Strictly, this is not
+      ! correct for ipowerflow=1, but currently I have simply replaced the
+      ! old usage of lblnkt etc.", so (FIXME) these equations
       ! should be checked.
 
-      if (iblanket==4) then 
+      if (iblanket==4) then
             ! If the KIT HCLL model is selected then
             dklen = 0.075D0 / (1.0D0 - vfblkt - fbllipb - fblli)
-      else 
+      else
             ! If the CCFE or KIT HCPB model is selected then
             dklen = 0.075D0 / (1.0D0 - vfblkt - fblli2o - fblbe)
       end if
@@ -672,7 +672,7 @@
 !
 !--Reference
 !  None
-!  
+!
 !--History
 !  01/12/93 PJK 1.000 Initial version
 !  25/02/94 PJK 1.010 Added WTYPE = 5 option
@@ -897,7 +897,7 @@
 !
 !--Reference
 !  None
-!  
+!
 !--History
 !  01/12/93 PJK 1.000 Initial version
 !
@@ -946,7 +946,7 @@
 !
 !--Reference
 !  None
-!  
+!
 !--History
 !  01/12/93 PJK 1.000 Initial version
 !  17/11/97 PJK 1.010 Added IVMS1 coding
@@ -1060,7 +1060,7 @@
 !
 !--Reference
 !  None
-!  
+!
 !--History
 !  01/12/93 PJK 1.000 Initial version
 !
@@ -1126,7 +1126,7 @@
 !
 !--Reference
 !  None
-!  
+!
 !--History
 !  01/12/93 PJK 1.000 Initial version
 !
@@ -1485,7 +1485,7 @@
 !
 !--Reference
 !  None
-!  
+!
 !--History
 !  01/12/93 PJK 1.000 Initial version
 !  17/11/97 PJK 1.010 Added IVMS1 coding
@@ -1733,7 +1733,7 @@
       ZSECT(IN) = XSECT(101)
 !  ## By repeating the 5 gas nuclides, (in all libraries), try
 !     to get all gases (Nov 89).
-!  ## Correction made to include reactions to isomers, 
+!  ## Correction made to include reactions to isomers,
 !     change MT to MT1 and divide reac number by 10. Mar 90
 !  ## Additional reactions for He4 production (Nov 1989)##
       IF (MT1.EQ.107.OR.MT1.EQ.22.OR.MT1.EQ.24) THEN
@@ -1899,7 +1899,7 @@
 !
 !--Reference
 !  None
-!  
+!
 !--History
 !  01/12/93 PJK 1.000 Initial version
 !
@@ -1946,7 +1946,7 @@
 !
 !--Reference
 !  None
-!  
+!
 !--History
 !  01/12/93 PJK 1.000 Initial version
 !
@@ -2006,7 +2006,7 @@
 !
 !--Reference
 !  None
-!  
+!
 !--History
 !  01/12/93 PJK 1.000 Initial version
 !
@@ -2135,7 +2135,7 @@
 !
 !--Reference
 !  None
-!  
+!
 !--History
 !  01/12/93 PJK 1.000 Initial version
 !
@@ -2415,7 +2415,7 @@
 !
 !--Reference
 !  None
-!  
+!
 !--History
 !  01/12/93 PJK 1.000 Initial version
 !  17/11/97 PJK 1.010 Corrected EXTERNAL statement (CONV --> CONV1)
@@ -2992,7 +2992,7 @@
 !
 !--Reference
 !  None
-!  
+!
 !--History
 !  01/12/93 PJK 1.000 Initial version
 !  17/11/97 PJK 1.010 Added IVMS1 coding
@@ -3137,7 +3137,7 @@
          XSIDNT = CLIDNT(11:25)
          SPIDNT = CLIDNT(26:47)
          DDIDNT = OLDLIB(58:72)
- 
+
 !
 !  RESET NCROSS AND ERASE OLD CROSS SECTION DATA
 !
@@ -3378,7 +3378,7 @@
       READ(24,99022,END=152) NUMBEG
  152  CONTINUE
  154  CONTINUE
-!     
+!
 ! WRITE "LISTAG", OTHER COMMONS AND "A" ARRAY TO DISK. (UNFORMATTED).
 !
 !  ## HARWELL MODIFICATION DECEMBER 1990.
@@ -3487,7 +3487,7 @@
 !
 !--Reference
 !  None
-!  
+!
 !--History
 !  01/12/93 PJK 1.000 Initial version
 !
@@ -3568,7 +3568,7 @@
 !
 !--Reference
 !  None
-!  
+!
 !--History
 !  01/12/93 PJK 1.000 Initial version
 !  28/02/94 PJK 1.010 New coding for WTYPE=5 option
@@ -3721,7 +3721,7 @@
 !
 !--Reference
 !  None
-!  
+!
 !--History
 !  01/12/93 PJK 1.000 Initial version
 !
@@ -4388,7 +4388,7 @@
 !
 !--Reference
 !  None
-!  
+!
 !--History
 !  01/12/93 PJK 1.000 Initial version
 !
@@ -4818,7 +4818,7 @@
 !
  390  CONTINUE
       NSTEPS = NSTEPS + NSTEPS
- 
+
 !
 ! DECREASE STEP LENGTH.
 !
@@ -5052,7 +5052,7 @@
 !
 !--Reference
 !  None
-!  
+!
 !--History
 !  01/12/93 PJK 1.000 Initial version
 !
@@ -5104,7 +5104,7 @@
 !
 !--Reference
 !  None
-!  
+!
 !--History
 !  01/12/93 PJK 1.000 Initial version
 !  17/11/97 PJK 1.001 Corrected EXTERNAL statement (CONV --> CONV1)
@@ -5386,7 +5386,7 @@
 !
 !--Reference
 !  None
-!  
+!
 !--History
 !  01/12/93 PJK 1.000 Initial version
 !
@@ -5527,7 +5527,7 @@
 !
 !--Reference
 !  Neutronics Model for the PROCESS code, L.J. Baker
-!  
+!
 !--History
 !  01/12/93 PJK 1.000 Initial version
 !  17/11/97 PJK 1.010 Added IVMS1 coding
@@ -5690,7 +5690,7 @@
 !
 !--Reference
 !  None
-!  
+!
 !--History
 !  01/12/93 PJK 1.000 Initial version
 !
@@ -5851,7 +5851,7 @@
 !
 !--Reference
 !  None
-!  
+!
 !--History
 !  01/12/93 PJK 1.000 Initial version
 !
@@ -5909,7 +5909,7 @@
 !--Reference
 !  Elemental compositions taken from SEAFP report, October 1993, by
 !  Jean-Christophe Sublet, D3/166 Culham Laboratory, ext.3492
-!  
+!
 !--History
 !  03/12/93 PJK 1.000 Initial version
 !  05/02/97 PJK 1.100 Added martensitic steel
@@ -5951,7 +5951,7 @@
          eche(j) = 0.0D0
          ech2o(j) = 0.0D0
  10   continue
-         
+
 ! *** Stainless steel - structural component
 ! *** SEAFP report, Table I(a), Austenitic 316
 

@@ -1,6 +1,6 @@
 """Dict of obsolete vars and their new names for the input validator.
 
-This is used by the input_validator module to find any obsolete variables in the 
+This is used by the input_validator module to find any obsolete variables in the
 input file (which have since been renamed in the current version of the source).
 If the input validator finds an obsolete var, it can then suggest the new name
 of that variable, based on this dictionary. This should make migration of old
@@ -13,22 +13,22 @@ Note: this is now relied upon by Blueprint, pending implementing a proper API.
 """
 OBS_VARS = {
     "snull": "i_single_null",
-    "tfno":	"n_tf",
+    "tfno": "n_tf",
     "itfsup": "i_tf_sup",
     "r_tf_inleg_mid": "r_tf_inboard_mid",
-    "rtot":	"r_tf_outboard_mid",
-    "tfareain":	"a_tf_inboard",
+    "rtot": "r_tf_outboard_mid",
+    "tfareain": "a_tf_inboard",
     "r_tf_inleg_in": "r_tf_inleg_in",
     "r_tf_inleg_out": "r_tf_inleg_out",
-    "awpc":	"a_tf_wp",
-    "sigttf": "sig_tf_t", 
-    "sigtcon": "sig_tf_t", 
-    "sigrtf": "sig_tf_r", 
-    "sigrcon": "sig_tf_r", 
-    "sigvert": "sig_tf_z", 
-    "sig_vmises_case": "sig_tf_vmises", 
-    "sig_vmises_cond": "sig_tf_vmises", 
-    "sig_tresca_case": "sig_tf_treca", 
+    "awpc": "a_tf_wp",
+    "sigttf": "sig_tf_t",
+    "sigtcon": "sig_tf_t",
+    "sigrtf": "sig_tf_r",
+    "sigrcon": "sig_tf_r",
+    "sigvert": "sig_tf_z",
+    "sig_vmises_case": "sig_tf_vmises",
+    "sig_vmises_cond": "sig_tf_vmises",
+    "sig_tresca_case": "sig_tf_treca",
     "sig_tresca_cond": "sig_tf_treca",
     "sigver": "None",
     "sigrad": "None",
@@ -67,5 +67,5 @@ OBS_VARS = {
     "i_strain_wp": "i_str_wp",
     "strain_wp_max": "str_wp_max",
     "strain_wp": "str_wp",
-    "fstrain_wp": "fstr_wp"
+    "fstrain_wp": "fstr_wp",
 }

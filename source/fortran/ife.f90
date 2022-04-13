@@ -95,7 +95,7 @@ contains
 
     case(3)
        etadrv = drveff
-       
+
     case default
        idiags(1) = ifedrv
        call report_error(127)
@@ -128,10 +128,10 @@ contains
        wallmw = powfmw * 0.5D0*sang / fwarea
 
     else if (ifetyp == 4) then
-    
+
        ! 2019 build only has first wall at the top which has a tube at
        ! its centre.  This calculates solid angle and removes tube.
-       
+
        phi = atan(r1/zu1)
        sang = 1.0D0 - cos(phi)
        phi = atan(flirad/zu1)
@@ -875,10 +875,10 @@ contains
     30  format(T43,'Thickness (m)',T60,'Height (m)')
 
     if (ifetyp /= 4) then
-        
+
         call oheadr(outfile,'Vertical Build')
         write(outfile,30)
-        
+
         call obuild(outfile,'Base of device',0.0D0,-zl7)
         call obuild(outfile,'Void 3',v3dzl,-zl6)
         call obuild(outfile,'Shield',shdzl,-zl5)
@@ -949,7 +949,7 @@ contains
         call obuild(outfile,'Void 3',v3dzu,zu7)
         call ovarre(mfile,'Void 3 upper (m)','(v3dzu)',v3dzu)
 
-    end if   
+    end if
 
     !  Print matrix of material volumes
 
@@ -1056,7 +1056,7 @@ contains
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     use constants, only: pi
     use build_variables, only: fwarea
-    use error_handling, only: report_error  
+    use error_handling, only: report_error
     use buildings_variables, only: trcl, stcl
     use fwbs_variables, only: tbr, emult
     use ife_variables, only: blmatf, bldrc, lipmw, etali, taufall, rrmax, chvol, &
@@ -1081,8 +1081,8 @@ contains
      else if ((fwdzl.gt.1.0D-9).or.(v1dzl.gt.1.0d-9).or.(v2dzu.gt.1.0D-9)) then
           call report_error(232)
      end if
-     
-     ! Lithium Pump 
+
+     ! Lithium Pump
 
      ! Acceleration due to gravity (m/s^2)
      g = 9.81D0
@@ -1181,7 +1181,7 @@ contains
      v1vol(3) = pi * r3*r3 * (zl3 - zl2)
 
      !  Blanket
-     !  Radial Blanket - between void 2 and chamber 
+     !  Radial Blanket - between void 2 and chamber
      blvol(1) = pi * (r4*r4 - r3*r3) * (zu3 + zl3)
      !  Upper Blanket - Pool radially between shield and
      !  chamber of input height.
@@ -1190,16 +1190,16 @@ contains
      blvol(3) = pi * r5*r5 * (zl4 - zl3)
 
      !  Second void
-     
+
     v2vol(1) = pi * (r5*r5 - r4*r4) * (chdzl+chdzu)
     v2vol(2) = 0.0D0
     v2vol(3) = 0.0D0
 
     !  Shield
     shvol(1) = pi * (r6*r6 - r5*r5) * (zu5 + zl5)
-    ! Top Section is in three parts to account for the dip at 
+    ! Top Section is in three parts to account for the dip at
     ! the centre.  The first is the horizontal top, the second is the
-    ! horizontal 
+    ! horizontal
     shvol(2) = pi * (((r6*r6 - (chrad-shdr)*(chrad-shdr)) * shdzu) &
       + ((r1*r1 - flirad*flirad) * shdzu) &
       + ( (r1*r1 - (r1-shdzu)*(r1-shdzu)) *(bldzu-shdzu) ))
@@ -1228,8 +1228,8 @@ contains
      !  First wall area
      !  The chamber is surrounded by liquid on three sides
      !  with only the top being solid.  This is considered part
-     !  of the shield. There is a target injector tube at the 
-     !  centre of this area. 
+     !  of the shield. There is a target injector tube at the
+     !  centre of this area.
      fwarea = pi * (r1*r1 - flirad*flirad)
 
    end subroutine bld2019
@@ -1674,7 +1674,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use structure_variables, only: aintmass, clgsmass, coldmass, fncmass, gsmass 
+    use structure_variables, only: aintmass, clgsmass, coldmass, fncmass, gsmass
 
     implicit none
 
@@ -1984,7 +1984,7 @@ contains
     !  Power needed per floor area, MW/m2
 
     pmwpm2 = pwpm2 * 1.0D-6
-    
+
     !  Total pulsed power system load, MW
 
     pacpmw = crypmw + vachtmw + tdspmw + tfacmw + &

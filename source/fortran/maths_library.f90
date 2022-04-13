@@ -17,7 +17,7 @@ module maths_library
 #ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
 #endif
- 
+
   !use process_output
 
   implicit none
@@ -5203,7 +5203,7 @@ contains
       ! https://en.wikipedia.org/wiki/Secant_method
       ! Requires two initial values, x0 and x1, which should ideally be chosen to lie close to the root.
       !external:: f
-      
+
       interface
         function f(x)
 #ifndef dp

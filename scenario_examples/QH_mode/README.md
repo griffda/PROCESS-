@@ -35,4 +35,4 @@ Scaling Relationships and Switches:
 * `fgwsep = 0.5` * fraction of Greenwald Density to set as separatrix density – we use a reduced value of the separatrix density
 * `fgwped = 0.9` * fraction of Greenwald Density to set as pedestal-top density
 * `iefrf = 5,8` * switch for current drive efficiency model – use a model for NBI current drive
-* `pinjalw = 75.0` * maximum allowable value for injected power – This should be chosen to be a significant value to give the high injected NBI torque needed to generate shear flows in the plasma edge  
+* `pinjalw = 75.0` * maximum allowable value for injected power – This should be chosen to be a significant value to give the high injected NBI torque needed to generate shear flows in the plasma edge

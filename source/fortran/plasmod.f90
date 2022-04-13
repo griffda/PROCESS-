@@ -95,18 +95,18 @@ contains
 
     !  Arguments
     integer, intent(out) :: i_flag
-    
+
     ! geometry type
     real(dp), intent(out) :: geom_k, geom_d, geom_ip, geom_k95, geom_d95, &
       geom_r, geom_a, geom_q95, geom_bt, geom_counter
-    
+
     ! composition type
     real(dp), intent(out) :: comp_fcoreraditv, comp_qdivt, comp_pradfrac, &
       comp_pradpos, comp_psep_r, comp_psepb_q95AR, comp_protium, &
       comp_psepplh_inf, comp_psepplh_sup, comp_c_car, comp_fuelmix
     real(dp), dimension(:), intent(out) :: comp_comparray, comp_globtau
     integer, dimension(:), intent(out) :: comp_imptype
-    
+
     ! inputs type
     real(dp), intent(out) :: inp0_car_qdivt, inp0_chisaw, inp0_chisawpos, inp0_contrpovr, &
       inp0_contrpovs, inp0_cxe_psepfac, &
@@ -119,7 +119,7 @@ contains
     integer, intent(out) :: inp0_PLH
     real(dp), dimension(:), intent(out) :: inp0_x_heat, inp0_x_cd, inp0_x_fus, inp0_x_control, &
       inp0_dx_heat, inp0_dx_cd, inp0_dx_fus, inp0_dx_control
-    
+
     ! numerics_transp type
     real(dp), intent(out) :: num_Ainc, num_capA, num_dgy, num_dt, num_dtinc, &
       num_dtmax, num_dtmaxmax, &
@@ -129,7 +129,7 @@ contains
     integer, intent(out) :: num_i_equiltype, num_i_impmodel, num_isawt, &
       num_i_modeltype, num_ipedestal, num_iprocess, num_nchannels, num_nx, &
       num_nxt
-    
+
     ! pedestal type
     real(dp), intent(out) :: ped_tesep, ped_rho_t, ped_rho_n, ped_pedscal, &
       ped_teped
@@ -379,7 +379,7 @@ contains
         betaft, ptrimw, ni0, zeff, vsres, nesep, dnz, pedgeradmw, dlamie, &
         falpi, kappa, rnfene, pbrempv, rmajor, dnbeam, gamma, kappaa, deni, &
         dnprot, beta, fdeut, palppv, aspect
-    
+
 		use constants, only: rmu0, echarge, pi, nout
     use structs, only: geometry, composition, pedestal, radial_profiles, &
       MHD_EQ, power_losses
@@ -390,21 +390,21 @@ contains
     !  Arguments
     ! geometry type
     real(dp), intent(in) :: geom_k, geom_d, geom_perim, geom_ip, geom_q95
-    
+
     ! composition type
     real(dp), intent(in) :: comp_cxe, comp_che, comp_car
     real(dp), dimension(:), intent(in) :: comp_comparray, comp_globtau
-    
+
     ! pedestal type
     real(dp), intent(in) :: ped_teped, ped_nped, ped_nsep, ped_tesep
-    
+
     ! radial_profiles type
     real(dp), intent(in) :: radp_av_te, radp_av_ten, radp_av_ti, radp_av_ne, &
       radp_av_ni, radp_av_nhe, radp_av_nd, radp_av_nz, radp_zeff
     real(dp), dimension(:), intent(in) :: radp_ne, radp_psi, radp_te, radp_ti, &
       radp_jcd, radp_jpar, radp_ipol, radp_qprof, radp_Volum, radp_vp, &
       radp_cc, radp_palph, radp_nions
-    
+
     ! power_losses type
     real(dp), intent(in) :: loss_alpharate, loss_betaft, loss_dfuelreq, loss_fusionrate, loss_h, &
       loss_palpe, loss_palpi, loss_pbrehms, loss_pdiv, loss_peaux, loss_pfus, &
@@ -412,7 +412,7 @@ contains
       loss_pohm, loss_prad, loss_pradcore, loss_pradedge, loss_psep, &
       loss_psepe, loss_psepi, loss_psync, loss_qcd, loss_qfus, loss_qheat, &
       loss_qtot, loss_rplas, loss_tauee, loss_taueff, loss_tauei, loss_wth
-    
+
     ! mhd_eq type
     real(dp), intent(in) :: mhd_betan, mhd_bp, mhd_equilcheck, mhd_f_ni, mhd_fbs, mhd_ip_out, &
       mhd_q, mhd_q_sep, mhd_qstar, mhd_rli, mhd_sp, mhd_torsurf, mhd_vloop, &
@@ -817,7 +817,7 @@ contains
 		use constraint_variables, only: psepbqarmax, pseprmax
 		use physics_variables, only: rmajor, bt, aspect
     use process_output, only: ovarin, ocmmnt, oheadr, ovarrf, osubhd
-    
+
 		use constants, only: echarge, rmu0
     use plasmod_variables, only: radp, ped, geom, plasmod_i_equiltype, loss, &
       inp0, mhd, num, i_flag, comp

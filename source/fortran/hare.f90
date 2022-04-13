@@ -5,10 +5,10 @@ contains
                          fshift,xf,enpa,ftherm,fpp,cdeff,ampperwatt, &
                          Temperature_capped)
         use process_output, only:ocmmnt, ovarre, ovarin, ovarrf
-        use mode, only: imod 
-        use param, only: c, pi 
+        use mode, only: imod
+        use param, only: c, pi
         use mod_f90_kind, only: rkind, ikind
-        use freq, only: om, xk0 
+        use freq, only: om, xk0
         implicit none
         real(rkind), intent(in) :: dens,bfield,R0m,amin_m,rho,te0,zeff
         real(rkind), intent(out) :: fshift, xf, enpa,ftherm,fpp,cdeff, ampperwatt
@@ -29,7 +29,7 @@ contains
         integer(ikind) :: cdharm
 
         external currn
-        
+
         ! Initialise local variables
         cdharm = 1
 
@@ -192,7 +192,7 @@ contains
 
     subroutine parasitic(ne,bmod,temp,freq,npar,drho,theta,am,nh,percent)
         use mod_f90_kind, only: rkind
-        use param, only: pi, c 
+        use param, only: pi, c
         implicit none
 
         real(rkind) :: ne,bmod,temp,freq,npar,drho,theta,am,nh

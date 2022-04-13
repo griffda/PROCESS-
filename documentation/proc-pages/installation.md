@@ -1,5 +1,5 @@
 # Installation
-Below are instructions of how to install the applications, code and dependencies such that you can begin working on Process. 
+Below are instructions of how to install the applications, code and dependencies such that you can begin working on Process.
 
 ## Supported environments
 **Please note, only Python3.8 is supported, Python3.9 and Python3.6 are not.**
@@ -15,7 +15,7 @@ Using the Windows Subsystem for Linux (on Windows) or a containerised environmen
 ## Ubuntu and Windows (using Windows Subsystem for Linux) and Installing Visual Studio Code
 *This section is for users on a Windows system, if you are a MacOS or priviledged machine user please go [here](#docker-container), or if you are a using a shared resource, please go [here](#singularity-container).*
 
-To install Windows Subsystem for Linux (WSL) follow the 'Manual Installation Steps' [here](https://docs.microsoft.com/en-us/windows/wsl/install-win10). Choose WSL 2 and Ubuntu 20 (if installing from the Microsoft store then Ubuntu 20 is installed by default). 
+To install Windows Subsystem for Linux (WSL) follow the 'Manual Installation Steps' [here](https://docs.microsoft.com/en-us/windows/wsl/install-win10). Choose WSL 2 and Ubuntu 20 (if installing from the Microsoft store then Ubuntu 20 is installed by default).
 
 
 The following command is used to install WSL:
@@ -50,7 +50,7 @@ sudo apt install python3-pip
 sudo apt install lcov
 sudo apt install poppler-utils
 ```
-Next, the code will need to be downloaded so you can work with it. The Process code is stored in a GitLab repository and as such needs to be 'cloned' - i.e bought to your VSCode window from GitLab. 
+Next, the code will need to be downloaded so you can work with it. The Process code is stored in a GitLab repository and as such needs to be 'cloned' - i.e bought to your VSCode window from GitLab.
 
 To clone the PROCESS repository from Gitlab you will need to use an SSH key. A guide on how to find if you have an existing SSH key pair or to generate a new SSH key pair can be found on Gitlab [here](https://docs.gitlab.com/ee/ssh/).
 
@@ -117,7 +117,7 @@ To rebuild, for example after making a change to the Fortran source, run `cmake 
 
 Now, skip to [testing](#testing).
 
-## Docker container 
+## Docker container
 *This section is for users of a priviledged machine of the wrong OS e.g MacOS. If you are a using a shared resource e.g. Freia, please go [here](#singularity-container).*
 
 ### **If you are using a Windows system with WSL and have followed the above steps then this next section is not necessary and you may skip to testing your installation [here](#testing).**
@@ -226,7 +226,7 @@ When VS Code is first opened, you are able to set it such that the command:
 ```bash
 source env/bin/activate
 ```
-is executed automatically. This saves manually activating the virtual environment everytime you open the application. This is done by first using `Ctrl+Shift+P` and searching for `Python:Select Interpreter`. The select: `Python *version* ('env':venv) ./env/bin/python`. This should be starred as the recommended version. Now, close your terminal and close VS Code. Reopen and open a new terminal which should now automatically point to the virtual environmnet signalled by an `(env)` in front of your user. 
+is executed automatically. This saves manually activating the virtual environment everytime you open the application. This is done by first using `Ctrl+Shift+P` and searching for `Python:Select Interpreter`. The select: `Python *version* ('env':venv) ./env/bin/python`. This should be starred as the recommended version. Now, close your terminal and close VS Code. Reopen and open a new terminal which should now automatically point to the virtual environmnet signalled by an `(env)` in front of your user.
 
 ## Prepare Release (not required)
 It is possible to build a standalone module which can be distributed without the need for the source code. This exists as a pippable "wheels" module which is build by running:

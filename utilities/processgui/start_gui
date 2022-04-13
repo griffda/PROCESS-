@@ -17,4 +17,3 @@ if [[ `ps u` != *"manage.py runserver"* ]]; then
 fi
 
 firefox 127.0.0.1:8000 &> /dev/null &
-

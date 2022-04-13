@@ -64,8 +64,3 @@
  cubb=-btor/(0.2d0*pi_g*rtor)*rho*mux*cubb !cubb is Jbs in MA/m^2
 
               ! end of cubsfml
-
-
-
-
-

@@ -39,7 +39,7 @@ subroutine compute_equil( &
   real(kind(1.0d0)), dimension(nx) :: gra,sqgra,grar,avr2,ai0,dgrda,avsqg !gradient,sqrgradient,radial gradient,
   real(kind(1.0D0)), dimension(nx) :: smallk, dvdr, rhoint, f, jpol, kerncur, pressure, A, B, C, bbb, ccc, dum1, dum2, dum3
   real(kind(1.0D0)), dimension(nx) :: chat,betahat,y,  fp, kpk, dpk,  pprime,FF,ffprime,ba,bb
-  real(kind(1.0d0)), dimension(nx) :: gr,GBD,GL,GSD, & 
+  real(kind(1.0d0)), dimension(nx) :: gr,GBD,GL,GSD, &
   &  BD,BC,B2B0EQ,B0B2EQ,BMAXEQ,BMINEQ,BMODEQ,FOFBEQ,GRDAEQ, &
   &  btooo,rooo,g11,g22,g33,slat,vr
 ! Quiet NAN, double precision.
@@ -92,7 +92,7 @@ pres_fac=1.d0
    C=-gpp4*mu_vacuum*derivcc(nx,x,pressure,1)/A
    dum3=G20/qg3s
    dum2=derivcc(nx,x,dum3,1)
-   B = -dum2/qg3s/A	
+   B = -dum2/qg3s/A
    fb = R*btor/gp2
    yb = 0.5*fb**2.d0
    dum2 = integrcc(nx,x,B)
@@ -100,14 +100,14 @@ pres_fac=1.d0
 			dum1 = dum1/dum1(nx)
    dum3 = integrcc(nx,x,C/dum1)
    dum3=dum3-dum3(nx)
-   C1 = yb 
+   C1 = yb
    y = dum1*(dum3+C1)
 			dum2=G20/qg3s
-  	dum3=derivcc(nx,psi,dum2,2)						
+  	dum3=derivcc(nx,psi,dum2,2)
    betahat=dum3/qg3s/A
    Chat=-gpp4*mu_vacuum*pprime/A
    FF = sqrt(2.*y)
-			ffprime=gpp4*(chat-betahat*FF**2.d0)     
+			ffprime=gpp4*(chat-betahat*FF**2.d0)
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
@@ -122,12 +122,12 @@ pres_fac=1.d0
 	eqff=-2.*pi/mu_vacuum/R*ffprime*1.e-6
 
 	TIME=0.
-        
+
 
 	nxtemp=nx
 	!call emeq with inputs Ba, BB which are pprime and ffprime recasted
 	call EMEQ(redo,BA,BB,R+SHIF(nx),rmin,ELON,TRIA*rmin,nx, &		! radial grid point No.
-             &	 ACEQLB,BTOR*R/(R+SHIF(nx)),IP,GR,GBD,GL,GSD,gra, & 
+             &	 ACEQLB,BTOR*R/(R+SHIF(nx)),IP,GR,GBD,GL,GSD,gra, &
         &  sqgra,grar,avr2,ai0,dgrda,avsqg,vvvv,B2B0EQ,B0B2EQ,BMAXEQ,BMINEQ,BMODEQ,FOFBEQ,GRDAEQ)
 
 	if (nx.lt.1.or.isnan(sqgra(2))) then ! if crashed, redo at lower pressure
@@ -202,7 +202,7 @@ pres_fac=1.d0
 end if
 
 	if (isnan(sqgra(2))) then
-!if crashed, dont do anything	
+!if crashed, dont do anything
 		else !call current diffusion equation solver below
   call ADDITIONAL_CALCS( &
        i_equiltype,jiter,nx,V,btor,Ip,R,rmin,x,cc,cubb, jcdr, FF,G2,G3,q0,mu_vacuum, &
@@ -254,7 +254,7 @@ subroutine INITEQUIL( &
   + 8.*R*gradient(shif,rhoint)**2 - 4.*R*d*gradient(shif,rhoint) + 5.&
   *R*d**2 + 4.*rhoint**2*gradient(d,rhoint) &
   + 24.*R*k**2 - 16.*rhoint*gradient(shif,rhoint) + 4.*rhoint*d)
-  
+
   G2 = 16.*pi**4*rhoint**2 * (1.+k+1./(16.*R**2)* (R**2 * rhoint**2 *&
   gradient(d, rhoint)**2 + 2.*R**2 * rhoint**2 * gradient(k, rhoint)**2 &
   - 4.0*rhoint*R**2*gradient(shif, rhoint)*gradient(d, rhoint) + 2.&
@@ -262,7 +262,7 @@ subroutine INITEQUIL( &
   + 8.*R**2*gradient(shif,rhoint)**2 - 4.*R**2*d*gradient(shif,rhoint) + 5.&
   *R**2*d**2 - 4.*rhoint**2*R*gradient(d,rhoint) &
   + 8.*R**2*k**2 + 16.*rhoint*R*gradient(shif,rhoint) - 4.*R*rhoint*d + 8.*rhoint**2))
-  
+
   G3=1./R**2-1./(4.*R**4)*(-2.*rhoint**2 + 8.*shif*R-3.*d*R*rhoint + 4.&
   *gradient(shif,rhoint)*R*rhoint-rhoint**2*R*gradient(d,rhoint))
 
@@ -280,7 +280,7 @@ subroutine ADDITIONAL_CALCS( &
      ,q_edge_in,q_95,elon,tria,elong95,triang95,k,d,isawt,j_qeq1)
 
   use grad_func
-  implicit none	
+  implicit none
 
 !input/output exchange variables
   integer, intent(in) :: nx,jiter,i_equiltype,isawt
@@ -291,7 +291,7 @@ subroutine ADDITIONAL_CALCS( &
   real(kind(1.0D0)), intent(inout) :: roc,Vloop,toleq,Ibs,Epar,fbs,fcd
   real(kind(1.0d0)), dimension(nx), intent(inout) :: Vprime,k,d
   real(kind(1.0d0)), dimension(nx), intent(in) :: V,x,cc,cubb,jcdr,FF,G2,G3,q0
-  real(kind(1.0D0)), dimension(nx), intent(inout) :: dV,phi,rho,ipol,jpol,kerncur,jpar,q,psi, dum1 
+  real(kind(1.0D0)), dimension(nx), intent(inout) :: dV,phi,rho,ipol,jpol,kerncur,jpar,q,psi, dum1
 
 !local variables
   integer :: j,DEBUG_FLAG,j_9
@@ -314,7 +314,7 @@ subroutine ADDITIONAL_CALCS( &
 
 !calculation of currents
      kerncur = cc/ipol**2.*dV
- 
+
      Ibs = sum(cubb/ipol**2.*dV)*ipol(nx)*btor/(2.*pi)
  !integrated bootstrap in MA
      Icd = sum(jcdr/ipol**2.*dV)*ipol(nx)*btor/(2.*pi)
@@ -325,17 +325,17 @@ subroutine ADDITIONAL_CALCS( &
 
      jpar = cc*Epar + cubb+jcdr
  !parallel current density of the plasma
-					
+
      Vloop = Epar * 2. * pi * btor/(ipol(nx) * G3(nx))
  !loop voltage
-					
+
 !calculation of safety factor
      kerncur = jpar/ipol**2.*dV
      dum1=ipol*btor/gp2*cumint1(dV*jpar/ipol**2.)
      q=ipol*g2*g3/(mu_vacuum*8*pi**3.*dum1*1.e6)
-	
+
 	j_qeq1=0
-	
+
  q(1)=q(2)
 	j_9=1
 	do j=1,nx
@@ -359,7 +359,7 @@ subroutine ADDITIONAL_CALCS( &
 	enddo
 11	continue ! if q is reversed, fix it to some arbitrary profile which is monotonic
 	q(1)=sum(q(1:j_9))/(j_9-1.d0)
-	q(1:j_9)=q(1)+(q(j_9)-q(1))*v(1:j_9)/v(j_9)	
+	q(1:j_9)=q(1)+(q(j_9)-q(1))*v(1:j_9)/v(j_9)
  q(1)=q(2)
 10	continue
 !smooth q
@@ -368,14 +368,14 @@ subroutine ADDITIONAL_CALCS( &
 
      qedge=q(nx)
  !edge q
-					
+
      psi = integrcc(nx,phi,1.d0/q)
  !compute Psi in Wb
-					
+
      toleq = maxval(abs(q-q0)/q0) !tolerance of q
-					
+
 !find 95% position
-	dum2=(psi-psi(1))/(psi(nx)-psi(1))	     
+	dum2=(psi-psi(1))/(psi(nx)-psi(1))
 	j_9=1
 	do j=1,nx
 	if (dum2(j).le.0.95) j_9=j
@@ -503,7 +503,7 @@ end subroutine ADDITIONAL_CALCS
 !CC======================================================================|
 	subroutine	SMAP(ALFA,NO,XO,N,XN,F)
 !C----------------------------------------------------------------------|
-!C Smooth mapping from grid 
+!C Smooth mapping from grid
 !C Similar to SMOOTH but the same array, F, is used for input and output
 !C----------------------------------------------------------------------|
 	implicit none

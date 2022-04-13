@@ -43,14 +43,14 @@ contains
     !! Call the reinke_tsep function first then use as an argument to this function
     !! Issue #707
     !! M.L. Reinke 2017 Nucl. Fusion 57 034004
-       
+
     ! use divertor_ode, only: impurity_concs
     ! use div_kal_vars, only: impurity_enrichment
     use divertor_ode_var, only: impurity_concs
     use reinke_variables, only: reinke_mode
     use read_radiation, only: read_lz
     use impurity_radiation_module, only: nimp, imp_label
-    
+
     implicit none
     real(dp) :: reinke_fzmin
     real(dp) :: bt, flh, qstar, rmajor, eps, fsep, fgw, kappa
@@ -131,7 +131,7 @@ contains
       !subtract radiation contribution from fixed fraction impurities, then complete the equation
       reinke_fzmin = (reinke_fzmin - sum_fZ_ml_other )/ ml_div
 
-    end if  
+    end if
    !return minimum fraction required at the SOL of specified impurity fraction
   end function reinke_fzmin
 

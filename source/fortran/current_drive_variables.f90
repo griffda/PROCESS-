@@ -17,7 +17,7 @@ module current_drive_variables
 
   real(dp) :: beamwd
   !! width of neutral beam duct where it passes between the TF coils (m)
-  !! T Inoue et al, Design of neutral beam system for ITER-FEAT, 
+  !! T Inoue et al, Design of neutral beam system for ITER-FEAT,
   !! <A HREF=http://dx.doi.org/10.1016/S0920-3796(01)00339-8>
   !! Fusion Engineering and Design, Volumes 56-57, October 2001, Pages 517-521</A>)
 
@@ -28,7 +28,7 @@ module current_drive_variables
   !! bootstrap current fraction (enforced; see ibss)
 
   real(dp) :: bscfmax
-  !! maximum fraction of plasma current from bootstrap; if `bscfmax < 0`, 
+  !! maximum fraction of plasma current from bootstrap; if `bscfmax < 0`,
   !! bootstrap fraction = abs(bscfmax)
 
   real(dp) :: bscf_iter89
@@ -104,7 +104,7 @@ module current_drive_variables
   !! current drive efficiency fudge factor (`iteration variable 47`)
 
   real(dp) :: forbitloss
-  !! fraction of neutral beam power lost after ionisation but before 
+  !! fraction of neutral beam power lost after ionisation but before
   !! thermalisation (orbit loss fraction)
 
   real(dp) :: frbeam
@@ -143,7 +143,7 @@ module current_drive_variables
 
   integer :: iefrffix
   !! Switch for 2nd current drive efficiency model:
-  !! 
+  !!
   !! - =0 No fixed current drive
   !! - =1 Fenstermacher Lower Hybrid
   !! - =2 Ion Cyclotron current drive
@@ -230,63 +230,63 @@ module current_drive_variables
     !! Initialise module variables
     implicit none
 
-    beamwd = 0.58D0  
-    bigq = 0.0D0  
-    bootipf = 0.0D0  
-    bscfmax = 0.9D0  
-    bscf_iter89 = 0.0D0  
-    bscf_nevins = 0.0D0  
-    bscf_sauter = 0.0D0  
-    bscf_wilson = 0.0D0  
-    cboot = 1.0D0  
-    cnbeam = 0.0D0  
-    diacf_hender = 0.0D0  
-    diacf_scene = 0.0D0  
-    diaipf = 0.0D0  
-    echpwr = 0.0D0  
-    echwpow = 0.0D0  
-    effcd = 0.0D0  
+    beamwd = 0.58D0
+    bigq = 0.0D0
+    bootipf = 0.0D0
+    bscfmax = 0.9D0
+    bscf_iter89 = 0.0D0
+    bscf_nevins = 0.0D0
+    bscf_sauter = 0.0D0
+    bscf_wilson = 0.0D0
+    cboot = 1.0D0
+    cnbeam = 0.0D0
+    diacf_hender = 0.0D0
+    diacf_scene = 0.0D0
+    diaipf = 0.0D0
+    echpwr = 0.0D0
+    echwpow = 0.0D0
+    effcd = 0.0D0
     harnum = 1.0D0
-    enbeam = 1.0D3  
-    etacd = 0.0D0  
-    etacdfix = 0.0D0  
-    etaech = 0.3D0  
-    etalh = 0.3D0  
-    etanbi = 0.3D0  
-    fpion = 0.5D0  
-    pnbitot = 0.0D0  
-    pscf_scene = 0.0D0  
-    nbshinemw = 0.0D0  
-    feffcd = 1.0D0  
-    forbitloss = 0.0D0  
-    frbeam = 1.05D0  
-    ftritbm = 1.0D-6  
-    gamcd = 0.0D0  
-    gamma_ecrh = 0.35D0  
-    rho_ecrh = 0.1D0 
-    xi_ebw = 0.43D0 
-    iefrf = 5  
-    iefrffix = 0   
-    irfcd = 1  
-    nbshinef = 0.0D0  
-    nbshield = 0.5D0  
-    pheat = 0.0D0  
-    pheatfix = 0.0D0  
-    pinjalw = 150.0D0  
-    pinjemw = 0.0D0  
-    pinjimw = 0.0D0  
-    pinjmw = 0.0D0  
-    pinjfixmw = 0.0D0  
-    plasipf = 0.0D0  
-    plhybd = 0.0D0  
-    pnbeam = 0.0D0  
-    porbitlossmw = 0.0D0  
-    psipf = 0.0D0  
-    pwplh = 0.0D0  
-    pwpnb = 0.0D0  
-    rtanbeam = 0.0D0  
-    rtanmax = 0.0D0  
-    taubeam = 0.0D0  
+    enbeam = 1.0D3
+    etacd = 0.0D0
+    etacdfix = 0.0D0
+    etaech = 0.3D0
+    etalh = 0.3D0
+    etanbi = 0.3D0
+    fpion = 0.5D0
+    pnbitot = 0.0D0
+    pscf_scene = 0.0D0
+    nbshinemw = 0.0D0
+    feffcd = 1.0D0
+    forbitloss = 0.0D0
+    frbeam = 1.05D0
+    ftritbm = 1.0D-6
+    gamcd = 0.0D0
+    gamma_ecrh = 0.35D0
+    rho_ecrh = 0.1D0
+    xi_ebw = 0.43D0
+    iefrf = 5
+    iefrffix = 0
+    irfcd = 1
+    nbshinef = 0.0D0
+    nbshield = 0.5D0
+    pheat = 0.0D0
+    pheatfix = 0.0D0
+    pinjalw = 150.0D0
+    pinjemw = 0.0D0
+    pinjimw = 0.0D0
+    pinjmw = 0.0D0
+    pinjfixmw = 0.0D0
+    plasipf = 0.0D0
+    plhybd = 0.0D0
+    pnbeam = 0.0D0
+    porbitlossmw = 0.0D0
+    psipf = 0.0D0
+    pwplh = 0.0D0
+    pwpnb = 0.0D0
+    rtanbeam = 0.0D0
+    rtanmax = 0.0D0
+    taubeam = 0.0D0
     tbeamin = 3.0D0
   end subroutine init_current_drive_variables
 end module current_drive_variables

@@ -79,7 +79,7 @@ module stellarator_variables
 
   real(dp) :: vporttmax
   !! maximum available toroidal extent for vertical ports (m)
-  
+
   contains
 
   subroutine init_stellarator_variables

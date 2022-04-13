@@ -158,7 +158,7 @@ contains
   end subroutine plasma_profiles
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+
   function tcore(rhopedt, tped, tsep, tav, alphat, tbeta)
 
     !! Central temperature for a pedestal profile
@@ -230,7 +230,7 @@ contains
     !! alphat  : input real : temperature peaking parameter
     !! tbeta   : input real : second temperature exponent
     !! trho    : output real : T(rho) (keV)
-    !! This routine calculates the temperature at a normalised minor 
+    !! This routine calculates the temperature at a normalised minor
     !! radius position rho for a pedestalised profile.
     !! <P>If <CODE>ipedestal = 0</CODE> the original parabolic
     !! profile form is used instead.
@@ -273,11 +273,11 @@ contains
     end if
 
   end function tprofile
-  
+
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+
   function ncore(rhopedn, nped, nsep, nav, alphan)
-    
+
     !! Central density of a pedestal profile
     !! author: R Kemp, CCFE, Culham Science Centre
     !! author: H Lux, CCFE, Culham Science Centre
@@ -301,7 +301,7 @@ contains
     !  Arguments
 
     real(dp), intent(in) :: rhopedn, nped, nsep, nav, alphan
- 
+
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ncore = 1.0D0 / (3.0D0*rhopedn**2) * ( &
@@ -320,9 +320,9 @@ contains
   end function ncore
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+
   function nprofile(rho, rhopedn, n0, nped, nsep, alphan)
-    
+
     !! Implementation of HELIOS-type density pedestal profile
     !! author: R Kemp, CCFE, Culham Science Centre
     !! author: H Lux, CCFE, Culham Science Centre

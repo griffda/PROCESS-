@@ -4,30 +4,31 @@ docs_dir: documentation/proc-pages/
 nav:
     - Home: index.md
     - PROCESS Sources Documentation:
-        - FORD Documentation: ford_site
-        - Python Documentation:
-            - process: python/process.md 
-            - process.io: python/process.io.md
-            - process.utilities: python/process.utilities.md
-            - process.fortran: python/process.fortran.md
+          - FORD Documentation: ford_site
+          - Python Documentation:
+                - process: python/process.md
+                - process.io: python/process.io.md
+                - process.utilities: python/process.utilities.md
+                - process.fortran: python/process.fortran.md
     - Introduction:
-        - Installation Guide: installation.md
-        - Usage Guide: usage.md
-        - Getting Started: getting-started.md
-        - Cost Models: cost-models/cost-models.md
+          - Installation Guide: installation.md
+          - Usage Guide: usage.md
+          - Getting Started: getting-started.md
+          - Cost Models: cost-models/cost-models.md
+          - FAQs: FAQs.md
     - Tracking: tracking.html
-    - Development: 
-        - Version Control (Git): development/git-usage.md
-        - Pre-commit: development/pre-commit.md
-        - Standards: development/standards.md
-        - F2Py Standards: development/f2py-standards.md
-        - Adding Variables & Constraints: development/add-vars.md
-        - Adding Physics and Engineering Variables to Python: development/annotated-variable.md
-        - Continuous Integration: development/ci-guide.md
-        - Testing: development/testing.md
-        - Debugging: development/debugging.md
-        - Tools: development/tools.md
-        - Versioning: development/versioning.md
+    - Development:
+          - Version Control (Git): development/git-usage.md
+          - Pre-commit: development/pre-commit.md
+          - Standards: development/standards.md
+          - F2Py Standards: development/f2py-standards.md
+          - Adding Variables & Constraints: development/add-vars.md
+          - Adding Physics and Engineering Variables to Python: development/annotated-variable.md
+          - Continuous Integration: development/ci-guide.md
+          - Testing: development/testing.md
+          - Debugging: development/debugging.md
+          - Tools: development/tools.md
+          - Versioning: development/versioning.md
     - Engineering Models:
           - Machine Build: eng-models/machine-build.md
           - Structural Components: eng-models/structural-components.md
@@ -83,34 +84,34 @@ extra_javascript:
     - https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML
 
 markdown_extensions:
-  - footnotes
-  - admonition
-  - codehilite
-  - pymdownx.arithmatex
-  - pymdownx.betterem:
-      smart_enable: all
-  - pymdownx.caret
-  - pymdownx.critic
-  - pymdownx.details
-  - pymdownx.inlinehilite
-  - pymdownx.magiclink
-  - pymdownx.mark
-  - pymdownx.smartsymbols
-  - pymdownx.superfences
-  - pymdownx.tasklist:
-      custom_checkbox: true
-  - pymdownx.tilde
+    - footnotes
+    - admonition
+    - codehilite
+    - pymdownx.arithmatex
+    - pymdownx.betterem:
+          smart_enable: all
+    - pymdownx.caret
+    - pymdownx.critic
+    - pymdownx.details
+    - pymdownx.inlinehilite
+    - pymdownx.magiclink
+    - pymdownx.mark
+    - pymdownx.smartsymbols
+    - pymdownx.superfences
+    - pymdownx.tasklist:
+          custom_checkbox: true
+    - pymdownx.tilde
 
 plugins:
-  - autorefs
-  - search
-  - mkdocstrings:
-        handlers:
-            python:
-                selection:
-                    docstring_style: "restructured-text"
-                rendering:
-                    show_source: false
-                    show_root_heading: true
+    - autorefs
+    - search
+    - mkdocstrings:
+          handlers:
+              python:
+                  selection:
+                      docstring_style: restructured-text
+                  rendering:
+                      show_source: false
+                      show_root_heading: true
 
 extra_css: [vardes.css]

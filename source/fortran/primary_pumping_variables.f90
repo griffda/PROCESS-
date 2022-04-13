@@ -15,7 +15,7 @@ module primary_pumping_variables
   implicit none
 
   public
-  
+
   real(dp) :: gamma_he
   !! ratio of specific heats for helium (`primary_pumping=3`)
 
@@ -35,7 +35,7 @@ module primary_pumping_variables
   !! pressure drop in FW and blanket coolant including heat exchanger and pipes (`primary_pumping=3`) [Pa]
 
   real(dp) :: htpmw_fw_blkt
-  !! mechanical pumping power for FW and blanket including heat exchanger and 
+  !! mechanical pumping power for FW and blanket including heat exchanger and
   !! pipes (`primary_pumping=3`) [MW]
 
   contains
@@ -43,7 +43,7 @@ module primary_pumping_variables
   subroutine init_primary_pumping_variables
     !! Initialise module variables
     implicit none
-    
+
     !! initialise variables with default values in the absence of a value in the input file.
     gamma_he = 1.667D0 ! Ratio of specific heats  Helium
     !! cp_he = 5.195.0D3 ! Specific Heat J/kg K (disabled at the moment)
@@ -52,7 +52,7 @@ module primary_pumping_variables
     p_he = 8.0D6 ! Pa
     dp_he = 5.5D5 ! Pa
     htpmw_fw_blkt = 0.0D0
-    
+
   end subroutine init_primary_pumping_variables
 
 end module primary_pumping_variables

@@ -214,12 +214,12 @@
     ! -------------
     ! Bore centre
     radmin(1) = 1.0D-20
-    radpls(1) = radmin(1) + bore  
+    radpls(1) = radmin(1) + bore
 
     ! CS coil
     radmin(2) = radpls(1)
-    radpls(2) = radmin(2) + ohcth  
-    
+    radpls(2) = radmin(2) + ohcth
+
     ! CS precompresser
     radmin(3) = radpls(2)
     radpls(3) = radmin(3) + precomp
@@ -232,11 +232,11 @@
     radmin(5) = radpls(4)
     radpls(5) = radmin(5) + tfcth
 
-    ! Inner TF - thermal shield gap    
+    ! Inner TF - thermal shield gap
     radmin(6) = radpls(5) + tftsgap
     radpls(6) = radmin(6)
 
-    ! Inner thermal shield 
+    ! Inner thermal shield
     radmin(7) = radpls(6)
     radpls(7) = radmin(7) + thshield
 
@@ -255,7 +255,7 @@
     ! Inner VV - (tritium breeding) blanket gap
     radmin(11) = radpls(10) + vvblgap
     radpls(11) = radmin(11)
-    
+
     ! Inner (tritium breeding) blanket
     radmin(12) = radpls(11)
     radpls(12) = radmin(12) + blnkith
@@ -278,7 +278,7 @@
 
     ! Outer Blanket - VV gap
     radmin(17) = radpls(16) + vvblgap
-    radpls(17) = radmin(17) 
+    radpls(17) = radmin(17)
 
     ! Outer neutron shield
     radmin(18) = radpls(17)
@@ -288,11 +288,11 @@
     radmin(19) = radpls(18)
     radpls(19) = radmin(19) + d_vv_out
 
-    ! Outer VV - thermal shield gap 
+    ! Outer VV - thermal shield gap
     radmin(20) = radpls(19) + gapsto
     radpls(20) = radmin(20)
 
-    ! Outer thermal shield 
+    ! Outer thermal shield
     radmin(21) = radpls(20)
     radpls(21) = radmin(21) + thshield
 
@@ -308,9 +308,9 @@
     radmin(24) = radpls(23) + 2.0D0
     radpls(24) = radmin(24) + ddwex
     ! -------------
-    
-   
-    ! Computing the middle radial position of each region and var initialization 
+
+
+    ! Computing the middle radial position of each region and var initialization
     do k = 1,nreg
        radmid(k) = 0.5D0 * (radmin(k) + radpls(k))
        qvol(k) = 0.0D0
@@ -318,9 +318,9 @@
           matfrc(k,i) = 0.0D0
        end do
     end do
-   
 
-    ! Layers compositions 
+
+    ! Layers compositions
     ! !!!!!!!!!!!!!!!!!!!
     !  Non-zero material fractions MATFRC(REGION,MATERIAL)
     !  The materials are:
@@ -352,14 +352,14 @@
 
        !  Copper resistive CS coils
        ! ******
-       if (ipfres == 1) then  
+       if (ipfres == 1) then
           matfrc(2,5) = vfohc
           matfrc(2,7) = 1.0D0 - vfohc
        ! ******
 
        !  superconducting CS coils
        ! ******
-       else 
+       else
           !  Conductor + void areas
           a1 = (rb(nohc)-ra(nohc))*(zh(nohc)-zl(nohc))
           ac = a1 * (1.0D0 - vfohc)
@@ -380,7 +380,7 @@
           end if
        end if
        ! ******
-    
+
     ! No CS coils
     ! ******
     else
@@ -391,7 +391,7 @@
 
     ! CS coil precompressor
     matfrc(3,2) = 1.0D0    ! Austenistic steel
-    
+
     ! CS coil precompressor - TF gap
     matfrc(4,5) = 1.0D0    ! Dummy
 
@@ -399,12 +399,12 @@
     !  Inboard TF coil
     ! ----------------
     ! resistive copper TF coils
-    if ( i_tf_sup /= 1 ) then  
-      matfrc(5,5) = fcoolcp         ! Dummy 
+    if ( i_tf_sup /= 1 ) then
+      matfrc(5,5) = fcoolcp         ! Dummy
       matfrc(5,7) = 1.0D0 - fcoolcp ! Copper
 
     !  superconducting TF coils
-    else  
+    else
       !  Approximate total cross-sectional area per coil
       a1 = acasetf+acond+avwp+aswp
 
@@ -442,13 +442,13 @@
     matfrc(10,2) = (1.0D0 - vfshld) * (1.0D0 - fmssh)
     matfrc(10,5) = vfshld
 
-    ! Inner VV + neutron shield - (tritium breeding) blanket gap 
+    ! Inner VV + neutron shield - (tritium breeding) blanket gap
     matfrc(11,5) = 1.0D0    ! Dummy
 
 
     !  Inboard blanket
     ! ----------------
-    !if (lblnkt /= 1) then 
+    !if (lblnkt /= 1) then
     !  Old blanket model
     ! ******
     if (ipowerflow == 0) then
@@ -462,7 +462,7 @@
 
     !  New blanket model
     ! ******
-    else  
+    else
        !  Li2O/Be solid blanket
        if (blkttype == 3) then
           matfrc(12,1) = fblss * fmsbl
@@ -529,13 +529,13 @@
     ! Outboard TF coil
     ! ----------------
     !  resistive copper TF coils
-    if ( i_tf_sup /= 1 ) then 
+    if ( i_tf_sup /= 1 ) then
        matfrc(23,5) = vftf
        matfrc(23,7) = 1.0D0 - vftf
 
     ! superconducting TF coils
     ! ******
-    else  
+    else
        !  Approximate total cross-sectional area per coil
        !  including enlargement factor for case thickness
        a1 = (acasetf*tfootfi)+acond+avwp+aswp
@@ -556,7 +556,7 @@
 
     !  External cryostat
     matfrc(24,1) = fmsdwe
-    matfrc(24,2) = 1.0D0 - fmsdwe 
+    matfrc(24,2) = 1.0D0 - fmsdwe
     ! !!!!!!!!!!!!!!!!!!!
 
 

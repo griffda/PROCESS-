@@ -2,7 +2,7 @@
 	qdivt=0.d0
 
 !T. Eich scaling
-	lambda_q=0.73e-3*btor**(-0.78)* &     
+	lambda_q=0.73e-3*btor**(-0.78)* &
 		&   (rpminor**2.*btor/(0.2*rpmajor*ip))**1.02* &
  	&   (qtot-qrad)**0.1* &
  	&   (rpmajor)**0.02* &
@@ -11,9 +11,9 @@
 !geometry of field line
 	lparsep=qprf(nx)*2.d0*pi_g*rpmajor/2.d0
 	ldiv=0.55*lparsep
-	
+
 !upstream qpar
-	qpar=(qtot-qradedge)*1.d6/(2.d0*pi_g*(rpmajor+rpminor+shif(nx)) & 
+	qpar=(qtot-qradedge)*1.d6/(2.d0*pi_g*(rpmajor+rpminor+shif(nx)) &
 	 & *lambda_q*rpminor/rpmajor/qprf(nx)/2.d0)
 
 !some numerical values for Msicci model
@@ -55,17 +55,12 @@ if (num%isiccir.eq.1) then
 		dqoqguess=0.
 		tdivguess=100.
 	endif
-	
-!	call MS_SOL_model_sub(Lparsep,qpar,fx,0.d0, & 
-!	 & 0.d0,0.d0,nsep*1.d19,qdivt,Tup_0d,t_plate,fm_SE,Lr,6.d0,8.d0,7.d0 & 
-!		& ,1.e3*tsep,tau_relax,taue,tshguess,tupguess, & 
+
+!	call MS_SOL_model_sub(Lparsep,qpar,fx,0.d0, &
+!	 & 0.d0,0.d0,nsep*1.d19,qdivt,Tup_0d,t_plate,fm_SE,Lr,6.d0,8.d0,7.d0 &
+!		& ,1.e3*tsep,tau_relax,taue,tshguess,tupguess, &
 !		& fmguess,dqoqguess,Ldiv,tdivguess,rmajor,Qtot-Qradedge,ds1,dd1,ds2,dd2, &
 !		& ds3,dd3)
 	qdivt=qdivt/1e6
 
 endif
-
-
-
-
-

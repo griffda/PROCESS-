@@ -38,18 +38,40 @@ class CostsStep:
         self.iprint = 0  # switch for writing to output file (1=yes)
 
         # Various cost account values (M$)
-        self.step20 = AnnotatedVariable(float, 0.0, docstring="step20 account cost", units="M$")
-        self.step21 = AnnotatedVariable(float, 0.0, docstring="step21 account cost", units="M$")
-        self.step22 = AnnotatedVariable(float, 0.0, docstring="step22 account cost", units="M$")
-        self.step23 = AnnotatedVariable(float, 0.0, docstring="step23 account cost", units="M$")
-        self.step24 = AnnotatedVariable(float, 0.0, docstring="step24 account cost", units="M$")
-        self.step25 = AnnotatedVariable(float, 0.0, docstring="step25 account cost", units="M$")
-        self.step27 = AnnotatedVariable(float, 0.0, docstring="step27 account cost", units="M$")
-        self.step91 = AnnotatedVariable(float, 0.0, docstring="step91 account cost", units="M$")
-        self.step92 = AnnotatedVariable(float, 0.0, docstring="step92 account cost", units="M$")
-        self.step93 = AnnotatedVariable(float, 0.0, docstring="step93 account cost", units="M$")
-        #TODO provide appropriate docstring for this variable
-        self.fwblkcost = AnnotatedVariable(float, 0.0, docstring="account cost", units="M$")
+        self.step20 = AnnotatedVariable(
+            float, 0.0, docstring="step20 account cost", units="M$"
+        )
+        self.step21 = AnnotatedVariable(
+            float, 0.0, docstring="step21 account cost", units="M$"
+        )
+        self.step22 = AnnotatedVariable(
+            float, 0.0, docstring="step22 account cost", units="M$"
+        )
+        self.step23 = AnnotatedVariable(
+            float, 0.0, docstring="step23 account cost", units="M$"
+        )
+        self.step24 = AnnotatedVariable(
+            float, 0.0, docstring="step24 account cost", units="M$"
+        )
+        self.step25 = AnnotatedVariable(
+            float, 0.0, docstring="step25 account cost", units="M$"
+        )
+        self.step27 = AnnotatedVariable(
+            float, 0.0, docstring="step27 account cost", units="M$"
+        )
+        self.step91 = AnnotatedVariable(
+            float, 0.0, docstring="step91 account cost", units="M$"
+        )
+        self.step92 = AnnotatedVariable(
+            float, 0.0, docstring="step92 account cost", units="M$"
+        )
+        self.step93 = AnnotatedVariable(
+            float, 0.0, docstring="step93 account cost", units="M$"
+        )
+        # TODO provide appropriate docstring for this variable
+        self.fwblkcost = AnnotatedVariable(
+            float, 0.0, docstring="account cost", units="M$"
+        )
 
         # Scaling Properties
         self.vfi = AnnotatedVariable(float, 0.0, docstring="", units="")
@@ -97,7 +119,11 @@ class CostsStep:
 
         # Output header
         if self.iprint == 1 and cv.output_costs == 1:
-            title = "STEP Costing Model (" + f2py_compatible_to_string(cv.step_currency) + ")"
+            title = (
+                "STEP Costing Model ("
+                + f2py_compatible_to_string(cv.step_currency)
+                + ")"
+            )
             po.oheadr(self.outfile, title.strip())
 
         # Account 20 : Land and Rights
@@ -197,7 +223,7 @@ class CostsStep:
         self.step21 = step2101
 
         # 21.02 Reactor Building
-        step2102 = 8.665e3 * bldgsv.a_reactor_bldg ** 1.2132 * 1.0e-6
+        step2102 = 8.665e3 * bldgsv.a_reactor_bldg**1.2132 * 1.0e-6
         # * 1.0e-6 converts to M$
         self.step21 += step2102
 
@@ -1220,7 +1246,8 @@ class CostsStep:
                 po.ocmmnt(self.outfile, "feffwbl=", feffwbl, "  fwbllife=", fwbllife)
 
             po.write(
-                self.outfile, "\t" * 9 + "Annual Costs, M$" + "\t" * 1 + " " * 4 + "COE, m$/kWh"
+                self.outfile,
+                "\t" * 9 + "Annual Costs, M$" + "\t" * 1 + " " * 4 + "COE, m$/kWh",
             )
             po.dblcol(self.outfile, "Capital Investment", anncap, cv.coecap)
             po.dblcol(self.outfile, "Operation & Maintenance", annoam, cv.coeoam)
@@ -1305,7 +1332,6 @@ class CostsStep:
         # Add shield cost to total cost, step2201, in M$
         step2201 += step220102
         # STARFIRE percentage for spares
-        step2298 = 9.985e-2 * step220102
         spares = 9.985e-2 * step220102
 
         # 22.01.03.01 TF Coils
@@ -1613,7 +1639,7 @@ class CostsStep:
             2.0e0
             * (hshld + bv.shldtth)
             * constants.pi
-            * (r1 ** 2 - (r1 - shldith_corr) ** 2)
+            * (r1**2 - (r1 - shldith_corr) ** 2)
         )
 
         # Scale shield material volume (allow for 10% volume coolant, 5% steel)
@@ -1858,7 +1884,7 @@ class CostsStep:
         # (tech adjusted from 1990 $ is costed as per Cost Model 0)
         # Note: NBI and EC/EBW acounts will be zero if this tech is not included.
 
-        ## HCD requirements for flat-top operation
+        # HCD requirements for flat-top operation
 
         # NBI cost per injected Watt (adjusted from 2020 $):
         step220104 = cdv.pnbitot * cv.step_ref[68] * (229.0e0 / 258.84e0)
@@ -1885,10 +1911,9 @@ class CostsStep:
             # ...use calculation for Lower Hybrid system (adjusted from 1990 $):
             step220104 += 1.0e-6 * cv.uclh * (1.0e6 * cdv.plhybd) * (229.0e0 / 76.7e0)
 
-        ## HCD requirements for start-up and ramp-down
+        # HCD requirements for start-up and ramp-down
         cv.startuppwr = step220104 * cv.startupratio
         step220104 += cv.startuppwr
-        
 
         if cv.ifueltyp == 1:
             # fraction `fcdfuel` of HCD cost treated as fuel cost
@@ -1935,14 +1960,12 @@ class CostsStep:
         """
         # Cryoplant - will be zero for resistive coils
         # Parametric costing of cryo systems based on refrigeration capacity produced at Helium temp of 4.5K
-        step2203 = 6.14e0 * tfv.cryo_cool_req ** 0.63
+        step2203 = 6.14e0 * tfv.cryo_cool_req**0.63
 
         # Output costs
         if (self.iprint == 1) and (cv.output_costs == 1):
             po.write(self.outfile, "******************* 22.03 Cryogenic Cooling System")
-            po.ocosts(
-                self.outfile, "(step2203)", "Cryoplant (M$)", step2203 
-            )
+            po.ocosts(self.outfile, "(step2203)", "Cryoplant (M$)", step2203)
             po.oblnkl(self.outfile)
             po.ocosts(
                 self.outfile, "(step2203)", "Total Account 22.03 Cost (M$)", step2203

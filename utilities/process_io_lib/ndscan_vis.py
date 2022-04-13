@@ -10,23 +10,21 @@ class VisUtility(object):
 
     """Visualisation class containing Netcdf files from ndscan tool"""
 
-
-    def __init__(self, ncfilename='Demonstrationdata.nc'):
+    def __init__(self, ncfilename="Demonstrationdata.nc"):
         """
         Opens the ncfile at ncfilename and initializes its' variables
         into memory.
 
         """
         try:
-            self.ncfile = Dataset(ncfilename, 'r')
+            self.ncfile = Dataset(ncfilename, "r")
         except RuntimeError:
-            print('Error: NetCDF file does not exist, specify with -f!')
+            print("Error: NetCDF file does not exist, specify with -f!")
             exit()
         scanvars = self.ncfile.scanvars
-        self.scanvars = scanvars.split(',')
+        self.scanvars = scanvars.split(",")
         self.currentslice = None
         self.stepslist = []
-
 
     def make_contour_plot(self, xdim, ydim, zvar, masterconfigs):
         """
@@ -44,9 +42,9 @@ class VisUtility(object):
         """
 
         print("xdim is", xdim, "ydim is", ydim)
-        if xdim[0:4] is not "SCAN":
+        if xdim[0:4] != "SCAN":
             xdim = "SCAN" + xdim
-        if ydim[0:4] is not "SCAN":
+        if ydim[0:4] != "SCAN":
             ydim = "SCAN" + ydim
         xcoords = self.ncfile.variables[xdim][:]
         ycoords = self.ncfile.variables[ydim][:]
@@ -58,9 +56,9 @@ class VisUtility(object):
         zarr = zarr.transpose()
 
         conp = pl.contour(xarr, yarr, zarr, 10)
-        pl.xlabel(masterconfigs['xname'])
-        pl.ylabel(masterconfigs['yname'])
-        pl.title(masterconfigs['zname'])
+        pl.xlabel(masterconfigs["xname"])
+        pl.ylabel(masterconfigs["yname"])
+        pl.title(masterconfigs["zname"])
         pl.clabel(conp, inline=1, fontsize=10)
         pl.show()
 
@@ -79,9 +77,9 @@ class VisUtility(object):
         ."""
 
         print("xdim is", xdim, "ydim is", ydim)
-        if xdim[0:4] is not "SCAN":
+        if xdim[0:4] != "SCAN":
             xdim = "SCAN" + xdim
-        if ydim[0:4] is not "SCAN":
+        if ydim[0:4] != "SCAN":
             ydim = "SCAN" + ydim
         xcoords = self.ncfile.variables[xdim]
         ycoords = self.ncfile.variables[ydim]
@@ -93,11 +91,10 @@ class VisUtility(object):
 
         zarr = zarr.transpose()
 
-
-        pl.scatter(xarr, yarr, c=zarr, marker='s')
-        pl.xlabel(masterconfigs['xname'])
-        pl.ylabel(masterconfigs['yname'])
-        pl.title(masterconfigs['zname'])
+        pl.scatter(xarr, yarr, c=zarr, marker="s")
+        pl.xlabel(masterconfigs["xname"])
+        pl.ylabel(masterconfigs["yname"])
+        pl.title(masterconfigs["zname"])
         pl.colorbar()
         pl.show()
 
@@ -124,15 +121,15 @@ class VisUtility(object):
 
 
         """
-        print("Activating slice scanner for xvarnum", xvarnum, "and yvarnum",
-              yvarnum)
-        superlatives = {"ZenithSlice"  : None,
-                        "NadirSlice"   : None,
-                        "MaximalSlice" : None,
-                        "MinimalSlice" : None,
-                        "SteepestSlice" : None,
-                        "FlattestSlice" : None,
-                      }
+        print("Activating slice scanner for xvarnum", xvarnum, "and yvarnum", yvarnum)
+        superlatives = {
+            "ZenithSlice": None,
+            "NadirSlice": None,
+            "MaximalSlice": None,
+            "MinimalSlice": None,
+            "SteepestSlice": None,
+            "FlattestSlice": None,
+        }
         sliceindexlist = []
         maxlist = []
         minlist = []
@@ -165,16 +162,13 @@ class VisUtility(object):
                 else:
                     stepslist[index] += 1
 
-
                 if stepslist[index] < steptuple[index]:
                     return stepslist
 
-
-                if stepslist[index] == steptuple[index] and\
-                        index != len(stepslist)-1:
+                if stepslist[index] == steptuple[index] and index != len(stepslist) - 1:
 
                     stepslist[index] = 0
-                    for countahead in range(len(stepslist))[index+1::]:
+                    for countahead in range(len(stepslist))[index + 1 : :]:
 
                         if type(stepslist[countahead]) is int:
                             stepslist[countahead] += 1
@@ -192,15 +186,14 @@ class VisUtility(object):
                                 return stepslist
                         else:
                             continue
-                    print('Done!')
+                    print("Done!")
 
                     return False
-
 
                 print("Done!")
                 return False
 
-        #A little hack to contain all of the machinery of analyzing slices
+        # A little hack to contain all of the machinery of analyzing slices
         # within the loop..
         while stepslist:
 
@@ -210,10 +203,16 @@ class VisUtility(object):
             minlist.append(amin(temp))
             sumlist.append(sum(temp))
             stdlist.append(std(temp))
-            print("Analytics: Max:", amax(temp),
-                  "Min:", amin(temp),
-                  "Sum:", sum(temp),
-                  "Std:", std(temp))
+            print(
+                "Analytics: Max:",
+                amax(temp),
+                "Min:",
+                amin(temp),
+                "Sum:",
+                sum(temp),
+                "Std:",
+                std(temp),
+            )
             print(temp)
             stepslist = keep_going(steptuple, stepslist)
 
@@ -229,7 +228,6 @@ class VisUtility(object):
 
         superlatives["SteepestSlice"] = sliceindexlist[stdlist.index(max(stdlist))]
         superlatives["FlattestSlice"] = sliceindexlist[stdlist.index(min(stdlist))]
-
 
         for keys in superlatives.keys():
             print(keys, superlatives[keys])
@@ -254,10 +252,15 @@ class VisUtility(object):
         indicating what dimensions the slices contain and the integers
         representing where the cross-sections are made.
         """
-        print("You have chosen to make a 2d plot in ",
-              len(self.ncfile.dimensions), " space.")
-        print("You must summarily choose a 2d slice for the purposes of 2d\
- plotting.")
+        print(
+            "You have chosen to make a 2d plot in ",
+            len(self.ncfile.dimensions),
+            " space.",
+        )
+        print(
+            "You must summarily choose a 2d slice for the purposes of 2d\
+ plotting."
+        )
         print("Your scan dimensions are:")
         print(self.scanvars)
         print("Choose which two are your dimensions of choice.")
@@ -266,7 +269,9 @@ class VisUtility(object):
         yaxis = input("Y:")
         print()
 
-        while xaxis not in self.ncfile.dimensions or yaxis not in self.ncfile.dimensions:
+        while (
+            xaxis not in self.ncfile.dimensions or yaxis not in self.ncfile.dimensions
+        ):
             print("Incorrect x and y axes: Please try again.")
             print(self.scanvars)
             print("Choose which two are your dimensions of choice.")
@@ -311,7 +316,7 @@ class VisUtility(object):
         print("``'-.,_,.-'`VISUALIZATION UTILITY`'-.,_,.='``")
         print("``'-.,_,.-'``'-.,_,.='``'-.,_,.-'``'-.,_,.='``")
 
-        masterconfigs = {'xname': '', 'yname': '', 'zname': ''}
+        masterconfigs = {"xname": "", "yname": "", "zname": ""}
 
         while 1 == 1:
 
@@ -319,16 +324,19 @@ class VisUtility(object):
             print("1) Choose a plotting routine.")
             print("2) Use the slice manager (for n>2 dimensional scans)")
             print("3) Exit.")
-            userinput = input("What would you like to do? Please enter a\
- number.")
+            userinput = input(
+                "What would you like to do? Please enter a\
+ number."
+            )
             print()
 
-
-            if userinput == '1':
+            if userinput == "1":
                 if len(self.ncfile.dimensions) > 2 and self.currentslice is None:
                     print("Warning-- You have not gone to the slice manager yet.")
-                    print("Suggest that you run the slice manager first then\
- return to 2d plots")
+                    print(
+                        "Suggest that you run the slice manager first then\
+ return to 2d plots"
+                    )
                 print("You have the following options.")
                 print("2-dimensional scan, or higher dimensions?")
                 print("1) 2d.")
@@ -336,57 +344,53 @@ class VisUtility(object):
                 scaninput = input("Pick one:")
                 print()
 
-
-                if scaninput == '1':
+                if scaninput == "1":
                     print("Choose your x and y axes:")
                     print(self.scanvars)
-                    xaxis = input('x:')
+                    xaxis = input("x:")
                     print()
                     while xaxis not in self.scanvars:
                         print("Sorry- invalid x axis! Please try again...")
                         xaxis = input("x:")
                         print()
-                    masterconfigs['xname'] = xaxis
-                    yaxis = input('y:')
+                    masterconfigs["xname"] = xaxis
+                    yaxis = input("y:")
                     print()
                     while yaxis not in self.scanvars:
                         print("Sorry- invalid y axis! Please try again...")
                         yaxis = input("y:")
                         print()
-                    masterconfigs['yname'] = yaxis
+                    masterconfigs["yname"] = yaxis
                     print("Please choose a Z:")
                     for varbs in self.ncfile.variables:
                         if varbs[0:4] != "SCAN":
                             print(varbs)
-                    zaxis = input('z:')
+                    zaxis = input("z:")
                     print()
                     while zaxis not in self.ncfile.variables:
                         print("Sorry- invalid z axis! Please try again...")
-                        zaxis = input('z:')
+                        zaxis = input("z:")
                         print()
-                    masterconfigs['zname'] = zaxis
+                    masterconfigs["zname"] = zaxis
                     print("And what plotting routine would you like?")
                     print("1) Contour")
                     print("2) Scatter w/ Z Coloring")
 
                     plotinput = input("Please choose!:")
                     print()
-                    if plotinput == '1':
-                        self.make_contour_plot(xaxis, yaxis, zaxis,
-                                               masterconfigs)
+                    if plotinput == "1":
+                        self.make_contour_plot(xaxis, yaxis, zaxis, masterconfigs)
 
-                    elif plotinput == '2':
-                        self.make_scatter_plot(xaxis, yaxis, zaxis,
-                                               masterconfigs)
+                    elif plotinput == "2":
+                        self.make_scatter_plot(xaxis, yaxis, zaxis, masterconfigs)
 
                 elif scaninput == "2":
                     print("Okay- activating slice manager!")
                     self.currentslice = self.slice_manager()
-                    #TODO: I don't think this actually leads to any plots!
+                    # TODO: I don't think this actually leads to any plots!
             elif userinput == "2":
                 print("Okay- activating slice manager!")
                 self.currentslice = self.slice_manager()
             else:
                 print("Exiting.")
                 break
-

@@ -50,23 +50,18 @@ from process import final
 from process.stellarator import Stellarator
 from process.structure import Structure
 from process.build import Build
-from process.utilities.f2py_string_patch import (
-    string_to_f2py_compatible,
-    f2py_compatible_to_string,
-)
+from process.utilities.f2py_string_patch import string_to_f2py_compatible
 import argparse
 from process.costs_step import CostsStep
 from process.tfcoil import TFcoil
 from process.divertor import Divertor
 from process.availability import Availability
 from process.ife import IFE
-from process.stellarator import Stellarator
 from process.caller import Caller
 
 from pathlib import Path
 import sys
 import os
-import subprocess
 import logging
 
 # For VaryRun

@@ -16,9 +16,10 @@ import math
 
 from scenario import Scenario
 
-# TODO Split logging into console and file outputs. Further logging 
+# TODO Split logging into console and file outputs. Further logging
 # customisation?
 logger = logging.getLogger(__name__)
+
 
 def get_scenarios():
     """Generator to yield the scenarios that need to be tested.
@@ -27,7 +28,7 @@ def get_scenarios():
     :rtype: Scenario
     """
     # TODO Check this is a good way of getting the path
-    p = Path.cwd() / 'tests' / 'regression' / 'scenarios'
+    p = Path.cwd() / "tests" / "regression" / "scenarios"
     # Path object for the scenarios directory (all scenarios dir)
 
     scenario_dirs = [x for x in p.iterdir() if x.is_dir()]
@@ -40,6 +41,7 @@ def get_scenarios():
         scenario = Scenario(scenario_dir)
         yield scenario
 
+
 @pytest.fixture
 def scenarios_run():
     # Setup
@@ -49,6 +51,7 @@ def scenarios_run():
     # Teardown
     logger.info("End of scenarios regression run")
     # TODO Need to log summary result of all tests
+
 
 def get_scenario_id(scenario):
     """Return the name of the scenario.
@@ -60,6 +63,7 @@ def get_scenario_id(scenario):
     :rtype: str
     """
     return scenario.name
+
 
 @pytest.fixture(params=get_scenarios(), ids=get_scenario_id)
 def scenario(scenarios_run, request):
@@ -76,19 +80,20 @@ def scenario(scenarios_run, request):
     scenario = request.param
     return scenario
 
+
 def test_scenario(scenario, tmp_path, reg_tolerance, overwrite_refs_opt):
     """Test a scenario in a temporary directory.
 
     A scenario is an input file and its expected outputs from Process. This
     test function checks that the observed outputs are within a tolerance of the
-    expected outputs. This is done by comparing the observed and expected 
+    expected outputs. This is done by comparing the observed and expected
     MFILES.
 
     :param scenario: scenario fixture
     :type scenario: object
     :param tmp_path: temporary path fixture
     :type tmp_path: object
-    :param reg_tolerance: percentage tolerance when comparing observed and 
+    :param reg_tolerance: percentage tolerance when comparing observed and
     expected values
     :type reg_tolerance: float
     :param overwrite_refs_opt: option to overwrite reference MFILE and OUT.DAT
@@ -98,7 +103,8 @@ def test_scenario(scenario, tmp_path, reg_tolerance, overwrite_refs_opt):
     # function_evaluator.fcnhyb() for an explanation.
     # TODO Re-implement the IFE test using vmcon
     if scenario.name == "IFE":
-        pytest.skip("IFE currently uses the hybrd non-optimising solver, which "
+        pytest.skip(
+            "IFE currently uses the hybrd non-optimising solver, which "
             "is currently not implemented"
         )
 
@@ -107,7 +113,7 @@ def test_scenario(scenario, tmp_path, reg_tolerance, overwrite_refs_opt):
     # TODO Should only be logged once, not for every test
     logger.info(f"Tolerance set to {reg_tolerance}%")
 
-    # Copy the scenario's reference dir files into the tmp_dir to prevent 
+    # Copy the scenario's reference dir files into the tmp_dir to prevent
     # modifications
     test_files = scenario.ref_dir.glob("*")
     for test_file in test_files:
@@ -117,18 +123,16 @@ def test_scenario(scenario, tmp_path, reg_tolerance, overwrite_refs_opt):
     # Run the scenario: use the scenario method to run Process on the input file
     # in the temporary test directory
     scenario.run(tmp_path)
-    
+
     # Overwrite reference MFILE and OUT files (ref.MFILE.DAT and ref.OUT.DAT)
     # If overwriting refs, don't bother asserting anything else and return
     if overwrite_refs_opt:
-        logger.info(
-            f"Overwriting reference MFILE.DAT and OUT.DAT for {scenario.name}"
-        )
+        logger.info(f"Overwriting reference MFILE.DAT and OUT.DAT for {scenario.name}")
         scenario.overwrite_ref_files()
         return
 
     # Assert mfile contains something
-    assert scenario.check_mfile_length() == True
+    assert scenario.check_mfile_length() is True
 
     # Read in the reference (expected) and new (observed) MFiles
     scenario.read_mfiles()
@@ -138,13 +142,13 @@ def test_scenario(scenario, tmp_path, reg_tolerance, overwrite_refs_opt):
     scenario.set_version()
 
     # Assert that the ifail value indicates solver success
-    assert scenario.check_ifail() == True
+    assert scenario.check_ifail() is True
 
     # Compare expected and observed MFiles and yield diff items
     for diff_item in scenario.get_mfile_diffs():
         # TODO Perhaps put this in another func?
         var_name, exp, obs, chg = diff_item
-        
+
         # Compare the expected and observed values for a variable
         # Try/except used to collect all diffs outside tolerance, rather than
         # failing entire test on first AssertionError
@@ -156,18 +160,21 @@ def test_scenario(scenario, tmp_path, reg_tolerance, overwrite_refs_opt):
                 # Assert with a relative tolerance
                 # reg_tolerance is a percentage however
                 # rel takes a fraction, /100 to convert
-                assert exp == approx(obs, rel=reg_tolerance/100)
-                
+                assert exp == approx(obs, rel=reg_tolerance / 100)
+
                 # Within tolerance
                 # If different but within tolerance, log
                 # If the same, ignore
                 if exp != obs:
-                    logger.info(f"Diff within tolerance: {var_name} was {exp}, now "
-                        f"{obs}, ({chg}%)")
+                    logger.info(
+                        f"Diff within tolerance: {var_name} was {exp}, now "
+                        f"{obs}, ({chg}%)"
+                    )
         except AssertionError:
             # Outside tolerance: record diff item
-            logger.exception(f"Diff outside tolerance: {var_name} was {exp}, "
-                f"now {obs}, ({chg}%)")
+            logger.exception(
+                f"Diff outside tolerance: {var_name} was {exp}, " f"now {obs}, ({chg}%)"
+            )
             scenario.add_diff_item(diff_item)
 
     # Log summary result of test
@@ -175,8 +182,9 @@ def test_scenario(scenario, tmp_path, reg_tolerance, overwrite_refs_opt):
 
     # Check no diffs outside the tolerance have been found
     assert len(scenario.get_diff_items()) == 0
-            
+
     # TODO Assert no unique vars found
+
 
 # TODO Old CLI arguments: how to convert this functionality to pytest?
 # Can pass CLI args to pytest...
@@ -190,5 +198,5 @@ def test_scenario(scenario, tmp_path, reg_tolerance, overwrite_refs_opt):
 # parser.add_argument("-r", "--ref", help="Set reference folder. Default ="
 #                     "test_files", type=str, default="test_files")
 
-# parser.add_argument("-u", "--utilities", help="Test utilities only", 
+# parser.add_argument("-u", "--utilities", help="Test utilities only",
 #                     action="store_true")

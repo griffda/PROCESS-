@@ -93,14 +93,14 @@ module impurity_radiation_module
 
   ! derived type imp_dat (and hence impurity_arr) were
   ! incompatible with f2py and have been replaced with
-  ! a less moder, but supported way of achieveing the 
+  ! a less moder, but supported way of achieveing the
   ! same results
 
   integer, parameter :: all_array_hotfix_len = 100
-  ! maximum length of the second dimensions of 
+  ! maximum length of the second dimensions of
   ! Temp_keV, Lz_Wm3, Zav
   ! since these can no longer be allocatable
-  
+
   character(len=2), dimension(nimp) :: impurity_arr_Label
   integer, dimension(nimp) :: impurity_arr_Z
   real(dp), dimension(nimp) :: impurity_arr_amass
@@ -498,7 +498,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-		use error_handling, only: report_error 
+		use error_handling, only: report_error
     implicit none
 
     integer :: element2index

@@ -99,7 +99,7 @@ class TestVacuum:
             ndiv,
             qtorus,
             gasld,
-            output=False
+            output=False,
         )
 
         assert pumpn == 36.0
