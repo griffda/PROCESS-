@@ -1523,8 +1523,7 @@ class Sctfcoil:
                 aa = tfcoil_variables.tfa[ii] + 0.5e0 * build_variables.tfcth
                 bb = tfcoil_variables.tfb[ii] + 0.5e0 * build_variables.tfcth
                 tfcoil_variables.tfleng = (
-                    tfcoil_variables.tfleng
-                    + 0.25e0 * sctfcoil_module.circumference(aa, bb)
+                    tfcoil_variables.tfleng + 0.25e0 * self.circumference(aa, bb)
                 )
                 # note: final tfcoil_variables.tfleng includes inboard leg length; eq(22)
 
@@ -1565,8 +1564,7 @@ class Sctfcoil:
                 aa = tfcoil_variables.tfa[ii] + 0.5e0 * build_variables.tfthko
                 bb = tfcoil_variables.tfb[ii] + 0.5e0 * build_variables.tfthko
                 tfcoil_variables.tfleng = (
-                    tfcoil_variables.tfleng
-                    + 0.25e0 * sctfcoil_module.circumference(aa, bb)
+                    tfcoil_variables.tfleng + 0.25e0 * self.circumference(aa, bb)
                 )
                 # IMPORTANT : THE CENTREPOST LENGTH IS NOT INCLUDED IN TFLENG FOR TART; eq(24)
         # ---
@@ -1610,3 +1608,27 @@ class Sctfcoil:
                 )  # eq(26)
 
         # ---
+
+    @staticmethod
+    def circumference(aaa, bbb):
+        """Calculate ellipse arc circumference using Ramanujan approximation (m)
+        See https://www.johndcook.com/blog/2013/05/05/ramanujan-circumference-ellipse/
+        for a discussion of the precision of the formula
+
+        An ellipse has the following formula: (x/a)² + (y/b)² = 1
+
+        :param aaa: the value of a in the formula of the ellipse.
+        :type aaa: float
+
+        :param bbb: the value of b in the formula of the ellipse.
+        :type bbb: float
+
+        :returns: an approximation of the circumference of the ellipse
+        :rtype: float
+        """
+        hh = (aaa - bbb) ** 2 / (aaa + bbb) ** 2
+        return (
+            numpy.pi
+            * (aaa + bbb)
+            * (1.0e0 + (3.0e0 * hh) / (10.0e0 + numpy.sqrt(4.0e0 - 3.0e0 * hh)))
+        )

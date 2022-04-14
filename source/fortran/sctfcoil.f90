@@ -4475,24 +4475,6 @@ end function sigvm
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-function circumference(aaa,bbb)
-        !! Calculate ellipse arc circumference using Ramanujan approximation (m)
-        !!  See https://www.johndcook.com/blog/2013/05/05/ramanujan-circumference-ellipse/
-        !!  for a discussion of the precision of the formula
-        use constants, only: pi
-
-        real(dp) :: circumference
-        real(dp), intent(in) :: aaa, bbb
-        real(dp) :: hh
-        hh = ( aaa - bbb )**2 / ( aaa + bbb )**2
-        circumference = pi* ( aaa + bbb ) * ( 1.0D0 + (3.0D0*hh)/(10.0D0 + sqrt(4.0D0 - 3.0D0*hh)) )
-
-        !-! end break
-
-end function
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 subroutine tfcind(tfthk)
 
     !! Calculates the self inductance of a TF coil
