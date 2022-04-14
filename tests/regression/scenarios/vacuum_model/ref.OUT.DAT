@@ -10,11 +10,11 @@
    Tag No. : v2.1-1570-g2769028f
     Branch : develop
    Git log : Merge\ branch\ |1626-add-xlaunch-documentation|\ into
- Date/time : 14 Apr 2022 10:15:09 +01:00(hh:mm) UTC
+ Date/time : 14 Apr 2022 10:49:37 +01:00(hh:mm) UTC
       User : jg6173
   Computer : L1088
- Directory : /tmp/pytest-of-jg6173/pytest-64/test_solver0
-     Input : /tmp/pytest-of-jg6173/pytest-64/test_scenario_vacuum_model_0/IN.DAT
+ Directory : /tmp/pytest-of-jg6173/pytest-66/test_solver0
+     Input : /tmp/pytest-of-jg6173/pytest-66/test_scenario_vacuum_model_0/IN.DAT
  Run title : demo 1 vacuum model test
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  

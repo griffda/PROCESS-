@@ -17,11 +17,11 @@
    Tag No. : v2.1-1570-g2769028f
     Branch : develop
    Git log : Merge\ branch\ |1626-add-xlaunch-documentation|\ into
- Date/time : 14 Apr 2022 10:13:58 +01:00(hh:mm) UTC
+ Date/time : 14 Apr 2022 10:48:19 +01:00(hh:mm) UTC
       User : jg6173
   Computer : L1088
- Directory : /tmp/pytest-of-jg6173/pytest-64/test_solver0
-     Input : /tmp/pytest-of-jg6173/pytest-64/test_scenario_FNSF_0/IN.DAT
+ Directory : /tmp/pytest-of-jg6173/pytest-66/test_solver0
+     Input : /tmp/pytest-of-jg6173/pytest-66/test_scenario_FNSF_0/IN.DAT
  Run title : FNSF (Menard et al. 2016)
   Run type : Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
  
