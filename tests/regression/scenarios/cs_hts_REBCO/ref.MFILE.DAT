@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.3.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "05/04/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "15:35"
- User____________________________________________________________________ (username)____________________     "ym1906"  
+ Date_of_run_____________________________________________________________ (date)________________________     "14/04/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "10:13"
+ User____________________________________________________________________ (username)____________________     "jg6173"  
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "Run Title (change this line using input variable 'runtitle')                                       
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1340-gfd8b81b0"                                                                               
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1500-add-cs-coil-rebco-quench-protection"                                                          
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "added\ regression\ test\ with\ reference\ input,\ output"                                          
- Input_filename__________________________________________________________ (fileprefix)__________________     "/home/ym1906/process/tests/regression/scenarios/cs_hts_REBCO/IN.DAT                                                                                                                                     "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1570-g2769028f"                                                                               
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "develop"                                                                                           
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge\ branch\ |1626-add-xlaunch-documentation|\ into"                                             
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-jg6173/pytest-64/test_scenario_cs_hts_REBCO_0/IN.DAT                                                                                                                                     "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #

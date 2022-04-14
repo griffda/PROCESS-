@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.3.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "30/03/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "10:51"
+ Date_of_run_____________________________________________________________ (date)________________________     "14/04/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "10:14"
  User____________________________________________________________________ (username)____________________     "jg6173"  
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "Run Title (change this line using input variable 'runtitle')                                       
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1456-ge3dc2ccc"                                                                               
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1336-update-cryoplant-cost-22-03-for-cost-model-2"                                                 
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge\ branch\ |develop|\ into\ 1336-update-cryoplant-"                                            
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-jg6173/pytest-57/test_scenario_L_mode_0/IN.DAT                                                                                                                                           "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1570-g2769028f"                                                                               
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "develop"                                                                                           
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge\ branch\ |1626-add-xlaunch-documentation|\ into"                                             
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-jg6173/pytest-64/test_scenario_L_mode_0/IN.DAT                                                                                                                                           "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -409,7 +409,7 @@
  Maximum_allowable_ECRH_power_(MW)_______________________________________ (pinjalw)_____________________      7.0100E+02    
  ECH_wall_plug_efficiency________________________________________________ (etaech)______________________      4.0000E-01    
  ECH_wall_plug_power_(MW)________________________________________________ (echwpow)_____________________      8.6449E+01 OP 
- Total_V-s_capability_of_Central_Solenoid/PF_coils_(Wb)__________________ (abs(vstot))__________________      9.8864E+02    
+ Total_V-s_capability_of_Central_Solenoid/PF_coils_(Wb)__________________ (abs(pfcoil_variables.vstot))_      9.8864E+02    
  Required_volt-seconds_during_start-up_(Wb)______________________________ (vssoft)______________________      7.4691E+02    
  Available_volt-seconds_during_burn_(Wb)_________________________________ (vsmax)_______________________      2.4630E+02    
  # Times #

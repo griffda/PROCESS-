@@ -6,14 +6,14 @@
  
    Program :
    Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1456-ge3dc2ccc code contains untracked changes
-    Branch : 1336-update-cryoplant-cost-22-03-for-cost-model-2
-   Git log : Merge\ branch\ |develop|\ into\ 1336-update-cryoplant-
- Date/time : 30 Mar 2022 10:51:21 +01:00(hh:mm) UTC
+   Tag No. : v2.1-1570-g2769028f
+    Branch : develop
+   Git log : Merge\ branch\ |1626-add-xlaunch-documentation|\ into
+ Date/time : 14 Apr 2022 10:14:56 +01:00(hh:mm) UTC
       User : jg6173
   Computer : L1088
- Directory : /tmp/pytest-of-jg6173/pytest-57/test_solver0
-     Input : /tmp/pytest-of-jg6173/pytest-57/test_scenario_QH_mode_0/IN.DAT
+ Directory : /tmp/pytest-of-jg6173/pytest-64/test_solver0
+     Input : /tmp/pytest-of-jg6173/pytest-64/test_scenario_QH_mode_0/IN.DAT
  Run title : Example QH-mode plasma scenario
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -518,7 +518,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Volt-second considerations:
  
- Total V-s capability of Central Solenoid/PF coils (Wb)                   (abs(vstot))              6.269E+02     
+ Total V-s capability of Central Solenoid/PF coils (Wb)                   (abs(pfcoil_variables.vst 6.269E+02     
  Required volt-seconds during start-up (Wb)                               (vssoft)                  3.368E+02     
  Available volt-seconds during burn (Wb)                                  (vsmax)                   2.706E+02     
  
