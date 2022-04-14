@@ -205,7 +205,7 @@ class PFCoil:
                     if tfv.i_tf_sup != 1 or pfv.i_sup_pf_shape == 1:
                         pf.rcls[j, k] = pf.rclsnorm
                     else:
-                        pf.rcls[j, k] = math.sqrt(pf.rclsnorm ** 2 - pf.zcls[j, k] ** 2)
+                        pf.rcls[j, k] = math.sqrt(pf.rclsnorm**2 - pf.zcls[j, k] ** 2)
 
             elif pfv.ipfloc[j] == 4:
                 #  PF coil is in general location
@@ -291,7 +291,7 @@ class PFCoil:
 
                     elif pfv.ipfloc[i] == 2:
                         #  PF coil is on top of the TF coil
-                        pf.ccls[i] = 0.3e0 * pv.aspect ** 1.6e0 * pv.plascur
+                        pf.ccls[i] = 0.3e0 * pv.aspect**1.6e0 * pv.plascur
 
                     elif pfv.ipfloc[i] == 3:
                         #  PF coil is radially outside the TF coil
@@ -955,10 +955,10 @@ class PFCoil:
         author: D Strickler, ORNL
         author: J Galambos, ORNL
 
-        :param lrow1: row length of arrays bfix, bvec, gmat, umat, vmat; should 
+        :param lrow1: row length of arrays bfix, bvec, gmat, umat, vmat; should
         be >= (2*nptsmx + ngrpmx)
         :type lrow1: int
-        :param lcol1: column length of arrays gmat, umat, vmat; should be >= 
+        :param lcol1: column length of arrays gmat, umat, vmat; should be >=
         ngrpmx
         :type lcol1: int
         :param npts: number of data points at which field is to be fixed; should
@@ -981,7 +981,7 @@ class PFCoil:
         :type rcls: numpy.ndarray
         :param zcls: coords R(i,j), Z(i,j) of coil j in group i (m)
         :type zcls: numpy.ndarray
-        :param alfa: smoothing parameter (0 = no smoothing, 1.0D-9 = large 
+        :param alfa: smoothing parameter (0 = no smoothing, 1.0D-9 = large
         smoothing)
         :type alfa: float
         :param bfix: Fields at data points (T)
@@ -1016,7 +1016,9 @@ class PFCoil:
                         rc[:nc], zc[:nc], cc[:nc], rpts[i], zpts[i]
                     )
                 else:
-                    xc, brw, bzw, psw = pf.bfield(rc[:1], zc[:1], cc[:1], rpts[i], zpts[i], 1, nciszero=True)
+                    xc, brw, bzw, psw = pf.bfield(
+                        rc[:1], zc[:1], cc[:1], rpts[i], zpts[i], 1, nciszero=True
+                    )
 
                 gmat[i, j] = brw
                 gmat[i + npts, j] = bzw
@@ -1066,24 +1068,24 @@ class PFCoil:
         eps = 1.0e-10
         ccls = np.zeros(ngrpmx)
 
-        sigma,umat,vmat,ierr,work2=ml.svd(nrws,gmat,truth,truth)
+        sigma, umat, vmat, ierr, work2 = ml.svd(nrws, gmat, truth, truth)
 
         for i in range(ngrp):
             work2[i] = 0.0e0
             for j in range(nrws):
-                work2[i] = work2[i]+umat[j,i]*bvec[j]
+                work2[i] = work2[i] + umat[j, i] * bvec[j]
 
         # Compute currents
         for i in range(ngrp):
             ccls[i] = 0.0e0
             zvec = 0.0e0
             for j in range(ngrp):
-                if (sigma[j] > eps):
-                    zvec = work2[j]/sigma[j]
+                if sigma[j] > eps:
+                    zvec = work2[j] / sigma[j]
 
-                ccls[i] = ccls[i]+vmat[i,j]*zvec
+                ccls[i] = ccls[i] + vmat[i, j] * zvec
 
-        return ccls,umat,vmat,sigma,work2
+        return ccls, umat, vmat, sigma, work2
 
     def ohcalc(self):
         """Routine to perform calculations for the Central Solenoid solenoid.
@@ -1440,8 +1442,8 @@ class PFCoil:
         if (bv.iohcl != 0) and (i == pfv.nohc):
             return bri, bro, bzi, bzo
 
-        bpfin = math.sqrt(bri ** 2 + bzi ** 2)
-        bpfout = math.sqrt(bro ** 2 + bzo ** 2)
+        bpfin = math.sqrt(bri**2 + bzi**2)
+        bpfout = math.sqrt(bro**2 + bzo**2)
         for n in range(pfv.ncls[ii - 1]):
             pfv.bpf[i - 1 + n] = bpfin
             pf.bpf2[i - 1 + n] = bpfout
@@ -1478,8 +1480,8 @@ class PFCoil:
             * constants.rmu0
             * h
             * math.log(
-                (alpha + math.sqrt(alpha ** 2 + beta ** 2))
-                / (1.0 + math.sqrt(1.0 + beta ** 2))
+                (alpha + math.sqrt(alpha**2 + beta**2))
+                / (1.0 + math.sqrt(1.0 + beta**2))
             )
         )
 
@@ -1612,10 +1614,10 @@ class PFCoil:
         hp_term_1 = K * ((2.0e0 + tfv.poisson_steel) / (3.0e0 * (alpha + 1.0e0)))
 
         hp_term_2 = (
-            alpha ** 2
+            alpha**2
             + alpha
             + 1.0e0
-            + alpha ** 2 / epsilon ** 2
+            + alpha**2 / epsilon**2
             - epsilon
             * (
                 ((1.0e0 + 2.0e0 * tfv.poisson_steel) * (alpha + 1.0e0))
@@ -1626,10 +1628,10 @@ class PFCoil:
         hp_term_3 = M * ((3.0e0 + tfv.poisson_steel) / (8.0e0))
 
         hp_term_4 = (
-            alpha ** 2
+            alpha**2
             + 1.0e0
-            + alpha ** 2 / epsilon ** 2
-            - epsilon ** 2
+            + alpha**2 / epsilon**2
+            - epsilon**2
             * ((1.0e0 + 3.0e0 * tfv.poisson_steel) / (3.0e0 + tfv.poisson_steel))
         )
 
@@ -1659,11 +1661,11 @@ class PFCoil:
 
         # kb term for elliptical integpfv.rals
         # kb2 = SQRT((4.0e0*b**2)/(4.0e0*b**2 + hl**2))
-        kb2 = (4.0e0 * b ** 2) / (4.0e0 * b ** 2 + hl ** 2)
+        kb2 = (4.0e0 * b**2) / (4.0e0 * b**2 + hl**2)
 
         # k2b term for elliptical integpfv.rals
         # k2b2 = SQRT((4.0e0*b**2)/(4.0e0*b**2 + 4.0e0*hl**2))
-        k2b2 = (4.0e0 * b ** 2) / (4.0e0 * b ** 2 + 4.0e0 * hl ** 2)
+        k2b2 = (4.0e0 * b**2) / (4.0e0 * b**2 + 4.0e0 * hl**2)
 
         # term 1
         axial_term_1 = -(constants.rmu0 / 2.0e0) * (ni / (2.0e0 * hl)) ** 2
@@ -1671,7 +1673,7 @@ class PFCoil:
         # term 2
         ekb2_1, ekb2_2 = ml.ellipke(kb2)
         axial_term_2 = (
-            2.0e0 * hl * (math.sqrt(4.0e0 * b ** 2 + hl ** 2)) * (ekb2_1 - ekb2_2)
+            2.0e0 * hl * (math.sqrt(4.0e0 * b**2 + hl**2)) * (ekb2_1 - ekb2_2)
         )
 
         # term 3
@@ -1679,7 +1681,7 @@ class PFCoil:
         axial_term_3 = (
             2.0e0
             * hl
-            * (math.sqrt(4.0e0 * b ** 2 + 4.0e0 * hl ** 2))
+            * (math.sqrt(4.0e0 * b**2 + 4.0e0 * hl**2))
             * (ek2b2_1 - ek2b2_2)
         )
 
@@ -1781,7 +1783,7 @@ class PFCoil:
         if bv.iohcl != 0:
             xohpl = 0.0
             if bv.ohcth >= delzoh:
-                deltar = math.sqrt((bv.ohcth ** 2 - delzoh ** 2) / 12.0e0)
+                deltar = math.sqrt((bv.ohcth**2 - delzoh**2) / 12.0e0)
             else:
                 eh.fdiags[0] = bv.ohcth
                 eh.fdiags[1] = delzoh
@@ -1791,7 +1793,7 @@ class PFCoil:
                 rp = roh[i]
                 zp = zoh[i]
 
-                reqv = rp * (1.0e0 + delzoh ** 2 / (24.0e0 * rp ** 2))
+                reqv = rp * (1.0e0 + delzoh**2 / (24.0e0 * rp**2))
 
                 xcin, br, bz, psi = pf.bfield(rc, zc, cc, reqv - deltar, zp)
                 xcout, br, bz, psi = pf.bfield(rc, zc, cc, reqv + deltar, zp)
@@ -2669,8 +2671,8 @@ class PFCoil:
         """
         selfinductance = (
             (1.0e-6 / 0.0254e0)
-            * a ** 2
-            * N ** 2
+            * a**2
+            * N**2
             / (9.0e0 * a + 10.0e0 * b + 8.4e0 * c + 3.2e0 * c * b / a)
         )
         return selfinductance
