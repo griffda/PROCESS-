@@ -234,7 +234,7 @@ contains
       fauxmn, fiooic, fcwr, fjohc0, frminor, psepbqarmax, ftpeak, bigqmin, &
       fstrcond, fptemp, ftmargoh, fvs, fbetatry, vvhealw, fpnetel, ftburn, &
       ffuspow, fpsepr, ptfnucmax, fvdump, pdivtlim, ftaulimit, nbshinefmax, &
-      fcqt, fzeffmax, fstrcase, fhldiv, foh_stress, fwalld, gammax, fjprot, &
+      fcqt, fzeffmax, fstrcase, fstr_wp, fhldiv, foh_stress, fwalld, gammax, fjprot, &
       ftohs, tcycmn, auxmin, zeffmax, peakfactrad, fdtmp, fpoloidalpower, &
       fnbshinef, freinke, fvvhe, fqval, fq, ftaucq, fbetap, fbeta, fjohc, &
       fflutf, bmxlim, tbrnmn, fbetatry_lower, fecrh_ignition

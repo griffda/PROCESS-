@@ -3304,7 +3304,6 @@ contains
       tmp_units = 'MW'
    end subroutine constraint_eqn_087
 
-end module constraints
    subroutine constraint_eqn_088(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for TF coil vertical strain upper limit (absolute value)
       !! author: CPS Swanson, PPPL, USA
@@ -3381,9 +3380,9 @@ end module constraints
       use stellarator_module, only: power_at_ignition_point
       use stellarator_variables, only: max_gyrotron_frequency, te0_ecrh_achievable
       implicit none
-            real(8), intent(out) :: tmp_cc
-      real(8), intent(out) :: tmp_con
-      real(8), intent(out) :: tmp_err
+            real(dp), intent(out) :: tmp_cc
+      real(dp), intent(out) :: tmp_con
+      real(dp), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
       real(dp) :: te0_ECRH_needed,b_ECRH,powerht_local,powerscaling
