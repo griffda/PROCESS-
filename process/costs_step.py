@@ -1389,24 +1389,24 @@ class CostsStep:
         # Superseded and deleted
 
         # 22.01.10 Divertor
-        # Caveat: rough estimate, using rmajor (rather than e.g. rnull) and 
+        # Caveat: rough estimate, using rmajor (rather than e.g. rnull) and
         # treating the divertor limbs as vertically oriented cylinders.
-        # Greater precision in geometry would provide more accurate results, 
-        # but (at the time of writing) the divertor design is not yet 
+        # Greater precision in geometry would provide more accurate results,
+        # but (at the time of writing) the divertor design is not yet
         # advanced enough to warrant such precision.
-        # Reference cost and area values are for ITER. 
+        # Reference cost and area values are for ITER.
 
         # Use 2D profile of divertor legs to estimate surface area (m2)
         div_profile_length = dv.divleg_profile_inner + dv.divleg_profile_outer
-        if (pv.idivrt == 2) :
+        if pv.idivrt == 2:
             # double-null = double divertor length
             div_profile_length = div_profile_length * 2.0e0
         div_sarea = 2.0e0 * constants.pi * pv.rmajor * div_profile_length
 
         # divertor cost = ref * (div area / ref area)**0.8
-        step220110 = cv.step_ref[31] * (div_sarea / 60.0e0)**0.8e0
+        step220110 = cv.step_ref[31] * (div_sarea / 60.0e0) ** 0.8e0
         # adjust to 2017$ (from 2014$) using CPI index
-        step220110 = step220110 * (229.0e0/228.0e0)
+        step220110 = step220110 * (229.0e0 / 228.0e0)
 
         if cv.ifueltyp == 1:
             cv.divcst = step220110
