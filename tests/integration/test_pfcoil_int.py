@@ -1646,11 +1646,14 @@ def test_mtrx(pfcoil):
     assert_array_almost_equal(xc, xc_exp)
 
 
-def test_solv():
+def test_solv(pfcoil):
     """Test solv() with simple arguments.
 
     Running baseline_2019 results in 2D array args with 740 elements: unfeasible
     for a unit test. Made-up simplified args are used instead.
+
+    :param pfcoil: a PFCoil instance
+    :type pfcoil: process.pfcoil.PFCoil
     """
     ngrpmx = 3
     ngrp = 3
@@ -1658,7 +1661,7 @@ def test_solv():
     gmat = np.full((3, 3), 2.0, order="F")
     bvec = np.full(3, 1.0)
 
-    ccls, umat, vmat, sigma, work2 = pf.solv(ngrpmx, ngrp, nrws, gmat, bvec)
+    ccls, umat, vmat, sigma, work2 = pfcoil.solv(ngrpmx, ngrp, nrws, gmat, bvec)
 
     assert_array_almost_equal(ccls, np.array([0.16666667, 0.37079081, -0.03745748]))
     assert_array_almost_equal(

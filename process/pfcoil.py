@@ -874,7 +874,7 @@ class PFCoil:
         )
 
         # Solve matrix equation
-        ccls, umat, vmat, sigma, work2 = pf.solv(pfv.ngrpmx, ngrp, nrws, gmat, bvec)
+        ccls, umat, vmat, sigma, work2 = self.solv(pfv.ngrpmx, ngrp, nrws, gmat, bvec)
 
         # Calculate the norm of the residual vectors
         brssq, brnrm, bzssq, bznrm, ssq = pf.rsid(
@@ -1035,6 +1035,55 @@ class PFCoil:
         nrws = 2 * npts + ngrp
 
         return nrws, gmat, bvec, rc, zc, cc, xc
+
+    def solv(self, ngrpmx, ngrp, nrws, gmat, bvec):
+        """Solve a matrix using singular value decomposition.
+
+        This routine solves the matrix equation for calculating the
+        currents in a group of ring coils.
+        author: P J Knight, CCFE, Culham Science Centre
+        author: D Strickler, ORNL
+        author: J Galambos, ORNL
+        author: P C Shipe, ORNL
+
+        :param ngrpmx: maximum number of PF coil groups
+        :type ngrpmx: int
+        :param ngrp: number of coil groups, where all coils in a group have the
+        same current, <= ngrpmx
+        :type ngrp: int
+        :param nrws: actual number of rows to use
+        :type nrws: int
+        :param gmat: work array
+        :type gmat: numpy.ndarray
+        :param bvec: work array
+        :type bvec: numpy.ndarray
+        :return: solution vector of coil currents
+        in each group (A) (ccls), rest are work arrays
+        :rtype: tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray,
+        numpy.ndarray, numpy.ndarray]
+        """
+        truth = True
+        eps = 1.0e-10
+        ccls = np.zeros(ngrpmx)
+
+        sigma,umat,vmat,ierr,work2=ml.svd(nrws,gmat,truth,truth)
+
+        for i in range(ngrp):
+            work2[i] = 0.0e0
+            for j in range(nrws):
+                work2[i] = work2[i]+umat[j,i]*bvec[j]
+
+        # Compute currents
+        for i in range(ngrp):
+            ccls[i] = 0.0e0
+            zvec = 0.0e0
+            for j in range(ngrp):
+                if (sigma[j] > eps):
+                    zvec = work2[j]/sigma[j]
+
+                ccls[i] = ccls[i]+vmat[i,j]*zvec
+
+        return ccls,umat,vmat,sigma,work2
 
     def ohcalc(self):
         """Routine to perform calculations for the Central Solenoid solenoid.
