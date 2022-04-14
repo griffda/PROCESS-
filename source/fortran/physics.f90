@@ -463,8 +463,8 @@ module physics_module
        call radpwr(pbrempv,plinepv,psyncpv, &
             pcoreradpv,pedgeradpv,pradpv)
 
-       pcoreradmw = pcoreradpv*vol
-       pedgeradmw = pedgeradpv*vol
+       pcoreradmw = pcoreradpv*vol ! This is probably wrong. It probably should be vol_core
+       pedgeradmw = pedgeradpv*vol ! And here it should be vol_edge
        pradmw = pradpv*vol
     endif
 

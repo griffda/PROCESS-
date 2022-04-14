@@ -347,8 +347,6 @@ contains
          d_vv_in + shldith + blnkith + fwith + scrapli + rminor
 
 
-      
-
     ! Bc stellarators cannot scale rminor reasonably well an additional constraint equation is required,
     ! that ensures that there is enough space between coils and plasma.
     required_radial_space = (tfcth/2.0D0 + gapds + d_vv_in + shldith + blnkith + fwith + scrapli)
@@ -704,7 +702,7 @@ contains
     pcoreradpv = max(pcoreradpv, 0.0d0)
     pedgeradpv = max(pedgeradpv, 0.0d0)
 
-    pcoreradmw = pcoreradpv*vol
+    pcoreradmw = pcoreradpv*vol ! Should probably be vol_core
     pedgeradmw = pedgeradpv*vol
 
     pradmw = pradpv*vol
