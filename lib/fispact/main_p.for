@@ -850,7 +850,7 @@ C  ## Harwell 21/11/90
       ZSECT(IN) = XSECT(101)
 C  ## By repeating the 5 gas nuclides, (in all libraries), try
 C     to get all gases (Nov 89).
-C  ## Correction made to include reactions to isomers, 
+C  ## Correction made to include reactions to isomers,
 C     change MT to MT1 and divide reac number by 10. Mar 90
 C  ## Additional reactions for He4 production (Nov 1989)##
       IF (MT1.EQ.107.OR.MT1.EQ.22.OR.MT1.EQ.24) THEN
@@ -1894,7 +1894,7 @@ C  ## HARWELL MODIFICATION DECEMBER 1990.
         XSIDNT = CLIDNT(11:25)
         SPIDNT = CLIDNT(26:47)
         DDIDNT = OLDLIB(58:72)
- 
+
 C
 C  RESET NCROSS AND ERASE OLD CROSS SECTION DATA
 C
@@ -3261,7 +3261,7 @@ C
 C DOUBLE NUMBER OF STEPS OF ONE-STEP METHOD.
 C
   390 NSTEPS = NSTEPS + NSTEPS
- 
+
 C
 C DECREASE STEP LENGTH.
 C

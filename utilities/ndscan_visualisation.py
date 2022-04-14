@@ -16,19 +16,25 @@ from process_io_lib.ndscan_vis import VisUtility
 import argparse
 
 
-if __name__ == '__main__':
-############################################################
-#Usage
+if __name__ == "__main__":
+    ############################################################
+    # Usage
 
-    PARSER = argparse.ArgumentParser(description='Program to visualise a multi-\
-    dimensional parameter scan.')
+    PARSER = argparse.ArgumentParser(
+        description="Program to visualise a multi-\
+    dimensional parameter scan."
+    )
 
-    PARSER.add_argument("-f", "--netcdffile", default='NdscanOutput.nc',
-                        help="netcdf file, default = NdscanOutput.nc")
+    PARSER.add_argument(
+        "-f",
+        "--netcdffile",
+        default="NdscanOutput.nc",
+        help="netcdf file, default = NdscanOutput.nc",
+    )
 
     ARGS = PARSER.parse_args()
 
     ############################################################
-    #main program
+    # main program
     VISUTIL = VisUtility(ARGS.netcdffile)
     VISUTIL.main()

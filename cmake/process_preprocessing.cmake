@@ -35,7 +35,7 @@ MACRO(FindPreprocessingVars)
 
     # CMake uses f95 (rather than gfortran) by default. However, this is usually
     # a symbolic link to gfortran. Set CMAKE_Fortran_COMPILER to the actual
-    # location of gfortran for clarity 
+    # location of gfortran for clarity
     EXECUTE_PROCESS (
     COMMAND bash -c "which gfortran | tr -d '[:space:]'"
     OUTPUT_VARIABLE CMAKE_Fortran_COMPILER
@@ -56,7 +56,7 @@ MACRO(FindPreprocessingVars)
     if(CMAKE_Fortran_COMPILER_VERSION VERSION_LESS 9)
         MESSAGE(STATUS "Fortran Compiler: ${CMAKE_Fortran_COMPILER}")
         MESSAGE(STATUS "Fortran Compiler ID: ${CMAKE_Fortran_COMPILER_ID}")
-        MESSAGE(STATUS "Fortran Compiler Version: ${CMAKE_Fortran_COMPILER_VERSION}")    
+        MESSAGE(STATUS "Fortran Compiler Version: ${CMAKE_Fortran_COMPILER_VERSION}")
         MESSAGE(FATAL_ERROR "cmake detected gfortran version is " ${CMAKE_Fortran_COMPILER_VERSION} ". 9 or above required")
     ENDIF()
 
@@ -85,7 +85,7 @@ MACRO(FindPreprocessingVars)
     ADD_DEFINITIONS(-Dtagno="${GIT_TAG}")
     ADD_DEFINITIONS(-Dbranch_name="${GIT_BRANCH}")
     ADD_DEFINITIONS(-Duntracked=${GIT_DIFF})
-    
+
     ensure_string_length(${COMMIT_MSG} 145 COMMIT_MSG) # 1502 line truncation error fix
 
     ADD_DEFINITIONS(-DCOMMSG="${COMMIT_MSG}")

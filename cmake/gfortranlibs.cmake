@@ -11,7 +11,7 @@ MACRO(GET_GFORTRANLIBS)
     MESSAGE(STATUS "[gfortran libraries]")
 
     SET(LIBGFORTRAN_NAME "libgfortran")
-    
+
     # Get the path of libgfortran.so
     EXECUTE_PROCESS(
         COMMAND bash -c "gfortran --print-file-name ${LIBGFORTRAN_NAME}${LIBRARY_OUTPUT_SUFFIX}"
@@ -19,7 +19,7 @@ MACRO(GET_GFORTRANLIBS)
         OUTPUT_VARIABLE LIBGFORTRAN_PATH
     )
     STRING(REGEX REPLACE "\n" "" LIBGFORTRAN_PATH ${LIBGFORTRAN_PATH})
-    
+
     # Error if gfortran library path not found
     IF(LIBGFORTRAN_PATH STREQUAL ${LIBGFORTRAN_NAME}${LIBRARY_OUTPUT_SUFFIX})
         MESSAGE(FATAL_ERROR "Could not retrieve location of gfortran library")

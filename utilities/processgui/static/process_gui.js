@@ -15,7 +15,7 @@ function highlight(obj) {
 
 //set the value of all objects with the same name
 //as the given object to the value of the given object
-function syncval(obj) { 
+function syncval(obj) {
     var name=obj.name
     var value=obj.value
     var sel = $("[name='"+name+"']")

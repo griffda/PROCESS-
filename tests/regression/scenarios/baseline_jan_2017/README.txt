@@ -15,4 +15,3 @@ This is the test file for the baseline run cases in January 2017
 - this is the case with argon (set_4, v2)
 
 ## Additional Notes
-

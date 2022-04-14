@@ -60,7 +60,7 @@ class TestStructure:
             blmass,
             coolmass,
             dewmass,
-            output=False
+            output=False,
         )
 
         assert fncmass == pytest.approx(expected_fncmass)

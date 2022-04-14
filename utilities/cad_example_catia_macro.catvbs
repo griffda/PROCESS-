@@ -17,7 +17,7 @@ Sub CATMain()
 
 	Sectors = InputBox ("How many sectors to visualise?")
 	MsgBox ("Sectors = " & Sectors)
-	
+
 	Dim oFileSys
 	Set oFilesys = CATIA.FileSystem
 	Set oText = oFilesys.GetFile(infile)
@@ -33,7 +33,7 @@ Sub CATMain()
 				i = i+1
 			End If
 		End If
-		If Instr(tmpStr,"Process Code")>0 Then 'Search the header 
+		If Instr(tmpStr,"Process Code")>0 Then 'Search the header
 			tmpsplit=Split(tmpStr,":")
 			If instr(tmpStr,"Export Date")>0 Then	' Get the date
 				strDate=tmpsplit(1)
@@ -58,7 +58,7 @@ Sub CATMain()
 
 	' Open the template CATProduct and modify to the input file parameters
 	Set CATDoc = CATIA.Documents
-	CATDoc.Open(MainDoc) 
+	CATDoc.Open(MainDoc)
 	Set ActDoc = CATIA.ActiveDocument
 	CATIA.ActiveDocument.Product.ApplyWorkMode DESIGN_MODE
 
@@ -95,7 +95,7 @@ Sub CATMain()
 				For d = 0 to Ubound(arrLines) ' Loop through the process input file looking for "Point."
 					If Left(arrLines(d),6) = "Point." Then 'Does the array line start with "Point."
 						'MsgBox "found point"
-						tmpLinex = Split(arrLines(d)," = ") 'Split the input 
+						tmpLinex = Split(arrLines(d)," = ") 'Split the input
 						'MsgBox "tmpLinex "&tmpLinex(0)&" AND "&tmpLinex(1)
 						'tmp_yz = Split(arrLines(d),VbTab) ' Split the xy values by a tab
 						tmp_yz = Split(tmpLinex(1))
@@ -117,7 +117,7 @@ Sub CATMain()
 			oTextout1.write VbLf& part2.Nomenclature & VbTab & "=" & VbTab & objMeasurable.Volume & VbTab &" m^3"
 		End If
 	Next
-	oTextout1.Close 'Close the output file	
+	oTextout1.Close 'Close the output file
 	'Export image captures of the saved cameras
 	'CATIA.ActiveWindow.ActiveViewer.PutBackgroundColor Array(1, 1, 1) 'Set the background to white for the image grab
 	'Set objSpecWindow = CATIA.ActiveWindow
@@ -134,11 +134,11 @@ Sub CATMain()
 	'	End If
 	'Next
 	'Set settingControllers1 = CATIA.SettingControllers
-	'Set visualizationSettingAtt1 = settingControllers1.Item("CATVizVisualizationSettingCtrl")	
+	'Set visualizationSettingAtt1 = settingControllers1.Item("CATVizVisualizationSettingCtrl")
 	'visualizationSettingAtt1.SetBackgroundRGB 51, 51, 102 'Set the background back to normal
 	'visualizationSettingAtt1.SaveRepository
 	'Export the data and save copies of the CATIA files
-	
+
 	'Set the Instance Names
 	Set product1 = ActDoc.Product
 	Set products1 = product1.Products
@@ -170,5 +170,3 @@ Sub CATMain()
 	objSpecWindow.Layout = catWindowSpecsAndGeom
 	'ActDoc.Close
 End Sub
-
-

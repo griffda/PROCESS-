@@ -19,10 +19,10 @@ module constants
   integer, parameter :: iotty    = 6
   !! Standard output unit identifier
 
-  integer, parameter :: nout     = 11 
+  integer, parameter :: nout     = 11
   !! Output file unit identifier
 
-  integer, parameter :: nplot    = 12 
+  integer, parameter :: nplot    = 12
   !! Plot data file unit identifier
 
   integer, parameter :: mfile    = 13
@@ -31,10 +31,10 @@ module constants
   integer, parameter :: vfile    = 14
   !! Verbose diagnostics file
 
-  integer, parameter :: opt_file = 15 
+  integer, parameter :: opt_file = 15
   !! Optimisation information output file number
 
-  integer, parameter :: sig_file = 16 
+  integer, parameter :: sig_file = 16
   !! TF inboard stress radial distributions file number
 
   real(dp), parameter :: degrad = 0.01745329251D0
@@ -89,7 +89,7 @@ module constants
   !! Average number of days in a year
 
   contains
-  
+
   subroutine init_constants
     !! Initialise module variables
     implicit none

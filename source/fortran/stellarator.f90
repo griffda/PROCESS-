@@ -232,7 +232,7 @@ contains
     eps = 1.0D0/aspect
 
     n_tf = config%coilspermodule*config%symmetry !! This overwrites n_tf in input file.
-   
+
     !  Factors used to scale the reference point.
     f_R = rmajor/config%rmajor_ref       !  Size scaling factor with respect to the reference calculation
     f_a = rminor/config%rminor_ref       !  Size scaling factor with respect to the reference calculation
@@ -240,7 +240,7 @@ contains
     f_aspect = aspect / config%aspect_ref
     f_N = n_tf/(config%coilspermodule * config%symmetry)       !  Coil number factor
     f_B = bt/config%bt_ref            !  B-field scaling factor
- 
+
 
 
   end subroutine stnewconfig
@@ -252,7 +252,7 @@ contains
     !!
     !! This routine calculates the plasma volume and surface area for
     !! a stellarator configuration.
-    !! It is simple scaling based on a Fourier representation based on 
+    !! It is simple scaling based on a Fourier representation based on
     !! that described in Geiger documentation.
     !!
     !! J. Geiger, IPP Greifswald internal document:  'Darstellung von
@@ -403,7 +403,7 @@ contains
     call ovarre(outfile,'Avail. Space (m)','(available_radial_space)',available_radial_space)
     call ovarre(outfile,'Req. Space (m)','(required_radial_space)',required_radial_space)
     call ovarre(outfile,'f value: ','(f_avspace)',f_avspace)
-   
+
 
 
     write(outfile,10)
@@ -631,7 +631,7 @@ contains
     !  Total field
     btot = sqrt(bt**2 + bp**2)
 
-    
+
     if ( ANY( ixc == 5 ) ) then  ! Check if beta (iteration variable 5) is an iteration variable
       call report_error(251)
     end if
@@ -2073,7 +2073,7 @@ contains
             t5,'scaling law', &
             t30,'confinement time (s)', &
             t55,'H-factor for')
-   
+
        write(outfile,20)
    20  format( &
          t34,'for H = 2', &
@@ -2349,7 +2349,7 @@ contains
     !! <P>Some precalculated effective parameters for a stellarator power
     !! plant design are used as the basis for the calculations. The coils
     !! are assumed to be a fixed shape, but are scaled in size
-    !! appropriately for the machine being modelled. 
+    !! appropriately for the machine being modelled.
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2410,7 +2410,7 @@ contains
    ! Winding Pack Geometry: for one conductor
    !
      ! This one conductor will just be multiplied later to fit the winding pack size.
-     !       
+     !
      ! [m] Dimension of square cable space inside insulation
      !     and case of the conduit of each turn
      t_cable = t_turn_tf - 2.0D0 * (thwcndut + thicndut)  !  t_cable = t_w
@@ -2431,12 +2431,12 @@ contains
 
 
      N_it = 200     ! number of iterations
- 
+
      allocate(RHS(n_it),LHS(n_it))
      allocate(jcrit_vector(n_it),wp_width_r(n_it),b_max_k(n_it))
  
      do k = 1,N_it
- 
+
        ! Sample coil winding pack
        wp_width_r(k) = (r_coil_minor/40.0D0 + (dble(k)-1) / (dble(N_it)-1) * (r_coil_minor/1.0D0-r_coil_minor/40.0D0))
        if (i_tf_sc_mat==6) wp_width_r(k) =(r_coil_minor/150.0D0 + (dble(k)-1) / (dble(N_it)-1)&
@@ -2447,12 +2447,12 @@ contains
  
        ! jcrit for this bmax:
        jcrit_vector(k) = jcrit_frommaterial(B_max_k(k),tftmp+1.5) ! Get here a temperature margin of 1.5K.
- 
+
      end do
- 
+
      ! The operation current density weighted with the global iop/icrit fraction
-     LHS = fiooic * jcrit_vector 
-     
+     LHS = fiooic * jcrit_vector
+
      ! Conduct fraction of conduit * Superconductor fraction in conductor
      f_scu = (acstf*(1.0D0-vftf))/(t_turn_tf**2)*(1.0D0-fcutfsu) !fraction that is SC of wp.
      !print *, "f_scu. ",f_scu,"Awp min: ",Awp(1)
@@ -2478,10 +2478,10 @@ contains
      wwp1 = awp_tor                ! [m] toroidal thickness of winding pack
      wwp2 = awp_tor                ! [m] toroidal thickness of winding pack (region in front)
      dr_tf_wp = awp_rad               ! [m] radial thickness of winding pack
- 
+
      !  [m^2] winding-pack cross sectional area including insulation (not global)
      awpc = (dr_tf_wp + 2.0D0*tinstf)*(wwp1 + 2.0D0*tinstf)
- 
+
 
      awptf = awp_tor*awp_rad                 ! [m^2] winding-pack cross sectional area
      jwptf = coilcurrent*1.0D6/awptf         ! [A/m^2] winding pack current density
@@ -2525,17 +2525,17 @@ contains
   
      !  Maximal poloidal port size (vertical ports) (m)
      vportpmax = 2.0* vporttmax ! Simple approximation
-  
+
      !  Maximal vertical port clearance area (m2)
      vportamax = vporttmax*vportpmax
-  
+
      !  Horizontal ports
      !  Maximal toroidal port size (horizontal ports) (m)
      hporttmax =  0.8D0 * config%max_portsize_width *f_r/f_n ! Factor 0.8 to take the variation with height into account
   
      !  Maximal poloidal port size (horizontal ports) (m)
      hportpmax = 2.0D0 * hporttmax ! Simple approximation
-  
+
      !  Maximal horizontal port clearance area (m2)
      hportamax = hporttmax*hportpmax
    ! End of port calculations
@@ -2544,24 +2544,24 @@ contains
 
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    !  General Coil Geometry values
-   !  
+   !
      tftort = wwp1 + 2.0D0*casths+ 2.0D0*tinstf     ! [m] Thickness of inboard leg in toroidal direction
 
      !? There was a factor of 2 in fron of thkcas. Is this right now (jlion, 21/01/2021)
      tfcth = thkcas + dr_tf_wp + casthi+ 2.0D0*tinstf  ! [m] Thickness of inboard leg in radial direction
      tfthko = thkcas + dr_tf_wp + casthi+ 2.0D0*tinstf ! [m] Thickness of outboard leg in radial direction (same as inboard)
-     arealeg = tfcth*tftort                         ! [m^2] overall coil cross-sectional area (assuming inboard and 
+     arealeg = tfcth*tftort                         ! [m^2] overall coil cross-sectional area (assuming inboard and
                                                     !       outboard leg are the same)
      acasetf = (tfcth*tftort)-awpc                  ! [m^2] Cross-sectional area of surrounding case
-     
+
      tfocrn = 0.5D0*tftort                          ! [m] Half-width of side of coil nearest torus centreline
      tficrn = 0.5D0*tftort                          ! [m] Half-width of side of coil nearest plasma
-  
+
      ! [m^2] Total surface area of coil side facing plasma: inboard region
      tfsai = n_tf*tftort * 0.5D0*tfleng
      ! [m^2] Total surface area of coil side facing plasma: outboard region
      tfsao = tfsai  !  depends, how 'inboard' and 'outboard' are defined
-  
+
      ! [m] Minimal distance in toroidal direction between two stellarator coils (from mid to mid)
      ! Consistency with coil width is checked in constraint equation 82
      toroidalgap = config%dmin * (r_coil_major-r_coil_minor)/(config%coil_rmajor-config%coil_rminor)
@@ -2580,15 +2580,15 @@ contains
      inductance = (config%inductance/f_r*(r_coil_minor/config%coil_rminor)**2*f_n**2)
      estotftgj = 0.5D0 * (config%inductance/f_r*(r_coil_minor/config%coil_rminor)**2*f_n**2)&
                    * (ritfc/n_tf)**2 * 1.0D-9             ! [GJ] Total magnetic energy
-  
+
      !  Coil dimensions
      hmax = 0.5D0 * config%maximal_coil_height *(r_coil_minor/config%coil_rminor)   ! [m] maximum half-height of coil
      r_tf_inleg_mid =  r_coil_major-r_coil_minor          ! This is not very well defined for a stellarator.
                                                           ! Though, this is taken as an average value.
      tf_total_h_width = r_coil_minor                      !? not really sure what this is supposed to be. Estimated as
                                                           ! the average minor coil radius
-     
-     
+
+
      tfborev = 2.0D0*hmax                   ! [m] estimated vertical coil bore
      
      
@@ -2603,7 +2603,7 @@ contains
    ! End of general coil geometry values
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-     
+
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    !  Masses of conductor constituents
    !
@@ -2639,7 +2639,7 @@ contains
      ! This copied from the tokamak module:
      ! Radial position of vacuum vessel [m]
      radvv = rmajor - rminor - scrapli - fwith - blnkith - vvblgap - shldith
- 
+
      ! Quench time [s]
      taucq = (bt * ritfc * rminor**2) / (radvv * sigvvall) ! (assumes tokamak reference value)
      
@@ -2707,7 +2707,7 @@ contains
        ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
        implicit none
- 
+
        ! t is the winding pack width (sqrt(awp) r8 now) divided by coil_rmajor
        real(dp), intent(in) ::wp_width_radial,current
  
@@ -2735,55 +2735,55 @@ contains
   
         strain =   -0.005D0 ! for now a small value
         fhe = vftf     ! this is helium fraction in the superconductor (set it to the fixed global variable here)
-  
+
         fcu = fcutfsu ! fcutfsu is a global variable. Is the copper fraction
                        ! of a cable conductor.
-  
-  
-  
+
+
+
         ! This fraction is copied from sctfcoil.f90 10/2019
         select case (i_tf_sc_mat)
-  
+
         case (1)  !  ITER Nb3Sn critical surface parameterization
            bc20m = 32.97D0 ! these are values taken from sctfcoil.f90
            tc0m = 16.06D0
-  
+
            !  jcritsc returned by itersc is the critical current density in the
            !  superconductor - not the whole strand, which contains copper
-           if(bmax>bc20m) then 
+           if(bmax>bc20m) then
               !print *,"bcrit too large!"
               jcritsc = 1.0D-9 ! Set to a small nonzero value
            else
               call itersc(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
            end if
-  
+
            jcritstr = jcritsc * (1.0D0-fcu)
-  
+
            ! This is needed right now. Can we change it later?
            jcritsc = Max(1.0D-9,jcritsc)
            jcritstr = Max(1.0D-9,jcritstr)
   
         case (2)  !  Bi-2212 high temperature superconductor parameterization
-  
+
            !  Current density in a strand of Bi-2212 conductor
            !  N.B. jcrit returned by bi2212 is the critical current density
            !  in the strand, not just the superconducting portion.
            !  The parameterization for jcritstr assumes a particular strand
            !  composition that does not require a user-defined copper fraction,
            !  so this is irrelevant in this model
-  
+
            jstrand = jwp / (1.0D0-fhe)
-  
+
            call bi2212(bmax,jstrand,thelium,fhts,jcritstr,tmarg) ! bi2212 outputs jcritstr
            jcritsc = jcritstr / (1.0D0-fcu)
            tcrit = thelium + tmarg
-  
+
         case (3)  !  NbTi data
            bc20m = 15.0D0
            tc0m = 9.3D0
            c0 = 1.0D10
-           
-           if(bmax>bc20m) then 
+
+           if(bmax>bc20m) then
               !print *,"bcrit too large!"
               jcritsc = 1.0D-9 ! Set to a small nonzero value
            else
@@ -2791,7 +2791,7 @@ contains
               ! I dont need tcrit here so dont use it.
            end if
            jcritstr = jcritsc * (1.0D0-fcu)
-           
+
            ! This is needed right now. Can we change it later?
            jcritsc = Max(1.0D-9,jcritsc)
            jcritstr = Max(1.0D-9,jcritstr)
@@ -2801,17 +2801,17 @@ contains
            tc0m = tcritsc
            call itersc(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
            jcritstr = jcritsc * (1.0D0-fcu)
-  
+
         case (5) ! WST Nb3Sn parameterisation
               bc20m = 32.97D0
               tc0m = 16.06D0
-  
+
               !  jcritsc returned by itersc is the critical current density in the
               !  superconductor - not the whole strand, which contains copper
-  
+
               call wstsc(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
               jcritstr = jcritsc * (1.0D0-fcu)
-  
+
         case (6) ! "REBCO" 2nd generation HTS superconductor in CrCo strand
             call jcrit_rebco(thelium,bmax,jcritsc,validity,0)
             jcritsc = Max(1.0D-9,jcritsc)
@@ -2833,12 +2833,12 @@ contains
 
         case default  !  Error condition
            idiags(1) = i_tf_sc_mat ; call report_error(156)
-  
+
         end select
-  
+
         jcrit_frommaterial = jcritsc *1.0D-6 ! To get it in MA/m^2
         return
-    end function 
+    end function
 
 
 
@@ -2930,9 +2930,9 @@ contains
         !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
         !!
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   
+
          implicit none
-   
+
          !  Arguments
    
          real(dp), intent(in) :: aio, tfes, acs, aturn, tdump, fcond, &
@@ -2940,15 +2940,15 @@ contains
          real(dp), intent(out) :: ajwpro, vd
    
          !  Local variables
-   
+
          integer :: no,np
          real(dp) :: aa,ai1,ai2,ai3,ajcp,bb,cc,dd,tav
          real(dp), dimension(11) :: p1, p2, p3
    
          ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   
+
          !  Integration coefficients p1,p2,p3
-   
+
          p1(1) = 0.0D0
          p1(2) = 0.8D0
          p1(3) = 1.75D0
@@ -2960,7 +2960,7 @@ contains
          p1(9) = 3.3D0
          p1(10) = 3.4D0
          p1(11) = 3.5D0
-   
+
          p2(1) = 0.0D0
          p2(2) = 0.05D0
          p2(3) = 0.5D0
@@ -2972,7 +2972,7 @@ contains
          p2(9) = 5.95D0
          p2(10) = 6.55D0
          p2(11) = 7.1D0
-   
+
          p3(1) = 0.0D0
          p3(2) = 0.05D0
          p3(3) = 0.5D0
@@ -2984,27 +2984,27 @@ contains
          p3(9) = 6.05D0
          p3(10) = 6.8D0
          p3(11) = 7.2D0
-   
+
          !  Dump voltage
          vd = 2.0D0 * tfes/(tdump*aio)
-   
+
          !  Current density limited by temperature rise during quench
          tav = 1.0D0 + (tmax-tba)/20.0D0
          no = int(tav)
          np = no+1
          np = min(np,11)
-   
+
          ai1 = 1.0D16 * ( p1(no)+(p1(np)-p1(no)) * (tav - no) )
          ai2 = 1.0D16 * ( p2(no)+(p2(np)-p2(no)) * (tav - no) )
          ai3 = 1.0D16 * ( p3(no)+(p3(np)-p3(no)) * (tav - no) )
-   
+
          aa = vd * aio/tfes
          bb = (1.0D0-fcond)*fcond*fcu*ai1
          cc = (fcu*fcond)**2 * ai2
          dd = (1.0D0-fcu)*fcu * fcond**2 * ai3
          ajcp = sqrt( aa* (bb+cc+dd) )
          ajwpro = ajcp*(acs/aturn)
-   
+
     end subroutine protect
 
     subroutine intersect(x1,y1,n1,x2,y2,n2,x)
@@ -3148,15 +3148,15 @@ contains
          thwcndut, n_tf_turn, n_tf_turn, vftf, whtcas, whtcon, whtconcu, whtconsc, &
          whtconsh, whttf, wwp1, acstf, avwp, tinstf
       implicit none
-  
+
       !  Arguments
-  
+
       integer, intent(in) :: outfile
-    
+
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+
       call oheadr(outfile,'Modular Coils')
-  
+
       call osubhd(outfile,'General Coil Parameters :')
   
 
@@ -3185,14 +3185,14 @@ contains
       call ovarre(outfile,'Total Stored energy (GJ)','(estotftgj)',estotftgj)
       call ovarre(outfile,'Inductance of TF Coils (H)','(inductance)',inductance)
       call ovarre(outfile,'Total mass of coils (kg)','(whttf)',whttf)
-  
+
       call osubhd(outfile,'Coil Geometry :')
       call ovarre(outfile,'Inboard leg centre radius (m)','(r_tf_inleg_mid)',r_tf_inleg_mid)
       call ovarre(outfile,'Outboard leg centre radius (m)','(r_tf_outboard_mid)',r_tf_outboard_mid)
       call ovarre(outfile,'Maximum inboard edge height (m)','(hmax)',hmax)
       call ovarre(outfile,'Clear horizontal bore (m)','(tf_total_h_width)',tf_total_h_width)
       call ovarre(outfile,'Clear vertical bore (m)','(tfborev)',tfborev)
-  
+
       call osubhd(outfile,'Conductor Information :')
       call ovarre(outfile,'Superconductor mass per coil (kg)','(whtconsc)',whtconsc)
       call ovarre(outfile,'Copper mass per coil (kg)','(whtconcu)',whtconcu)
@@ -3247,15 +3247,15 @@ contains
 
 
       call osubhd(outfile,'External Case Information :')
-  
+
       call ovarre(outfile,'Case thickness, plasma side (m)','(casthi)',casthi)
       call ovarre(outfile,'Case thickness, outer side (m)','(thkcas)',thkcas)
       call ovarre(outfile,'Case toroidal thickness (m)','(casths)',casths)
       call ovarre(outfile,'Case area per coil (m2)','(acasetf)',acasetf)
       call ovarre(outfile,'External case mass per coil (kg)','(whtcas)',whtcas)
-  
+
       call osubhd(outfile,'Available Space for Ports :')
-  
+
       call ovarre(outfile,'Max toroidal size of vertical ports (m)', &
            '(vporttmax)',vporttmax)
       call ovarre(outfile,'Max poloidal size of vertical ports (m)', &
@@ -3268,11 +3268,11 @@ contains
            '(hportpmax)',hportpmax)
       call ovarre(outfile,'Max area of horizontal ports (m2)', &
            '(hportamax)',hportamax)
-  
+
     end subroutine stcoil_output
 
   end subroutine stcoil
 
-  
+
 
 end module stellarator_module

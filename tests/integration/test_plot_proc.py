@@ -1,8 +1,7 @@
 """Integration tests for plot_proc.py."""
-import pytest
-from pathlib import Path
 from process.io import plot_proc
 from shutil import copy
+
 
 def test_input_file(temp_data, mfile_name):
     """Run plot_proc on an input MFILE and check for an output.
@@ -15,9 +14,10 @@ def test_input_file(temp_data, mfile_name):
     mfile = temp_data / mfile_name
     mfile_str = str(mfile)
     plot_proc.main(args=["-f", mfile_str])
-    
+
     # Assert a pdf has been created
     assert len(list(temp_data.glob("*.pdf")))
+
 
 def test_input_file_cwd(temp_data_cwd, mfile_name):
     """Run plot_proc on an MFILE in the cwd.
@@ -29,7 +29,7 @@ def test_input_file_cwd(temp_data_cwd, mfile_name):
     """
     # Copy the mfile to its default name
     copy(temp_data_cwd / mfile_name, temp_data_cwd / "MFILE.DAT")
-    
+
     # Run plot_proc with no args, which will look for the default-named mfile
     plot_proc.main(args=[])
 

@@ -4,6 +4,7 @@ from process.fortran import physics_variables as pv
 import pytest
 from pytest import approx
 
+
 def t_eped_scaling_param(**kwargs):
     """Make parameters for a single t_eped_scaling() test.
 
@@ -12,38 +13,47 @@ def t_eped_scaling_param(**kwargs):
     """
     # Default parameters
     defaults = {
-        'triang': 0.4,
-        'kappa': 1.5,
-        'rmajor': 7.0,
-        'rminor': 2.0,
-        'plascur': 10e6,
-        'normalised_total_beta': 2.0,
-        'eped_sf': 1.0,
-        'expected': approx( 1.7134, abs=0.001)
+        "triang": 0.4,
+        "kappa": 1.5,
+        "rmajor": 7.0,
+        "rminor": 2.0,
+        "plascur": 10e6,
+        "normalised_total_beta": 2.0,
+        "eped_sf": 1.0,
+        "expected": approx(1.7134, abs=0.001),
     }
 
     # Merge default dict with any optional keyword arguments to override values
     param = {**defaults, **kwargs}
     return param
 
+
 def t_eped_scaling_params():
     """Create a list of parameter dicts for the calc_u_planned fixture.
-    
+
     Case 1: low
     Case 2: high
-    
+
     :return: List of parameter dicts
     :rtype: list
     """
-    params = [t_eped_scaling_param(),
-        t_eped_scaling_param(triang=0.6, kappa=2, rmajor=11.0, rminor=3.5,
-        plascur=20e6, normalised_total_beta=3.0, expected=approx(5.3955, 
-        abs=0.001))
-        ]
+    params = [
+        t_eped_scaling_param(),
+        t_eped_scaling_param(
+            triang=0.6,
+            kappa=2,
+            rmajor=11.0,
+            rminor=3.5,
+            plascur=20e6,
+            normalised_total_beta=3.0,
+            expected=approx(5.3955, abs=0.001),
+        ),
+    ]
 
     return params
 
-@pytest.fixture(params=t_eped_scaling_params(), ids=['low', 'high'])
+
+@pytest.fixture(params=t_eped_scaling_params(), ids=["low", "high"])
 def t_eped_scaling_fix(request, monkeypatch):
     """Fixture for the t_eped_scaling() variables.
 
@@ -58,16 +68,17 @@ def t_eped_scaling_fix(request, monkeypatch):
 
     # Mock variables used by t_eped_scaling()
     # Some may be parameterised
-    monkeypatch.setattr(pv, 'triang', param['triang'])
-    monkeypatch.setattr(pv, 'kappa', param['kappa'])
-    monkeypatch.setattr(pv, 'rmajor', param['rmajor'])
-    monkeypatch.setattr(pv, 'rminor', param['rminor'])
-    monkeypatch.setattr(pv, 'plascur', param['plascur'])
-    monkeypatch.setattr(pv, 'normalised_total_beta', param['normalised_total_beta'])
-    monkeypatch.setattr(pv, 'eped_sf', param['eped_sf'])
+    monkeypatch.setattr(pv, "triang", param["triang"])
+    monkeypatch.setattr(pv, "kappa", param["kappa"])
+    monkeypatch.setattr(pv, "rmajor", param["rmajor"])
+    monkeypatch.setattr(pv, "rminor", param["rminor"])
+    monkeypatch.setattr(pv, "plascur", param["plascur"])
+    monkeypatch.setattr(pv, "normalised_total_beta", param["normalised_total_beta"])
+    monkeypatch.setattr(pv, "eped_sf", param["eped_sf"])
 
     # Return the expected result for the given parameter list
-    return param['expected']
+    return param["expected"]
+
 
 def test_t_eped_scaling(t_eped_scaling_fix):
     """Test t_eped_scaling.
@@ -80,6 +91,7 @@ def test_t_eped_scaling(t_eped_scaling_fix):
     result = pf.t_eped_scaling()
     assert result == t_eped_scaling_fix
 
+
 def test_plasma_elongation_ipb(monkeypatch):
     """Test plasma_elongation_IPB().
     :param monkeypatch: Mock fixture
@@ -90,6 +102,7 @@ def test_plasma_elongation_ipb(monkeypatch):
     monkeypatch.setattr(pv, "vol", 2634.0)
     kappaa_ipb = pf.plasma_elongation_ipb()
     assert kappaa_ipb == approx(1.682, abs=0.001)
+
 
 def test_total_mag_field(monkeypatch):
     """Test total_mag_field().
@@ -102,6 +115,7 @@ def test_total_mag_field(monkeypatch):
     btot = pf.total_mag_field()
     assert btot == approx(5.347, abs=0.001)
 
+
 def test_beta_poloidal(monkeypatch):
     """Test beta_poloidal().
 
@@ -113,6 +127,7 @@ def test_beta_poloidal(monkeypatch):
     monkeypatch.setattr(pv, "bp", 0.852)
     betap = pf.beta_poloidal()
     assert betap == approx(1.209, abs=0.001)
+
 
 def test_res_diff_time(monkeypatch):
     """Test res_diff_time().

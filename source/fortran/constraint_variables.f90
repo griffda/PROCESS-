@@ -168,6 +168,10 @@ module constraint_variables
   !! f-value for maxiumum TF coil conduit Tresca yield criterion
   !! (`constraint equation 32`, `iteration variable 49`)
 
+  real(dp) :: fstr_wp
+  !! f-value for maxiumum TF coil strain absolute value
+  !! (`constraint equation 88`, `iteration variable 165`)
+
   real(dp) :: ftaucq
   !! f-value for calculated minimum TF quench time
   !! (`constraint equation 65`, `iteration variable 113`)
@@ -349,6 +353,7 @@ module constraint_variables
     frminor = 1.0D0
     fstrcase = 1.0D0
     fstrcond = 1.0D0
+    fstr_wp = 1.0D0
     ftaucq = 1.0D0
     ftbr = 1.0D0
     ftburn = 1.0D0

@@ -30,7 +30,6 @@ subroutine init_all_module_vars
   use heat_transport_variables, only: init_heat_transport_variables
   use ife_variables, only: init_ife_variables
   use impurity_radiation_module, only: init_impurity_radiation_module
-  use build_module, only: init_build_module
   use vmcon_module, only: init_vmcon_module
   use pfcoil_module, only: init_pfcoil_module
   use physics_module, only: init_physics_module
@@ -88,7 +87,6 @@ subroutine init_all_module_vars
   call init_heat_transport_variables
   call init_ife_variables
   call init_impurity_radiation_module
-  call init_build_module
   call init_vmcon_module
   call init_pfcoil_module
   call init_physics_module
@@ -149,8 +147,8 @@ subroutine init
   use global_variables, only: verbose, fileprefix, output_prefix
   use main_module, only: run_summary
   use constants, only: opt_file, vfile, nout, nplot, mfile, sig_file
-  use error_handling, only: initialise_error_list 
-  use impurity_radiation_module, only: initialise_imprad 
+  use error_handling, only: initialise_error_list
+  use impurity_radiation_module, only: initialise_imprad
   use numerics, only: ixc , lablxc, nvar
   use process_input, only: nin, input
   use stellarator_module, only: stinit
@@ -164,7 +162,7 @@ subroutine init
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !  Initialise error handling
-  
+
   call initialise_error_list
 
   !  Initialise the program variables
@@ -214,9 +212,9 @@ subroutine init
 end subroutine init
 
 subroutine finish
-  ! Originally at the end of the "program", this subroutine writes some final 
-  ! lines via the output module and then closes any open files. This is 
-  ! currently called from Python, and will be removed once file handling is 
+  ! Originally at the end of the "program", this subroutine writes some final
+  ! lines via the output module and then closes any open files. This is
+  ! currently called from Python, and will be removed once file handling is
   ! completely dealt with in Python
   ! # TODO Move this output and file handling to Python
 

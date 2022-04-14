@@ -6,8 +6,8 @@ subroutine trmodel(i_modeltype,nx,nxt, nchan, & !input
   SHIF,ELON,TRIA,VPOL,VTOR,ER,NIBM,IPOL,G11,VRS,GRADRO, &  ! input
   SHEAR,PBLON,PBPER,PFAST,NIZ3,ZIM2,ZIM3, & ! input
   y0, gy0, xtr,x, amin, rmajor, btor,capA, q_tr, sh_tr, &! input
-  a, b, & 
-  Hfactor,chi00,chipow,Hnow,chifac,npikpalmod,xihepalmod) 
+  a, b, &
+  Hfactor,chi00,chipow,Hnow,chifac,npikpalmod,xihepalmod)
 
   use grad_func
   implicit none
@@ -20,12 +20,12 @@ subroutine trmodel(i_modeltype,nx,nxt, nchan, & !input
   real(kind(1.0d0)), intent(in) :: npikpalmod,xihepalmod
   real(kind(1.0d0)), dimension(nxt), intent(in) :: xtr, q_tr, sh_tr
   real(kind(1.0d0)), dimension(nxt, nchan), intent(out) :: a, b
-  real(kind(1.0d0)), dimension(nx), intent(in) :: VR, & 
+  real(kind(1.0d0)), dimension(nx), intent(in) :: VR, &
   & NE,TE,NI,NDEUT,NIZ1,TI,ZEF,ZIM1,AMAIN,MU,RHO,AMETR, &
-  & SHIF,ELON,TRIA,VPOL,VTOR,ER,NIBM,IPOL,G11,VRS,GRADRO, & 
+  & SHIF,ELON,TRIA,VPOL,VTOR,ER,NIBM,IPOL,G11,VRS,GRADRO, &
   & SHEAR,PBLON,PBPER,PFAST,NIZ3,ZIM2,ZIM3,x
   real(kind(1.0d0)), dimension(nxt, nchan), intent(in) :: gy0, y0
-  
+
   !  Local variables
   integer :: IS,IE,NA1,NA1N,NA1E,NA1I,j,jmin
   real(kind(1.0d0)) :: TIME, &
@@ -68,10 +68,10 @@ subroutine trmodel(i_modeltype,nx,nxt, nchan, & !input
 		Vn = -Dn/rmajor * (0.25d0*rlx(:,2)+0.5) * sqrt(xtr/amin)
  !particle V
 	else
-		Vn = -Dn/rmajor * npikpalmod * & 
+		Vn = -Dn/rmajor * npikpalmod * &
 		& sqrt(xtr/amin)/sqrt(xtr(nint((0.0001+nxt)/2.))/amin)
 	endif
-	
+
 !transfer
      a(:,1)=chifac*Dn
      a(:,2)=chifac*chie
@@ -96,7 +96,7 @@ subroutine trmodel(i_modeltype,nx,nxt, nchan, & !input
 !stop 1
 	cgbohm=3.236*y0(:,2)**(1.5d0)*sqrt(AMJ)/(btor**2.*rmajor)
 
-     chie = 0.01d0 + 0.25d0*cgbohm*(3.13+(xtr/amin)**0.3d0)*(rlx(:,2)/10.d0)**1.d0*q_tr**1. 
+     chie = 0.01d0 + 0.25d0*cgbohm*(3.13+(xtr/amin)**0.3d0)*(rlx(:,2)/10.d0)**1.d0*q_tr**1.
 !	write(*,*) chie
      chii = 2.*chie
      Dn = 0.5d0 * (chii+chie) * 0.8d0
@@ -125,7 +125,7 @@ subroutine trmodel(i_modeltype,nx,nxt, nchan, & !input
 !stop 1
 	cgbohm=3.236*y0(:,2)**(1.5d0)*sqrt(AMJ)/(btor**2.*rmajor)
 
-     chie = 0.01d0 + 1.05d0*cgbohm*(0.03+(xtr/amin)**0.3d0)*(max(0.d0,rlx(:,2)-7.d0))**4.d0*q_tr**2. 
+     chie = 0.01d0 + 1.05d0*cgbohm*(0.03+(xtr/amin)**0.3d0)*(max(0.d0,rlx(:,2)-7.d0))**4.d0*q_tr**2.
 !	write(*,*) chie
      chii = 2.*chie
      Dn = 0.5d0 * (chii+chie) * 0.8d0

@@ -2,13 +2,13 @@
 # Author: Timothy Nunn
 # Date: 2021-11-09
 
-# Note: CMake verbatim commands insert quotes inappropriately meaning 
-# the preprocessor directives must (annoyingly) be inserted directly inside 
+# Note: CMake verbatim commands insert quotes inappropriately meaning
+# the preprocessor directives must (annoyingly) be inserted directly inside
 # of the command
 
 # Note: when adding new preprocessor directives, you are responsible
 # for adding in appropriate ' marks for non-integer/float variables
-# e.g. -Dfoo=some string of text 
+# e.g. -Dfoo=some string of text
 # will not work and must be -Dfoo="'some string of text'"
 # where the "" are for CMake to identify this as a string
 # and the '' are then directly inserted into the fortran along
@@ -44,5 +44,5 @@ MACRO(PREPROCESS)
             DEPENDS ${source} # rerun preprocessing when the source file changes
         )
     ENDFOREACH()
-    
+
 ENDMACRO(PREPROCESS)

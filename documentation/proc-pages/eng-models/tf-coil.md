@@ -1,14 +1,14 @@
 # Toroidal field coils
 
 <p style='text-align: justify;'>
-This section presents the <em>PROCESS</em> TF coil models and how to use them. The associated  module computes first the coil current from the specified plasma major radius and toroidal magnet field. The exact inboard leg mid-plane cross section geometry is then set up to the conductor level. The vertical geometry is defined and the TF components masses are deduced. The inboard mid-plane stress distributions, the coil inductance and the ripple are then estimated. Finally, the resistive heating (if resistive coil) and the ratio between the critical current density and the conductor current density (superconducting coil) is estimated. 
+This section presents the <em>PROCESS</em> TF coil models and how to use them. The associated  module computes first the coil current from the specified plasma major radius and toroidal magnet field. The exact inboard leg mid-plane cross section geometry is then set up to the conductor level. The vertical geometry is defined and the TF components masses are deduced. The inboard mid-plane stress distributions, the coil inductance and the ripple are then estimated. Finally, the resistive heating (if resistive coil) and the ratio between the critical current density and the conductor current density (superconducting coil) is estimated.
 </p>
 
 <p style='text-align: justify;'>
-Two major types of toroidal field (TF) coils can be considered in PROCESS: Resistive magnets or Superconducting magnets. The conductor and its support geometry strongly differs between these two options and will be described separately in the next section. The choice of conductor type is made using the following integer switch:</p> 
+Two major types of toroidal field (TF) coils can be considered in PROCESS: Resistive magnets or Superconducting magnets. The conductor and its support geometry strongly differs between these two options and will be described separately in the next section. The choice of conductor type is made using the following integer switch:</p>
 
 - `i_tf_sup == 0` : Resistive copper (GLIDCOP) magnets with active water
-  cooling. 
+  cooling.
 - `i_tf_sup == 1` : Superconducting magnets with active Helium cooling (4.75 K inlet Helium).
 - `i_tf_sup == 2` : Resistive aluminium (high purity) magnet with active Helium cooling at at low temperature (15-30 K inlet helium).
 
@@ -49,11 +49,11 @@ The TF coils are assumed to be supporting each other against the net TF coils ce
 
 <figure>
     <center>
-    <img src="../../images/tfcoil_SC_inboard_structure.png" alt="SC_mid_plane_cross_section" 
-    title="Inboard mid-plane superconducting TF coil cross-section" 
+    <img src="../../images/tfcoil_SC_inboard_structure.png" alt="SC_mid_plane_cross_section"
+    title="Inboard mid-plane superconducting TF coil cross-section"
     width="800" height="200" />
     <br>
-    <figcaption><i><p style='text-align: justify;'> 
+    <figcaption><i><p style='text-align: justify;'>
       Figure 1: Inboard mid-plane cross-section of the superconducting TF coils considered in PROCESS with associated parametrization. The green variables are calculated by the machine_build module subroutine while the blue ones are specific to the sctfcoil module. The light grey area corresponds to the steel casing containing the Winding pack and providing structural support. The dark grey area corresponds to the winding pack insertion gap, and its ground insulation. Finally the light blue area corresponds to the winding pack containing the conductor cables. More details on the parametrization is discussed in this section.</p>
     </i></figcaption>
     <br>
@@ -62,44 +62,44 @@ The TF coils are assumed to be supporting each other against the net TF coils ce
 
 #### TF coil inboard radial size
 
-<p style='text-align: justify;'> 
+<p style='text-align: justify;'>
   Following the geometry and its parametrization presented in <em>Figure 1</em>, the TF total thickness <em>tfcth</em> \( \left( \Delta R_\mathrm{TF} \right) \) is related with the inner and outer case radial thicknesses (<em>thkcas</em>, \(  \Delta R_\mathrm{case}^\mathrm{in} \) and <em>casthi</em>, \( \Delta R_\mathrm{case}^\mathrm{out} \) respectively) and the WP radial thickness <em>dr_tf_wp</em> \(\Delta R_\mathrm{WP}\) by the fooling equation :
 </p>
 
-$$ 
+$$
 \Delta R_\mathrm{TF} = \frac{R_\mathrm{TF}^\mathrm{in} + \Delta R_\mathrm{WP} + \Delta R_\mathrm{case}^\mathrm{out} + \Delta R_\mathrm{case}^\mathrm{in} }{\cos\left(\frac{\pi}{N_\mathrm{TF}}\right)} - R_\mathrm{TF}^\mathrm{in}
 $$
 
-<p style='text-align: justify;'> 
+<p style='text-align: justify;'>
   with \( R_\mathrm{TF}^\mathrm{in} \) (<em>r_tf_inboard_in</em>) the radius of the innermost TF edge, set by the central  solenoid coil size and \( N_\mathrm{TF} \) the number of TF coils. Reverted, to provide the WP thickness, the same equation simply becomes:
 </p>
 
-$$  
+$$
 \Delta R_\mathrm{WP} = \cos\left(\frac{\pi}{N_\mathrm{TF}}\right) \left( R_\mathrm{TF}^\mathrm{in} + \Delta R_\mathrm{TF} \right) - R_\mathrm{TF}^\mathrm{in} - \Delta R_\mathrm{case}^\mathrm{out} - \Delta R_\mathrm{case}^\mathrm{in}
 $$
 
-<p style='text-align: justify;'> 
+<p style='text-align: justify;'>
   The TF coil radial thickness (<em>tfcth</em>) can parametrized in two ways in <em>PROCESS</em>:
 </p>
-- <p style='text-align: justify;'> 
+- <p style='text-align: justify;'>
     **Direct parametrization**: the TF radial inboard thickness width is set as an input variable : `tfcth` (iteration variable 57). The WP radial thickness (`dr_tf_wp`) is calculated from `tfcth` and the two case radial thicknesses. This parametrization is used by default.
   </p>
-- <p style='text-align: justify;'> 
+- <p style='text-align: justify;'>
     **WP thickness parametrization**: the TF inboard radial thickness is calculated from the the case and the WP radial thickness. This option is selected by using the WP thickness (`dr_tf_wp`, iteration variable 140) as an iteration variable. Doing so, any `tfcth` values will be overwritten and for this reason `dr_tf_wp` and `tfcth` cannot be used as iteration variables simultaneously. Although not set by default for backward compatibility, this parametrization provides a more stable optimization procedure (negative WP area layer cannot be obtained by construction) and his hence encouraged.
   </p>
 
 #### Case geometry
 
-<p style='text-align: justify;'> 
-  Although not physically divided into pieces, three section of the case can be considered: 
+<p style='text-align: justify;'>
+  Although not physically divided into pieces, three section of the case can be considered:
 </p>
-- <p style='text-align: justify;'> 
+- <p style='text-align: justify;'>
     **The nose casing:** this section corresponds to the case separating the WP with the machine center. Due to the presence of net electromechanical centering forces, this case has a major structural purpose and is often much larger than the other sides. The nose case dimension is set by its radial thickness that the user can specify using the `thkcas`  input variable (iteration variable 57).
   </p>
-- <p style='text-align: justify;'> 
+- <p style='text-align: justify;'>
     **Sidewall casing:** this section corresponds to the lateral side of the case, separating the WP with the other vaulted coils. As in the WP geometry is generally squared, the sidewall case thickness may vary with the machine radius. For this reason, the user sets its dimensions though its minimal thickness `casths`. The user can either directly specify `casths` or define it as a fraction of the total coil thickness at the inner radius of the WP (`r_wp_inner`) with the `casths_fraction` input. If `casths_fraction` is set in the input file, the `casths` value will be overwritten.
   </p>
-- <p style='text-align: justify;'> 
+- <p style='text-align: justify;'>
     **Plasma side casing:** this section corresponds to the case section separating the WP with the plasma. As the geometry of this section is rounded, its thickness is set by its minimal value `casthi` (user input). This parameter can also be defined as a fraction of the total TF coil thickness `tfcth` using `casthi_fraction`. If the `casthi_fraction` parametrization is used, the `casthi` value will be overwritten.
   </p>
 
@@ -116,11 +116,11 @@ Two different plasma side casing shapes can be selected using the `i_tf_case_geo
 
 <figure>
     <center>
-    <img src="../../images/tfcoil_SC_plasma_case_option.png" alt="plasma side case geometry options" 
-    title="plasma side case geometry options" 
+    <img src="../../images/tfcoil_SC_plasma_case_option.png" alt="plasma side case geometry options"
+    title="plasma side case geometry options"
     width="500" height="100" />
     <br>
-    <figcaption><i><p style='text-align: justify;'> 
+    <figcaption><i><p style='text-align: justify;'>
       Figure 2: Visual illustration of the two i_tf_case_geom front casing geometry option. The to diagram shows the default i_tf_case_geom = 0 rounded option and the bottom the i_tf_case_geom = 1 straight option.</p>
     </i></figcaption>
     <br>
@@ -129,7 +129,7 @@ Two different plasma side casing shapes can be selected using the `i_tf_case_geo
 
 #### Winding pack geometry
 
-Several Winding pack geometries can chosen with the `i_tf_wp_geom` integer switch as shown in Figure 3: 
+Several Winding pack geometries can chosen with the `i_tf_wp_geom` integer switch as shown in Figure 3:
 
 - <p style='text-align: justify;'>
     `i_tf_wp_geom = 0` : Rectangular winding pack. It is the only geometry compatible with the integer turn parametrization (`i_tf_turns_integer = 1`).
@@ -137,7 +137,7 @@ Several Winding pack geometries can chosen with the `i_tf_wp_geom` integer switc
 - <p style='text-align: justify;'>
     `i_tf_wp_geom = 1` : Double rectangle winding pack. The two rectangles are have the same radial thickness and their width in the toroidal direction is defined with the minimal sidewall thickness at their innermost radius.
   </p>
-- <p style='text-align: justify;'> 
+- <p style='text-align: justify;'>
     `i_tf_wp_geom = 2` : Trapezoidal WP. The WP area is defined with a trapezoid, keeping the sidewall case thickness constant. This is however probably not a realistic shape as the turns are generally rectangular. This option has been added mostly to allow comparison with simplified FEA analysis configurations.
   </p>
 
@@ -148,7 +148,7 @@ Several Winding pack geometries can chosen with the `i_tf_wp_geom` integer switc
     width="650"
     height="100"/>
     <br><br>
-    <figcaption><i><p style='text-align: justify;'> 
+    <figcaption><i><p style='text-align: justify;'>
       Figure 3: Visual illustration of the WP shapes the user can select with the i_tf_wp_geom integer switch. The wwp1 and wwp2 parameters, added in option i_tf_wp_geom = 1 are calculated using the minimal sidewall case thickness.
     </p></i></figcaption>
     <br>
@@ -164,13 +164,13 @@ Several Winding pack geometries can chosen with the `i_tf_wp_geom` integer switc
 
 <figure>
     <center>
-    <img src="../../images/tfcoil_SC_turn.png" alt="SC turn geometry" 
+    <img src="../../images/tfcoil_SC_turn.png" alt="SC turn geometry"
     title="Superconducting turn geometry"
     width="650"
     height="100"/>
     <br><br>
-    <figcaption><i><p style='text-align: justify;'> 
-      Figure 4: Illustration of the winding pack internal structure. The top 
+    <figcaption><i><p style='text-align: justify;'>
+      Figure 4: Illustration of the winding pack internal structure. The top
       right diagram shows the inboard mid-plane cross section of a TF coil with
       the seel case in light grey and the winding pack in light blue. Each dotted
       line squares winding pack region illustrate the presence of rectangular
@@ -185,7 +185,7 @@ Several Winding pack geometries can chosen with the `i_tf_wp_geom` integer switc
     </center>
 </figure>
 
-The winding pack is assumed to be made of \(N_\mathrm{turn} \) (`n_tf_turn`) 
+The winding pack is assumed to be made of \(N_\mathrm{turn} \) (`n_tf_turn`)
 turns. The number of turns can be parametrized in three different ways :
 
 - <p style='text-align: justify;'>
@@ -197,7 +197,7 @@ turns. The number of turns can be parametrized in three different ways :
     integer number of turn is used with this parametrization. If the turn
     thickness `t_turn_tf` or the cable thickness `t_cable_tf` is defined by
     the user, this parametrization is not selected.
-  </p> 
+  </p>
 - <p style='text-align: justify;'>
     **Turn size parametrization:** the dimension of the turn `t_turn_tf` can be
     set by the user. To do so, the user just have to select the following option:
@@ -218,8 +218,8 @@ turns. The number of turns can be parametrized in three different ways :
     realistic turn configuration (with all the turn geometrically fitting in the
     allocated space) or even have an integer number of turns is used with this
     parametrization. The current per turn `cpttf` will be overwitten.
-  </p> 
-- <p style='text-align: justify;'> 
+  </p>
+- <p style='text-align: justify;'>
     **Integer turn parametrization:** `i_tf_turns_integer = 1` the user sets the
     number of turn layer in the radial (`n_layer`) and in the toroidal direction
     (`n_pancake`). Using this parametrization an integer number of turns is
@@ -229,11 +229,11 @@ turns. The number of turns can be parametrized in three different ways :
     direction. Only a rectangular WP can be used for this parametrization.
   </p>
 
-<p style='text-align: justify;'>  
+<p style='text-align: justify;'>
   The turn internal structure, illustrated in <em>Figure 4</em>, is inspired
   from the cable-in-conduit-conductor (CICC) design, with the main different
   being that a rounded squared cable space is used (grey area in <em>Figure 4
-  </em>). The rounding curve radius is take as 0.75 of the steel conduit 
+  </em>). The rounding curve radius is take as 0.75 of the steel conduit
   thickness. The turn geometry is set with with the following thicknesses:
 </p>
 - <p style='text-align: justify;'>
@@ -246,25 +246,25 @@ turns. The number of turns can be parametrized in three different ways :
     for the TF coil structural properties it is also an iteration variable.
   </p>
 - <p style='text-align: justify;'>
-    **Helium cooling channel diameter `dhecoil`:** user input defining the 
+    **Helium cooling channel diameter `dhecoil`:** user input defining the
     size of the cooling channel.
   </p>
 
 
 #### Cable composition
 <p style='text-align: justify;'>
-  As illustrated in <em>Figure 5</em> showing a picture of the <em>ITER</em> 
+  As illustrated in <em>Figure 5</em> showing a picture of the <em>ITER</em>
   TF conductor, the actual conductor cable structure can be relatively complex.
 </p>
 
 <figure>
     <center>
-    <img src="../../images/iter_fusion_tf_conductor.jpg" alt="SC turn geometry" 
+    <img src="../../images/iter_fusion_tf_conductor.jpg" alt="SC turn geometry"
     title="Superconducting turn geometry"
     width="500"
     height="100"/>
     <br><br>
-    <figcaption><i><p style='text-align: justify;'> 
+    <figcaption><i><p style='text-align: justify;'>
       Figure 5: Picture if the ITER cable-in-conduit-conductor (CICC) cable design
       with a helium cooling channel at its center covered with a mixture of
       copper and NB\(_3\)Sn strands. Space remain between strands.
@@ -285,7 +285,7 @@ turns. The number of turns can be parametrized in three different ways :
     in the conductor space. This fraction does not include the Helium cooling
     pipe at the cable center.
   </p>
-- <p style='text-align: justify;'> 
+- <p style='text-align: justify;'>
     **Copper fraction (`fcutfsu`):** user input setting the copper fraction.
     This fraction is applied after the void and helium cooling channels areas
     has been removed from the conductor area.
@@ -308,12 +308,12 @@ turns. The number of turns can be parametrized in three different ways :
     variable 57) is present to support electromechanical the centering forces.
     Its presence is however not mandatory and can be can be removed setting
   </p>
-- <p style='text-align: justify;'> 
+- <p style='text-align: justify;'>
     **The conductor area:** parametrized with its thickness `dr_tf_wp` (iteration
     variable 140) containing the conductor turns. Ground insulation, corresponding
     to the dark grey area in *Figure 6* is included in this section by convention.
   </p>
-- <p style='text-align: justify;'> 
+- <p style='text-align: justify;'>
     **The outer cylinder:** parametrized with its thickness `casthi` providing
     support for the conductor structure. This cylinder does however not help
     with the TF electromechanical centering/vertical forces.
@@ -321,8 +321,8 @@ turns. The number of turns can be parametrized in three different ways :
 
 <figure>
     <center>
-    <img src="../../images/tfcoil_res_inboard_geom.png" alt="Res_geom" 
-    title="Schematic diagram of TART tokamak TF coil" 
+    <img src="../../images/tfcoil_res_inboard_geom.png" alt="Res_geom"
+    title="Schematic diagram of TART tokamak TF coil"
     width="650" height="100" />
     <br><br>
     <figcaption><i>
@@ -330,7 +330,7 @@ turns. The number of turns can be parametrized in three different ways :
         Figure 6: Resistive TF coil inboard leg structure at mid-plane. The
         disjoint steel case (no lateral case) are shown in light grey. The
         ground insulation wrapping the turns is shown in grey and the conductor
-        region containing the turns in light blue. The dotted blue illustrate 
+        region containing the turns in light blue. The dotted blue illustrate
         the location of the 6 coils turn.
       </p>
     </i></figcaption>
@@ -350,8 +350,8 @@ turns. The number of turns can be parametrized in three different ways :
 
 <figure>
     <center>
-    <img src="../../images/tfcoil_res_turn.png" alt="Res_geom" 
-    title="Schematic diagram of TART tokamak TF coil" 
+    <img src="../../images/tfcoil_res_turn.png" alt="Res_geom"
+    title="Schematic diagram of TART tokamak TF coil"
     width="650" height="100" />
     <br><br>
     <figcaption><i>
@@ -370,14 +370,14 @@ turns. The number of turns can be parametrized in three different ways :
 
 ### Coil shape
 
-Two vertical shapes can be selected for the coil designs using the `i_tf_shape` 
+Two vertical shapes can be selected for the coil designs using the `i_tf_shape`
 integer switch:
 
 - <p style='text-align: justify;'>
     **D-shape (`i_tf_shape = 1`):** simplified D-shape parametrization defined
     in the (R,Z) plane by a straight section and four elliptical arcs. The
     corresponding shape is not exactly the constant tension Princeton D but, but
-    it is not so critical as the shape is mostly used to provide the coil 
+    it is not so critical as the shape is mostly used to provide the coil
     circumference and illustration purposes in the current version of the
     *PROCESS* code. This shape is considered by default for conventional aspect
     ratio tokamaks (`itart = 0`).
@@ -415,13 +415,13 @@ integer switch:
 
 <figure>
     <center>
-    <img src="../../images/ST_geom.png" alt="tok_tfcoil" 
-    title="Schematic diagram of TART tokamak TF coil" 
+    <img src="../../images/ST_geom.png" alt="tok_tfcoil"
+    title="Schematic diagram of TART tokamak TF coil"
     width="600" height="100" />
     <br><br>
     <figcaption><i>
       <p style='text-align: justify;'>
-        Figure 8: Mid-plane toroidal (left) and vertical (right) 
+        Figure 8: Mid-plane toroidal (left) and vertical (right)
         cross-section of a magnet using the itart == 1 geometry option. The toroidal
         cross-section (left) shows the presence of vaulted turn geometry with a
         bucking cylinder ( that is not present by default for copper magnets) with
@@ -453,7 +453,7 @@ different ways:
 - <p style='text-align: justify;'>
     **Mid/top TF radius ratio (`i_r_cp_top = 2`):** `r_cp_top` is set as a ratio
     of the inboard mid-plane with the user input `f_r_cp`, defined as \( \frac{
-    R_\mathrm{TF}^\mathrm{top} }{R_\mathrm{TF}^\mathrm{out}} \). If the 
+    R_\mathrm{TF}^\mathrm{top} }{R_\mathrm{TF}^\mathrm{out}} \). If the
     resulting `r_cp_top` gets incompatible with the X-point position, a lvl error
     is also raised at the end of the *PROCESS* run. This parametrization allows
     consistent parametrization when varying the machine size.
@@ -463,7 +463,7 @@ different ways:
   The resistive heating, cooling, material masses are calculated taking the
   flaring into account, parametrized with an arc. The cooling cross-section
   is the same as the mid-plane one, making the cooling fraction fraction smaller
-  at the top where less resistive heating is expected (larger conductor section). 
+  at the top where less resistive heating is expected (larger conductor section).
 </p>
 
 ### TF coil joins
@@ -509,7 +509,7 @@ different ways:
   The <em>PROCESS</em> TF coil module only considers the inboard mid-plane stress
   constraint. Although it is the most stringent design constraint for the
   machine build, out-of-plane stress, local bending stresses due to the coil
-  shaping, ripple and inter-coil structure effects remains to be evaluated after  
+  shaping, ripple and inter-coil structure effects remains to be evaluated after
   a <em>PROCESS</em> run. Inboard mid-plane stress limits can be introduced
   using the following constraints equations:
 </p>
@@ -540,7 +540,7 @@ different ways:
   component of its current induces an identical and opposite vertical force
   \( F_\mathrm{z}\) on the upper and lower sections of the TF coils. If
   axisymmetry is assumed, this force only depends on the coil current
-  \( \left( \frac{I_\mathrm{TF}^\mathrm{tot}}{N_\mathrm{TF}} \right) \)  
+  \( \left( \frac{I_\mathrm{TF}^\mathrm{tot}}{N_\mathrm{TF}} \right) \)
   and its radial build. If we parametrize the conductor layer radial build
   with its in/outboard (\(R_\mathrm{in}\)/\(R_\mathrm{out}\) )  radii and
   its thickness (\(\Delta R_\mathrm{cond} \)), the vertical force is given by:
@@ -548,8 +548,8 @@ different ways:
 
 $$
 \begin{align}\label{eq: vforce}
-	F_\mathrm{z} = \frac{ I_\mathrm{TF}^\mathrm{tot} }{N_\mathrm{TF}} 
-   \frac{B_\mathrm{T} R_\mathrm{maj}}{2 {\Delta R_\mathrm{cond}}^2}  
+	F_\mathrm{z} = \frac{ I_\mathrm{TF}^\mathrm{tot} }{N_\mathrm{TF}}
+   \frac{B_\mathrm{T} R_\mathrm{maj}}{2 {\Delta R_\mathrm{cond}}^2}
     & \left[{R_\mathrm{out}}^2 \ln\left( \frac{R_\mathrm{out} + \Delta R_\mathrm{cond}}{R_\mathrm{out}} \right)  + {R_\mathrm{in}}^2 \ln\left( \frac{R_\mathrm{in} }{R_\mathrm{out} - \Delta R_\mathrm{cond}} \right) \right.  \\
 	& \qquad \left. {} + {\Delta R_\mathrm{cond}}^2 \ln\left( \frac{R_\mathrm{out} + \Delta R_\mathrm{cond} }{R_\mathrm{in} - \Delta R_\mathrm{cond}} \right)  - \Delta R_\mathrm{cond}\left( R_\mathrm{in} + R_\mathrm{out} \right)   \right.\nonumber \\
 	& \qquad \left. {} + 2\Delta R_\mathrm{cond} \left\{ R_\mathrm{in}\ln\left(\frac{R_\mathrm{in}-\Delta R_\mathrm{cond}}{R_\mathrm{in}} \right) + R_\mathrm{out}\ln\left(\frac{R_\mathrm{out}+ \Delta R_\mathrm{cond}}{R_\mathrm{out}}  \right)   \right\}  \right] \nonumber
@@ -594,9 +594,9 @@ $$
 
 $$
 \begin{align}
-	T_\mathrm{z}^\mathrm{in} = \frac{1}{2} \frac{B_\text{max}R_{B_\mathrm{max}} I_\mathrm{tot}}{N_\mathrm{TF} {\Delta R_\mathrm{cond}}^2} &\left[ 
-	{R_\mathrm{in}}^2 \ln\left( \frac{R_\mathrm{in}}{R_\mathrm{in}-\Delta R_\mathrm{cond}} \right) + {\Delta R_\mathrm{cond}}^2 \ln\left( \frac{ R_\mathrm{joint} }{ R_\mathrm{in}-\Delta R_\mathrm{cond}} \right) \right. \\	
-	& \qquad \left. {} + \frac{2}{3} {\Delta R_\mathrm{cond}}^2  +  R_\mathrm{in} \Delta R_\mathrm{cond} 
+	T_\mathrm{z}^\mathrm{in} = \frac{1}{2} \frac{B_\text{max}R_{B_\mathrm{max}} I_\mathrm{tot}}{N_\mathrm{TF} {\Delta R_\mathrm{cond}}^2} &\left[
+	{R_\mathrm{in}}^2 \ln\left( \frac{R_\mathrm{in}}{R_\mathrm{in}-\Delta R_\mathrm{cond}} \right) + {\Delta R_\mathrm{cond}}^2 \ln\left( \frac{ R_\mathrm{joint} }{ R_\mathrm{in}-\Delta R_\mathrm{cond}} \right) \right. \\
+	& \qquad \left. {} + \frac{2}{3} {\Delta R_\mathrm{cond}}^2  +  R_\mathrm{in} \Delta R_\mathrm{cond}
 	\left(2\ln\left( \frac{R_\mathrm{in}-\Delta R_\mathrm{cond}}{R_\mathrm{in}} \right) -1 \right) \right]\nonumber
 \end{align}
 $$
@@ -617,7 +617,7 @@ $$
   <em>PROCESS</em> TF SC coil stress
   model provide acceptable (within 4-10% error margins) stress distributions
   for global machine design, it is advised to finalize the stress analysis with
-  FEA models that captures the stress variations in the toroidal direction and 
+  FEA models that captures the stress variations in the toroidal direction and
   its associated maximum stresses. Two models can be used to calculate inboard
   mid-plane normal stresses radial distributions. They both support an arbitrary
   number of different material layers and mainly differs in the way the vertical
@@ -649,7 +649,7 @@ $$
     another for the radial to toroidal direction. Although more coherent and
     complete this model is not yet used by default as more FEA validations
     are needed. `i_tf_stress_model = 0` is the older model, which is O(n^3)
-    in the number of layers and fails if there is a solid bore. 
+    in the number of layers and fails if there is a solid bore.
     `i_tf_stress_model = 2` is the newr model, which is O(n) and accepts a solid
     bore, but is otherwise identical to the older model `i_tf_stress_model = 0`.
   </p>
@@ -693,7 +693,7 @@ $$
 
 - <p style='text-align: justify;'>
     **Structural support layer:** made of the steel case nose section. No <em>e.
-    m.</em> body forces are present in this layer, therefore so the stress 
+    m.</em> body forces are present in this layer, therefore so the stress
     variations are only driven by geometrical effects (constant vertical stress)
 - <p style='text-align: justify;'>
     **Conductor layers:** made of the winding packs and the lateral casings.
@@ -705,12 +705,12 @@ $$
 
 <figure>
     <center>
-    <img src="../../images/tfcoil_SC_stress_layers.png" alt="SC_mid_plane_stress_layers" 
+    <img src="../../images/tfcoil_SC_stress_layers.png" alt="SC_mid_plane_stress_layers"
     title="Inboard mid-plane superconducting TF coil stress layers"
     width="500" height="100" />
     <br>
     <figcaption><i>
-      <p style='text-align: justify;'> 
+      <p style='text-align: justify;'>
         Figure 9: Positioning of the layers used in the stress calculations
         delimited by the red lines. The corresponding radii are defined keeping
         the nose and plasma side casing area constant to get consistent vertical
@@ -795,15 +795,15 @@ $$
   are calculated decomposing the turn geometry in series (constant strain), as
   illustrated in <em>Figure 10</em>.
 </p>
-  
+
 <figure>
     <center>
-    <img src="../../images/tfcoil_SC_turn_diag.png" alt="SC_mid_plane_stress_layers" 
+    <img src="../../images/tfcoil_SC_turn_diag.png" alt="SC_mid_plane_stress_layers"
     title="Inboard mid-plane superconducting TF coil stress layers"
     width="500" height="100" />
     <br>
     <figcaption><i>
-      <p style='text-align: justify;'> 
+      <p style='text-align: justify;'>
         Figure 10: turn structure decomposition used to estimate the average
         winding pack average Young modulus. The decomposition is made considering
         a vertical stress component, corresponding to a parallel decomposition
@@ -916,7 +916,7 @@ selected with the `i_tf_bucking` integer switch.
     unsmeating procedure as the TF coil, as detailed in issue [4]. The maximum
     between the CS stress from the this model and the on calculated in the
     `pfcoil` module is taken as the CS coil stress limit (constraint 72). A fast
-    version, neglecting the interface layer properties is implemented 
+    version, neglecting the interface layer properties is implemented
     (`i_tf_bucking == 2`). And a more complete one, taking explicitly the Kapton
     interface into account in the stress calcualtions (`i_tf_bucking == 3`) is
     also implemented. Before using this design option, the user must know two
@@ -978,7 +978,7 @@ $$
     generates some instabilities that degrades the plasma confinement.
     Moreover, some significant fast particles losses can be present if the
     field variation becomes too large between coils, threatening the divertor
-    and first wall integrity.  
+    and first wall integrity.
   </p>
 - <p style='text-align: justify;'>
     **On coil ripple:** If the lateral case is separating the conductor region
@@ -1001,21 +1001,21 @@ $$
   and the maximum field (on coil toroidal direction) respectively, measured at
   the mid-plane plasma outer limit (separatrix). <em>PROCESS</em> plasma ripple
   is estimated using a parametric Bio-Savart calculation fitted using the
-  <em>UKAEA</em> free boundary MHD code <em>FIESTA</em>. The shape (Princeton-D) 
-  used for these MHD model is shown in the left section of Figure 11. 
+  <em>UKAEA</em> free boundary MHD code <em>FIESTA</em>. The shape (Princeton-D)
+  used for these MHD model is shown in the left section of Figure 11.
   </p>
 
 <figure>
     <center>
-    <img src="../../images/tfcoil_ripple_plasma.png" alt="Plasma_ripple_shapes" 
+    <img src="../../images/tfcoil_ripple_plasma.png" alt="Plasma_ripple_shapes"
     title="Inboard mid-plane superconducting TF coil stress layers"
     width="250" height="1000" />
-    <img src="../../images/tfcoil_ripple_plasma_fit.png" alt="Plasma_ripple_plots" 
+    <img src="../../images/tfcoil_ripple_plasma_fit.png" alt="Plasma_ripple_plots"
     title="Inboard mid-plane superconducting TF coil stress layers"
     width="450" height="1000" />
     <br>
     <figcaption><i>
-      <p style='text-align: justify;'> 
+      <p style='text-align: justify;'>
         Figure 11 : The left graph shows the filament shape used in the
         <em>FIESTA</em> ripple calculations. The current loops are made straight
         section (red lines) connecting vertices (blue dots) following the coil
@@ -1048,7 +1048,7 @@ $$
   x = \frac{\Delta R_\mathrm{tWP}^\mathrm{out}}{R_\mathrm{maj}} N_\mathrm{TF}
 $$
 
-  
+
 <p style='text-align: justify;'>
   with \(\Delta R_\mathrm{tWP}^\mathrm{out}\) the plasma side WP thickness
   defined in the Figures 1 and 3, \(N_\mathrm{TF}\) the number of coils and
@@ -1075,7 +1075,7 @@ $$
 - <p style='text-align: justify;'>
     **separatrix to TF ratio:** \( y \in [0.7-0.8] \)
   </p>
-  
+
 
 <p style='text-align: justify;'>
   To prevent intolerable fast particles losses and plasma instabilities,
@@ -1097,7 +1097,7 @@ $$
 <p style='text-align: justify;'>
   The currently implemented plasma ripple evaluation assumes a Princeton-D shape
   and is therefore not valid anymore if very different shapes are considered,
-  with picture frame coils, for example, different models should be 
+  with picture frame coils, for example, different models should be
   considered/implemented in <em>PROCESS</em>.
 </p>
 
@@ -1139,19 +1139,19 @@ $$
   \( \Delta R_\mathrm{tWP}^\mathrm{out\ max} \) the same value calculated without
   sidewall case as illustrated in Figure 12.
 </p>
-  
+
 <figure>
     <center>
-    <img src="../../images/tfcoil_ripple_on_coil_filaments.png" alt="On_coil_ripple_shapes" 
+    <img src="../../images/tfcoil_ripple_on_coil_filaments.png" alt="On_coil_ripple_shapes"
     title="Inboard mid-plane superconducting TF coil stress layers"
     width="800" height="100" />
     <br>
     <figcaption><i>
-      <p style='text-align: justify;'> 
+      <p style='text-align: justify;'>
         Figure 12: Inboard midplane cross section showing the filaments used for
         the on-coil ripple calculations with <em>FIESTA</em> with 16 coils. A
-        radial and toroidal winding pack thickness of 0.5 m and 0.8 m for the 
-        left graph, while a radial and toroidal thickness of 1.2 m and 1.9 m, 
+        radial and toroidal winding pack thickness of 0.5 m and 0.8 m for the
+        left graph, while a radial and toroidal thickness of 1.2 m and 1.9 m,
         respectively, is used in the right figure. The right graph provides
         a visual illustration of the case where the parameter \(t\) is close to
         unity.
@@ -1160,7 +1160,7 @@ $$
     <br>
     </center>
 </figure>
-  
+
 <p style='text-align: justify;'>
   And the relative winding pack radial thickness \(z\) given by
 </p>
@@ -1192,7 +1192,7 @@ $$
 
 <figure>
     <center>
-    <img src="../../images/tfcoil_ripple_on_coil_contours.png" alt="On_coil_ripple_shapes" 
+    <img src="../../images/tfcoil_ripple_on_coil_contours.png" alt="On_coil_ripple_shapes"
     title="Inboard mid-plane superconducting TF coil stress layers"
     width="520" height="100" />
     <br>
@@ -1254,11 +1254,11 @@ $$
 
 Switch `i_tf_sc_mat` specifies which superconducting material is to be used:
 
-- `i_tf_sc_mat == 1` -- Nb$_3$Sn superconductor, ITER critical surface 
+- `i_tf_sc_mat == 1` -- Nb$_3$Sn superconductor, ITER critical surface
   parameterization[^5], standard critical values
 - `i_tf_sc_mat == 2` -- Bi-2212 high temperature superconductor
 - `i_tf_sc_mat == 3` -- NbTi superconductor
-- `i_tf_sc_mat == 4` -- Nb$_3$Sn superconductor, ITER critical surface 
+- `i_tf_sc_mat == 4` -- Nb$_3$Sn superconductor, ITER critical surface
   parameterization[^5], user-defined critical parameters
 - `i_tf_sc_mat == 5` -- WST Nb$_3$Sn parameterization
 - `i_tf_sc_mat == 6` -- REBCO HTS tape in CroCo strand
@@ -1269,18 +1269,18 @@ Switch `i_tf_sc_mat` specifies which superconducting material is to be used:
 The fraction of copper present in the superconducting filaments is given by
 the value of variable `fcutfsu` (iteration variable number 59).
 
-For `i_tf_sc_mat = 2`, a technology adjustment factor `fhts` may be used to modify 
-the critical current density fit for the Bi-2212 superconductor, to describe the 
-level of technology assumed (i.e. to account for stress, fatigue, radiation, 
-AC losses, joints or manufacturing variations). The default value for `fhts` is 
+For `i_tf_sc_mat = 2`, a technology adjustment factor `fhts` may be used to modify
+the critical current density fit for the Bi-2212 superconductor, to describe the
+level of technology assumed (i.e. to account for stress, fatigue, radiation,
+AC losses, joints or manufacturing variations). The default value for `fhts` is
 0.5 (a value of 1.0 would be very optimistic).
 
-For `i_tf_sc_mat = 4`, important superconductor properties may be input by the user 
-as follows: the upper critical field at zero temperature and strain is set 
-using input parameter `bcritsc`, and the critical temperature at zero field and 
+For `i_tf_sc_mat = 4`, important superconductor properties may be input by the user
+as follows: the upper critical field at zero temperature and strain is set
+using input parameter `bcritsc`, and the critical temperature at zero field and
 strain is set using input parameter `tcritsc`.
 
-For `i_tf_sc_mat = 6`, the turn design is largely different from the ITER one. 
+For `i_tf_sc_mat = 6`, the turn design is largely different from the ITER one.
 
 The current in the TF coils must be sufficient to produce the required
 toroidal field at the centre of the plasma. In tokamaks, the field falls off
@@ -1289,22 +1289,22 @@ inboard portion of the TF coil winding pack ($R_{\mbox{max TF}} =
 \mathtt{rbmax}$). The maximum TF coil current depends on the field it produces
 and the allowable current density.
 
-Three constraints are relevant to the operating current density $J_{\mbox{op}}$ 
+Three constraints are relevant to the operating current density $J_{\mbox{op}}$
 in the (superconducting) TF coils.
 
 - `Constraint 33` -- To ensure that $J_{\mbox{op}}$ does not exceed the critical value $J_{\mbox{crit}}$, constraint equation no.\ 33 should be turned on with iteration variable no.\ 50
   ( `fiooic`).
 
-- `Constraint 35` -- To ensure that $J_{\mbox{op}}$ does not exceed the current 
-  density protection limit, constraint equation no.\ 35 should be turned on with 
+- `Constraint 35` -- To ensure that $J_{\mbox{op}}$ does not exceed the current
+  density protection limit, constraint equation no.\ 35 should be turned on with
   iteration variable no.\ 53 ( `fjprot`).
 
-- `Constraint 36` -- The critical current density $J_{\mbox{crit}}$ falls with 
-  the temperature of the superconductor. The temperature margin $\Delta T$ is the difference between the temperature at which \jcrit would be equal to 
+- `Constraint 36` -- The critical current density $J_{\mbox{crit}}$ falls with
+  the temperature of the superconductor. The temperature margin $\Delta T$ is the difference between the temperature at which \jcrit would be equal to
   $J_{\mbox{op}}$ and the operating temperature. The minimum allowed $\Delta T$
-  can be set using input parameter `tmargmin` together with constraint equation 
+  can be set using input parameter `tmargmin` together with constraint equation
   no.\ 36 and iteration variable no. 54 ( `ftmargtf`). Note that if the temperature margin is positive, $J_{\mbox{op}}$ is guaranteed to be. lower than \jcrit, and so constraints~33 and~36 need not both be turned on. (in fact, it is recommended that only one of these two constraints is
-  activated in  
+  activated in
 
 ### Resistive heating
 
@@ -1316,7 +1316,7 @@ The TF coil structure is illustrated by the box diagram in Figure 14.
 
 <figure>
     <center>
-    <img src="../../images/tfcoil_code_structure.png" alt="TF_code_structure" 
+    <img src="../../images/tfcoil_code_structure.png" alt="TF_code_structure"
     title="Inboard mid-plane superconducting TF coil stress layers"
     width="700" height="100" />
     <br>
@@ -1366,8 +1366,8 @@ Another subroutine, `tfspcall` is called outside `stfcoil` to estimate to check 
 |  Parameter | description | Iteration variable | Default | Unit |
 | - | - | - | - | - |
 | `tfcth` | TF coil maximum radial size <br> calculated if `dr_tf_wp` is used as iteration variable |  ixc = 13 | No default | m |
-| `tfootfi` | Outboard/inboard TF coil thickness ratio | - | 1 | - | 
-| `dr_tf_wp` | Winding pack radial thickness <br> calculated if `tfcth` is used as iteration variable. Include the ground insulation and the insertion gap. | ixc = 140 | No default | m | 
+| `tfootfi` | Outboard/inboard TF coil thickness ratio | - | 1 | - |
+| `dr_tf_wp` | Winding pack radial thickness <br> calculated if `tfcth` is used as iteration variable. Include the ground insulation and the insertion gap. | ixc = 140 | No default | m |
 | `thkcas` | Nose/inner case radial thickness | ixc = 57 | 0.3 | m |
 | `casths` | Minimal sidewall casing thickness | - | - | m |
 | `casths_fraction` | Minimal sidewall casing thickness as a fraction of the TF coil toroidal thickness. Overwites the `casths` input value | - | 0.03 | - |
@@ -1471,8 +1471,8 @@ Please note that only a fraction of the plots will be performed if the plane
 stress option is chosen (this is the default stress option). The full set of
 plots is however performed if the generalized plane strain option chosen.
 
-[^1]: "PROCESS": A systems code for fusion power plants - Part 2: Engineering M. Kovari, F. Fox, C. Harrington, R. Kembleton, P. Knight, H. Lux, J. Morris Fusion Engineering and Design 104 (2016) 9-20 
-[^2]: Derivation_of_multilayer_generalized_plain_strain.docx in 
+[^1]: "PROCESS": A systems code for fusion power plants - Part 2: Engineering M. Kovari, F. Fox, C. Harrington, R. Kembleton, P. Knight, H. Lux, J. Morris Fusion Engineering and Design 104 (2016) 9-20
+[^2]: Derivation_of_multilayer_generalized_plain_strain.docx in
 <a href="https://git.ccfe.ac.uk/process/process/-/issues/991">PROCESS issue 991</a>
 [^3]:  <a href = "https://git.ccfe.ac.uk/process/process/-/issues/1048"> issue 1048 </a>
 [^4]: <a href = "https://git.ccfe.ac.uk/process/process/-/issues/1031"> issue 1031 </a>

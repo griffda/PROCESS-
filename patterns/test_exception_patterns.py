@@ -6,6 +6,7 @@ import exception_patterns as ep
 from process import fortran
 import pytest
 
+
 @pytest.fixture(params=[1, 0, 2, -4])
 def some_int(request):
     """Fixture to return different integers.
@@ -17,6 +18,7 @@ def some_int(request):
     """
     return request.param
 
+
 @pytest.fixture(params=[2, "some_string", 4.3, 0])
 def who_knows(request):
     """Fixture to return an assortment of types to cause problems.
@@ -25,6 +27,7 @@ def who_knows(request):
     :type request: object
     """
     return request.param
+
 
 @pytest.fixture(params=[0, 1])
 def ifail(request):
@@ -36,6 +39,7 @@ def ifail(request):
     :rtype: int
     """
     return request.param
+
 
 def test_unhandled_python_raised_exception(some_int):
     """Call a function with no exception handling with different values.
@@ -53,6 +57,7 @@ def test_unhandled_python_raised_exception(some_int):
         result = ep.unhandled_python_raised_exception(some_int)
         assert type(result) is float
 
+
 def test_handled_python_raised_exception(some_int):
     """Call a function with exception handling with different values.
 
@@ -66,7 +71,8 @@ def test_handled_python_raised_exception(some_int):
         assert result == 1
     elif some_int == 0:
         # Exception should be caught, and there is no returned result
-        assert result == None
+        assert result is None
+
 
 def test_handled_all_python_raised_exceptions(who_knows):
     """Call a function with a load of different types to raise exceptions.
@@ -82,7 +88,8 @@ def test_handled_all_python_raised_exceptions(who_knows):
         assert type(result) == float
     else:
         # This function should handle all exceptions and return None
-        assert result == None
+        assert result is None
+
 
 def test_raised_exception(some_int):
     """Call a function that can raise its own exceptions.
@@ -103,6 +110,7 @@ def test_raised_exception(some_int):
         result = ep.raised_exception(some_int)
         assert type(result) is float
 
+
 def test_assert_fortran_value(ifail, monkeypatch):
     """Test asserting a Fortran-returned result.
 
@@ -113,7 +121,7 @@ def test_assert_fortran_value(ifail, monkeypatch):
     """
     # Mock fortran.main_module.eqslv() return value with ifail
     monkeypatch.setattr(fortran.vmcon_module, "info", ifail)
-    
+
     if ifail == 0:
         # Assert evaluates to True, no exception
         ep.assert_fortran_value()
