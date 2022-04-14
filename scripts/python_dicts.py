@@ -37,8 +37,9 @@ process_spec.loader.exec_module(process_module)
 
 # now that "process" is temporarily available to import
 # as a package (despite being a directory) we can install what we need
-from process.main import Models
-from process.variables import AnnotatedVariable
+
+from process.main import Models  # noqa: E402
+from process.variables import AnnotatedVariable  # noqa: E402
 
 
 class AnnotatedVariableData(NamedTuple):

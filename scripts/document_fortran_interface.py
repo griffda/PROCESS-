@@ -15,7 +15,6 @@ fortran (python module)
 
 
 import inspect
-import os
 from pathlib import Path
 from typing import Any, List, NamedTuple, Set, Union
 
@@ -89,7 +88,7 @@ def get_modules(ftrn) -> List[FortranModule]:
     classes = []
 
     for name, module in inspect.getmembers(ftrn):
-        if type(module) == type(fortran.main_module):
+        if type(module) == type(fortran.main_module):  # noqa: E721
             classes.append(
                 FortranModule(
                     name=name, docstring=module.__doc__, members=get_members(module)
@@ -116,7 +115,7 @@ def get_members(
         if name[0:2] == "__":
             continue
 
-        if type(member) == type(fortran.main_module.inform):
+        if type(member) == type(fortran.main_module.inform):  # noqa: E721
             docstring = member.__doc__
             if is_variable(member):
                 members.append(

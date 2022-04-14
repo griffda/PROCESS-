@@ -27,9 +27,7 @@
 """
 
 from collections import OrderedDict
-import operator
 import logging
-import sys
 from sys import stderr
 from process.io.python_fortran_dicts import get_dicts
 import json
@@ -188,7 +186,7 @@ class MFileDataDictionary(OrderedDict):
 class DefaultOrderedDict(OrderedDict):
     # Source: http://stackoverflow.com/a/6190500/562769
     def __init__(self, default_factory=None, *a, **kw):
-        if default_factory is not None and not isinstance(default_factory, Callable):
+        if default_factory is not None and not isinstance(default_factory):
             raise TypeError("first argument must be callable")
         OrderedDict.__init__(self, *a, **kw)
         self.default_factory = default_factory
@@ -263,7 +261,9 @@ class MFile(object):
     def parse_mfile(self):
         """Function to parse MFILE.DAT"""
         # for line in (c for c in (clean_line(l) for l in self.mfile_lines if '#' not in l[:2])
-        for line in (c for c in (clean_line(l) for l in self.mfile_lines) if c != [""]):
+        for line in (
+            c for c in (clean_line(lines) for lines in self.mfile_lines) if c != [""]
+        ):
             self.add_line(line)
 
     def add_line(self, line):
@@ -671,10 +671,9 @@ def test(f):
     :param f: file to test"""
 
     try:
-        m = MFile(f)
         # print(m.data["rmajor"].get_scans())
         return True
-    except:
+    except Exception:
         return False
     return True
 

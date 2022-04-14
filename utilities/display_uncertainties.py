@@ -13,17 +13,14 @@ uncertainties.nc
 #######################
 # imported libraries
 
-from matplotlib import rc, use
-
-rc("font", size=20)
-rc(("xtick", "ytick"), labelsize=15)
-
-
+from matplotlib import rc
 import argparse
-from numpy import loadtxt
 from matplotlib.ticker import NullFormatter
 from pylab import figure, axes, show, savefig
 from sys import stderr
+
+rc("font", size=20)
+rc(("xtick", "ytick"), labelsize=15)
 
 
 def fig_2dscatter_and_hist(xarr, yarr, labelx, labely):

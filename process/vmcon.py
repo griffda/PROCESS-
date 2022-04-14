@@ -349,7 +349,7 @@ class Vmcon:
             self.n, self.m, self.x, self.ifail, self.fcnvmc1_first_call
         )
 
-        if self.fcnvmc1_first_call == True:
+        if self.fcnvmc1_first_call is True:
             self.fcnvmc1_first_call = False
 
     def fcnvmc2_wrapper(self):

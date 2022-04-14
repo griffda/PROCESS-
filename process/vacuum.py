@@ -266,9 +266,9 @@ class Vacuum:
             - mvdsh (`float`) - Mass of a single vacuum duct shield (kg)
             - dimax (`float`) -  Diameter of passage from divertor to pumping ducts (m)
         """
-        k = 1.38e-23  #  Boltzmann's constant (J/K)
-        densh = 7900.0e0  #  Density of shielding material (kg/m2)
-        fsolid = 0.9e0  #  Fraction of duct shielding that is solid material
+        k = 1.38e-23  # Boltzmann's constant (J/K)
+        densh = 7900.0e0  # Density of shielding material (kg/m2)
+        fsolid = 0.9e0  # Fraction of duct shielding that is solid material
 
         #  Pump type;
         #    ntype = 0 for turbomolecular pump (mag. bearing) with a nominal
@@ -276,7 +276,7 @@ class Vacuum:
         #    ntype = 1 for compound cryopump with nominal speed of 10 m^3/s
         #              (9.0 for N2, 5.0 for He and 25. for DT)
 
-        pfus = pfusmw * 1.0e6  #  Fusion power (W)
+        pfus = pfusmw * 1.0e6  # Fusion power (W)
         ntf = int(n_tf)
 
         #  Feed rate (gas load) of D-T into chamber (pellets + gas puffing +
@@ -324,7 +324,7 @@ class Vacuum:
 
         area = plasma_sarea * (aw + dsol) / aw
 
-        ogas = vacv.rat * area * 10.0e0  #  Outgassing rate (Pa-m^3/s)
+        ogas = vacv.rat * area * 10.0e0  # Outgassing rate (Pa-m^3/s)
         s.append(ogas / vacv.pbase)
 
         #  Pumpdown between burns
@@ -334,8 +334,8 @@ class Vacuum:
 
         pend = (
             0.5e0 * nplasma * k * vacv.tn
-        )  #  pressure in plasma chamber after burn (Pa)
-        pstart = 0.01e0 * pend  #  pressure in chamber before start of burn (Pa)
+        )  # pressure in plasma chamber after burn (Pa)
+        pstart = 0.01e0 * pend  # pressure in chamber before start of burn (Pa)
 
         #  Chamber volume (m^3)
 
@@ -373,13 +373,13 @@ class Vacuum:
         imax = 1
         cmax = 0.01e0
         pumpn = 1.0e0
-        nflag = 0  #  Control option if ducts are too small in x-sectional area
+        nflag = 0  # Control option if ducts are too small in x-sectional area
         #  = 1 if problem is identified in output, but run continues
         #  = 0 otherwise
 
-        l1 = thshldo + thtf  #  Length of passage from divertor to ducts (m)
-        l2 = thshldo + 4.0e0  #  Length of ducts from divertor passage to elbow (m)
-        l3 = 2.0e0  #  Length of ducts from elbow to hi-vac pumps (m)
+        l1 = thshldo + thtf  # Length of passage from divertor to ducts (m)
+        l2 = thshldo + 4.0e0  # Length of ducts from divertor passage to elbow (m)
+        l3 = 2.0e0  # Length of ducts from elbow to hi-vac pumps (m)
         ltot = l1 + l2 + l3
 
         ITERATIONS_OVER_I = 4
@@ -411,7 +411,7 @@ class Vacuum:
                 while True:
                     a1 = (
                         0.25e0 * math.pi * d[i] * d[i]
-                    )  #  Area of aperture and duct (m^2)
+                    )  # Area of aperture and duct (m^2)
                     a2 = 1.44e0 * a1
                     a3 = a2
                     k1 = 4.0e0 / 3.0e0 * d[i] / (l1 + 4.0e0 / 3.0e0 * d[i])
@@ -470,7 +470,7 @@ class Vacuum:
                 a1max = (r0 + aw - ritf - thcsh / math.tan(theta)) ** 2 * math.tan(
                     theta
                 )
-                d1max = math.sqrt(4.0e0 * a1max / math.pi)  #  Equivalent diameter
+                d1max = math.sqrt(4.0e0 * a1max / math.pi)  # Equivalent diameter
                 if a1 < a1max:
                     break
 

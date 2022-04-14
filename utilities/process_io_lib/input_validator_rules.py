@@ -1,18 +1,18 @@
 """The rules for the input validator to run.
 
-This module contains the rule classes which are used by the input_validator 
-module to check rules on the input data to validate it. This consists of the 
-abstract Rule class and the individual rule subclasses which are intialised by 
+This module contains the rule classes which are used by the input_validator
+module to check rules on the input data to validate it. This consists of the
+abstract Rule class and the individual rule subclasses which are intialised by
 the input_validator module. Each rule class (a subclass of Rule) defines its own
-check method, which checks that particular rule against the input data. This 
+check method, which checks that particular rule against the input data. This
 method stores the result and any messages on the instance of that rule class
 itself.
 
-To add a new rule, define a new class that inherits from the Rule class, naming 
-it the same as the variable it covers, but with the first letter capitalised. 
-Then override the __init__() and check() methods. The new rule class will be 
-used by the input_validator module automatically, and the rule will be checked 
-when input_validator is run. See class Ishape(Rule) for an example, or use the 
+To add a new rule, define a new class that inherits from the Rule class, naming
+it the same as the variable it covers, but with the first letter capitalised.
+Then override the __init__() and check() methods. The new rule class will be
+used by the input_validator module automatically, and the rule will be checked
+when input_validator is run. See class Ishape(Rule) for an example, or use the
 rule snippet in the Process project on Gitlab.
 """
 from abc import ABC, abstractmethod
@@ -128,20 +128,20 @@ class Ishape(Rule):
         self.check_defined("ishape")
         ishape = self.get_param_value("ishape")
 
-        if ishape is 0:
+        if ishape == 0:
             # Use kappa and triang to calculate 95% kappa and triang
             self.check_defined("kappa")
             self.check_defined("triang")
             self.check_undefined("kappa95")
             self.check_undefined("triang95")
-        elif ishape is 1:
+        elif ishape == 1:
             # Scale with aspect ratio
             self.check_undefined("qlim")
             self.check_undefined("kappa")
             self.check_undefined("triang")
             self.check_undefined("kappa95")
             self.check_undefined("triang95")
-        elif ishape is 2:
+        elif ishape == 2:
             # kappa calculated using fkzohm, triang input
             self.check_defined("fkzohm")
             self.check_defined("aspect")
@@ -149,38 +149,38 @@ class Ishape(Rule):
             self.check_defined("triang")
             self.check_undefined("kappa95")
             self.check_undefined("triang95")
-        elif ishape is 3:
+        elif ishape == 3:
             # kappa calculated using fkzohm, triang95 input
             self.check_defined("fkzohm")
             self.check_undefined("kappa")
             self.check_defined("triang95")
             self.check_undefined("triang")
             self.check_undefined("kappa95")
-        elif ishape is 4:
+        elif ishape == 4:
             # kappa95 and triang95 are used to calculate kappa and triang
             self.check_defined("kappa95")
             self.check_defined("triang95")
             self.check_undefined("kappa")
             self.check_undefined("triang")
-        elif ishape is 5:
+        elif ishape == 5:
             # kappa95 and triang95 are used to calculate kappa and triang
             self.check_defined("kappa95")
             self.check_defined("triang95")
             self.check_undefined("kappa")
             self.check_undefined("triang")
-        elif ishape is 5:
+        elif ishape == 5:
             # Use kappa and triang to calculate 95% kappa and triang
             self.check_defined("kappa")
             self.check_defined("triang")
             self.check_undefined("kappa95")
             self.check_undefined("triang95")
-        elif ishape is 7:
+        elif ishape == 7:
             # kappa95 and triang95 are used to calculate kappa and triang
             self.check_defined("kappa95")
             self.check_defined("triang95")
             self.check_undefined("kappa")
             self.check_undefined("triang")
-        elif ishape is 8:
+        elif ishape == 8:
             # Use kappa and triang to calculate 95% kappa and triang
             self.check_defined("kappa")
             self.check_defined("triang")
@@ -283,8 +283,8 @@ class Dnbeta(Rule):
         """Check if dnbeta input value is required or not"""
         iprofile = self.get_param_value("iprofile")
         gtscale = self.get_param_value("gtscale")
-        if iprofile is 0:
-            if gtscale is 1:
+        if iprofile == 0:
+            if gtscale == 1:
                 # dnbeta is calculated
                 self.check_undefined("dnbeta")
             else:

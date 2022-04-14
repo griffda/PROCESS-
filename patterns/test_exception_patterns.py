@@ -71,7 +71,7 @@ def test_handled_python_raised_exception(some_int):
         assert result == 1
     elif some_int == 0:
         # Exception should be caught, and there is no returned result
-        assert result == None
+        assert result is None
 
 
 def test_handled_all_python_raised_exceptions(who_knows):
@@ -88,7 +88,7 @@ def test_handled_all_python_raised_exceptions(who_knows):
         assert type(result) == float
     else:
         # This function should handle all exceptions and return None
-        assert result == None
+        assert result is None
 
 
 def test_raised_exception(some_int):

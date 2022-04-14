@@ -11,20 +11,18 @@ SIG_TF.DAT
 """
 
 import matplotlib
-
-matplotlib.use("Agg")
 import os
 import argparse
 from argparse import RawTextHelpFormatter
-import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.lines as mlines
+
+
+matplotlib.use("Agg")
 
 
 if __name__ == "__main__":
-    #####################################################
-    ##            PARSING USER PARAMETERS              ##
-    #####################################################
+
+    # PARSING USER PARAMETERS
     # please execute 'python plot_stress_tf.py -h' for input information
     # Option definition
     # -----------------
@@ -75,15 +73,14 @@ if __name__ == "__main__":
     axis_font_size = int(args.axis_font_size)
     term_output = args.term_output
 
-    ## Boolean swiches for plot selection
+    # Boolean swiches for plot selection
     # -----------------------------------
     plot_sig = ("sig" in plot_selection) or "all" == plot_selection
     plot_disp = ("disp" in plot_selection) or "all" == plot_selection
     plot_strain = ("strain" in plot_selection) or "all" == plot_selection
     plot_sm_sig = ("sm_sig" in plot_selection) or "all" == plot_selection
-    #####################################################
 
-    ## Step 1 : Data extraction
+    # Step 1 : Data extraction
     # ----------------------------------------------------------------------------------------------
     # Number of physical quantity value per coil layer
     n_radial_array_layer = int()
@@ -371,7 +368,7 @@ if __name__ == "__main__":
     mark_size = 13
     line_width = 3.5
 
-    ## PLOT 1 : Stress summary
+    # PLOT 1 : Stress summary
     # ------------------------
     if plot_sig:
 
@@ -486,7 +483,7 @@ if __name__ == "__main__":
         plt.clf()
         plt.cla()
 
-    ## PLOT 2 : Smeared stress summary
+    # PLOT 2 : Smeared stress summary
     # ------------------------
     if plot_sm_sig:
 
@@ -593,7 +590,7 @@ if __name__ == "__main__":
         plt.clf()
         plt.cla()
 
-    ## PLOT 3 : Strain summary
+    # PLOT 3 : Strain summary
     # ------------------------
     if plot_strain and len(data) > 15:
 
@@ -676,7 +673,7 @@ if __name__ == "__main__":
         plt.clf()
         plt.cla()
 
-    ## PLOT 4 : Displacement
+    # PLOT 4 : Displacement
     # ----------------------
     if plot_disp:
         plt.plot(radius[0], radial_displacement[0], color="dodgerblue")

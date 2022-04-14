@@ -193,9 +193,7 @@ def main(cmd_args):
     else:
         location = sys.stdout
 
-    print(
-        "\nCFETR comparison with output file '{0}':\n".format(cmd_args.f, file=location)
-    )
+    print("\nCFETR comparison with output file '{0}':\n".format(cmd_args.f))
 
     # Get input file names
     file_name = cmd_args.f

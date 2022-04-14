@@ -389,10 +389,8 @@ class NetCDFReader(object):
         mfile_dict = dict()
         try:
             mfile_data = self.root.groups[path]
-        except:
-            raise KeyError(
-                "Cannot access {} in " "{}".format(path, self.netcdf_filename)
-            )
+        except KeyError:
+            ("Cannot access {} in " "{}".format(path, self.netcdf_filename))
         for group in mfile_data.groups.values():
             for variable in group.variables.values():
                 mfile_dict[group.group_name] = variable.getValue()
@@ -403,10 +401,8 @@ class NetCDFReader(object):
         m_file = MFile(filename=None)
         try:
             mfile_data = self.root.groups[path]
-        except:
-            raise KeyError(
-                "Cannot access {} in " "{}".format(path, self.netcdf_filename)
-            )
+        except KeyError:
+            ("Cannot access {} in " "{}".format(path, self.netcdf_filename))
         for group in mfile_data.groups.values():
             for var_name, variable in group.variables.items():
                 scan_num = None
@@ -428,10 +424,8 @@ class NetCDFReader(object):
         indat_dict = dict()
         try:
             input_data = self.root.groups[path]
-        except:
-            raise KeyError(
-                "Cannot access {} in " "{}".format(path, self.netcdf_filename)
-            )
+        except KeyError:
+            ("Cannot access {} in " "{}".format(path, self.netcdf_filename))
         for group in input_data.groups.values():
             for var_name, variable in group.variables.items():
                 indat_dict[var_name] = variable.getValue()
@@ -446,10 +440,8 @@ class NetCDFReader(object):
         indat = InDat(filename=None)
         try:
             input_data = self.root.groups[path]
-        except:
-            raise KeyError(
-                "Cannot access {} in " "{}".format(path, self.netcdf_filename)
-            )
+        except KeyError:
+            ("Cannot access {} in " "{}".format(path, self.netcdf_filename))
         for group in input_data.groups.values():
             for var_name, variable in group.variables.items():
                 indat.add_parameter(var_name, variable.getValue())

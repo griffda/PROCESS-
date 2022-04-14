@@ -24,9 +24,7 @@ The sheet will be created if it does not exist.
 import os
 import argparse
 import process.io.mfile as mf
-from process.io.mfile import make_plot_dat
-from openpyxl import Workbook, styles, load_workbook
-from openpyxl.styles import Font, Border, Side
+from openpyxl import Workbook, load_workbook
 
 
 def append_line(spreadsheet, custom_keys, mfile_data):
@@ -45,16 +43,15 @@ def append_line(spreadsheet, custom_keys, mfile_data):
 
     try:
         wb = load_workbook(spreadsheet)
-    except:
+    except Exception:
         wb = Workbook()
 
     # Use the worksheet with the specified name
     if args.n:
         try:
             ws = wb.get_sheet_by_name(args.n)
-        except:
+        except Exception:
             ws = wb.create_sheet(title=args.n)
-            new_sheet_created = True
             print("New sheet created:", args.n)
     else:
         # Use whichever worksheet is active
@@ -79,7 +76,7 @@ def append_line(spreadsheet, custom_keys, mfile_data):
     try:
         if ws.max_row == 1:
             ws.append(var_descriptions)
-    except:
+    except Exception:
         # Don't write the header line
         pass
 

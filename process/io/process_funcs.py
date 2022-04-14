@@ -106,7 +106,7 @@ def get_variable_range(itervars, factor, wdir="."):
         else:
             value = get_from_indat_or_default(in_dat, varname)
 
-            if value == None:
+            if value is None:
                 print("Error: Iteration variable {} has None value!".format(varname))
                 exit()
 
@@ -250,9 +250,6 @@ def check_input_error(wdir="."):
     try:
         mfile_path = Path(wdir) / "MFILE.DAT"
 
-        # TODO Remove: what's here?
-        what = list(mfile_path.parent.glob("*"))
-
         if mfile_path.exists():
             mfile_path_str = str(mfile_path)
             mfile = MFile(filename=mfile_path_str)
@@ -268,7 +265,7 @@ def check_input_error(wdir="."):
                 file=stderr,
             )
             exit()
-    except:
+    except Exception:
         logger.exception("Check input error exception")
         raise
 
@@ -451,9 +448,7 @@ def get_from_indat_or_default(in_dat, varname):
 
     """quick function to get variable value from IN.DAT
     or PROCESS default value"""
-
     dicts = get_dicts()
-
     if varname in in_dat.data.keys():
         return in_dat.data[varname].get_value
     else:

@@ -1,16 +1,16 @@
 """Scenario class for an individual regression test case."""
-from pathlib import Path
 import logging
 import sys
 import os
 import shutil
 import re
+from process.main import main
+from process.io.mfile import MFile
+
 
 # TODO This isn't good: put MFile into process package?
 sys.path.append(os.path.join(os.path.dirname(__file__), "../utilities/"))
 
-from process.main import main
-from process.io.mfile import MFile
 
 # Variables and patterns to ignore when comparing differences (set and list)
 # These variables can differ substantially from their reference values when
@@ -100,7 +100,7 @@ class Scenario:
         # directory, catching any errors
         try:
             main(args=args)
-        except:
+        except Exception:
             logger.exception(
                 f"Process threw an exception when running " f"scenario: {self.name}"
             )
@@ -128,7 +128,7 @@ class Scenario:
         try:
             self.ref_mfile = MFile(ref_mfile_path_str)
             self.new_mfile = MFile(new_mfile_path_str)
-        except:
+        except Exception:
             logger.exception("There was an error creating an MFile object.")
             raise
 

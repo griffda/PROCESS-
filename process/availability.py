@@ -21,13 +21,13 @@ s_handler.setLevel(logging.INFO)
 logger.addHandler(s_handler)
 
 DAY_SECONDS = 60 * 60 * 24
-"""Number of seconds in a day [s]"""
+# Number of seconds in a day [s]
 
 DAYS_IN_YEAR = 365.25
-"""Number of days in a year"""
+# Number of days in a year
 
 YEAR_SECONDS = DAY_SECONDS * DAYS_IN_YEAR
-"""Number of seconds in a year [s]"""
+# Number of seconds in a year [s]
 
 
 class Availability:
@@ -344,7 +344,7 @@ class Availability:
         cv.redun_vac = math.floor(vacv.vpumpn * cv.redun_vacp / 100.0 + 0.5e0)
 
         u_unplanned_vacuum = self.calc_u_unplanned_vacuum(output)
-        
+
         # Total unplanned unavailability
         u_unplanned = min(
             1.0e0,
@@ -582,9 +582,6 @@ class Availability:
         # Use the lower of the two values.  Issue #526
         tmargmin = min(tfv.tmargmin_tf, tfv.tmargmin_cs)
         mag_temp_marg_limit = tmargmin
-
-        # Magnet temperature margin (K)
-        mag_temp_marg = tfv.temp_margin
 
         # Magnet maintenance time (years)
         mag_main_time = 0.5e0

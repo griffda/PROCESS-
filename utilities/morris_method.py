@@ -30,7 +30,7 @@ from SALib.analyze import morris
 from process.io.process_config import RunProcessConfig
 from process.io.in_dat import InDat
 from process.io.mfile import MFile
-from process.io.process_funcs import set_variable_in_indat, process_stopped
+from process.io.process_funcs import set_variable_in_indat
 import numpy as np
 import json
 
@@ -56,7 +56,7 @@ def Get_Input():
             "etaiso",
         ],
         # ,'boundl(18)','pinjalw',\
-        #'alstroh','alstrtf','aspect','bmxlim','triang'],
+        # 'alstroh','alstrtf','aspect','bmxlim','triang'],
         "bounds": [
             [1.1, 1.3],
             [1.0, 1.2],
