@@ -1010,12 +1010,13 @@ class PFCoil:
 
                 # bfield() requires slices of array arguments of length nc
                 # nc can equal 0, however!
+                # f2py can't handle passing zero-length arrays
                 if nc > 0:
                     xc, brw, bzw, psw = pf.bfield(
-                        rc, zc[:nc], cc[:nc], rpts[i], zpts[i], nc
+                        rc[:nc], zc[:nc], cc[:nc], rpts[i], zpts[i]
                     )
                 else:
-                    xc, brw, bzw, psw = pf.bfield(rc, 0.0, 0.0, rpts[i], zpts[i], nc)
+                    xc, brw, bzw, psw = pf.bfield(rc[:1], zc[:1], cc[:1], rpts[i], zpts[i], 1, nciszero=True)
 
                 gmat[i, j] = brw
                 gmat[i + npts, j] = bzw

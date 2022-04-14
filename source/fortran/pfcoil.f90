@@ -237,7 +237,7 @@ module pfcoil_module
 
    end subroutine rsid
 
-   subroutine bfield(nc, rc, zc, cc, xc, rp, zp, br, bz, psi)
+   subroutine bfield(nc, rc, zc, cc, xc, rp, zp, br, bz, psi, nciszero)
  
      !! Calculate the field at a point due to currents in a number
      !! of circular poloidal conductor loops.
@@ -270,6 +270,7 @@ module pfcoil_module
      integer, intent(in) :: nc
      real(dp), intent(in) :: rp, zp
      real(dp), dimension(nc), intent(in) :: rc, zc, cc
+     logical, optional :: nciszero
      real(dp), dimension(nc), intent(out) :: xc
      real(dp), intent(out) :: br, bz, psi
  
@@ -306,6 +307,10 @@ module pfcoil_module
      bz  = 0.0D0
      psi = 0.0D0
  
+      if (nciszero .eqv. .true.) then
+         return
+      endif
+
      do i = 1,nc
         d = (rp + rc(i))**2 + (zp - zc(i))**2
         s = 4.0D0*rp*rc(i)/d
