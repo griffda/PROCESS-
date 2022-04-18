@@ -2155,7 +2155,7 @@ contains
           call parse_real_variable('thkcas', thkcas, 0.0D0, 1.0D0, &
                'External supercond. case thickness (m)')
        case ('thwcndut')
-          call parse_real_variable('thwcndut', thwcndut, 0.001D0, 0.1D0, &
+          call parse_real_variable('thwcndut', thwcndut, 0.0D0, 0.1D0, &
                'TF coil conduit case thickness (m)')
        case ('tinstf')
           call parse_real_variable('tinstf', tinstf, 0.0D0, 0.1D0, &
