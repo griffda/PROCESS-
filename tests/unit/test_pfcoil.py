@@ -1053,7 +1053,7 @@ def test_bfmax(pfcoil, test_asset):
     assert pytest.approx(bfmax) == test_asset.bfmax_exp
 
 
-def test_waveform(monkeypatch):
+def test_waveform(monkeypatch, pfcoil):
     """Test waveform subroutine.
 
     waveform() requires specific mocked variables in order to work; these were
@@ -1064,6 +1064,8 @@ def test_waveform(monkeypatch):
     these are asserted on.
     :param monkeypatch: mocking fixture
     :type monkeypatch: _pytest.monkeypatch.MonkeyPatch
+    :param pfcoil: PFCoil object
+    :type pfcoil: process.pfcoil.PFCoil
     """
     ngc2 = 22
     monkeypatch.setattr(pfv, "ric", np.zeros(ngc2, dtype=int))
@@ -1213,7 +1215,7 @@ def test_waveform(monkeypatch):
         ],
     )
 
-    pf.waveform()
+    pfcoil.waveform()
 
     assert_array_almost_equal(pfv.ric, ric_exp)
     assert_array_almost_equal(pfv.waves, waves_exp)

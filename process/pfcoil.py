@@ -527,7 +527,7 @@ class PFCoil:
 
         #  Set up coil current waveforms, normalised to the peak current in
         #  each coil
-        pf.waveform()  #  returns pfv.ric(), pfv.waves()
+        self.waveform()  #  sets pfv.ric(), pfv.waves()
 
         #  Calculate PF coil geometry, current and number of pfv.turns
         #  Dimensions are those of the winding pack, and exclude
@@ -2743,3 +2743,45 @@ class PFCoil:
         ssq = brssq / (1.0e0 + brnrm) + bzssq / (1.0e0 + bznrm)
 
         return brssq, brnrm, bzssq, bznrm, ssq
+
+    def waveform(self):
+        """Sets up the PF coil waveforms.
+
+        author: P J Knight, CCFE, Culham Science Centre
+        This routine sets up the PF coil current waveforms.
+        waves[i,j] is the current in coil i, at time j,
+        normalized to the peak current in that coil at any time.
+        AEA FUS 251: A User's Guide to the PROCESS Systems Code
+        """
+        nplas = pfv.nohc + 1
+        for it in range(6):
+            pfv.waves[nplas - 1, it] = 1.0e0
+
+        for ic in range(pfv.nohc):
+
+            # Find where the peak current occurs
+            # Beginning of pulse, t = tramp
+            if (abs(pfv.curpfs[ic]) >= abs(pfv.curpfb[ic])) and (
+                abs(pfv.curpfs[ic]) >= abs(pfv.curpff[ic])
+            ):
+                pfv.ric[ic] = pfv.curpfs[ic]
+
+            # Beginning of flat-top, t = tramp + tohs
+            if (abs(pfv.curpff[ic]) >= abs(pfv.curpfb[ic])) and (
+                abs(pfv.curpff[ic]) >= abs(pfv.curpfs[ic])
+            ):
+                pfv.ric[ic] = pfv.curpff[ic]
+
+            # End of flat-top, t = tramp + tohs + theat + tburn
+            if (abs(pfv.curpfb[ic]) >= abs(pfv.curpfs[ic])) and (
+                abs(pfv.curpfb[ic]) >= abs(pfv.curpff[ic])
+            ):
+                pfv.ric[ic] = pfv.curpfb[ic]
+
+            # Set normalized current waveforms
+            pfv.waves[ic, 0] = 0.0e0
+            pfv.waves[ic, 1] = pfv.curpfs[ic] / pfv.ric[ic]
+            pfv.waves[ic, 2] = pfv.curpff[ic] / pfv.ric[ic]
+            pfv.waves[ic, 3] = pfv.curpff[ic] / pfv.ric[ic]
+            pfv.waves[ic, 4] = pfv.curpfb[ic] / pfv.ric[ic]
+            pfv.waves[ic, 5] = 0.0e0
