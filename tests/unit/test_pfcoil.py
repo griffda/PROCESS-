@@ -34,12 +34,15 @@ def test_init_pfcoil(pfcoil):
     assert pf.nef == 0
 
 
-def test_rsid():
+def test_rsid(pfcoil):
     """Test rsid subroutine.
 
     rsid() requires specific arguments in order to work; these were discovered
     using gdb to break on the first subroutine call when running the baseline
     2018 IN.DAT.
+
+    :param pfcoil: PFCoil object
+    :type pfcoil: process.pfcoil.PFCoil
     """
     nptsmx = 32
     npts = 32
@@ -898,7 +901,7 @@ def test_rsid():
     bznrm_exp = 0.0
     ssq_exp = 0.0006400910095285954
 
-    brssq, brnrm, bzssq, bznrm, ssq = pf.rsid(
+    brssq, brnrm, bzssq, bznrm, ssq = pfcoil.rsid(
         npts, brin, bzin, nfix, ngrp, ccls, bfix, gmat
     )
 

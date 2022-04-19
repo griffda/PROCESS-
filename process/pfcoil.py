@@ -877,7 +877,7 @@ class PFCoil:
         ccls, umat, vmat, sigma, work2 = self.solv(pfv.ngrpmx, ngrp, nrws, gmat, bvec)
 
         # Calculate the norm of the residual vectors
-        brssq, brnrm, bzssq, bznrm, ssq = pf.rsid(
+        brssq, brnrm, bzssq, bznrm, ssq = self.rsid(
             npts, brin, bzin, nfix, ngrp, ccls, bfix, gmat
         )
 
@@ -2676,3 +2676,70 @@ class PFCoil:
             / (9.0e0 * a + 10.0e0 * b + 8.4e0 * c + 3.2e0 * c * b / a)
         )
         return selfinductance
+
+    def rsid(self, npts, brin, bzin, nfix, ngrp, ccls, bfix, gmat):
+        """Computes the norm of the residual vectors.
+
+        author: P J Knight, CCFE, Culham Science Centre
+        author: D Strickler, ORNL
+        author: J Galambos, ORNL
+        author: P C Shipe, ORNL
+        This routine calculates the residuals from the matrix
+        equation for calculation of the currents in a group of ring coils.
+
+        :param npts: number of data points at which field is  to be fixed;
+        should be <= nptsmx
+        :type npts: int
+        :param brin: field components at data points (T)
+        :type brin: numpy.ndarray
+        :param bzin: field components at data points (T)
+        :type bzin: numpy.ndarray
+        :param nfix: number of coils with fixed currents, <= nfixmx
+        :type nfix: int
+        :param ngrp: number of coil groups, where all coils in a group have the
+        same current, <= ngrpmx
+        :type ngrp: int
+        :param ccls: coil currents in each group (A)
+        :type ccls: numpy.ndarray
+        :param bfix: work array
+        :type bfix: numpy.ndarray
+        :param gmat: work array
+        :type gmat: numpy.ndarray
+        :return: sum of squares of radial field residues (brssq), radial field
+        residue norm (brnrm), sum of squares of vertical field residues (bzssq),
+        vertical field residue norm (bznrm), sum of squares of elements of
+        residual vector (ssq)
+        :rtype: tuple[float, float, float, float, float]
+        """
+        brnrm = 0.0e0
+        brssq = 0.0e0
+
+        for i in range(npts):
+            svec = 0.0e0
+            if nfix > 0:
+                svec = bfix[i]
+
+            for j in range(ngrp):
+                svec = svec + gmat[i, j] * ccls[j]
+
+            rvec = svec - brin[i]
+            brnrm = brnrm + brin[i] ** 2
+            brssq = brssq + rvec**2
+
+        bznrm = 0.0e0
+        bzssq = 0.0e0
+
+        for i in range(npts):
+            svec = 0.0e0
+            if nfix > 0:
+                svec = bfix[i + npts]
+            for j in range(ngrp):
+                svec = svec + gmat[i + npts, j] * ccls[j]
+
+            rvec = svec - bzin[i]
+            bznrm = bznrm + bzin[i] ** 2
+            bzssq = bzssq + rvec**2
+
+        ssq = brssq / (1.0e0 + brnrm) + bzssq / (1.0e0 + bznrm)
+
+        return brssq, brnrm, bzssq, bznrm, ssq
