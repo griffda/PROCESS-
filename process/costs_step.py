@@ -1894,22 +1894,34 @@ class CostsStep:
         # Cost per Watt depends on technology/hardware used;
         # inflation adjustment applied as appropriate to source for costs
         # (tech adjusted from 1990 $ is costed as per Cost Model 0)
-        # Note: NBI and EC/EBW acounts will be zero if this tech is not included.
+        # Notes:
+        # NBI and EC/EBW calculations will be zero if this tech is not included.
+        # HCD requirements for start-up and ramp-down calculated in
+        # relation to requirements for flat-top operation.
 
-        # HCD requirements for flat-top operation
+        # Total injected power [W] =
+        #      1.0e-6 *
+        #      (flat-top operation [MW] +
+        #       (startupratio * flat-top operation [MW])
+        #       )
+        totinjpow_nbi = 0.0e0
+        totinjpow_ec = 0.0e0
+        totinjpow_ic = 0.0e0
+        # Cost calculated from 'cost per injected Watt', coverted to 2017 M$.
 
         # NBI cost per injected Watt (adjusted from 2020 $):
-        step220104 = cdv.pnbitot * cv.step_ref[68] * (229.0e0 / 258.84e0)
-        # (if this method is not used, result is zero)
+        totinjpow_nbi = 1.0e-6 * (cdv.pnbitot + (cv.startupratio * cdv.pnbitot))
+        step220104 = (totinjpow_nbi * cv.step_ref[68] * (229.0e0 / 258.84e0)) / 1.0e-6
 
         # EC or EBW cost per injected Watt (adjusted from 2020 $):
-        step220104 += cdv.echpwr * cv.step_ref[69] * (229.0e0 / 258.84e0)
-        # (if this method is not used, result is zero)
+        totinjpow_ec = 1.0e-6 * (cdv.echpwr + (cv.startupratio * cdv.echpwr))
+        step220104 += (totinjpow_ec * cv.step_ref[69] * (229.0e0 / 258.84e0)) / 1.0e-6
 
         if cdv.iefrf == 2 or cdv.iefrffix == 2:
             # if primary *or* secondary current drive efficiency model is
             # Ion Cyclotron current drive (adjusted from 1990 $):
-            step220104 += 1.0e-6 * cv.ucich * (1.0e6 * cdv.plhybd) * (229.0e0 / 76.7e0)
+            totinjpow_ic = 1.0e-6 * (cdv.plhybd + (cv.startupratio * cdv.plhybd))
+            step220104 += (totinjpow_ic * cv.ucich * (229.0e0 / 76.7e0)) / 1.0e-6
 
         # if primary current drive efficiency model is any of the following...
         if (
@@ -1921,11 +1933,8 @@ class CostsStep:
             or (cdv.iefrf == 6)
         ):
             # ...use calculation for Lower Hybrid system (adjusted from 1990 $):
-            step220104 += 1.0e-6 * cv.uclh * (1.0e6 * cdv.plhybd) * (229.0e0 / 76.7e0)
-
-        # HCD requirements for start-up and ramp-down
-        cv.startuppwr = step220104 * cv.startupratio
-        step220104 += cv.startuppwr
+            totinjpow_ic = 1.0e-6 * (cdv.plhybd + (cv.startupratio * cdv.plhybd))
+            step220104 += (totinjpow_ic * cv.uclh * (229.0e0 / 76.7e0)) / 1.0e-6
 
         if cv.ifueltyp == 1:
             # fraction `fcdfuel` of HCD cost treated as fuel cost
