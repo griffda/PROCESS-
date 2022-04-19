@@ -15,14 +15,14 @@
  
    Program :
    Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1570-g2769028f
-    Branch : develop
-   Git log : Merge\ branch\ |1626-add-xlaunch-documentation|\ into
- Date/time : 14 Apr 2022 10:48:03 +01:00(hh:mm) UTC
+   Tag No. : v2.1-1592-g962112e9
+    Branch : divertor-costs-into-cost-model-2-more-stable
+   Git log : Removed\ costs_step.f90\ as\ superceded\ by\ python\ ver
+ Date/time : 19 Apr 2022 11:31:21 +01:00(hh:mm) UTC
       User : jg6173
   Computer : L1088
- Directory : /tmp/pytest-of-jg6173/pytest-66/test_solver0
-     Input : /tmp/pytest-of-jg6173/pytest-66/test_scenario_CFETR_small_0/IN.DAT
+ Directory : /tmp/pytest-of-jg6173/pytest-70/test_solver0
+     Input : /tmp/pytest-of-jg6173/pytest-70/test_scenario_CFETR_small_0/IN.DAT
  Run title : "CFETR small (5.7m) reference file"
   Run type : Reactor concept design: Steady-state tokamak model, (c) CCFE
  
