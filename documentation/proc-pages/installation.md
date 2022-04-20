@@ -25,6 +25,9 @@ wsl --install
 
 However, you need admin privilages to perfom this command. Please ask support to grant you these rights temporarily so you can successsfully install WSL. This can be done via a Marval ticket or email to support if you are a new starter and do not have Nucleus access yet.
 
+If the above procedure fails to work, there is a page on Nucleus giving a further detailed instructions on installing WSL on Windows which have proven to be helpful for some. They can be found [here](https://intranet.ukaea.uk/software/guides/wsl2.html).
+*Unless instructed, please stop before the 'Enable x-forwarding' stage as this has been knwon to cause issues with the speed at which the code will run- see FAQs for more.*
+
 Next, you will need to install a source code editor so you are able to work with the Process code. Visual Studio Code, or VSCode for short, is a great choice. It is a lightweight but powerful source code editor which runs on your deskotp and is available for Windows, MacOS and Linux. It has a vast extension package allowing ease of use with a range of languages. More information on VSCode can be found [here](https://code.visualstudio.com/docs).
 
 Install Visual Studio Code [here](https://code.visualstudio.com/).
