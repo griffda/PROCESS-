@@ -34,24 +34,24 @@ real(dp) :: tf_fit_y
 real(dp) :: tfc_current
 !! Current in each TF coil
 
-real(dp), private :: awpc
+real(dp) :: awpc
 !! Total cross-sectional area of winding pack including
 !! GW insulation and insertion gap [m2]
 
-real(dp), private :: awptf
+real(dp) :: awptf
 !! Total cross-sectional area of winding pack without
 !! ground insulation and insertion gap [m2]
 
 real(dp), private :: a_tf_steel
 !! Inboard coil steel coil cross-sectional area [m2]
 
-real(dp), private :: a_tf_ins
+real(dp) :: a_tf_ins
 !! Inboard coil insulation cross-section per coil [m2]
 
 real(dp), private :: f_tf_steel
 !! Inboard coil steel fraction [-]
 
-real(dp), private :: f_tf_ins
+real(dp) :: f_tf_ins
 !! Inboard coil insulation fraction [-]
 
 real(dp) :: h_cp_top
@@ -63,16 +63,16 @@ real(dp) :: r_tf_outboard_in
 real(dp) :: r_tf_outboard_out
 !! Radial position of outer edge of TF coil inboard leg [m]
 
-real(dp), private :: r_wp_inner
+real(dp) :: r_wp_inner
 !! Radial position of inner edge and centre of winding pack [m]
 
-real(dp), private :: r_wp_outer
+real(dp) :: r_wp_outer
 !! Radial position of outer edge and centre of winding pack [m]
 
 real(dp) :: r_wp_centre
 !! Radial position of centre and centre of winding pack [m]
 
-real(dp), private :: dr_tf_wp_top
+real(dp) :: dr_tf_wp_top
 !! Conductor layer radial thickness at centercollumn top [m]
 !! Ground insulation layer included, only defined for itart = 1
 
@@ -94,13 +94,13 @@ real(dp), private :: t_wp_toroidal_av
 real(dp), private :: t_lat_case_av
 !! Average lateral casing thickness [m]
 
-real(dp), private :: a_case_front
+real(dp) :: a_case_front
 !! Front casing area [m2]
 
 real(dp), private :: a_case_nose
 !! Nose casing area [m2]
 
-real(dp), private :: a_ground_ins
+real(dp) :: a_ground_ins
 !! Inboard mid-plane cross-section area of the WP ground insulation [m2]
 
 real(dp), private :: a_leg_ins
@@ -927,7 +927,7 @@ subroutine res_tf_internal_geom()
         call report_error(101)
     end if
 
-    !-! end break
+    !!! end break
 
 
 end subroutine res_tf_internal_geom
@@ -4533,14 +4533,14 @@ subroutine outtf(outfile, peaktfflag)
     end if
 
     write(outfile,10)
-    10  format(t2,'point',t16,'x(m)',t31,'y(m)')
+10  format(t2,'point',t16,'x(m)',t31,'y(m)')
     do ii = 1,5
         write(outfile,20) ii,xarc(ii),yarc(ii)
         intstring = int2char(ii)
         call ovarre(mfile,'TF coil arc point '//intstring//' R (m)', '(xarc('//intstring//'))',xarc(ii))
         call ovarre(mfile,'TF coil arc point '//intstring//' Z (m)', '(yarc('//intstring//'))',yarc(ii))
     end do
-    20 format(i4,t10,f10.3,t25,f10.3)
+20  format(i4,t10,f10.3,t25,f10.3)
 
     ! CP tapering geometry
     if ( itart == 1 .and. i_tf_sup /= 1 ) then
