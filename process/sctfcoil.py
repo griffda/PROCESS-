@@ -1632,3 +1632,167 @@ class Sctfcoil:
             * (aaa + bbb)
             * (1.0e0 + (3.0e0 * hh) / (10.0e0 + numpy.sqrt(4.0e0 - 3.0e0 * hh)))
         )
+
+    def tf_res_heating(self):
+        """
+        Resitive magnet resitive heating calculations
+        Rem SK : Clamped joined superconductors might have resistive power losses on the joints
+        Rem SK : Sliding joints might have a region of high resistivity
+        """
+        if tfcoil_variables.i_tf_sup == 0:
+            tfcoil_variables.rhocp = (
+                (tfcoil_variables.frhocp / 0.92e0)
+                * (1.72e0 + 0.0039e0 * (tfcoil_variables.tcpav - 273.15e0))
+                * 1.0e-8
+            )
+
+        # Aluminium
+        if tfcoil_variables.i_tf_sup == 2:
+            tfcoil_variables.rhocp = tfcoil_variables.frhocp * (
+                2.00016e-14 * tfcoil_variables.tcpav**3
+                - 6.75384e-13 * tfcoil_variables.tcpav**2
+                + 8.89159e-12 * tfcoil_variables.tcpav
+            )
+
+        # Calculations dedicated for configurations with CP
+        if physics_variables.itart == 1:
+
+            # Tricky trick to make the leg / CP tempearture the same
+            if (
+                abs(tfcoil_variables.tlegav + 1.0e0)
+                < numpy.finfo(float(tfcoil_variables.tlegav)).eps
+            ):
+                sctfcoil_module.is_leg_cp_temp_same = 1
+                tfcoil_variables.tlegav = tfcoil_variables.tcpav
+
+            # Leg resistivity (different leg temperature as separate cooling channels)
+            if tfcoil_variables.i_tf_sup == 0:
+                tfcoil_variables.rhotfleg = (
+                    (tfcoil_variables.frholeg / 0.92e0)
+                    * (1.72e0 + 0.0039e0 * (tfcoil_variables.tlegav - 273.15e0))
+                    * 1.0e-8
+                )
+            elif tfcoil_variables.i_tf_sup == 2:
+                tfcoil_variables.rhotfleg = tfcoil_variables.frholeg * (
+                    2.00016e-14 * tfcoil_variables.tlegav**3
+                    - 6.75384e-13 * tfcoil_variables.tlegav**2
+                    + 8.89159e-12 * tfcoil_variables.tlegav
+                )
+
+            # Tricky trick to make the leg / CP tempearture the same
+            if sctfcoil_module.is_leg_cp_temp_same == 1:
+                tfcoil_variables.tlegav = -1.0e0
+
+            # Centrepost resisitivity and conductor/insulation volume
+            (
+                tfcoil_variables.a_cp_cool,
+                tfcoil_variables.vol_cond_cp,
+                tfcoil_variables.prescp,
+                sctfcoil_module.vol_ins_cp,
+                sctfcoil_module.vol_case_cp,
+                sctfcoil_module.vol_gr_ins_cp,
+            ) = sctfcoil_module.cpost(
+                build_variables.r_tf_inboard_in,
+                build_variables.r_tf_inboard_out,
+                build_variables.r_cp_top,
+                sctfcoil_module.h_cp_top,
+                build_variables.hmax + build_variables.tfthko,
+                tfcoil_variables.thkcas,
+                tfcoil_variables.casthi,
+                tfcoil_variables.tinstf,
+                tfcoil_variables.thicndut,
+                tfcoil_variables.n_tf_turn,
+                tfcoil_variables.ritfc,
+                tfcoil_variables.rhocp,
+                tfcoil_variables.fcoolcp,
+            )
+
+        # Leg cross-section areas
+        # Rem : For physics_variables.itart = 1, these quantitire corresponds to the outer leg only
+        # ---
+        # Leg ground insulation area per coil [m2]
+        sctfcoil_module.a_leg_gr_ins = tfcoil_variables.arealeg - (
+            tfcoil_variables.tftort - 2.0e0 * tfcoil_variables.tinstf
+        ) * (build_variables.tfthko - 2.0e0 * tfcoil_variables.tinstf)
+
+        # Outboard leg turns insulation area per coil [m2]
+        sctfcoil_module.a_leg_ins = 2.0e0 * tfcoil_variables.thicndut * (
+            tfcoil_variables.tftort - 2.0e0 * tfcoil_variables.tinstf
+        ) + 2.0e0 * tfcoil_variables.thicndut * tfcoil_variables.n_tf_turn * (
+            build_variables.tfthko
+            - 2.0e0 * (tfcoil_variables.thicndut + tfcoil_variables.tinstf)
+        )  # toroidal direction + radial direction
+
+        # Exact TF outboard leg conductor area per coil [m2]
+        a_leg_cond = (1.0e0 - tfcoil_variables.fcoolleg) * (
+            tfcoil_variables.arealeg
+            - sctfcoil_module.a_leg_gr_ins
+            - sctfcoil_module.a_leg_ins
+        )
+        # ---
+
+        if physics_variables.itart == 1:
+
+            # Outer leg resistive power loss
+            # ---
+            # TF outboard leg's resistance calculation (per leg) [ohm]
+            tfcoil_variables.tflegres = (
+                tfcoil_variables.rhotfleg * tfcoil_variables.tfleng / a_leg_cond
+            )
+
+            # TF outer leg resistive power (TOTAL) [W]
+            tfcoil_variables.presleg = (
+                tfcoil_variables.tflegres
+                * tfcoil_variables.ritfc**2
+                / tfcoil_variables.n_tf
+            )
+            # ---
+
+            # Sliding joints resistive heating
+            # ---
+            if tfcoil_variables.i_cp_joints != 0:
+
+                # Number of contact area per joint (all legs)
+                n_contact_tot = (
+                    tfcoil_variables.n_tf_joints_contact
+                    * numpy.round(tfcoil_variables.n_tf_turn)
+                    * numpy.round(tfcoil_variables.n_tf)
+                )
+
+                # Area of joint contact (all legs)
+                a_joints = (
+                    build_variables.tfthko
+                    * tfcoil_variables.th_joint_contact
+                    * n_contact_tot
+                )
+
+                # Total joints resistive power losses
+                tfcoil_variables.pres_joints = (
+                    tfcoil_variables.n_tf_joints
+                    * tfcoil_variables.rho_tf_joints
+                    * tfcoil_variables.ritfc**2
+                    / a_joints
+                )
+            else:
+                # Joints resistance to be evaluated for SC
+                tfcoil_variables.pres_joints = 0.0e0
+
+            # ---
+
+        # Case of a resistive magnet without joints
+        # ***
+        else:
+
+            # TF resistive powers
+            tfcoil_variables.prescp = (
+                tfcoil_variables.rhocp
+                * tfcoil_variables.ritfc**2
+                * tfcoil_variables.tfleng
+                / (a_leg_cond * tfcoil_variables.n_tf)
+            )
+
+            # tfcoil_variables.prescp containts the the total resistive power losses
+            tfcoil_variables.presleg = 0.0e0
+
+            # No joints if physics_variables.itart = 0
+            tfcoil_variables.pres_joints = 0.0e0

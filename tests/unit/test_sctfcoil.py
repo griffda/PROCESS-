@@ -830,3 +830,343 @@ def test_circumference(a, b, expected_circumference, sctfcoil):
     :type sctfcoil: process.sctfcoil.Sctfcoil
     """
     assert sctfcoil.circumference(a, b) == pytest.approx(expected_circumference)
+
+
+class TfResHeatingParam(NamedTuple):
+
+    rhocp: Any = None
+
+    tlegav: Any = None
+
+    thicndut: Any = None
+
+    th_joint_contact: Any = None
+
+    rhotfleg: Any = None
+
+    vol_cond_cp: Any = None
+
+    n_tf_turn: Any = None
+
+    thkcas: Any = None
+
+    tftort: Any = None
+
+    tfleng: Any = None
+
+    tflegres: Any = None
+
+    tcpav: Any = None
+
+    arealeg: Any = None
+
+    ritfc: Any = None
+
+    rho_tf_joints: Any = None
+
+    presleg: Any = None
+
+    prescp: Any = None
+
+    pres_joints: Any = None
+
+    n_tf_joints_contact: Any = None
+
+    n_tf_joints: Any = None
+
+    n_tf: Any = None
+
+    i_tf_sup: Any = None
+
+    frholeg: Any = None
+
+    frhocp: Any = None
+
+    fcoolcp: Any = None
+
+    casthi: Any = None
+
+    a_cp_cool: Any = None
+
+    fcoolleg: Any = None
+
+    i_cp_joints: Any = None
+
+    tinstf: Any = None
+
+    tfthko: Any = None
+
+    tfcth: Any = None
+
+    r_cp_top: Any = None
+
+    hmax: Any = None
+
+    r_tf_inboard_in: Any = None
+
+    r_tf_inboard_out: Any = None
+
+    itart: Any = None
+
+    h_cp_top: Any = None
+
+    is_leg_cp_temp_same: Any = None
+
+    expected_rhocp: Any = None
+
+    expected_rhotfleg: Any = None
+
+    expected_vol_cond_cp: Any = None
+
+    expected_tflegres: Any = None
+
+    expected_presleg: Any = None
+
+    expected_prescp: Any = None
+
+    expected_pres_joints: Any = None
+
+    expected_a_cp_cool: Any = None
+
+    expected_is_leg_cp_temp_same: Any = None
+
+
+@pytest.mark.parametrize(
+    "tfresheatingparam",
+    (
+        TfResHeatingParam(
+            rhocp=0,
+            tlegav=-1,
+            thicndut=0.00080000000000000004,
+            th_joint_contact=0.029999999999999999,
+            rhotfleg=0,
+            vol_cond_cp=0,
+            n_tf_turn=1,
+            thkcas=0,
+            tftort=0.45367650933034859,
+            tfleng=15.582502857142856,
+            tflegres=0,
+            tcpav=347.13,
+            arealeg=0.070242733939617885,
+            ritfc=25500000,
+            rho_tf_joints=2.5000000000000002e-10,
+            presleg=0,
+            prescp=0,
+            pres_joints=0,
+            n_tf_joints_contact=6,
+            n_tf_joints=4,
+            n_tf=12,
+            i_tf_sup=0,
+            frholeg=1,
+            frhocp=1,
+            fcoolcp=0.12725,
+            casthi=0.0077415000000000019,
+            a_cp_cool=0,
+            fcoolleg=0.20000000000000001,
+            i_cp_joints=1,
+            tinstf=0,
+            tfthko=0.15483000000000002,
+            tfcth=0.15483000000000002,
+            r_cp_top=0.87643571428571443,
+            hmax=4.4214285714285717,
+            r_tf_inboard_in=0,
+            r_tf_inboard_out=0.15483000000000002,
+            itart=1,
+            h_cp_top=2.6714285714285717,
+            is_leg_cp_temp_same=0,
+            expected_rhocp=2.1831760869565221e-08,
+            expected_rhotfleg=2.1831760869565221e-08,
+            expected_vol_cond_cp=12.020160732580297,
+            expected_tflegres=6.1387543007600344e-06,
+            expected_presleg=332643748.67243439,
+            expected_prescp=470083798.99090022,
+            expected_pres_joints=1944336.7995005273,
+            expected_a_cp_cool=0.00068328705812121333,
+            expected_is_leg_cp_temp_same=1,
+        ),
+        TfResHeatingParam(
+            rhocp=2.1831760869565221e-08,
+            tlegav=-1,
+            thicndut=0.00080000000000000004,
+            th_joint_contact=0.029999999999999999,
+            rhotfleg=2.1831760869565221e-08,
+            vol_cond_cp=12.020160732580297,
+            n_tf_turn=1,
+            thkcas=0,
+            tftort=0.44435902370665786,
+            tfleng=15.654502857142857,
+            tflegres=6.1387543007600344e-06,
+            tcpav=347.13,
+            arealeg=0.068800107640501845,
+            ritfc=25500000,
+            rho_tf_joints=2.5000000000000002e-10,
+            presleg=332643748.67243439,
+            prescp=470083798.99090022,
+            pres_joints=1944336.7995005273,
+            n_tf_joints_contact=6,
+            n_tf_joints=4,
+            n_tf=12,
+            i_tf_sup=0,
+            frholeg=1,
+            frhocp=1,
+            fcoolcp=0.12725,
+            casthi=0.0077415000000000019,
+            a_cp_cool=0.00068328705812121333,
+            fcoolleg=0.20000000000000001,
+            i_cp_joints=1,
+            tinstf=0,
+            tfthko=0.15483000000000002,
+            tfcth=0.15483000000000002,
+            r_cp_top=0.85843571428571441,
+            hmax=4.4214285714285717,
+            r_tf_inboard_in=0,
+            r_tf_inboard_out=0.15483000000000002,
+            itart=1,
+            h_cp_top=2.6714285714285717,
+            is_leg_cp_temp_same=1,
+            expected_rhocp=2.1831760869565221e-08,
+            expected_rhotfleg=2.1831760869565221e-08,
+            expected_vol_cond_cp=11.545770024935592,
+            expected_tflegres=6.2969005770928158e-06,
+            expected_presleg=341213300.02121693,
+            expected_prescp=475710489.56122422,
+            expected_pres_joints=1944336.7995005273,
+            expected_a_cp_cool=0.00068328705812121333,
+            expected_is_leg_cp_temp_same=1,
+        ),
+    ),
+)
+def test_tf_res_heating(tfresheatingparam, monkeypatch, sctfcoil):
+    """
+    Automatically generated Regression Unit Test for tf_res_heating.
+
+    This test was generated using data from tests/regression/scenarios/FNSF/IN.DAT.
+
+    :param tfresheatingparam: the data used to mock and assert in this test.
+    :type tfresheatingparam: tfresheatingparam
+
+    :param monkeypatch: pytest fixture used to mock module/class variables
+    :type monkeypatch: _pytest.monkeypatch.monkeypatch
+    """
+
+    monkeypatch.setattr(tfcoil_variables, "rhocp", tfresheatingparam.rhocp)
+
+    monkeypatch.setattr(tfcoil_variables, "tlegav", tfresheatingparam.tlegav)
+
+    monkeypatch.setattr(tfcoil_variables, "thicndut", tfresheatingparam.thicndut)
+
+    monkeypatch.setattr(
+        tfcoil_variables, "th_joint_contact", tfresheatingparam.th_joint_contact
+    )
+
+    monkeypatch.setattr(tfcoil_variables, "rhotfleg", tfresheatingparam.rhotfleg)
+
+    monkeypatch.setattr(tfcoil_variables, "vol_cond_cp", tfresheatingparam.vol_cond_cp)
+
+    monkeypatch.setattr(tfcoil_variables, "n_tf_turn", tfresheatingparam.n_tf_turn)
+
+    monkeypatch.setattr(tfcoil_variables, "thkcas", tfresheatingparam.thkcas)
+
+    monkeypatch.setattr(tfcoil_variables, "tftort", tfresheatingparam.tftort)
+
+    monkeypatch.setattr(tfcoil_variables, "tfleng", tfresheatingparam.tfleng)
+
+    monkeypatch.setattr(tfcoil_variables, "tflegres", tfresheatingparam.tflegres)
+
+    monkeypatch.setattr(tfcoil_variables, "tcpav", tfresheatingparam.tcpav)
+
+    monkeypatch.setattr(tfcoil_variables, "arealeg", tfresheatingparam.arealeg)
+
+    monkeypatch.setattr(tfcoil_variables, "ritfc", tfresheatingparam.ritfc)
+
+    monkeypatch.setattr(
+        tfcoil_variables, "rho_tf_joints", tfresheatingparam.rho_tf_joints
+    )
+
+    monkeypatch.setattr(tfcoil_variables, "presleg", tfresheatingparam.presleg)
+
+    monkeypatch.setattr(tfcoil_variables, "prescp", tfresheatingparam.prescp)
+
+    monkeypatch.setattr(tfcoil_variables, "pres_joints", tfresheatingparam.pres_joints)
+
+    monkeypatch.setattr(
+        tfcoil_variables, "n_tf_joints_contact", tfresheatingparam.n_tf_joints_contact
+    )
+
+    monkeypatch.setattr(tfcoil_variables, "n_tf_joints", tfresheatingparam.n_tf_joints)
+
+    monkeypatch.setattr(tfcoil_variables, "n_tf", tfresheatingparam.n_tf)
+
+    monkeypatch.setattr(tfcoil_variables, "i_tf_sup", tfresheatingparam.i_tf_sup)
+
+    monkeypatch.setattr(tfcoil_variables, "frholeg", tfresheatingparam.frholeg)
+
+    monkeypatch.setattr(tfcoil_variables, "frhocp", tfresheatingparam.frhocp)
+
+    monkeypatch.setattr(tfcoil_variables, "fcoolcp", tfresheatingparam.fcoolcp)
+
+    monkeypatch.setattr(tfcoil_variables, "casthi", tfresheatingparam.casthi)
+
+    monkeypatch.setattr(tfcoil_variables, "a_cp_cool", tfresheatingparam.a_cp_cool)
+
+    monkeypatch.setattr(tfcoil_variables, "fcoolleg", tfresheatingparam.fcoolleg)
+
+    monkeypatch.setattr(tfcoil_variables, "i_cp_joints", tfresheatingparam.i_cp_joints)
+
+    monkeypatch.setattr(tfcoil_variables, "tinstf", tfresheatingparam.tinstf)
+
+    monkeypatch.setattr(build_variables, "tfthko", tfresheatingparam.tfthko)
+
+    monkeypatch.setattr(build_variables, "tfcth", tfresheatingparam.tfcth)
+
+    monkeypatch.setattr(build_variables, "r_cp_top", tfresheatingparam.r_cp_top)
+
+    monkeypatch.setattr(build_variables, "hmax", tfresheatingparam.hmax)
+
+    monkeypatch.setattr(
+        build_variables, "r_tf_inboard_in", tfresheatingparam.r_tf_inboard_in
+    )
+
+    monkeypatch.setattr(
+        build_variables, "r_tf_inboard_out", tfresheatingparam.r_tf_inboard_out
+    )
+
+    monkeypatch.setattr(physics_variables, "itart", tfresheatingparam.itart)
+
+    monkeypatch.setattr(sctfcoil_module, "h_cp_top", tfresheatingparam.h_cp_top)
+
+    monkeypatch.setattr(
+        sctfcoil_module, "is_leg_cp_temp_same", tfresheatingparam.is_leg_cp_temp_same
+    )
+
+    sctfcoil.tf_res_heating()
+
+    assert tfcoil_variables.rhocp == pytest.approx(tfresheatingparam.expected_rhocp)
+
+    assert tfcoil_variables.rhotfleg == pytest.approx(
+        tfresheatingparam.expected_rhotfleg
+    )
+
+    assert tfcoil_variables.vol_cond_cp == pytest.approx(
+        tfresheatingparam.expected_vol_cond_cp
+    )
+
+    assert tfcoil_variables.tflegres == pytest.approx(
+        tfresheatingparam.expected_tflegres
+    )
+
+    assert tfcoil_variables.presleg == pytest.approx(tfresheatingparam.expected_presleg)
+
+    assert tfcoil_variables.prescp == pytest.approx(tfresheatingparam.expected_prescp)
+
+    assert tfcoil_variables.pres_joints == pytest.approx(
+        tfresheatingparam.expected_pres_joints
+    )
+
+    assert tfcoil_variables.a_cp_cool == pytest.approx(
+        tfresheatingparam.expected_a_cp_cool
+    )
+
+    assert sctfcoil_module.is_leg_cp_temp_same == pytest.approx(
+        tfresheatingparam.expected_is_leg_cp_temp_same
+    )

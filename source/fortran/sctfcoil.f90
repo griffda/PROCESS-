@@ -76,13 +76,13 @@ real(dp), private :: dr_tf_wp_top
 !! Conductor layer radial thickness at centercollumn top [m]
 !! Ground insulation layer included, only defined for itart = 1
 
-real(dp), private :: vol_ins_cp
+real(dp) :: vol_ins_cp
 !! CP turn insulation volume [m3]
 
-real(dp), private :: vol_gr_ins_cp
+real(dp) :: vol_gr_ins_cp
 !! CP ground insulation volume [m3]
 
-real(dp), private :: vol_case_cp
+real(dp) :: vol_case_cp
 !! Volume of the CP outer casing cylinder
 
 real(dp), private :: t_wp_toroidal
@@ -103,10 +103,10 @@ real(dp), private :: a_case_nose
 real(dp), private :: a_ground_ins
 !! Inboard mid-plane cross-section area of the WP ground insulation [m2]
 
-real(dp), private :: a_leg_ins
+real(dp) :: a_leg_ins
 !! TF ouboard leg turn insulation area per coil [m2]
 
-real(dp), private :: a_leg_gr_ins
+real(dp) :: a_leg_gr_ins
 !! TF outboard leg ground insulation area per coil [m2]
 
 real(dp), private :: a_leg_cond
@@ -931,130 +931,6 @@ subroutine res_tf_internal_geom()
 
 
 end subroutine res_tf_internal_geom
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-subroutine tf_res_heating()
-    !! Resitive magnet resitive heating calculations
-    !! Rem SK : Clamped joined superconductors might have resistive power losses on the joints
-    !! Rem SK : Sliding joints might have a region of high resistivity
-    use tfcoil_variables, only: rhocp, tlegav, thicndut, th_joint_contact, rhotfleg, &
-        vol_cond_cp, n_tf_turn, thkcas, tftort, tfleng, tflegres, tcpav, arealeg, &
-        ritfc, rho_tf_joints, presleg, prescp, pres_joints, n_tf_joints_contact, &
-        n_tf_joints, n_tf, i_tf_sup, frholeg, frhocp, fcoolcp, casthi, &
-        a_cp_cool, fcoolleg, i_cp_joints, tinstf
-    use build_variables, only: tfthko, tfcth, r_cp_top, hmax, &
-        r_tf_inboard_in, r_tf_inboard_out
-    use physics_variables, only: itart
-    use constants, only: pi
-    implicit none
-
-    ! Internal variable
-    ! ---
-    real(dp) :: a_joints
-    !! Total area of joint contact [m2]
-
-    integer :: n_contact_tot
-    !! Total number of contact area (4 joints section per legs)
-    ! ---
-
-
-    ! Copper : Copper resistivity degraded by 1/0.92 for the used of GLIDCOP A-15
-    !          Better structural properties at high temperature and radiation damage resilience
-    if ( i_tf_sup == 0 ) rhocp = (frhocp/0.92D0) * ( 1.72D0 + 0.0039D0*(tcpav-273.15D0) ) * 1.0D-8
-
-    ! Aluminium
-    if ( i_tf_sup == 2 ) rhocp = frhocp * ( 2.00016D-14*tcpav**3 - 6.75384D-13*tcpav**2 + 8.89159D-12*tcpav )
-
-    ! Calculations dedicated for configurations with CP
-    if ( itart == 1 ) then
-
-        ! Tricky trick to make the leg / CP tempearture the same
-        if ( abs(tlegav + 1.0D0) < epsilon(tlegav) ) then
-            is_leg_cp_temp_same = 1
-            tlegav = tcpav
-        end if
-
-        ! Leg resistivity (different leg temperature as separate cooling channels)
-        if ( i_tf_sup == 0 ) rhotfleg = (frholeg/0.92D0) * ( 1.72D0 + 0.0039D0*(tlegav-273.15D0) ) * 1.0D-8
-        if ( i_tf_sup == 2 ) rhotfleg =  frholeg * ( 2.00016D-14*tlegav**3 - 6.75384D-13*tlegav**2 + 8.89159D-12*tlegav )
-
-        ! Tricky trick to make the leg / CP tempearture the same
-        if ( is_leg_cp_temp_same == 1 ) tlegav = -1.0D0
-
-        ! Centrepost resisitivity and conductor/insulation volume
-        call cpost( r_tf_inboard_in, r_tf_inboard_out, r_cp_top, h_cp_top,    & ! Inputs
-                    hmax+tfthko, thkcas, casthi, tinstf, thicndut, n_tf_turn, & ! Inputs
-                    ritfc, rhocp, fcoolcp,                                    & ! Inputs
-                    a_cp_cool, vol_cond_cp, prescp,        & ! Outputs
-                    vol_ins_cp, vol_case_cp, vol_gr_ins_cp ) ! Outputs
-    end if
-
-    ! Leg cross-section areas
-    ! Rem : For itart = 1, these quantitire corresponds to the outer leg only
-    ! ---
-    ! Leg ground insulation area per coil [m2]
-    a_leg_gr_ins = arealeg - ( tftort - 2.0D0 * tinstf ) &
-                           * ( tfthko - 2.0D0 * tinstf )
-
-    ! Outboard leg turns insulation area per coil [m2]
-    a_leg_ins = 2.0D0 * thicndut * ( tftort - 2.0D0 * tinstf )     &                    ! toroidal direction
-              + 2.0D0 * thicndut * n_tf_turn * ( tfthko - 2.0D0 * ( thicndut + tinstf ) ) ! radial direction
-
-    ! Exact TF outboard leg conductor area per coil [m2]
-    a_leg_cond = ( 1.0D0 - fcoolleg ) * ( arealeg - a_leg_gr_ins - a_leg_ins )
-    ! ---
-
-
-    if ( itart == 1 ) then
-
-        ! Outer leg resistive power loss
-        ! ---
-        ! TF outboard leg's resistance calculation (per leg) [ohm]
-        tflegres = rhotfleg * tfleng / a_leg_cond
-
-        ! TF outer leg resistive power (TOTAL) [W]
-        presleg = tflegres * ritfc**2 / n_tf
-        ! ---
-
-
-        ! Sliding joints resistive heating
-        ! ---
-        if ( i_cp_joints /= 0 ) then
-
-            ! Number of contact area per joint (all legs)
-            n_contact_tot = n_tf_joints_contact * nint(n_tf_turn) * nint(n_tf)
-
-            ! Area of joint contact (all legs)
-            a_joints = tfthko * th_joint_contact * dble(n_contact_tot)
-
-            ! Total joints resistive power losses
-            pres_joints = dble(n_tf_joints) * rho_tf_joints * ritfc**2 / a_joints
-        else
-            ! Joints resistance to be evaluated for SC
-            pres_joints = 0.0D0
-        end if
-        ! ---
-
-
-    ! Case of a resistive magnet without joints
-    ! ***
-    else
-
-        ! TF resistive powers
-        prescp = rhocp * ritfc**2 * tfleng / ( a_leg_cond * n_tf )
-
-        ! prescp containts the the total resistive power losses
-        presleg = 0.0D0
-
-        ! No joints if itart = 0
-        pres_joints = 0.0D0
-
-    end if
-
-    !-! end break
-
-end subroutine tf_res_heating
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
