@@ -1192,7 +1192,7 @@ class Sctfcoil:
 
         # TF resistive heating (res TF only)
         if tfcoil_variables.i_tf_sup != 1:
-            sctfcoil_module.tf_res_heating()
+            self.tf_res_heating()
 
         # Vertical force
         sctfcoil_module.tf_field_and_force()
