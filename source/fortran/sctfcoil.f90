@@ -109,7 +109,7 @@ real(dp) :: a_leg_ins
 real(dp) :: a_leg_gr_ins
 !! TF outboard leg ground insulation area per coil [m2]
 
-real(dp), private :: a_leg_cond
+real(dp) :: a_leg_cond
 !! Exact TF ouboard leg conductor area [m2]
 
 real(dp) :: theta_coil
