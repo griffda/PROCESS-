@@ -1195,7 +1195,7 @@ class Sctfcoil:
             self.tf_res_heating()
 
         # Vertical force
-        sctfcoil_module.tf_field_and_force()
+        self.tf_field_and_force()
 
         # TF coil inductance
         # ---
@@ -2130,4 +2130,131 @@ class Sctfcoil:
             vol_ins_cp,
             vol_case_cp,
             vol_gr_ins_cp,
+        )
+
+    def tf_field_and_force(self):
+        """
+        Calculate the TF coil field, force and VV quench consideration, and the resistive magnets resistance/volume
+        """
+        if tfcoil_variables.i_tf_sup == 1:
+            tfcoil_variables.taucq = (
+                physics_variables.bt
+                * tfcoil_variables.ritfc
+                * physics_variables.rminor
+                * physics_variables.rminor
+            ) / (build_variables.r_vv_inboard_out * tfcoil_variables.sigvvall)
+
+        # Outer/inner WP radius removing the ground insulation layer and the insertion gap [m]
+        if tfcoil_variables.i_tf_sup == 1:
+            r_out_wp = (
+                sctfcoil_module.r_wp_outer
+                - tfcoil_variables.tinstf
+                - tfcoil_variables.tfinsgap
+            )
+            r_in_wp = (
+                sctfcoil_module.r_wp_inner
+                + tfcoil_variables.tinstf
+                + tfcoil_variables.tfinsgap
+            )
+        else:
+            r_out_wp = sctfcoil_module.r_wp_outer - tfcoil_variables.tinstf
+            r_in_wp = sctfcoil_module.r_wp_inner + tfcoil_variables.tinstf
+
+        # Associated WP thickness
+        dr_wp = r_out_wp - r_in_wp
+
+        # In plane forces
+        # ---
+        # Centering force = net inwards radial force per meters per TF coil [N/m]
+        tfcoil_variables.cforce = (
+            0.5e0
+            * tfcoil_variables.bmaxtf
+            * tfcoil_variables.ritfc
+            / tfcoil_variables.n_tf
+        )
+
+        # Vertical force per coil [N]
+        # ***
+        # Rem : this force does not depends on the TF shape or the presence of
+        #        sliding joints, the in/outboard vertical tension repartition is
+        # -#
+        # Ouboard leg WP plasma side radius without ground insulation/insertion gat [m]
+        if tfcoil_variables.i_tf_sup == 1:
+            r_in_outwp = (
+                sctfcoil_module.r_tf_outboard_in
+                + tfcoil_variables.casthi
+                + tfcoil_variables.tinstf
+                + tfcoil_variables.tfinsgap
+            )
+        else:
+            r_in_outwp = sctfcoil_module.r_tf_outboard_in + tfcoil_variables.tinstf
+
+        # If the TF coil has no bore it would induce division by 0.
+        # In this situation, the bore radius is set to a very small value : 1.0e-9 m
+        if abs(r_in_wp) < numpy.finfo(float(r_in_wp)).eps:
+            r_in_wp = 1.0e-9
+
+        # May the force be with you
+        vforce_tot = (
+            0.5e0
+            * (physics_variables.bt * physics_variables.rmajor * tfcoil_variables.ritfc)
+            / (tfcoil_variables.n_tf * dr_wp**2)
+            * (
+                r_out_wp**2 * numpy.log(r_out_wp / r_in_wp)
+                + r_in_outwp**2 * numpy.log((r_in_outwp + dr_wp) / r_in_outwp)
+                + dr_wp**2 * numpy.log((r_in_outwp + dr_wp) / r_in_wp)
+                - dr_wp * (r_out_wp + r_in_outwp)
+                + 2.0e0
+                * dr_wp
+                * (
+                    r_out_wp * numpy.log(r_in_wp / r_out_wp)
+                    + r_in_outwp * numpy.log((r_in_outwp + dr_wp) / r_in_outwp)
+                )
+            )
+        )
+
+        # Case of a centrepost (physics_variables.itart == 1) with sliding joints (the CP vertical are separated from the leg ones)
+        # Rem SK : casing/insulation thickness not subtracted as part of the CP is genuinely connected to the legs..
+        if physics_variables.itart == 1 and tfcoil_variables.i_cp_joints == 1:
+
+            # CP vertical tension [N]
+            tfcoil_variables.vforce = (
+                0.25e0
+                * (
+                    physics_variables.bt
+                    * physics_variables.rmajor
+                    * tfcoil_variables.ritfc
+                )
+                / (tfcoil_variables.n_tf * dr_wp**2)
+                * (
+                    2.0e0 * r_out_wp**2 * numpy.log(r_out_wp / r_in_wp)
+                    + 2.0e0 * dr_wp**2 * numpy.log(build_variables.r_cp_top / r_in_wp)
+                    + 3.0e0 * dr_wp**2
+                    - 2.0e0 * dr_wp * r_out_wp
+                    + 4.0e0 * dr_wp * r_out_wp * numpy.log(r_in_wp / r_out_wp)
+                )
+            )
+
+            # Vertical tension applied on the outer leg [N]
+            tfcoil_variables.vforce_outboard = vforce_tot - tfcoil_variables.vforce
+
+            # Inboard vertical tension fraction
+            tfcoil_variables.f_vforce_inboard = tfcoil_variables.vforce / vforce_tot
+
+        # Case of TF without joints or with clamped joints vertical tension
+        else:
+
+            # Inboard vertical tension [N]
+            tfcoil_variables.vforce = tfcoil_variables.f_vforce_inboard * vforce_tot
+
+            # Ouboard vertical tension [N]
+            tfcoil_variables.vforce_outboard = tfcoil_variables.vforce * (
+                (1.0e0 / tfcoil_variables.f_vforce_inboard) - 1.0e0
+            )
+
+        # ***
+
+        # Total vertical force
+        sctfcoil_module.vforce_inboard_tot = (
+            tfcoil_variables.vforce * tfcoil_variables.n_tf
         )

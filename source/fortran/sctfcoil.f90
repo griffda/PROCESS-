@@ -34,24 +34,24 @@ real(dp) :: tf_fit_y
 real(dp) :: tfc_current
 !! Current in each TF coil
 
-real(dp), private :: awpc
+real(dp) :: awpc
 !! Total cross-sectional area of winding pack including
 !! GW insulation and insertion gap [m2]
 
-real(dp), private :: awptf
+real(dp) :: awptf
 !! Total cross-sectional area of winding pack without
 !! ground insulation and insertion gap [m2]
 
-real(dp), private :: a_tf_steel
+real(dp) :: a_tf_steel
 !! Inboard coil steel coil cross-sectional area [m2]
 
-real(dp), private :: a_tf_ins
+real(dp) :: a_tf_ins
 !! Inboard coil insulation cross-section per coil [m2]
 
-real(dp), private :: f_tf_steel
+real(dp) :: f_tf_steel
 !! Inboard coil steel fraction [-]
 
-real(dp), private :: f_tf_ins
+real(dp) :: f_tf_ins
 !! Inboard coil insulation fraction [-]
 
 real(dp) :: h_cp_top
@@ -63,16 +63,16 @@ real(dp) :: r_tf_outboard_in
 real(dp) :: r_tf_outboard_out
 !! Radial position of outer edge of TF coil inboard leg [m]
 
-real(dp), private :: r_wp_inner
+real(dp) :: r_wp_inner
 !! Radial position of inner edge and centre of winding pack [m]
 
-real(dp), private :: r_wp_outer
+real(dp) :: r_wp_outer
 !! Radial position of outer edge and centre of winding pack [m]
 
 real(dp) :: r_wp_centre
 !! Radial position of centre and centre of winding pack [m]
 
-real(dp), private :: dr_tf_wp_top
+real(dp) :: dr_tf_wp_top
 !! Conductor layer radial thickness at centercollumn top [m]
 !! Ground insulation layer included, only defined for itart = 1
 
@@ -85,22 +85,22 @@ real(dp) :: vol_gr_ins_cp
 real(dp) :: vol_case_cp
 !! Volume of the CP outer casing cylinder
 
-real(dp), private :: t_wp_toroidal
+real(dp) :: t_wp_toroidal
 !! Minimal toroidal thickness of of winding pack [m]
 
-real(dp), private :: t_wp_toroidal_av
+real(dp) :: t_wp_toroidal_av
 !! Averaged toroidal thickness of of winding pack [m]
 
-real(dp), private :: t_lat_case_av
+real(dp) :: t_lat_case_av
 !! Average lateral casing thickness [m]
 
-real(dp), private :: a_case_front
+real(dp) :: a_case_front
 !! Front casing area [m2]
 
-real(dp), private :: a_case_nose
+real(dp) :: a_case_nose
 !! Nose casing area [m2]
 
-real(dp), private :: a_ground_ins
+real(dp) :: a_ground_ins
 !! Inboard mid-plane cross-section area of the WP ground insulation [m2]
 
 real(dp) :: a_leg_ins
@@ -118,19 +118,19 @@ real(dp) :: theta_coil
 real(dp) :: tan_theta_coil
 !! Tan half toroidal angular extent of a single TF coil inboard leg
 
-real(dp), private :: t_conductor_radial, t_conductor_toroidal
+real(dp) :: t_conductor_radial, t_conductor_toroidal
 !! Conductor area radial and toroidal dimension (integer turn only) [m]
 
-real(dp), private :: t_cable_radial, t_cable_toroidal
+real(dp) :: t_cable_radial, t_cable_toroidal
 !! Cable area radial and toroidal dimension (integer turn only) [m]
 
-real(dp), private :: t_turn_radial, t_turn_toroidal
+real(dp) :: t_turn_radial, t_turn_toroidal
 !! Turn radial and toroidal dimension (integer turn only) [m]
 
-real(dp), private :: t_cable
+real(dp) :: t_cable
 !! Cable area averaged dimension (square shape) [m]
 
-real(dp), private :: vforce_inboard_tot
+real(dp) :: vforce_inboard_tot
 !! Total inboard vertical tension (all coils) [N]
 
 type(resistive_material), private :: copper
@@ -931,126 +931,6 @@ subroutine res_tf_internal_geom()
 
 
 end subroutine res_tf_internal_geom
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-subroutine tf_field_and_force()
-    !! Calculate the TF coil field, force and VV quench consideration, and the resistive magnets resistance/volume
-
-    use physics_variables, only: rminor, rmajor, bt, itart
-    use build_variables, only: r_tf_outboard_mid, r_vv_inboard_out, &
-        r_tf_inboard_mid, r_cp_top
-    use tfcoil_variables, only: vforce, n_tf, taucq, sigvvall, cforce, &
-        ritfc, bmaxtf, i_tf_sup, f_vforce_inboard, vforce_outboard, &
-        tinstf, thicndut, dr_tf_wp, tfinsgap, i_cp_joints, casthi
-
-    implicit none
-
-    ! Local variables
-    ! ---------------
-    real(dp) :: r_in_wp
-    !! Inner WP radius removing the insulation layer and the insertion gap [m]
-
-    real(dp) :: r_out_wp
-    !! Outer WP radius removing the insulation layer and the insertion gap [m]
-
-    real(dp) :: dr_wp
-    !! WP radial thickness removing the insulation layer and the insertion gap [m]
-
-    real(dp) :: vforce_tot
-    !! Total vertical force : inboard + outbord [N]
-
-    real(dp) :: r_in_outwp
-    !! Plasma side radius of the outboard leg winding pack (at-midplane) [m]
-    ! ---------------
-
-
-    ! Quench time [s]
-    ! Determine quench time (based on IDM: 2MBSE3)
-    ! Resistive magnets : calculation of the resistive power losses added
-    ! Issue #337: Force on the vessel wall due to TF coil quench
-    if ( i_tf_sup == 1 ) taucq = (bt * ritfc * rminor * rminor) / (r_vv_inboard_out * sigvvall)
-
-    ! Outer/inner WP radius removing the ground insulation layer and the insertion gap [m]
-    if ( i_tf_sup == 1 ) then
-        r_out_wp = r_wp_outer - tinstf - tfinsgap
-        r_in_wp = r_wp_inner + tinstf + tfinsgap
-    else
-        r_out_wp = r_wp_outer - tinstf
-        r_in_wp = r_wp_inner + tinstf
-    end if
-
-    ! Associated WP thickness
-    dr_wp = r_out_wp - r_in_wp
-
-
-    ! In plane forces
-    ! ---
-    ! Centering force = net inwards radial force per meters per TF coil [N/m]
-    cforce = 0.5D0 * bmaxtf*ritfc/n_tf
-
-
-    ! Vertical force per coil [N]
-    ! ***
-    ! Rem : this force does not depends on the TF shape or the presence of
-    !        sliding joints, the in/outboard vertical tension repartition is
-    !-!
-    ! Ouboard leg WP plasma side radius without ground insulation/insertion gat [m]
-    if ( i_tf_sup == 1 ) then
-        r_in_outwp = r_tf_outboard_in + casthi + tinstf + tfinsgap
-    else
-        r_in_outwp = r_tf_outboard_in + tinstf
-    end if
-
-    ! If the TF coil has no bore it would induce division by 0.
-    ! In this situation, the bore radius is set to a very small value : 1.0D-9 m
-    if ( abs(r_in_wp) < epsilon(r_in_wp) ) r_in_wp = 1.0D-9
-
-    ! May the force be with you
-    vforce_tot = 0.5D0 * ( bt * rmajor * ritfc ) / ( n_tf * dr_wp**2 ) &
-               * ( r_out_wp**2 * log( r_out_wp / r_in_wp )             &
-                 + r_in_outwp**2 * log( (r_in_outwp + dr_wp) / r_in_outwp ) &
-                 + dr_wp**2         * log( (r_in_outwp + dr_wp) / r_in_wp ) &
-                 - dr_wp            * ( r_out_wp + r_in_outwp )             &
-                 + 2.0D0 * dr_wp * ( r_out_wp     * log(r_in_wp / r_out_wp) &
-                                   + r_in_outwp * log((r_in_outwp + dr_wp)  &
-                                   / r_in_outwp)))
-
-    ! Case of a centrepost (itart == 1) with sliding joints (the CP vertical are separated from the leg ones)
-    ! Rem SK : casing/insulation thickness not subtracted as part of the CP is genuinely connected to the legs..
-    if ( itart == 1 .and. i_cp_joints == 1 ) then
-
-        ! CP vertical tension [N]
-        vforce = 0.25D0 * (bt * rmajor * ritfc) / (n_tf * dr_wp**2) &
-               * ( 2.0D0 * r_out_wp**2 * log(r_out_wp / r_in_wp )   &
-                 + 2.0D0 * dr_wp**2 * log( r_cp_top / r_in_wp )     &
-                 + 3.0D0 * dr_wp**2                                 &
-                 - 2.0D0 * dr_wp * r_out_wp                         &
-                 + 4.0D0 * dr_wp * r_out_wp *log( r_in_wp / r_out_wp ) )
-
-        ! Vertical tension applied on the outer leg [N]
-        vforce_outboard = vforce_tot - vforce
-
-        ! Inboard vertical tension fraction
-        f_vforce_inboard = vforce / vforce_tot
-
-    ! Case of TF without joints or with clamped joints vertical tension
-    else
-
-        ! Inboard vertical tension [N]
-        vforce = f_vforce_inboard * vforce_tot
-
-        ! Ouboard vertical tension [N]
-        vforce_outboard = vforce * ( ( 1.0D0 / f_vforce_inboard ) - 1.0D0 )
-    end if
-    ! ***
-
-    ! Total vertical force
-    vforce_inboard_tot = vforce * n_tf
-
-    !-! end break
-
-end subroutine tf_field_and_force
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
