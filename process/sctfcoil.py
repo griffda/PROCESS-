@@ -1227,7 +1227,7 @@ class Sctfcoil:
         # Peak field including ripple
         # Rem : as resistive magnets are axisymmetric, no inboard ripple is present
         if tfcoil_variables.i_tf_sup == 1:
-            tfcoil_variables.bmaxtfrp, peaktfflag = sctfcoil_module.peak_tf_with_ripple(
+            tfcoil_variables.bmaxtfrp, peaktfflag = self.peak_tf_with_ripple(
                 tfcoil_variables.n_tf,
                 tfcoil_variables.wwp1,
                 tfcoil_variables.dr_tf_wp
@@ -2661,3 +2661,94 @@ class Sctfcoil:
                 + tfcoil_variables.whtconin
                 + tfcoil_variables.whtgw
             ) * tfcoil_variables.n_tf
+
+    def peak_tf_with_ripple(self, n_tf, wwp1, dr_tf_wp, tfin, bmaxtf):
+        """Peak toroidal field on the conductor
+        author: P J Knight, CCFE, Culham Science Centre
+        This subroutine calculates the peak toroidal field at the
+        outboard edge of the inboard TF coil winding pack, including
+        the effects of ripple.
+        <P>For 16, 18 or 20 coils, the calculation uses fitting formulae
+        derived by M. Kovari using MAGINT calculations on coil sets based
+        on a DEMO1 case.
+        <P>For other numbers of coils, the original estimate using a 9%
+        increase due to ripple from the axisymmetric calculation is used.
+        M. Kovari, Toroidal Field Coils - Maximum Field and Ripple -
+        Parametric Calculation, July 2014
+
+        :param n_tf: number of TF coils
+        :type n_tf: float
+        :param wwp1: width of plasma-facing face of winding pack (m)
+        :type wwp1: float
+        :param dr_tf_wp: radial thickness of winding pack (m)
+        :type dr_tf_wp: float
+        :param tfin: major radius of centre of winding pack (m)
+        :type tfin: float
+        :param bmaxtf: nominal (axisymmetric) peak toroidal field (T)
+        :type bmaxtf: float
+
+        :returns: (bmaxtfrp, flag)
+        * bmaxtfrp: peak toroidal field including ripple (T)
+        * flag: flag warning of applicability problems
+
+        :rtype: Tuple[float, int]
+
+        """
+        a = numpy.zeros((4,))
+        flag = 0
+
+        #  Set fitting coefficients for different numbers of TF coils
+
+        int_n_tf = numpy.round(n_tf)
+
+        if int_n_tf == 16:
+            a[0] = 0.28101e0
+            a[1] = 1.8481e0
+            a[2] = -0.88159e0
+            a[3] = 0.93834e0
+        elif int_n_tf == 18:
+            a[0] = 0.29153e0
+            a[1] = 1.81600e0
+            a[2] = -0.84178e0
+            a[3] = 0.90426e0
+        elif int_n_tf == 20:
+            a[0] = 0.29853e0
+            a[1] = 1.82130e0
+            a[2] = -0.85031e0
+            a[3] = 0.89808e0
+
+        else:
+            bmaxtfrp = 1.09e0 * bmaxtf
+            return bmaxtfrp, flag
+
+        #  Maximum winding pack width before adjacent packs touch
+        #  (ignoring the external case and ground wall thicknesses)
+
+        wmax = (2.0e0 * tfin + dr_tf_wp) * numpy.tan(numpy.pi / n_tf)
+
+        #  Dimensionless winding pack width
+
+        sctfcoil_module.tf_fit_t = wwp1 / wmax
+        if (sctfcoil_module.tf_fit_t < 0.3e0) or (sctfcoil_module.tf_fit_t > 1.1e0):
+            # write(*,*) 'PEAK_TF_WITH_RIPPLE: fitting problem; t = ',t
+            flag = 1
+
+        #  Dimensionless winding pack radial thickness
+
+        sctfcoil_module.tf_fit_z = dr_tf_wp / wmax
+        if (sctfcoil_module.tf_fit_z < 0.26e0) or (sctfcoil_module.tf_fit_z > 0.7e0):
+            # write(*,*) 'PEAK_TF_WITH_RIPPLE: fitting problem; z = ',z
+            flag = 2
+
+        #  Ratio of peak field with ripple to nominal axisymmetric peak field
+
+        sctfcoil_module.tf_fit_y = (
+            a[0]
+            + a[1] * numpy.exp(-sctfcoil_module.tf_fit_t)
+            + a[2] * sctfcoil_module.tf_fit_z
+            + a[3] * sctfcoil_module.tf_fit_z * sctfcoil_module.tf_fit_t
+        )
+
+        bmaxtfrp = sctfcoil_module.tf_fit_y * bmaxtf
+
+        return bmaxtfrp, flag

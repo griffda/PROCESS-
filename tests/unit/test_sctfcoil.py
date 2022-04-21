@@ -2339,3 +2339,111 @@ def test_tf_coil_area_and_masses(tfcoilareaandmassesparam, monkeypatch, sctfcoil
     assert tfcoil_variables.cplen == pytest.approx(
         tfcoilareaandmassesparam.expected_cplen
     )
+
+
+class PeakTfWithRippleParam(NamedTuple):
+
+    tf_fit_t: Any = None
+
+    tf_fit_z: Any = None
+
+    tf_fit_y: Any = None
+
+    n_tf: Any = None
+
+    wwp1: Any = None
+
+    dr_tf_wp: Any = None
+
+    tfin: Any = None
+
+    bmaxtf: Any = None
+
+    expected_tf_fit_t: Any = None
+
+    expected_tf_fit_z: Any = None
+
+    expected_tf_fit_y: Any = None
+
+    expected_bmaxtfrp: Any = None
+
+    expected_flag: Any = None
+
+
+@pytest.mark.parametrize(
+    "peaktfwithrippleparam",
+    (
+        PeakTfWithRippleParam(
+            tf_fit_t=0,
+            tf_fit_z=0,
+            tf_fit_y=0,
+            n_tf=16,
+            wwp1=1.299782604942499,
+            dr_tf_wp=0.50661087836601015,
+            tfin=3.789896624292115,
+            bmaxtf=11.717722779177526,
+            expected_tf_fit_t=0.80807838916035957,
+            expected_tf_fit_z=0.3149613642807837,
+            expected_tf_fit_y=1.0658869305062604,
+            expected_bmaxtfrp=12.48976756562082,
+            expected_flag=0,
+        ),
+        PeakTfWithRippleParam(
+            tf_fit_t=0.80807838916035957,
+            tf_fit_z=0.3149613642807837,
+            tf_fit_y=1.0658869305062604,
+            n_tf=16,
+            wwp1=1.299782604942499,
+            dr_tf_wp=0.50661087836601015,
+            tfin=3.789896624292115,
+            bmaxtf=11.717722779177526,
+            expected_tf_fit_t=0.80807838916035957,
+            expected_tf_fit_z=0.3149613642807837,
+            expected_tf_fit_y=1.0658869305062604,
+            expected_bmaxtfrp=12.48976756562082,
+            expected_flag=0,
+        ),
+    ),
+)
+def test_peak_tf_with_ripple(peaktfwithrippleparam, monkeypatch, sctfcoil):
+    """
+    Automatically generated Regression Unit Test for peak_tf_with_ripple.
+
+    This test was generated using data from tracking/baseline_2018/baseline_2018_IN.DAT.
+
+    :param peaktfwithrippleparam: the data used to mock and assert in this test.
+    :type peaktfwithrippleparam: peaktfwithrippleparam
+
+    :param monkeypatch: pytest fixture used to mock module/class variables
+    :type monkeypatch: _pytest.monkeypatch.monkeypatch
+    """
+
+    monkeypatch.setattr(sctfcoil_module, "tf_fit_t", peaktfwithrippleparam.tf_fit_t)
+
+    monkeypatch.setattr(sctfcoil_module, "tf_fit_z", peaktfwithrippleparam.tf_fit_z)
+
+    monkeypatch.setattr(sctfcoil_module, "tf_fit_y", peaktfwithrippleparam.tf_fit_y)
+
+    bmaxtfrp, flag = sctfcoil.peak_tf_with_ripple(
+        n_tf=peaktfwithrippleparam.n_tf,
+        wwp1=peaktfwithrippleparam.wwp1,
+        dr_tf_wp=peaktfwithrippleparam.dr_tf_wp,
+        tfin=peaktfwithrippleparam.tfin,
+        bmaxtf=peaktfwithrippleparam.bmaxtf,
+    )
+
+    assert sctfcoil_module.tf_fit_t == pytest.approx(
+        peaktfwithrippleparam.expected_tf_fit_t
+    )
+
+    assert sctfcoil_module.tf_fit_z == pytest.approx(
+        peaktfwithrippleparam.expected_tf_fit_z
+    )
+
+    assert sctfcoil_module.tf_fit_y == pytest.approx(
+        peaktfwithrippleparam.expected_tf_fit_y
+    )
+
+    assert bmaxtfrp == pytest.approx(peaktfwithrippleparam.expected_bmaxtfrp)
+
+    assert flag == pytest.approx(peaktfwithrippleparam.expected_flag)
