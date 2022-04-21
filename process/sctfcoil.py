@@ -1192,15 +1192,15 @@ class Sctfcoil:
 
         # TF resistive heating (res TF only)
         if tfcoil_variables.i_tf_sup != 1:
-            sctfcoil_module.tf_res_heating()
+            self.tf_res_heating()
 
         # Vertical force
-        sctfcoil_module.tf_field_and_force()
+        self.tf_field_and_force()
 
         # TF coil inductance
         # ---
         if physics_variables.itart == 0 and tfcoil_variables.i_tf_shape == 1:
-            sctfcoil_module.tfcind(build_variables.tfcth)
+            self.tfcind(build_variables.tfcth)
         else:
             tfcoil_variables.tfind = (
                 (build_variables.hmax + build_variables.tfthko)
@@ -1633,6 +1633,7 @@ class Sctfcoil:
             * (1.0e0 + (3.0e0 * hh) / (10.0e0 + numpy.sqrt(4.0e0 - 3.0e0 * hh)))
         )
 
+<<<<<<< HEAD
     def res_tf_internal_geom(self):
         """
         Author : S. Kahn
@@ -1745,3 +1746,715 @@ class Sctfcoil:
             error_handling.report_error(101)
 
         ### end break
+=======
+    def tf_res_heating(self):
+        """
+        Resitive magnet resitive heating calculations
+        Rem SK : Clamped joined superconductors might have resistive power losses on the joints
+        Rem SK : Sliding joints might have a region of high resistivity
+        """
+        if tfcoil_variables.i_tf_sup == 0:
+            tfcoil_variables.rhocp = (
+                (tfcoil_variables.frhocp / 0.92e0)
+                * (1.72e0 + 0.0039e0 * (tfcoil_variables.tcpav - 273.15e0))
+                * 1.0e-8
+            )
+
+        # Aluminium
+        if tfcoil_variables.i_tf_sup == 2:
+            tfcoil_variables.rhocp = tfcoil_variables.frhocp * (
+                2.00016e-14 * tfcoil_variables.tcpav**3
+                - 6.75384e-13 * tfcoil_variables.tcpav**2
+                + 8.89159e-12 * tfcoil_variables.tcpav
+            )
+
+        # Calculations dedicated for configurations with CP
+        if physics_variables.itart == 1:
+
+            # Tricky trick to make the leg / CP tempearture the same
+            if (
+                abs(tfcoil_variables.tlegav + 1.0e0)
+                < numpy.finfo(float(tfcoil_variables.tlegav)).eps
+            ):
+                sctfcoil_module.is_leg_cp_temp_same = 1
+                tfcoil_variables.tlegav = tfcoil_variables.tcpav
+
+            # Leg resistivity (different leg temperature as separate cooling channels)
+            if tfcoil_variables.i_tf_sup == 0:
+                tfcoil_variables.rhotfleg = (
+                    (tfcoil_variables.frholeg / 0.92e0)
+                    * (1.72e0 + 0.0039e0 * (tfcoil_variables.tlegav - 273.15e0))
+                    * 1.0e-8
+                )
+            elif tfcoil_variables.i_tf_sup == 2:
+                tfcoil_variables.rhotfleg = tfcoil_variables.frholeg * (
+                    2.00016e-14 * tfcoil_variables.tlegav**3
+                    - 6.75384e-13 * tfcoil_variables.tlegav**2
+                    + 8.89159e-12 * tfcoil_variables.tlegav
+                )
+
+            # Tricky trick to make the leg / CP tempearture the same
+            if sctfcoil_module.is_leg_cp_temp_same == 1:
+                tfcoil_variables.tlegav = -1.0e0
+
+            # Centrepost resisitivity and conductor/insulation volume
+
+            (
+                tfcoil_variables.a_cp_cool,
+                tfcoil_variables.vol_cond_cp,
+                tfcoil_variables.prescp,
+                sctfcoil_module.vol_ins_cp,
+                sctfcoil_module.vol_case_cp,
+                sctfcoil_module.vol_gr_ins_cp,
+            ) = self.cpost(
+                build_variables.r_tf_inboard_in,
+                build_variables.r_tf_inboard_out,
+                build_variables.r_cp_top,
+                sctfcoil_module.h_cp_top,
+                build_variables.hmax + build_variables.tfthko,
+                tfcoil_variables.thkcas,
+                tfcoil_variables.casthi,
+                tfcoil_variables.tinstf,
+                tfcoil_variables.thicndut,
+                tfcoil_variables.n_tf_turn,
+                tfcoil_variables.ritfc,
+                tfcoil_variables.rhocp,
+                tfcoil_variables.fcoolcp,
+            )
+
+        # Leg cross-section areas
+        # Rem : For physics_variables.itart = 1, these quantitire corresponds to the outer leg only
+        # ---
+        # Leg ground insulation area per coil [m2]
+        sctfcoil_module.a_leg_gr_ins = tfcoil_variables.arealeg - (
+            tfcoil_variables.tftort - 2.0e0 * tfcoil_variables.tinstf
+        ) * (build_variables.tfthko - 2.0e0 * tfcoil_variables.tinstf)
+
+        # Outboard leg turns insulation area per coil [m2]
+        sctfcoil_module.a_leg_ins = 2.0e0 * tfcoil_variables.thicndut * (
+            tfcoil_variables.tftort - 2.0e0 * tfcoil_variables.tinstf
+        ) + 2.0e0 * tfcoil_variables.thicndut * tfcoil_variables.n_tf_turn * (
+            build_variables.tfthko
+            - 2.0e0 * (tfcoil_variables.thicndut + tfcoil_variables.tinstf)
+        )  # toroidal direction + radial direction
+
+        # Exact TF outboard leg conductor area per coil [m2]
+        sctfcoil_module.a_leg_cond = (1.0e0 - tfcoil_variables.fcoolleg) * (
+            tfcoil_variables.arealeg
+            - sctfcoil_module.a_leg_gr_ins
+            - sctfcoil_module.a_leg_ins
+        )
+        # ---
+
+        if physics_variables.itart == 1:
+
+            # Outer leg resistive power loss
+            # ---
+            # TF outboard leg's resistance calculation (per leg) [ohm]
+            tfcoil_variables.tflegres = (
+                tfcoil_variables.rhotfleg
+                * tfcoil_variables.tfleng
+                / sctfcoil_module.a_leg_cond
+            )
+
+            # TF outer leg resistive power (TOTAL) [W]
+            tfcoil_variables.presleg = (
+                tfcoil_variables.tflegres
+                * tfcoil_variables.ritfc**2
+                / tfcoil_variables.n_tf
+            )
+            # ---
+
+            # Sliding joints resistive heating
+            # ---
+            if tfcoil_variables.i_cp_joints != 0:
+
+                # Number of contact area per joint (all legs)
+                n_contact_tot = (
+                    tfcoil_variables.n_tf_joints_contact
+                    * numpy.round(tfcoil_variables.n_tf_turn)
+                    * numpy.round(tfcoil_variables.n_tf)
+                )
+
+                # Area of joint contact (all legs)
+                a_joints = (
+                    build_variables.tfthko
+                    * tfcoil_variables.th_joint_contact
+                    * n_contact_tot
+                )
+
+                # Total joints resistive power losses
+                tfcoil_variables.pres_joints = (
+                    tfcoil_variables.n_tf_joints
+                    * tfcoil_variables.rho_tf_joints
+                    * tfcoil_variables.ritfc**2
+                    / a_joints
+                )
+            else:
+                # Joints resistance to be evaluated for SC
+                tfcoil_variables.pres_joints = 0.0e0
+
+            # ---
+
+        # Case of a resistive magnet without joints
+        # ***
+        else:
+
+            # TF resistive powers
+            tfcoil_variables.prescp = (
+                tfcoil_variables.rhocp
+                * tfcoil_variables.ritfc**2
+                * tfcoil_variables.tfleng
+                / (sctfcoil_module.a_leg_cond * tfcoil_variables.n_tf)
+            )
+
+            # tfcoil_variables.prescp containts the the total resistive power losses
+            tfcoil_variables.presleg = 0.0e0
+
+            # No joints if physics_variables.itart = 0
+            tfcoil_variables.pres_joints = 0.0e0
+
+    def cpost(
+        self,
+        r_tf_inboard_in,
+        r_tf_inboard_out,
+        r_cp_top,
+        ztop,
+        hmaxi,
+        cas_in_th,
+        cas_out_th,
+        gr_ins_th,
+        ins_th,
+        n_tf_turn,
+        curr,
+        rho,
+        fcool,
+    ):
+        """
+        author: P J Knight, CCFE, Culham Science Centre
+        Calculates the volume and resistive power losses of a TART centrepost
+        This routine calculates the volume and resistive power losses
+        of a TART centrepost. It is assumed to be tapered - narrowest at
+        the midplane and reaching maximum thickness at the height of the
+        plasma. Above/below the plasma, the centrepost is cylindrical.
+        The shape of the taper is assumed to be an arc of a circle.
+        P J Knight, CCFE, Culham Science Centre
+        21/10/96 PJK Initial version
+        08/05/12 PJK Initial F90 version
+        16/10/12 PJK Added constants; removed argument pi
+        26/06/14 PJK Added error handling
+        12/11/19 SK Using fixed cooling cross-section area along the CP
+        26/11/19 SK added the coolant area, the conuctor/isulator/outer casing volume
+        30/11/20 SK added the ground outer ground insulation volume
+        F/MI/PJK/LOGBOOK12, pp.33,34
+        AEA FUS 251: A User's Guide to the PROCESS Systems Code
+        """
+        yy_ins = numpy.zeros((101,))  # Exact conductor area (to be integrated)
+        yy_cond = numpy.zeros((101,))  # Turn insulation area (to be integrated)
+        yy_gr_ins = numpy.zeros(
+            (101,)
+        )  # Outter ground insulation area (to be integrated)
+        yy_casout = numpy.zeros((101,))  # Outter case area (to be integrated)
+
+        rtop = r_cp_top - cas_out_th - gr_ins_th
+
+        # Conductor outer radius at CP mid-plane [m]
+        rmid = r_tf_inboard_out - cas_out_th - gr_ins_th
+
+        # Conductor inner radius [m]
+        r_tfin_inleg = r_tf_inboard_in + cas_in_th + gr_ins_th
+        # -#
+
+        #  Error traps
+        # ------------
+        if rtop <= 0.0e0:
+            error_handling.fdiags[0] = rtop
+            error_handling.report_error(115)
+
+        if ztop <= 0.0e0:
+            error_handling.fdiags[0] = ztop
+            error_handling.report_error(116)
+
+        if rmid <= 0.0e0:
+            error_handling.fdiags[0] = rmid
+            error_handling.report_error(117)
+
+        if build_variables.hmax <= 0.0e0:
+            error_handling.fdiags[0] = build_variables.hmax
+            error_handling.report_error(118)
+
+        if (fcool < 0.0e0) or (fcool > 1.0e0):
+            error_handling.fdiags[0] = fcool
+            error_handling.report_error(119)
+
+        if rtop < rmid:
+            error_handling.fdiags[0] = rtop
+            error_handling.fdiags[1] = rmid
+            error_handling.report_error(120)
+
+        if build_variables.hmax < ztop:
+            error_handling.fdiags[0] = build_variables.hmax
+            error_handling.fdiags[1] = ztop
+            error_handling.report_error(121)
+
+        # ------------
+
+        # Mid-plane area calculations
+        # ---------------------------
+        # Total number of CP turns
+        n_turns_tot = tfcoil_variables.n_tf * n_tf_turn
+
+        # Area of the innner TF central hole [m2]
+        a_tfin_hole = numpy.pi * r_tfin_inleg**2
+
+        # Mid-plane outer casing cross-section area [m2]
+        a_casout = numpy.pi * (
+            (rmid + gr_ins_th + cas_out_th) ** 2 - (rmid + gr_ins_th) ** 2
+        )
+
+        # Mid-plane outter ground insulation thickness [m2]
+        a_cp_gr_ins = (
+            numpy.pi * ((rmid + gr_ins_th) ** 2 - rmid**2)
+            + 2.0e0 * gr_ins_th * (rmid - r_tfin_inleg) * tfcoil_variables.n_tf
+        )
+
+        # Mid-plane turn layer cross-section area [m2]
+        a_cp_ins = (
+            numpy.pi
+            * ((r_tfin_inleg + ins_th) ** 2 - r_tfin_inleg**2)  # Inner layer volume
+            + numpy.pi * (rmid**2 - (rmid - ins_th) ** 2)  # Outter layer volume
+            + 2.0e0 * n_turns_tot * ins_th * (rmid - r_tfin_inleg - 2.0e0 * ins_th)
+        )  # inter turn separtion
+
+        # Cooling pipes cross-section per coil [m2]
+        a_cp_cool = fcool * (
+            (numpy.pi * rmid**2 - a_tfin_hole - a_cp_ins) / tfcoil_variables.n_tf
+            - 2.0e0 * gr_ins_th * (rmid - r_tfin_inleg)
+        )  # Wedge ground insulation
+        # ---------------------------
+
+        #  Trivial solutions
+        # ------------------
+        if abs(fcool) < numpy.finfo(float(fcool)).eps:
+            vol_cond_cp = 0.0e0
+            respow = 0.0e0
+            vol_case_cp = 0.0e0
+            vol_gr_ins_cp = 0.0e0
+            vol_ins_cp = 0.0e0
+            error_handling.report_error(122)
+            return (
+                a_cp_cool,
+                vol_cond_cp,
+                respow,
+                vol_ins_cp,
+                vol_case_cp,
+                vol_gr_ins_cp,
+            )
+
+        if abs(rmid - rtop) < numpy.finfo(float(rtop)).eps:
+
+            # Exact conductor cross-section
+            a_cond_midplane = (
+                numpy.pi * rmid**2
+                - a_tfin_hole
+                - tfcoil_variables.n_tf * a_cp_cool
+                - a_cp_ins
+            )
+
+            # Volumes and resisitive losses calculations
+            vol_cond_cp = 2.0e0 * hmaxi * a_cond_midplane
+            vol_ins_cp = 2.0e0 * hmaxi * a_cp_ins
+            vol_gr_ins_cp = 2.0e0 * hmaxi * a_cp_gr_ins
+            respow = 2.0e0 * hmaxi * curr**2 * rho / a_cond_midplane
+            vol_case_cp = 2.0e0 * hmaxi * a_casout
+
+            return (
+                a_cp_cool,
+                vol_cond_cp,
+                respow,
+                vol_ins_cp,
+                vol_case_cp,
+                vol_gr_ins_cp,
+            )
+
+        # ------------------
+
+        # Find centre of circle (RC,0) defining the taper's arc
+        # (r1,z1) is midpoint of line joining (rmid,0) and (rtop,ztop)
+        # Rem : The taper arc is defined using the outer radius of the
+        #       conductor including turn unsulation
+        # -------------------------------------------------------------
+        r1 = 0.5e0 * (rmid + rtop)
+        z1 = 0.5e0 * ztop
+
+        x = (r1 - rmid) ** 2 + z1**2
+        y = ztop**2 / ((rtop - rmid) ** 2 + ztop**2)
+
+        rc = rmid + numpy.sqrt(x / (1.0e0 - y))
+        # -------------------------------------------------------------
+
+        #  Find volume of tapered section of centrepost, and the resistive
+        #  power losses, by integrating along the centrepost from the midplane
+        # --------------------------------------------------------------------
+        #  Calculate centrepost radius and cross-sectional areas at each Z
+        dz = 0.01e0 * ztop
+
+        for ii in range(101):
+            z = ii * dz
+            z = min(z, ztop)
+
+            r = rc - numpy.sqrt((rc - rmid) ** 2 - z * z)
+
+            if r <= 0.0e0:
+                error_handling.fdiags[0] = r
+                error_handling.fdiags[1] = rc
+                error_handling.fdiags[2] = rmid
+                error_handling.fdiags[3] = z
+
+                error_handling.report_error(123)
+
+            # Insulation cross-sectional area at z
+            yy_ins[ii] = (
+                numpy.pi * ((r_tfin_inleg + ins_th) ** 2 - r_tfin_inleg**2)
+                + numpy.pi * (r**2 - (r - ins_th) ** 2)  # Inner layer volume
+                + 2.0e0  # Outter layer volume
+                * ins_th
+                * (r - r_tfin_inleg - 2.0e0 * ins_th)
+                * n_turns_tot
+            )  # inter turn layers
+
+            #  Conductor cross-sectional area at z
+            yy_cond[ii] = (
+                numpy.pi * r**2
+                - a_tfin_hole
+                - tfcoil_variables.n_tf * a_cp_cool
+                - yy_ins[ii]
+                - 2.0e0 * tfcoil_variables.n_tf * gr_ins_th * (r - r_tfin_inleg)
+            )  # Wedge ground insulation
+
+            #  Outer ground insulation area at z
+            yy_gr_ins[ii] = numpy.pi * (
+                (r + gr_ins_th) ** 2 - r**2
+            ) + 2.0e0 * tfcoil_variables.n_tf * gr_ins_th * (r - r_tfin_inleg)
+
+            #  Outer casing Cross-sectional area at z
+            yy_casout[ii] = numpy.pi * (
+                (r + gr_ins_th + cas_out_th) ** 2 - (r + gr_ins_th) ** 2
+            )
+
+        #  Perform integrals using trapezium rule
+        sum1 = 0.0e0
+        sum2 = 0.0e0
+        sum3 = 0.0e0
+        sum4 = 0.0e0
+        sum5 = 0.0e0
+        for ii in range(1, 100):
+            sum1 = sum1 + yy_cond[ii]
+            sum2 = sum2 + 1.0e0 / yy_cond[ii]
+            sum3 = sum3 + yy_ins[ii]
+            sum4 = sum4 + yy_casout[ii]
+            sum5 = sum5 + yy_gr_ins[ii]
+
+        sum1 = 0.5e0 * dz * (yy_cond[0] + yy_cond[100] + 2.0e0 * sum1)
+        sum2 = 0.5e0 * dz * (1.0e0 / yy_cond[0] + 1.0e0 / yy_cond[100] + 2.0e0 * sum2)
+        sum3 = 0.5e0 * dz * (yy_ins[0] + yy_ins[100] + 2.0e0 * sum3)
+        sum4 = 0.5e0 * dz * (yy_casout[0] + yy_casout[100] + 2.0e0 * sum4)
+        sum5 = 0.5e0 * dz * (yy_gr_ins[0] + yy_gr_ins[100] + 2.0e0 * sum5)
+
+        # Turn insulation layer cross section at CP top  [m2]
+        a_cp_ins = (
+            numpy.pi * ((r_tfin_inleg + ins_th) ** 2 - r_tfin_inleg**2)
+            + numpy.pi * (rtop**2 - (rtop - ins_th) ** 2)  # Inner layer volume
+            + 2.0e0  # Outter layer volume
+            * ins_th
+            * (rtop - r_tfin_inleg - 2.0e0 * ins_th)
+            * n_turns_tot
+        )  # turn separtion layers
+
+        # Ground insulation layer cross-section at CP top [m2]
+        a_cp_gr_ins = (
+            numpy.pi * ((rtop + gr_ins_th) ** 2 - rtop**2)
+            + 2.0e0 * gr_ins_th * (rtop - r_tfin_inleg) * tfcoil_variables.n_tf
+        )
+
+        # Outer casing cross-section area at CP top [m2]
+        a_casout = numpy.pi * (
+            (rmid + gr_ins_th + cas_out_th) ** 2 - (rmid + gr_ins_th) ** 2
+        )
+
+        # Centrepost volume (ignoring coolant fraction) [m3]
+        vol_cond_cp = 2.0e0 * sum1 + 2.0e0 * (  # Tapered section
+            hmaxi - ztop
+        ) * (  # Straight section vertical height
+            numpy.pi * rtop**2
+            - a_tfin_hole
+            - a_cp_ins
+            - tfcoil_variables.n_tf * a_cp_cool
+            - 2.0e0 * tfcoil_variables.n_tf * gr_ins_th * (rtop - r_tfin_inleg)
+        )  # subtracting ground insulation wedge separation
+
+        # Resistive power losses in taped section (variable radius section) [W]
+        res_taped = rho * curr**2 * sum2
+
+        # Centrepost insulator volume [m3]
+        vol_ins_cp = 2.0e0 * (sum3 + (hmaxi - ztop) * a_cp_ins)
+
+        # Ground insulation volume [m3]
+        vol_gr_ins_cp = 2.0e0 * (
+            sum5
+            + (hmaxi - ztop) * a_cp_gr_ins
+            + hmaxi * numpy.pi * (r_tfin_inleg**2 - (r_tfin_inleg - gr_ins_th) ** 2)
+        )
+
+        # CP casing volume [m3]
+        vol_case_cp = 2.0e0 * (
+            sum4
+            + (hmaxi - ztop) * a_casout
+            + hmaxi
+            * numpy.pi
+            * (
+                (r_tfin_inleg - gr_ins_th) ** 2
+                - (r_tfin_inleg - gr_ins_th - cas_in_th) ** 2
+            )
+        )
+
+        # Resistive power losses in cylindrical section (constant radius) [W]
+        res_cyl = (
+            rho
+            * curr**2
+            * (
+                (hmaxi - ztop)
+                / (
+                    numpy.pi * rtop**2
+                    - a_tfin_hole
+                    - a_cp_ins
+                    - tfcoil_variables.n_tf * a_cp_cool
+                    - 2.0e0 * tfcoil_variables.n_tf * gr_ins_th * (rtop - r_tfin_inleg)
+                )
+            )
+        )  # ground insulation separation
+
+        # Total CP resistive power [W]
+        respow = 2.0e0 * (res_cyl + res_taped)
+
+        return (
+            a_cp_cool,
+            vol_cond_cp,
+            respow,
+            vol_ins_cp,
+            vol_case_cp,
+            vol_gr_ins_cp,
+        )
+
+    def tf_field_and_force(self):
+        """
+        Calculate the TF coil field, force and VV quench consideration, and the resistive magnets resistance/volume
+        """
+        if tfcoil_variables.i_tf_sup == 1:
+            tfcoil_variables.taucq = (
+                physics_variables.bt
+                * tfcoil_variables.ritfc
+                * physics_variables.rminor
+                * physics_variables.rminor
+            ) / (build_variables.r_vv_inboard_out * tfcoil_variables.sigvvall)
+
+        # Outer/inner WP radius removing the ground insulation layer and the insertion gap [m]
+        if tfcoil_variables.i_tf_sup == 1:
+            r_out_wp = (
+                sctfcoil_module.r_wp_outer
+                - tfcoil_variables.tinstf
+                - tfcoil_variables.tfinsgap
+            )
+            r_in_wp = (
+                sctfcoil_module.r_wp_inner
+                + tfcoil_variables.tinstf
+                + tfcoil_variables.tfinsgap
+            )
+        else:
+            r_out_wp = sctfcoil_module.r_wp_outer - tfcoil_variables.tinstf
+            r_in_wp = sctfcoil_module.r_wp_inner + tfcoil_variables.tinstf
+
+        # Associated WP thickness
+        dr_wp = r_out_wp - r_in_wp
+
+        # In plane forces
+        # ---
+        # Centering force = net inwards radial force per meters per TF coil [N/m]
+        tfcoil_variables.cforce = (
+            0.5e0
+            * tfcoil_variables.bmaxtf
+            * tfcoil_variables.ritfc
+            / tfcoil_variables.n_tf
+        )
+
+        # Vertical force per coil [N]
+        # ***
+        # Rem : this force does not depends on the TF shape or the presence of
+        #        sliding joints, the in/outboard vertical tension repartition is
+        # -#
+        # Ouboard leg WP plasma side radius without ground insulation/insertion gat [m]
+        if tfcoil_variables.i_tf_sup == 1:
+            r_in_outwp = (
+                sctfcoil_module.r_tf_outboard_in
+                + tfcoil_variables.casthi
+                + tfcoil_variables.tinstf
+                + tfcoil_variables.tfinsgap
+            )
+        else:
+            r_in_outwp = sctfcoil_module.r_tf_outboard_in + tfcoil_variables.tinstf
+
+        # If the TF coil has no bore it would induce division by 0.
+        # In this situation, the bore radius is set to a very small value : 1.0e-9 m
+        if abs(r_in_wp) < numpy.finfo(float(r_in_wp)).eps:
+            r_in_wp = 1.0e-9
+
+        # May the force be with you
+        vforce_tot = (
+            0.5e0
+            * (physics_variables.bt * physics_variables.rmajor * tfcoil_variables.ritfc)
+            / (tfcoil_variables.n_tf * dr_wp**2)
+            * (
+                r_out_wp**2 * numpy.log(r_out_wp / r_in_wp)
+                + r_in_outwp**2 * numpy.log((r_in_outwp + dr_wp) / r_in_outwp)
+                + dr_wp**2 * numpy.log((r_in_outwp + dr_wp) / r_in_wp)
+                - dr_wp * (r_out_wp + r_in_outwp)
+                + 2.0e0
+                * dr_wp
+                * (
+                    r_out_wp * numpy.log(r_in_wp / r_out_wp)
+                    + r_in_outwp * numpy.log((r_in_outwp + dr_wp) / r_in_outwp)
+                )
+            )
+        )
+
+        # Case of a centrepost (physics_variables.itart == 1) with sliding joints (the CP vertical are separated from the leg ones)
+        # Rem SK : casing/insulation thickness not subtracted as part of the CP is genuinely connected to the legs..
+        if physics_variables.itart == 1 and tfcoil_variables.i_cp_joints == 1:
+
+            # CP vertical tension [N]
+            tfcoil_variables.vforce = (
+                0.25e0
+                * (
+                    physics_variables.bt
+                    * physics_variables.rmajor
+                    * tfcoil_variables.ritfc
+                )
+                / (tfcoil_variables.n_tf * dr_wp**2)
+                * (
+                    2.0e0 * r_out_wp**2 * numpy.log(r_out_wp / r_in_wp)
+                    + 2.0e0 * dr_wp**2 * numpy.log(build_variables.r_cp_top / r_in_wp)
+                    + 3.0e0 * dr_wp**2
+                    - 2.0e0 * dr_wp * r_out_wp
+                    + 4.0e0 * dr_wp * r_out_wp * numpy.log(r_in_wp / r_out_wp)
+                )
+            )
+
+            # Vertical tension applied on the outer leg [N]
+            tfcoil_variables.vforce_outboard = vforce_tot - tfcoil_variables.vforce
+
+            # Inboard vertical tension fraction
+            tfcoil_variables.f_vforce_inboard = tfcoil_variables.vforce / vforce_tot
+
+        # Case of TF without joints or with clamped joints vertical tension
+        else:
+
+            # Inboard vertical tension [N]
+            tfcoil_variables.vforce = tfcoil_variables.f_vforce_inboard * vforce_tot
+
+            # Ouboard vertical tension [N]
+            tfcoil_variables.vforce_outboard = tfcoil_variables.vforce * (
+                (1.0e0 / tfcoil_variables.f_vforce_inboard) - 1.0e0
+            )
+
+        # ***
+
+        # Total vertical force
+        sctfcoil_module.vforce_inboard_tot = (
+            tfcoil_variables.vforce * tfcoil_variables.n_tf
+        )
+
+    def tfcind(self, tfthk):
+        """Calculates the self inductance of a TF coil
+        This routine calculates the self inductance of a TF coil
+        approximated by a straight inboard section and two elliptical arcs.
+        The inductance of the TFC (considered as a single axisymmetric turn)
+        is calculated by numerical integration over the cross-sectional area.
+        The contribution from the cross-sectional area of the
+        coil itself is calculated by taking the field as B(r)/2.
+        The field in the bore is calculated for unit current.
+        Top/bottom symmetry is assumed.
+
+        :param tfthk: TF coil thickness (m)
+        :type tfthk: float
+        """
+        NINTERVALS = 100
+
+        tfcoil_variables.tfind = 0.0e0
+        # Integrate over the whole TF area, including the coil thickness.
+        x0 = tfcoil_variables.xarc[1]
+        y0 = tfcoil_variables.yarc[1]
+
+        # Minor and major radii of the inside and outside perimeters of the the
+        # Inboard leg and arc.
+        # Average the upper and lower halves, which are different in the
+        # single null case
+        ai = tfcoil_variables.xarc[1] - tfcoil_variables.xarc[0]
+        bi = (
+            tfcoil_variables.yarc[1] - tfcoil_variables.yarc[3]
+        ) / 2.0e0 - tfcoil_variables.yarc[0]
+        ao = ai + tfthk
+        bo = bi + tfthk
+        # Interval used for integration
+        dr = ao / NINTERVALS
+        # Start both integrals from the centre-point where the arcs join.
+        # Initialise major radius
+        r = x0 - dr / 2.0e0
+
+        for i in range(NINTERVALS):
+            # Field in the bore for unit current
+            b = constants.rmu0 / (2.0e0 * numpy.pi * r)
+            # Find out if there is a bore
+            if x0 - r < ai:
+                h_bore = y0 + bi * numpy.sqrt(1 - ((r - x0) / ai) ** 2)
+                h_thick = bo * numpy.sqrt(1 - ((r - x0) / ao) ** 2) - h_bore
+            else:
+                h_bore = 0.0e0
+                # Include the contribution from the straight section
+                h_thick = (
+                    bo * numpy.sqrt(1 - ((r - x0) / ao) ** 2) + tfcoil_variables.yarc[0]
+                )
+
+            # Assume B in TF coil = 1/2  B in bore
+            # Multiply by 2 for upper and lower halves of coil
+            tfcoil_variables.tfind = tfcoil_variables.tfind + b * dr * (
+                2.0e0 * h_bore + h_thick
+            )
+            r = r - dr
+
+        # Outboard arc
+        ai = tfcoil_variables.xarc[2] - tfcoil_variables.xarc[1]
+        bi = (tfcoil_variables.yarc[1] - tfcoil_variables.yarc[3]) / 2.0e0
+        ao = ai + tfthk
+        bo = bi + tfthk
+        dr = ao / NINTERVALS
+        # Initialise major radius
+        r = x0 + dr / 2.0e0
+
+        for i in range(NINTERVALS):
+            # Field in the bore for unit current
+            b = constants.rmu0 / (2.0e0 * numpy.pi * r)
+            # Find out if there is a bore
+            if r - x0 < ai:
+                h_bore = y0 + bi * numpy.sqrt(1 - ((r - x0) / ai) ** 2)
+                h_thick = bo * numpy.sqrt(1 - ((r - x0) / ao) ** 2) - h_bore
+            else:
+                h_bore = 0.0e0
+                h_thick = bo * numpy.sqrt(1 - ((r - x0) / ao) ** 2)
+
+            # Assume B in TF coil = 1/2  B in bore
+            # Multiply by 2 for upper and lower halves of coil
+            tfcoil_variables.tfind = tfcoil_variables.tfind + b * dr * (
+                2.0e0 * h_bore + h_thick
+            )
+            r = r + dr
+>>>>>>> abbc297c0c1c16e1a10871ee0a3706571598c0d0
