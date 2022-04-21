@@ -947,21 +947,24 @@ class ResTfInternalGeomParam(NamedTuple):
 )
 def test_res_tf_internal_geom(restfinternalgeomparam, monkeypatch):
     """
-    Automatically generated Regression Unit Test for res_tf_internal_geom.
+        Automatically generated Regression Unit Test for res_tf_internal_geom.
 
-    This test was generated using data from tests/regression/scenarios/FNSF/IN.DAT.
+        This test was generated using data from tests/regression/scenarios/FNSF/IN.DAT.
 
-    :param restfinternalgeomparam: the data used to mock and assert in this test.
-    :type restfinternalgeomparam: restfinternalgeomparam
+        :param restfinternalgeomparam: the data used to mock and assert in this test.
+        :type restfinternalgeomparam: restfinternalgeomparam
 
-    :param monkeypatch: pytest fixture used to mock module/class variables
-    :type monkeypatch: _pytest.monkeypatch.monkeypatch
-<<<<<<< HEAD
+        :param monkeypatch: pytest fixture used to mock module/class variables
+        :type monkeypatch: _pytest.monkeypatch.monkeypatch
+    <<<<<<< HEAD
+    <<<<<<< HEAD
 
-    :param sctfcoil: initialised Sctfcoil object
-    :type sctfcoil: process.sctfcoil.Sctfcoil
-=======
->>>>>>> abbc297c0c1c16e1a10871ee0a3706571598c0d0
+        :param sctfcoil: initialised Sctfcoil object
+        :type sctfcoil: process.sctfcoil.Sctfcoil
+    =======
+    >>>>>>> abbc297c0c1c16e1a10871ee0a3706571598c0d0
+    =======
+    >>>>>>> abbc297c0c1c16e1a10871ee0a3706571598c0d0
     """
 
     monkeypatch.setattr(tfcoil_variables, "n_tf_turn", restfinternalgeomparam.n_tf_turn)
@@ -1009,131 +1012,55 @@ def test_res_tf_internal_geom(restfinternalgeomparam, monkeypatch):
     monkeypatch.setattr(physics_variables, "itart", restfinternalgeomparam.itart)
 
 
-<<<<<<< HEAD
-class ResTfInternalGeomParam(NamedTuple):
-
-    n_tf_turn: Any = None
-
-    thicndut: Any = None
-
-    thkcas: Any = None
-
-    dr_tf_wp: Any = None
-
-    tftort: Any = None
-
-    tfareain: Any = None
-
-    ritfc: Any = None
-
-    fcoolcp: Any = None
-
-    cpttf: Any = None
-
-    cdtfleg: Any = None
-
-    casthi: Any = None
-
-    aiwp: Any = None
-
-    acasetf: Any = None
-
-    tinstf: Any = None
-
-    n_tf: Any = None
-
-    tfthko: Any = None
-
-=======
 class TfResHeatingParam(NamedTuple):
-
     rhocp: Any = None
-
     tlegav: Any = None
-
     thicndut: Any = None
-
     th_joint_contact: Any = None
-
     rhotfleg: Any = None
-
     vol_cond_cp: Any = None
-
     n_tf_turn: Any = None
-
     thkcas: Any = None
-
     tftort: Any = None
-
     tfleng: Any = None
-
     tflegres: Any = None
-
     tcpav: Any = None
-
     arealeg: Any = None
-
     ritfc: Any = None
-
     rho_tf_joints: Any = None
-
     presleg: Any = None
-
     prescp: Any = None
-
     pres_joints: Any = None
-
     n_tf_joints_contact: Any = None
-
     n_tf_joints: Any = None
-
     n_tf: Any = None
-
     i_tf_sup: Any = None
-
     frholeg: Any = None
-
     frhocp: Any = None
-
     fcoolcp: Any = None
-
     casthi: Any = None
-
     a_cp_cool: Any = None
-
     fcoolleg: Any = None
-
     i_cp_joints: Any = None
-
     tinstf: Any = None
-
     tfthko: Any = None
-
     tfcth: Any = None
-
     r_cp_top: Any = None
-
     hmax: Any = None
-
->>>>>>> abbc297c0c1c16e1a10871ee0a3706571598c0d0
     r_tf_inboard_in: Any = None
-
     r_tf_inboard_out: Any = None
-
-<<<<<<< HEAD
-    r_cp_top: Any = None
-
     itart: Any = None
-
-    expected_n_tf_turn: Any = None
-
-    expected_cpttf: Any = None
-
-    expected_cdtfleg: Any = None
-
-    expected_aiwp: Any = None
-
-    expected_acasetf: Any = None
+    h_cp_top: Any = None
+    is_leg_cp_temp_same: Any = None
+    expected_rhocp: Any = None
+    expected_rhotfleg: Any = None
+    expected_vol_cond_cp: Any = None
+    expected_tflegres: Any = None
+    expected_presleg: Any = None
+    expected_prescp: Any = None
+    expected_pres_joints: Any = None
+    expected_a_cp_cool: Any = None
+    expected_is_leg_cp_temp_same: Any = None
 
 
 @pytest.mark.parametrize(
@@ -1292,7 +1219,7 @@ def test_res_tf_internal_geom(restfinternalgeomparam, monkeypatch, sctfcoil):
     assert tfcoil_variables.acasetf == pytest.approx(
         restfinternalgeomparam.expected_acasetf
     )
-=======
+
     itart: Any = None
 
     h_cp_top: Any = None
@@ -2052,4 +1979,3 @@ def test_tfcind(tfcindparam, monkeypatch, sctfcoil):
     sctfcoil.tfcind(tfthk=tfcindparam.tfthk)
 
     assert tfcoil_variables.tfind == pytest.approx(tfcindparam.expected_tfind)
->>>>>>> abbc297c0c1c16e1a10871ee0a3706571598c0d0
