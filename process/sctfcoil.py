@@ -1684,6 +1684,7 @@ class Sctfcoil:
                 tfcoil_variables.tlegav = -1.0e0
 
             # Centrepost resisitivity and conductor/insulation volume
+
             (
                 tfcoil_variables.a_cp_cool,
                 tfcoil_variables.vol_cond_cp,
@@ -1691,7 +1692,7 @@ class Sctfcoil:
                 sctfcoil_module.vol_ins_cp,
                 sctfcoil_module.vol_case_cp,
                 sctfcoil_module.vol_gr_ins_cp,
-            ) = sctfcoil_module.cpost(
+            ) = self.cpost(
                 build_variables.r_tf_inboard_in,
                 build_variables.r_tf_inboard_out,
                 build_variables.r_cp_top,
@@ -1796,3 +1797,335 @@ class Sctfcoil:
 
             # No joints if physics_variables.itart = 0
             tfcoil_variables.pres_joints = 0.0e0
+
+    def cpost(
+        self,
+        r_tf_inboard_in,
+        r_tf_inboard_out,
+        r_cp_top,
+        ztop,
+        hmaxi,
+        cas_in_th,
+        cas_out_th,
+        gr_ins_th,
+        ins_th,
+        n_tf_turn,
+        curr,
+        rho,
+        fcool,
+    ):
+        """
+        author: P J Knight, CCFE, Culham Science Centre
+        Calculates the volume and resistive power losses of a TART centrepost
+        This routine calculates the volume and resistive power losses
+        of a TART centrepost. It is assumed to be tapered - narrowest at
+        the midplane and reaching maximum thickness at the height of the
+        plasma. Above/below the plasma, the centrepost is cylindrical.
+        The shape of the taper is assumed to be an arc of a circle.
+        P J Knight, CCFE, Culham Science Centre
+        21/10/96 PJK Initial version
+        08/05/12 PJK Initial F90 version
+        16/10/12 PJK Added constants; removed argument pi
+        26/06/14 PJK Added error handling
+        12/11/19 SK Using fixed cooling cross-section area along the CP
+        26/11/19 SK added the coolant area, the conuctor/isulator/outer casing volume
+        30/11/20 SK added the ground outer ground insulation volume
+        F/MI/PJK/LOGBOOK12, pp.33,34
+        AEA FUS 251: A User's Guide to the PROCESS Systems Code
+        """
+        yy_ins = numpy.zeros((101,))  # Exact conductor area (to be integrated)
+        yy_cond = numpy.zeros((101,))  # Turn insulation area (to be integrated)
+        yy_gr_ins = numpy.zeros(
+            (101,)
+        )  # Outter ground insulation area (to be integrated)
+        yy_casout = numpy.zeros((101,))  # Outter case area (to be integrated)
+
+        rtop = r_cp_top - cas_out_th - gr_ins_th
+
+        # Conductor outer radius at CP mid-plane [m]
+        rmid = r_tf_inboard_out - cas_out_th - gr_ins_th
+
+        # Conductor inner radius [m]
+        r_tfin_inleg = r_tf_inboard_in + cas_in_th + gr_ins_th
+        # -#
+
+        #  Error traps
+        # ------------
+        if rtop <= 0.0e0:
+            error_handling.fdiags[0] = rtop
+            error_handling.report_error(115)
+
+        if ztop <= 0.0e0:
+            error_handling.fdiags[0] = ztop
+            error_handling.report_error(116)
+
+        if rmid <= 0.0e0:
+            error_handling.fdiags[0] = rmid
+            error_handling.report_error(117)
+
+        if build_variables.hmax <= 0.0e0:
+            error_handling.fdiags[0] = build_variables.hmax
+            error_handling.report_error(118)
+
+        if (fcool < 0.0e0) or (fcool > 1.0e0):
+            error_handling.fdiags[0] = fcool
+            error_handling.report_error(119)
+
+        if rtop < rmid:
+            error_handling.fdiags[0] = rtop
+            error_handling.fdiags[1] = rmid
+            error_handling.report_error(120)
+
+        if build_variables.hmax < ztop:
+            error_handling.fdiags[0] = build_variables.hmax
+            error_handling.fdiags[1] = ztop
+            error_handling.report_error(121)
+
+        # ------------
+
+        # Mid-plane area calculations
+        # ---------------------------
+        # Total number of CP turns
+        n_turns_tot = tfcoil_variables.n_tf * n_tf_turn
+
+        # Area of the innner TF central hole [m2]
+        a_tfin_hole = numpy.pi * r_tfin_inleg**2
+
+        # Mid-plane outer casing cross-section area [m2]
+        a_casout = numpy.pi * (
+            (rmid + gr_ins_th + cas_out_th) ** 2 - (rmid + gr_ins_th) ** 2
+        )
+
+        # Mid-plane outter ground insulation thickness [m2]
+        a_cp_gr_ins = (
+            numpy.pi * ((rmid + gr_ins_th) ** 2 - rmid**2)
+            + 2.0e0 * gr_ins_th * (rmid - r_tfin_inleg) * tfcoil_variables.n_tf
+        )
+
+        # Mid-plane turn layer cross-section area [m2]
+        a_cp_ins = (
+            numpy.pi
+            * ((r_tfin_inleg + ins_th) ** 2 - r_tfin_inleg**2)  # Inner layer volume
+            + numpy.pi * (rmid**2 - (rmid - ins_th) ** 2)  # Outter layer volume
+            + 2.0e0 * n_turns_tot * ins_th * (rmid - r_tfin_inleg - 2.0e0 * ins_th)
+        )  # inter turn separtion
+
+        # Cooling pipes cross-section per coil [m2]
+        a_cp_cool = fcool * (
+            (numpy.pi * rmid**2 - a_tfin_hole - a_cp_ins) / tfcoil_variables.n_tf
+            - 2.0e0 * gr_ins_th * (rmid - r_tfin_inleg)
+        )  # Wedge ground insulation
+        # ---------------------------
+
+        #  Trivial solutions
+        # ------------------
+        if abs(fcool) < numpy.finfo(float(fcool)).eps:
+            vol_cond_cp = 0.0e0
+            respow = 0.0e0
+            vol_case_cp = 0.0e0
+            vol_gr_ins_cp = 0.0e0
+            vol_ins_cp = 0.0e0
+            error_handling.report_error(122)
+            return (
+                a_cp_cool,
+                vol_cond_cp,
+                respow,
+                vol_ins_cp,
+                vol_case_cp,
+                vol_gr_ins_cp,
+            )
+
+        if abs(rmid - rtop) < numpy.finfo(float(rtop)).eps:
+
+            # Exact conductor cross-section
+            a_cond_midplane = (
+                numpy.pi * rmid**2
+                - a_tfin_hole
+                - tfcoil_variables.n_tf * a_cp_cool
+                - a_cp_ins
+            )
+
+            # Volumes and resisitive losses calculations
+            vol_cond_cp = 2.0e0 * hmaxi * a_cond_midplane
+            vol_ins_cp = 2.0e0 * hmaxi * a_cp_ins
+            vol_gr_ins_cp = 2.0e0 * hmaxi * a_cp_gr_ins
+            respow = 2.0e0 * hmaxi * curr**2 * rho / a_cond_midplane
+            vol_case_cp = 2.0e0 * hmaxi * a_casout
+
+            return (
+                a_cp_cool,
+                vol_cond_cp,
+                respow,
+                vol_ins_cp,
+                vol_case_cp,
+                vol_gr_ins_cp,
+            )
+
+        # ------------------
+
+        # Find centre of circle (RC,0) defining the taper's arc
+        # (r1,z1) is midpoint of line joining (rmid,0) and (rtop,ztop)
+        # Rem : The taper arc is defined using the outer radius of the
+        #       conductor including turn unsulation
+        # -------------------------------------------------------------
+        r1 = 0.5e0 * (rmid + rtop)
+        z1 = 0.5e0 * ztop
+
+        x = (r1 - rmid) ** 2 + z1**2
+        y = ztop**2 / ((rtop - rmid) ** 2 + ztop**2)
+
+        rc = rmid + numpy.sqrt(x / (1.0e0 - y))
+        # -------------------------------------------------------------
+
+        #  Find volume of tapered section of centrepost, and the resistive
+        #  power losses, by integrating along the centrepost from the midplane
+        # --------------------------------------------------------------------
+        #  Calculate centrepost radius and cross-sectional areas at each Z
+        dz = 0.01e0 * ztop
+
+        for ii in range(101):
+            z = ii * dz
+            z = min(z, ztop)
+
+            r = rc - numpy.sqrt((rc - rmid) ** 2 - z * z)
+
+            if r <= 0.0e0:
+                error_handling.fdiags[0] = r
+                error_handling.fdiags[1] = rc
+                error_handling.fdiags[2] = rmid
+                error_handling.fdiags[3] = z
+
+                error_handling.report_error(123)
+
+            # Insulation cross-sectional area at z
+            yy_ins[ii] = (
+                numpy.pi * ((r_tfin_inleg + ins_th) ** 2 - r_tfin_inleg**2)
+                + numpy.pi * (r**2 - (r - ins_th) ** 2)  # Inner layer volume
+                + 2.0e0  # Outter layer volume
+                * ins_th
+                * (r - r_tfin_inleg - 2.0e0 * ins_th)
+                * n_turns_tot
+            )  # inter turn layers
+
+            #  Conductor cross-sectional area at z
+            yy_cond[ii] = (
+                numpy.pi * r**2
+                - a_tfin_hole
+                - tfcoil_variables.n_tf * a_cp_cool
+                - yy_ins[ii]
+                - 2.0e0 * tfcoil_variables.n_tf * gr_ins_th * (r - r_tfin_inleg)
+            )  # Wedge ground insulation
+
+            #  Outer ground insulation area at z
+            yy_gr_ins[ii] = numpy.pi * (
+                (r + gr_ins_th) ** 2 - r**2
+            ) + 2.0e0 * tfcoil_variables.n_tf * gr_ins_th * (r - r_tfin_inleg)
+
+            #  Outer casing Cross-sectional area at z
+            yy_casout[ii] = numpy.pi * (
+                (r + gr_ins_th + cas_out_th) ** 2 - (r + gr_ins_th) ** 2
+            )
+
+        #  Perform integrals using trapezium rule
+        sum1 = 0.0e0
+        sum2 = 0.0e0
+        sum3 = 0.0e0
+        sum4 = 0.0e0
+        sum5 = 0.0e0
+        for ii in range(1, 100):
+            sum1 = sum1 + yy_cond[ii]
+            sum2 = sum2 + 1.0e0 / yy_cond[ii]
+            sum3 = sum3 + yy_ins[ii]
+            sum4 = sum4 + yy_casout[ii]
+            sum5 = sum5 + yy_gr_ins[ii]
+
+        sum1 = 0.5e0 * dz * (yy_cond[0] + yy_cond[100] + 2.0e0 * sum1)
+        sum2 = 0.5e0 * dz * (1.0e0 / yy_cond[0] + 1.0e0 / yy_cond[100] + 2.0e0 * sum2)
+        sum3 = 0.5e0 * dz * (yy_ins[0] + yy_ins[100] + 2.0e0 * sum3)
+        sum4 = 0.5e0 * dz * (yy_casout[0] + yy_casout[100] + 2.0e0 * sum4)
+        sum5 = 0.5e0 * dz * (yy_gr_ins[0] + yy_gr_ins[100] + 2.0e0 * sum5)
+
+        # Turn insulation layer cross section at CP top  [m2]
+        a_cp_ins = (
+            numpy.pi * ((r_tfin_inleg + ins_th) ** 2 - r_tfin_inleg**2)
+            + numpy.pi * (rtop**2 - (rtop - ins_th) ** 2)  # Inner layer volume
+            + 2.0e0  # Outter layer volume
+            * ins_th
+            * (rtop - r_tfin_inleg - 2.0e0 * ins_th)
+            * n_turns_tot
+        )  # turn separtion layers
+
+        # Ground insulation layer cross-section at CP top [m2]
+        a_cp_gr_ins = (
+            numpy.pi * ((rtop + gr_ins_th) ** 2 - rtop**2)
+            + 2.0e0 * gr_ins_th * (rtop - r_tfin_inleg) * tfcoil_variables.n_tf
+        )
+
+        # Outer casing cross-section area at CP top [m2]
+        a_casout = numpy.pi * (
+            (rmid + gr_ins_th + cas_out_th) ** 2 - (rmid + gr_ins_th) ** 2
+        )
+
+        # Centrepost volume (ignoring coolant fraction) [m3]
+        vol_cond_cp = 2.0e0 * sum1 + 2.0e0 * (  # Tapered section
+            hmaxi - ztop
+        ) * (  # Straight section vertical height
+            numpy.pi * rtop**2
+            - a_tfin_hole
+            - a_cp_ins
+            - tfcoil_variables.n_tf * a_cp_cool
+            - 2.0e0 * tfcoil_variables.n_tf * gr_ins_th * (rtop - r_tfin_inleg)
+        )  # subtracting ground insulation wedge separation
+
+        # Resistive power losses in taped section (variable radius section) [W]
+        res_taped = rho * curr**2 * sum2
+
+        # Centrepost insulator volume [m3]
+        vol_ins_cp = 2.0e0 * (sum3 + (hmaxi - ztop) * a_cp_ins)
+
+        # Ground insulation volume [m3]
+        vol_gr_ins_cp = 2.0e0 * (
+            sum5
+            + (hmaxi - ztop) * a_cp_gr_ins
+            + hmaxi * numpy.pi * (r_tfin_inleg**2 - (r_tfin_inleg - gr_ins_th) ** 2)
+        )
+
+        # CP casing volume [m3]
+        vol_case_cp = 2.0e0 * (
+            sum4
+            + (hmaxi - ztop) * a_casout
+            + hmaxi
+            * numpy.pi
+            * (
+                (r_tfin_inleg - gr_ins_th) ** 2
+                - (r_tfin_inleg - gr_ins_th - cas_in_th) ** 2
+            )
+        )
+
+        # Resistive power losses in cylindrical section (constant radius) [W]
+        res_cyl = (
+            rho
+            * curr**2
+            * (
+                (hmaxi - ztop)
+                / (
+                    numpy.pi * rtop**2
+                    - a_tfin_hole
+                    - a_cp_ins
+                    - tfcoil_variables.n_tf * a_cp_cool
+                    - 2.0e0 * tfcoil_variables.n_tf * gr_ins_th * (rtop - r_tfin_inleg)
+                )
+            )
+        )  # ground insulation separation
+
+        # Total CP resistive power [W]
+        respow = 2.0e0 * (res_cyl + res_taped)
+
+        return (
+            a_cp_cool,
+            vol_cond_cp,
+            respow,
+            vol_ins_cp,
+            vol_case_cp,
+            vol_gr_ins_cp,
+        )

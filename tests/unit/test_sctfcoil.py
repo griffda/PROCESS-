@@ -1548,3 +1548,152 @@ def test_tf_res_heating(tfresheatingparam, monkeypatch, sctfcoil):
     assert sctfcoil_module.is_leg_cp_temp_same == pytest.approx(
         tfresheatingparam.expected_is_leg_cp_temp_same
     )
+
+
+class CpostParam(NamedTuple):
+
+    n_tf: Any = None
+
+    hmax: Any = None
+
+    r_tf_inboard_in: Any = None
+
+    r_tf_inboard_out: Any = None
+
+    r_cp_top: Any = None
+
+    ztop: Any = None
+
+    hmaxi: Any = None
+
+    cas_in_th: Any = None
+
+    cas_out_th: Any = None
+
+    gr_ins_th: Any = None
+
+    ins_th: Any = None
+
+    n_tf_turn: Any = None
+
+    curr: Any = None
+
+    rho: Any = None
+
+    fcool: Any = None
+
+    expected_vol_ins_cp: Any = None
+
+    expected_vol_gr_ins_cp: Any = None
+
+    expected_vol_case_cp: Any = None
+
+    expected_respow: Any = None
+
+    expected_vol_cond_cp: Any = None
+
+    expected_a_cp_cool: Any = None
+
+
+@pytest.mark.parametrize(
+    "cpostparam",
+    (
+        CpostParam(
+            n_tf=12,
+            hmax=4.4214285714285717,
+            r_tf_inboard_in=0,
+            r_tf_inboard_out=0.15483000000000002,
+            r_cp_top=0.87643571428571443,
+            ztop=2.6714285714285717,
+            hmaxi=4.5762585714285713,
+            cas_in_th=0,
+            cas_out_th=0.0077415000000000019,
+            gr_ins_th=0,
+            ins_th=0.00080000000000000004,
+            n_tf_turn=1,
+            curr=25500000,
+            rho=2.1831760869565221e-08,
+            fcool=0.12725,
+            expected_vol_ins_cp=0.12917075053120922,
+            expected_vol_gr_ins_cp=0,
+            expected_vol_case_cp=0.12791418544773489,
+            expected_respow=470083798.99090022,
+            expected_vol_cond_cp=12.020160732580297,
+            expected_a_cp_cool=0.00068328705812121333,
+        ),
+        CpostParam(
+            n_tf=12,
+            hmax=4.4214285714285717,
+            r_tf_inboard_in=0,
+            r_tf_inboard_out=0.15483000000000002,
+            r_cp_top=0.85843571428571441,
+            ztop=2.6714285714285717,
+            hmaxi=4.5762585714285713,
+            cas_in_th=0,
+            cas_out_th=0.0077415000000000019,
+            gr_ins_th=0,
+            ins_th=0.00080000000000000004,
+            n_tf_turn=1,
+            curr=25500000,
+            rho=2.1831760869565221e-08,
+            fcool=0.12725,
+            expected_vol_ins_cp=0.12679799009998483,
+            expected_vol_gr_ins_cp=0,
+            expected_vol_case_cp=0.12648575512245444,
+            expected_respow=475710489.56122422,
+            expected_vol_cond_cp=11.545770024935592,
+            expected_a_cp_cool=0.00068328705812121333,
+        ),
+    ),
+)
+def test_cpost(cpostparam, monkeypatch, sctfcoil):
+    """
+    Automatically generated Regression Unit Test for cpost.
+
+    This test was generated using data from tests/regression/scenarios/FNSF/IN.DAT.
+
+    :param cpostparam: the data used to mock and assert in this test.
+    :type cpostparam: cpostparam
+
+    :param monkeypatch: pytest fixture used to mock module/class variables
+    :type monkeypatch: _pytest.monkeypatch.monkeypatch
+    """
+
+    monkeypatch.setattr(tfcoil_variables, "n_tf", cpostparam.n_tf)
+
+    monkeypatch.setattr(build_variables, "hmax", cpostparam.hmax)
+
+    (
+        a_cp_cool,
+        vol_cond_cp,
+        respow,
+        vol_ins_cp,
+        vol_case_cp,
+        vol_gr_ins_cp,
+    ) = sctfcoil.cpost(
+        r_tf_inboard_in=cpostparam.r_tf_inboard_in,
+        r_tf_inboard_out=cpostparam.r_tf_inboard_out,
+        r_cp_top=cpostparam.r_cp_top,
+        ztop=cpostparam.ztop,
+        hmaxi=cpostparam.hmaxi,
+        cas_in_th=cpostparam.cas_in_th,
+        cas_out_th=cpostparam.cas_out_th,
+        gr_ins_th=cpostparam.gr_ins_th,
+        ins_th=cpostparam.ins_th,
+        n_tf_turn=cpostparam.n_tf_turn,
+        curr=cpostparam.curr,
+        rho=cpostparam.rho,
+        fcool=cpostparam.fcool,
+    )
+
+    assert vol_ins_cp == pytest.approx(cpostparam.expected_vol_ins_cp)
+
+    assert vol_gr_ins_cp == pytest.approx(cpostparam.expected_vol_gr_ins_cp)
+
+    assert vol_case_cp == pytest.approx(cpostparam.expected_vol_case_cp)
+
+    assert respow == pytest.approx(cpostparam.expected_respow)
+
+    assert vol_cond_cp == pytest.approx(cpostparam.expected_vol_cond_cp)
+
+    assert a_cp_cool == pytest.approx(cpostparam.expected_a_cp_cool)
