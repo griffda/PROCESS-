@@ -589,7 +589,7 @@ module physics_variables
   !! profile factor (= n-weighted T / average T)
 
   real(dp) :: pcoreradmw
-  !! total core radiation power (MW)
+  !! total "core" radiation power (MW)
 
   real(dp) :: pcoreradpv
   !! total core radiation power per volume (MW/m3)
@@ -616,7 +616,7 @@ module physics_variables
   !! deuterium-tritium fusion power (MW)
 
   real(dp) :: pedgeradmw
-  !! edge radiation power (MW)
+  !! "edge" radiation power (MW)
 
   real(dp) :: pedgeradpv
   !! edge radiation power per volume (MW/m3)
@@ -661,7 +661,7 @@ module physics_variables
   !! plasma poloidal perimeter (m)
 
   real(dp) :: pradmw
-  !! total radiation power (MW)
+  !! total radiation power from inside LCFS (MW)
 
   real(dp) :: pradpv
   !! total radiation power per volume (MW/m3)

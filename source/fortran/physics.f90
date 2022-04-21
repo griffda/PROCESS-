@@ -4231,12 +4231,12 @@ module physics_module
     call ovarre(outfile,"Normalised minor radius defining 'core'", '(coreradius)',coreradius)
     call ovarre(outfile,"Fraction of core radiation subtracted from P_L", &
          '(coreradiationfraction)',coreradiationfraction)
-    call ovarre(outfile,'Total core radiation power (MW)', '(pcoreradmw)',pcoreradmw, 'OP ')
-    call ovarre(outfile,'Edge radiation power (MW)','(pedgeradmw)', pedgeradmw, 'OP ')
+    call ovarre(outfile,'Total "core" radiation power (MW)', '(pcoreradmw)',pcoreradmw, 'OP ')
+    call ovarre(outfile,'"Edge" radiation power (MW)','(pedgeradmw)', pedgeradmw, 'OP ')
     if (istell/=0) then
         call ovarre(outfile,'SOL radiation power (MW)','(psolradmw)', psolradmw, 'OP ')
     end if
-    call ovarre(outfile,'Total radiation power (MW)','(pradmw)',pradmw, 'OP ')
+    call ovarre(outfile,'Total radiation power from inside LCFS (MW)','(pradmw)',pradmw, 'OP ')
     call ovarre(outfile,'Core radiation fraction = total radiation in core / total power deposited in plasma', &
         '(rad_fraction_core)', rad_fraction_core, 'OP ')
     call ovarre(outfile,'SoL radiation fraction = total radiation in SoL / total power accross separatrix', &
