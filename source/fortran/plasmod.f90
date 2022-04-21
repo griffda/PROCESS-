@@ -797,7 +797,7 @@ contains
     !---------------------------------------
 
     pinjmw =loss_pnbi
-    pradpv = loss_Prad/vol !Total radiation power (MW)
+    pradpv = loss_Prad/vol !Total radiation power/volume in lcsf (MW/m3)
     ptrimw = loss_psepi !Ion transport (MW)
     ptremw = loss_psepe !Electron transport (MW)
 
