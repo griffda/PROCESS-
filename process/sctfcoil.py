@@ -1200,7 +1200,7 @@ class Sctfcoil:
         # TF coil inductance
         # ---
         if physics_variables.itart == 0 and tfcoil_variables.i_tf_shape == 1:
-            sctfcoil_module.tfcind(build_variables.tfcth)
+            self.tfcind(build_variables.tfcth)
         else:
             tfcoil_variables.tfind = (
                 (build_variables.hmax + build_variables.tfthko)
@@ -2258,3 +2258,88 @@ class Sctfcoil:
         sctfcoil_module.vforce_inboard_tot = (
             tfcoil_variables.vforce * tfcoil_variables.n_tf
         )
+
+    def tfcind(self, tfthk):
+        """Calculates the self inductance of a TF coil
+        This routine calculates the self inductance of a TF coil
+        approximated by a straight inboard section and two elliptical arcs.
+        The inductance of the TFC (considered as a single axisymmetric turn)
+        is calculated by numerical integration over the cross-sectional area.
+        The contribution from the cross-sectional area of the
+        coil itself is calculated by taking the field as B(r)/2.
+        The field in the bore is calculated for unit current.
+        Top/bottom symmetry is assumed.
+
+        :param tfthk: TF coil thickness (m)
+        :type tfthk: float
+        """
+        NINTERVALS = 100
+
+        tfcoil_variables.tfind = 0.0e0
+        # Integrate over the whole TF area, including the coil thickness.
+        x0 = tfcoil_variables.xarc[1]
+        y0 = tfcoil_variables.yarc[1]
+
+        # Minor and major radii of the inside and outside perimeters of the the
+        # Inboard leg and arc.
+        # Average the upper and lower halves, which are different in the
+        # single null case
+        ai = tfcoil_variables.xarc[1] - tfcoil_variables.xarc[0]
+        bi = (
+            tfcoil_variables.yarc[1] - tfcoil_variables.yarc[3]
+        ) / 2.0e0 - tfcoil_variables.yarc[0]
+        ao = ai + tfthk
+        bo = bi + tfthk
+        # Interval used for integration
+        dr = ao / NINTERVALS
+        # Start both integrals from the centre-point where the arcs join.
+        # Initialise major radius
+        r = x0 - dr / 2.0e0
+
+        for i in range(NINTERVALS):
+            # Field in the bore for unit current
+            b = constants.rmu0 / (2.0e0 * numpy.pi * r)
+            # Find out if there is a bore
+            if x0 - r < ai:
+                h_bore = y0 + bi * numpy.sqrt(1 - ((r - x0) / ai) ** 2)
+                h_thick = bo * numpy.sqrt(1 - ((r - x0) / ao) ** 2) - h_bore
+            else:
+                h_bore = 0.0e0
+                # Include the contribution from the straight section
+                h_thick = (
+                    bo * numpy.sqrt(1 - ((r - x0) / ao) ** 2) + tfcoil_variables.yarc[0]
+                )
+
+            # Assume B in TF coil = 1/2  B in bore
+            # Multiply by 2 for upper and lower halves of coil
+            tfcoil_variables.tfind = tfcoil_variables.tfind + b * dr * (
+                2.0e0 * h_bore + h_thick
+            )
+            r = r - dr
+
+        # Outboard arc
+        ai = tfcoil_variables.xarc[2] - tfcoil_variables.xarc[1]
+        bi = (tfcoil_variables.yarc[1] - tfcoil_variables.yarc[3]) / 2.0e0
+        ao = ai + tfthk
+        bo = bi + tfthk
+        dr = ao / NINTERVALS
+        # Initialise major radius
+        r = x0 + dr / 2.0e0
+
+        for i in range(NINTERVALS):
+            # Field in the bore for unit current
+            b = constants.rmu0 / (2.0e0 * numpy.pi * r)
+            # Find out if there is a bore
+            if r - x0 < ai:
+                h_bore = y0 + bi * numpy.sqrt(1 - ((r - x0) / ai) ** 2)
+                h_thick = bo * numpy.sqrt(1 - ((r - x0) / ao) ** 2) - h_bore
+            else:
+                h_bore = 0.0e0
+                h_thick = bo * numpy.sqrt(1 - ((r - x0) / ao) ** 2)
+
+            # Assume B in TF coil = 1/2  B in bore
+            # Multiply by 2 for upper and lower halves of coil
+            tfcoil_variables.tfind = tfcoil_variables.tfind + b * dr * (
+                2.0e0 * h_bore + h_thick
+            )
+            r = r + dr
