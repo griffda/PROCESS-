@@ -1725,7 +1725,7 @@ class Sctfcoil:
         )  # toroidal direction + radial direction
 
         # Exact TF outboard leg conductor area per coil [m2]
-        a_leg_cond = (1.0e0 - tfcoil_variables.fcoolleg) * (
+        sctfcoil_module.a_leg_cond = (1.0e0 - tfcoil_variables.fcoolleg) * (
             tfcoil_variables.arealeg
             - sctfcoil_module.a_leg_gr_ins
             - sctfcoil_module.a_leg_ins
@@ -1738,7 +1738,9 @@ class Sctfcoil:
             # ---
             # TF outboard leg's resistance calculation (per leg) [ohm]
             tfcoil_variables.tflegres = (
-                tfcoil_variables.rhotfleg * tfcoil_variables.tfleng / a_leg_cond
+                tfcoil_variables.rhotfleg
+                * tfcoil_variables.tfleng
+                / sctfcoil_module.a_leg_cond
             )
 
             # TF outer leg resistive power (TOTAL) [W]
@@ -1789,7 +1791,7 @@ class Sctfcoil:
                 tfcoil_variables.rhocp
                 * tfcoil_variables.ritfc**2
                 * tfcoil_variables.tfleng
-                / (a_leg_cond * tfcoil_variables.n_tf)
+                / (sctfcoil_module.a_leg_cond * tfcoil_variables.n_tf)
             )
 
             # tfcoil_variables.prescp containts the the total resistive power losses
