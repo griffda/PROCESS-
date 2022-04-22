@@ -2440,3 +2440,233 @@ def test_peak_tf_with_ripple(peaktfwithrippleparam, monkeypatch, sctfcoil):
     assert bmaxtfrp == pytest.approx(peaktfwithrippleparam.expected_bmaxtfrp)
 
     assert flag == pytest.approx(peaktfwithrippleparam.expected_flag)
+
+
+class TfWpGeomParam(NamedTuple):
+
+    tfcth: Any = None
+
+    r_tf_inboard_in: Any = None
+
+    r_tf_inboard_out: Any = None
+
+    dr_tf_wp: Any = None
+
+    casthi: Any = None
+
+    thkcas: Any = None
+
+    casths: Any = None
+
+    wwp1: Any = None
+
+    wwp2: Any = None
+
+    tinstf: Any = None
+
+    tfinsgap: Any = None
+
+    awpc: Any = None
+
+    awptf: Any = None
+
+    r_wp_inner: Any = None
+
+    r_wp_outer: Any = None
+
+    r_wp_centre: Any = None
+
+    t_wp_toroidal: Any = None
+
+    t_wp_toroidal_av: Any = None
+
+    a_ground_ins: Any = None
+
+    theta_coil: Any = None
+
+    tan_theta_coil: Any = None
+
+    i_tf_wp_geom: Any = None
+
+    expected_wwp1: Any = None
+
+    expected_awpc: Any = None
+
+    expected_awptf: Any = None
+
+    expected_r_wp_inner: Any = None
+
+    expected_r_wp_outer: Any = None
+
+    expected_r_wp_centre: Any = None
+
+    expected_t_wp_toroidal: Any = None
+
+    expected_t_wp_toroidal_av: Any = None
+
+    expected_a_ground_ins: Any = None
+
+
+@pytest.mark.parametrize(
+    "tfwpgeomparam",
+    (
+        TfWpGeomParam(
+            tfcth=1.208,
+            r_tf_inboard_in=2.9939411851091102,
+            r_tf_inboard_out=4.20194118510911,
+            dr_tf_wp=0.54261087836601019,
+            casthi=0.060000000000000012,
+            thkcas=0.52465000000000006,
+            casths=0.05000000000000001,
+            wwp1=0,
+            wwp2=0,
+            tinstf=0.0080000000000000019,
+            tfinsgap=0.01,
+            awpc=0,
+            awptf=0,
+            r_wp_inner=0,
+            r_wp_outer=0,
+            r_wp_centre=0,
+            t_wp_toroidal=0,
+            t_wp_toroidal_av=0,
+            a_ground_ins=0,
+            theta_coil=0.19634954084936207,
+            tan_theta_coil=0.19891236737965801,
+            i_tf_wp_geom=0,
+            expected_wwp1=1.299782604942499,
+            expected_awpc=0.70527618095271016,
+            expected_awptf=0.64024601555360383,
+            expected_r_wp_inner=3.5185911851091101,
+            expected_r_wp_outer=4.06120206347512,
+            expected_r_wp_centre=3.789896624292115,
+            expected_t_wp_toroidal=1.299782604942499,
+            expected_t_wp_toroidal_av=1.299782604942499,
+            expected_a_ground_ins=0.028582295732936136,
+        ),
+        TfWpGeomParam(
+            tfcth=1.208,
+            r_tf_inboard_in=2.9939411851091102,
+            r_tf_inboard_out=4.20194118510911,
+            dr_tf_wp=0.54261087836601019,
+            casthi=0.060000000000000012,
+            thkcas=0.52465000000000006,
+            casths=0.05000000000000001,
+            wwp1=1.299782604942499,
+            wwp2=0,
+            tinstf=0.0080000000000000019,
+            tfinsgap=0.01,
+            awpc=0.70527618095271016,
+            awptf=0.64024601555360383,
+            r_wp_inner=3.5185911851091101,
+            r_wp_outer=4.06120206347512,
+            r_wp_centre=3.789896624292115,
+            t_wp_toroidal=1.299782604942499,
+            t_wp_toroidal_av=1.299782604942499,
+            a_ground_ins=0.028582295732936136,
+            theta_coil=0.19634954084936207,
+            tan_theta_coil=0.19891236737965801,
+            i_tf_wp_geom=0,
+            expected_wwp1=1.299782604942499,
+            expected_awpc=0.70527618095271016,
+            expected_awptf=0.64024601555360383,
+            expected_r_wp_inner=3.5185911851091101,
+            expected_r_wp_outer=4.06120206347512,
+            expected_r_wp_centre=3.789896624292115,
+            expected_t_wp_toroidal=1.299782604942499,
+            expected_t_wp_toroidal_av=1.299782604942499,
+            expected_a_ground_ins=0.028582295732936136,
+        ),
+    ),
+)
+def test_tf_wp_geom(tfwpgeomparam, monkeypatch, sctfcoil):
+    """
+    Automatically generated Regression Unit Test for tf_wp_geom.
+
+    This test was generated using data from tracking/baseline_2018/baseline_2018_IN.DAT.
+
+    :param tfwpgeomparam: the data used to mock and assert in this test.
+    :type tfwpgeomparam: tfwpgeomparam
+
+    :param monkeypatch: pytest fixture used to mock module/class variables
+    :type monkeypatch: _pytest.monkeypatch.monkeypatch
+    """
+
+    monkeypatch.setattr(build_variables, "tfcth", tfwpgeomparam.tfcth)
+
+    monkeypatch.setattr(
+        build_variables, "r_tf_inboard_in", tfwpgeomparam.r_tf_inboard_in
+    )
+
+    monkeypatch.setattr(
+        build_variables, "r_tf_inboard_out", tfwpgeomparam.r_tf_inboard_out
+    )
+
+    monkeypatch.setattr(tfcoil_variables, "dr_tf_wp", tfwpgeomparam.dr_tf_wp)
+
+    monkeypatch.setattr(tfcoil_variables, "casthi", tfwpgeomparam.casthi)
+
+    monkeypatch.setattr(tfcoil_variables, "thkcas", tfwpgeomparam.thkcas)
+
+    monkeypatch.setattr(tfcoil_variables, "casths", tfwpgeomparam.casths)
+
+    monkeypatch.setattr(tfcoil_variables, "wwp1", tfwpgeomparam.wwp1)
+
+    monkeypatch.setattr(tfcoil_variables, "wwp2", tfwpgeomparam.wwp2)
+
+    monkeypatch.setattr(tfcoil_variables, "tinstf", tfwpgeomparam.tinstf)
+
+    monkeypatch.setattr(tfcoil_variables, "tfinsgap", tfwpgeomparam.tfinsgap)
+
+    monkeypatch.setattr(sctfcoil_module, "awpc", tfwpgeomparam.awpc)
+
+    monkeypatch.setattr(sctfcoil_module, "awptf", tfwpgeomparam.awptf)
+
+    monkeypatch.setattr(sctfcoil_module, "r_wp_inner", tfwpgeomparam.r_wp_inner)
+
+    monkeypatch.setattr(sctfcoil_module, "r_wp_outer", tfwpgeomparam.r_wp_outer)
+
+    monkeypatch.setattr(sctfcoil_module, "r_wp_centre", tfwpgeomparam.r_wp_centre)
+
+    monkeypatch.setattr(sctfcoil_module, "t_wp_toroidal", tfwpgeomparam.t_wp_toroidal)
+
+    monkeypatch.setattr(
+        sctfcoil_module, "t_wp_toroidal_av", tfwpgeomparam.t_wp_toroidal_av
+    )
+
+    monkeypatch.setattr(sctfcoil_module, "a_ground_ins", tfwpgeomparam.a_ground_ins)
+
+    monkeypatch.setattr(sctfcoil_module, "theta_coil", tfwpgeomparam.theta_coil)
+
+    monkeypatch.setattr(sctfcoil_module, "tan_theta_coil", tfwpgeomparam.tan_theta_coil)
+
+    sctfcoil.tf_wp_geom(i_tf_wp_geom=tfwpgeomparam.i_tf_wp_geom)
+
+    assert tfcoil_variables.wwp1 == pytest.approx(tfwpgeomparam.expected_wwp1)
+
+    assert sctfcoil_module.awpc == pytest.approx(tfwpgeomparam.expected_awpc)
+
+    assert sctfcoil_module.awptf == pytest.approx(tfwpgeomparam.expected_awptf)
+
+    assert sctfcoil_module.r_wp_inner == pytest.approx(
+        tfwpgeomparam.expected_r_wp_inner
+    )
+
+    assert sctfcoil_module.r_wp_outer == pytest.approx(
+        tfwpgeomparam.expected_r_wp_outer
+    )
+
+    assert sctfcoil_module.r_wp_centre == pytest.approx(
+        tfwpgeomparam.expected_r_wp_centre
+    )
+
+    assert sctfcoil_module.t_wp_toroidal == pytest.approx(
+        tfwpgeomparam.expected_t_wp_toroidal
+    )
+
+    assert sctfcoil_module.t_wp_toroidal_av == pytest.approx(
+        tfwpgeomparam.expected_t_wp_toroidal_av
+    )
+
+    assert sctfcoil_module.a_ground_ins == pytest.approx(
+        tfwpgeomparam.expected_a_ground_ins
+    )

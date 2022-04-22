@@ -234,136 +234,6 @@ end subroutine initialise_cables
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine tf_wp_geom(i_tf_wp_geom)
-        !! Author : S. Kahn, CCFE
-        !! Seting the WP geometry and area for SC magnets
-
-        use error_handling, only: fdiags, report_error
-        use build_variables, only: tfcth, r_tf_inboard_in, r_tf_inboard_out
-        use tfcoil_variables, only: dr_tf_wp, casthi, thkcas, casths, &
-            wwp1, wwp2, tinstf, tfinsgap
-
-        implicit none
-
-        ! Inputs
-        ! ------
-        integer, intent(in) :: i_tf_wp_geom
-        !! Switch for TF WP geometry selection
-        !!   0 : Rectangular geometry
-        !!   1 : Double rectangular geometry
-        !!   2 : Trapezoidal geometry (constant lateral casing thickness)
-        ! ------
-
-
-        ! Local variables
-        ! ------
-        real(dp) :: t_tf_at_wp
-        !! TF coil width at inner egde of winding pack toroidal direction [m]
-        ! ------
-
-
-        ! Radial position of inner edge of winding pack [m]
-        r_wp_inner = r_tf_inboard_in + thkcas
-
-        ! Radial position of outer edge of winding pack [m]
-        r_wp_outer = r_wp_inner + dr_tf_wp
-
-        ! Radius of geometrical centre of winding pack [m]
-        r_wp_centre = 0.5D0 * ( r_wp_inner + r_wp_outer )
-
-        ! TF toroidal thickness at the WP inner radius [m]
-        t_tf_at_wp = 2.0D0 * r_wp_inner * tan_theta_coil
-
-        ! Minimal toroidal thickness of winding pack [m]
-        t_wp_toroidal = t_tf_at_wp - 2.0D0 * casths
-
-        ! Rectangular WP
-        ! --------------
-        if ( i_tf_wp_geom == 0 ) then
-
-            ! Outer WP layer toroidal thickness [m]
-            wwp1 = t_wp_toroidal
-
-            ! Averaged toroidal thickness of of winding pack [m]
-            t_wp_toroidal_av = t_wp_toroidal
-
-            ! Total cross-sectional area of winding pack [m2]
-            awpc = dr_tf_wp * t_wp_toroidal
-
-            ! WP cross-section without insertion gap and ground insulation [m2]
-            awptf = ( dr_tf_wp - 2.0D0 * ( tinstf + tfinsgap ) )  &
-                  * ( t_wp_toroidal - 2.0D0 * ( tinstf + tfinsgap ) )
-
-            ! Cross-section area of the WP ground insulation [m2]
-            a_ground_ins = ( dr_tf_wp - 2.0D0 * tfinsgap )  &
-                         * ( t_wp_toroidal - 2.0D0 *  tfinsgap ) - awptf
-
-
-        ! Double rectangular WP
-        ! ---------------------
-        else if ( i_tf_wp_geom == 1 ) then
-
-            ! Thickness of winding pack section at R > r_wp_centre [m]
-            wwp1 = 2.0D0 * ( r_wp_centre * tan_theta_coil - casths )
-
-            ! Thickness of winding pack section at R < r_wp_centre [m]
-            wwp2 = 2.0D0 * ( r_wp_inner * tan_theta_coil - casths )
-
-            ! Averaged toroidal thickness of of winding pack [m]
-            t_wp_toroidal_av = 0.5D0 * ( wwp1 + wwp2 )
-
-            ! Total cross-sectional area of winding pack [m2]
-            ! Including ground insulation and insertion gap
-            awpc = dr_tf_wp * t_wp_toroidal_av
-
-            ! WP cross-section without insertion gap and ground insulation [m2]
-            awptf = 0.5D0 * ( dr_tf_wp - 2.0D0 * ( tinstf + tfinsgap ) )  &
-                          * ( wwp1 + wwp2 - 4.0D0 * ( tinstf + tfinsgap ) )
-
-            ! Cross-section area of the WP ground insulation [m2]
-            a_ground_ins = 0.5D0 * ( dr_tf_wp - 2.0D0 * tfinsgap )  &
-                                 * ( wwp1 + wwp2 - 4.0D0 * tfinsgap ) - awptf
-
-
-        ! Trapezoidal WP
-        ! --------------
-        else
-
-            ! Thickness of winding pack section at r_wp_outer [m]
-            wwp1 = 2.0D0 * ( r_wp_outer * tan_theta_coil - casths )
-
-            ! Thickness of winding pack section at r_wp_inner [m]
-            wwp2 = 2.0D0 * ( r_wp_inner * tan_theta_coil - casths )
-
-            ! Averaged toroidal thickness of of winding pack [m]
-            t_wp_toroidal_av = 0.5D0 * ( wwp1 + wwp2 )
-
-            ! Total cross-sectional area of winding pack [m2]
-            ! Including ground insulation and insertion gap
-            awpc = dr_tf_wp * ( wwp2 + 0.5D0 * ( wwp1 - wwp2 ) )
-
-            ! WP cross-section without insertion gap and ground insulation [m2]
-            awptf = ( dr_tf_wp - 2.0D0 * ( tinstf + tfinsgap ) ) &
-                  * ( wwp2 - 2.0D0 * ( tinstf + tfinsgap ) + 0.5D0 * ( wwp1 - wwp2 ) )
-
-            ! Cross-section area of the WP ground insulation [m2]
-            a_ground_ins = ( dr_tf_wp - 2.0D0 * tfinsgap ) &
-                         * ( wwp2 - 2.0D0 * tfinsgap  + 0.5D0 * ( wwp1 - wwp2 ) ) - awptf
-
-        end if
-        ! --------------
-
-
-        ! Negative WP area error reporting
-        if ( awptf <= 0.0D0 .or. awpc <= 0.0D0 ) then
-            fdiags(1) = awptf
-            fdiags(2) = awpc
-            call report_error(99)
-        end if
-
-        !-! end break
-
-    end subroutine tf_wp_geom
 
 subroutine tf_case_geom(i_tf_wp_geom, i_tf_case_geom)
         !! Author : S. Kahn, CCFE
@@ -588,7 +458,7 @@ subroutine tf_averaged_turn_geom( jwptf, thwcndut, thicndut, i_tf_sc_mat,    & !
 
         end if
 
-        !!- end break
+        !-! end break
 
     end subroutine tf_averaged_turn_geom
 
@@ -747,7 +617,6 @@ subroutine res_tf_internal_geom()
     !! Author : S. Kahn
     !! Resisitve TF turn geometry, equivalent to winding_pack subroutines
     use error_handling, only: fdiags, report_error
-    use numerics, only: nvar, ixc
     use tfcoil_variables, only: n_tf_turn, thicndut, thkcas, dr_tf_wp, tftort,   &
         tfareain, ritfc, fcoolcp, cpttf, cdtfleg, casthi, aiwp, acasetf, tinstf, &
         n_tf
@@ -831,7 +700,8 @@ subroutine res_tf_internal_geom()
         call report_error(101)
     end if
 
-    !!! end break
+    !-c
+    ! end break
 
 
 end subroutine res_tf_internal_geom
