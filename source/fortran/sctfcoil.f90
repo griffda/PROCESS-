@@ -327,7 +327,7 @@ subroutine sc_tf_internal_geom(i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer)
         call report_error(276)
     end if
     ! -------------------
-
+    !!! end break
 end subroutine sc_tf_internal_geom
 
 subroutine tf_wp_geom(i_tf_wp_geom)

@@ -14,6 +14,7 @@ from process.fortran import error_handling
 from process.fortran import fwbs_variables
 
 from process.utilities.f2py_string_patch import f2py_compatible_to_string
+from sctfcoil import tf_wp_geom
 
 logger = logging.getLogger(__name__)
 # Logging handler for console output
@@ -2886,3 +2887,117 @@ class Sctfcoil:
         elif sctfcoil_module.awptf < 0.0e0:
             error_handling.fdiags[0] = sctfcoil_module.awptf
             error_handling.report_error(101)
+
+    def sc_tf_internal_geom(self, tf_wp_geom):
+        """
+        Author : S. Kahn, CCFE
+        Seting the WP, case and turns geometry for SC magnets
+        """
+
+        tf_wp_geom(sctfcoil_module.i_tf_wp_geom)
+
+        # Calculating the TF steel casing areas
+        sctfcoil_module.tf_case_geom(
+            sctfcoil_module.i_tf_wp_geom, sctfcoil_module.i_tf_case_geom
+        )
+
+        # WP/trun currents
+        sctfcoil_module.tf_wp_currents()
+
+        # Setting the WP turn geometry / areas
+        if sctfcoil_module.i_tf_turns_integer == 0:
+            # Non-ingeger number of turns
+            sctfcoil_module.tf_averaged_turn_geom(
+                tfcoil_variables.jwptf,
+                tfcoil_variables.thwcndut,
+                tfcoil_variables.thicndut,
+                tfcoil_variables.i_tf_sc_mat,  # Inputs
+                tfcoil_variables.acstf,
+                tfcoil_variables.acndttf,
+                tfcoil_variables.insulation_area,
+                tfcoil_variables.n_tf_turn,
+            )  # Outputs
+        else:
+            # Integer number of turns
+            sctfcoil_module.tf_integer_turn_geom(
+                tfcoil_variables.n_layer,
+                tfcoil_variables.n_pancake,
+                tfcoil_variables.thwcndut,
+                tfcoil_variables.thicndut,  # Inputs
+                tfcoil_variables.acstf,
+                tfcoil_variables.acndttf,
+                tfcoil_variables.insulation_area,  # Outputs
+                tfcoil_variables.cpttf,
+                tfcoil_variables.n_tf_turn,
+            )  # Outputs
+
+        # Areas and fractions
+        # -------------------
+        # Central helium channel down the conductor core [m2]
+        tfcoil_variables.awphec = (
+            0.25e0
+            * tfcoil_variables.n_tf_turn
+            * numpy.pi
+            * tfcoil_variables.dhecoil**2
+        )
+
+        # Total conductor cross-sectional area, taking account of void area
+        # and central helium channel [m2]
+        tfcoil_variables.acond = (
+            tfcoil_variables.acstf
+            * tfcoil_variables.n_tf_turn
+            * (1.0e0 - tfcoil_variables.vftf)
+            - tfcoil_variables.awphec
+        )
+
+        # Void area in conductor for He, not including central channel [m2]
+        tfcoil_variables.avwp = (
+            tfcoil_variables.acstf * tfcoil_variables.n_tf_turn * tfcoil_variables.vftf
+        )
+
+        # Area of inter-turn insulation: total [m2]
+        tfcoil_variables.aiwp = (
+            tfcoil_variables.n_tf_turn * tfcoil_variables.insulation_area
+        )
+
+        # Area of steel structure in winding pack [m2]
+        tfcoil_variables.aswp = tfcoil_variables.n_tf_turn * tfcoil_variables.acndttf
+
+        # Inboard coil steel area [m2]
+        sctfcoil_module.a_tf_steel = tfcoil_variables.acasetf + tfcoil_variables.aswp
+
+        # Inboard coil steel fraction [-]
+        sctfcoil_module.f_tf_steel = (
+            tfcoil_variables.n_tf
+            * sctfcoil_module.a_tf_steel
+            / tfcoil_variables.tfareain
+        )
+
+        # Inboard coil insulation cross-section [m2]
+        sctfcoil_module.a_tf_ins = tfcoil_variables.aiwp + sctfcoil_module.a_ground_ins
+
+        #  Inboard coil insulation fraction [-]
+        sctfcoil_module.f_tf_ins = (
+            tfcoil_variables.n_tf * sctfcoil_module.a_tf_ins / tfcoil_variables.tfareain
+        )
+
+        # Negative areas or fractions error reporting
+        if (
+            tfcoil_variables.acond <= 0.0e0
+            or tfcoil_variables.avwp <= 0.0e0
+            or tfcoil_variables.aiwp <= 0.0e0
+            or tfcoil_variables.aswp <= 0.0e0
+            or sctfcoil_module.a_tf_steel <= 0.0e0
+            or sctfcoil_module.f_tf_steel <= 0.0e0
+            or sctfcoil_module.a_tf_ins <= 0.0e0
+            or sctfcoil_module.f_tf_ins <= 0.0e0
+        ):
+            error_handling.fdiags[0] = tfcoil_variables.acond
+            error_handling.fdiags[1] = tfcoil_variables.avwp
+            error_handling.fdiags[2] = tfcoil_variables.aiwp
+            error_handling.fdiags[3] = tfcoil_variables.aswp
+            error_handling.fdiags[4] = sctfcoil_module.a_tf_steel
+            error_handling.fdiags[5] = sctfcoil_module.f_tf_steel
+            error_handling.fdiags[6] = sctfcoil_module.a_tf_ins
+            error_handling.fdiags[7] = sctfcoil_module.f_tf_ins
+            error_handling.report_error(276)
