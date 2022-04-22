@@ -2888,47 +2888,45 @@ class Sctfcoil:
             error_handling.fdiags[0] = sctfcoil_module.awptf
             error_handling.report_error(101)
 
-    def sc_tf_internal_geom(self):
+    def sc_tf_internal_geom(self, i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer):
         """
         Author : S. Kahn, CCFE
         Seting the WP, case and turns geometry for SC magnets
         """
 
-        sctfcoil_module.tf_wp_geom(sctfcoil_module.i_tf_wp_geom)
+        sctfcoil_module.tf_wp_geom(i_tf_wp_geom)
 
         # Calculating the TF steel casing areas
-        sctfcoil_module.tf_case_geom(
-            sctfcoil_module.i_tf_wp_geom, sctfcoil_module.i_tf_case_geom
-        )
+        sctfcoil_module.tf_case_geom(i_tf_wp_geom, i_tf_case_geom)
 
         # WP/trun currents
         sctfcoil_module.tf_wp_currents()
 
         # Setting the WP turn geometry / areas
-        if sctfcoil_module.i_tf_turns_integer == 0:
-            # Non-ingeger number of turns
-            sctfcoil_module.tf_averaged_turn_geom(
-                tfcoil_variables.jwptf,
-                tfcoil_variables.thwcndut,
-                tfcoil_variables.thicndut,
-                tfcoil_variables.i_tf_sc_mat,  # Inputs
+        if i_tf_turns_integer == 0:
+            (
                 tfcoil_variables.acstf,
                 tfcoil_variables.acndttf,
                 tfcoil_variables.insulation_area,
                 tfcoil_variables.n_tf_turn,
+            ) = sctfcoil_module.tf_averaged_turn_geom(
+                tfcoil_variables.jwptf,
+                tfcoil_variables.thwcndut,
+                tfcoil_variables.thicndut,
+                tfcoil_variables.i_tf_sc_mat,  # Inputs
             )  # Outputs
         else:
-            # Integer number of turns
-            sctfcoil_module.tf_integer_turn_geom(
-                tfcoil_variables.n_layer,
-                tfcoil_variables.n_pancake,
-                tfcoil_variables.thwcndut,
-                tfcoil_variables.thicndut,  # Inputs
+            (
                 tfcoil_variables.acstf,
                 tfcoil_variables.acndttf,
                 tfcoil_variables.insulation_area,  # Outputs
                 tfcoil_variables.cpttf,
                 tfcoil_variables.n_tf_turn,
+            ) = sctfcoil_module.tf_integer_turn_geom(
+                tfcoil_variables.n_layer,
+                tfcoil_variables.n_pancake,
+                tfcoil_variables.thwcndut,
+                tfcoil_variables.thicndut,  # Inputs
             )  # Outputs
 
         # Areas and fractions
