@@ -14,7 +14,7 @@ from process.fortran import error_handling
 from process.fortran import fwbs_variables
 
 from process.utilities.f2py_string_patch import f2py_compatible_to_string
-from sctfcoil import tf_wp_geom
+
 
 logger = logging.getLogger(__name__)
 # Logging handler for console output
@@ -1177,7 +1177,7 @@ class Sctfcoil:
         # ---
         # Superconducting magnets
         if tfcoil_variables.i_tf_sup == 1:
-            sctfcoil_module.sc_tf_internal_geom(
+            self.sc_tf_internal_geom(
                 tfcoil_variables.i_tf_wp_geom,
                 tfcoil_variables.i_tf_case_geom,
                 tfcoil_variables.i_tf_turns_integer,
@@ -2888,13 +2888,13 @@ class Sctfcoil:
             error_handling.fdiags[0] = sctfcoil_module.awptf
             error_handling.report_error(101)
 
-    def sc_tf_internal_geom(self, tf_wp_geom):
+    def sc_tf_internal_geom(self):
         """
         Author : S. Kahn, CCFE
         Seting the WP, case and turns geometry for SC magnets
         """
 
-        tf_wp_geom(sctfcoil_module.i_tf_wp_geom)
+        sctfcoil_module.tf_wp_geom(sctfcoil_module.i_tf_wp_geom)
 
         # Calculating the TF steel casing areas
         sctfcoil_module.tf_case_geom(
