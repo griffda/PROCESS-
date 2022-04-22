@@ -76,7 +76,11 @@ module pfcoil_module
    end subroutine init_pfcoil_module
 
    subroutine bfield(nc, rc, zc, cc, xc, rp, zp, br, bz, psi, nciszero)
- 
+      ! #TODO bfield() is called very frequently (~15k times per solver iteration);
+      ! converting this to Python results in a ~30x slowdown of the code! This will
+      ! be left in Fortran for the time being, but in time should be converted to Python
+      ! alongside a tool such as numba to ensure performance is maintained.
+
      !! Calculate the field at a point due to currents in a number
      !! of circular poloidal conductor loops.
      !! author: P J Knight, CCFE, Culham Science Centre
