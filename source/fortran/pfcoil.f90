@@ -48,33 +48,6 @@ module pfcoil_module
  
  contains
  
-   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- 
-   subroutine init_pfcoil_module
-     !! Initialise module variables
-     implicit none
- 
-     first_call = .true.
-     CSlimit = .false.
-     nef = 0
-     nfxf = 0
-     ricpf = 0.0D0
-     ssq0 = 0.0D0
-     sig_axial = 0.0D0
-     sig_hoop = 0D0
-     axial_force = 0D0
-     rfxf = 0.0D0
-     zfxf = 0.0D0
-     cfxf = 0.0D0
-     xind = 0.0D0
-     rcls = 0.0D0
-     zcls = 0.0D0
-     ccls = 0.0D0
-     ccl0 = 0.0D0
-     bpf2 = 0.0D0
-     vsdum = 0.0D0
-   end subroutine init_pfcoil_module
-
    subroutine bfield(nc, rc, zc, cc, xc, rp, zp, br, bz, psi, nciszero)
       ! #TODO bfield() is called very frequently (~15k times per solver iteration);
       ! converting this to Python results in a ~30x slowdown of the code! This will
