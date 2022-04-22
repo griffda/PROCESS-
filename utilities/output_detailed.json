@@ -481,7 +481,7 @@
             "pcoreradmw",
             "pedgeradmw",
             "pradmw",
-            "rad_fraction",
+            "rad_fraction_total",
             "photon_wall",
             "peakfactrad",
             "maxradwallload",

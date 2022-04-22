@@ -68,4 +68,5 @@ OBS_VARS = {
     "strain_wp_max": "str_wp_max",
     "strain_wp": "str_wp",
     "fstrain_wp": "fstr_wp",
+    "rad_fraction": "rad_fraction_total",
 }

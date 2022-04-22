@@ -493,7 +493,7 @@ contains
       pfuscmw, pedgeradpv, photon_wall, piepv, plascur, plinepv, pneutmw, &
       pneutpv, pohmmw, powerht, powfmw, pradmw, pradpv, protonrate, &
       pscalingmw, psolradmw, psyncpv, ptremw, ptrepv, ptrimw, ptripv, q, q95, &
-      qfuel, qstar, rad_fraction, rmajor, rminor, rndfuel, sarea, tauee, &
+      qfuel, qstar, rad_fraction_total, rmajor, rminor, rndfuel, sarea, tauee, &
       taueff, tauei, taup, te, ten, ti, tin, vol, wallmw, xarea, zeff, zeffai, &
       ffwal, palpnb, palppv, pchargepv
     use profiles_module, only: plasma_profiles
@@ -640,7 +640,7 @@ contains
 
     peakradwallload = photon_wall * peakfactrad
 
-    rad_fraction = pradmw / (falpha*palpmw+pchargemw+pohmmw+pinjmw)
+    rad_fraction_total = pradmw / (falpha*palpmw+pchargemw+pohmmw+pinjmw)
 
     !  Calculate density limit
 

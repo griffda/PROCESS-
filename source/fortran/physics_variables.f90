@@ -666,6 +666,9 @@ module physics_variables
   real(dp) :: pradpv
   !! total radiation power per volume (MW/m3)
 
+  real(dp) :: pradsolmw
+  !! total radiation power from SoL (MW)
+
   real(dp) :: protonrate
   !! proton production rate (particles/m3/sec)
 
@@ -747,8 +750,8 @@ module physics_variables
   real(dp) :: rad_fraction_sol
   !! SoL radiation fraction
 
-  real(dp) :: rad_fraction
-  !! Radiation fraction = total radiation / total power deposited in plasma
+  real(dp) :: rad_fraction_total
+  !! Radiation fraction total = SoL + ICFS radiation / total power deposited in plasma
 
   real(dp) :: ralpne
   !! thermal alpha density/electron density (`iteration variable 109`) (calculated if `ipedestal=3`)
@@ -1037,6 +1040,7 @@ module physics_variables
     pperim = 0.0D0
     pradmw = 0.0D0
     pradpv = 0.0D0
+    pradsolmw = 0.0D0
     protonrate = 0.0D0
     psolradmw = 0.0D0
     psyncpv = 0.0D0
@@ -1056,7 +1060,7 @@ module physics_variables
     qlim = 0.0D0
     qstar = 0.0D0
     rad_fraction_sol = 0.8D0
-    rad_fraction = 0.0D0
+    rad_fraction_total = 0.0D0
     ralpne = 0.10D0
     protium = 0.0D0
     rli = 0.9D0

@@ -106,9 +106,9 @@ module physics_module
     use physics_variables, only: ptremw, idensl, res_time, ignite, vol, dnalp, &
       teped, beta, dnelimt, taup, pradpv, fgwped, photon_wall, kappaa_ipb, &
       kappaa, gamma, plhthresh, betap, fvsbrnni, btot, hfact, nesep, palpfwmw, &
-      betanb, pradmw, rad_fraction, q95, wallmw, zeffai, dnla, vsstt, &
+      betanb, pradmw, rad_fraction_total, q95, wallmw, zeffai, dnla, vsstt, &
       pedgeradmw, falpi, tin, ralpne, triang95, ti, tesep, ibss, dene, p0, &
-      psyncpv, pscalingmw, rad_fraction_sol, pcoreradmw, rplas, zeff, &
+      psyncpv, pscalingmw, rad_fraction_sol, pradsolmw, pcoreradmw, rplas, zeff, &
       normalised_total_beta, pdhe3, pdivmax, pdivl, fgwsep, pdt, pdd, xarea, &
       faccd, iwalld, itart, pdivu, gtscale, idivrt, pneutmw, neped, ipedestal, &
       icurr, betalim, pdivt, te0, dlamie, dnbeta, ptrimw, facoh, te, &
@@ -628,7 +628,8 @@ module physics_module
     ! Calculate some derived quantities that may not have been defined earlier
     total_loss_power = 1d6 * (falpha*palpmw+pchargemw+pohmmw+pinjmw)
     rad_fraction_core = 1.0D6*pradmw / total_loss_power
-    rad_fraction = rad_fraction_core + (1.0d0 - rad_fraction_core) * rad_fraction_sol
+    rad_fraction_total = rad_fraction_core + (1.0d0 - rad_fraction_core) * rad_fraction_sol
+    pradsolmw = rad_fraction_sol*pdivt
     total_plasma_internal_energy = 1.5D0*beta*btot*btot/(2.0D0*rmu0)*vol
     total_energy_conf_time = total_plasma_internal_energy / total_loss_power
 
@@ -683,7 +684,7 @@ module physics_module
        write(32,*) 'IMPURITIES -----'
        write(32,*) 'ralpne ',ralpne, ' fimp_13 ',fimp(13)
        write(32,*) 'RADIATION -----'
-       write(32,*) 'rad_fraction ', rad_fraction, ' pradmw ',pradmw
+       write(32,*) 'rad_fraction_total ', rad_fraction_total, ' pradmw ',pradmw
        write(32,*) 'pcoreradmw ', pcoreradmw, ' pedgeradmw ',pedgeradmw
        write(32,*) 'psyncpv ', psyncpv, ' pbrempv ',pbrempv
        write(32,*) 'plinepv ', plinepv, ' piepv ',piepv
@@ -3823,7 +3824,7 @@ module physics_module
     use impurity_radiation_module, only: nimp, coreradiationfraction, &
       coreradius, fimp, impurity_arr_frac, impurity_arr_Label
     use physics_variables, only: ieped, ftar, dnelimt, fgwped, kappaa, deni, &
-      betap, iculbl, rad_fraction, palpnb, ten, falpi, iradloss, pthrmw, &
+      betap, iculbl, rad_fraction_total, palpnb, ten, falpi, iradloss, pthrmw, &
       ralpne, taueff, dntau, dene, rad_fraction_sol, iprofile, rhopedn, &
       xarea, itart, epbetmax, neped, te0, ptrimw, dnbeta, powerht, psyncpv, &
       res_time, ignite, vol, bvert, tbeta, photon_wall, burnup, kappaa_ipb, &
@@ -3834,7 +3835,7 @@ module physics_module
       pchargemw, wallmw, vsstt, aspect, ti, q0, pcoreradmw, &
       normalised_total_beta, pdivmax, dnbeam, kappa95, nesep_crit, fhe3, &
       triang, pneutmw, tauee, betalim, rlp, te, dlimit, ne0, qstar, dnalp, &
-      taup, sarea, ti0, plhthresh, bp, dnitot, pradmw, csawth, rndfuel, q95, &
+      taup, sarea, ti0, plhthresh, bp, dnitot, pradmw, pradsolmw, csawth, rndfuel, q95, &
       rhopedt, tauratio, pperim, tesep, vsind, ibss, alphaj, dnz, q, ssync, &
       psolradmw, tauei, ishape, plinepv, palpmw, icurr, pdivt, gammaft, powfmw
     use physics_variables, only: betaft, tauscl, fgwsep, rmajor, falpha, &
@@ -4239,10 +4240,6 @@ module physics_module
     call ovarre(outfile,'Total radiation power from inside LCFS (MW)','(pradmw)',pradmw, 'OP ')
     call ovarre(outfile,'Core radiation fraction = total radiation in core / total power deposited in plasma', &
         '(rad_fraction_core)', rad_fraction_core, 'OP ')
-    call ovarre(outfile,'SoL radiation fraction = total radiation in SoL / total power accross separatrix', &
-        '(rad_fraction_sol)', rad_fraction_sol, 'IP ')
-    call ovarre(outfile,'Radiation fraction = total radiation / total power deposited in plasma', &
-        '(rad_fraction)', rad_fraction, 'OP ')
     call ovarre(outfile,'Nominal mean radiation load on inside surface of reactor (MW/m2)', &
         '(photon_wall)', photon_wall, 'OP ')
     call ovarre(outfile,'Peaking factor for radiation wall load', &
@@ -4255,6 +4252,11 @@ module physics_module
         '(wallmw)', wallmw, 'OP ')
     if (istell == 0) then
     call oblnkl(outfile)
+    call ovarre(outfile,'Total radiation power from SoL (MW)','(pradsolmw)',pradsolmw, 'OP ')   
+    call ovarre(outfile,'SoL radiation fraction = total radiation in SoL / total power accross separatrix', &
+    '(rad_fraction_sol)', rad_fraction_sol, 'IP ')
+    call ovarre(outfile,'Radiation fraction total = SoL + ICFS radiation / total power deposited in plasma', &
+    '(rad_fraction_total)', rad_fraction_total, 'OP ') 
     call ovarre(outfile,'Power incident on the divertor targets (MW)', &
         '(ptarmw)',ptarmw, 'OP ')
     call ovarre(outfile, 'Fraction of power to the lower divertor', &
