@@ -2897,7 +2897,7 @@ class Sctfcoil:
         self.tf_wp_geom(i_tf_wp_geom)
 
         # Calculating the TF steel casing areas
-        sctfcoil_module.tf_case_geom(i_tf_wp_geom, i_tf_case_geom)
+        self.tf_case_geom(i_tf_wp_geom, i_tf_case_geom)
 
         # WP/trun currents
         sctfcoil_module.tf_wp_currents()

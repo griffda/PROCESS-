@@ -2784,7 +2784,7 @@ class TfCaseGeomParam(NamedTuple):
         ),
     ),
 )
-def test_tf_case_geom(tfcasegeomparam, monkeypatch):
+def test_tf_case_geom(tfcasegeomparam, monkeypatch, sctfcoil):
     """
     Automatically generated Regression Unit Test for tf_case_geom.
 
@@ -2839,7 +2839,7 @@ def test_tf_case_geom(tfcasegeomparam, monkeypatch):
         sctfcoil_module, "tan_theta_coil", tfcasegeomparam.tan_theta_coil
     )
 
-    sctfcoil_module.tf_case_geom(
+    sctfcoil.tf_case_geom(
         i_tf_wp_geom=tfcasegeomparam.i_tf_wp_geom,
         i_tf_case_geom=tfcasegeomparam.i_tf_case_geom,
     )
