@@ -3163,3 +3163,67 @@ class Sctfcoil:
             error_handling.fdiags[0] = sctfcoil_module.awptf
             error_handling.fdiags[1] = sctfcoil_module.awpc
             error_handling.report_error(99)
+
+    def tf_case_geom(self, i_tf_wp_geom, i_tf_case_geom):
+        """
+        Author : S. Kahn, CCFE
+        Setting the case geometry and area for SC magnets
+        """
+        tfcoil_variables.acasetf = (
+            tfcoil_variables.tfareain / tfcoil_variables.n_tf
+        ) - sctfcoil_module.awpc
+
+        # Outboard leg cross-sectional area of surrounding case [m2]
+        tfcoil_variables.acasetfo = tfcoil_variables.arealeg - sctfcoil_module.awpc
+
+        # Front casing area [m2]
+        if i_tf_case_geom == 0:
+
+            # Circular front case
+            sctfcoil_module.a_case_front = (
+                sctfcoil_module.theta_coil * build_variables.r_tf_inboard_out**2
+                - sctfcoil_module.tan_theta_coil * sctfcoil_module.r_wp_outer**2
+            )
+        else:
+
+            # Straight front case
+            sctfcoil_module.a_case_front = (
+                (sctfcoil_module.r_wp_outer + tfcoil_variables.casthi) ** 2
+                - sctfcoil_module.r_wp_outer**2
+            ) * sctfcoil_module.tan_theta_coil
+
+        # Nose casing area [m2]
+        sctfcoil_module.a_case_nose = (
+            sctfcoil_module.tan_theta_coil * sctfcoil_module.r_wp_inner**2
+            - sctfcoil_module.theta_coil * build_variables.r_tf_inboard_in**2
+        )
+
+        # Report error if the casing area is negative
+        if tfcoil_variables.acasetf <= 0.0e0 or tfcoil_variables.acasetfo <= 0.0e0:
+            error_handling.fdiags[0] = tfcoil_variables.acasetf
+            error_handling.fdiags[1] = tfcoil_variables.acasetfo
+            error_handling.report_error(99)
+
+        # Average lateral casing thickness
+        # --------------
+        # Rectangular casing
+        if i_tf_wp_geom == 0:
+            sctfcoil_module.t_lat_case_av = (
+                tfcoil_variables.casths
+                + 0.5e0 * sctfcoil_module.tan_theta_coil * tfcoil_variables.dr_tf_wp
+            )
+
+        # Double rectangular WP
+        elif i_tf_wp_geom == 1:
+            sctfcoil_module.t_lat_case_av = (
+                tfcoil_variables.casths
+                + 0.25e0 * sctfcoil_module.tan_theta_coil * tfcoil_variables.dr_tf_wp
+            )
+
+        # Trapezoidal WP
+        else:
+            sctfcoil_module.t_lat_case_av = tfcoil_variables.casths
+
+        # --------------
+
+        ### end break

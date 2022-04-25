@@ -2670,3 +2670,192 @@ def test_tf_wp_geom(tfwpgeomparam, monkeypatch, sctfcoil):
     assert sctfcoil_module.a_ground_ins == pytest.approx(
         tfwpgeomparam.expected_a_ground_ins
     )
+
+
+class TfCaseGeomParam(NamedTuple):
+
+    acasetf: Any = None
+
+    acasetfo: Any = None
+
+    arealeg: Any = None
+
+    tfareain: Any = None
+
+    n_tf: Any = None
+
+    casths: Any = None
+
+    casthi: Any = None
+
+    dr_tf_wp: Any = None
+
+    r_tf_inboard_in: Any = None
+
+    r_tf_inboard_out: Any = None
+
+    awpc: Any = None
+
+    r_wp_inner: Any = None
+
+    r_wp_outer: Any = None
+
+    t_lat_case_av: Any = None
+
+    a_case_front: Any = None
+
+    a_case_nose: Any = None
+
+    theta_coil: Any = None
+
+    tan_theta_coil: Any = None
+
+    i_tf_wp_geom: Any = None
+
+    i_tf_case_geom: Any = None
+
+    expected_acasetf: Any = None
+
+    expected_acasetfo: Any = None
+
+    expected_t_lat_case_av: Any = None
+
+    expected_a_case_front: Any = None
+
+    expected_a_case_nose: Any = None
+
+
+@pytest.mark.parametrize(
+    "tfcasegeomparam",
+    (
+        TfCaseGeomParam(
+            acasetf=0,
+            acasetfo=0,
+            arealeg=1.9805354702921749,
+            tfareain=27.308689677971632,
+            n_tf=16,
+            casths=0.05000000000000001,
+            casthi=0.060000000000000012,
+            dr_tf_wp=0.54261087836601019,
+            r_tf_inboard_in=2.9939411851091102,
+            r_tf_inboard_out=4.20194118510911,
+            awpc=0.70527618095271016,
+            r_wp_inner=3.5185911851091101,
+            r_wp_outer=4.06120206347512,
+            t_lat_case_av=0,
+            a_case_front=0,
+            a_case_nose=0,
+            theta_coil=0.19634954084936207,
+            tan_theta_coil=0.19891236737965801,
+            i_tf_wp_geom=0,
+            i_tf_case_geom=0,
+            expected_acasetf=1.0015169239205168,
+            expected_acasetfo=1.2752592893394648,
+            expected_t_lat_case_av=0.10396600719086938,
+            expected_a_case_front=0.18607458590131154,
+            expected_a_case_nose=0.70261616505511615,
+        ),
+        TfCaseGeomParam(
+            acasetf=1.0015169239205168,
+            acasetfo=1.2752592893394648,
+            arealeg=1.9805354702921749,
+            tfareain=27.308689677971632,
+            n_tf=16,
+            casths=0.05000000000000001,
+            casthi=0.060000000000000012,
+            dr_tf_wp=0.54261087836601019,
+            r_tf_inboard_in=2.9939411851091102,
+            r_tf_inboard_out=4.20194118510911,
+            awpc=0.70527618095271016,
+            r_wp_inner=3.5185911851091101,
+            r_wp_outer=4.06120206347512,
+            t_lat_case_av=0.10396600719086938,
+            a_case_front=0.18607458590131154,
+            a_case_nose=0.70261616505511615,
+            theta_coil=0.19634954084936207,
+            tan_theta_coil=0.19891236737965801,
+            i_tf_wp_geom=0,
+            i_tf_case_geom=0,
+            expected_acasetf=1.0015169239205168,
+            expected_acasetfo=1.2752592893394648,
+            expected_t_lat_case_av=0.10396600719086938,
+            expected_a_case_front=0.18607458590131154,
+            expected_a_case_nose=0.70261616505511615,
+        ),
+    ),
+)
+def test_tf_case_geom(tfcasegeomparam, monkeypatch):
+    """
+    Automatically generated Regression Unit Test for tf_case_geom.
+
+    This test was generated using data from tracking/baseline_2018/baseline_2018_IN.DAT.
+
+    :param tfcasegeomparam: the data used to mock and assert in this test.
+    :type tfcasegeomparam: tfcasegeomparam
+
+    :param monkeypatch: pytest fixture used to mock module/class variables
+    :type monkeypatch: _pytest.monkeypatch.monkeypatch
+    """
+
+    monkeypatch.setattr(tfcoil_variables, "acasetf", tfcasegeomparam.acasetf)
+
+    monkeypatch.setattr(tfcoil_variables, "acasetfo", tfcasegeomparam.acasetfo)
+
+    monkeypatch.setattr(tfcoil_variables, "arealeg", tfcasegeomparam.arealeg)
+
+    monkeypatch.setattr(tfcoil_variables, "tfareain", tfcasegeomparam.tfareain)
+
+    monkeypatch.setattr(tfcoil_variables, "n_tf", tfcasegeomparam.n_tf)
+
+    monkeypatch.setattr(tfcoil_variables, "casths", tfcasegeomparam.casths)
+
+    monkeypatch.setattr(tfcoil_variables, "casthi", tfcasegeomparam.casthi)
+
+    monkeypatch.setattr(tfcoil_variables, "dr_tf_wp", tfcasegeomparam.dr_tf_wp)
+
+    monkeypatch.setattr(
+        build_variables, "r_tf_inboard_in", tfcasegeomparam.r_tf_inboard_in
+    )
+
+    monkeypatch.setattr(
+        build_variables, "r_tf_inboard_out", tfcasegeomparam.r_tf_inboard_out
+    )
+
+    monkeypatch.setattr(sctfcoil_module, "awpc", tfcasegeomparam.awpc)
+
+    monkeypatch.setattr(sctfcoil_module, "r_wp_inner", tfcasegeomparam.r_wp_inner)
+
+    monkeypatch.setattr(sctfcoil_module, "r_wp_outer", tfcasegeomparam.r_wp_outer)
+
+    monkeypatch.setattr(sctfcoil_module, "t_lat_case_av", tfcasegeomparam.t_lat_case_av)
+
+    monkeypatch.setattr(sctfcoil_module, "a_case_front", tfcasegeomparam.a_case_front)
+
+    monkeypatch.setattr(sctfcoil_module, "a_case_nose", tfcasegeomparam.a_case_nose)
+
+    monkeypatch.setattr(sctfcoil_module, "theta_coil", tfcasegeomparam.theta_coil)
+
+    monkeypatch.setattr(
+        sctfcoil_module, "tan_theta_coil", tfcasegeomparam.tan_theta_coil
+    )
+
+    sctfcoil_module.tf_case_geom(
+        i_tf_wp_geom=tfcasegeomparam.i_tf_wp_geom,
+        i_tf_case_geom=tfcasegeomparam.i_tf_case_geom,
+    )
+
+    assert tfcoil_variables.acasetf == pytest.approx(tfcasegeomparam.expected_acasetf)
+
+    assert tfcoil_variables.acasetfo == pytest.approx(tfcasegeomparam.expected_acasetfo)
+
+    assert sctfcoil_module.t_lat_case_av == pytest.approx(
+        tfcasegeomparam.expected_t_lat_case_av
+    )
+
+    assert sctfcoil_module.a_case_front == pytest.approx(
+        tfcasegeomparam.expected_a_case_front
+    )
+
+    assert sctfcoil_module.a_case_nose == pytest.approx(
+        tfcasegeomparam.expected_a_case_nose
+    )
