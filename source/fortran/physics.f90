@@ -4255,7 +4255,7 @@ module physics_module
     call ovarre(outfile,'Total radiation power from SoL (MW)','(pradsolmw)',pradsolmw, 'OP ')   
     call ovarre(outfile,'SoL radiation fraction = total radiation in SoL / total power accross separatrix', &
     '(rad_fraction_sol)', rad_fraction_sol, 'IP ')
-    call ovarre(outfile,'Radiation fraction total = SoL + ICFS radiation / total power deposited in plasma', &
+    call ovarre(outfile,'Radiation fraction total = SoL + LCFS radiation / total power deposited in plasma', &
     '(rad_fraction_total)', rad_fraction_total, 'OP ') 
     call ovarre(outfile,'Power incident on the divertor targets (MW)', &
         '(ptarmw)',ptarmw, 'OP ')

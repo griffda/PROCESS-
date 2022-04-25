@@ -751,7 +751,7 @@ module physics_variables
   !! SoL radiation fraction
 
   real(dp) :: rad_fraction_total
-  !! Radiation fraction total = SoL + ICFS radiation / total power deposited in plasma
+  !! Radiation fraction total = SoL + LCFS radiation / total power deposited in plasma
 
   real(dp) :: ralpne
   !! thermal alpha density/electron density (`iteration variable 109`) (calculated if `ipedestal=3`)

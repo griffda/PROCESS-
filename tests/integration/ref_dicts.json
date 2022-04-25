@@ -10802,7 +10802,7 @@
         "r_wp_outer": "Radial position of outer edge and centre of winding pack [m]",
         "ra": "inner radius of coil i (m)",
         "rad": "",
-        "rad_fraction_total": "Radiation fraction total = SoL + ICFS radiation / total power deposited in plasma",
+        "rad_fraction_total": "Radiation fraction total = SoL + LCFS radiation / total power deposited in plasma",
         "rad_fraction_core": "",
         "rad_fraction_sol": "SoL radiation fraction ",
         "rad_ib": "",
