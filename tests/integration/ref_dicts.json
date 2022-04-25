@@ -1586,7 +1586,7 @@
         "degrad": 0.01745329251,
         "degree": "pi/180.0D0",
         "delld": 1.0,
-        "delta": 0.0001,
+        "delta": null,
         "delta_eta": 0.0,
         "delta_var": null,
         "dendiv": 0.0,
@@ -3511,7 +3511,7 @@
         "phi_tfc_ob": 0.0,
         "phiint": 0.0,
         "photon_wall": 0.0,
-        "pi": "3.141592653589793_wp_",
+        "pi": "3.14159265358979e0_rkind",
         "pibv": 20000.0,
         "piepv": 0.0,
         "pifecr": 10.0,
@@ -8844,7 +8844,7 @@
         "zeffai": 0.0,
         "zeffdiv": 1.0,
         "zeffmax": 3.6,
-        "zero": "0.0_wp_",
+        "zero": 0.0,
         "zfxf": [
             0.0,
             0.0,
@@ -15234,7 +15234,7 @@
             "ub": 10.0
         },
         "thwcndut": {
-            "lb": 0.001,
+            "lb": 0.0,
             "ub": 0.1
         },
         "ti": {
