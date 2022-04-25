@@ -12,6 +12,8 @@ from process.fortran import cs_fatigue_variables as csfv
 from process.fortran import maths_library as ml
 from process.fortran import process_output as op
 from process.fortran import numerics
+from process.fortran import superconductors as sc
+from process import maths_library as pml
 from process.utilities.f2py_string_patch import f2py_compatible_to_string
 from process import fortran as ft
 import math
@@ -622,7 +624,7 @@ class PFCoil:
 
                 if pfv.ipfres == 0:
                     bmax = max(abs(pfv.bpf[i]), abs(pf.bpf2[i]))
-                    pfv.rjpfalw[i], jstrand, jsc, tmarg = pf.superconpf(
+                    pfv.rjpfalw[i], jstrand, jsc, tmarg = self.superconpf(
                         bmax,
                         pfv.vf[i],
                         pfv.fcupfsu,
@@ -1271,7 +1273,7 @@ class PFCoil:
             #  Allowable coil overall current density at EOF
             #  (superconducting coils only)
 
-            jcritwp, pfv.jstrandoh_eof, pfv.jscoh_eof, tmarg1 = pf.superconpf(
+            jcritwp, pfv.jstrandoh_eof, pfv.jscoh_eof, tmarg1 = self.superconpf(
                 pfv.bmaxoh,
                 pfv.vfohc,
                 pfv.fcuohsu,
@@ -1288,7 +1290,7 @@ class PFCoil:
 
             #  Allowable coil overall current density at BOP
 
-            jcritwp, pfv.jstrandoh_bop, pfv.jscoh_bop, tmarg2 = pf.superconpf(
+            jcritwp, pfv.jstrandoh_bop, pfv.jscoh_bop, tmarg2 = self.superconpf(
                 pfv.bmaxoh0,
                 pfv.vfohc,
                 pfv.fcuohsu,
@@ -2785,3 +2787,315 @@ class PFCoil:
             pfv.waves[ic, 3] = pfv.curpff[ic] / pfv.ric[ic]
             pfv.waves[ic, 4] = pfv.curpfb[ic] / pfv.ric[ic]
             pfv.waves[ic, 5] = 0.0e0
+
+    def superconpf(
+        self, bmax, fhe, fcu, jwp, isumat, fhts, strain, thelium, bcritsc, tcritsc
+    ):
+        """Routine to calculate the PF coil superconductor properties.
+
+        This routine calculates the superconductor critical winding pack
+        current density for the PF coils, plus the temperature margin.
+        It is based on the TF coil version, supercon.
+        author: P J Knight, CCFE, Culham Science Centre
+
+        :param bmax: peak field at conductor (T)
+        :type bmax: float
+        :param fhe: fraction of cable space that is for He cooling
+        :type fhe: float
+        :param fcu: fraction of strand that is copper
+        :type fcu: float
+        :param jwp: actual winding pack current density (A/m2)
+        :type jwp: float
+        :param isumat: switch for conductor type
+        1 = ITER Nb3Sn, standard parameters,
+        2 = Bi-2212 High Temperature Superconductor,
+        3 = NbTi,
+        4 = ITER Nb3Sn, user-defined parameters
+        5 = WST Nb3Sn parameterisation
+        7 = Durham Ginzbug-Landau Nb-Ti parameterisation
+        :type isumat: int
+        :param fhts: Adjustment factor (<= 1) to account for strain,
+        radiation damage, fatigue or AC losses
+        :type fhts: float
+        :param strain: Strain on superconductor at operation conditions
+        :type strain: float
+        :param thelium: He temperature at peak field point (K)
+        :type thelium: float
+        :param bcritsc: Critical field at zero temperature and strain (T) (isumat=4 only)
+        :type bcritsc: float
+        :param tcritsc: Critical temperature at zero field and strain (K) (isumat=4 only)
+        :type tcritsc: float
+        :return: Critical winding pack current density (A/m2) (jcritwp),
+        Critical strand current density (A/m2) (jcritstr)
+        Critical superconductor current density (A/m2) (jcritsc)
+        Temperature margin (K) (tmarg)
+        :rtype: tuple[float, float, float, float]
+        """
+
+        """TODO maths_library.secant_solve() requires a function of one variable, 
+        e.g. f(x). However, this function can require other variables as arguments
+        e.g. constants. Access to these variables (e.g. bmax, bc20m, tc0m) has
+        previously been provided through nested functions with implicit access
+        to the parent scope of superconpf() when the functions are passed to
+        secant_solve(). Now in Python, it might be better to explcitly pass
+        these variables as optional argument(s) to secant_solve() and remove
+        this nested function requirement.
+        """
+
+        def deltaj_nbti(temperature):
+            """Critical current density and current density difference in NbTi.
+
+            :param temperature: temperature
+            :type temperature: float
+            :return: difference in current density
+            :rtype: float
+            """
+            jcrit0, t = sc.jcrit_nbti(temperature, bmax, c0, bc20m, tc0m)
+            if ml.variable_error(jcrit0):  # superconductors.jcrit_nbti has failed.
+                print(f"superconductors.jcrit_nbti: {bmax=} {temperature=} {jcrit0=}")
+
+            deltaj_nbti = jcrit0 - jsc
+            return deltaj_nbti
+
+        def deltaj_wst(temperature):
+            """Critical current density and current density difference for WST Nb3Sn.
+
+            :param temperature: temperature
+            :type temperature: float
+            :return: difference in current density
+            :rtype: float
+            """
+            jcrit0, b, t = sc.wstsc(temperature, bmax, strain, bc20m, tc0m)
+            if ml.variable_error(jcrit0):  # superconductors.wstsc has failed.
+                print(f"deltaj_wst: {bmax=} {temperature=} {jcrit0=}")
+
+            deltaj_wst = jcrit0 - jsc
+            return deltaj_wst
+
+        def deltaj_gl_nbti(temperature):
+            """Critical current density and current density difference in GL NbTi.
+
+            :param temperature: temperature
+            :type temperature: float
+            :return: difference in current density
+            :rtype: float
+            """
+            jcrit0, b, t = sc.gl_nbti(temperature, bmax, strain, bc20m, tc0m)
+            if ml.variable_error(jcrit0):  # GL_Nbti has failed.
+                print(f"deltaj_GL_nbti: {bmax=} {temperature=} {jcrit0=}")
+
+            deltaj_gl_nbti = jcrit0 - jsc
+            return deltaj_gl_nbti
+
+        def deltaj_gl_rebco(temperature):
+            """Critical current density and current density difference in GL REBCO.
+
+            :param temperature: temperature
+            :type temperature: float
+            :return: difference in current density
+            :rtype: float
+            """
+            jcrit0, b, t = sc.gl_rebco(temperature, bmax, strain, bc20m, tc0m)
+            if ml.variable_error(jcrit0):  # superconductors.GL_REBCO has failed.
+                print(f"deltaj_gl_REBCO: {bmax=} {temperature=} {jcrit0=}")
+
+            deltaj_gl_rebco = jcrit0 - jsc
+            return deltaj_gl_rebco
+
+        #  Find critical current density in superconducting strand, jcritstr
+        if isumat == 1:
+            # ITER Nb3Sn critical surface parameterization
+            bc20m = 32.97e0
+            tc0m = 16.06e0
+
+            #  jcritsc returned by superconductors.itersc is the critical current density in the
+            #  superconductor - not the whole strand, which contains copper
+
+            jcritsc, bcrit, tcrit = sc.itersc(thelium, bmax, strain, bc20m, tc0m)
+            jcritstr = jcritsc * (1.0e0 - fcu)
+
+        elif isumat == 2:
+            # Bi-2212 high temperature superconductor parameterization
+
+            #  Current density in a strand of Bi-2212 conductor
+            #  N.B. jcrit returned by superconductors.bi2212 is the critical current density
+            #  in the strand, not just the superconducting portion.
+            #  The parameterization for jcritstr assumes a particular strand
+            #  composition that does not require a user-defined copper fraction,
+            #  so this is irrelevant in this model
+
+            jstrand = jwp / (1.0e0 - fhe)
+
+            jcritstr, tmarg = sc.bi2212(bmax, jstrand, thelium, fhts)
+            jcritsc = jcritstr / (1.0e0 - fcu)
+            tcrit = thelium + tmarg
+
+        elif isumat == 3:
+            # NbTi data
+            bc20m = 15.0e0
+            tc0m = 9.3e0
+            c0 = 1.0e10
+            jcritsc, tcrit = sc.jcrit_nbti(thelium, bmax, c0, bc20m, tc0m)
+            jcritstr = jcritsc * (1.0e0 - fcu)
+
+        elif isumat == 4:
+            # As (1), but user-defined parameters
+            bc20m = bcritsc
+            tc0m = tcritsc
+            jcritsc, bcrit, tcrit = sc.itersc(thelium, bmax, strain, bc20m, tc0m)
+            jcritstr = jcritsc * (1.0e0 - fcu)
+
+        elif isumat == 5:
+            # WST Nb3Sn parameterisation
+            bc20m = 32.97e0
+            tc0m = 16.06e0
+
+            #  jcritsc returned by superconductors.itersc is the critical current density in the
+            #  superconductor - not the whole strand, which contains copper
+
+            jcritsc, bcrit, tcrit = sc.wstsc(thelium, bmax, strain, bc20m, tc0m)
+            jcritstr = jcritsc * (1.0e0 - fcu)
+
+        elif isumat == 6:
+            # "REBCO" 2nd generation HTS superconductor in CrCo strand
+            jcritsc, validity = sc.jcrit_rebco(thelium, bmax, 0)
+            jcritstr = jcritsc * (1.0e0 - fcu)
+
+        elif isumat == 7:
+            # Durham Ginzburg-Landau Nb-Ti parameterisation
+            bc20m = tfv.b_crit_upper_nbti
+            tc0m = tfv.t_crit_nbti
+            jcritsc, bcrit, tcrit = sc.gl_nbti(thelium, bmax, strain, bc20m, tc0m)
+            jcritstr = jcritsc * (1.0e0 - fcu)
+
+        elif isumat == 8:
+            # Branch YCBO model fit to Tallahassee data
+            bc20m = 429e0
+            tc0m = 185e0
+            jcritsc, bcrit, tcrit = sc.gl_rebco(thelium, bmax, strain, bc20m, tc0m)
+            # A0 calculated for tape cross section already
+            jcritstr = jcritsc * (1.0e0 - fcu)
+
+        else:
+            # Error condition
+            eh.idiag[0] = isumat
+            eh.report_error(156)
+
+        #  Critical current density in winding pack
+        jcritwp = jcritstr * (1.0e0 - fhe)
+        jstrand = jwp / (1.0e0 - fhe)
+        jsc = jstrand / (1.0e0 - fcu)
+
+        #  Temperature margin (already calculated in superconductors.bi2212 for isumat=2)
+        if (isumat == 1) or (isumat == 4):
+            #  Newton-Raphson method; start at requested minimum temperature margin
+            ttest = thelium + tfv.tmargmin_cs
+            delt = 0.01e0
+            jtol = 1.0e4
+
+            #  Actual current density in superconductor, which should be equal to jcrit(thelium+tmarg)
+            #  when we have found the desired value of tmarg
+            lap = 0
+            while True:
+                lap = lap + 1
+                if (ttest <= 0.0) or (lap > 100):
+                    eh.idiags[0] = lap
+                    eh.fdiags[0] = ttest
+                    eh.report_error(158)
+                    break
+
+                ttestm = ttest - delt
+                ttestp = ttest + delt
+
+                if isumat in [1, 4]:
+                    jcrit0, b, t = sc.itersc(ttest, bmax, strain, bc20m, tc0m)
+                    if (abs(jsc - jcrit0) <= jtol) and (
+                        abs((jsc - jcrit0) / jsc) <= 0.01
+                    ):
+                        break
+
+                    jcritm, b, t = sc.itersc(ttestm, bmax, strain, bc20m, tc0m)
+                    jcritp, b, t = sc.itersc(ttestp, bmax, strain, bc20m, tc0m)
+
+                ttest = ttest - 2.0e0 * delt * (jcrit0 - jsc) / (jcritp - jcritm)
+
+            tmarg = ttest - thelium
+
+        # MDK 13/7/18 Use secant solver for NbTi.
+        elif isumat == 3:
+            x1 = 4e0  # Initial values of temperature
+            x2 = 6e0
+            # Solve for deltaj_nbti = 0
+            current_sharing_t, error, residual = pml.secant_solve(
+                deltaj_nbti, x1, x2, 100e0
+            )
+            tmarg = current_sharing_t - thelium
+            jcrit0, t = sc.jcrit_nbti(current_sharing_t, bmax, c0, bc20m, tc0m)
+            if ml.variable_error(
+                current_sharing_t
+            ):  # current sharing secant solver has failed.
+                print(
+                    f"NbTi: {current_sharing_t=} {tmarg=} {jsc=} {jcrit0=} {residual=}"
+                )
+
+        # MDK 13/7/18 Use secant solver for WST.
+        elif isumat == 5:
+            # Current sharing temperature for WST Nb3Sn
+            x1 = 4e0  # Initial values of temperature
+            x2 = 6e0
+            # Solve for deltaj_wst = 0
+            current_sharing_t, error, residual = pml.secant_solve(
+                deltaj_wst, x1, x2, 100e0
+            )
+            tmarg = current_sharing_t - thelium
+            jcrit0, b, t = sc.wstsc(current_sharing_t, bmax, strain, bc20m, tc0m)
+            if ml.variable_error(
+                current_sharing_t
+            ):  # current sharing secant solver has failed.
+                print(
+                    f"WST: {current_sharing_t=} {tmarg=} {jsc=} {jcrit0=} {residual=}"
+                )
+
+        # Temperature margin: An alternative method using secant solver
+        elif isumat == 6:
+            current_sharing_t = sc.current_sharing_rebco(bmax, jsc)
+            tmarg = current_sharing_t - thelium
+            tfv.temp_margin = tmarg
+
+        # SCM 16/03/20 Use secant solver for GL_nbti.
+        elif isumat == 7:
+            # Current sharing temperature for Durham Ginzburg-Landau Nb-Ti
+            x1 = 4.0e0  # Initial values of temperature
+            x2 = 6.0e0
+            # Solve for deltaj_GL_nbti = 0
+            current_sharing_t, error, residual = pml.secant_solve(
+                deltaj_gl_nbti, x1, x2, 100e0
+            )
+            tmarg = current_sharing_t - thelium
+            jcrit0, b, t = sc.gl_nbti(current_sharing_t, bmax, strain, bc20m, tc0m)
+            if ml.variable_error(
+                current_sharing_t
+            ):  # current sharing secant solver has failed.
+                print(
+                    f"Gl_nbti: {current_sharing_t=} {tmarg=} {jsc=} {jcrit0=} {residual=}"
+                )
+
+        # SCM 10/08/20 Use secant solver for superconductors.GL_REBCO.
+        elif isumat == 8:
+            # Current sharing temperature for Durham Ginzburg-Landau Nb-Ti
+            x1 = 4.0e0  # Initial values of temperature
+            x2 = 6.0e0
+            # Solve for deltaj_superconductors.GL_REBCO = 0
+            current_sharing_t, error, residual = pml.secant_solve(
+                deltaj_gl_rebco, x1, x2, 100e0
+            )
+            tmarg = current_sharing_t - thelium
+            jcrit0, b, t = sc.gl_rebco(current_sharing_t, bmax, strain, bc20m, tc0m)
+            if ml.variable_error(
+                current_sharing_t
+            ):  # current sharing secant solver has failed.
+                print(
+                    f"Gl_REBCO: {current_sharing_t=} {tmarg=} {jsc=} {jcrit0=} {residual=}"
+                )
+
+        return jcritwp, jcritstr, jcritsc, tmarg

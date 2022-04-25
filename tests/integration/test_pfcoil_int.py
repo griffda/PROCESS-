@@ -2632,7 +2632,7 @@ def test_peakb(monkeypatch, pfcoil):
     assert pytest.approx(bzo) == bzo_exp
 
 
-def test_superconpf(monkeypatch):
+def test_superconpf(monkeypatch, pfcoil):
     """Test superconpf subroutine.
 
     superconpf() requires specific arguments in order to work; these were
@@ -2640,6 +2640,8 @@ def test_superconpf(monkeypatch):
     baseline 2018 IN.DAT.
     :param monkeypatch: mocking fixture
     :type monkeypatch: _pytest.monkeypatch.MonkeyPatch
+    :param pfcoil: a PFCoil instance
+    :type pfcoil: process.pfcoil.PFCoil
     """
     # TODO This test would benefit from parameterisation for different SC
     # materials (isumat)
@@ -2666,7 +2668,7 @@ def test_superconpf(monkeypatch):
     jcritsc_exp = -1.23116924e8
     tmarg_exp = -2.651537e-1
 
-    jcritwp, jcritstr, jcritsc, tmarg = pf.superconpf(
+    jcritwp, jcritstr, jcritsc, tmarg = pfcoil.superconpf(
         bmax, fhe, fcu, jwp, isumat, fhts, strain, thelium, bcritsc, tcritsc
     )
 
