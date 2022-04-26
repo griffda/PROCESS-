@@ -3323,3 +3323,61 @@ def test_tf_averaged_turn_geom(tfaveragedturngeomparam, monkeypatch, sctfcoil):
     )
 
     assert n_tf_turn == pytest.approx(tfaveragedturngeomparam.expected_n_tf_turn)
+
+
+class TfWpCurrentsParam(NamedTuple):
+
+    ritfc: Any = None
+
+    n_tf: Any = None
+
+    jwptf: Any = None
+
+    awptf: Any = None
+
+    expected_jwptf: Any = None
+
+
+@pytest.mark.parametrize(
+    "tfwpcurrentsparam",
+    (
+        TfWpCurrentsParam(
+            ritfc=256500000.00000003,
+            n_tf=16,
+            jwptf=0,
+            awptf=0.60510952642236249,
+            expected_jwptf=26493137.688284047,
+        ),
+        TfWpCurrentsParam(
+            ritfc=256500000.00000003,
+            n_tf=16,
+            jwptf=26493137.688284047,
+            awptf=0.60510952642236249,
+            expected_jwptf=26493137.688284047,
+        ),
+    ),
+)
+def test_tf_wp_currents(tfwpcurrentsparam, monkeypatch):
+    """
+    Automatically generated Regression Unit Test for tf_wp_currents.
+
+    This test was generated using data from tests/regression/scenarios/i_mode/IN.DAT.
+
+    :param tfwpcurrentsparam: the data used to mock and assert in this test.
+    :type tfwpcurrentsparam: tfwpcurrentsparam
+
+    :param monkeypatch: pytest fixture used to mock module/class variables
+    :type monkeypatch: _pytest.monkeypatch.monkeypatch
+    """
+
+    monkeypatch.setattr(tfcoil_variables, "ritfc", tfwpcurrentsparam.ritfc)
+
+    monkeypatch.setattr(tfcoil_variables, "n_tf", tfwpcurrentsparam.n_tf)
+
+    monkeypatch.setattr(tfcoil_variables, "jwptf", tfwpcurrentsparam.jwptf)
+
+    monkeypatch.setattr(sctfcoil_module, "awptf", tfwpcurrentsparam.awptf)
+
+    sctfcoil_module.tf_wp_currents()
+
+    assert tfcoil_variables.jwptf == pytest.approx(tfwpcurrentsparam.expected_jwptf)

@@ -235,22 +235,6 @@ end subroutine initialise_cables
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-subroutine tf_wp_currents()
-        !! Author : S. Kahn, CCFE
-        !! Turn engineering turn currents/densities
-
-        use tfcoil_variables, only: ritfc, n_tf, jwptf
-        implicit none
-
-        ! Winding pack current density (forced to be positive) [A/m2]
-        jwptf = max(1.0D0, ritfc/(n_tf*awptf))
-
-        !-! end break
-
-    end subroutine tf_wp_currents
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 subroutine res_tf_internal_geom()
     !! Author : S. Kahn
     !! Resisitve TF turn geometry, equivalent to winding_pack subroutines

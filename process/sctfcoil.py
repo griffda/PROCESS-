@@ -3440,3 +3440,15 @@ class Sctfcoil:
         return acstf, acndttf, insulation_area, n_tf_turn
 
         ### end break
+
+    def tf_wp_currents(self):
+        """
+        Author : S. Kahn, CCFE
+        Turn engineering turn currents/densities
+        """
+        tfcoil_variables.jwptf = max(
+            1.0e0,
+            tfcoil_variables.ritfc / (tfcoil_variables.n_tf * sctfcoil_module.awptf),
+        )
+
+        ### end break
