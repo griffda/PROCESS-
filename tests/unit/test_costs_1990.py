@@ -6,6 +6,17 @@ from process.fortran import heat_transport_variables as htv
 from process import fortran
 import pytest
 from pytest import approx
+from process.costs import Costs
+
+
+@pytest.fixture
+def costs():
+    """Provides Pulse object for testing.
+
+    :returns: initialised Pulse object
+    :rtype: process.pulse.Pulse
+    """
+    return Costs()
 
 
 def acc2261_param(**kwargs):
