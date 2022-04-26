@@ -413,7 +413,7 @@
  Maximum_allowable_ECRH_power_(MW)_______________________________________ (pinjalw)_____________________      5.1000E+01    
  ECH_wall_plug_efficiency________________________________________________ (etaech)______________________      4.0000E-01    
  ECH_wall_plug_power_(MW)________________________________________________ (echwpow)_____________________      1.2750E+02 OP 
- Total_V-s_capability_of_Central_Solenoid/PF_coils_(Wb)__________________ (abs(pfcoil_variables.vstot))_      7.8678E+02    
+ Total_V-s_capability_of_Central_Solenoid/PF_coils_(Wb)__________________ (abs(vstot))__________________      7.8678E+02    
  Required_volt-seconds_during_start-up_(Wb)______________________________ (vssoft)______________________      3.6480E+02    
  Available_volt-seconds_during_burn_(Wb)_________________________________ (vsmax)_______________________      2.3081E+02    
  # Times #
