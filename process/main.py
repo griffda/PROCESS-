@@ -43,6 +43,7 @@ Box file T&amp;M/PKNIGHT/PROCESS (from 24/01/12)
 """
 from process import fortran
 from process.buildings import Buildings
+from process.costs import Costs
 from process.io import plot_proc
 from process.pulse import Pulse
 from process.scan import Scan
@@ -483,6 +484,7 @@ class Models:
         self.stellarator = Stellarator(
             availability=self.availability, buildings=self.buildings, vacuum=self.vacuum
         )
+        self.costs = Costs()
 
 
 def main(args=None):
