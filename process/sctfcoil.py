@@ -3348,6 +3348,7 @@ class Sctfcoil:
         (positive cable space) and the second to provide its dimensions,
         areas and the (float) number of turns
         """
+        acstf = 0
         if tfcoil_variables.t_turn_tf_is_input:
 
             # Turn area [m2]
