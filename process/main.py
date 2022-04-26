@@ -323,7 +323,8 @@ class SingleRun:
         self.finish()
         self.append_input()
 
-    def init_module_vars(self):
+    @staticmethod
+    def init_module_vars():
         """Initialise all module variables in the Fortran.
 
         This "resets" all module variables to their initialised values, so each
@@ -378,7 +379,8 @@ class SingleRun:
         """Set the mfile filename."""
         self.mfile_path = Path(self.filename_prefix + "MFILE.DAT")
 
-    def initialise(self):
+    @staticmethod
+    def initialise():
         """Run the init module to call all initialisation routines."""
         fortran.init_module.init()
 
