@@ -2922,7 +2922,7 @@ class Sctfcoil:
                 tfcoil_variables.insulation_area,  # Outputs
                 tfcoil_variables.cpttf,
                 tfcoil_variables.n_tf_turn,
-            ) = sctfcoil_module.tf_integer_turn_geom(
+            ) = self.tf_integer_turn_geom(
                 tfcoil_variables.n_layer,
                 tfcoil_variables.n_pancake,
                 tfcoil_variables.thwcndut,
@@ -3225,5 +3225,116 @@ class Sctfcoil:
             sctfcoil_module.t_lat_case_av = tfcoil_variables.casths
 
         # --------------
+
+        ### end break
+
+    def tf_integer_turn_geom(self, n_layer, n_pancake, thwcndut, thicndut):
+        """
+        Authors: J Morris & S Khan
+        Setting the TF WP turn geometry for SC magnets from the number
+        of turns rows in the radial direction. The turns can have any
+        rectangular shapes.
+        This calculation has two purposes, first to check if a turn can exist
+        (positive cable space) and the second to provide its dimenesions,
+        areas and the its associated current
+
+        """
+        sctfcoil_module.rbcndut = thwcndut * 0.75e0
+
+        # Radial turn dimension [m]
+        sctfcoil_module.t_turn_radial = (
+            tfcoil_variables.dr_tf_wp
+            - 2.0e0 * (tfcoil_variables.tinstf + tfcoil_variables.tfinsgap)
+        ) / n_layer
+
+        if sctfcoil_module.t_turn_radial <= (2.0e0 * thicndut + 2.0e0 * thwcndut):
+            error_handling.fdiags[0] = sctfcoil_module.t_turn_radial
+            error_handling.fdiags[1] = thicndut
+            error_handling.fdiags[2] = thwcndut
+            error_handling.report_error(100)
+
+        # Toroidal turn dimension [m]
+        sctfcoil_module.t_turn_toroidal = (
+            sctfcoil_module.t_wp_toroidal
+            - 2.0e0 * (tfcoil_variables.tinstf + tfcoil_variables.tfinsgap)
+        ) / n_pancake
+
+        if sctfcoil_module.t_turn_toroidal <= (2.0e0 * thicndut + 2.0e0 * thwcndut):
+            error_handling.fdiags[0] = sctfcoil_module.t_turn_toroidal
+            error_handling.fdiags[1] = thicndut
+            error_handling.fdiags[2] = thwcndut
+            error_handling.report_error(100)
+
+        tfcoil_variables.t_turn_tf = numpy.sqrt(
+            sctfcoil_module.t_turn_radial * sctfcoil_module.t_turn_toroidal
+        )
+
+        # Number of TF turns
+        n_tf_turn = numpy.double(n_layer * n_pancake)
+
+        # Current per turn [A/turn]
+        cpttf = sctfcoil_module.tfc_current / n_tf_turn
+
+        # Radial and toroidal dimension of conductor [m]
+        sctfcoil_module.t_conductor_radial = (
+            sctfcoil_module.t_turn_radial - 2.0e0 * thicndut
+        )
+        sctfcoil_module.t_conductor_toroidal = (
+            sctfcoil_module.t_turn_toroidal - 2.0e0 * thicndut
+        )
+        tfcoil_variables.t_conductor = numpy.sqrt(
+            sctfcoil_module.t_conductor_radial * sctfcoil_module.t_conductor_toroidal
+        )
+
+        # Dimension of square cable space inside conduit [m]
+        sctfcoil_module.t_cable_radial = (
+            sctfcoil_module.t_conductor_radial - 2.0e0 * thwcndut
+        )
+        sctfcoil_module.t_cable_toroidal = (
+            sctfcoil_module.t_conductor_toroidal - 2.0e0 * thwcndut
+        )
+        sctfcoil_module.t_cable = numpy.sqrt(
+            sctfcoil_module.t_cable_radial * sctfcoil_module.t_cable_toroidal
+        )
+
+        # Cross-sectional area of cable space per turn
+        # taking account of rounded inside corners [m2]
+        acstf = (sctfcoil_module.t_cable_radial * sctfcoil_module.t_cable_toroidal) - (
+            4.0e0 - numpy.pi
+        ) * sctfcoil_module.rbcndut**2
+
+        if acstf <= 0.0e0:
+            if (sctfcoil_module.t_cable_radial < 0.0e0) or (
+                sctfcoil_module.t_cable_toroidal < 0.0e0
+            ):
+                error_handling.fdiags[0] = acstf
+                error_handling.fdiags[1] = sctfcoil_module.t_cable_radial
+                error_handling.fdiags[2] = sctfcoil_module.t_cable_toroidal
+                error_handling.report_error(101)
+            else:
+                error_handling.fdiags[0] = acstf
+                error_handling.fdiags[1] = sctfcoil_module.t_cable_radial
+                error_handling.fdiags[1] = sctfcoil_module.t_cable_toroidal
+                error_handling.report_error(102)
+                sctfcoil_module.rbcndut = 0.0e0
+                acstf = (
+                    sctfcoil_module.t_cable_radial * sctfcoil_module.t_cable_toroidal
+                )
+
+        # Cross-sectional area of conduit jacket per turn [m2]
+        acndttf = (
+            sctfcoil_module.t_conductor_radial * sctfcoil_module.t_conductor_toroidal
+            - acstf
+        )
+
+        # Area of inter-turn insulation: single turn [m2]
+        insulation_area = (
+            sctfcoil_module.t_turn_radial * sctfcoil_module.t_turn_toroidal
+            - acndttf
+            - acstf
+        )
+        return acstf, acndttf, insulation_area, cpttf, n_tf_turn
+
+        # -------------
 
         ### end break

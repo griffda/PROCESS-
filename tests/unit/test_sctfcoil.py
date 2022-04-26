@@ -2859,3 +2859,266 @@ def test_tf_case_geom(tfcasegeomparam, monkeypatch, sctfcoil):
     assert sctfcoil_module.a_case_nose == pytest.approx(
         tfcasegeomparam.expected_a_case_nose
     )
+
+
+class TfIntegerTurnGeomParam(NamedTuple):
+
+    dr_tf_wp: Any = None
+
+    tinstf: Any = None
+
+    tfinsgap: Any = None
+
+    t_conductor: Any = None
+
+    t_turn_tf: Any = None
+
+    tfc_current: Any = None
+
+    t_wp_toroidal: Any = None
+
+    t_conductor_radial: Any = None
+
+    t_conductor_toroidal: Any = None
+
+    t_cable_radial: Any = None
+
+    t_cable_toroidal: Any = None
+
+    t_turn_radial: Any = None
+
+    t_turn_toroidal: Any = None
+
+    t_cable: Any = None
+
+    n_layer: Any = None
+
+    n_pancake: Any = None
+
+    thwcndut: Any = None
+
+    thicndut: Any = None
+
+    expected_t_conductor: Any = None
+
+    expected_t_turn_tf: Any = None
+
+    expected_t_conductor_radial: Any = None
+
+    expected_t_conductor_toroidal: Any = None
+
+    expected_t_cable_radial: Any = None
+
+    expected_t_cable_toroidal: Any = None
+
+    expected_t_turn_radial: Any = None
+
+    expected_t_turn_toroidal: Any = None
+
+    expected_t_cable: Any = None
+
+    expected_acstf: Any = None
+
+    expected_acndttf: Any = None
+
+    expected_insulation_area: Any = None
+
+    expected_cpttf: Any = None
+
+    expected_n_tf_turn: Any = None
+
+
+@pytest.mark.parametrize(
+    "tfintegerturngeomparam",
+    (
+        TfIntegerTurnGeomParam(
+            dr_tf_wp=0.54261087836601019,
+            tinstf=0.0080000000000000019,
+            tfinsgap=0.01,
+            t_conductor=0,
+            t_turn_tf=0,
+            tfc_current=14805350.287500001,
+            t_wp_toroidal=1.299782604942499,
+            t_conductor_radial=0,
+            t_conductor_toroidal=0,
+            t_cable_radial=0,
+            t_cable_toroidal=0,
+            t_turn_radial=0,
+            t_turn_toroidal=0,
+            t_cable=0,
+            n_layer=10,
+            n_pancake=20,
+            thwcndut=0.0080000000000000002,
+            thicndut=0.002,
+            expected_t_conductor=0.052553108427885735,
+            expected_t_turn_tf=0.056579413904423038,
+            expected_t_conductor_radial=0.046661087836601015,
+            expected_t_conductor_toroidal=0.059189130247124938,
+            expected_t_cable_radial=0.030661087836601014,
+            expected_t_cable_toroidal=0.043189130247124938,
+            expected_t_turn_radial=0.050661087836601018,
+            expected_t_turn_toroidal=0.063189130247124942,
+            expected_t_cable=0.036389912284773368,
+            expected_acstf=0.001293323051622732,
+            expected_acndttf=0.0014685061538103825,
+            expected_insulation_area=0.00043940087233490435,
+            expected_cpttf=74026.751437500003,
+            expected_n_tf_turn=200,
+        ),
+        TfIntegerTurnGeomParam(
+            dr_tf_wp=0.54261087836601019,
+            tinstf=0.0080000000000000019,
+            tfinsgap=0.01,
+            t_conductor=0.052553108427885735,
+            t_turn_tf=0.056579413904423038,
+            tfc_current=14805350.287500001,
+            t_wp_toroidal=1.299782604942499,
+            t_conductor_radial=0.046661087836601015,
+            t_conductor_toroidal=0.059189130247124938,
+            t_cable_radial=0.030661087836601014,
+            t_cable_toroidal=0.043189130247124938,
+            t_turn_radial=0.050661087836601018,
+            t_turn_toroidal=0.063189130247124942,
+            t_cable=0.036389912284773368,
+            n_layer=10,
+            n_pancake=20,
+            thwcndut=0.0080000000000000002,
+            thicndut=0.002,
+            expected_t_conductor=0.052553108427885735,
+            expected_t_turn_tf=0.056579413904423038,
+            expected_t_conductor_radial=0.046661087836601015,
+            expected_t_conductor_toroidal=0.059189130247124938,
+            expected_t_cable_radial=0.030661087836601014,
+            expected_t_cable_toroidal=0.043189130247124938,
+            expected_t_turn_radial=0.050661087836601018,
+            expected_t_turn_toroidal=0.063189130247124942,
+            expected_t_cable=0.036389912284773368,
+            expected_acstf=0.001293323051622732,
+            expected_acndttf=0.0014685061538103825,
+            expected_insulation_area=0.00043940087233490435,
+            expected_cpttf=74026.751437500003,
+            expected_n_tf_turn=200,
+        ),
+    ),
+)
+def test_tf_integer_turn_geom(tfintegerturngeomparam, monkeypatch, sctfcoil):
+    """
+    Automatically generated Regression Unit Test for tf_integer_turn_geom.
+
+    This test was generated using data from tracking/baseline_2018/baseline_2018_IN.DAT.
+
+    :param tfintegerturngeomparam: the data used to mock and assert in this test.
+    :type tfintegerturngeomparam: tfintegerturngeomparam
+
+    :param monkeypatch: pytest fixture used to mock module/class variables
+    :type monkeypatch: _pytest.monkeypatch.monkeypatch
+    """
+
+    monkeypatch.setattr(tfcoil_variables, "dr_tf_wp", tfintegerturngeomparam.dr_tf_wp)
+
+    monkeypatch.setattr(tfcoil_variables, "tinstf", tfintegerturngeomparam.tinstf)
+
+    monkeypatch.setattr(tfcoil_variables, "tfinsgap", tfintegerturngeomparam.tfinsgap)
+
+    monkeypatch.setattr(
+        tfcoil_variables, "t_conductor", tfintegerturngeomparam.t_conductor
+    )
+
+    monkeypatch.setattr(tfcoil_variables, "t_turn_tf", tfintegerturngeomparam.t_turn_tf)
+
+    monkeypatch.setattr(
+        sctfcoil_module, "tfc_current", tfintegerturngeomparam.tfc_current
+    )
+
+    monkeypatch.setattr(
+        sctfcoil_module, "t_wp_toroidal", tfintegerturngeomparam.t_wp_toroidal
+    )
+
+    monkeypatch.setattr(
+        sctfcoil_module, "t_conductor_radial", tfintegerturngeomparam.t_conductor_radial
+    )
+
+    monkeypatch.setattr(
+        sctfcoil_module,
+        "t_conductor_toroidal",
+        tfintegerturngeomparam.t_conductor_toroidal,
+    )
+
+    monkeypatch.setattr(
+        sctfcoil_module, "t_cable_radial", tfintegerturngeomparam.t_cable_radial
+    )
+
+    monkeypatch.setattr(
+        sctfcoil_module, "t_cable_toroidal", tfintegerturngeomparam.t_cable_toroidal
+    )
+
+    monkeypatch.setattr(
+        sctfcoil_module, "t_turn_radial", tfintegerturngeomparam.t_turn_radial
+    )
+
+    monkeypatch.setattr(
+        sctfcoil_module, "t_turn_toroidal", tfintegerturngeomparam.t_turn_toroidal
+    )
+
+    monkeypatch.setattr(sctfcoil_module, "t_cable", tfintegerturngeomparam.t_cable)
+
+    (
+        acstf,
+        acndttf,
+        insulation_area,
+        cpttf,
+        n_tf_turn,
+    ) = sctfcoil.tf_integer_turn_geom(
+        n_layer=tfintegerturngeomparam.n_layer,
+        n_pancake=tfintegerturngeomparam.n_pancake,
+        thwcndut=tfintegerturngeomparam.thwcndut,
+        thicndut=tfintegerturngeomparam.thicndut,
+    )
+
+    assert tfcoil_variables.t_conductor == pytest.approx(
+        tfintegerturngeomparam.expected_t_conductor
+    )
+
+    assert tfcoil_variables.t_turn_tf == pytest.approx(
+        tfintegerturngeomparam.expected_t_turn_tf
+    )
+
+    assert sctfcoil_module.t_conductor_radial == pytest.approx(
+        tfintegerturngeomparam.expected_t_conductor_radial
+    )
+
+    assert sctfcoil_module.t_conductor_toroidal == pytest.approx(
+        tfintegerturngeomparam.expected_t_conductor_toroidal
+    )
+
+    assert sctfcoil_module.t_cable_radial == pytest.approx(
+        tfintegerturngeomparam.expected_t_cable_radial
+    )
+
+    assert sctfcoil_module.t_cable_toroidal == pytest.approx(
+        tfintegerturngeomparam.expected_t_cable_toroidal
+    )
+
+    assert sctfcoil_module.t_turn_radial == pytest.approx(
+        tfintegerturngeomparam.expected_t_turn_radial
+    )
+
+    assert sctfcoil_module.t_turn_toroidal == pytest.approx(
+        tfintegerturngeomparam.expected_t_turn_toroidal
+    )
+
+    assert sctfcoil_module.t_cable == pytest.approx(
+        tfintegerturngeomparam.expected_t_cable
+    )
+
+    assert acstf == pytest.approx(tfintegerturngeomparam.expected_acstf)
+
+    assert acndttf == pytest.approx(tfintegerturngeomparam.expected_acndttf)
+
+    assert insulation_area == pytest.approx(
+        tfintegerturngeomparam.expected_insulation_area
+    )
+
+    assert cpttf == pytest.approx(tfintegerturngeomparam.expected_cpttf)
+
+    assert n_tf_turn == pytest.approx(tfintegerturngeomparam.expected_n_tf_turn)
