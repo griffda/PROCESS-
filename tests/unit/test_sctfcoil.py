@@ -3357,7 +3357,7 @@ class TfWpCurrentsParam(NamedTuple):
         ),
     ),
 )
-def test_tf_wp_currents(tfwpcurrentsparam, monkeypatch):
+def test_tf_wp_currents(tfwpcurrentsparam, monkeypatch, sctfcoil):
     """
     Automatically generated Regression Unit Test for tf_wp_currents.
 
@@ -3378,6 +3378,6 @@ def test_tf_wp_currents(tfwpcurrentsparam, monkeypatch):
 
     monkeypatch.setattr(sctfcoil_module, "awptf", tfwpcurrentsparam.awptf)
 
-    sctfcoil_module.tf_wp_currents()
+    sctfcoil.tf_wp_currents()
 
     assert tfcoil_variables.jwptf == pytest.approx(tfwpcurrentsparam.expected_jwptf)

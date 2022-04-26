@@ -322,8 +322,7 @@ subroutine res_tf_internal_geom()
         call report_error(101)
     end if
 
-    !-c
-    ! end break
+    !!! end break
 
 
 end subroutine res_tf_internal_geom

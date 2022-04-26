@@ -2900,7 +2900,7 @@ class Sctfcoil:
         self.tf_case_geom(i_tf_wp_geom, i_tf_case_geom)
 
         # WP/trun currents
-        sctfcoil_module.tf_wp_currents()
+        self.tf_wp_currents()
 
         # Setting the WP turn geometry / areas
         if i_tf_turns_integer == 0:
