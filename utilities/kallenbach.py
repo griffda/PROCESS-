@@ -25,8 +25,6 @@ CURRENT_PATH = Path(__file__).resolve().parent
 def kallenbach_paper():
     # TODO: this should probably be turned into a pytest at some point
 
-    # hacky method to init stuff without changing
-    # the methods to static
     SingleRun.init_module_vars()
     SingleRun.initialise()
 
