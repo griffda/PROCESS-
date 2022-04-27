@@ -509,18 +509,6 @@ contains
     ne0_max_ECRH = min(ne0,ne0_max_ECRH)
     bt_ecrh = min(bt,bt_ecrh)
     
-    ! Check if the ECRH Calculation is in the icc vector.
-    ! If yes: Calculate heating power at ECRH operatable point. Otherwise don't calculate it
-    if ( any(icc == 88) ) then
-      if (isthtr .ne. 1) then
-         ! ECRH constraint called without indicated ECRH as heating scheme
-         write(*,*) 'Warning in routine STOPT:'
-         write(*,*) 'isthtr is not set to 1 but icc=88 (ECRH) was called.'
-      end if
-
-      call power_at_ignition_point(max_gyrotron_frequency,te0_ecrh_achievable,powerht_local,pscalingmw_local)
-    end if
-
 
     if (iprint == 1) call stopt_output(outfile)
 
@@ -581,8 +569,8 @@ contains
     use fwbs_variables, only: fdiv, fhcd, fhole
     use heat_transport_variables, only: ipowerflow
     use physics_functions_module, only: palph, beamfus, palph2
-    use physics_module, only: plasma_composition, rether, pcond, phyaux
-    use physics_variables, only: afuel, alphan, alpharate, alphat, aspect, &
+    use physics_module, only: plasma_composition, rether, pcond, phyaux, total_plasma_internal_energy, nu_star, rho_star
+    use physics_variables, only: aion, afuel, alphan, alpharate, alphat, aspect, &
       beamfus0, beta, betaft, betalim, betanb, betap, betbm0, bp, bt, btot, &
       burnup, dene, deni, dlamie, dnalp, dnbeam2, dnelimt, dnitot, dnla, &
       dntau, ealphadt, eps, falpe, falpha, falpi, fdeut, fhe3, figmer, ftrit, &
@@ -598,7 +586,7 @@ contains
     use profiles_module, only: plasma_profiles
     use stellarator_variables, only: f_rad, iotabar
     use physics_functions_module, only: radpwr
-    use constants, only: echarge, nout, pi, rmu0
+    use constants, only: echarge, nout, pi, rmu0, mproton, epsilon0
     use numerics, only: ixc
     use error_handling, only: report_error
     implicit none
@@ -613,7 +601,7 @@ contains
     real(dp) :: chi_neo_e, chi_PROCESS_e, q_neo, q_PROCESS,q_PROCESS_r1, gamma_neo, gamma_PROCESS, total_q_neo,&
                   q_neo_e, q_neo_D, q_neo_a, q_neo_T, g_neo_e, g_neo_D, g_neo_a, g_neo_T, &
                   dndt_neo_e, dndt_neo_D, dndt_neo_a, dndt_neo_T, dndt_neo_fuel, dmdt_neo_fuel,dmdt_neo_fuel_from_e, &
-                  total_q_neo_e
+                  total_q_neo_e, nu_star_e, nu_star_i
 
     ! These parameters are used for the stellarator 0.5D turbulence module
     real(dp) :: q_turb, chi_turb, total_q_turb
@@ -639,7 +627,10 @@ contains
     !  Set beta as a consequence:
     !  This replaces constraint equation 1 as it is just an equality.
     beta = (betaft + betanb + 2.0D3*rmu0*echarge * (dene*ten + dnitot*tin)/btot**2)
+    total_plasma_internal_energy = 1.5D0*beta*btot*btot/(2.0D0*rmu0)*vol
 
+    rho_star = sqrt(2.d0* mproton * aion * total_plasma_internal_energy / (3.d0 * vol * dnla) ) / &
+      (echarge * bt * eps * rmajor)
 
     q95 = q
 
@@ -720,7 +711,6 @@ contains
 
     ! Here the implementation sometimes leaves the accessible regime when pradmw> powht which is unphysical and
     ! is not taken care of by the rad module. We restrict the radiation power here by the heating power:
-    !pradmw = min(pradmw, powht) 
     pradmw = max(0.0d0,pradmw)
 
     !  Power to divertor, = (1-f_rad)*Psol
@@ -786,9 +776,6 @@ contains
     ! Calculate the neoclassical sanity check with PROCESS parameters
     call calc_neoclassics
 
-    
-
-
     if (iprint == 1) call stphys_output(outfile)
 
    contains
@@ -841,6 +828,10 @@ contains
          call ovarre(outfile,'Radius of Maximum te gradient (m)','(r_max_dt)',rho_max_dt*rminor)
          call ovarre(outfile,'Maxium ne gradient (/m4)','(drdn_max)',dndrho_max/rminor)
          call ovarre(outfile,'Maxium te gradient (keV/m)','(drdt_max)',dtdrho_max/rminor)
+
+         call ovarre(outfile,'Normalized ion Larmor radius', '(rho_star)', rho_star)
+         call ovarre(outfile,'Normalized collisionality (electrons)', '(nu_star_e)',nu_star_e)
+         call ovarre(outfile,'Normalized collisionality (ions)', '(nu_star_i)',nu_star_i)
 
       end subroutine stphys_output
 
@@ -947,6 +938,9 @@ contains
                      neo_at_rhocore%profiles%dr_densities(1))
          
          chi_PROCESS_e = st_calc_eff_chi()
+
+         nu_star_e = neo_at_rhocore%nu_star_averaged(1)
+         nu_star_i = neo_at_rhocore%nu_star_averaged(2)
 
 
 
@@ -1989,7 +1983,7 @@ contains
 
    call stphys(nout,0)
    
-   powerht_out = powerht
+   powerht_out = max(powerht,0.00001D0) ! the radiation module sometimes returns negative heating power
    pscalingmw_out = pscalingmw
 
    ! Reverse it and do it again because anything more efficiently isn't suitable with the current implementation
