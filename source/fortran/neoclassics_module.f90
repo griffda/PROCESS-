@@ -174,7 +174,7 @@ contains
     end function neoclassics_calc_KT
 
     function neoclassics_calc_Gamma_flux(self)
-        !! Calculates the Energy flux by neoclassicsal particle transport
+        !! Calculates the Energy flux by neoclassical particle transport
         !
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
