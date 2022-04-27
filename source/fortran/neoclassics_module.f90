@@ -46,6 +46,8 @@ module neoclassics_module
         !  90-degree deflection frequency on GL roots
         real(dp), dimension(4,no_roots) :: nu_star = 0
         !  Dimensionless 90-degree deflection frequency on GL roots
+        real(dp), dimension(2) :: nu_star_averaged = 0
+        !  Maxwellian averaged dimensionless 90-degree deflection frequency for electrons (index 1) and ions (index 2)
         real(dp), dimension(4,no_roots) :: vd = 0
         !  Drift velocity on GL roots
         real(dp), dimension(4,no_roots) :: KT = 0
@@ -92,6 +94,7 @@ module neoclassics_module
         procedure :: calc_KT => neoclassics_calc_KT
         procedure :: calc_nu => neoclassics_calc_nu
         procedure :: calc_nu_star => neoclassics_calc_nu_star
+        procedure :: avg_nu_star => neoclassics_average_nu_star
         procedure :: calc_D11_mono => neoclassics_calc_D11_mono
         procedure :: calc_vd => neoclassics_calc_vd
         procedure :: calc_D111 => neoclassics_calc_D111
@@ -130,6 +133,7 @@ contains
         myneo%KT = myneo%calc_KT()
         myneo%nu = myneo%calc_nu()
         myneo%nu_star = myneo%calc_nu_star()
+        myneo%nu_star_averaged = myneo%avg_nu_star()
         myneo%vd = myneo%calc_vd()
 
         myneo%D11_plateau = myneo%calc_D11_plateau()
@@ -330,6 +334,26 @@ contains
         nu_star = rmajor * self%nu/(self%iota*v)
 
     end function neoclassics_calc_nu_star
+
+    function neoclassics_average_nu_star(self) result(nu_star_averaged)
+        !! Averages the normalized collision frequency
+        !
+        ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+        use const_and_precisions, only: pi
+
+        class(neoclassics), intent(in) :: self
+        real(dp),dimension(2) :: nu_star_averaged
+
+        real(dp),dimension(no_roots) :: xi,wi
+
+        xi = self%gauss_laguerre%roots
+        wi = self%gauss_laguerre%weights
+     
+        nu_star_averaged(1) = sum(self%nu_star(1,:) * xi * wi)/sum(xi * wi)
+        nu_star_averaged(2) = 0.5*(sum(self%nu_star(2,:) * xi * wi)/sum(xi * wi)+sum(self%nu_star(3,:) * xi * wi)/sum(xi * wi))
+
+    end function neoclassics_average_nu_star
 
     function neoclassics_calc_D111(self)
         !! Calculates the integrated radial transport coefficients (index 1)
