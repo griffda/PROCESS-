@@ -59,6 +59,7 @@ contains
     use divertor_ode
     use read_and_get_atomic_data
     use read_radiation
+    use plot_radiation, only: plot_Lz, plot_z
     use constants
     use process_output, only: oblnkl, obuild, ocentr, ocmmnt, oheadr, osubhd, &
       ovarin, ovarre, ovarrf, ovarst
@@ -153,6 +154,7 @@ contains
     use divertor_ode
     use read_and_get_atomic_data
     use read_radiation
+    use plot_radiation, only: plot_Lz, plot_z
     use constants
     use process_output, only: oblnkl, obuild, ocentr, ocmmnt, oheadr, osubhd, &
                               ovarin, ovarre, ovarrf, ovarst
