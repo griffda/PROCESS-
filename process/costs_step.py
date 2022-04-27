@@ -1389,13 +1389,25 @@ class CostsStep:
         # Superseded and deleted
 
         # 22.01.10 Divertor
-        # Cost Model 0 cost for STARFIRE sized device
-        # 58.62% increase between 1980 and 1990
-        # http://www.in2013dollars.com/1980-dollars-in-1990
-        # Scaling with product of rmajor and rminor
-        step220110 = cv.step_ref[31] * (
-            (pv.rmajor * pv.rminor) / (self.rmajor_star * self.rminor_star)
-        )
+        # Caveat: rough estimate, using rmajor (rather than e.g. rnull) and
+        # treating the divertor limbs as vertically oriented cylinders.
+        # Greater precision in geometry would provide more accurate results,
+        # but (at the time of writing) the divertor design is not yet
+        # advanced enough to warrant such precision.
+        # Reference cost and area values are for ITER.
+
+        # Use 2D profile of divertor legs to estimate surface area (m2)
+        div_profile_length = dv.divleg_profile_inner + dv.divleg_profile_outer
+        if pv.idivrt == 2:
+            # double-null = double divertor length
+            div_profile_length = div_profile_length * 2.0e0
+        div_sarea = 2.0e0 * constants.pi * pv.rmajor * div_profile_length
+
+        # divertor cost = ref * (div area / ref area)**0.8
+        step220110 = cv.step_ref[31] * (div_sarea / 60.0e0) ** 0.8e0
+        # adjust to 2017$ (from 2014$) using CPI index
+        step220110 = step220110 * (229.0e0 / 228.0e0)
+
         if cv.ifueltyp == 1:
             cv.divcst = step220110
             step220110 = 0.0e0
@@ -1882,22 +1894,34 @@ class CostsStep:
         # Cost per Watt depends on technology/hardware used;
         # inflation adjustment applied as appropriate to source for costs
         # (tech adjusted from 1990 $ is costed as per Cost Model 0)
-        # Note: NBI and EC/EBW acounts will be zero if this tech is not included.
+        # Notes:
+        # NBI and EC/EBW calculations will be zero if this tech is not included.
+        # HCD requirements for start-up and ramp-down calculated in
+        # relation to requirements for flat-top operation.
 
-        # HCD requirements for flat-top operation
+        # Total injected power [W] =
+        #      1.0e-6 *
+        #      (flat-top operation [MW] +
+        #       (startupratio * flat-top operation [MW])
+        #       )
+        totinjpow_nbi = 0.0e0
+        totinjpow_ec = 0.0e0
+        totinjpow_ic = 0.0e0
+        # Cost calculated from 'cost per injected Watt', coverted to 2017 M$.
 
         # NBI cost per injected Watt (adjusted from 2020 $):
-        step220104 = cdv.pnbitot * cv.step_ref[68] * (229.0e0 / 258.84e0)
-        # (if this method is not used, result is zero)
+        totinjpow_nbi = 1.0e-6 * (cdv.pnbitot + (cv.startupratio * cdv.pnbitot))
+        step220104 = (totinjpow_nbi * cv.step_ref[68] * (229.0e0 / 258.84e0)) / 1.0e-6
 
         # EC or EBW cost per injected Watt (adjusted from 2020 $):
-        step220104 += cdv.echpwr * cv.step_ref[69] * (229.0e0 / 258.84e0)
-        # (if this method is not used, result is zero)
+        totinjpow_ec = 1.0e-6 * (cdv.echpwr + (cv.startupratio * cdv.echpwr))
+        step220104 += (totinjpow_ec * cv.step_ref[69] * (229.0e0 / 258.84e0)) / 1.0e-6
 
         if cdv.iefrf == 2 or cdv.iefrffix == 2:
             # if primary *or* secondary current drive efficiency model is
             # Ion Cyclotron current drive (adjusted from 1990 $):
-            step220104 += 1.0e-6 * cv.ucich * (1.0e6 * cdv.plhybd) * (229.0e0 / 76.7e0)
+            totinjpow_ic = 1.0e-6 * (cdv.plhybd + (cv.startupratio * cdv.plhybd))
+            step220104 += (totinjpow_ic * cv.ucich * (229.0e0 / 76.7e0)) / 1.0e-6
 
         # if primary current drive efficiency model is any of the following...
         if (
@@ -1909,11 +1933,8 @@ class CostsStep:
             or (cdv.iefrf == 6)
         ):
             # ...use calculation for Lower Hybrid system (adjusted from 1990 $):
-            step220104 += 1.0e-6 * cv.uclh * (1.0e6 * cdv.plhybd) * (229.0e0 / 76.7e0)
-
-        # HCD requirements for start-up and ramp-down
-        cv.startuppwr = step220104 * cv.startupratio
-        step220104 += cv.startuppwr
+            totinjpow_ic = 1.0e-6 * (cdv.plhybd + (cv.startupratio * cdv.plhybd))
+            step220104 += (totinjpow_ic * cv.uclh * (229.0e0 / 76.7e0)) / 1.0e-6
 
         if cv.ifueltyp == 1:
             # fraction `fcdfuel` of HCD cost treated as fuel cost

@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1456-ge3dc2ccc code contains untracked changes
-    Branch : 1336-update-cryoplant-cost-22-03-for-cost-model-2
-   Git log : Merge\ branch\ |develop|\ into\ 1336-update-cryoplant-
- Date/time : 30 Mar 2022 10:49:26 +01:00(hh:mm) UTC
+   Tag No. : v2.1-1592-g962112e9
+    Branch : divertor-costs-into-cost-model-2-more-stable
+   Git log : Removed\ costs_step.f90\ as\ superceded\ by\ python\ ver
+ Date/time : 19 Apr 2022 11:31:14 +01:00(hh:mm) UTC
       User : jg6173
   Computer : L1088
- Directory : /tmp/pytest-of-jg6173/pytest-57/test_solver0
-     Input : /tmp/pytest-of-jg6173/pytest-57/test_scenario_baseline_jan_2010/IN.DAT
+ Directory : /tmp/pytest-of-jg6173/pytest-70/test_solver0
+     Input : /tmp/pytest-of-jg6173/pytest-70/test_scenario_baseline_jan_2010/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -481,7 +481,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Volt-second considerations:
  
- Total V-s capability of Central Solenoid/PF coils (Wb)                   (abs(vstot))              8.358E+02     
+ Total V-s capability of Central Solenoid/PF coils (Wb)                   (abs(pfcoil_variables.vst 8.358E+02     
  Required volt-seconds during start-up (Wb)                               (vssoft)                  4.158E+02     
  Available volt-seconds during burn (Wb)                                  (vsmax)                   3.939E+02     
  

@@ -25,6 +25,9 @@ wsl --install
 
 However, you need admin privilages to perfom this command. Please ask support to grant you these rights temporarily so you can successsfully install WSL. This can be done via a Marval ticket or email to support if you are a new starter and do not have Nucleus access yet.
 
+If the above procedure fails to work, there is a page on Nucleus giving a further detailed instructions on installing WSL on Windows which have proven to be helpful for some. They can be found [here](https://intranet.ukaea.uk/software/guides/wsl2.html).
+*Unless instructed, please stop before the 'Enable x-forwarding' stage as this has been knwon to cause issues with the speed at which the code will run- see FAQs for more.*
+
 Next, you will need to install a source code editor so you are able to work with the Process code. Visual Studio Code, or VSCode for short, is a great choice. It is a lightweight but powerful source code editor which runs on your deskotp and is available for Windows, MacOS and Linux. It has a vast extension package allowing ease of use with a range of languages. More information on VSCode can be found [here](https://code.visualstudio.com/docs).
 
 Install Visual Studio Code [here](https://code.visualstudio.com/).
@@ -226,7 +229,17 @@ When VS Code is first opened, you are able to set it such that the command:
 ```bash
 source env/bin/activate
 ```
-is executed automatically. This saves manually activating the virtual environment everytime you open the application. This is done by first using `Ctrl+Shift+P` and searching for `Python:Select Interpreter`. The select: `Python *version* ('env':venv) ./env/bin/python`. This should be starred as the recommended version. Now, close your terminal and close VS Code. Reopen and open a new terminal which should now automatically point to the virtual environmnet signalled by an `(env)` in front of your user.
+is executed automatically. This saves manually activating the virtual environment everytime you open the application. This is done by first using `Ctrl+Shift+P` and searching for `Python:Select Interpreter`. The select: `Python *version* ('env':venv) ./env/bin/python`. This should be starred as the recommended version.
+You will see that in your project the .vscode directroy will contain a `settings.json` file. Open this and inside of it add:
+
+```json
+"python.terminal.activateEnvironment": true
+```
+Dont forget to add a comma before to separate it from already present key value pairs.
+
+
+
+Now, close your terminal and close VS Code. Reopen and open a new terminal which should now automatically point to the virtual environmnet signalled by an `(env)` in front of your user.
 
 ## Prepare Release (not required)
 It is possible to build a standalone module which can be distributed without the need for the source code. This exists as a pippable "wheels" module which is build by running:

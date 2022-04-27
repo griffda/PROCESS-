@@ -264,7 +264,6 @@ starfire-py38:
 # Python linting
 # Job will fail if ANY violations are detected
 Flake8:
-    when: on_success
     stage: quality
     script:
         - python3.8 -m pip install flake8
@@ -277,7 +276,6 @@ Flake8:
 # black style checks
 # Job will fail if black thinks ANY changes are required
 Black:
-    when: on_success
     stage: quality
     before_script:
         - python3.8 -m pip install black==22.3.0
