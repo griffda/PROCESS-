@@ -87,7 +87,6 @@ LIST(TRANSFORM REFPROP_SRCS PREPEND ${REFPROP_SRC_DIR}/ OUTPUT_VARIABLE REFPROP_
 # Define interface source filenames to wrap
 LIST(APPEND PROCESS_SRCS
     div_kal_vars.f90
-    kallenbach_module.f90
     numerics.f90
     scan.f90
     fw.f90

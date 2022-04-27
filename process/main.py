@@ -391,10 +391,13 @@ class SingleRun:
             fortran.main_module.runtests()
 
     def kallenbach_scan(self):
-        """Run Kallenbach scan if required."""
+        """Run Kallenbach scan if required.
+
+        :returns: True if a kallenbach scan has run, else False.
+        :rtype: bool
+        """
         if fortran.div_kal_vars.kallenbach_scan_switch == 1:
             kallenbach_scan()
-            # Exit if just running the scan
             sys.exit()
 
     def call_solver(self):

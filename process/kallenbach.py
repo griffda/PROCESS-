@@ -121,9 +121,9 @@ def kallenbach_scan():
 
     for i in range(div_kal_vars.kallenbach_scan_num):
         po.oblnkl(constants.nout)
-        po.ovarin(constants.nout, "Scan point number", "(iscan)", i)
+        po.ovarin(constants.nout, "Scan point number", "(iscan)", i + 1)
 
-        divertor_ode.divertor_Kallenbach(
+        divertor_ode.divertor_kallenbach(
             rmajor=physics_variables.rmajor,
             rminor=physics_variables.rminor,
             bt=physics_variables.bt,
@@ -139,7 +139,7 @@ def kallenbach_scan():
             iprint=1,
         )
 
-        if div_kal_vars.kallenbach_scan_var:
+        if div_kal_vars.kallenbach_scan_var == 0:
             div_kal_vars.ttarget += step
         else:
             setattr(div_kal_vars, target_variable, step)
