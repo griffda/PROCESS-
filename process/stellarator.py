@@ -48,15 +48,6 @@ class Stellarator:
         """
 
         if output:
-            # original routine contained the following debug
-            # print statements that have been removed due to
-            # f2py derived-type limitations.
-            # print *,"Used stellarator configuration: ", config%name
-            # print *,"Deviation from reference point"
-            # print *,"aspect ratio",aspect/config%aspect_ref
-            # print *,"major radius",rmajor/config%rmajor_ref
-            # print *,"n_tf (should be 1)", n_tf/(config%coilspermodule*config%symmetry)
-
             cs.costs(self.outfile, 1)
             # TODO: should availability.run be called
             # rather than availability.avail?
