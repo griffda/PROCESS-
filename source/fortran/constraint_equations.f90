@@ -3367,11 +3367,11 @@ contains
       !! author: J Lion, IPP Greifswald
       !! args : output structure : residual error; constraint value; 
       !! residual error in physical units; output string; units string
-      !!  te0_ecrh_achievable > te_ECRH_needed
+      !!  powerht_local > powerscaling
       !! #=# physics
       !! #=#=# fecrh_ignition, powerht_local, powerscaling
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !! fecrh_ignition : input real : f-value for constraint te0_ecrh_achievable > te_ECRH_needed
+      !! fecrh_ignition : input real : f-value for constraint powerht_local > powerscaling
       !! bt : input real :  Lower limit for beta
       !! max_gyrotron_frequency : input real :  Max. av. gyrotron frequency
       !! te0_ecrh_achievable : input real : Alpha particle beta

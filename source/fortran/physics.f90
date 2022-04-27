@@ -2738,7 +2738,7 @@ module physics_module
     if (iradloss == 0) then
        powerht = powerht - pradpv*vol
     else if (iradloss == 1) then
-       powerht = powerht - pcoreradpv*vol
+       powerht = powerht - pcoreradpv*vol ! shouldn't this be vol_core instead of vol?
     else
        continue  !  do not adjust powerht for radiation
     end if
