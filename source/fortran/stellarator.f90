@@ -792,16 +792,8 @@ contains
          call oheadr(outfile,'Stellarator Specific Physics:')
 
          call ovarre(outfile,'Total 0D heat flux (r=rhocore) (MW/m2)','(q_PROCESS)',q_PROCESS)
-         !call ovarre(outfile,'Total neoclassical flux (r=rhocore) (MW/m2)','(total_q_neo)',total_q_neo)
          call ovarre(outfile,'Total neoclassical flux from 4*q_e (r=rhocore) (MW/m2)','(total_q_neo_e)',total_q_neo_e)
-         !call ovarre(outfile,'Total turbulence flux from 2*q_e (r=rhocore) (MW/m2)','(total_q_turb)',total_q_turb)
 
-         !call ovarre(outfile,'Total heat flux due to neoclassical energy transport (MW/m2): ','(q_neo)',q_neo)
-         !call ovarre(outfile,'Total heat flux due to neoclassical particle transport (MW/m2): ','(gamma_neo)',gamma_neo)
-         !call ovarre(outfile,'Total fuel (DT) particle flux due to neoclassical particle transport (1/s): ',&
-         !                        '(dndt_neo_fuel)',dndt_neo_fuel)
-         !call ovarre(outfile,'Total fuel (DT) mass flux due to neoclassical particle transport (mg/s): ', &
-         !                        '(dmdt_neo_fuel)',dmdt_neo_fuel)
          call ovarre(outfile,'Total fuel (DT) mass flux by using 4 * neoclassical e transport (mg/s): ', &
                                  '(dmdt_neo_fuel_from_e)',dmdt_neo_fuel_from_e)
          call ovarre(outfile,'Considered Heatflux by LCFS heat flux ratio (1)','(q_PROCESS/q_PROCESS_r1)',q_PROCESS/q_PROCESS_r1)
@@ -810,19 +802,8 @@ contains
          call ovarre(outfile,'Neoclassical electron effective chi (r=rhocore): ','(chi_neo_e)',chi_neo_e)
 
          call ovarre(outfile,'Heat flux due to neoclassical energy transport (e) (MW/m2): ','(q_neo_e)',q_neo_e)
-         !call ovarre(outfile,'Heat flux due to neoclassical energy transport (D) (MW/m2): ','(q_neo_D)',q_neo_D)
-         !call ovarre(outfile,'Heat flux due to neoclassical energy transport (T) (MW/m2): ','(q_neo_T)',q_neo_T)
-         !call ovarre(outfile,'Heat flux due to neoclassical energy transport (a) (MW/m2): ','(q_neo_a)',q_neo_a)
-
          call ovarre(outfile,'Heat flux due to neoclassical particle transport (e) (MW/m2): ','(g_neo_e)',g_neo_e)
-         !call ovarre(outfile,'Heat flux due to neoclassical particle transport (D) (MW/m2): ','(g_neo_D)',g_neo_D)
-         !call ovarre(outfile,'Heat flux due to neoclassical particle transport (T) (MW/m2): ','(g_neo_T)',g_neo_T)
-         !call ovarre(outfile,'Heat flux due to neoclassical particle transport (a) (MW/m2): ','(g_neo_a)',g_neo_a)
-
          call ovarre(outfile,'Particle flux due to neoclassical particle transport (e) (1/m2/s): ','(dndt_neo_e)',dndt_neo_e)
-         !call ovarre(outfile,'Particle flux due to neoclassical particle transport (D) (1/m2/s): ','(dndt_neo_D)',dndt_neo_D)
-         !call ovarre(outfile,'Particle flux due to neoclassical particle transport (T) (1/m2/s): ','(dndt_neo_T)',dndt_neo_T)
-         !call ovarre(outfile,'Particle flux due to neoclassical particle transport (a) (1/m2/s): ','(dndt_neo_a)',dndt_neo_a)
 
          call ovarre(outfile,'Radius of Maximum ne gradient (m)','(r_max_dn)',rho_max_dn*rminor)
          call ovarre(outfile,'Radius of Maximum te gradient (m)','(r_max_dt)',rho_max_dt*rminor)
@@ -863,8 +844,8 @@ contains
       
          nominator = (falpha*palppv - pcoreradpv) *volscaling
       
-         denominator = (3 *ne0*e_*Te0 * 1.0d3 *(0*alphan+alphat)*coreradius* &
-                        (1-coreradius**2)**(alphan+alphat-1))*surfacescaling * 1.0d-6
+         denominator = (3.0d0 *ne0*e_*Te0 * 1.0d3 *(0d0*alphan+alphat)*coreradius* & ! include alphan if chi should be incorporate density gradients too
+                        (1d0-coreradius**2)**(alphan+alphat-1d0))*surfacescaling * 1.0d-6
       
          st_calc_eff_chi = nominator/denominator
    
@@ -2432,8 +2413,8 @@ contains
      do k = 1,N_it
 
        ! Sample coil winding pack
-       wp_width_r(k) = (r_coil_minor/40.0D0 + (dble(k)-1) / (dble(N_it)-1) * (r_coil_minor/1.0D0-r_coil_minor/40.0D0))
-       if (i_tf_sc_mat==6) wp_width_r(k) =(r_coil_minor/150.0D0 + (dble(k)-1) / (dble(N_it)-1)&
+       wp_width_r(k) = (r_coil_minor/40.0D0 + (dble(k)-1d0) / (dble(N_it)-1d0) * (r_coil_minor/1.0D0-r_coil_minor/40.0D0))
+       if (i_tf_sc_mat==6) wp_width_r(k) =(r_coil_minor/150.0D0 + (dble(k)-1d0) / (dble(N_it)-1d0)&
                 * (r_coil_minor/1.0D0-r_coil_minor/150.0D0))
  
        !  B-field calculation
@@ -2541,7 +2522,6 @@ contains
    !
      tftort = wwp1 + 2.0D0*casths+ 2.0D0*tinstf     ! [m] Thickness of inboard leg in toroidal direction
 
-     !? There was a factor of 2 in fron of thkcas. Is this right now (jlion, 21/01/2021)
      tfcth = thkcas + dr_tf_wp + casthi+ 2.0D0*tinstf  ! [m] Thickness of inboard leg in radial direction
      tfthko = thkcas + dr_tf_wp + casthi+ 2.0D0*tinstf ! [m] Thickness of outboard leg in radial direction (same as inboard)
      arealeg = tfcth*tftort                         ! [m^2] overall coil cross-sectional area (assuming inboard and
@@ -2589,10 +2569,10 @@ contains
      tfleng = config%coillength*(r_coil_minor/config%coil_rminor)/n_tf                     ! [m] estimated average length of a coil
  
      ! [m^2] Total surface area of toroidal shells covering coils
-     tfcryoarea = config%coilsurface *(r_coil_minor/config%coil_rminor)**2**2 *1.1D0 !1.1 to scale it out a bit. Should be coupled to winding pack maybe.
+     tfcryoarea = config%coilsurface *(r_coil_minor/config%coil_rminor)**2 *1.1D0 !1.1 to scale it out a bit. Should be coupled to winding pack maybe.
  
      ! Minimal bending radius:
-     min_bending_radius = config%min_bend_radius * f_r * 1/(1-dr_tf_wp/(2*r_coil_minor))
+     min_bending_radius = config%min_bend_radius * f_r * 1.0/(1.0-dr_tf_wp/(2.0*r_coil_minor))
 
    ! End of general coil geometry values
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2645,7 +2625,7 @@ contains
      ! \[Tau]ref = 1.;
      ! Rref = 5.2;
      ! dref = 14*10^-3;
-     f_VV_actual = 2.54D6*(3*1.3*50*0.92**2)/(1*5.2*0.014)*(bt*ritfc*rminor**2/((d_vv_in+d_vv_out)/2*taucq*radvv))**(-1)
+     f_VV_actual = 2.54D6*(3d0*1.3d0*50d0*0.92d0**2d0)/(1d0*5.2d0*0.014d0)*(bt*ritfc*rminor**2/((d_vv_in+d_vv_out)/2*taucq*radvv))**(-1)
 
      ! the conductor fraction is meant of the cable space!
      ! This is the old routine which is being replaced for now by the new one below

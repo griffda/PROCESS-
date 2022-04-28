@@ -187,7 +187,7 @@ module stellarator_configuration
  
              output_config%plasma_surface = 1960.0D0 ! Plasma Surface
  
-             output_config%maximal_coil_height = 12.7 ! [m] Full height max point to min point
+             output_config%maximal_coil_height = 12.7D0 ! [m] Full height max point to min point
  
              output_config%coilsurface = 4817.7D0 ! Coil surface, dimensionfull. At reference point
  
@@ -211,11 +211,11 @@ module stellarator_configuration
              output_config%min_plasma_coil_distance = 1.9d0
              output_config%derivative_min_LCFS_coils_dist = -1.0d0 ! this is approximated for now
  
-             output_config%min_bend_radius = 1.0 ! [m]
+             output_config%min_bend_radius = 1.0d0 ! [m]
 
-             output_config%neutron_peakfactor = 1.6
+             output_config%neutron_peakfactor = 1.6d0
 
-             output_config%epseff = 0.015
+             output_config%epseff = 0.015d0
  
              allocate(output_config%D11_star_mono_input(10))
              allocate(output_config%nu_star_mono_input(10))
@@ -279,9 +279,9 @@ module stellarator_configuration
  
              output_config%min_bend_radius = 0.86 ! [m]
  
-             output_config%neutron_peakfactor = 1.6
+             output_config%neutron_peakfactor = 1.6d0
 
-             output_config%epseff = 0.015
+             output_config%epseff = 0.015d0
 
  
           case(3)
@@ -339,11 +339,11 @@ module stellarator_configuration
              output_config%min_plasma_coil_distance = 1.78d0
              output_config%derivative_min_LCFS_coils_dist = -1.0d0 ! this is approximated for now
  
-             output_config%min_bend_radius = 1.145 ! [m]
+             output_config%min_bend_radius = 1.145d0 ! [m]
  
-             output_config%neutron_peakfactor = 1.6
+             output_config%neutron_peakfactor = 1.6d0
 
-             output_config%epseff = 0.015
+             output_config%epseff = 0.015d0
 
  
           case(4)
@@ -398,11 +398,11 @@ module stellarator_configuration
              output_config%min_plasma_coil_distance = 0.45D0
              output_config%derivative_min_LCFS_coils_dist = -1.0d0 ! this is approximated for now 
  
-             output_config%min_bend_radius = 0.186 ! [m]
+             output_config%min_bend_radius = 0.186d0 ! [m]
  
-             output_config%neutron_peakfactor = 1.6
+             output_config%neutron_peakfactor = 1.6d0
 
-             output_config%epseff = 0.015
+             output_config%epseff = 0.015d0
 
           case(5)
              ! w7x50 Machine
@@ -456,11 +456,11 @@ module stellarator_configuration
              output_config%min_plasma_coil_distance = 0.39D0
              output_config%derivative_min_LCFS_coils_dist = -1.0d0 ! this is approximated for now
  
-             output_config%min_bend_radius = 0.39 ! [m]
+             output_config%min_bend_radius = 0.39d0 ! [m]
  
-             output_config%neutron_peakfactor = 1.6
+             output_config%neutron_peakfactor = 1.6d0
 
-             output_config%epseff = 0.015
+             output_config%epseff = 0.015d0
          
           
           

@@ -162,15 +162,15 @@ contains
       if(alphat > 1.0) then
          ! Rho (normalized radius), where temperature derivative is largest
          rho_max_dt = 1.0d0/sqrt(-1.0d0 +2.0d0 * alphat)
-         dtdrho_max = -2.0**alphat*(-1.0 + alphat)**(-1.0 + alphat)*alphat*(-1.0 + &
-                     2.0 * alphat)**(0.5 - alphat)
+         dtdrho_max = -2.0d0**alphat*(-1.0d0 + alphat)**(-1.0d0 + alphat)*alphat*(-1.0d0 + &
+                     2.0d0 * alphat)**(0.5d0 - alphat)
 
-      elseif (alphat .le. 1.0 .and. alphaT > 0.0) then
+      elseif (alphat .le. 1.0d0 .and. alphaT > 0.0d0) then
          ! This makes the profiles very 'boxy'
          ! The gradient diverges here at the edge so define some 'wrong' value of 0.99
          ! to approximate the gradient
-         rho_max_dt = 0.99
-         dtdrho_max = -100.0*0.02**alphat*alphat
+         rho_max_dt = 0.99d0
+         dtdrho_max = -100.0d0*0.02d0**alphat*alphat
 
       else
          print *, "ERROR: alphat is negative!"
@@ -178,17 +178,17 @@ contains
       end if
 
       ! Same for density
-      if(alphan > 1.0) then
+      if(alphan > 1.0d0) then
          rho_max_dn = 1.0d0/sqrt(-1.0d0 +2.0d0 * alphan)
-         dndrho_max = -2.0**alphan*(-1.0 + alphan)**(-1.0 + alphan)*alphan*(-1.0 + &
-                     2.0 * alphan)**(0.5 - alphan)
+         dndrho_max = -2.0d0**alphan*(-1.0d0 + alphan)**(-1.0d0 + alphan)*alphan*(-1.0d0 + &
+                     2.0d0 * alphan)**(0.5d0 - alphan)
 
-      elseif (alphan .le. 1.0 .and. alphan > 0.0) then
+      elseif (alphan .le. 1.0d0 .and. alphan > 0.0d0) then
          ! This makes the profiles very 'boxy'
          ! The gradient diverges here at the edge so define some 'wrong' value of 0.99
          ! to approximate the gradient
-         rho_max_dn = 0.99
-         dndrho_max = -100.0*0.02**alphan*alphan
+         rho_max_dn = 0.99d0
+         dndrho_max = -100.0d0*0.02d0**alphan*alphan
 
       else
          print *, "ERROR: alphan is negative!"
