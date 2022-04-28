@@ -4,7 +4,7 @@ The improved energy confinement mode (I-mode) is a regime of plasma operation ch
 
 The I-mode regime is accessed in the low density and low edge collisionality $`\nu^\ast`$ regime. Stability analysis shows that I-mode is accessed well below the peeling-ballooning limit, consistent with the lack of ELMs [2].
 
-Measurements on several machines has shown that the transition from L-mode to I-mode characterised by distinct changes in turbulence in the pedestal region. Low frequency broadband fluctuations decrease while a weakly coherent mode (WCM) in high frequency density and magnetic fluctuations emerges [3], additionally a geodesic acoustic mode (GAM) localised at the edge of the plasma at low frequency [4]. These modes act to drive a decrease in the thermal conductivity in the plasma edge. These modes appear together and while are observed well separated in frequency space show strong evidence of mode coupling driven by non-linearities. The lack of a density pedestal means we expect high particle transport which will lower impurity concentration and remove Helium ash.  
+Measurements on several machines has shown that the transition from L-mode to I-mode characterised by distinct changes in turbulence in the pedestal region. Low frequency broadband fluctuations decrease while a weakly coherent mode (WCM) in high frequency density and magnetic fluctuations emerges [3], additionally a geodesic acoustic mode (GAM) localised at the edge of the plasma at low frequency [4]. These modes act to drive a decrease in the thermal conductivity in the plasma edge. These modes appear together and while are observed well separated in frequency space show strong evidence of mode coupling driven by non-linearities. The lack of a density pedestal means we expect high particle transport which will lower impurity concentration and remove Helium ash.
 
 A robust demonstration of I-mode needs a plasma operated in the unfavourable ion $`\nabla B`$ drift direction to mitigate the transition to H-mode and allow for stable I-mode access. Therefore, the L-I threshold can be twice the LH threshold power, an empirical L-I power threshold scaling has been created and shows
 
@@ -33,7 +33,7 @@ Iterations Variables:
 
 * `ixc = 6` – `dene` * electron density – I-mode is a low density regime so a lower initial value for the electron density is suggested, for example `dene = 7.432e19`.
 * `ixc = 9` – `fdene` * f-value for density limit constraint equation – I-mode is a low density regime so an upper bound of 0.9 is recommended.
-* `ixc = 46` – `fpinj` * f-value for injection power upper limit constraint equation – The high Psep needed to satisfy the LI threshold means that large injected powers are required for I-mode.  
+* `ixc = 46` – `fpinj` * f-value for injection power upper limit constraint equation – The high Psep needed to satisfy the LI threshold means that large injected powers are required for I-mode.
 * `ixc = 103` – `flhthresh` * f-value for L-H threshold constraint equation
 * `ixc = 153` – `fdivlim` * f-value for the lower limit to pdivt constraint equation
 * `ixc = 145` – `fgwped` * fraction of the Greenwald density to set as pedestal-top density – suggested initial value is `fgwped = 0.65` with a `boundl(145) = 0.65` and `boundu(145) = 0.72`. These lower values are chosen to reduce the density pedestal in I-mode.

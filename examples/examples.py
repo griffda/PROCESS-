@@ -1,19 +1,25 @@
 # %% [markdown]
 # # Process examples
 # A Jupyter notebook to demonstrate usage of the `process` package. This notebook has also been exported as a Python script to `examples.py`.
-# 
+#
 # ## Motivation
 # Process is moving away from being a runnable package with a single command-line entry-point to an importable package which can be scripted. This notebook is a good way of demonstrating the functionality of the package, and could provide a better way of working for modellers, who may wish to create their own scripts or notebooks for different tasks.
-# 
+#
 # ## Setup
 # Currently the various classes and "utilities" scripts in Process have different interfaces and read and write files in differing manners and in locations that can't be easily controlled. To partially avoid the headaches associated with this, the code cell below defines a function to allow each example to be run in a temporary directory, much like a test. Input files are copied to this temporary directory and outputs contained there before the directory is removed.
-# 
+#
 # This temporary directory function is only required for running the examples below and removing any modifications afterwards, not in regular use of Process where the outputs will want to be preserved. Further development work will unify these disparate ways of running Process into a common Pythonic form.
 
 # %%
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from shutil import copy
+from process.main import SingleRun
+from process.io import plot_proc
+from pdf2image import convert_from_path
+from process.main import VaryRun
+import os
+from process.io import plot_scans
 
 # Define project root dir; when running a notebook, the cwd is the dir the notebook is in
 PROJ_DIR = Path.cwd().parent
@@ -51,12 +57,11 @@ def copy_to_temp_dir(input_rel):
 
 
 # %% [markdown]
-# 
+#
 # ## Basic run of Process
 # Run Process on an input file using the `SingleRun` class. This outputs an `MFILE.DAT` and an `OUT.DAT`.
 
 # %%
-from process.main import SingleRun
 
 # Define input file name relative to project dir, then copy to temp dir
 input_rel = "tracking/baseline_2018/baseline_2018_IN.DAT"
@@ -71,8 +76,6 @@ single_run = SingleRun(str(temp_input_path))
 # Create a summary PDF of the generated `MFILE.DAT` using `plot_proc`.
 
 # %%
-from process.io import plot_proc
-from pdf2image import convert_from_path
 
 # Create a summary PDF
 plot_proc.main(args=["-f", str(single_run.mfile_path)])
@@ -87,7 +90,7 @@ for page_no, page_image in enumerate(pages):
 
 # %% [markdown]
 # `plot_proc`'s PDF output.
-# 
+#
 # <img src="plot_proc_1.png" width="1000">
 # <img src="plot_proc_2.png" width="1000">
 
@@ -127,8 +130,7 @@ temp_dir.cleanup()
 # Vary iteration parameters until a feasible solution is found, using the `VaryRun` class.
 
 # %%
-from process.main import VaryRun
-import os
+
 
 input_rel = "tests/integration/data/run_process.conf"
 temp_dir, temp_input_path = copy_to_temp_dir(input_rel)
@@ -156,7 +158,7 @@ temp_dir.cleanup()
 # Plot a scanned MFILE.
 
 # %%
-from process.io import plot_scans
+
 
 # Define working directory relative to project dir and input file name
 input_rel = "tests/integration/data/scan_MFILE.DAT"
@@ -174,6 +176,3 @@ plot_scans.main(
 )
 
 temp_dir.cleanup()
-
-
-

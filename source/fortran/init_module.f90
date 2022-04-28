@@ -145,8 +145,8 @@ subroutine init
   use global_variables, only: verbose, fileprefix, output_prefix
   use main_module, only: run_summary
   use constants, only: opt_file, vfile, nout, nplot, mfile, sig_file
-  use error_handling, only: initialise_error_list 
-  use impurity_radiation_module, only: initialise_imprad 
+  use error_handling, only: initialise_error_list
+  use impurity_radiation_module, only: initialise_imprad
   use numerics, only: ixc , lablxc, nvar
   use process_input, only: nin, input
   use stellarator_module, only: stinit
@@ -160,7 +160,7 @@ subroutine init
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !  Initialise error handling
-  
+
   call initialise_error_list
 
   !  Initialise the program variables
@@ -210,9 +210,9 @@ subroutine init
 end subroutine init
 
 subroutine finish
-  ! Originally at the end of the "program", this subroutine writes some final 
-  ! lines via the output module and then closes any open files. This is 
-  ! currently called from Python, and will be removed once file handling is 
+  ! Originally at the end of the "program", this subroutine writes some final
+  ! lines via the output module and then closes any open files. This is
+  ! currently called from Python, and will be removed once file handling is
   ! completely dealt with in Python
   ! # TODO Move this output and file handling to Python
 

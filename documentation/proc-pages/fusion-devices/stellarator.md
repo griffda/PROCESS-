@@ -60,10 +60,10 @@ where $n$ is the line-averaged electron density in units of $10^{20} m^{-3}$, $p
 
 Five confinement time scaling laws relevant to stellarators are present within `PROCESS`. The value of switch isc` determines which of these in the plasma energy balance calculation.
 
-$\tau_E$ (Large Helical Device[^8]: `isc=21`) = $0.17 \, R^{0.75}_0 \, a^2_p \, \bar{n}^{0.69}_{20} \, B^{0.84}_0 \, P^{-0.58}$  
-$\tau_E$ (Gyro-reduced Bohm[^9]: `isc=22`) = $0.25 \, R^{0.6}_0 \, a^{2.4}_p \, \bar{n}^{0.6}_{20} \, B^{0.8}_0 \, P^{-0.6}$  
-$\tau_E$ (Lackner-Gottardi[^10]: `isc=23`) = $0.17 \, R_0 \, a^2_p \, \bar{n}^{0.6}_{20} \, B^{0.8}_0 \, P^{-0.6} \, \iota^{0.4}$  
-$\tau_E$ (ISS95[^11]: `isc=37`) = $0.079 \, R^{0.65}_0 \, a^{2.21}_p \, \bar{n}^{0.51}_{20} \, B^{0.83}_0 \, P^{-0.59} \, \bar{\iota}^{0.4}$  
+$\tau_E$ (Large Helical Device[^8]: `isc=21`) = $0.17 \, R^{0.75}_0 \, a^2_p \, \bar{n}^{0.69}_{20} \, B^{0.84}_0 \, P^{-0.58}$
+$\tau_E$ (Gyro-reduced Bohm[^9]: `isc=22`) = $0.25 \, R^{0.6}_0 \, a^{2.4}_p \, \bar{n}^{0.6}_{20} \, B^{0.8}_0 \, P^{-0.6}$
+$\tau_E$ (Lackner-Gottardi[^10]: `isc=23`) = $0.17 \, R_0 \, a^2_p \, \bar{n}^{0.6}_{20} \, B^{0.8}_0 \, P^{-0.6} \, \iota^{0.4}$
+$\tau_E$ (ISS95[^11]: `isc=37`) = $0.079 \, R^{0.65}_0 \, a^{2.21}_p \, \bar{n}^{0.51}_{20} \, B^{0.83}_0 \, P^{-0.59} \, \bar{\iota}^{0.4}$
 $\tau_E$ (ISS04[^12]: `isc=38`) = $0.134 \, R^{0.64}_0 \, a^{2.28}_p \, \bar{n}^{0.54}_{20} \, B^{0.84}_0 \, P^{-0.61} \, \bar{\iota}^{0.41}$
 
 Here $\bar{\iota}$ is the rotational transform, which is equivalent to the reciprocal of the tokamak safety factor $q$.
@@ -126,7 +126,7 @@ The winding pack cross-section is rectangular for the stellarator coils, rather 
 [^6]: J. Geiger, *"Darstellung von ineinandergeschachtelten toroidal  eschlossenen Flachen mit Fourierkoeffizienten"* *"Representation of nested, closed surfaces with Fourier coefficients"* IPP Greifswald, Germany, internal document, 06/07/2010
 [^7]: J. Nuhrenberg et al., *PLasma Physics and Controlled Fusion*, **35** (1993) B115
 [^8]: S. Sudo, Y. Takeiri, H. Zushi et al., *Nuclear Fusion*, **30** (1990) 11
-[^9]: R. J. Goldston, H. Biglari, G. W. Hammett et al., *Bull. Am. Phys. Society*, **34** (1989) 1964 
+[^9]: R. J. Goldston, H. Biglari, G. W. Hammett et al., *Bull. Am. Phys. Society*, **34** (1989) 1964
 [^10]: K. Lackner and N. A. O. Gottardi, *Nuclear Fusion*, **30** (1990) 767
 [^11]: U. Stroth et al., *Nuclear Fusion*, **36** (1996) 1063
 [^12]: H. Yamada et al., *Nuclear Fusion*, **45** (2005) 1684

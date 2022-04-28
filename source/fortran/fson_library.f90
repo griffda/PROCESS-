@@ -25,15 +25,15 @@
 ! Permission is hereby granted, free of charge, to any person obtaining a copy of this
 ! software and associated documentation files (the "Software"), to deal in the Software
 ! without restriction, including without limitation the rights to use, copy, modify, merge,
-! publish, distribute, sublicense, and/or sell copies of the Software, and to permit 
+! publish, distribute, sublicense, and/or sell copies of the Software, and to permit
 ! persons to whom the Software is furnished to do so, subject to the following conditions:
 !
-! The above copyright notice and this permission notice shall be included in all copies or 
+! The above copyright notice and this permission notice shall be included in all copies or
 ! substantial portions of the Software.
 !
-! THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+! THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 ! INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
-! PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE 
+! PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
 ! LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT
 ! OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 ! DEALINGS IN THE SOFTWARE.
@@ -624,7 +624,7 @@ contains
           end if
 
           if (.not.associated(p)) then
-             return     
+             return
           end if
 
           child_i = i + 1
@@ -681,7 +681,7 @@ contains
           ! add
           integral = integral + tmp
 
-       case default          
+       case default
           return
        end select
     end do
@@ -694,7 +694,7 @@ contains
   subroutine get_integer(this, path, value)
     use fson_value_m, only: type_integer, type_real, type_logical, fson_value
     implicit none
-  
+
     type(fson_value), pointer :: this, p
     character(len=*), optional :: path
     integer :: value
@@ -734,7 +734,7 @@ contains
   subroutine get_real(this, path, value)
     use fson_value_m, only: type_integer, type_real, type_logical, fson_value
     implicit none
-  
+
     type(fson_value), pointer :: this, p
     character(len=*), optional :: path
     real :: value
@@ -775,7 +775,7 @@ contains
   subroutine get_double(this, path, value)
     use fson_value_m, only: type_integer, type_real, type_logical, fson_value
     implicit none
-  
+
     type(fson_value), pointer :: this, p
     character(len=*), optional :: path
     real(kind(1.0D0)) :: value
@@ -816,7 +816,7 @@ contains
   subroutine get_logical(this, path, value)
     use fson_value_m, only: type_integer, type_logical, fson_value
     implicit none
-  
+
     type(fson_value), pointer :: this, p
     character(len=*), optional :: path
     logical :: value
@@ -850,9 +850,9 @@ contains
   !
   subroutine get_chars(this, path, value)
     use fson_value_m, only: type_string, fson_value
-    use fson_string_m, only: fson_string_copy 
+    use fson_string_m, only: fson_string_copy
     implicit none
-  
+
     type(fson_value), pointer :: this, p
     character(len=*), optional :: path
     character(len=*) :: value
@@ -886,7 +886,7 @@ contains
     use fson_value_m, only: type_array, fson_value_get, fson_value_count, &
       fson_value
     implicit none
-  
+
     type(fson_value), pointer :: this, p, element
     character(len=*), optional :: path
     integer :: index, count
@@ -944,7 +944,7 @@ contains
     use fson_value_m, only: type_array, fson_value_get, fson_value_count, &
       fson_value
     implicit none
-  
+
     type(fson_value), pointer :: this, p, element
     character(len=*), optional :: path
     integer :: index, count
@@ -984,7 +984,7 @@ contains
     use fson_value_m, only: type_array, fson_value_get, fson_value_count, &
       fson_value
     implicit none
-  
+
     type(fson_value), pointer :: this, p, element
     character(len=*), optional :: path
     integer :: index, count
@@ -1022,9 +1022,9 @@ contains
   !
   subroutine get_double_array(this, path, array)
     use fson_value_m, only: type_array, fson_value_get, fson_value_count, &
-      fson_value  
+      fson_value
     implicit none
-  
+
     type(fson_value), pointer :: this, p, element
     character(len=*), optional :: path
     integer :: index, count
@@ -1063,9 +1063,9 @@ contains
   subroutine get_string_array(this, path, array)
     use fson_value_m, only: fson_value_count, fson_value_get, fson_value, &
       TYPE_ARRAY
-    use fson_string_m, only: fson_string_copy 
+    use fson_string_m, only: fson_string_copy
     implicit none
-  
+
     type(fson_value), pointer :: this, p, element
     character(len=*), optional :: path
     integer :: index, count
@@ -1105,7 +1105,7 @@ contains
     use fson_value_m, only: fson_value_count, fson_value_get, fson_value, &
       TYPE_ARRAY
     implicit none
-  
+
     type(fson_value), pointer :: this, p, element
     character(len=*) :: path, subpath
     integer, dimension(:), intent(out) :: array
@@ -1141,7 +1141,7 @@ contains
     use fson_value_m, only: fson_value_count, fson_value_get, fson_value, &
       TYPE_ARRAY
     implicit none
-  
+
     type(fson_value), pointer :: this, p, element
     character(len=*) :: path, subpath
     real, dimension(:), intent(out) :: array
@@ -1177,7 +1177,7 @@ contains
     use fson_value_m, only: fson_value_count, fson_value_get, fson_value, &
       TYPE_ARRAY
     implicit none
-  
+
     type(fson_value), pointer :: this, p, element
     character(len=*) :: path, subpath
     real(kind(1.0D0)), dimension(:), intent(out) :: array
@@ -1213,7 +1213,7 @@ contains
     use fson_value_m, only: fson_value_count, fson_value_get, fson_value, &
       TYPE_ARRAY
     implicit none
-  
+
     type(fson_value), pointer :: this, p, element
     character(len=*) :: path, subpath
     character(len=*), dimension(:), intent(out) :: array
@@ -1292,7 +1292,7 @@ contains
 
     pushed_index = 0
   end subroutine init_fson_library
-  
+
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   !
   ! FSON PARSE
@@ -1327,7 +1327,7 @@ contains
     open (unit=u, file=file, status="old", action="read", &
          form="formatted", position="rewind")
 
-    ! create the value and associate the pointer        
+    ! create the value and associate the pointer
     p => fson_value_create()
 
     ! parse as a value
@@ -1510,7 +1510,7 @@ contains
   function parse_string(unit) result(string)
     use fson_string_m, only: fson_string, fson_string_create, fson_string_append
     implicit none
-    
+
     integer, intent(inout) :: unit
     type(fson_string), pointer :: string
 
@@ -1564,7 +1564,7 @@ contains
   subroutine parse_number(unit, value)
     use fson_value_m, only: TYPE_INTEGER, TYPE_REAL
     implicit none
-    
+
     integer, intent(inout) :: unit
     type(fson_value), pointer :: value
     logical :: eof, negative, decimal, scientific
@@ -1764,7 +1764,7 @@ contains
           read (unit=unit, fmt="(a)", advance="no", iostat=ios) c
        end if
        if (ios == end_of_record) then
-          cycle            
+          cycle
        else if (ios == end_of_file) then
           eof = .true.
           exit

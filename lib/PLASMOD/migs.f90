@@ -32,4 +32,4 @@
    write(*,*) 'Matrix inversion failed!'
    stop 1
   end if
-end 
+end

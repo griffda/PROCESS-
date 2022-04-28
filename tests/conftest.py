@@ -5,7 +5,7 @@ Defines fixtures that will be shared across all test modules.
 import pytest
 from system_check import system_compatible
 import warnings
-import numpy as np
+
 
 from process.fortran import error_handling as eh
 

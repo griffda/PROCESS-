@@ -10,22 +10,24 @@
     James Morris
     UKAEA
     26.09.19
-        
+
 """
 
 import os
-import sys
 
 # Get repository root directory
-import  pathlib
+import pathlib
 import time
-timeout = time.time() + 10   # 10 seconds
+
+timeout = time.time() + 10  # 10 seconds
 found_root = False
 back = ""
 while not found_root:
     if time.time() > timeout:
-        print("Can't find repository root. Make sure utility is being run "
-              "inside a PROCESS repository clone")
+        print(
+            "Can't find repository root. Make sure utility is being run "
+            "inside a PROCESS repository clone"
+        )
         break
     else:
         my_file = pathlib.Path(back + ".gitignore")
@@ -42,18 +44,9 @@ LINE_LIMIT = 100
 
 # Paths and files to check
 CHECK_LIST = {
-    "fortran" :{
-        "path" : REPO_ROOT+"/source/fortran/",
-        "extension" : ".f90"
-    },
-    "python" :{
-        "path" : REPO_ROOT+"/utilities/",
-        "extension" : ".py"
-    },
-    "latex" :{
-        "path" : REPO_ROOT+"/documentation/",
-        "extension" : ".tex"
-    }
+    "fortran": {"path": REPO_ROOT + "/source/fortran/", "extension": ".f90"},
+    "python": {"path": REPO_ROOT + "/utilities/", "extension": ".py"},
+    "latex": {"path": REPO_ROOT + "/documentation/", "extension": ".tex"},
 }
 
 if __name__ == "__main__":
@@ -63,7 +56,7 @@ if __name__ == "__main__":
     intro = """
 
     Checking line length standard (<100) lines.
-    
+
     For the following locations
 
         - /source/fortran/*.f90
@@ -94,14 +87,18 @@ if __name__ == "__main__":
                 FORT_STATUS = True
                 print("")
                 print(filename)
-                file_lines = open(check_path + filename, "r", 
-                                  encoding="UTF-8").readlines()
+                file_lines = open(
+                    check_path + filename, "r", encoding="UTF-8"
+                ).readlines()
                 counter = 0
                 for line in file_lines:
                     counter += 1
                     if len(line) > LINE_LIMIT:
-                        print("|-- {0:30} :: line :: {1:<5} :: length = {2:<10}".
-                             format(filename, counter, len(line)))
+                        print(
+                            "|-- {0:30} :: line :: {1:<5} :: length = {2:<10}".format(
+                                filename, counter, len(line)
+                            )
+                        )
                         STATUS = False
                         LINE_COUNT += 1
                         if FORT_STATUS:

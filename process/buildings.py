@@ -235,16 +235,11 @@ class Buildings:
 
         # Decontamination cell size
         dcw = 2.0e0 * tcw + 1.0e0
-        dcl = 2.0e0 * tcw + 1.0e0
 
         # Hot cell size
         # hccl : clearance around components in hot cell, m
         hcw = shro - shri + 3.0e0 * buildings_variables.hccl + 2.0e0
         hcl = 3.0e0 * (shro - shri) + 4.0e0 * buildings_variables.hccl + tcw
-
-        # Radioactive waste treatment
-        rww = dcw
-        rwl = hcl - dcl - buildings_variables.hcwt
 
         # Maintenance building dimensions
         rmbw = hcw + dcw + 3.0e0 * buildings_variables.hcwt
@@ -452,9 +447,6 @@ class Buildings:
 
         # Fuel Cycle facilities: include within reactor building
         # Dimensions based upon estimates from W. Smith
-        fc_building_area = (
-            buildings_variables.fc_building_l * buildings_variables.fc_building_w
-        )
         buildings_variables.reactor_hall_l = (
             buildings_variables.reactor_hall_l + buildings_variables.fc_building_l
         )

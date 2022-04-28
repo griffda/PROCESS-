@@ -1,9 +1,9 @@
 # f2py Programming Style Requirements
-f2py is a tool developed by Numpy, it is used to provide an interface between Python and Fortran. PROCESS uses f2py for its Fortran interface. 
+f2py is a tool developed by Numpy, it is used to provide an interface between Python and Fortran. PROCESS uses f2py for its Fortran interface.
 
-f2py can wrap most modern Fortran, that being said it is opinionated on the structure of modules, subroutines and function. 
+f2py can wrap most modern Fortran, that being said it is opinionated on the structure of modules, subroutines and function.
 
-The following rules will be enforced on all Fortran code, whether currently wrapped or not, and any code not adhering to such rules will not pass code review. 
+The following rules will be enforced on all Fortran code, whether currently wrapped or not, and any code not adhering to such rules will not pass code review.
 
 Examples of rules may be given in the context of an example to aide understanding.
 
@@ -14,8 +14,8 @@ f2py does not allow the use of derived types as subroutine/function arguments. F
 ```fortran
 module foo
     implicit none
-    
-    type :: duck 
+
+    type :: duck
         integer :: id
         character(len=10) :: first_name
     end type duck
@@ -43,7 +43,7 @@ end module foo
 ```
 
 ## Parameters as dimensions of an array
-f2py does not allow dimensions of an array to be parameters without issuing an f2py directive. 
+f2py does not allow dimensions of an array to be parameters without issuing an f2py directive.
 
 **Bad:**
 ```fortran
@@ -130,14 +130,14 @@ Also note that when using this interface as an argument, the standard Fortran wa
 
 
 ## Private/public attributes
-f2py cannot see `private` routines or variables. This means the use of `private` must be carefully used otherwise f2py will raise errors thinking it cannot see variables. This does, however, mean that the `private` keyword can be used to 'hide' error-causing variables from f2py - such as derived types that are not used as routine parameters. 
+f2py cannot see `private` routines or variables. This means the use of `private` must be carefully used otherwise f2py will raise errors thinking it cannot see variables. This does, however, mean that the `private` keyword can be used to 'hide' error-causing variables from f2py - such as derived types that are not used as routine parameters.
 
 Developers should also be carefully not to accidentally implicitly-private a module by using the `public` keyword on a variable or routine; every other variable/module variable will become implicitly private.
 
 Generally, we advise against the use of `private` and `public` keywords unless in very select circumstances.
 
 
-## Intrinsic double precision 
+## Intrinsic double precision
 The Fortran-recommended way to handle `real` precision is to `use` `real64` from the intrinsic `iso_fortran_env`:
 
 **Bad:**
@@ -148,7 +148,7 @@ module foo
 
     implicit none
 
-    contains 
+    contains
 
     subroutine bar(x, y)
         real(dp), intent(in) :: x
@@ -159,9 +159,9 @@ module foo
 end module foo
 ```
 
-When f2py wraps this module, it will wrap each subroutine seperately and the `dp` pointer will not be available within this wrapper. Because of this, an error will be raised declaring `dp` to be undefined. 
+When f2py wraps this module, it will wrap each subroutine seperately and the `dp` pointer will not be available within this wrapper. Because of this, an error will be raised declaring `dp` to be undefined.
 
-The solution is to preprocess wrapped files first, and replace `dp` with `8`. We use an `ifndef` preprocessor directive to indicate not to include the `use ...` line in the wrapping process. 
+The solution is to preprocess wrapped files first, and replace `dp` with `8`. We use an `ifndef` preprocessor directive to indicate not to include the `use ...` line in the wrapping process.
 
 **Good:**
 ```fortran
@@ -173,7 +173,7 @@ module foo
 
     implicit none
 
-    contains 
+    contains
 
     subroutine bar(x, y)
         real(dp), intent(in) :: x
@@ -192,7 +192,7 @@ This then creates an intermediate source file which does not have undefined poin
 module foo
     implicit none
 
-    contains 
+    contains
 
     subroutine bar(x, y)
         real(8), intent(in) :: x
@@ -214,7 +214,7 @@ module foo
 
     implicit none
 
-    contains 
+    contains
 
     subroutine bar(x, y)
         real(dp), dimension(:,:), intent(in) :: x
@@ -234,7 +234,7 @@ module foo
 
     implicit none
 
-    contains 
+    contains
 
     subroutine bar(x, y, n, i)
         integer, intent(in) :: n, i
@@ -263,7 +263,7 @@ def bar(string: str) -> None:
     fortran.foomod.barvar = string_to_f2py_compatible(fortran.foomod.barvar, string)
 ```
 
-where `fortran.foomod.barvar` will be set as the string `string`, padded with whitespace if too short or truncated if too long. 
+where `fortran.foomod.barvar` will be set as the string `string`, padded with whitespace if too short or truncated if too long.
 
 Remember to also use the fortran `trim` function to remove padding when using any strings inside of Fortran code.
 

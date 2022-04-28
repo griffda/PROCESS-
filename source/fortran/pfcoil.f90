@@ -18,7 +18,7 @@ module pfcoil_module
    implicit none
 
    public
- 
+
    !  Local variables
    
    integer :: nef,nfxf
@@ -42,18 +42,18 @@ module pfcoil_module
    logical :: first_call
    ! outpf subroutine var requiring re-initialisation before each new run
    logical :: CSlimit
- 
+
    type(volume_fractions), private :: conductorpf
    type(supercon_strand), private ::croco_strand
- 
+
  contains
- 
+
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- 
+
    subroutine init_pfcoil_module
      !! Initialise module variables
      implicit none
- 
+
      first_call = .true.
      CSlimit = .false.
      nef = 0
@@ -103,29 +103,29 @@ module pfcoil_module
      !! None
      !
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- 
+
        use constants, only: twopi, rmu0
      implicit none
- 
+
      !  Arguments
- 
+
      integer, intent(in) :: nc
      real(dp), intent(in) :: rp, zp
      real(dp), dimension(nc), intent(in) :: rc, zc, cc
      logical, optional :: nciszero
      real(dp), dimension(nc), intent(out) :: xc
      real(dp), intent(out) :: br, bz, psi
- 
+
      !  Local variables
- 
+
      integer :: i
      real(dp) a0,a1,a2,a3,a4,b0,b1,b2,b3,b4,c1,c2,c3,c4,d1,d2,d3,d4
      real(dp) :: zs,dr,d,s,t,a,xk,xe,dz,sd,brx,bzx
- 
+
      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- 
+
      !  Elliptic integral coefficients
- 
+
      a0 = 1.38629436112D0
      a1 = 0.09666344259D0
      a2 = 0.03590092383D0
@@ -144,7 +144,7 @@ module pfcoil_module
      d2 = 0.09200180037D0
      d3 = 0.04069697526D0
      d4 = 0.00526449639D0
- 
+
      br  = 0.0D0
      bz  = 0.0D0
      psi = 0.0D0
@@ -156,40 +156,40 @@ module pfcoil_module
      do i = 1,nc
         d = (rp + rc(i))**2 + (zp - zc(i))**2
         s = 4.0D0*rp*rc(i)/d
- 
+
         t = 1.0D0 - s
         a = log(1.0D0/t)
- 
+
         dz = zp - zc(i)
         zs = dz**2
         dr = rp - rc(i)
         sd = sqrt(d)
- 
+
         !  Evaluation of elliptic integrals
- 
+
         xk = a0 + t*(a1 + t*(a2 + t*(a3 + a4*t))) &
              + a*(b0 + t*(b1 + t*(b2 + t*(b3 + b4*t))))
         xe = 1.0D0 + t*(c1 + t*(c2 + t*(c3 + c4*t))) &
              + a*t*(d1 + t*(d2 + t*(d3 + d4*t)))
- 
+
         !  Mutual inductances
- 
+
         xc(i) = 0.5D0*rmu0*sd*((2.0D0 - s)*xk - 2.0D0*xe)
- 
+
         !  Radial, vertical fields
- 
+
         brx = rmu0*cc(i)*dz/(twopi*rp*sd)*(- xk + &
              (rc(i)**2 + rp**2 + zs)/(dr**2 + zs)*xe)
         bzx = rmu0*cc(i)/(twopi*sd)*(xk + &
              (rc(i)**2 - rp**2 - zs)/(dr**2 + zs)*xe)
- 
+
         !  Sum fields, flux
- 
+
         br = br + brx
         bz = bz + bzx
         psi = psi + xc(i)*cc(i)
- 
+
      end do
- 
+
    end subroutine bfield
  end module pfcoil_module

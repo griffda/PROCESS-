@@ -19,16 +19,16 @@ module function_evaluator
   implicit none
 
   public
-  
+
 contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! fcnhyb() is commented out temporarily. It calls the caller() subroutine, which
 ! is being moved to Python. fcnhyb() is passed into maths_library.hybrd() as an
-! external subroutine argument, which calls fcnhyb() within a goto block. This 
+! external subroutine argument, which calls fcnhyb() within a goto block. This
 ! is difficult to unravel when converting to Python (so that caller() is called
-! from Python), so it has been decided to comment out hybrd() and fcnhyb() 
-! temporarily, disabling the non-optimising solver, to allow Python conversion 
+! from Python), so it has been decided to comment out hybrd() and fcnhyb()
+! temporarily, disabling the non-optimising solver, to allow Python conversion
 ! work using the optimising solver (vmcon()) to continue.
 
 !   subroutine fcnhyb(n,xc,rc,iflag)
@@ -48,8 +48,8 @@ contains
 !     !
 !     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-!     use constraints, only: constraint_eqns 
-!     use numerics, only: neqns 
+!     use constraints, only: constraint_eqns
+!     use numerics, only: neqns
 !     use caller_module, only: caller
 !     implicit none
 
@@ -94,17 +94,17 @@ contains
 
 		use global_variables, only: xlabel, iscan_global
 		use constants, only: nout, iotty, mfile
-		use constraints, only: constraint_eqns 
-		use cost_variables, only: concost, cfactr, cdirt, ireactor, iavail, coe 
+		use constraints, only: constraint_eqns
+		use cost_variables, only: concost, cfactr, cdirt, ireactor, iavail, coe
 		use current_drive_variables, only: bigq, porbitlossmw, pinjmw
 		use divertor_variables, only: hldiv
 		use error_handling, only: idiags, fdiags, errors_on, report_error
-		use heat_transport_variables, only: pnetelmw 
-    use numerics, only: minmax 
+		use heat_transport_variables, only: pnetelmw
+    use numerics, only: minmax
 		use physics_variables, only: powfmw, bt, rmajor, wallmw, aspect, pohmmw
-		use pf_power_variables, only: srcktpm 
-		use process_output, only: int_to_string3 
-		use tfcoil_variables, only: tfcmw 
+		use pf_power_variables, only: srcktpm
+		use process_output, only: int_to_string3
+		use tfcoil_variables, only: tfcmw
 		use times_variables, only: tburn
     implicit none
 
@@ -195,7 +195,7 @@ contains
 
    case (18)  !  Null figure of merit
       fc = 1d0
-   
+
    case (19)  !  major radius/burn time
       fc = sgn * ( -0.5d0 * (bigq/20.0D0) - 0.5d0 * (tburn/7200.d0) )
 

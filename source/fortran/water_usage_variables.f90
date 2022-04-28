@@ -7,7 +7,7 @@ module water_usage_variables
   !!
   !! https://www.usgs.gov/special-topic/water-science-school/science/water-density
   !! https://www.thermal-engineering.org/what-is-latent-heat-of-vaporization-definition/
-  !! 
+  !!
 
 #ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
@@ -22,10 +22,10 @@ module water_usage_variables
 
   real(dp) :: watertemp
   !! water temperature (degrees Celsius)
-  
+
   real(dp) :: windspeed
   !! wind speed (m/s)
-  
+
   real(dp) :: waterdens
   !! density of water (kg/m3)
   !!   for simplicity, set to static value applicable to water at 21 degC
@@ -36,17 +36,17 @@ module water_usage_variables
 
   real(dp) :: volheat
   !! volumetric heat of vaporization (J/m3)
-  
+
   real(dp) :: evapratio
-  !! evaporation ratio: ratio of the heat used to evaporate water 
+  !! evaporation ratio: ratio of the heat used to evaporate water
   !!   to the total heat discharged through the tower
-  
+
   real(dp) :: evapvol
   !! evaporated volume of water (m3)
-  
+
   real(dp) :: energypervol
   !! input waste (heat) energy cooled per evaporated volume (J/m3)
-  
+
   real(dp) :: volperenergy
   !! volume evaporated by units of heat energy (m3/MJ)
 
@@ -78,7 +78,7 @@ module water_usage_variables
     waterusetower = 0.0D0
     wateruserecirc = 0.0D0
     wateruseonethru = 0.0D0
-      
+
   end subroutine init_watuse_variables
 
 end module water_usage_variables

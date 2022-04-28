@@ -7,7 +7,7 @@ module read_radiation
   !! author: M Kovari, CCFE, Culham Science Centre
   !! N/A
   !! This module contains the PROCESS Kallenbach divertor model
-  !! 
+  !!
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -24,22 +24,22 @@ module read_radiation
 
   ! Vars in function read_lz requiring re-initialisation on each new run
   integer :: location
-  
+
   ! Length of temperature and netau data
   integer :: nt, nnetau
-  
+
   ! Impurity data array
   real(dp), dimension(200,5) :: impurity_data
-  
+
   ! The values of the Lz, mean Z, and mean Z^2 stored in the data files
   real(dp), dimension(nimp,200,5) :: data_lz, data_z, data_qz
-  
+
   ! The values of ln(n.tau) at which the data is stored.
   real(dp), dimension(nimp,5) :: lnetau_lz, lnetau_z, lnetau_qz
-  
+
   ! The values of ln(Te) at which the data is stored.
   real(dp), dimension(nimp, 200) :: logT_lz, logT_z, logT_qz
-  
+
   ! First call boolean switch array
   logical :: FirstCall(nimp)
 
@@ -52,7 +52,7 @@ contains
             lzdir = INSTALLDIR//'/process/data/lz_non_corona_14_elements/'
         else
             lzdir = trim(process_dir)//'/data/lz_non_corona_14_elements/'
-        end if    
+        end if
   end function lzdir
 
   subroutine init_read_radiation
@@ -254,7 +254,7 @@ contains
     !! logT_array    : output real array : log temperature array
     !! lnetau_array  : output real array : log netau array
     !! Read the impurity data from database
-    !! 
+    !!
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -348,7 +348,7 @@ contains
     !! author: M Kovari, CCFE, Culham Science Centre
     !! Write loss data to file for plotting
     !! Compare to Figure 3 in Kallenbach 2016.
-    !! 
+    !!
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -399,7 +399,7 @@ contains
     !! Write z and z^2 data to file for plotting
     !! author: M Kovari, CCFE, Culham Science Centre
     !! Write z and z^2 data to file for plotting
-    !! 
+    !!
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

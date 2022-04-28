@@ -24,7 +24,7 @@ module vmcon_module
   real(dp), dimension(:,:), allocatable :: b
   real(dp), dimension(:), allocatable :: vlam,vmu,gm,bdl,bdu
   real(dp) :: sum
-  
+
   ! Other module variables, originally local to subroutine vmcon
   real(dp), dimension(:), allocatable :: best_solution_vector
   real(dp), dimension(:), allocatable :: delta_var           ! For opt data extraction only
@@ -33,7 +33,7 @@ module vmcon_module
   real(dp) :: alpha,aux,auxa,calpha,dbd,dflsa,dg, &
     fls,flsa,spgdel,temp,thcomp,theta
   real(dp) :: summ, sqsumsq, sqsumsq_tol
-  real(dp) :: lowest_valid_fom    
+  real(dp) :: lowest_valid_fom
   real(dp), parameter :: zero = 0.0D0
   real(dp), parameter :: cp1 = 0.1D0
   real(dp), parameter :: cp2 = 0.2D0
@@ -43,11 +43,11 @@ module vmcon_module
 
   ! Var from subroutine vmcon requiring re-initialisation on each new run
   real(dp) :: best_sum_so_far
-  
-  ! Exit code for module subroutines: determines when to return completely from 
+
+  ! Exit code for module subroutines: determines when to return completely from
   ! subroutine vmcon
   integer :: exit_code
-  
+
   ! Format string
   character(len=20), parameter :: fmt_str = "(a,1pe10.3)"
 
@@ -75,7 +75,7 @@ contains
     !! meq_ : input integer : number of equality constraints
     !! x_(n) : input real array : initial/final estimates of
     !! solution vector
-    
+
     !! lcnorm_ : input integer : array dimension, >= n+1
     !! b_(lb,lb) : input real array : approximation to the
     !! second derivative matrix of the Lagrangian function.
@@ -165,8 +165,8 @@ contains
     bndu = bndu_
     x = x_
     b = b_
-    
-    ! Array allocation: only allocate what hasn't already been allocated by 
+
+    ! Array allocation: only allocate what hasn't already been allocated by
     ! assignment above
     allocate(vmu(m+2*n+1))
     allocate(vlam(m+2*n+1))
@@ -240,8 +240,8 @@ contains
     real(dp), dimension(m_+(2*n_)+1), intent(out) :: vlam_, vmu_
     real(dp), dimension(n_+1), intent(out) :: gm_, bdl_, bdu_
     real(dp), intent(out) :: sum_
-    
-    
+
+
     !! info_ : output integer : error flag<BR>
     !! INFO < 0 : user termination<BR>
     !! INFO = 0 : improper input parameters<BR>
@@ -353,16 +353,16 @@ contains
     deallocate(best_solution_vector)
     deallocate(delta_var)
   end subroutine unload
-  
+
   subroutine vmcon1()
     implicit none
-    
+
     lowest_valid_fom = 999d0
     best_solution_vector = x
     np1 = n + 1
     npp = 2*np1
     info = 0
-    
+
     !  Check input parameters for errors
     if ( &
       (n <= 0)           .or. &
@@ -379,7 +379,7 @@ contains
       exit_code = 1
       return
     endif
-    
+
     !  Set the initial elements of b and vmu. vmu is the weighting
     !  vector to be used in the line search.
     !  Use hessian estimate provided by user if mode = 1 on input
@@ -392,7 +392,7 @@ contains
         b(j,j) = one
       end do
     end if
-    
+
     mp1 = m + 1
     mpn = m + n
     mpnpp1 = m + np1 + 1
@@ -403,20 +403,20 @@ contains
     do i = 1,n
       if (ilower(i) == 1) mcon = mcon + 1
     end do
-    
+
     !  Set ml to m + number of lower bounds
     ml = mcon
-    
+
     !  Set mlp1 to ml + 1
     mlp1 = ml + 1
     do i = 1, n
       if (iupper(i) == 1) mcon = mcon + 1
     end do
-    
+
     do k = 1, mpnppn
       vmu(k) = zero
     end do
-    
+
     !  Set initial values of some variables
     !  nfev is the number of calls of fcnvmc1
     !  nsix is the length of an array
@@ -429,14 +429,14 @@ contains
 
   subroutine vmcon2()
     implicit none
-    
+
     if (info < 0) then
       exit_code = 1
       return
     endif
-    
+
   end subroutine vmcon2
-  
+
   subroutine vmcon3
     use constants, only: iotty
     implicit none
@@ -445,13 +445,13 @@ contains
       exit_code = 1
       return
     endif
-    
+
     !  Setup line overwrite for VMCON iterations output
     open(unit=iotty)
     write(*,*) ""
-    
+
   end subroutine vmcon3
-  
+
   subroutine vmcon4()
     !  Start the iteration by calling the quadratic programming
     !  subroutine
@@ -463,7 +463,7 @@ contains
     !  Increment the quadratic subproblem counter
     nqp = nqp + 1
     niter = nqp
-    
+
     !  Set the linear term of the quadratic problem objective function
     !  to the negative gradient of objf
     do i = 1, n
@@ -472,12 +472,12 @@ contains
     do i = 1, mpnppn
       vlam(i) = zero
     end do
-    
+
     call qpsub( &
       n,m,meq,conf,cnorm,lcnorm,b,lb,gm,bdl,bdu,info,x,delta, &
       ldel,cm,h,lh,mact,wa,lwa,iwa,liwa,ilower,iupper, &
       bndl,bndu)
-    
+
     !  The following return is made if the quadratic problem solver
     !  failed to find a feasible point, if an artificial bound was
     !  active, or if a singular matrix was detected
@@ -490,10 +490,10 @@ contains
       exit_code = 1
       return
     end if
-    
+
     !  Initialize the line search iteration counter
     nls = 0
-    
+
     !  Calculate the Lagrange multipliers
     do j = 1, mact
       k = iwa(j) - npp
@@ -517,7 +517,7 @@ contains
         vlam(k) = vlam(k) + h(np1j,i)*delta(nsixi)
       end do
     end do
-    
+
     !  Calculate the gradient of the Lagrangian function
     !  nfinit is the value of nfev at the start of an iteration
     nfinit = nfev
@@ -543,7 +543,7 @@ contains
         if (iupper(inx) /= 0) glag(inx) = glag(inx) + vlam(k)
       end if
     end do
-    
+
     !  Set spgdel to the scalar product of fgrd and delta
     !  Store the elements of glag and x
     spgdel = zero
@@ -552,7 +552,7 @@ contains
       glaga(i) = glag(i)
       xa(i) = x(i)
     end do
-    
+
     !  Revise the vector vmu and test for convergence
     sum = abs(spgdel)
     do k = 1, mpnppn
@@ -575,7 +575,7 @@ contains
       end if
       sum = sum + abs(vlam(k)*temp)
     end do
-    
+
     !  Check convergence of constraint residuals
     summ = 0.0D0
     !do i = 1,m
@@ -584,20 +584,20 @@ contains
       summ = summ + conf(i)*conf(i)
     end do
     sqsumsq = sqrt(summ)
-    
+
     !  Output to terminal number of VMCON iterations
     iteration_progress = repeat("=", floor(((niter+1)/FLOAT(maxcal))*20.0D0))
-    
+
     write(iotty, '("==>", I5, "  vmcon iterations. Normalised FoM =", &
     &  f8.4, "  Residuals (sqsumsq) =", 1pe8.1, "  Convergence param =", 1pe8.1, a1)', &
     ADVANCE="NO") niter+1, max(objf, -objf), sqsumsq, sum, achar(13)
-    
+
     if (verbose == 1) then
       write(*,'(a,es13.5,a,es13.5)') &
         'Constraint residuals (sqsumsq) = ',sqsumsq, &
         ' Convergence parameter = ',sum
     end if
-    
+
     ! Writting the step results in OPT.DAT file
     do i = 1, n
       delta_var(i) = delta(i)
@@ -605,15 +605,15 @@ contains
 
     ! Comment in to write optional optimisation information output file
     !  write(opt_file, '(I5,E28.10,*(E18.10))') niter+1, abs(objf), sum, sqsumsq, conf, x, delta_var
-    
+
     !  Exit if both convergence criteria are satisfied
     !  (the original criterion, plus constraint residuals below the tolerance level)
     !  Temporarily set the two tolerances equal (should perhaps be an input parameter)
     sqsumsq_tol = tol
-    
+
     ! Store the lowest valid FoM (ie where constraints are satisfied)
     if (sqsumsq < sqsumsq_tol)  lowest_valid_fom = min(lowest_valid_fom, objf)
-    
+
     if ((sum <= tol).and.(sqsumsq < sqsumsq_tol)) then
       if (verbose == 1) then
         write(*,*) 'Convergence parameter < convergence criterion (epsvmc)'
@@ -622,7 +622,7 @@ contains
       exit_code = 1
       return
     end if
-    
+
     ! The convergence criteria are not yet satisfied.
     ! Store the best value of the convergence parameter achieved
     if(sum < best_sum_so_far) then
@@ -729,7 +729,7 @@ contains
 
   subroutine vmcon9()
     implicit none
-    
+
     if (info >= 0) info = 3
     ! Error return because line search required 10 calls of fcnvmc1
     ! Issue #601 Return the best value of the solution vector - not the last value. MDK
@@ -740,12 +740,12 @@ contains
     exit_code = 1
     return
   end subroutine vmcon9
-    
+
   subroutine vmcon10
     implicit none
     !  Calculate next reduction in the line step assuming
     !  a quadratic fit
-    
+
     alpha = max(cp1,cp5*dflsa/(dflsa - aux))
   end subroutine vmcon10
 
@@ -778,7 +778,7 @@ contains
       exit_code = 1
       return
     end if
-    
+
     nfev = nfev + 1
   end subroutine vmcon11
 

@@ -1,8 +1,8 @@
 module reinke_variables
   !! author: S. Muldrew (UKAEA)
   !!
-  !! This module contains global variables relating to the minimum impurity fraction 
-  !! for detached divertor conditions Reinke criterion. It furthermore uses 
+  !! This module contains global variables relating to the minimum impurity fraction
+  !! for detached divertor conditions Reinke criterion. It furthermore uses
   !! several parameters from Kallenbach model like netau and empurity_enrichment.
   !!
   !!### References
@@ -28,7 +28,7 @@ module reinke_variables
   !! Minimum impurity fraction necessary for detachment. This is the impurity at the SOL/Div.
 
   real(dp) :: fzactual
-  !! Actual impurity fraction of divertor impurity (impvardiv) in the SoL (taking 
+  !! Actual impurity fraction of divertor impurity (impvardiv) in the SoL (taking
   !! impurity_enrichment into account) (`iteration variable 148`)
 
   integer :: reinke_mode

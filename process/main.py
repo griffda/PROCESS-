@@ -1,11 +1,11 @@
 """Run Process by calling into the Fortran.
 
-This uses a Python module called fortran.py, which uses an extension module 
-called "_fortran.cpython... .so", which are both generated from 
-process_module.f90. The process_module module contains the code to actually run 
+This uses a Python module called fortran.py, which uses an extension module
+called "_fortran.cpython... .so", which are both generated from
+process_module.f90. The process_module module contains the code to actually run
 Process.
 
-This file, process.py, is now analogous to process.f90, which contains the 
+This file, process.py, is now analogous to process.f90, which contains the
 Fortran "program" statement. This Python module effectively acts as the Fortran
 "program".
 
@@ -44,15 +44,13 @@ Box file T&amp;M/PKNIGHT/PROCESS (from 24/01/12)
 from process import fortran
 from process.buildings import Buildings
 from process.io import plot_proc
+from process.pulse import Pulse
 from process.scan import Scan
 from process import final
 from process.stellarator import Stellarator
 from process.structure import Structure
 from process.build import Build
-from process.utilities.f2py_string_patch import (
-    string_to_f2py_compatible,
-    f2py_compatible_to_string,
-)
+from process.utilities.f2py_string_patch import string_to_f2py_compatible
 import argparse
 from process.costs_step import CostsStep
 from process.pfcoil import PFCoil
@@ -60,13 +58,11 @@ from process.tfcoil import TFcoil
 from process.divertor import Divertor
 from process.availability import Availability
 from process.ife import IFE
-from process.stellarator import Stellarator
 from process.caller import Caller
 
 from pathlib import Path
 import sys
 import os
-import subprocess
 import logging
 
 # For VaryRun
@@ -484,6 +480,7 @@ class Models:
         self.buildings = Buildings()
         self.vacuum = Vacuum()
         self.water_use = WaterUse()
+        self.pulse = Pulse()
         self.ife = IFE(availability=self.availability)
         self.stellarator = Stellarator(
             availability=self.availability, buildings=self.buildings, vacuum=self.vacuum

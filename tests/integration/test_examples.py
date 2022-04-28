@@ -66,10 +66,11 @@ def scan_cleanup(examples_as_cwd):
         if "IN.DAT" not in file.name:
             os.remove(file)
 
+
 def test_scan(scan_cleanup):
     """Run the scan.py script and check no exceptions are raised.
 
-    scan.py intentionally produces files when running the notebook, but remove 
+    scan.py intentionally produces files when running the notebook, but remove
     them when testing.
     :param scan_cleanup: fixture to delete any produced files
     :type scan_cleanup: None

@@ -1,4 +1,4 @@
-from process import fortran as ft, output
+from process import fortran as ft
 
 
 class Caller:
@@ -77,7 +77,7 @@ class Caller:
         self.models.pfcoil.run()
 
         # Pulsed reactor model
-        ft.pulse_module.pulse(ft.constants.nout, 0)
+        self.models.pulse.run(output=False)
 
         # Blanket model
         """Blanket switch values

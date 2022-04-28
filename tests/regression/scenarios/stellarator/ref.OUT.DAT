@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1386-g2155ecdc code contains untracked changes
-    Branch : 1456-convert-pfcoil-f90-to-python
-   Git log : Regression\ reference\ changes\ to\ kallenbach\ and\ hts
- Date/time :  6 Apr 2022 14:06:20 +01:00(hh:mm) UTC
-      User : jon
-  Computer : jon-Precision-3560
- Directory : /home/jon/code/process
-     Input : /tmp/pytest-of-jon/pytest-76/popen-gw6/test_scenario_stellarator_0/IN.DAT
+   Tag No. : v2.1-1592-g962112e9
+    Branch : divertor-costs-into-cost-model-2-more-stable
+   Git log : Removed\ costs_step.f90\ as\ superceded\ by\ python\ ver
+ Date/time : 19 Apr 2022 11:33:10 +01:00(hh:mm) UTC
+      User : jg6173
+  Computer : L1088
+ Directory : /tmp/pytest-of-jg6173/pytest-70/test_solver0
+     Input : /tmp/pytest-of-jg6173/pytest-70/test_scenario_stellarator_0/IN.DAT
  Run title : HELIAS-5B
   Run type : Reactor concept design: Stellarator model, (c) CCFE
  
@@ -808,9 +808,11 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  AC losses in cryogenic components (MW)                                   (qac/1.0D6)               0.000E+00  OP 
  Resistive losses in current leads (MW)                                   (qcl/1.0D6)               9.031E-02  OP 
  45% allowance for heat loads in transfer lines, storage tanks etc (MW)   (qmisc/1.0D6)             4.757E-02  OP 
- Sum = Total heat removal at cryogenic temperatures (W)                   (helpow/1.0D6)            1.533E-01  OP 
- Temperature of cryogenic components (K)                                  (tmpcry)                  4.200E+00     
+ Sum = Total heat removal at cryogenic temperatures (tmpcry & tcoolin) (M (helpow + helpow_cryal/1. 1.533E-01  OP 
+ Temperature of cryogenic superconducting components (K)                  (tmpcry)                  4.200E+00     
+ Temperature of cryogenic aluminium components (K)                        (tcoolin)                 3.131E+02     
  Efficiency (figure of merit) of cryogenic plant is 13% of ideal Carnot v                           1.891E-03  OP 
+ Efficiency (figure of merit) of cryogenic aluminium plant is 40% of idea                          -2.020E+00  OP 
  Electric power for cryogenic plant (MW)                                  (crypmw)                  8.108E+01  OP 
  
  ************************************ Plant Power / Heat Transport Balance ************************************

@@ -23,7 +23,7 @@ contains
     !! Tests for divertor kallenbach model
     !! author: J Morris, CCFE, Culham Science Centre
     !! Tests of Kallenbach divertor model
-    !! 
+    !!
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     use process_output, only: ocmmnt, osubhd
@@ -31,7 +31,7 @@ contains
     use div_kal_vars, only: kallenbach_test_option, &
       kallenbach_tests
     implicit none
-    
+
     call osubhd(iotty,'# Running test of Kallenbach divertor model')
     select case (kallenbach_test_option)
         case (0)
@@ -52,7 +52,7 @@ contains
     !! author: M Kovari, CCFE, Culham Science Centre
     !! author: J Morris, CCFE, Culham Science Centre
     !! Test of Kallenbach divertor model
-    !! 
+    !!
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -65,8 +65,8 @@ contains
     use physics_variables, only: tesep
 		use constants, only: iotty
 		use div_kal_vars, only: target_spread, lambda_q_omp, &
-      netau_sol, lcon_factor 
-    use divertor_ode_var, only: impurity_arr
+      netau_sol, lcon_factor
+    use impurity_radiation_module, only: impurity_arr_frac
     implicit none
 
     integer :: i
@@ -106,12 +106,12 @@ contains
 
     ! Set the impurity fractions to the test values
     do i = 2, nimp
-      impurity_arr(i)%frac = 0.0D0
+      impurity_arr_frac(i) = 0.0D0
     enddo
 
-    ! Set the impurity array fraction of Nitrogen 
+    ! Set the impurity array fraction of Nitrogen
     ! gives 0.04 in SOL, as in Kallenbach paper
-    impurity_arr(5)%frac = 8.0D-3  
+    impurity_arr_frac(5) = 8.0D-3
 
     call divertor_Kallenbach(rmajor=rmajor, rminor=rminor, &
                             bt=bt, plascur=plascur, &
@@ -189,7 +189,7 @@ contains
 
     call oheadr(nout, 'Divertor: Kallenbach 1D Model - Test with user input - ')
     call osubhd(nout, 'Inputs :')
-    
+
     call ovarre(nout, 'Major radius [m]','(rmajor)', rmajor)
     call ovarre(nout, 'Aspect ratio','(aspect)', aspect)
     call ovarre(nout, 'Toroidal field [T]','(bt)', bt)
@@ -202,7 +202,7 @@ contains
     call ovarre(nout, 'Describes departure from local ionisation equil. in SOL; [ms;1e20/m3]','(netau_sol)', netau_sol)
     call ovarre(nout, 'Angle between flux surface and divertor target [deg]','(targetangle)', targetangle)
     call ovarre(nout, 'Power density on target including surface recombination [w/m2]','(qtargettotal)', qtargettotal)
-    
+
     call divertor_Kallenbach(rmajor=rmajor, rminor=rminor, &
                             bt=bt, plascur=plascur, &
                             q=q, &
@@ -251,7 +251,7 @@ contains
     use plasma_geometry_module, only: xparam
 		use div_kal_vars, only: lambda_q_omp, netau_sol, &
       kallenbach_scan_var, target_spread, kallenbach_scan_start, &
-      kallenbach_scan_end, kallenbach_scan_num 
+      kallenbach_scan_end, kallenbach_scan_num
     implicit none
 
     integer :: i
@@ -276,7 +276,7 @@ contains
 
     ! Calculate average poloidal field
     b_pol = bpol(itart, plascur, q, aspect, bt, kappa, triang, pperim)
-  
+
     call oheadr(nout, 'Divertor: Kallenbach 1D Model - SCANS - ')
     call ovarin(nout,'Number of scan points','(isweep)',kallenbach_scan_num)
     call ovarin(nout,'Scanning variable number','(kallenbach_scan_var)',kallenbach_scan_var)
@@ -313,14 +313,14 @@ contains
         write(*,*) "Kallenbach scan variable not recognised"
         stop 1
     end select
-  
+
     step_value = (kallenbach_scan_end - kallenbach_scan_start)/kallenbach_scan_num
-  
+
     do i = 1, kallenbach_scan_num
-  
+
         call oblnkl(nout)
         call ovarin(nout,'Scan point number','(iscan)',i)
-        
+
         call divertor_Kallenbach(rmajor=rmajor, rminor=rminor, &
                             bt=bt, plascur=plascur, &
                             q=q, &
@@ -335,7 +335,7 @@ contains
                             ! iprint turned off by default to stop _divertor.txt debug file being written
                             ! turn iprint to 1 for such a debug file. Possible flag in input file can
                             ! be added if requested
-  
+
         select case (kallenbach_scan_var)
           case(0)
             ttarget = ttarget + step_value
@@ -347,10 +347,9 @@ contains
             lambda_q_omp = step_value
           case(4)
             netau_sol = step_value
-        end select        
+        end select
     end do
-  
+
   end subroutine Kallenbach_scan
 
 end module kallenbach_module
-

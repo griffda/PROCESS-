@@ -1,5 +1,5 @@
 """
-Code to perform the Sobols sensistivity analysis to 
+Code to perform the Sobols sensistivity analysis to
 investiage the sensistivity of the input parameters in PROCESS
 
 Author: A. Pearce (alexander.pearce@ukaea.uk)
@@ -30,7 +30,7 @@ from SALib.analyze import sobol
 from process.io.process_config import RunProcessConfig
 from process.io.in_dat import InDat
 from process.io.mfile import MFile
-from process.io.process_funcs import set_variable_in_indat, process_stopped
+from process.io.process_funcs import set_variable_in_indat
 import numpy as np
 import json
 

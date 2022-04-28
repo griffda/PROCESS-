@@ -41,7 +41,7 @@ contains
     use global_variables, only: run_tests, verbose, output_prefix
 		use constants, only: mfile
     use maths_library, only: secant_solve
-    use plasmod_variables, only: plasmod_nchannels, numerics_transp, & 
+    use plasmod_variables, only: plasmod_nchannels, numerics_transp, &
       plasmod_chisawpos, plasmod_x_heat, geom, plasmod_psepplh_sup, &
       plasmod_pfus, plasmod_dx_heat, plasmod_maxpauxor, plasmod_dtinc, num, &
       plasmod_test, plasmod_ainc, plasmod_dt, inp0, plasmod_dtmaxmax, &
@@ -327,14 +327,14 @@ contains
     !! file : input integer : Fortran output unit identifier
     !! string : input character string : Character string to be used
     implicit none
-    
+
     !  Arguments
     integer, intent(in) :: file
     character(len=*), intent(in) :: string
-    
+
     write(file,*) trim(string)
   end subroutine write
-  
+
   subroutine dblcol(file, desc, val1, val2)
     !! Write a description and 2 columns of values to 2dp in standard notation.
     !! file : input integer : Fortran output unit identifier

@@ -43,7 +43,7 @@ class Build:
 
         #  Half-width of outboard TF coil in toroidal direction (m)
 
-        a = 0.5e0 * tfcoil_variables.tftort  #  (previously used inboard leg width)
+        a = 0.5e0 * tfcoil_variables.tftort  # (previously used inboard leg width)
 
         #  Radial thickness of outboard TF coil leg (m)
 
@@ -65,20 +65,20 @@ class Build:
         theta = omega - numpy.arctan(a / d)
         phi = theta - numpy.arcsin(a / e)
 
-        g = numpy.sqrt(e * e + f * f - 2.0e0 * e * f * numpy.cos(phi))  #  cosine rule
+        g = numpy.sqrt(e * e + f * f - 2.0e0 * e * f * numpy.cos(phi))  # cosine rule
 
         if g > c:
 
             h = numpy.sqrt(g * g - c * c)
 
             alpha = numpy.arctan(h / c)
-            eps = numpy.arcsin(e * numpy.sin(phi) / g) - alpha  #  from sine rule
+            eps = numpy.arcsin(e * numpy.sin(phi) / g) - alpha  # from sine rule
 
             #  Maximum tangency radius for centreline of beam (m)
 
             current_drive_variables.rtanmax = f * numpy.cos(eps) - 0.5e0 * c
 
-        else:  #  coil separation is too narrow for beam...
+        else:  # coil separation is too narrow for beam...
 
             error_handling.fdiags[0] = g
             error_handling.fdiags[1] = c
@@ -176,32 +176,32 @@ class Build:
         triu = physics_variables.triang
         tril = physics_variables.triang
 
-        ## Old method: assumes that divertor arms are continuations of arcs
+        # Old method: assumes that divertor arms are continuations of arcs
         #
-        ##  Outboard side
-        ##  build_variables.plsepo = poloidal length along the separatrix from null to
-        ##           strike point on outboard [default 1.5 m]
-        ##  thetao = arc angle between the strike point and the null point
+        # Outboard side
+        # build_variables.plsepo = poloidal length along the separatrix from null to
+        # strike point on outboard [default 1.5 m]
+        # thetao = arc angle between the strike point and the null point
         #
         # xpointo = physics_variables.rmajor + 0.5e0*physics_variables.rminor*(kap**2 + tri**2 - 1.0e0) /     #     (1.0e0 - tri)
         # rprimeo = (xpointo - physics_variables.rmajor + physics_variables.rminor)
         # phio = asin(kap*physics_variables.rminor/rprimeo)
         # thetao = build_variables.plsepo/rprimeo
         #
-        ##  Initial strike point
+        # Initial strike point
         #
         # yspointo = rprimeo * sin(thetao + phio)
         # xspointo = xpointo - rprimeo * cos(thetao + phio)
         #
-        ##  Outboard strike point radius - normalized to ITER
+        # Outboard strike point radius - normalized to ITER
         #
         # rstrko = xspointo + 0.14e0
         #
-        ##  Uppermost divertor strike point (end of power decay)
-        ##  anginc = angle of incidence of scrape-off field lines on the
-        ##           divertor (rad)
+        # Uppermost divertor strike point (end of power decay)
+        # anginc = angle of incidence of scrape-off field lines on the
+        # divertor (rad)
         #
-        ##+**PJK 25/07/11 Changed sign of anginc contribution
+        # +**PJK 25/07/11 Changed sign of anginc contribution
         # yprimeb = soleno * cos(thetao + phio - anginc)
         #
         # divht = yprimeb + yspointo - kap*physics_variables.rminor
@@ -212,18 +212,18 @@ class Build:
         #  Find half-angle of outboard arc
         # denomo = (tril**2 + kap**2 - 1.0e0)/( 2.0e0*(1.0e0+tril) ) - tril
         # thetao = atan(kap/denomo)
-        ##  Angle between horizontal and inner divertor leg
+        # Angle between horizontal and inner divertor leg
         # alphad = (pi/2.0e0) - thetao
 
         # Method 26/05/2016
         # Find radius of inner and outer plasma arcs
 
         rco = 0.5 * numpy.sqrt(
-            (physics_variables.rminor ** 2 * ((tril + 1.0e0) ** 2 + kap ** 2) ** 2)
+            (physics_variables.rminor**2 * ((tril + 1.0e0) ** 2 + kap**2) ** 2)
             / ((tril + 1.0e0) ** 2)
         )
         rci = 0.5 * numpy.sqrt(
-            (physics_variables.rminor ** 2 * ((tril - 1.0e0) ** 2 + kap ** 2) ** 2)
+            (physics_variables.rminor**2 * ((tril - 1.0e0) ** 2 + kap**2) ** 2)
             / ((tril - 1.0e0) ** 2)
         )
 
@@ -1243,7 +1243,7 @@ class Build:
             - build_variables.blnktth
             - 0.5e0 * (build_variables.fwith + build_variables.fwoth)
         )
-        if physics_variables.idivrt == 2:  #  (i.e. physics_variables.i_single_null=0)
+        if physics_variables.idivrt == 2:  # (i.e. physics_variables.i_single_null=0)
             htop = hbot
         else:
             htop = (
@@ -1255,7 +1255,7 @@ class Build:
 
         if (physics_variables.itart == 1) or (
             fwbs_variables.fwbsshape == 1
-        ):  #  D-shaped
+        ):  # D-shaped
 
             #  Major radius to outer edge of inboard section
             r1 = (
@@ -1283,7 +1283,7 @@ class Build:
                 build_variables.fwarea,
             ) = maths_library.dshellarea(r1, r2, hfw)
 
-        else:  #  Cross-section is assumed to be defined by two ellipses
+        else:  # Cross-section is assumed to be defined by two ellipses
 
             #  Major radius to centre of inboard and outboard ellipses
             #  (coincident in radius with top of plasma)

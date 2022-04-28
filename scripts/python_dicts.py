@@ -17,13 +17,15 @@ from typing import Any, List, NamedTuple
 CURRENT_DIR = pathlib.Path(__file__).resolve().parent
 
 # the following code allows us to import the Process directory as a package
-# ignoring current installs of Process and meaning we get access to the latest 
+# ignoring current installs of Process and meaning we get access to the latest
 # code changes
 # This means the installation of process does not need to be a build dependency
 # of this script and a potential race condition can be removed
 
 # find import information for the process directory sitting above this scripts directory
-process_spec = importlib.util.spec_from_file_location("process", CURRENT_DIR.parent / "process/__init__.py")
+process_spec = importlib.util.spec_from_file_location(
+    "process", CURRENT_DIR.parent / "process/__init__.py"
+)
 # get the module from the above import information
 process_module = importlib.util.module_from_spec(process_spec)
 # add the process_module (from the directory NOT the possibly pre-installed version)
@@ -35,9 +37,9 @@ process_spec.loader.exec_module(process_module)
 
 # now that "process" is temporarily available to import
 # as a package (despite being a directory) we can install what we need
-from process.main import Models
-from process.variables import AnnotatedVariable
 
+from process.main import Models  # noqa: E402
+from process.variables import AnnotatedVariable  # noqa: E402
 
 
 class AnnotatedVariableData(NamedTuple):
