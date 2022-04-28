@@ -107,8 +107,8 @@ module physics_module
       teped, beta, dnelimt, taup, pradpv, fgwped, photon_wall, kappaa_ipb, &
       kappaa, gamma, plhthresh, betap, fvsbrnni, btot, hfact, nesep, palpfwmw, &
       betanb, pradmw, rad_fraction_total, q95, wallmw, zeffai, dnla, vsstt, &
-      poutzoneradmw, falpi, tin, ralpne, triang95, ti, tesep, ibss, dene, p0, &
-      psyncpv, pscalingmw, rad_fraction_sol, pradsolmw, pinzoneradmw, rplas, zeff, &
+      pouterzoneradmw, falpi, tin, ralpne, triang95, ti, tesep, ibss, dene, p0, &
+      psyncpv, pscalingmw, rad_fraction_sol, pradsolmw, pinnerzoneradmw, rplas, zeff, &
       normalised_total_beta, pdhe3, pdivmax, pdivl, fgwsep, pdt, pdd, xarea, &
       faccd, iwalld, itart, pdivu, gtscale, idivrt, pneutmw, neped, ipedestal, &
       icurr, betalim, pdivt, te0, dlamie, dnbeta, ptrimw, facoh, te, &
@@ -462,8 +462,8 @@ module physics_module
        call radpwr(pbrempv,plinepv,psyncpv, &
             pcoreradpv,pedgeradpv,pradpv)
 
-       pinzoneradmw = pcoreradpv*vol
-       poutzoneradmw = pedgeradpv*vol
+       pinnerzoneradmw = pcoreradpv*vol
+       pouterzoneradmw = pedgeradpv*vol
        pradmw = pradpv*vol
     endif
 
@@ -685,7 +685,7 @@ module physics_module
        write(32,*) 'ralpne ',ralpne, ' fimp_13 ',fimp(13)
        write(32,*) 'RADIATION -----'
        write(32,*) 'rad_fraction_total ', rad_fraction_total, ' pradmw ',pradmw
-       write(32,*) 'pinzoneradmw ', pinzoneradmw, ' poutzoneradmw ',poutzoneradmw
+       write(32,*) 'pinnerzoneradmw ', pinnerzoneradmw, ' pouterzoneradmw ',pouterzoneradmw
        write(32,*) 'psyncpv ', psyncpv, ' pbrempv ',pbrempv
        write(32,*) 'plinepv ', plinepv, ' piepv ',piepv
        write(32,*) 'pinjemw ', pinjemw, ' pinjimw ',pinjimw
@@ -3828,11 +3828,11 @@ module physics_module
       ralpne, taueff, dntau, dene, rad_fraction_sol, iprofile, rhopedn, &
       xarea, itart, epbetmax, neped, te0, ptrimw, dnbeta, powerht, psyncpv, &
       res_time, ignite, vol, bvert, tbeta, photon_wall, burnup, kappaa_ipb, &
-      hfact, ilhthresh, alphan, fkzohm, alpha_crit, pohmmw, poutzoneradmw, qlim, &
+      hfact, ilhthresh, alphan, fkzohm, alpha_crit, pohmmw, pouterzoneradmw, qlim, &
       qfuel, triang95, rplas, zeff, pdhe3, plascur, pdt, pdd, pbrempv, &
       ipedestal, dlamie, vsres, falpe, rli, ptremw, alphat, rminor, isc, &
       teped, fdeut, gamma, dnprot, ftrit, aion, btot, vsbrn, betanb, protium, &
-      pchargemw, wallmw, vsstt, aspect, ti, q0, pinzoneradmw, &
+      pchargemw, wallmw, vsstt, aspect, ti, q0, pinnerzoneradmw, &
       normalised_total_beta, pdivmax, dnbeam, kappa95, nesep_crit, fhe3, &
       triang, pneutmw, tauee, betalim, rlp, te, dlimit, ne0, qstar, dnalp, &
       taup, sarea, ti0, plhthresh, bp, dnitot, pradmw, pradsolmw, csawth, rndfuel, q95, &
@@ -4233,8 +4233,8 @@ module physics_module
     call ovarre(outfile,"Normalised minor radius defining 'core'", '(coreradius)',coreradius)
     call ovarre(outfile,"Fraction of core radiation subtracted from P_L", &
          '(coreradiationfraction)',coreradiationfraction)
-    call ovarre(outfile,'Radiation power from inner zone (MW)', '(pinzoneradmw)',pinzoneradmw, 'OP ')
-    call ovarre(outfile,'Radiation power from outer zone (MW)','(poutzoneradmw)', poutzoneradmw, 'OP ')
+    call ovarre(outfile,'Radiation power from inner zone (MW)', '(pinnerzoneradmw)',pinnerzoneradmw, 'OP ')
+    call ovarre(outfile,'Radiation power from outer zone (MW)','(pouterzoneradmw)', pouterzoneradmw, 'OP ')
     if (istell/=0) then
         call ovarre(outfile,'SOL radiation power (MW)','(psolradmw)', psolradmw, 'OP ')
     end if
@@ -4429,7 +4429,7 @@ module physics_module
        call ovarre(outfile,'Radiation power subtracted from plasma power balance (MW)', '',pradmw, 'OP ')
        call ocmmnt(outfile,'  (Radiation correction is total radiation power)')
     else if (iradloss == 1) then
-       call ovarre(outfile,'Radiation power subtracted from plasma power balance (MW)', '',pinzoneradmw, 'OP ')
+       call ovarre(outfile,'Radiation power subtracted from plasma power balance (MW)', '',pinnerzoneradmw, 'OP ')
        call ocmmnt(outfile,'  (Radiation correction is core radiation power)')
     else
        call ovarre(outfile,'Radiation power subtracted from plasma power balance (MW)', '',0.0D0)
