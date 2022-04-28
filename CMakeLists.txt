@@ -145,6 +145,7 @@ LIST(APPEND PROCESS_SRCS
     impurity_radiation.f90
     pulse_variables.f90
     pf_power_variables.f90
+    rebco_variables.f90
 )
 
 PREPROCESS()

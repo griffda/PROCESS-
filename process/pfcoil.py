@@ -13,6 +13,7 @@ from process.fortran import maths_library as ml
 from process.fortran import process_output as op
 from process.fortran import numerics
 from process.fortran import superconductors as sc
+from process.fortran import rebco_variables as rcv
 from process import maths_library as pml
 from process.utilities.f2py_string_patch import f2py_compatible_to_string
 from process import fortran as ft
@@ -631,7 +632,7 @@ class PFCoil:
                         pfv.rjconpf[i],
                         pfv.isumatpf,
                         tfv.fhts,
-                        tfv.strncon_pf,
+                        tfv.str_pf_con_res,
                         tfv.tftmp,
                         tfv.bcritsc,
                         tfv.tcritsc,
@@ -1280,7 +1281,7 @@ class PFCoil:
                 (abs(pfv.ric[pfv.nohc - 1]) / pfv.awpoh) * 1.0e6,
                 pfv.isumatoh,
                 tfv.fhts,
-                tfv.strncon_cs,
+                tfv.str_cs_con_res,
                 tfv.tftmp,
                 tfv.bcritsc,
                 tfv.tcritsc,
@@ -1297,7 +1298,7 @@ class PFCoil:
                 (abs(pfv.ric[pfv.nohc - 1]) / pfv.awpoh) * 1.0e6,
                 pfv.isumatoh,
                 tfv.fhts,
-                tfv.strncon_cs,
+                tfv.str_cs_con_res,
                 tfv.tftmp,
                 tfv.bcritsc,
                 tfv.tcritsc,
@@ -2143,9 +2144,9 @@ class PFCoil:
                 )
                 op.ovarre(
                     self.outfile,
-                    "Strain on CS superconductor",
-                    "(tfcoil_variables.strncon_cs)",
-                    tfv.strncon_cs,
+                    "Residual manufacturing strain in CS superconductor material",
+                    "(tfcoil_variables.str_cs_con_res)",
+                    tfv.str_cs_con_res,
                 )
                 op.ovarre(
                     self.outfile,
@@ -2153,6 +2154,21 @@ class PFCoil:
                     "(pfv.fcuohsu)",
                     pfv.fcuohsu,
                 )
+                # If REBCO material is used, print copperaoh_m2
+                if pfv.isumatoh == 6 or pfv.isumatoh == 8:
+                    op.ovarre(
+                        self.outfile,
+                        "CS current/copper area (A/m2)",
+                        "(copperaoh_m2)",
+                        rcv.copperaoh_m2,
+                    )
+                    op.ovarre(
+                        self.outfile,
+                        "Max CS current/copper area (A/m2)",
+                        "(copperaoh_m2_max)",
+                        rcv.copperaoh_m2_max,
+                    )
+
                 op.ovarre(
                     self.outfile,
                     "Void (coolant) fraction in conductor",
@@ -2233,15 +2249,15 @@ class PFCoil:
                 # REBCO fractures in strains above ~+/- 0.7%
                 if (
                     (pfv.isumatoh == 8)
-                    and tfv.strncon_cs > 0.7e-2
-                    or tfv.strncon_cs < -0.7e-2
+                    and tfv.str_cs_con_res > 0.7e-2
+                    or tfv.str_cs_con_res < -0.7e-2
                 ):
                     eh.report_error(262)
 
                 if (
                     (pfv.isumatpf == 8)
-                    and tfv.strncon_pf > 0.7e-2
-                    or tfv.strncon_pf < -0.7e-2
+                    and tfv.str_pf_con_res > 0.7e-2
+                    or tfv.str_pf_con_res < -0.7e-2
                 ):
                     eh.report_error(263)
 
@@ -2272,6 +2288,11 @@ class PFCoil:
                 )
             elif pfv.isumatpf == 5:
                 op.ocmmnt(self.outfile, " (WST Nb3Sn critical surface model)")
+            elif pfv.isumatpf == 6:
+                op.ocmmnt(
+                    self.outfile,
+                    "REBCO 2nd generation HTS superconductor in CrCo strand",
+                )
             elif pfv.isumatpf == 7:
                 op.ocmmnt(
                     self.outfile,
@@ -2961,12 +2982,24 @@ class PFCoil:
             jcritsc, validity = sc.jcrit_rebco(thelium, bmax, 0)
             jcritstr = jcritsc * (1.0e0 - fcu)
 
+            # The CS coil current at EOF
+            ioheof = bv.hmax * pfv.ohhghf * bv.ohcth * 2.0 * pfv.coheof
+            # The CS coil current/copper area calculation for quench protection
+            # Copper area = (area of coil - area of steel)*(1- void fraction)*
+            # (fraction of copper in strands)
+            rcv.copperaoh_m2 = ioheof / pfv.awpoh * (1.0 - pfv.vfohc) * pfv.fcuohsu
+
         elif isumat == 7:
             # Durham Ginzburg-Landau Nb-Ti parameterisation
             bc20m = tfv.b_crit_upper_nbti
             tc0m = tfv.t_crit_nbti
             jcritsc, bcrit, tcrit = sc.gl_nbti(thelium, bmax, strain, bc20m, tc0m)
             jcritstr = jcritsc * (1.0e0 - fcu)
+
+            # The CS coil current at EOF
+            ioheof = bv.hmax * pfv.ohhghf * bv.ohcth * 2.0 * pfv.coheof
+            # The CS coil current/copper area calculation for quench protection
+            rcv.copperaoh_m2 = ioheof / pfv.awpoh * (1.0 - pfv.vfohc) * pfv.fcuohsu
 
         elif isumat == 8:
             # Branch YCBO model fit to Tallahassee data
