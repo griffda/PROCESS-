@@ -489,7 +489,7 @@ contains
       dntau, ealphadt, eps, falpe, falpha, falpi, fdeut, fhe3, figmer, ftrit, &
       fusionrate, hfact, ifalphap, ignite, iinvqd, isc, iwalld, kappa, &
       kappa95, kappaa, palpepv, palpepv, palpfwmw, palpipv, palpmw, pbrempv, &
-      pchargemw, pcoreradmw, pcoreradpv, pdd, pdhe3, pdivt, pdt, pedgeradmw, &
+      pchargemw, pinzoneradmw, pcoreradpv, pdd, pdhe3, pdivt, pdt, poutzoneradmw, &
       pfuscmw, pedgeradpv, photon_wall, piepv, plascur, plinepv, pneutmw, &
       pneutpv, pohmmw, powerht, powfmw, pradmw, pradpv, protonrate, &
       pscalingmw, psolradmw, psyncpv, ptremw, ptrepv, ptrimw, ptripv, q, q95, &
@@ -592,8 +592,8 @@ contains
     !  Calculate radiation power
     call radpwr(pbrempv,plinepv,psyncpv, pcoreradpv,pedgeradpv,pradpv)
 
-    pcoreradmw = pcoreradpv*vol
-    pedgeradmw = pedgeradpv*vol
+    pinzoneradmw = pcoreradpv*vol
+    poutzoneradmw = pedgeradpv*vol
     pradmw = pradpv*vol
 
     !  Heating power to plasma (= Psol in divertor model)

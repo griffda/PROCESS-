@@ -69,4 +69,7 @@ OBS_VARS = {
     "strain_wp": "str_wp",
     "fstrain_wp": "fstr_wp",
     "rad_fraction": "rad_fraction_total",
+    "pcoreradmw": "pinzoneradmw",
+    "pedgeradmw": "poutzoneradmw",
+    "rad_fraction_core": "rad_fraction_LCFS",
 }

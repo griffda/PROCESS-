@@ -374,9 +374,9 @@ contains
         piepv, powfmw, neped, bt, vsind, vol, taup, teped, palpipv, csawth, &
         falpe, pradmw, rncne, palpepv, qfuel, palpmw, te, betanb, dene, &
         triang, rnone, ptrepv, palpnb, tauei, tauee, pneutpv, dntau, &
-        pcoreradmw, ti0, rli, pchargemw, pfuscmw, vsstt, rlp, ralpne, &
+        pinzoneradmw, ti0, rli, pchargemw, pfuscmw, vsstt, rlp, ralpne, &
         pchargepv, hfact, figmer, protium, pohmpv, pdivt, rndfuel, rpfac, &
-        betaft, ptrimw, ni0, zeff, vsres, nesep, dnz, pedgeradmw, dlamie, &
+        betaft, ptrimw, ni0, zeff, vsres, nesep, dnz, poutzoneradmw, dlamie, &
         falpi, kappa, rnfene, pbrempv, rmajor, dnbeam, gamma, kappaa, deni, &
         dnprot, beta, fdeut, palppv, aspect
 
@@ -738,8 +738,8 @@ contains
     gammaft = (betaft+betanb)/betath !(Fast alpha + beam beta)/(thermal beta)
     hfact  = loss_H
     pradmw     = loss_prad ! fradpwr is total radiation fraction
-    pedgeradmw = loss_pradedge
-    pcoreradmw = loss_pradcore
+    poutzoneradmw = loss_pradedge
+    pinzoneradmw = loss_pradcore
     psyncpv    = loss_psync/vol
     pbrempv    = loss_pbrehms/vol
     plinepv    = loss_pline/vol

@@ -588,8 +588,8 @@ module physics_variables
   real(dp) :: pcoef
   !! profile factor (= n-weighted T / average T)
 
-  real(dp) :: pcoreradmw
-  !! total "core" radiation power (MW)
+  real(dp) :: pinzoneradmw
+  !! radiation power from inner zone (MW)
 
   real(dp) :: pcoreradpv
   !! total core radiation power per volume (MW/m3)
@@ -615,8 +615,8 @@ module physics_variables
   real(dp) :: pdt
   !! deuterium-tritium fusion power (MW)
 
-  real(dp) :: pedgeradmw
-  !! "edge" radiation power (MW)
+  real(dp) :: poutzoneradmw
+  !! radiation power from outer zone (MW)
 
   real(dp) :: pedgeradpv
   !! edge radiation power per volume (MW/m3)
@@ -667,7 +667,7 @@ module physics_variables
   !! total radiation power per volume (MW/m3)
 
   real(dp) :: pradsolmw
-  !! total radiation power from SoL (MW)
+  !! radiation power from SoL (MW)
 
   real(dp) :: protonrate
   !! proton production rate (particles/m3/sec)
@@ -1014,7 +1014,7 @@ module physics_variables
     pchargemw = 0.0D0
     pchargepv = 0.0D0
     pcoef = 0.0D0
-    pcoreradmw = 0.0D0
+    pinzoneradmw = 0.0D0
     pcoreradpv = 0.0D0
     pdd = 0.0D0
     pdhe3 = 0.0D0
@@ -1023,7 +1023,7 @@ module physics_variables
     pdivu = 0.0D0
     pdivmax = 0.0D0
     pdt = 0.0D0
-    pedgeradmw = 0.0D0
+    poutzoneradmw = 0.0D0
     pedgeradpv = 0.0D0
     pfuscmw = 0.0D0
     phiint = 0.0D0

@@ -1022,9 +1022,9 @@ def plot_power_info(axis, mfile_data, scan):
 
     data = [
         ("wallmw", "Av. neutron wall load", "MW m$^{-2}$"),
-        ("pcoreradmw", "Core radiation", "MW"),
+        ("pinzoneradmw", "inner zone radiation", "MW"),
         ("psyncpv*vol", "Synchrotron radiation", "MW"),
-        ("pedgeradmw", "Edge radiation", "MW"),
+        ("poutzoneradmw", "outer zone radiation", "MW"),
         ("pnucblkt", "Nuclear heating in blanket", "MW"),
         ("pnucshld", "Nuclear heating in shield", "MW"),
         ("pdivt", "Psep / Pdiv", "MW"),
@@ -1090,7 +1090,7 @@ def plot_current_drive_info(axis, mfile_data, scan):
 
     powerht = mfile_data.data["powerht"].get_scan(scan)
     psync = mfile_data.data["psyncpv*vol"].get_scan(scan)
-    pbrem = mfile_data.data["pcoreradmw"].get_scan(scan)
+    pbrem = mfile_data.data["pinzoneradmw"].get_scan(scan)
     hfact = mfile_data.data["hfact"].get_scan(scan)
     hstar = hfact * (powerht / (powerht + psync + pbrem)) ** 0.31
 
