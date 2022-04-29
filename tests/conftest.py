@@ -99,10 +99,11 @@ def initialise_error_module():
     eh.init_error_handling()
     eh.initialise_error_list()
 
+
 @pytest.fixture
 def reinitialise_error_module():
     """Re-initialise the error module.
-    
+
     If a subroutine raises an error and writes to error variables, this should
     be cleaned up when the test finishes to prevent any side-effects.
 

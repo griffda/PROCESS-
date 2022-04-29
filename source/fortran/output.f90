@@ -475,7 +475,7 @@ contains
     dum20 = varnam
     ! Remove the "(" and ")" from the varnam
     stripped = varnam(2:len(varnam)-1)
-    
+
     ! May need to strip Python module name (e.g. the pfv. from pfv.coheof)
     ! This ensures the ITV flag is still added when required in output files
     dotindex = scan(stripped,".")

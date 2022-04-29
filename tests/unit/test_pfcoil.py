@@ -30,7 +30,7 @@ def test_init_pfcoil(pfcoil):
     """
     # Test a selection of module variables
     assert pf.ssq0 == 0.0
-    assert pf.cslimit == False
+    assert pf.cslimit == 0
     assert pf.nef == 0
 
 
@@ -2084,7 +2084,7 @@ def test_selfinductance(pfcoil):
 
 def test_brookscoil(pfcoil):
     """Unit test of self-inductance formula.
-    
+
     :param pfcoil: PFCoil object
     :type pfcoil: process.pfcoil.PFCoil
     """
@@ -2093,9 +2093,9 @@ def test_brookscoil(pfcoil):
     b = c
     N = 1.0e0
 
-    l = 0.025491e0 * c * 100.0e0 * N ** 2 * 1.0e-6
+    l_self = 0.025491e0 * c * 100.0e0 * N**2 * 1.0e-6
     # Self-inductance of 1m Brooks coil: standard formula
-    lp = pfcoil.selfinductance(a, b, c, N)
+    l_self_p = pfcoil.selfinductance(a, b, c, N)
     # Self-inductance of 1m Brooks coil: PROCESS formula
 
-    assert (l / lp < 1.05e0) and (l / lp > 0.95e0)
+    assert (l_self / l_self_p < 1.05e0) and (l_self / l_self_p > 0.95e0)

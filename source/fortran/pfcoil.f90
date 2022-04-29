@@ -20,7 +20,7 @@ module pfcoil_module
    public
 
    !  Local variables
-   
+
    integer :: nef,nfxf
    real(dp) :: ricpf, ssq0, sig_axial, sig_hoop
    real(dp) :: axial_force
@@ -37,7 +37,7 @@ module pfcoil_module
    real(dp), dimension(10) :: ccls,ccl0
    real(dp), dimension(22) :: bpf2
    real(dp), dimension(22,3) :: vsdum
- 
+
    ! pfcoil subroutine var requiring re-initialisation before each new run
    logical :: first_call
    ! outpf subroutine var requiring re-initialisation before each new run
@@ -148,7 +148,7 @@ module pfcoil_module
      br  = 0.0D0
      bz  = 0.0D0
      psi = 0.0D0
- 
+
       if (nciszero .eqv. .true.) then
          return
       endif

@@ -41,7 +41,6 @@ def secant_solve(f, x1, x2, opt_tol=None):
     x = np.zeros(20)
     x[0] = x1
     x[1] = x2
-    mean = (x1 + x2) / 2
 
     # Calculate the first two values before the loop
     fximinus1 = f(x[1])

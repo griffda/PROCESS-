@@ -3,7 +3,7 @@
 Vaguely realistic mocked values are taken from baseline2019 output, init values
 in the pfcoil_variables module, or where necessary, guesses.
 
-Many of these subroutines are long and perform multiple gets/sets on many "use" 
+Many of these subroutines are long and perform multiple gets/sets on many "use"
 dependencies. As a result, many mocks are required to isolate the tests. There
 are also many variables that could be asserted, so a few key variables central
 to the testing of the subroutine have been chosen.
@@ -643,7 +643,6 @@ def test_mtrx(pfcoil):
             9.655957481515668e-97,
         ]
     )
-
 
     nrws, gmat, bvec, rc, zc, cc, xc = pfcoil.mtrx(
         lrow1,
@@ -3068,8 +3067,6 @@ def test_induct(pfcoil, monkeypatch):
     monkeypatch.setattr(pv, "rmajor", 8.8901000000000003)
     monkeypatch.setattr(pv, "rlp", 1.6039223939491056e-05)
 
-    outfile = 11
-    iprint = 0
     sxlg_exp = np.array(
         [
             [
