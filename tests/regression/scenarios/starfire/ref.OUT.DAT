@@ -6,14 +6,14 @@
  
    Program :
    Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1592-g962112e9
-    Branch : divertor-costs-into-cost-model-2-more-stable
-   Git log : Removed\ costs_step.f90\ as\ superceded\ by\ python\ ver
- Date/time : 19 Apr 2022 11:33:04 +01:00(hh:mm) UTC
-      User : jg6173
-  Computer : L1088
- Directory : /tmp/pytest-of-jg6173/pytest-70/test_solver0
-     Input : /tmp/pytest-of-jg6173/pytest-70/test_scenario_starfire_0/IN.DAT
+   Tag No. : v2.1-1403-gecefea14 code contains untracked changes
+    Branch : 1456-convert-pfcoil-f90-to-python
+   Git log : Convert\ superconpf()\ to\ Python
+ Date/time : 29 Apr 2022 11:01:09 +01:00(hh:mm) UTC
+      User : jon
+  Computer : jon-Precision-3560
+ Directory : /home/jon/code/process
+     Input : /tmp/pytest-of-jon/pytest-77/popen-gw1/test_scenario_starfire_0/IN.DAT
  Run title : starfire
   Run type : Reactor concept design: Steady-state tokamak model, (c) CCFE
  
@@ -944,46 +944,46 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  Central Solenoid Current Density Limits :
  
- Maximum field at Beginning Of Pulse (T)                                  (bmaxoh0)                 9.577E+00  OP 
- Critical superconductor current density at BOP (A/m2)                    (jscoh_bop)               9.994E+08  OP 
- Critical strand current density at BOP (A/m2)                            (jstrandoh_bop)           2.998E+08  OP 
- Allowable overall current density at BOP (A/m2)                          (rjohc0)                  6.412E+07  OP 
- Actual overall current density at BOP (A/m2)                             (cohbop)                  1.268E+07  OP 
+ Maximum field at Beginning Of Pulse (T)                                  (pfv.bmaxoh0)             9.577E+00  OP 
+ Critical superconductor current density at BOP (A/m2)                    (pfv.jscoh_bop)           9.994E+08  OP 
+ Critical strand current density at BOP (A/m2)                            (pfv.jstrandoh_bop)       2.998E+08  OP 
+ Allowable overall current density at BOP (A/m2)                          (pfv.rjohc0)              6.412E+07  OP 
+ Actual overall current density at BOP (A/m2)                             (pfv.cohbop)              1.268E+07  OP 
  
- Maximum field at End Of Flattop (T)                                      (bmaxoh)                  9.089E+00  OP 
- Critical superconductor current density at EOF (A/m2)                    (jscoh_eof)               1.104E+09  OP 
- Critical strand current density at EOF (A/m2)                            (jstrandoh_eof)           3.312E+08  OP 
- Allowable overall current density at EOF (A/m2)                          (rjohc)                   7.082E+07  OP 
- Actual overall current density at EOF (A/m2)                             (coheof)                  1.354E+07     
+ Maximum field at End Of Flattop (T)                                      (pfv.bmaxoh)              9.089E+00  OP 
+ Critical superconductor current density at EOF (A/m2)                    (pfv.jscoh_eof)           1.104E+09  OP 
+ Critical strand current density at EOF (A/m2)                            (pfv.jstrandoh_eof)       3.312E+08  OP 
+ Allowable overall current density at EOF (A/m2)                          (pfv.rjohc)               7.082E+07  OP 
+ Actual overall current density at EOF (A/m2)                             (pfv.coheof)              1.354E+07     
  
- CS inside radius (m)                                                     (bore.)                   1.097E-01     
- CS thickness (m)                                                         (ohcth.)                  6.000E-01     
- Gap between central solenoid and TF coil (m)                             (gapoh)                   5.000E-02  ITV
- CS overall cross-sectional area (m2)                                     (areaoh)                  6.353E+00  OP 
- CS conductor+void cross-sectional area (m2)                              (awpoh)                   1.941E+00  OP 
-    CS conductor cross-sectional area (m2)                                (awpoh*(1-vfohc))         1.359E+00  OP 
-    CS void cross-sectional area (m2)                                     (awpoh*vfohc)             5.822E-01  OP 
- CS steel cross-sectional area (m2)                                       (areaoh-awpoh)            4.412E+00  OP 
- CS steel area fraction                                                   (oh_steel_frac)           6.945E-01  ITV
+ CS inside radius (m)                                                     (bv.bore.)                1.097E-01     
+ CS thickness (m)                                                         (bv.ohcth.)               6.000E-01     
+ Gap between central solenoid and TF coil (m)                             (bv.gapoh)                5.000E-02  ITV
+ CS overall cross-sectional area (m2)                                     (pfv.areaoh)              6.353E+00  OP 
+ CS conductor+void cross-sectional area (m2)                              (pfv.awpoh)               1.941E+00  OP 
+    CS conductor cross-sectional area (m2)                                (pfv.awpoh*(1-pfv.vfohc)) 1.359E+00  OP 
+    CS void cross-sectional area (m2)                                     (pfv.awpoh*pfv.vfohc)     5.822E-01  OP 
+ CS steel cross-sectional area (m2)                                       (pfv.areaoh-pfv.awpoh)    4.412E+00  OP 
+ CS steel area fraction                                                   (pfv.oh_steel_frac)       6.945E-01  ITV
  Only hoop stress considered
- Switch for CS stress calculation                                         (i_cs_stress)                     0     
- Allowable stress in CS steel (Pa)                                        (alstroh)                 6.000E+08     
+ Switch for CS stress calculation                                         (pfv.i_cs_stress)                 0     
+ Allowable stress in CS steel (Pa)                                        (pfv.alstroh)             6.000E+08     
  Hoop stress in CS steel (Pa)                                             (sig_hoop)                7.850E+07  OP 
  Axial stress in CS steel (Pa)                                            (sig_axial)              -1.205E+08  OP 
- Maximum shear stress in CS steel for the Tresca criterion (Pa)           (s_tresca_oh)             7.850E+07  OP 
+ Maximum shear stress in CS steel for the Tresca criterion (Pa)           (pfv.s_tresca_oh)         7.850E+07  OP 
  Axial force in CS (N)                                                    (axial_force)            -6.461E+07  OP 
- Residual manufacturing strain in CS superconductor material              (str_cs_con_res)         -5.000E-03     
- Copper fraction in strand                                                (fcuohsu)                 7.000E-01     
- Void (coolant) fraction in conductor                                     (vfohc)                   3.000E-01     
- Helium coolant temperature (K)                                           (tftmp)                   4.750E+00     
- CS temperature margin (K)                                                (tmargoh)                 4.307E+00  OP 
- Minimum permitted temperature margin (K)                                 (tmargmin_cs)             1.500E+00     
- residual hoop stress in CS Steel (Pa)                                    (residual_sig_hoop)       2.400E+08     
- Initial vertical crack size (m)                                          (t_crack_vertical)        2.000E-03     
- Initial radial crack size (m)                                            (t_crack_radial)          6.000E-03     
- CS structural vertical thickness (m)                                     (t_structural_vertical)   2.200E-02     
- CS structural radial thickness (m)                                       (t_structural_radial)     7.000E-02     
- Allowable number of cycles till CS fracture                              (N_cycle)                       NaN  OP 
+ Residual manufacturing strain in CS superconductor material              (tfcoil_variables.str_cs_-5.000E-03     
+ Copper fraction in strand                                                (pfv.fcuohsu)             7.000E-01     
+ Void (coolant) fraction in conductor                                     (pfv.vfohc)               3.000E-01     
+ Helium coolant temperature (K)                                           (tfv.tftmp)               4.750E+00     
+ CS temperature margin (K)                                                (pfv.tmargoh)             4.307E+00  OP 
+ Minimum permitted temperature margin (K)                                 (tfv.tmargmin_cs)         1.500E+00     
+ residual hoop stress in CS Steel (Pa)                                    (csfv.residual_sig_hoop)  2.400E+08     
+ Initial vertical crack size (m)                                          (csfv.t_crack_vertical)   2.000E-03     
+ Initial radial crack size (m)                                            (csfv.t_crack_radial)     6.000E-03     
+ CS structural vertical thickness (m)                                     (csfv.t_structural_vertic 2.200E-02     
+ CS structural radial thickness (m)                                       (csfv.t_structural_radial 7.000E-02     
+ Allowable number of cycles till CS fpfv.racture                          (csfv.n_cycle)                  NaN  OP 
  
  Superconducting PF coils
  PF coil superconductor material                                          (pfv.isumatpf)                    3     
@@ -999,149 +999,147 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  coil			R(m)			Z(m)			dR(m)			dZ(m)			pfv.turns		steel thickness(m)
  
-  PF 1           5.23        7.39        1.24        1.24      401.49        0.06
-  PF 2           5.23       -8.47        1.29        1.29      436.32        0.06
-  PF 3          14.52        1.94        1.06        1.06      160.12        0.06
-  PF 4          14.52       -1.94        1.06        1.06      160.12        0.06
-  PF 5          13.60        5.44        0.79        0.79      116.23        0.06
-  PF 6          13.60       -5.44        0.79        0.79      116.23        0.06
-  CS             0.41        0.00        0.60       10.59     2000.36        0.21
- Plasma          7.00        0.00        3.89        6.22        1.00
+ PF 0			5.23e+00	7.39e+00	1.24e+00	1.24e+00	4.01e+02	5.52e-02
+ PF 1			5.23e+00	-8.47e+00	1.29e+00	1.29e+00	4.36e+02	6.35e-02
+ PF 2			1.45e+01	1.94e+00	1.06e+00	1.06e+00	1.60e+02	6.19e-02
+ PF 3			1.45e+01	-1.94e+00	1.06e+00	1.06e+00	1.60e+02	6.19e-02
+ PF 4			1.36e+01	5.44e+00	7.90e-01	7.90e-01	1.16e+02	5.65e-02
+ PF 5			1.36e+01	-5.44e+00	7.90e-01	7.90e-01	1.16e+02	5.65e-02
+ CS				4.10e-01	0.00e+00	6.00e-01	1.06e+01	2.00e+03	2.08e-01
+ Plasma		7.00e+00	0.0e0			3.89e+00	6.22e+00	1.0e0
  
  PF Coil Information at Peak Current:
  
  coil	current	allowed J		actual J		J			cond. mass	steel mass	field
  				(MA)		(A/m2)		(A/m2)		ratio			(kg)			(kg)			(T)
  
-  PF 1   16.94  7.495E+08  1.100E+07  0.01 2.149E+05   7.333E+04    2.774E+00
-  PF 2   18.41  7.091E+08  1.100E+07  0.02 2.335E+05   8.826E+04    3.140E+00
-  PF 3   -6.76  7.647E+08  6.000E+06  0.01 4.367E+05   1.980E+05    2.636E+00
-  PF 4   -6.76  7.647E+08  6.000E+06  0.01 4.367E+05   1.980E+05    2.636E+00
-  PF 5   -5.00  7.566E+08  8.000E+06  0.01 2.269E+05   1.276E+05    2.710E+00
-  PF 6   -5.00  7.566E+08  8.000E+06  0.01 2.269E+05   1.276E+05    2.710E+00
-  CS   -86.02  6.412E+07  1.354E+07  0.21 2.126E+04   8.858E+04    9.577E+00
-       ------                             ---------   ---------
-       144.88                             1.797E+06   9.014E+05
+ PF 0	1.69e+01	7.50e+08	1.10e+07	1.47e-02	2.15e+05	7.33e+04	2.77e+00
+ PF 1	1.84e+01	7.09e+08	1.10e+07	1.55e-02	2.34e+05	8.83e+04	3.14e+00
+ PF 2	-6.76e+00	7.65e+08	6.00e+06	7.85e-03	4.37e+05	1.98e+05	2.64e+00
+ PF 3	-6.76e+00	7.65e+08	6.00e+06	7.85e-03	4.37e+05	1.98e+05	2.64e+00
+ PF 4	-5.00e+00	7.57e+08	8.00e+06	1.06e-02	2.27e+05	1.28e+05	2.71e+00
+ PF 5	-5.00e+00	7.57e+08	8.00e+06	1.06e-02	2.27e+05	1.28e+05	2.71e+00
+ CS		-8.60e+01	6.41e+07	1.35e+07	2.11e-01	2.13e+04	8.86e+04	9.58e+00
+ 				------																---------	---------
+ 				1.45e+02																1.80e+06	9.01e+05
  
  PF coil current scaling information :
  
- Sum of squares of residuals                                              (ssq0)                    6.951E-07  OP 
- Smoothing parameter                                                      (alfapf)                  5.000E-10     
+ Sum of squares of residuals                                              (pf.ssq0)                 6.951E-07  OP 
+ Smoothing parameter                                                      (pfv.alfapf)              5.000E-10     
  
  ****************************************** Volt Second Consumption *******************************************
  
-              volt-sec       volt-sec       volt-sec
-              start-up         burn          total
-
- PF coils :     -88.90           0.00         -88.90
- CS coil  :      -7.46           0.00          -7.46
-              --------       --------       --------
- Total :        -96.36           0.00         -96.36
+ 				volt-sec			volt-sec		volt-sec
+ 				start-up			burn			total
+ PF coils:		-88.90				0.00			-88.90
+ CS coil:		-7.46				0.00			-7.46
+ 				-------				-------			-------
+ Total:			-96.36				0.00			-96.36
  
- Total volt-second consumption by coils (Wb)                              (vstot)                  -9.636E+01  OP 
+ Total volt-second consumption by coils (Wb)                              (pfv.vstot)              -9.600E+01  OP 
  
- Summary of volt-second consumption by circuit (Wb) :
+ Summary of volt-second consumption by circuit (Wb):
  
- circuit       BOP            BOF            EOF
+ circuit		BOP				BOF				EOF
  
-     1        0.858         35.414         35.414
-     2        0.900         30.701         30.701
-     3        0.343        -47.698        -47.698
-     4        0.343        -47.698        -47.698
-     5       -0.344        -28.932        -28.932
-     6       -0.344        -28.932        -28.932
- CS coil      3.609         -3.855         -3.855
+ 	0			0.858			35.414		35.414
+ 	1			0.900			30.701		30.701
+ 	2			0.343			-47.698		-47.698
+ 	3			0.343			-47.698		-47.698
+ 	4			-0.344			-28.932		-28.932
+ 	5			-0.344			-28.932		-28.932
+ CS coil		3.609			-3.855		-3.855
  
  ********************************** Waveforms ***********************************
  
- Currents (Amps/coil) as a function of time :
+ Currents (Amps/coil) as a function of time:
  
-                                       time (sec)
-
-                0.00      30.02      60.03      70.03   10070.03   10100.05
-               Start      BOP        EOR        BOF        EOF        EOP        
+ 												time (sec)
+ 				0.00			30.02			60.03			70.03			10070.03			10100.05
+ 					Start					BOP					EOR					BOF					EOF					EOP
  circuit
-   1         0.000E+00  4.104E+05  1.694E+07  1.694E+07  1.694E+07  0.000E+00
-   2         0.000E+00  5.400E+05  1.841E+07  1.841E+07  1.841E+07  0.000E+00
-   3        -0.000E+00  4.863E+04 -6.757E+06 -6.757E+06 -6.757E+06 -0.000E+00
-   4        -0.000E+00  4.863E+04 -6.757E+06 -6.757E+06 -6.757E+06 -0.000E+00
-   5        -0.000E+00 -5.949E+04 -4.998E+06 -4.998E+06 -4.998E+06 -0.000E+00
-   6        -0.000E+00 -5.949E+04 -4.998E+06 -4.998E+06 -4.998E+06 -0.000E+00
-   7        -0.000E+00  8.053E+07 -8.602E+07 -8.602E+07 -8.602E+07 -0.000E+00
- Plasma (A)  0.000E+00  0.000E+00  1.501E+07  1.501E+07  1.501E+07  0.000E+00
+ 	0			0.000e+00	4.104e+05	1.694e+07	1.694e+07	1.694e+07	0.000e+00
+ 	1			0.000e+00	5.400e+05	1.841e+07	1.841e+07	1.841e+07	0.000e+00
+ 	2			-0.000e+00	4.863e+04	-6.757e+06	-6.757e+06	-6.757e+06	-0.000e+00
+ 	3			-0.000e+00	4.863e+04	-6.757e+06	-6.757e+06	-6.757e+06	-0.000e+00
+ 	4			-0.000e+00	-5.949e+04	-4.998e+06	-4.998e+06	-4.998e+06	-0.000e+00
+ 	5			-0.000e+00	-5.949e+04	-4.998e+06	-4.998e+06	-4.998e+06	-0.000e+00
+ 	6			-0.000e+00	8.053e+07	-8.602e+07	-8.602e+07	-8.602e+07	-0.000e+00
+ Plasma (A)	0.000e+00	0.000e+00	1.501e+07	1.501e+07	1.501e+07	0.000e+00
  
  This consists of: CS coil field balancing:
-   1         0.000E+00  4.104E+05 -4.384E+05 -4.384E+05 -4.384E+05  0.000E+00
-   2         0.000E+00  5.400E+05 -5.768E+05 -5.768E+05 -5.768E+05  0.000E+00
-   3        -0.000E+00  4.863E+04 -5.195E+04 -5.195E+04 -5.195E+04 -0.000E+00
-   4        -0.000E+00  4.863E+04 -5.195E+04 -5.195E+04 -5.195E+04 -0.000E+00
-   5        -0.000E+00 -5.949E+04  6.355E+04  6.355E+04  6.355E+04 -0.000E+00
-   6        -0.000E+00 -5.949E+04  6.355E+04  6.355E+04  6.355E+04 -0.000E+00
-   7        -0.000E+00  8.053E+07 -8.602E+07 -8.602E+07 -8.602E+07 -0.000E+00
+ 0			0.000e+00	4.104e+05	-4.384e+05	-4.384e+05	-4.384e+05	0.000e+00
+ 1			0.000e+00	5.400e+05	-5.768e+05	-5.768e+05	-5.768e+05	0.000e+00
+ 2			-0.000e+00	4.863e+04	-5.195e+04	-5.195e+04	-5.195e+04	-0.000e+00
+ 3			-0.000e+00	4.863e+04	-5.195e+04	-5.195e+04	-5.195e+04	-0.000e+00
+ 4			-0.000e+00	-5.949e+04	6.355e+04	6.355e+04	6.355e+04	-0.000e+00
+ 5			-0.000e+00	-5.949e+04	6.355e+04	6.355e+04	6.355e+04	-0.000e+00
+ 6			-0.000e+00	8.053e+07	-8.602e+07	-8.602e+07	-8.602e+07	-0.000e+00
  
  And: equilibrium field:
-   1         0.000E+00  0.000E+00  1.738E+07  1.738E+07  1.738E+07  0.000E+00
-   2         0.000E+00  0.000E+00  1.899E+07  1.899E+07  1.899E+07  0.000E+00
-   3         0.000E+00  0.000E+00 -6.705E+06 -6.705E+06 -6.705E+06  0.000E+00
-   4         0.000E+00  0.000E+00 -6.705E+06 -6.705E+06 -6.705E+06  0.000E+00
-   5         0.000E+00  0.000E+00 -5.061E+06 -5.061E+06 -5.061E+06  0.000E+00
-   6         0.000E+00  0.000E+00 -5.061E+06 -5.061E+06 -5.061E+06  0.000E+00
-   7         0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00
+ 0			0.000e+00	0.000e+00	4.806e+05	4.806e+05	4.806e+05	0.0e0
+ 1			0.000e+00	0.000e+00	6.190e+05	6.190e+05	6.190e+05	0.0e0
+ 2			0.000e+00	0.000e+00	9.746e+03	9.746e+03	9.746e+03	0.0e0
+ 3			0.000e+00	0.000e+00	9.746e+03	9.746e+03	9.746e+03	0.0e0
+ 4			0.000e+00	0.000e+00	-1.065e+05	-1.065e+05	-1.065e+05	0.0e0
+ 5			0.000e+00	0.000e+00	-1.065e+05	-1.065e+05	-1.065e+05	0.0e0
+ 6			0.000e+00	0.000e+00	8.597e+07	8.597e+07	8.597e+07	0.0e0
  
- Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.362E-01     
- Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                 1.000E+00  OP 
+ Ratio of central solenoid current at beginning of Pulse / end of flat-to (pfv.fcohbop)             9.362E-01     
+ Ratio of central solenoid current at beginning of Flat-top / end of flat (pfv.fcohbof)             1.000E+00  OP 
  
  *************************** PF Circuit Waveform Data ***************************
  
- Number of PF circuits including CS and plasma                            (ncirt)                           8     
- PF Circuit 01 - Time point 01 (A)                                        (pfc01t01)                0.000E+00     
- PF Circuit 01 - Time point 02 (A)                                        (pfc01t02)                4.104E+05     
- PF Circuit 01 - Time point 03 (A)                                        (pfc01t03)                1.694E+07     
- PF Circuit 01 - Time point 04 (A)                                        (pfc01t04)                1.694E+07     
- PF Circuit 01 - Time point 05 (A)                                        (pfc01t05)                1.694E+07     
- PF Circuit 01 - Time point 06 (A)                                        (pfc01t06)                0.000E+00     
- PF Circuit 02 - Time point 01 (A)                                        (pfc02t01)                0.000E+00     
- PF Circuit 02 - Time point 02 (A)                                        (pfc02t02)                5.400E+05     
- PF Circuit 02 - Time point 03 (A)                                        (pfc02t03)                1.841E+07     
- PF Circuit 02 - Time point 04 (A)                                        (pfc02t04)                1.841E+07     
- PF Circuit 02 - Time point 05 (A)                                        (pfc02t05)                1.841E+07     
- PF Circuit 02 - Time point 06 (A)                                        (pfc02t06)                0.000E+00     
- PF Circuit 03 - Time point 01 (A)                                        (pfc03t01)               -0.000E+00     
- PF Circuit 03 - Time point 02 (A)                                        (pfc03t02)                4.863E+04     
- PF Circuit 03 - Time point 03 (A)                                        (pfc03t03)               -6.757E+06     
- PF Circuit 03 - Time point 04 (A)                                        (pfc03t04)               -6.757E+06     
- PF Circuit 03 - Time point 05 (A)                                        (pfc03t05)               -6.757E+06     
- PF Circuit 03 - Time point 06 (A)                                        (pfc03t06)               -0.000E+00     
- PF Circuit 04 - Time point 01 (A)                                        (pfc04t01)               -0.000E+00     
- PF Circuit 04 - Time point 02 (A)                                        (pfc04t02)                4.863E+04     
- PF Circuit 04 - Time point 03 (A)                                        (pfc04t03)               -6.757E+06     
- PF Circuit 04 - Time point 04 (A)                                        (pfc04t04)               -6.757E+06     
- PF Circuit 04 - Time point 05 (A)                                        (pfc04t05)               -6.757E+06     
- PF Circuit 04 - Time point 06 (A)                                        (pfc04t06)               -0.000E+00     
- PF Circuit 05 - Time point 01 (A)                                        (pfc05t01)               -0.000E+00     
- PF Circuit 05 - Time point 02 (A)                                        (pfc05t02)               -5.949E+04     
- PF Circuit 05 - Time point 03 (A)                                        (pfc05t03)               -4.998E+06     
- PF Circuit 05 - Time point 04 (A)                                        (pfc05t04)               -4.998E+06     
- PF Circuit 05 - Time point 05 (A)                                        (pfc05t05)               -4.998E+06     
- PF Circuit 05 - Time point 06 (A)                                        (pfc05t06)               -0.000E+00     
- PF Circuit 06 - Time point 01 (A)                                        (pfc06t01)               -0.000E+00     
- PF Circuit 06 - Time point 02 (A)                                        (pfc06t02)               -5.949E+04     
- PF Circuit 06 - Time point 03 (A)                                        (pfc06t03)               -4.998E+06     
- PF Circuit 06 - Time point 04 (A)                                        (pfc06t04)               -4.998E+06     
- PF Circuit 06 - Time point 05 (A)                                        (pfc06t05)               -4.998E+06     
- PF Circuit 06 - Time point 06 (A)                                        (pfc06t06)               -0.000E+00     
- CS Circuit  - Time point 01 (A)                                          (cst01)                  -0.000E+00     
- CS Circuit  - Time point 02 (A)                                          (cst02)                   8.053E+07     
- CS Circuit  - Time point 03 (A)                                          (cst03)                  -8.602E+07     
- CS Circuit  - Time point 04 (A)                                          (cst04)                  -8.602E+07     
- CS Circuit  - Time point 05 (A)                                          (cst05)                  -8.602E+07     
- CS Circuit  - Time point 06 (A)                                          (cst06)                  -0.000E+00     
- Plasma  - Time point 01 (A)                                              (plasmat01)               0.000E+00     
- Plasma  - Time point 02 (A)                                              (plasmat02)               0.000E+00     
- Plasma  - Time point 03 (A)                                              (plasmat03)               1.501E+07     
- Plasma  - Time point 04 (A)                                              (plasmat04)               1.501E+07     
- Plasma  - Time point 05 (A)                                              (plasmat05)               1.501E+07     
- Plasma  - Time point 06 (A)                                              (plasmat06)               0.000E+00     
+ Number of PF circuits including CS and plasma                            (pfv.ncirt)                       8     
+ PF Circuit 0 Time point 0 (A)                                            (pfc0t0)                  0.000E+00     
+ PF Circuit 0 Time point 1 (A)                                            (pfc0t1)                  4.104E+05     
+ PF Circuit 0 Time point 2 (A)                                            (pfc0t2)                  1.694E+07     
+ PF Circuit 0 Time point 3 (A)                                            (pfc0t3)                  1.694E+07     
+ PF Circuit 0 Time point 4 (A)                                            (pfc0t4)                  1.694E+07     
+ PF Circuit 0 Time point 5 (A)                                            (pfc0t5)                  0.000E+00     
+ PF Circuit 1 Time point 0 (A)                                            (pfc1t0)                  0.000E+00     
+ PF Circuit 1 Time point 1 (A)                                            (pfc1t1)                  5.400E+05     
+ PF Circuit 1 Time point 2 (A)                                            (pfc1t2)                  1.841E+07     
+ PF Circuit 1 Time point 3 (A)                                            (pfc1t3)                  1.841E+07     
+ PF Circuit 1 Time point 4 (A)                                            (pfc1t4)                  1.841E+07     
+ PF Circuit 1 Time point 5 (A)                                            (pfc1t5)                  0.000E+00     
+ PF Circuit 2 Time point 0 (A)                                            (pfc2t0)                 -0.000E+00     
+ PF Circuit 2 Time point 1 (A)                                            (pfc2t1)                  4.863E+04     
+ PF Circuit 2 Time point 2 (A)                                            (pfc2t2)                 -6.757E+06     
+ PF Circuit 2 Time point 3 (A)                                            (pfc2t3)                 -6.757E+06     
+ PF Circuit 2 Time point 4 (A)                                            (pfc2t4)                 -6.757E+06     
+ PF Circuit 2 Time point 5 (A)                                            (pfc2t5)                 -0.000E+00     
+ PF Circuit 3 Time point 0 (A)                                            (pfc3t0)                 -0.000E+00     
+ PF Circuit 3 Time point 1 (A)                                            (pfc3t1)                  4.863E+04     
+ PF Circuit 3 Time point 2 (A)                                            (pfc3t2)                 -6.757E+06     
+ PF Circuit 3 Time point 3 (A)                                            (pfc3t3)                 -6.757E+06     
+ PF Circuit 3 Time point 4 (A)                                            (pfc3t4)                 -6.757E+06     
+ PF Circuit 3 Time point 5 (A)                                            (pfc3t5)                 -0.000E+00     
+ PF Circuit 4 Time point 0 (A)                                            (pfc4t0)                 -0.000E+00     
+ PF Circuit 4 Time point 1 (A)                                            (pfc4t1)                 -5.949E+04     
+ PF Circuit 4 Time point 2 (A)                                            (pfc4t2)                 -4.998E+06     
+ PF Circuit 4 Time point 3 (A)                                            (pfc4t3)                 -4.998E+06     
+ PF Circuit 4 Time point 4 (A)                                            (pfc4t4)                 -4.998E+06     
+ PF Circuit 4 Time point 5 (A)                                            (pfc4t5)                 -0.000E+00     
+ PF Circuit 5 Time point 0 (A)                                            (pfc5t0)                 -0.000E+00     
+ PF Circuit 5 Time point 1 (A)                                            (pfc5t1)                 -5.949E+04     
+ PF Circuit 5 Time point 2 (A)                                            (pfc5t2)                 -4.998E+06     
+ PF Circuit 5 Time point 3 (A)                                            (pfc5t3)                 -4.998E+06     
+ PF Circuit 5 Time point 4 (A)                                            (pfc5t4)                 -4.998E+06     
+ PF Circuit 5 Time point 5 (A)                                            (pfc5t5)                 -0.000E+00     
+ CS Circuit Time point 0 (A)                                              (cs t0)                  -0.000E+00     
+ CS Circuit Time point 1 (A)                                              (cs t1)                   8.053E+07     
+ CS Circuit Time point 2 (A)                                              (cs t2)                  -8.602E+07     
+ CS Circuit Time point 3 (A)                                              (cs t3)                  -8.602E+07     
+ CS Circuit Time point 4 (A)                                              (cs t4)                  -8.602E+07     
+ CS Circuit Time point 5 (A)                                              (cs t5)                  -0.000E+00     
+ Plasma Time point 0 (A)                                                  (plasmat0)                0.000E+00     
+ Plasma Time point 1 (A)                                                  (plasmat1)                0.000E+00     
+ Plasma Time point 2 (A)                                                  (plasmat2)                1.501E+07     
+ Plasma Time point 3 (A)                                                  (plasmat3)                1.501E+07     
+ Plasma Time point 4 (A)                                                  (plasmat4)                1.501E+07     
+ Plasma Time point 5 (A)                                                  (plasmat5)                0.000E+00     
  
  ********************************************* Support Structure **********************************************
  
@@ -1157,14 +1155,14 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  Inductance matrix [H]:
  
-   1     2.5E+00 4.9E-02 2.0E-01 1.4E-01 1.9E-01 6.8E-02 1.4E-02 8.4E-04
-   2     4.9E-02 2.9E+00 1.4E-01 2.0E-01 6.6E-02 1.9E-01 1.1E-02 7.3E-04
-   3     2.0E-01 1.4E-01 1.6E+00 6.7E-01 4.8E-01 2.8E-01 6.7E-03 1.1E-03
-   4     1.4E-01 2.0E-01 6.7E-01 1.6E+00 2.8E-01 4.8E-01 6.7E-03 1.1E-03
-   5     1.9E-01 6.6E-02 4.8E-01 2.8E-01 8.7E-01 1.2E-01 4.4E-03 6.7E-04
-   6     6.8E-02 1.9E-01 2.8E-01 4.8E-01 1.2E-01 8.7E-01 4.4E-03 6.7E-04
-  CS     1.4E-02 1.1E-02 6.7E-03 6.7E-03 4.4E-03 4.4E-03 1.6E-01 9.0E-05
- Plasma  8.4E-04 7.3E-04 1.1E-03 1.1E-03 6.7E-04 6.7E-04 9.0E-05 1.3E-05
+ 0			[2.5e+00 4.9e-02 2.0e-01 1.4e-01 1.9e-01 6.8e-02 1.4e-02 8.4e-04]
+ 1			[4.9e-02 2.9e+00 1.4e-01 2.0e-01 6.6e-02 1.9e-01 1.1e-02 7.3e-04]
+ 2			[2.0e-01 1.4e-01 1.6e+00 6.7e-01 4.8e-01 2.8e-01 6.7e-03 1.1e-03]
+ 3			[1.4e-01 2.0e-01 6.7e-01 1.6e+00 2.8e-01 4.8e-01 6.7e-03 1.1e-03]
+ 4			[1.9e-01 6.6e-02 4.8e-01 2.8e-01 8.7e-01 1.2e-01 4.4e-03 6.7e-04]
+ 5			[6.8e-02 1.9e-01 2.8e-01 4.8e-01 1.2e-01 8.7e-01 4.4e-03 6.7e-04]
+ CS			[1.4e-02 1.1e-02 6.7e-03 6.7e-03 4.4e-03 4.4e-03 1.6e-01 9.0e-05]
+ Plasma	[8.4e-04 7.3e-04 1.1e-03 1.1e-03 6.7e-04 6.7e-04 9.0e-05 1.3e-05]
  
  ************************************ Pumping for primary coolant (helium) ************************************
  

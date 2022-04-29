@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1592-g962112e9
-    Branch : divertor-costs-into-cost-model-2-more-stable
-   Git log : Removed\ costs_step.f90\ as\ superceded\ by\ python\ ver
- Date/time : 19 Apr 2022 11:31:37 +01:00(hh:mm) UTC
-      User : jg6173
-  Computer : L1088
- Directory : /tmp/pytest-of-jg6173/pytest-70/test_solver0
-     Input : /tmp/pytest-of-jg6173/pytest-70/test_scenario_FNSF_0/IN.DAT
+   Tag No. : v2.1-1403-gecefea14 code contains untracked changes
+    Branch : 1456-convert-pfcoil-f90-to-python
+   Git log : Convert\ superconpf()\ to\ Python
+ Date/time : 29 Apr 2022 10:59:49 +01:00(hh:mm) UTC
+      User : jon
+  Computer : jon-Precision-3560
+ Directory : /home/jon/code/process
+     Input : /tmp/pytest-of-jon/pytest-77/popen-gw7/test_scenario_FNSF_0/IN.DAT
  Run title : FNSF (Menard et al. 2016)
   Run type : Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
  
@@ -788,86 +788,87 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  ****************************************** Volt Second Consumption *******************************************
  
-              volt-sec       volt-sec       volt-sec
-              start-up         burn          total
-
- PF coils :      -6.99           0.00          -6.99
- CS coil  :       0.00           0.00           0.00
-              --------       --------       --------
- Total :         -6.99           0.00          -6.99
+ 				volt-sec			volt-sec		volt-sec
+ 				start-up			burn			total
+ PF coils:		-6.99				0.00			-6.99
+ CS coil:		0.00				0.00			0.00
+ 				-------				-------			-------
+ Total:			-6.99				0.00			-6.99
  
- Total volt-second consumption by coils (Wb)                              (vstot)                  -6.990E+00  OP 
+ Total volt-second consumption by coils (Wb)                              (pfv.vstot)              -7.000E+00  OP 
  
- Summary of volt-second consumption by circuit (Wb) :
+ Summary of volt-second consumption by circuit (Wb):
  
- circuit       BOP            BOF            EOF
+ circuit		BOP				BOF				EOF
  
-
- CS coil      0.000         -3.972         -3.972
+ 	0			0.000			0.477		0.477
+ 	1			0.000			0.477		0.477
+ 	2			0.000			-3.972		-3.972
+ 	3			0.000			-3.972		-3.972
+ CS coil		0.000			-3.972		-3.972
  
  ********************************** Waveforms ***********************************
  
- Currents (Amps/coil) as a function of time :
+ Currents (Amps/coil) as a function of time:
  
-                                       time (sec)
-
-                0.00      18.76      37.51      47.51    1047.51    1066.27
-               Start      BOP        EOR        BOF        EOF        EOP        
+ 												time (sec)
+ 				0.00			18.76			37.51			47.51			1047.51			1066.27
+ 					Start					BOP					EOR					BOF					EOF					EOP
  circuit
-   1         0.000E+00  0.000E+00  6.888E+06  6.888E+06  6.888E+06  0.000E+00
-   2         0.000E+00  0.000E+00  6.888E+06  6.888E+06  6.888E+06  0.000E+00
-   3        -0.000E+00  0.000E+00 -3.751E+06 -3.751E+06 -3.751E+06 -0.000E+00
-   4        -0.000E+00  0.000E+00 -3.751E+06 -3.751E+06 -3.751E+06 -0.000E+00
- Plasma (A)  0.000E+00  0.000E+00  9.378E+06  9.378E+06  9.378E+06  0.000E+00
+ 	0			0.000e+00	0.000e+00	6.888e+06	6.888e+06	6.888e+06	0.000e+00
+ 	1			0.000e+00	0.000e+00	6.888e+06	6.888e+06	6.888e+06	0.000e+00
+ 	2			-0.000e+00	0.000e+00	-3.751e+06	-3.751e+06	-3.751e+06	-0.000e+00
+ 	3			-0.000e+00	0.000e+00	-3.751e+06	-3.751e+06	-3.751e+06	-0.000e+00
+ Plasma (A)	0.000e+00	0.000e+00	9.378e+06	9.378e+06	9.378e+06	0.000e+00
  
  This consists of: CS coil field balancing:
-   1         0.000E+00  0.000E+00 -0.000E+00 -0.000E+00 -0.000E+00  0.000E+00
-   2         0.000E+00  0.000E+00 -0.000E+00 -0.000E+00 -0.000E+00  0.000E+00
-   3        -0.000E+00  0.000E+00 -0.000E+00 -0.000E+00 -0.000E+00 -0.000E+00
-   4        -0.000E+00  0.000E+00 -0.000E+00 -0.000E+00 -0.000E+00 -0.000E+00
+ 0			0.000e+00	0.000e+00	-0.000e+00	-0.000e+00	-0.000e+00	0.000e+00
+ 1			0.000e+00	0.000e+00	-0.000e+00	-0.000e+00	-0.000e+00	0.000e+00
+ 2			-0.000e+00	0.000e+00	-0.000e+00	-0.000e+00	-0.000e+00	-0.000e+00
+ 3			-0.000e+00	0.000e+00	-0.000e+00	-0.000e+00	-0.000e+00	-0.000e+00
  
  And: equilibrium field:
-   1         0.000E+00  0.000E+00  6.888E+06  6.888E+06  6.888E+06  0.000E+00
-   2         0.000E+00  0.000E+00  6.888E+06  6.888E+06  6.888E+06  0.000E+00
-   3         0.000E+00  0.000E+00 -3.751E+06 -3.751E+06 -3.751E+06  0.000E+00
-   4         0.000E+00  0.000E+00 -3.751E+06 -3.751E+06 -3.751E+06  0.000E+00
+ 0			0.000e+00	0.000e+00	4.200e+04	4.200e+04	4.200e+04	0.0e0
+ 1			0.000e+00	0.000e+00	4.200e+04	4.200e+04	4.200e+04	0.0e0
+ 2			0.000e+00	0.000e+00	-4.200e+04	-4.200e+04	-4.200e+04	0.0e0
+ 3			0.000e+00	0.000e+00	-4.200e+04	-4.200e+04	-4.200e+04	0.0e0
  
- Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.000E-01     
- Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                 1.000E+00  OP 
+ Ratio of central solenoid current at beginning of Pulse / end of flat-to (pfv.fcohbop)             9.000E-01     
+ Ratio of central solenoid current at beginning of Flat-top / end of flat (pfv.fcohbof)             1.000E+00  OP 
  
  *************************** PF Circuit Waveform Data ***************************
  
- Number of PF circuits including CS and plasma                            (ncirt)                           5     
- PF Circuit 01 - Time point 01 (A)                                        (pfc01t01)                0.000E+00     
- PF Circuit 01 - Time point 02 (A)                                        (pfc01t02)                0.000E+00     
- PF Circuit 01 - Time point 03 (A)                                        (pfc01t03)                6.888E+06     
- PF Circuit 01 - Time point 04 (A)                                        (pfc01t04)                6.888E+06     
- PF Circuit 01 - Time point 05 (A)                                        (pfc01t05)                6.888E+06     
- PF Circuit 01 - Time point 06 (A)                                        (pfc01t06)                0.000E+00     
- PF Circuit 02 - Time point 01 (A)                                        (pfc02t01)                0.000E+00     
- PF Circuit 02 - Time point 02 (A)                                        (pfc02t02)                0.000E+00     
- PF Circuit 02 - Time point 03 (A)                                        (pfc02t03)                6.888E+06     
- PF Circuit 02 - Time point 04 (A)                                        (pfc02t04)                6.888E+06     
- PF Circuit 02 - Time point 05 (A)                                        (pfc02t05)                6.888E+06     
- PF Circuit 02 - Time point 06 (A)                                        (pfc02t06)                0.000E+00     
- PF Circuit 03 - Time point 01 (A)                                        (pfc03t01)               -0.000E+00     
- PF Circuit 03 - Time point 02 (A)                                        (pfc03t02)                0.000E+00     
- PF Circuit 03 - Time point 03 (A)                                        (pfc03t03)               -3.751E+06     
- PF Circuit 03 - Time point 04 (A)                                        (pfc03t04)               -3.751E+06     
- PF Circuit 03 - Time point 05 (A)                                        (pfc03t05)               -3.751E+06     
- PF Circuit 03 - Time point 06 (A)                                        (pfc03t06)               -0.000E+00     
- CS Circuit  - Time point 01 (A)                                          (cst01)                  -0.000E+00     
- CS Circuit  - Time point 02 (A)                                          (cst02)                   0.000E+00     
- CS Circuit  - Time point 03 (A)                                          (cst03)                  -3.751E+06     
- CS Circuit  - Time point 04 (A)                                          (cst04)                  -3.751E+06     
- CS Circuit  - Time point 05 (A)                                          (cst05)                  -3.751E+06     
- CS Circuit  - Time point 06 (A)                                          (cst06)                  -0.000E+00     
- Plasma  - Time point 01 (A)                                              (plasmat01)               0.000E+00     
- Plasma  - Time point 02 (A)                                              (plasmat02)               0.000E+00     
- Plasma  - Time point 03 (A)                                              (plasmat03)               9.378E+06     
- Plasma  - Time point 04 (A)                                              (plasmat04)               9.378E+06     
- Plasma  - Time point 05 (A)                                              (plasmat05)               9.378E+06     
- Plasma  - Time point 06 (A)                                              (plasmat06)               0.000E+00     
+ Number of PF circuits including CS and plasma                            (pfv.ncirt)                       5     
+ PF Circuit 0 Time point 0 (A)                                            (pfc0t0)                  0.000E+00     
+ PF Circuit 0 Time point 1 (A)                                            (pfc0t1)                  0.000E+00     
+ PF Circuit 0 Time point 2 (A)                                            (pfc0t2)                  6.888E+06     
+ PF Circuit 0 Time point 3 (A)                                            (pfc0t3)                  6.888E+06     
+ PF Circuit 0 Time point 4 (A)                                            (pfc0t4)                  6.888E+06     
+ PF Circuit 0 Time point 5 (A)                                            (pfc0t5)                  0.000E+00     
+ PF Circuit 1 Time point 0 (A)                                            (pfc1t0)                  0.000E+00     
+ PF Circuit 1 Time point 1 (A)                                            (pfc1t1)                  0.000E+00     
+ PF Circuit 1 Time point 2 (A)                                            (pfc1t2)                  6.888E+06     
+ PF Circuit 1 Time point 3 (A)                                            (pfc1t3)                  6.888E+06     
+ PF Circuit 1 Time point 4 (A)                                            (pfc1t4)                  6.888E+06     
+ PF Circuit 1 Time point 5 (A)                                            (pfc1t5)                  0.000E+00     
+ PF Circuit 2 Time point 0 (A)                                            (pfc2t0)                 -0.000E+00     
+ PF Circuit 2 Time point 1 (A)                                            (pfc2t1)                  0.000E+00     
+ PF Circuit 2 Time point 2 (A)                                            (pfc2t2)                 -3.751E+06     
+ PF Circuit 2 Time point 3 (A)                                            (pfc2t3)                 -3.751E+06     
+ PF Circuit 2 Time point 4 (A)                                            (pfc2t4)                 -3.751E+06     
+ PF Circuit 2 Time point 5 (A)                                            (pfc2t5)                 -0.000E+00     
+ CS Circuit Time point 0 (A)                                              (cs t0)                  -0.000E+00     
+ CS Circuit Time point 1 (A)                                              (cs t1)                   0.000E+00     
+ CS Circuit Time point 2 (A)                                              (cs t2)                  -3.751E+06     
+ CS Circuit Time point 3 (A)                                              (cs t3)                  -3.751E+06     
+ CS Circuit Time point 4 (A)                                              (cs t4)                  -3.751E+06     
+ CS Circuit Time point 5 (A)                                              (cs t5)                  -0.000E+00     
+ Plasma Time point 0 (A)                                                  (plasmat0)                0.000E+00     
+ Plasma Time point 1 (A)                                                  (plasmat1)                0.000E+00     
+ Plasma Time point 2 (A)                                                  (plasmat2)                9.378E+06     
+ Plasma Time point 3 (A)                                                  (plasmat3)                9.378E+06     
+ Plasma Time point 4 (A)                                                  (plasmat4)                9.378E+06     
+ Plasma Time point 5 (A)                                                  (plasmat5)                0.000E+00     
  
  ********************************************* Support Structure **********************************************
  
