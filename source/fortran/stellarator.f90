@@ -720,9 +720,8 @@ contains
     pdivt = powht - psolradmw
 
     ! Add SOL Radiation to total
-
     pradmw = pradmw + psolradmw
-    pradpv = pradmw / vol ! this line OVERWRITES the original definition of pradpv
+    !pradpv = pradmw / vol ! this line OVERWRITES the original definition of pradpv, probably shouldn't be defined like that as the core does not lose SOL power.
 
     !  The following line is unphysical, but prevents -ve sqrt argument
     !  Should be obsolete if constraint eqn 17 is turned on (but beware -
@@ -2625,7 +2624,8 @@ contains
      ! \[Tau]ref = 1.;
      ! Rref = 5.2;
      ! dref = 14*10^-3;
-     f_VV_actual = 2.54D6*(3d0*1.3d0*50d0*0.92d0**2d0)/(1d0*5.2d0*0.014d0)*(bt*ritfc*rminor**2/((d_vv_in+d_vv_out)/2*taucq*radvv))**(-1)
+     f_VV_actual = 2.54D6*(3d0*1.3d0*50d0*0.92d0**2d0)/(1d0*5.2d0*0.014d0)* &
+                     (bt*ritfc*rminor**2/((d_vv_in+d_vv_out)/2*taucq*radvv))**(-1)
 
      ! the conductor fraction is meant of the cable space!
      ! This is the old routine which is being replaced for now by the new one below
