@@ -28,7 +28,7 @@ class Costs:
         <P>The code is arranged in the order of the standard accounts.
         AEA FUS 251: A User's Guide to the PROCESS Systems Code
         """
-        costs_module.acc21()
+        self.acc21()
 
         #  Account 22 : Fusion power island
         costs_module.acc22()
@@ -767,7 +767,6 @@ class Costs:
         """
         cmlsa = [0.6800e0, 0.8400e0, 0.9200e0, 1.0000e0]
         exprb = 1.0e0
-
         #  Account 211 : Site improvements, facilities and land
         #  N.B. Land unaffected by LSA
 

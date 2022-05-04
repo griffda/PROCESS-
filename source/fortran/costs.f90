@@ -16,33 +16,33 @@ module costs_module
   implicit none
 
   !  Various cost account values (M$)
-  real(dp) :: c228, c229, c23, c25, c26, cindrt, ccont
+real(dp) :: c228, c229, c23, c25, c26, cindrt, ccont
 
   !  Account 226 - Heat transport system
-  real(dp) :: c226, c2261, c2262, c2263
+real(dp) :: c226, c2261, c2262, c2263
 
   !  Account 227 - Fuel handling
-  real(dp) :: c227, c2271, c2272, c2273, c2274
+real(dp) :: c227, c2271, c2272, c2273, c2274
 
   !  Account 24 - electrical plant equipment
-  real(dp) :: c24, c241, c242, c243, c244, c245
+real(dp) :: c24, c241, c242, c243, c244, c245
 
 
-  real(dp) :: c21, c211, c212, c213, c214, c2141, c2142, c215, c216, c217, c2171
+real(dp) :: c21, c211, c212, c213, c214, c2141, c2142, c215, c216, c217, c2171
 
-  real(dp) :: c2172, c2173, c2174, c22, c2211, c2212 ,c22121, c22122, c22123
+real(dp) :: c2172, c2173, c2174, c22, c2211, c2212 ,c22121, c22122, c22123
 
-  real(dp) :: c22124, c22125, c22126, c22127, c2213, c22131, c22132, c2214, c2215
+real(dp) :: c22124, c22125, c22126, c22127, c2213, c22131, c22132, c2214, c2215
 
-  real(dp) :: c2221, c22211, c22212, c22213, c22214, c22215, c2222, c22221, c22222
+real(dp) :: c2221, c22211, c22212, c22213, c22214, c22215, c2222, c22221, c22222
 
-  real(dp) :: c22223, c22224, c2223, c223, c2231, c2232, c2233, c2234, c224, c2241
+real(dp) :: c22223, c22224, c2223, c223, c2231, c2232, c2233, c2234, c224, c2241
 
-  real(dp) :: c2242, c2243, c2244, c2245, c2246, c225, c2251, c22511, c22512, c22513
+real(dp) :: c2242, c2243, c2244, c2245, c2246, c225, c2251, c22511, c22512, c22513
 
-  real(dp) :: c22514, c22515, c2252, c22521, c22522, c22523, c22524, c22525, c22526
+real(dp) :: c22514, c22515, c2252, c22521, c22522, c22523, c22524, c22525, c22526
 
-  real(dp) :: c22527, c2253, chx, cpp, cppa, c22128
+real(dp) :: c22527, c2253, chx, cpp, cppa, c22128
 
 contains
 
@@ -184,7 +184,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Account 21 : Structures and site facilities
-    call acc21
+
 
     !  Account 22 : Fusion power island
     call acc22
@@ -935,7 +935,7 @@ contains
     implicit none
 
     !  Account 221 : Reactor
-    call acc221
+    !  acc221
 
     !  Account 222 : Magnets
     call acc222
