@@ -464,11 +464,12 @@ class CostsStep:
         step21010111 = cv.site_imp_uc[17] * cv.whole_site_area
         step210101 += step21010111
 
-        # 21.01.01.12 Connection to Electricity grid (outgoing)
-        # Includes transformers, busbars, cabling installation, fire protection, earthing.
-        # Based upon a circa 3GW power production plant.
-        step21010112 = cv.site_imp_uc[18]
-        step210101 += step21010112
+        if cv.igridconn == 0:
+            # 21.01.01.12 Connection to Electricity grid (outgoing)
+            # Includes transformers, busbars, cabling installation, fire protection, earthing.
+            # Based upon a circa 3GW power production plant.
+            step21010112 = cv.site_imp_uc[18]
+            step210101 += step21010112
 
         # 21.01.01.13 Retaining Walls
         # Site specific; retaining walls varying height from 1.2m to 3m high.
@@ -575,14 +576,16 @@ class CostsStep:
         step210104 += step21010403
 
         # 21.01.04.04 Campus Accommodation
-        # 21.01.04.04.01 Residential
-        # Campus accommodation including canteen, shops, laundry,
-        # internal recreation facilities, medical centre and sports pitches.
-        step2101040401 = cv.site_imp_uc[34]
+        if cv.isiteaccomm == 1:
+            # 21.01.04.04.01 Residential
+            # Campus accommodation including canteen, shops, laundry,
+            # internal recreation facilities, medical centre and sports pitches.
+            step2101040401 = cv.site_imp_uc[34]
+            step210104 += step2101040401
         # 21.01.04.04.02 Bus service
         # Bus station building and site maintenance and services.
         step2101040402 = cv.site_imp_uc[35]
-        step210104 += step2101040401 + step2101040402
+        step210104 += step2101040402
 
         # 21.01.04.05 Multi-storey Car parks
         step21010405 = cv.site_imp_uc[36]
@@ -652,24 +655,31 @@ class CostsStep:
         step2101 = step2101 + (step210104 / 1.0e6)
 
         # 21.01.05 Waterfront Improvements
-        # 21.01.05.01 Marine
-        # 21.01.05.01.01 Cooling installations - offshore intake, discharge, fish return, heat sink.
-        # (Scaling used relates to thermal power of Hinckley C)
-        step2101050101 = cv.site_imp_uc[54] * htv.pthermmw * (0.5e0 / 4524)
-        # 21.01.05.01.02 Breakwater - harbour breakwater construction
-        step2101050102 = cv.site_imp_uc[55]
-        step21010501 = step2101050101 + step2101050102
-        # 21.01.05.02 Material Offloading Facility
-        # Marine transportation - jetty complete with conveyor (inc. dismantling at project end)
-        step21010502 = cv.site_imp_uc[56]
-        # 21.01.05.03 Sea Defence
+        step210105 = 0.0e0
+        if cv.isitetype == 1:
+            # 21.01.05.01 Marine
+            # 21.01.05.01.01 Cooling installations - offshore intake, discharge, fish return, heat sink.
+            # (Scaling used relates to thermal power of Hinckley C)
+            step2101050101 = cv.site_imp_uc[54] * htv.pthermmw * (0.5e0 / 4524)
+            # 21.01.05.01.02 Breakwater - harbour breakwater construction
+            step2101050102 = cv.site_imp_uc[55]
+            step21010501 = step2101050101 + step2101050102
+            step210105 += step21010501
+            # 21.01.05.02 Material Offloading Facility
+            # Marine transportation - jetty complete with conveyor (inc. dismantling at project end)
+            step21010502 = cv.site_imp_uc[56]
+            step210105 += step21010502
+        # 21.01.05.03 Sea/Flood Defence
         # Armour and mass fill to increase height of existing defences in line with flood analysis.
         step21010503 = cv.site_imp_uc[57]
-        # 21.01.05.04 Other Waterfront Improvements
-        # Excluded (no benchmark cost data available)
-        step21010504 = 0.0e0
+        step210105 += step21010503
+        if cv.isitetype == 1:
+            # 21.01.05.04 Other Waterfront Improvements
+            # Excluded (no benchmark cost data available)
+            step21010504 = 0.0e0
+            step210105 += step21010504
 
-        step210105 = step21010501 + step21010502 + step21010503 + step21010504
+        # step210105 = step21010501 + step21010502 + step21010503 + step21010504
 
         # Running total (M$)
         step2101 += step210105 / 1.0e6
@@ -685,16 +695,22 @@ class CostsStep:
         step2101 += step210106 / 1.0e6
 
         # 21.01.07 Transport access
+        step210107 = 0.0e0
         # 21.01.07.01 Highway Access - offsite highway improvements
         # Includes new roads & junctions, widening, upgrade, etc.
         step21010701 = cv.site_imp_uc[60]
-        # 21.01.07.02 Rail Access
-        # Includes new track and associated provisions, interface with existing rail
-        step21010702 = cv.site_imp_uc[61]
+        step210107 += step21010701
+        if cv.irailaccess == 0:
+            # 21.01.07.02 Rail Access
+            # Includes new track and associated provisions, interface with existing rail
+            step21010702 = cv.site_imp_uc[61]
+            step210107 += step21010702
         # 21.01.07.03 Air Access
         # Excluded (no benchmark cost data available)
         step21010703 = 0.0e0
-        step210107 = step21010701 + step21010702 + step21010703
+        step210107 += step21010703
+        
+        #step210107 = step21010701 + step21010702 + step21010703
 
         # Running total (M$)
         step2101 += step210107 / 1.0e6
