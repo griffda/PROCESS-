@@ -1586,7 +1586,7 @@
         "degrad": 0.01745329251,
         "degree": "pi/180.0D0",
         "delld": 1.0,
-        "delta": null,
+        "delta": 0.0001,
         "delta_eta": 0.0,
         "delta_var": null,
         "dendiv": 0.0,
@@ -2441,6 +2441,7 @@
         "ifueltyp": 0.0,
         "igeom": 1.0,
         "ignite": 0.0,
+        "igridconn": 1.0,
         "iinvqd": 1.0,
         "ikind": "int_def",
         "ilhthresh": 19.0,
@@ -2646,6 +2647,7 @@
         "ipvlam": "ipeqns+2*ipnvars+1",
         "ipvp1": "ipnvars+1",
         "iradloss": 1.0,
+        "irailaccess": 1.0,
         "ireactor": 1.0,
         "irefprop": 1.0,
         "irfcd": 1.0,
@@ -2656,6 +2658,8 @@
         "iscrp": 1.0,
         "iscz": 0.0,
         "ishape": 0.0,
+        "isiteaccomm": 0.0,
+        "isitetype": 0.0,
         "istell": 0.0,
         "isthtr": 3.0,
         "istore": 1.0,
@@ -3511,7 +3515,7 @@
         "phi_tfc_ob": 0.0,
         "phiint": 0.0,
         "photon_wall": 0.0,
-        "pi": "3.14159265358979e0_rkind",
+        "pi": "3.141592653589793_wp_",
         "pibv": 20000.0,
         "piepv": 0.0,
         "pifecr": 10.0,
@@ -8844,7 +8848,7 @@
         "zeffai": 0.0,
         "zeffdiv": 1.0,
         "zeffmax": 3.6,
-        "zero": 0.0,
+        "zero": "0.0_wp_",
         "zfxf": [
             0.0,
             0.0,
@@ -10103,6 +10107,7 @@
         "ifueltyp": "Switch for fuel type:\n<ul>\n<li>=2 treat initial blanket, divertor, first wall\n   as capital costs. Treat all later items and\n   fraction fcdfuel of CD equipment as fuel costs</li>\n<li>=1 treat blanket divertor, first wall and\n   fraction fcdfuel of CD equipment as fuel cost</li>\n<li>=0 treat these as capital cost</li>\n</ul>",
         "igeom": "switch for plasma geometry calculation:\n<ul>\n<li>=0 original method (possibly based on Peng ST modelling)</li>\n<li>=1 improved (and traceable) method</li>\n</ul>",
         "ignite": "switch for ignition assumption. Obviously, ignite must be zero if current drive\n is required. If ignite is 1, any auxiliary power is assumed to be used only during\n plasma start-up, and is excluded from all steady-state power balance calculations.\n<ul>\n<li>=0 do not assume plasma ignition</li>\n<li>=1 assume ignited (but include auxiliary power in costs)</UL</li>\n</ul>",
+        "igridconn": "switch for site connection (outgoing) to electricity grid:\n<ul>\n<li>=0 site has no connection to grid</li>\n<li>=1 site already has connection to grid</li>\n</ul>",
         "iinvqd": "switch for inverse quadrature in L-mode scaling laws 5 and 9:\n<ul>\n<li>=0 inverse quadrature not used</li>\n<li>=1 inverse quadrature with Neo-Alcator tau-E used</li>\n</ul>",
         "ikind": "",
         "ilhthresh": "switch for L-H mode power threshold scaling to use (see pthrmw for list)",
@@ -10171,6 +10176,7 @@
         "ipvlam": "",
         "ipvp1": "",
         "iradloss": "switch for radiation loss term usage in power balance (see User Guide):\n<ul>\n<li>=0 total power lost is scaling power plus radiation (needed for `ipedestal=2,3`)</li>\n<li>=1 total power lost is scaling power plus core radiation only</li>\n<li>=2 total power lost is scaling power only, with no additional\n   allowance for radiation. This is not recommended for power plant models.</li>\n</ul>",
+        "irailaccess": "switch for rail access to site:\n<ul>\n<li>=0 site has no rail access</li>\n<li>=1 site already has rail access</li>\n</ul>",
         "ireactor": "Switch for net electric power and cost of electricity calculations:\n<ul>\n<li>=0 do not calculate MW(electric) or c-o-e</li>\n<li>=1 calculate MW(electric) and c-o-e</li>\n</ul>",
         "irefprop": "Switch to use REFPROP routines (stellarator only)",
         "irfcd": "Switch for current drive calculation:\n<ul>\n<li>=0 turned off</li>\n<li>=1 turned on</li>\n</ul>",
@@ -10181,6 +10187,8 @@
         "iscrp": "switch for plasma-first wall clearances:\n<ul>\n<li>=0 use 10% of rminor</li>\n<li>=1 use input (scrapli and scraplo)</li>\n</ul>",
         "iscz": "",
         "ishape": "switch for plasma cross-sectional shape calculation:\n<ul>\n<li>=0 use input kappa, triang to calculate 95% values</li>\n<li>=1 scale qlim, kappa, triang with aspect ratio (ST)</li>\n<li>=2 set kappa to the natural elongation value (Zohm ITER scaling), triang input</li>\n<li>=3 set kappa to the natural elongation value (Zohm ITER scaling), triang95 input</li>\n<li>=4 use input kappa95, triang95 to calculate separatrix values</li>\n<li>=5 use input kappa95, triang95 to calculate separatrix values based on MAST scaling (ST)</li>\n<li>=6 use input kappa, triang to calculate 95% values based on MAST scaling (ST)</li>\n<li>=7 use input kappa95, triang95 to calculate separatrix values based on fit to FIESTA (ST)</li>\n<li>=8 use input kappa, triang to calculate 95% values based on fit to FIESTA (ST)</li>\n<li>=9 set kappa to the natural elongation value (PROCESS-STEP issue #70), triang input</li>\n<li>=10 set kappa to maximum stable value at a given aspect ratio (2.6<A<3.6)), triang input (#1399)</li>\n<li>=11 set kappa Menard 2016 aspect-ratio-dependent scaling, triang input (#1439)</li>\n</ul>",
+        "isiteaccomm": "switch for including Campus Accommodation:\n<ul>\n<li>=0 no campus accommodation</li>\n<li>=1 campus accommodation included</li>\n</ul>",
+        "isitetype": "switch for type of site:\n<ul>\n<li>=0 Site with river infrastructure</li>\n<li>=1 Site with sea infrastructure</li>\n</ul>",
         "istell": "Switch for stellarator option (set via `device.dat`):\n<ul>\n<li>=0 use tokamak model</li>\n<li>=1 use stellarator model: Helias5-b</li>\n<li>=2 use stellarator model: Helias4-b</li>\n<li>=3 use stellarator model: Helias3-b</li>\n</ul>",
         "isthtr": "Switch for stellarator auxiliary heating method:\n<ul>\n<li>= 1electron cyclotron resonance heating</li>\n<li>= 2lower hybrid heating</li>\n<li>= 3neutral beam injection</li>\n</ul>",
         "istore": "Switch for thermal storage method:\n<ul>\n<li>=1 option 1 of Electrowatt report, AEA FUS 205</li>\n<li>=2 option 2 of Electrowatt report, AEA FUS 205</li>\n<li>=3 stainless steel block</li>\n</ul>",
@@ -13813,6 +13821,10 @@
             "lb": 0,
             "ub": 1
         },
+        "igridconn": {
+            "lb": 0,
+            "ub": 1
+        },
         "iinvqd": {
             "lb": 0,
             "ub": 1
@@ -13913,6 +13925,10 @@
             "lb": 0,
             "ub": 2
         },
+        "irailaccess": {
+            "lb": 0,
+            "ub": 1
+        },
         "ireactor": {
             "lb": 0,
             "ub": 1
@@ -13936,6 +13952,14 @@
         "ishape": {
             "lb": 0,
             "ub": 11
+        },
+        "isiteaccomm": {
+            "lb": 0,
+            "ub": 1
+        },
+        "isitetype": {
+            "lb": 0,
+            "ub": 1
         },
         "istell": {
             "lb": 0,
@@ -18392,7 +18416,11 @@
             "ucws",
             "ucwst",
             "wfbuilding",
-            "whole_site_area"
+            "whole_site_area",
+            "isitetype",
+            "isiteaccomm",
+            "igridconn",
+            "irailaccess"
         ],
         "costs_2015_module": [
             "double",
@@ -21308,6 +21336,7 @@
         "ifueltyp": "int_variable",
         "igeom": "int_variable",
         "ignite": "int_variable",
+        "igridconn": "int_variable",
         "iinvqd": "int_variable",
         "ilhthresh": "int_variable",
         "ilw_smelter_h": "real_variable",
@@ -21336,6 +21365,7 @@
         "iprofile": "int_variable",
         "ips": "int_variable",
         "iradloss": "int_variable",
+        "irailaccess": "int_variable",
         "ireactor": "int_variable",
         "irefprop": "int_variable",
         "irfcd": "int_variable",
@@ -21343,6 +21373,8 @@
         "iscenr": "int_variable",
         "iscrp": "int_variable",
         "ishape": "int_variable",
+        "isiteaccomm": "int_variable",
+        "isitetype": "int_variable",
         "istell": "int_variable",
         "isthtr": "int_variable",
         "istore": "int_variable",
