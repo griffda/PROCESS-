@@ -3,7 +3,6 @@ from process.fortran import process_output as po
 from process.fortran import ife_variables, fwbs_variables
 from process.fortran import tfcoil_variables
 from process.fortran import physics_variables
-from process.fortran import buildings_variables
 
 
 class Costs:
@@ -28,7 +27,7 @@ class Costs:
         <P>The code is arranged in the order of the standard accounts.
         AEA FUS 251: A User's Guide to the PROCESS Systems Code
         """
-        self.acc21()
+        costs_module.acc21()
 
         #  Account 22 : Fusion power island
         costs_module.acc22()
@@ -748,125 +747,3 @@ class Costs:
                     "Total capital investment (M$)",
                     cost_variables.capcost,
                 )
-
-    def acc21(self):
-        """
-        Account 21 : Structures and site facilities
-        author: P J Knight, CCFE, Culham Science Centre
-        None
-        This routine evaluates the Account 21 (structures and site
-        facilities) costs.
-        Building costs are scaled with volume according to algorithms
-        developed from TFCX, TFTR, and commercial power plant buildings.
-        Costs include equipment, materials and installation labour, but
-        no engineering or construction management.
-        <P>The general form of the cost algorithm is cost=ucxx*volume**expxx.
-        Allowances are used for site improvements and for miscellaneous
-        buildings and land costs.
-        AEA FUS 251: A User's Guide to the PROCESS Systems Code
-        """
-        cmlsa = [0.6800e0, 0.8400e0, 0.9200e0, 1.0000e0]
-        exprb = 1.0e0
-        #  Account 211 : Site improvements, facilities and land
-        #  N.B. Land unaffected by LSA
-
-        costs_module.c211 = (
-            cost_variables.csi * cmlsa[cost_variables.lsa - 1] + cost_variables.cland
-        )
-
-        #  Account 212 : Reactor building
-
-        costs_module.c212 = (
-            1.0e-6
-            * cost_variables.ucrb
-            * buildings_variables.rbvol**exprb
-            * cmlsa[cost_variables.lsa - 1]
-        )
-
-        #  Account 213 : Turbine building
-
-        if cost_variables.ireactor == 1:
-            costs_module.c213 = cost_variables.cturbb * cmlsa[cost_variables.lsa - 1]
-        else:
-            costs_module.c213 = 0.0e0
-
-        #  Account 214 : Reactor maintenance and warm shops buildings
-
-        costs_module.c2141 = (
-            1.0e-6
-            * cost_variables.ucmb
-            * buildings_variables.rmbvol**exprb
-            * cmlsa[cost_variables.lsa - 1]
-        )
-        costs_module.c2142 = (
-            1.0e-6
-            * cost_variables.ucws
-            * buildings_variables.wsvol**exprb
-            * cmlsa[cost_variables.lsa - 1]
-        )
-        costs_module.c214 = costs_module.c2141 + costs_module.c2142
-
-        #  Account 215 : Tritium building
-
-        costs_module.c215 = (
-            1.0e-6
-            * cost_variables.uctr
-            * buildings_variables.triv**exprb
-            * cmlsa[cost_variables.lsa - 1]
-        )
-
-        #  Account 216 : Electrical equipment building
-
-        costs_module.c216 = (
-            1.0e-6
-            * cost_variables.ucel
-            * buildings_variables.elevol**exprb
-            * cmlsa[cost_variables.lsa - 1]
-        )
-
-        #  Account 217 : Other buildings
-        #  Includes administration, control, shops, cryogenic
-        #  plant and an allowance for miscellaneous structures
-
-        costs_module.c2171 = (
-            1.0e-6
-            * cost_variables.ucad
-            * buildings_variables.admvol**exprb
-            * cmlsa[cost_variables.lsa - 1]
-        )
-        costs_module.c2172 = (
-            1.0e-6
-            * cost_variables.ucco
-            * buildings_variables.convol**exprb
-            * cmlsa[cost_variables.lsa - 1]
-        )
-        costs_module.c2173 = (
-            1.0e-6
-            * cost_variables.ucsh
-            * buildings_variables.shovol**exprb
-            * cmlsa[cost_variables.lsa - 1]
-        )
-        costs_module.c2174 = (
-            1.0e-6
-            * cost_variables.uccr
-            * buildings_variables.cryvol**exprb
-            * cmlsa[cost_variables.lsa - 1]
-        )
-        costs_module.c217 = (
-            costs_module.c2171
-            + costs_module.c2172
-            + costs_module.c2173
-            + costs_module.c2174
-        )
-
-        #  Total for Account 21
-
-        costs_module.c21 = (
-            costs_module.c211
-            + costs_module.c212
-            + costs_module.c213
-            + costs_module.c214
-            + costs_module.c215
-            + costs_module.c216
-            + costs_module.c217
-        )

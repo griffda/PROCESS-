@@ -860,7 +860,7 @@ class Acc21Param(NamedTuple):
         ),
     ),
 )
-def test_acc21(acc21param, monkeypatch, costs):
+def test_acc21(acc21param, monkeypatch):
     """
     Automatically generated Regression Unit Test for acc21.
 
@@ -931,7 +931,7 @@ def test_acc21(acc21param, monkeypatch, costs):
 
     monkeypatch.setattr(costs_module, "c2174", acc21param.c2174)
 
-    costs.acc21()
+    costs_module.acc21()
 
     assert costs_module.c21 == pytest.approx(acc21param.expected_c21)
 
