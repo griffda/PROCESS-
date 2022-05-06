@@ -188,7 +188,7 @@ integration-py38:
 regression-py38:
     extends: .test_template
     script:
-        - pytest tests/regression -vs | tee tests/regression/pytest.log
+        - pytest tests/regression -vs --reg-tolerance=0 | tee tests/regression/pytest.log
         - lcov --gcov-tool gcov --capture --directory build/CMakeFiles/process.dir/source/fortran/ --output-file lcov_results/coverage.info
         - genhtml --output-directory lcov_results/html lcov_results/coverage.info
     artifacts:
@@ -202,7 +202,7 @@ regression-py38:
 regression-py38-5-percent:
     extends: .test_template
     script:
-        - pytest tests/regression -vs --reg-tolerance=5 | tee tests/regression/pytest.log
+        - pytest tests/regression -vs | tee tests/regression/pytest.log
     artifacts:
         when: on_failure
         paths:
