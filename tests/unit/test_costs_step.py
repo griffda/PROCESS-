@@ -218,8 +218,13 @@ def test_step_a20(monkeypatch, costs_step):
     assert pytest.approx(obs) == exp
 
 
-@pytest.mark.parametrize("isitetype, isiteaccomm, igridconn, irailaccess, exp", ((0, 0, 0, 0, 5.0877341e3), (1, 1, 1, 1, 6.1786241e3)))
-def test_step_a21(monkeypatch, costs_step, isitetype, isiteaccomm, igridconn, irailaccess, exp):
+@pytest.mark.parametrize(
+    "isitetype, isiteaccomm, igridconn, irailaccess, exp",
+    ((0, 0, 0, 0, 5.0877341e3), (1, 1, 1, 1, 6.1786241e3)),
+)
+def test_step_a21(
+    monkeypatch, costs_step, isitetype, isiteaccomm, igridconn, irailaccess, exp
+):
     """Validate sum of cost account 21.
 
     :param monkeypatch: mocking fixture
