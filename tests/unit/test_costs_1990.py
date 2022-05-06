@@ -871,7 +871,7 @@ class Acc21Param(NamedTuple):
         ),
     ),
 )
-def test_acc21(acc21param, monkeypatch):
+def test_acc21(acc21param, monkeypatch, costs):
     """
     Automatically generated Regression Unit Test for acc21.
 
@@ -942,7 +942,7 @@ def test_acc21(acc21param, monkeypatch):
 
     monkeypatch.setattr(costs_module, "c2174", acc21param.c2174)
 
-    costs_module.acc21()
+    costs.acc21()
 
     assert costs_module.c21 == pytest.approx(acc21param.expected_c21)
 
@@ -1067,7 +1067,7 @@ class Acc2211Param(NamedTuple):
         ),
     ),
 )
-def test_acc2211(acc2211param, monkeypatch):
+def test_acc2211(acc2211param, monkeypatch, costs):
     """
     Automatically generated Regression Unit Test for acc2211.
 
@@ -1106,7 +1106,7 @@ def test_acc2211(acc2211param, monkeypatch):
 
     monkeypatch.setattr(costs_module, "c2211", acc2211param.c2211)
 
-    costs_module.acc2211()
+    costs.acc2211()
 
     assert cost_variables.fwallcst == pytest.approx(acc2211param.expected_fwallcst)
 
@@ -1305,7 +1305,7 @@ class Acc2212Param(NamedTuple):
         ),
     ),
 )
-def test_acc2212(acc2212param, monkeypatch):
+def test_acc2212(acc2212param, monkeypatch, costs):
     """
     Automatically generated Regression Unit Test for acc2212.
 
@@ -1388,7 +1388,7 @@ def test_acc2212(acc2212param, monkeypatch):
 
     monkeypatch.setattr(costs_module, "c22128", acc2212param.c22128)
 
-    costs_module.acc2212()
+    costs.acc2212()
 
     assert cost_variables.blkcst == pytest.approx(acc2212param.expected_blkcst)
 

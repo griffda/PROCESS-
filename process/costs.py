@@ -3,6 +3,8 @@ from process.fortran import process_output as po
 from process.fortran import ife_variables, fwbs_variables
 from process.fortran import tfcoil_variables
 from process.fortran import physics_variables
+from process.fortran import buildings_variables
+from process.fortran import build_variables
 
 
 class Costs:
@@ -27,10 +29,10 @@ class Costs:
         <P>The code is arranged in the order of the standard accounts.
         AEA FUS 251: A User's Guide to the PROCESS Systems Code
         """
-        costs_module.acc21()
+        self.acc21()
 
         #  Account 22 : Fusion power island
-        costs_module.acc22()
+        self.acc22()
 
         #  Account 23 : Turbine plant equipment
         costs_module.acc23()
@@ -747,3 +749,484 @@ class Costs:
                     "Total capital investment (M$)",
                     cost_variables.capcost,
                 )
+
+    def acc22(self):
+        """
+        Account 22 : Fusion power island
+        author: P J Knight, CCFE, Culham Science Centre
+        author: J Morris, CCFE, Culham Science Centre
+        None
+        This routine evaluates the Account 22 (fusion power island
+        - the tokamak itself plus auxiliary power systems, etc.) costs.
+        AEA FUS 251: A User's Guide to the PROCESS Systems Code
+        """
+        self.acc221()
+
+        #  Account 222 : Magnets
+        costs_module.acc222
+
+        #  Account 223 : Power injection
+        costs_module.acc223
+
+        #  Account 224 : Vacuum system
+        costs_module.acc224
+
+        #  Account 225 : Power conditioning
+        costs_module.acc225
+
+        #  Account 226 : Heat transport system
+        costs_module.acc2261  # Account 2261 : Reactor cooling system
+        costs_module.acc2262  # Account 2262 : Auxiliary component coolin
+        costs_module.acc2263  # Account 2263 : Cryogenic system
+        costs_module.acc226  # ccount 226  : Total
+
+        #  Account 227 : Fuel handling
+        costs_module.acc2271  # Account 2271 : Fuelling system
+        costs_module.acc2272  # Account 2272 : Fuel processing and purification
+        costs_module.acc2273  # Account 2273 : Atmospheric recovery systems
+        costs_module.acc2274  # Account 2274 : Nuclear building ventilation
+        costs_module.acc227  # Account 227  : Total
+
+        #  Account 228 : Instrumentation and control
+        costs_module.acc228
+
+        #  Account 229 : Maintenance equipment
+        costs_module.acc229
+
+        #  Reactor core costs
+        cost_variables.crctcore = (
+            cost_variables.c221 + cost_variables.c222 + costs_module.c223
+        )
+
+        #  Total account 22
+        costs_module.c22 = (
+            cost_variables.c221
+            + cost_variables.c222
+            + costs_module.c223
+            + costs_module.c224
+            + costs_module.c225
+            + costs_module.c226
+            + costs_module.c227
+            + costs_module.c228
+            + costs_module.c229
+        )
+
+    def acc221(self):
+        """
+        Account 221 : Reactor
+        author: P J Knight, CCFE, Culham Science Centre
+        None
+        This routine evaluates the Account 221 (reactor) costs.
+        These include the first wall, blanket, shield, support structure
+        and divertor plates.
+        <P>If ifueltyp = 1, the first wall, blanket and divertor costs are
+        treated as fuel costs, rather than as capital costs.
+        <P>If ifueltyp = 2, the initial first wall, blanket and divertor costs are
+        treated as capital costs, and replacemnts are included as fuel costs.
+        AEA FUS 251: A User's Guide to the PROCESS Systems Code
+        """
+        self.acc2211()
+
+        #  Account 221.2 : Blanket
+
+        self.acc2212()
+
+        #  Account 221.3 : Shield
+
+        costs_module.acc2213
+
+        #  Account 221.4 : Reactor structure
+
+        costs_module.acc2214
+
+        #  Account 221.5 : Divertor
+
+        costs_module.acc2215
+
+        #  Total account 221
+
+        cost_variables.c221 = (
+            costs_module.c2211
+            + costs_module.c2212
+            + costs_module.c2213
+            + costs_module.c2214
+            + costs_module.c2215
+        )
+
+    def acc222(self):
+        """
+        Account 222 : Magnets, including cryostat
+        author: P J Knight, CCFE, Culham Science Centre
+        None
+        This routine evaluates the Account 222 (magnet) costs,
+        including the costs of associated cryostats.
+        AEA FUS 251: A User's Guide to the PROCESS Systems Code
+        """
+        if ife_variables.ife == 1:
+            cost_variables.c222 = 0.0e0
+            return
+
+        #  Account 222.1 : TF magnet assemblies
+
+        costs_module.acc2221
+
+        #  Account 222.2 : PF magnet assemblies
+        costs_module.acc2222
+
+        #  Account 222.3 : Cryostat
+
+        costs_module.acc2223
+
+        #  Total account 222
+
+        cost_variables.c222 = (
+            costs_module.c2221 + costs_module.c2222 + costs_module.c2223
+        )
+
+    def acc225(self):
+        """
+        Account 225 : Power conditioning
+        author: P J Knight, CCFE, Culham Science Centre
+        None
+        This routine evaluates the Account 225 (power conditioning) costs.
+        AEA FUS 251: A User's Guide to the PROCESS Systems Code
+        """
+        if ife_variables.ife == 1:
+            costs_module.c225 = 0.0e0
+        else:
+
+            #  Account 225.1 : TF coil power conditioning
+
+            costs_module.acc2251
+
+            #  Account 225.2 : PF coil power conditioning
+
+            costs_module.acc2252
+
+            #  Account 225.3 : Energy storage
+
+            costs_module.acc2253
+
+            #  Total account 225
+
+            costs_module.c225 = (
+                costs_module.c2251 + costs_module.c2252 + costs_module.c2253
+            )
+
+    def acc21(self):
+        """
+        Account 21 : Structures and site facilities
+        author: P J Knight, CCFE, Culham Science Centre
+        None
+        This routine evaluates the Account 21 (structures and site
+        facilities) costs.
+        Building costs are scaled with volume according to algorithms
+        developed from TFCX, TFTR, and commercial power plant buildings.
+        Costs include equipment, materials and installation labour, but
+        no engineering or construction management.
+        <P>The general form of the cost algorithm is cost=ucxx*volume**expxx.
+        Allowances are used for site improvements and for miscellaneous
+        buildings and land costs.
+        AEA FUS 251: A User's Guide to the PROCESS Systems Code
+        """
+        cmlsa = [0.6800e0, 0.8400e0, 0.9200e0, 1.0000e0]
+        exprb = 1.0e0
+        #  Account 211 : Site improvements, facilities and land
+        #  N.B. Land unaffected by LSA
+
+        costs_module.c211 = (
+            cost_variables.csi * cmlsa[cost_variables.lsa - 1] + cost_variables.cland
+        )
+
+        #  Account 212 : Reactor building
+
+        costs_module.c212 = (
+            1.0e-6
+            * cost_variables.ucrb
+            * buildings_variables.rbvol**exprb
+            * cmlsa[cost_variables.lsa - 1]
+        )
+
+        #  Account 213 : Turbine building
+
+        if cost_variables.ireactor == 1:
+            costs_module.c213 = cost_variables.cturbb * cmlsa[cost_variables.lsa - 1]
+        else:
+            costs_module.c213 = 0.0e0
+
+        #  Account 214 : Reactor maintenance and warm shops buildings
+
+        costs_module.c2141 = (
+            1.0e-6
+            * cost_variables.ucmb
+            * buildings_variables.rmbvol**exprb
+            * cmlsa[cost_variables.lsa - 1]
+        )
+        costs_module.c2142 = (
+            1.0e-6
+            * cost_variables.ucws
+            * buildings_variables.wsvol**exprb
+            * cmlsa[cost_variables.lsa - 1]
+        )
+        costs_module.c214 = costs_module.c2141 + costs_module.c2142
+
+        #  Account 215 : Tritium building
+
+        costs_module.c215 = (
+            1.0e-6
+            * cost_variables.uctr
+            * buildings_variables.triv**exprb
+            * cmlsa[cost_variables.lsa - 1]
+        )
+
+        #  Account 216 : Electrical equipment building
+
+        costs_module.c216 = (
+            1.0e-6
+            * cost_variables.ucel
+            * buildings_variables.elevol**exprb
+            * cmlsa[cost_variables.lsa - 1]
+        )
+
+        #  Account 217 : Other buildings
+        #  Includes administration, control, shops, cryogenic
+        #  plant and an allowance for miscellaneous structures
+
+        costs_module.c2171 = (
+            1.0e-6
+            * cost_variables.ucad
+            * buildings_variables.admvol**exprb
+            * cmlsa[cost_variables.lsa - 1]
+        )
+        costs_module.c2172 = (
+            1.0e-6
+            * cost_variables.ucco
+            * buildings_variables.convol**exprb
+            * cmlsa[cost_variables.lsa - 1]
+        )
+        costs_module.c2173 = (
+            1.0e-6
+            * cost_variables.ucsh
+            * buildings_variables.shovol**exprb
+            * cmlsa[cost_variables.lsa - 1]
+        )
+        costs_module.c2174 = (
+            1.0e-6
+            * cost_variables.uccr
+            * buildings_variables.cryvol**exprb
+            * cmlsa[cost_variables.lsa - 1]
+        )
+        costs_module.c217 = (
+            costs_module.c2171
+            + costs_module.c2172
+            + costs_module.c2173
+            + costs_module.c2174
+        )
+
+        #  Total for Account 21
+
+        costs_module.c21 = (
+            costs_module.c211
+            + costs_module.c212
+            + costs_module.c213
+            + costs_module.c214
+            + costs_module.c215
+            + costs_module.c216
+            + costs_module.c217
+        )
+
+    def acc2211(self):
+        """
+        Account 221.1 : First wall
+        author: P J Knight, CCFE, Culham Science Centre
+        None
+        This routine evaluates the Account 221.1 (first wall) costs.
+        The first wall cost is scaled linearly with surface area from TFCX.
+        If ifueltyp = 1, the first wall cost is treated as a fuel cost,
+        rather than as a capital cost.
+        If ifueltyp = 2, inital first wall is included as a capital cost,
+        and the replacement first wall cost is treated as a fuel costs.
+        AEA FUS 251: A User's Guide to the PROCESS Systems Code
+        """
+        cmlsa = 0.5000e0, 0.7500e0, 0.8750e0, 1.0000e0
+
+        if ife_variables.ife != 1:
+            costs_module.c2211 = (
+                1.0e-6
+                * cmlsa[cost_variables.lsa - 1]
+                * (
+                    (cost_variables.ucfwa + cost_variables.ucfws)
+                    * build_variables.fwarea
+                    + cost_variables.ucfwps
+                )
+            )
+        else:
+            costs_module.c2211 = (
+                1.0e-6
+                * cmlsa[cost_variables.lsa - 1]
+                * (
+                    cost_variables.ucblss
+                    * (
+                        ife_variables.fwmatm(1, 1)
+                        + ife_variables.fwmatm(2, 1)
+                        + ife_variables.fwmatm(3, 1)
+                    )
+                    + ife_variables.uccarb
+                    * (
+                        ife_variables.fwmatm(1, 2)
+                        + ife_variables.fwmatm(2, 2)
+                        + ife_variables.fwmatm(3, 2)
+                    )
+                    + cost_variables.ucblli2o
+                    * (
+                        ife_variables.fwmatm(1, 4)
+                        + ife_variables.fwmatm(2, 4)
+                        + ife_variables.fwmatm(3, 4)
+                    )
+                    + ife_variables.ucconc
+                    * (
+                        ife_variables.fwmatm(1, 5)
+                        + ife_variables.fwmatm(2, 5)
+                        + ife_variables.fwmatm(3, 5)
+                    )
+                )
+            )
+
+        costs_module.c2211 = cost_variables.fkind * costs_module.c2211
+
+        if cost_variables.ifueltyp == 1:
+            cost_variables.fwallcst = costs_module.c2211
+            costs_module.c2211 = 0.0e0
+        elif cost_variables.ifueltyp == 2:
+            cost_variables.fwallcst = costs_module.c2211
+        else:
+            cost_variables.fwallcst = 0.0e0
+
+    def acc2212(self):
+        """
+        Account 221.2 : Blanket
+        author: P J Knight, CCFE, Culham Science Centre
+        None
+        This routine evaluates the Account 221.2 (blanket) costs.
+        If ifueltyp = 1, the blanket cost is treated as a fuel cost,
+        rather than as a capital cost.
+        If ifueltyp = 2, the initial blanket is included as a capital cost
+        and the replacement blanket costs are treated as a fuel cost.
+        AEA FUS 251: A User's Guide to the PROCESS Systems Code
+        """
+        cmlsa = [0.5000e0, 0.7500e0, 0.8750e0, 1.0000e0]
+
+        if ife_variables.ife != 1:
+
+            # iblanket=4 is used for KIT HCLL model. iblanket<4 are all
+            # HCPB (CCFE, KIT and CCFE + Shimwell TBR calculation).
+
+            if fwbs_variables.iblanket == 4:
+                #  Liquid blanket (LiPb + Li)
+                costs_module.c22121 = (
+                    1.0e-6 * fwbs_variables.wtbllipb * cost_variables.ucbllipb
+                )
+                costs_module.c22122 = (
+                    1.0e-6 * fwbs_variables.whtblli * cost_variables.ucblli
+                )
+            else:
+                #  Solid blanket (Li2O + Be)
+                costs_module.c22121 = (
+                    1.0e-6 * fwbs_variables.whtblbe * cost_variables.ucblbe
+                )
+                if fwbs_variables.iblanket == 2:
+                    # KIT model
+                    costs_module.c22122 = (
+                        1.0e-6 * fwbs_variables.whtblbreed * cost_variables.ucblbreed
+                    )
+                else:
+                    # CCFE model
+                    costs_module.c22122 = (
+                        1.0e-6 * fwbs_variables.wtblli2o * cost_variables.ucblli2o
+                    )
+
+            costs_module.c22123 = (
+                1.0e-6 * fwbs_variables.whtblss * cost_variables.ucblss
+            )
+            costs_module.c22124 = (
+                1.0e-6 * fwbs_variables.whtblvd * cost_variables.ucblvd
+            )
+            costs_module.c22125 = 0.0e0
+            costs_module.c22126 = 0.0e0
+            costs_module.c22127 = 0.0e0
+
+        else:
+
+            #  IFE blanket; materials present are Li2O, steel, carbon, concrete,
+            #  FLiBe and lithium
+
+            costs_module.c22121 = 0.0e0
+            costs_module.c22122 = (
+                1.0e-6 * fwbs_variables.wtblli2o * cost_variables.ucblli2o
+            )
+            costs_module.c22123 = (
+                1.0e-6 * fwbs_variables.whtblss * cost_variables.ucblss
+            )
+            costs_module.c22124 = 0.0e0
+            costs_module.c22125 = (
+                1.0e-6
+                * ife_variables.uccarb
+                * (
+                    ife_variables.blmatm(1, 2)
+                    + ife_variables.blmatm(2, 2)
+                    + ife_variables.blmatm(3, 2)
+                )
+            )
+            costs_module.c22126 = (
+                1.0e-6
+                * ife_variables.ucconc
+                * (
+                    ife_variables.blmatm(1, 5)
+                    + ife_variables.blmatm(2, 5)
+                    + ife_variables.blmatm(3, 5)
+                )
+            )
+            costs_module.c22127 = 1.0e-6 * ife_variables.ucflib * ife_variables.mflibe
+            costs_module.c22128 = (
+                1.0e-6 * cost_variables.ucblli * fwbs_variables.whtblli
+            )
+
+        costs_module.c22121 = (
+            cost_variables.fkind * costs_module.c22121 * cmlsa[cost_variables.lsa - 1]
+        )
+        costs_module.c22122 = (
+            cost_variables.fkind * costs_module.c22122 * cmlsa[cost_variables.lsa - 1]
+        )
+        costs_module.c22123 = (
+            cost_variables.fkind * costs_module.c22123 * cmlsa[cost_variables.lsa - 1]
+        )
+        costs_module.c22124 = (
+            cost_variables.fkind * costs_module.c22124 * cmlsa[cost_variables.lsa - 1]
+        )
+        costs_module.c22125 = (
+            cost_variables.fkind * costs_module.c22125 * cmlsa[cost_variables.lsa - 1]
+        )
+        costs_module.c22126 = (
+            cost_variables.fkind * costs_module.c22126 * cmlsa[cost_variables.lsa - 1]
+        )
+        costs_module.c22127 = (
+            cost_variables.fkind * costs_module.c22127 * cmlsa[cost_variables.lsa - 1]
+        )
+
+        costs_module.c2212 = (
+            costs_module.c22121
+            + costs_module.c22122
+            + costs_module.c22123
+            + costs_module.c22124
+            + costs_module.c22125
+            + costs_module.c22126
+            + costs_module.c22127
+        )
+
+        if cost_variables.ifueltyp == 1:
+            cost_variables.blkcst = costs_module.c2212
+            costs_module.c2212 = 0.0e0
+        elif cost_variables.ifueltyp == 2:
+            cost_variables.blkcst = costs_module.c2212
+        else:
+            cost_variables.blkcst = 0.0e0
