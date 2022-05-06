@@ -1731,6 +1731,8 @@ class CostsStep:
             # Total TF coil cost
             step22010301 = c_tf_inboard_legs + c_tf_outboard_legs
 
+            step22010301 = cv.fkind * step22010301
+
         # Superconducting coils
         elif tfv.i_tf_sup == 1:
             # Calculation taken from cost model 0:
@@ -1767,6 +1769,8 @@ class CostsStep:
             # Total superconducting TF coil costs
             step22010301 = ctfcontot + costtfwind + costtfcas + costtfint + costtfgss
 
+            step22010301 = cv.fkind * step22010301
+
         # Cryogenic aluminium coils
         elif tfv.i_tf_sup == 2:
             # Cost approximated as the material cost of conducting Al * a
@@ -1780,6 +1784,8 @@ class CostsStep:
                 * 1.0e-6
             )
 
+            step22010301 = cv.fkind * step22010301
+
         # step22010301 = step2201030101 + step2201030102 + step2201030103
 
         # ifueltyp: consider centrepost cost as fuel, capital or both?
@@ -1791,12 +1797,11 @@ class CostsStep:
                 cv.cpstcst = c_tf_inboard_legs
                 if tfv.i_tf_sup == 0:
                     # Subtract from capital cost
-                    step22010301 = step22010301 - c_tf_inboard_legs
+                    # TODO confirm that subtraction should be multiplied by fkind
+                    step22010301 = step22010301 - (cv.fkind * c_tf_inboard_legs)
             elif cv.ifueltyp == 2:
                 # Treat centrepost cost as capital and fuel cost
                 cv.cpstcst = c_tf_inboard_legs
-
-        step22010301 = cv.fkind * step22010301
 
         return step22010301
 
@@ -2085,7 +2090,6 @@ class CostsStep:
 
         # STARFIRE percentage for spares
         spares = 5.026e-2 * step2205
-        spares = cv.fkind * spares
 
         # Output costs
         if self.iprint == 1 and cv.output_costs == 1:
