@@ -229,7 +229,17 @@ When VS Code is first opened, you are able to set it such that the command:
 ```bash
 source env/bin/activate
 ```
-is executed automatically. This saves manually activating the virtual environment everytime you open the application. This is done by first using `Ctrl+Shift+P` and searching for `Python:Select Interpreter`. The select: `Python *version* ('env':venv) ./env/bin/python`. This should be starred as the recommended version. Now, close your terminal and close VS Code. Reopen and open a new terminal which should now automatically point to the virtual environmnet signalled by an `(env)` in front of your user.
+is executed automatically. This saves manually activating the virtual environment everytime you open the application. This is done by first using `Ctrl+Shift+P` and searching for `Python:Select Interpreter`. The select: `Python *version* ('env':venv) ./env/bin/python`. This should be starred as the recommended version.
+You will see that in your project the .vscode directroy will contain a `settings.json` file. Open this and inside of it add:
+
+```json
+"python.terminal.activateEnvironment": true
+```
+Dont forget to add a comma before to separate it from already present key value pairs.
+
+
+
+Now, close your terminal and close VS Code. Reopen and open a new terminal which should now automatically point to the virtual environmnet signalled by an `(env)` in front of your user.
 
 ## Prepare Release (not required)
 It is possible to build a standalone module which can be distributed without the need for the source code. This exists as a pippable "wheels" module which is build by running:

@@ -177,7 +177,7 @@ class Pulse:
             po.ovarre(
                 self.outfile,
                 "Total V-s capability of Central Solenoid/PF coils (Wb)",
-                "(abs(pfcoil_variables.vstot))",
+                "(abs(vstot))",
                 abs(pfcoil_variables.vstot),
             )
             po.ovarre(
