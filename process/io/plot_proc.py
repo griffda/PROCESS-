@@ -2067,7 +2067,7 @@ def plot_magnetics_info(axis, mfile_data, scan):
     # Number of coils (1 is OH coil)
     number_of_coils = 0
     for item in mfile_data.data.keys():
-        if "rpf(" in item:
+        if "rpf[" in item:
             number_of_coils += 1
 
     pf_info = []
