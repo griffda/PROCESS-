@@ -15,6 +15,7 @@ from process.fortran import pf_power_variables
 from process.fortran import pulse_variables
 from process.fortran import times_variables
 from process.fortran import error_handling
+import numpy
 
 
 class Costs:
@@ -82,7 +83,7 @@ class Costs:
 
         #  Cost of electricity
         if (cost_variables.ireactor == 1) and (cost_variables.ipnet == 0):
-            costs_module.coelc(self.outfile, int(output))
+            self.coelc(output)
 
         if output and cost_variables.output_costs == 1:
 
@@ -2647,3 +2648,417 @@ class Costs:
             costs_module.c2253 = costs_module.c2253 * 1.36e0
 
         costs_module.c2253 = cost_variables.fkind * costs_module.c2253
+
+    def coelc(self, iprint):
+        """
+        Routine to calculate the cost of electricity for a fusion power plant
+        author: P J Knight, CCFE, Culham Science Centre
+        outfile : input integer : output file unit
+        iprint : input integer : switch for writing to output file (1=yes)
+        This routine performs the calculation of the cost of electricity
+        for a fusion power plant.
+        <P>Annual costs are in megadollars/year, electricity costs are in
+        millidollars/kWh, while other costs are in megadollars.
+        All values are based on 1990 dollars.
+        AEA FUS 251: A User's Guide to the PROCESS Systems Code
+        """
+        if ife_variables.ife == 1:
+            kwhpy = (
+                1.0e3
+                * heat_transport_variables.pnetelmw
+                * (24.0e0 * constants.n_day_year)
+                * cost_variables.cfactr
+            )
+        else:
+            kwhpy = (
+                1.0e3
+                * heat_transport_variables.pnetelmw
+                * (24.0e0 * constants.n_day_year)
+                * cost_variables.cfactr
+                * times_variables.tburn
+                / times_variables.tcycle
+            )
+
+        #  Costs due to reactor plant
+        #  ==========================
+
+        #  Interest on construction costs
+
+        cost_variables.moneyint = cost_variables.concost * (
+            cost_variables.fcap0 - 1.0e0
+        )
+
+        #  Capital costs
+
+        cost_variables.capcost = cost_variables.concost + cost_variables.moneyint
+
+        #  Annual cost of plant capital cost
+
+        anncap = cost_variables.capcost * cost_variables.fcr0
+
+        # SJP Issue #836
+        # Check for the condition when kwhpy=0
+
+        if kwhpy < 1.0e-10:
+            kwhpy = 1.0e-10
+
+        #  Cost of electricity due to plant capital cost
+
+        cost_variables.coecap = 1.0e9 * anncap / kwhpy
+
+        #  Costs due to first wall and blanket renewal
+        #  ===========================================
+
+        #  Operational life
+
+        fwbllife = fwbs_variables.bktlife
+
+        #  Compound interest factor
+
+        feffwbl = (1.0e0 + cost_variables.discount_rate) ** fwbllife
+
+        #  Capital recovery factor
+
+        crffwbl = (feffwbl * cost_variables.discount_rate) / (feffwbl - 1.0e0)
+
+        #  Annual cost of replacements
+
+        annfwbl = (
+            (cost_variables.fwallcst + cost_variables.blkcst)
+            * (1.0e0 + cost_variables.cfind[cost_variables.lsa - 1])
+            * cost_variables.fcap0cp
+            * crffwbl
+        )
+
+        if cost_variables.ifueltyp == 2:
+            annfwbl = annfwbl * (1.0e0 - fwbllife / cost_variables.tlife)
+
+        #  Cost of electricity due to first wall/blanket replacements
+
+        coefwbl = 1.0e9 * annfwbl / kwhpy
+
+        #  Costs due to divertor renewal
+        #  =============================
+
+        if ife_variables.ife == 1:
+            anndiv = 0.0e0
+            coediv = 0.0e0
+        else:
+
+            #  Compound interest factor
+
+            fefdiv = (1.0e0 + cost_variables.discount_rate) ** cost_variables.divlife
+
+            #  Capital recovery factor
+
+            crfdiv = (fefdiv * cost_variables.discount_rate) / (fefdiv - 1.0e0)
+
+            #  Annual cost of replacements
+
+            anndiv = (
+                cost_variables.divcst
+                * (1.0e0 + cost_variables.cfind[cost_variables.lsa - 1])
+                * cost_variables.fcap0cp
+                * crfdiv
+            )
+
+            #  Cost of electricity due to divertor replacements
+
+            if cost_variables.ifueltyp == 2:
+                anndiv = anndiv * (
+                    1.0e0 - cost_variables.divlife / cost_variables.tlife
+                )
+
+            coediv = 1.0e9 * anndiv / kwhpy
+
+        #  Costs due to centrepost renewal
+        #  ===============================
+
+        if (physics_variables.itart == 1) and (ife_variables.ife != 1):
+
+            #  Compound interest factor
+
+            fefcp = (1.0e0 + cost_variables.discount_rate) ** cost_variables.cplife
+
+            #  Capital recovery factor
+
+            crfcp = (fefcp * cost_variables.discount_rate) / (fefcp - 1.0e0)
+
+            #  Annual cost of replacements
+
+            anncp = (
+                cost_variables.cpstcst
+                * (1.0e0 + cost_variables.cfind[cost_variables.lsa - 1])
+                * cost_variables.fcap0cp
+                * crfcp
+            )
+
+            #  Cost of electricity due to centrepost replacements
+            if cost_variables.ifueltyp == 2:
+                anncp = anncp * (1.0e0 - cost_variables.cplife / cost_variables.tlife)
+
+            coecp = 1.0e9 * anncp / kwhpy
+
+        else:
+            anncp = 0.0e0
+            coecp = 0.0e0
+
+        #  Costs due to partial current drive system renewal
+        #  =================================================
+
+        #  Compound interest factor
+
+        fefcdr = (1.0e0 + cost_variables.discount_rate) ** cost_variables.cdrlife
+
+        #  Capital recovery factor
+
+        crfcdr = (fefcdr * cost_variables.discount_rate) / (fefcdr - 1.0e0)
+
+        #  Annual cost of replacements
+
+        if cost_variables.ifueltyp == 0:
+            anncdr = 0.0e0
+        else:
+            anncdr = (
+                cost_variables.cdcost
+                * cost_variables.fcdfuel
+                / (1.0e0 - cost_variables.fcdfuel)
+                * (1.0e0 + cost_variables.cfind[cost_variables.lsa - 1])
+                * cost_variables.fcap0cp
+                * crfcdr
+            )
+
+        #  Cost of electricity due to current drive system replacements
+
+        coecdr = 1.0e9 * anncdr / kwhpy
+
+        #  Costs due to operation and maintenance
+        #  ======================================
+
+        #  Annual cost of operation and maintenance
+
+        annoam = cost_variables.ucoam[cost_variables.lsa - 1] * numpy.sqrt(
+            heat_transport_variables.pnetelmw / 1200.0e0
+        )
+
+        #  Additional cost due to pulsed reactor thermal storage
+        #  See F/MPE/MOD/CAG/PROCESS/PULSE/0008
+        #
+        #      if (lpulse.eq.1) :
+        #         if (istore.eq.1) :
+        #            annoam1 = 51.0e0
+        #         elif  (istore.eq.2) :
+        #            annoam1 = 22.2e0
+        #         else:
+        #            continue
+        #
+        #
+        #  Scale with net electric power
+        #
+        #         annoam1 = annoam1 * heat_transport_variables.pnetelmw/1200.0e0
+        #
+        #  It is necessary to convert from 1992 pounds to 1990 dollars
+        #  Reasonable guess for the exchange rate + inflation factor
+        #  inflation = 5% per annum; exchange rate = 1.5 dollars per pound
+        #
+        #         annoam1 = annoam1 * 1.36e0
+        #
+        #         annoam = annoam + annoam1
+        #
+        #
+
+        #  Cost of electricity due to operation and maintenance
+
+        cost_variables.coeoam = 1.0e9 * annoam / kwhpy
+
+        #  Costs due to reactor fuel
+        #  =========================
+
+        #  Annual cost of fuel
+
+        if ife_variables.ife != 1:
+            #  Sum D-T fuel cost and He3 fuel cost
+            annfuel = (
+                cost_variables.ucfuel * heat_transport_variables.pnetelmw / 1200.0e0
+                + 1.0e-6
+                * physics_variables.fhe3
+                * physics_variables.wtgpd
+                * 1.0e-3
+                * cost_variables.uche3
+                * constants.n_day_year
+                * cost_variables.cfactr
+            )
+        else:
+            annfuel = (
+                1.0e-6
+                * ife_variables.uctarg
+                * ife_variables.reprat
+                * 3.1536e7
+                * cost_variables.cfactr
+            )
+
+        #  Cost of electricity due to reactor fuel
+
+        coefuel = 1.0e9 * annfuel / kwhpy
+
+        #  Costs due to waste disposal
+        #  ===========================
+
+        #  Annual cost of waste disposal
+
+        annwst = cost_variables.ucwst[cost_variables.lsa - 1] * numpy.sqrt(
+            heat_transport_variables.pnetelmw / 1200.0e0
+        )
+
+        #  Cost of electricity due to waste disposal
+
+        coewst = 1.0e9 * annwst / kwhpy
+
+        #  Costs due to decommissioning fund
+        #  =================================
+
+        #  Annual contributions to fund for decommissioning
+        #  A fraction cost_variables.decomf of the construction cost is set aside for
+        #  this purpose at the start of the plant life.
+        #  Final factor takes into account inflation over the plant lifetime
+        #  (suggested by Tim Hender 07/03/96)
+        #  Difference (cost_variables.dintrt) between borrowing and saving interest rates is
+        #  included, along with the possibility of completing the fund cost_variables.dtlife
+        #  years before the end of the plant's lifetime
+
+        anndecom = (
+            cost_variables.decomf
+            * cost_variables.concost
+            * cost_variables.fcr0
+            / (1.0e0 + cost_variables.discount_rate - cost_variables.dintrt)
+            ** (cost_variables.tlife - cost_variables.dtlife)
+        )
+
+        #  Cost of electricity due to decommissioning fund
+
+        coedecom = 1.0e9 * anndecom / kwhpy
+
+        #  Total costs
+        #  ===========
+
+        #  Annual costs due to 'fuel-like' components
+
+        # annfuelt = annfwbl + anndiv + anncdr + anncp + annfuel + annwst
+
+        #  Total cost of electricity due to 'fuel-like' components
+
+        cost_variables.coefuelt = coefwbl + coediv + coecdr + coecp + coefuel + coewst
+
+        #  Total annual costs
+
+        # anntot = anncap + annfuelt + annoam + anndecom
+
+        #  Total cost of electricity
+
+        cost_variables.coe = (
+            cost_variables.coecap
+            + cost_variables.coefuelt
+            + cost_variables.coeoam
+            + coedecom
+        )
+
+        if (iprint == 0) or (cost_variables.output_costs == 0):
+            return
+
+        #  Output section
+
+        po.oheadr(self.outfile, "Power Reactor Costs (1990 US$)")
+
+        po.ovarrf(
+            self.outfile, "First wall / blanket life (years)", "(fwbllife)", fwbllife
+        )
+
+        if ife_variables.ife != 1:
+            po.ovarrf(
+                self.outfile,
+                "Divertor life (years)",
+                "(divlife.)",
+                cost_variables.divlife,
+            )
+            if physics_variables.itart == 1:
+                po.ovarrf(
+                    self.outfile,
+                    "Centrepost life (years)",
+                    "(cplife.)",
+                    cost_variables.cplife,
+                )
+
+        po.ovarrf(
+            self.outfile, "Cost of electricity (m$/kWh)", "(coe)", cost_variables.coe
+        )
+
+        po.osubhd(self.outfile, "Power Generation Costs :")
+
+        # if ((annfwbl != annfwbl) or (annfwbl > 1.0e10) or (annfwbl < 0.0e0)) :
+        #     write(outfile,*)'Problem with annfwbl'
+        #     write(outfile,*)'fwallcst=', fwallcst, '  blkcst=', cost_variables.blkcst
+        #     write(outfile,*)'crffwbl=', crffwbl,   '  fcap0cp=', cost_variables.fcap0cp
+        #     write(outfile,*)'feffwbl=', feffwbl,   '  fwbllife=', fwbllife
+
+        #       write(outfile,200) #          anncap,coecap, #          annoam,coeoam, #          anndecom,coedecom, #          annfwbl,coefwbl, #          anndiv,coediv, #          anncp,coecp, #          anncdr,coecdr, #          annfuel,coefuel, #          annwst,coewst, #          annfuelt,coefuelt, #          anntot,coe
+
+        # 200   format( #          t76,'Annual Costs, M$       COE, m$/kWh'// #          1x,'Capital Investment',t80,f10.2,10x,f10.2/ #          1x,'Operation & Maintenance',t80,f10.2,10x,f10.2/ #          1x,'Decommissioning Fund',t80,f10.2,10x,f10.2/ #          1x,'Fuel Charge Breakdown'// #          5x,'Blanket & first wall',t72,f10.2,10x,f10.2/ #          5x,'Divertors',t72,f10.2,10x,f10.2/ #          5x,'Centrepost (TART only)',t72,f10.2,10x,f10.2/ #          5x,'Auxiliary Heating',t72,f10.2,10x,f10.2/ #          5x,'Actual Fuel',t72,f10.2,10x,f10.2/ #          5x,'Waste Disposal',t72,f10.2,10x,f10.2/ #          1x,'Total Fuel Cost',t80,f10.2,10x,f10.2// #          1x,'Total Cost',t80,f10.2,10x,f10.2 )
+
+        if cost_variables.ifueltyp == 1:
+            po.oshead(self.outfile, "Replaceable Components Direct Capital Cost")
+            po.ovarrf(
+                self.outfile,
+                "First wall direct capital cost (M$)",
+                "(fwallcst)",
+                cost_variables.fwallcst,
+            )
+            po.ovarrf(
+                self.outfile,
+                "Blanket direct capital cost (M$)",
+                "(blkcst)",
+                cost_variables.blkcst,
+            )
+            if ife_variables.ife != 1:
+                po.ovarrf(
+                    self.outfile,
+                    "Divertor direct capital cost (M$)",
+                    "(divcst)",
+                    cost_variables.divcst,
+                )
+                if physics_variables.itart == 1:
+                    po.ovarrf(
+                        self.outfile,
+                        "Centrepost direct capital cost (M$)",
+                        "(cpstcst)",
+                        cost_variables.cpstcst,
+                    )
+
+                po.ovarrf(
+                    self.outfile,
+                    "Plasma heating/CD system cap cost (M$)",
+                    "",
+                    cost_variables.cdcost
+                    * cost_variables.fcdfuel
+                    / (1.0e0 - cost_variables.fcdfuel),
+                )
+                po.ovarrf(
+                    self.outfile,
+                    "Fraction of CD cost --> fuel cost",
+                    "(fcdfuel)",
+                    cost_variables.fcdfuel,
+                )
+            else:
+                po.ovarrf(
+                    self.outfile,
+                    "IFE driver system direct cap cost (M$)",
+                    "",
+                    cost_variables.cdcost
+                    * cost_variables.fcdfuel
+                    / (1.0e0 - cost_variables.fcdfuel),
+                )
+                po.ovarrf(
+                    self.outfile,
+                    "Fraction of driver cost --> fuel cost",
+                    "(fcdfuel)",
+                    cost_variables.fcdfuel,
+                )

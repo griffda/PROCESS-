@@ -3434,7 +3434,7 @@ class Acc2253Param(NamedTuple):
         ),
     ),
 )
-def test_acc2253(acc2253param, monkeypatch):
+def test_acc2253(acc2253param, monkeypatch, costs):
     """
     Automatically generated Regression Unit Test for acc2253.
 
@@ -3469,7 +3469,7 @@ def test_acc2253(acc2253param, monkeypatch):
 
     monkeypatch.setattr(costs_module, "c2253", acc2253param.c2253)
 
-    costs_module.acc2253()
+    costs.acc2253()
 
     assert costs_module.c2253 == pytest.approx(acc2253param.expected_c2253)
 
@@ -5158,3 +5158,389 @@ def test_acc2253_urt(acc2253param, monkeypatch, costs, initialise_error_module):
     costs.acc2253()
 
     assert costs_module.c2253 == pytest.approx(acc2253param.expected_c2253)
+
+
+class CoelcParam(NamedTuple):
+
+    fcdfuel: Any = None
+
+    uche3: Any = None
+
+    tlife: Any = None
+
+    ifueltyp: Any = None
+
+    cpstcst: Any = None
+
+    coeoam: Any = None
+
+    coecap: Any = None
+
+    output_costs: Any = None
+
+    coe: Any = None
+
+    lsa: Any = None
+
+    cfactr: Any = None
+
+    divcst: Any = None
+
+    ucfuel: Any = None
+
+    divlife: Any = None
+
+    coefuelt: Any = None
+
+    moneyint: Any = None
+
+    cdrlife: Any = None
+
+    capcost: Any = None
+
+    cplife: Any = None
+
+    fwallcst: Any = None
+
+    fcr0: Any = None
+
+    discount_rate: Any = None
+
+    decomf: Any = None
+
+    cdcost: Any = None
+
+    fcap0: Any = None
+
+    fcap0cp: Any = None
+
+    ucwst: Any = None
+
+    ucoam: Any = None
+
+    dtlife: Any = None
+
+    blkcst: Any = None
+
+    dintrt: Any = None
+
+    concost: Any = None
+
+    cfind: Any = None
+
+    bktlife: Any = None
+
+    uctarg: Any = None
+
+    ife: Any = None
+
+    reprat: Any = None
+
+    pnetelmw: Any = None
+
+    itart: Any = None
+
+    wtgpd: Any = None
+
+    fhe3: Any = None
+
+    tcycle: Any = None
+
+    tburn: Any = None
+
+    iprint: Any = None
+
+    outfile: Any = None
+
+    expected_coeoam: Any = None
+
+    expected_coecap: Any = None
+
+    expected_coe: Any = None
+
+    expected_coefuelt: Any = None
+
+    expected_moneyint: Any = None
+
+    expected_capcost: Any = None
+
+
+@pytest.mark.parametrize(
+    "coelcparam",
+    (
+        CoelcParam(
+            fcdfuel=0.10000000000000001,
+            uche3=1000000,
+            tlife=40,
+            ifueltyp=1,
+            cpstcst=0,
+            coeoam=0,
+            coecap=0,
+            output_costs=0,
+            coe=0,
+            lsa=2,
+            cfactr=0.75000000000000011,
+            divcst=88.904644548525795,
+            ucfuel=3.4500000000000002,
+            divlife=6.1337250397740126,
+            coefuelt=0,
+            moneyint=0,
+            cdrlife=19.216116010620578,
+            capcost=0,
+            cplife=0,
+            fwallcst=143.19827300247195,
+            fcr0=0.065000000000000016,
+            discount_rate=0.060000000000000012,
+            decomf=0.10000000000000001,
+            cdcost=140.341808845157,
+            fcap0=1.1499999999999999,
+            fcap0cp=1.0600000000000001,
+            ucwst=numpy.array(
+                numpy.array(
+                    (0, 3.9399999999999999, 5.9100000000000001, 7.8799999999999999),
+                    order="F",
+                ),
+                order="F",
+            ).transpose(),
+            ucoam=numpy.array(
+                numpy.array(
+                    (
+                        68.799999999999997,
+                        68.799999999999997,
+                        68.799999999999997,
+                        74.400000000000006,
+                    ),
+                    order="F",
+                ),
+                order="F",
+            ).transpose(),
+            dtlife=0,
+            blkcst=868.59838754004318,
+            dintrt=0,
+            concost=6674.484979127632,
+            cfind=numpy.array(
+                numpy.array(
+                    (
+                        0.24399999999999999,
+                        0.24399999999999999,
+                        0.24399999999999999,
+                        0.28999999999999998,
+                    ),
+                    order="F",
+                ),
+                order="F",
+            ).transpose(),
+            bktlife=19.216116010620578,
+            uctarg=0.29999999999999999,
+            ife=0,
+            reprat=0,
+            pnetelmw=493.01760776192009,
+            itart=0,
+            wtgpd=507.88376577416528,
+            fhe3=0,
+            tcycle=10864.426139387357,
+            tburn=0,
+            iprint=0,
+            outfile=11,
+            expected_coeoam=4.4099029328740929e20,
+            expected_coecap=4.9891775218979061e21,
+            expected_coe=6.9525339143363677e21,
+            expected_coefuelt=1.4801870771036603e21,
+            expected_moneyint=1001.1727468691442,
+            expected_capcost=7675.6577259967762,
+        ),
+        CoelcParam(
+            fcdfuel=0.10000000000000001,
+            uche3=1000000,
+            tlife=40,
+            ifueltyp=1,
+            cpstcst=0,
+            coeoam=4.4099029328740929e20,
+            coecap=4.9891775218979061e21,
+            output_costs=0,
+            coe=6.9525339143363677e21,
+            lsa=2,
+            cfactr=0.75000000000000011,
+            divcst=88.904644548525795,
+            ucfuel=3.4500000000000002,
+            divlife=6.145510750914414,
+            coefuelt=1.4801870771036603e21,
+            moneyint=1001.1727468691442,
+            cdrlife=19.222115557991025,
+            capcost=7675.6577259967762,
+            cplife=0,
+            fwallcst=167.7865317453867,
+            fcr0=0.065000000000000016,
+            discount_rate=0.060000000000000012,
+            decomf=0.10000000000000001,
+            cdcost=140.341808845157,
+            fcap0=1.1499999999999999,
+            fcap0cp=1.0600000000000001,
+            ucwst=numpy.array(
+                numpy.array(
+                    (0, 3.9399999999999999, 5.9100000000000001, 7.8799999999999999),
+                    order="F",
+                ),
+                order="F",
+            ).transpose(),
+            ucoam=numpy.array(
+                numpy.array(
+                    (
+                        68.799999999999997,
+                        68.799999999999997,
+                        68.799999999999997,
+                        74.400000000000006,
+                    ),
+                    order="F",
+                ),
+                order="F",
+            ).transpose(),
+            dtlife=0,
+            blkcst=870.20508315783786,
+            dintrt=0,
+            concost=6836.2066921322539,
+            cfind=numpy.array(
+                numpy.array(
+                    (
+                        0.24399999999999999,
+                        0.24399999999999999,
+                        0.24399999999999999,
+                        0.28999999999999998,
+                    ),
+                    order="F",
+                ),
+                order="F",
+            ).transpose(),
+            bktlife=19.222115557991025,
+            uctarg=0.29999999999999999,
+            ife=0,
+            reprat=0,
+            pnetelmw=422.4198205312706,
+            itart=0,
+            wtgpd=507.72524666099866,
+            fhe3=0,
+            tcycle=864.42613938735622,
+            tburn=10230.533336387549,
+            iprint=0,
+            outfile=11,
+            expected_coeoam=1.2419424614419636,
+            expected_coecap=15.547404530833255,
+            expected_coe=21.504209731681467,
+            expected_coefuelt=4.5834233757821812,
+            expected_moneyint=1025.4310038198375,
+            expected_capcost=7861.6376959520912,
+        ),
+    ),
+)
+def test_coelc(coelcparam, monkeypatch, costs):
+    """
+    Automatically generated Regression Unit Test for coelc.
+
+    This test was generated using data from tracking/baseline_2018/baseline_2018_IN.DAT.
+
+    :param coelcparam: the data used to mock and assert in this test.
+    :type coelcparam: coelcparam
+
+    :param monkeypatch: pytest fixture used to mock module/class variables
+    :type monkeypatch: _pytest.monkeypatch.monkeypatch
+    """
+
+    monkeypatch.setattr(cost_variables, "fcdfuel", coelcparam.fcdfuel)
+
+    monkeypatch.setattr(cost_variables, "uche3", coelcparam.uche3)
+
+    monkeypatch.setattr(cost_variables, "tlife", coelcparam.tlife)
+
+    monkeypatch.setattr(cost_variables, "ifueltyp", coelcparam.ifueltyp)
+
+    monkeypatch.setattr(cost_variables, "cpstcst", coelcparam.cpstcst)
+
+    monkeypatch.setattr(cost_variables, "coeoam", coelcparam.coeoam)
+
+    monkeypatch.setattr(cost_variables, "coecap", coelcparam.coecap)
+
+    monkeypatch.setattr(cost_variables, "output_costs", coelcparam.output_costs)
+
+    monkeypatch.setattr(cost_variables, "coe", coelcparam.coe)
+
+    monkeypatch.setattr(cost_variables, "lsa", coelcparam.lsa)
+
+    monkeypatch.setattr(cost_variables, "cfactr", coelcparam.cfactr)
+
+    monkeypatch.setattr(cost_variables, "divcst", coelcparam.divcst)
+
+    monkeypatch.setattr(cost_variables, "ucfuel", coelcparam.ucfuel)
+
+    monkeypatch.setattr(cost_variables, "divlife", coelcparam.divlife)
+
+    monkeypatch.setattr(cost_variables, "coefuelt", coelcparam.coefuelt)
+
+    monkeypatch.setattr(cost_variables, "moneyint", coelcparam.moneyint)
+
+    monkeypatch.setattr(cost_variables, "cdrlife", coelcparam.cdrlife)
+
+    monkeypatch.setattr(cost_variables, "capcost", coelcparam.capcost)
+
+    monkeypatch.setattr(cost_variables, "cplife", coelcparam.cplife)
+
+    monkeypatch.setattr(cost_variables, "fwallcst", coelcparam.fwallcst)
+
+    monkeypatch.setattr(cost_variables, "fcr0", coelcparam.fcr0)
+
+    monkeypatch.setattr(cost_variables, "discount_rate", coelcparam.discount_rate)
+
+    monkeypatch.setattr(cost_variables, "decomf", coelcparam.decomf)
+
+    monkeypatch.setattr(cost_variables, "cdcost", coelcparam.cdcost)
+
+    monkeypatch.setattr(cost_variables, "fcap0", coelcparam.fcap0)
+
+    monkeypatch.setattr(cost_variables, "fcap0cp", coelcparam.fcap0cp)
+
+    monkeypatch.setattr(cost_variables, "ucwst", coelcparam.ucwst)
+
+    monkeypatch.setattr(cost_variables, "ucoam", coelcparam.ucoam)
+
+    monkeypatch.setattr(cost_variables, "dtlife", coelcparam.dtlife)
+
+    monkeypatch.setattr(cost_variables, "blkcst", coelcparam.blkcst)
+
+    monkeypatch.setattr(cost_variables, "dintrt", coelcparam.dintrt)
+
+    monkeypatch.setattr(cost_variables, "concost", coelcparam.concost)
+
+    monkeypatch.setattr(cost_variables, "cfind", coelcparam.cfind)
+
+    monkeypatch.setattr(fwbs_variables, "bktlife", coelcparam.bktlife)
+
+    monkeypatch.setattr(ife_variables, "uctarg", coelcparam.uctarg)
+
+    monkeypatch.setattr(ife_variables, "ife", coelcparam.ife)
+
+    monkeypatch.setattr(ife_variables, "reprat", coelcparam.reprat)
+
+    monkeypatch.setattr(heat_transport_variables, "pnetelmw", coelcparam.pnetelmw)
+
+    monkeypatch.setattr(physics_variables, "itart", coelcparam.itart)
+
+    monkeypatch.setattr(physics_variables, "wtgpd", coelcparam.wtgpd)
+
+    monkeypatch.setattr(physics_variables, "fhe3", coelcparam.fhe3)
+
+    monkeypatch.setattr(times_variables, "tcycle", coelcparam.tcycle)
+
+    monkeypatch.setattr(times_variables, "tburn", coelcparam.tburn)
+
+    costs.coelc(iprint=coelcparam.iprint)
+
+    assert cost_variables.coeoam == pytest.approx(coelcparam.expected_coeoam)
+
+    assert cost_variables.coecap == pytest.approx(coelcparam.expected_coecap)
+
+    assert cost_variables.coe == pytest.approx(coelcparam.expected_coe)
+
+    assert cost_variables.coefuelt == pytest.approx(coelcparam.expected_coefuelt)
+
+    assert cost_variables.moneyint == pytest.approx(coelcparam.expected_moneyint)
+
+    assert cost_variables.capcost == pytest.approx(coelcparam.expected_capcost)
