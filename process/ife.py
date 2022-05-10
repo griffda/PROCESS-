@@ -1,5 +1,4 @@
 from process.fortran import constants
-from process.fortran import costs_module as cs
 from process.fortran import ife_module as ife
 
 
@@ -16,7 +15,7 @@ class IFE:
     NOTE: currently the IFE module is only partially wrapped to unblock the wrapping of availability
     """
 
-    def __init__(self, availability) -> None:
+    def __init__(self, availability, costs) -> None:
         """Initialises the IFE module's variables
 
         :param availability: a pointer to the availability model, allowing use of availability's variables/methods
@@ -25,6 +24,7 @@ class IFE:
 
         self.outfile: int = constants.nout
         self.availability = availability
+        self.costs = costs
 
     def run(self, output: bool):
         """Routine to output the physics and engineering information
@@ -43,7 +43,7 @@ class IFE:
         # write to output file
         if output:
             # Costs
-            cs.costs(self.outfile, 1)
+            self.costs.costs(output=True)
 
             # Plant availability
             # TODO: should availability.run be called
@@ -118,4 +118,4 @@ class IFE:
         self.availability.avail(output=False)
 
         # Costs
-        cs.costs(constants.nout, 0)
+        self.costs.costs(output=False)

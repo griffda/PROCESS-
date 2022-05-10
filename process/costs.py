@@ -12,6 +12,9 @@ from process.fortran import current_drive_variables
 from process.fortran import vacuum_variables
 from process.fortran import heat_transport_variables
 from process.fortran import pf_power_variables
+from process.fortran import pulse_variables
+from process.fortran import times_variables
+from process.fortran import error_handling
 
 
 class Costs:
@@ -19,7 +22,7 @@ class Costs:
         self.outfile = constants.nout
 
     def run(self, output: bool = False):
-        costs_module.costs(self.outfile, int(output))
+        self.costs(output)
 
     def costs(self, output: bool):
         """
@@ -83,7 +86,7 @@ class Costs:
 
         if output and cost_variables.output_costs == 1:
 
-            po.oheadr(self.self.outfile, "Detailed Costings (1990 US$)")
+            po.oheadr(self.outfile, "Detailed Costings (1990 US$)")
             po.ovarre(
                 self.outfile,
                 "Acc.22 multiplier for Nth of a kind",
@@ -91,7 +94,7 @@ class Costs:
                 cost_variables.fkind,
             )
             po.ovarin(
-                self.outfile, "Level of Safety Assurance", "(lsa)", costs_module.lsa
+                self.outfile, "Level of Safety Assurance", "(lsa)", cost_variables.lsa
             )
             po.oblnkl(self.outfile)
             po.oshead(self.outfile, "Structures and Site Facilities")
@@ -746,7 +749,7 @@ class Costs:
                     self.outfile,
                     "(moneyint)",
                     "Interest during construction (M$)",
-                    costs_module.moneyint,
+                    cost_variables.moneyint,
                 )
 
                 po.oshead(self.outfile, "Total Capital Investment")
@@ -912,7 +915,7 @@ class Costs:
 
             #  Account 225.3 : Energy storage
 
-            costs_module.acc2253
+            self.acc2253()
 
             #  Total account 225
 
@@ -2535,3 +2538,112 @@ class Costs:
         costs_module.ccont = cost_variables.fcontng * (
             cost_variables.cdirt + costs_module.cindrt
         )
+
+    def acc2253(self):
+        """
+        Account 225.3 : Energy storage
+        author: P J Knight, CCFE, Culham Science Centre
+        None
+        This routine evaluates the Account 225.3 (energy storage) costs.
+        AEA FUS 251: A User's Guide to the PROCESS Systems Code
+        """
+        costs_module.c2253 = 0.0e0
+
+        #  Thermal storage options for a pulsed reactor
+        #  See F/MPE/MOD/CAG/PROCESS/PULSE/0008 and 0014
+
+        if pulse_variables.lpulse == 1:
+
+            print(pulse_variables.istore)
+
+            if pulse_variables.istore == 1:
+
+                #  Option 1 from ELECTROWATT report
+                #  Pulsed Fusion Reactor Study : AEA FUS 205
+
+                #  Increased condensate tank capacity
+                costs_module.c2253 = 0.1e0
+
+                #  Additional electrically-driven feedpump (50 per cent duty)
+                costs_module.c2253 = costs_module.c2253 + 0.8e0
+
+                #  Increased turbine-generator duty (5 per cent duty)
+                costs_module.c2253 = costs_module.c2253 + 4.0e0
+
+                #  Additional auxiliary transformer capacity and ancillaries
+                costs_module.c2253 = costs_module.c2253 + 0.5e0
+
+                #  Increased drum capacity
+                costs_module.c2253 = costs_module.c2253 + 2.8e0
+
+                #  Externally fired superheater
+                costs_module.c2253 = costs_module.c2253 + 29.0e0
+
+            elif pulse_variables.istore == 2:
+
+                #  Option 2 from ELECTROWATT report
+                #  Pulsed Fusion Reactor Study : AEA FUS 205
+
+                #  Increased condensate tank capacity
+                costs_module.c2253 = 0.1e0
+
+                #  Additional electrically-driven feedpump (50 per cent duty)
+                costs_module.c2253 = costs_module.c2253 + 0.8e0
+
+                #  Increased drum capacity
+                costs_module.c2253 = costs_module.c2253 + 2.8e0
+
+                #  Increased turbine-generator duty (5 per cent duty)
+                costs_module.c2253 = costs_module.c2253 + 4.0e0
+
+                #  Additional fired boiler (1 x 100 per cent duty)
+                costs_module.c2253 = costs_module.c2253 + 330.0e0
+
+                #  HP/LP steam bypass system for auxiliary boiler
+                #  (30 per cent boiler capacity)
+                costs_module.c2253 = costs_module.c2253 + 1.0e0
+
+                #  Dump condenser
+                costs_module.c2253 = costs_module.c2253 + 2.0e0
+
+                #  Increased cooling water system capacity
+                costs_module.c2253 = costs_module.c2253 + 18.0e0
+
+            elif pulse_variables.istore == 3:
+
+                #  Simplistic approach that assumes that a large stainless steel
+                #  block acts as the thermal storage medium. No account is taken
+                #  of the cost of the piping within the block, etc.
+                #
+                #  shcss is the specific heat capacity of stainless steel (J/kg/K)
+                #  pulse_variables.dtstor is the maximum allowable temperature change in the
+                #  stainless steel block (input)
+
+                shcss = 520.0e0
+                costs_module.c2253 = (
+                    cost_variables.ucblss
+                    * (heat_transport_variables.pthermmw * 1.0e6)
+                    * times_variables.tdown
+                    / (shcss * pulse_variables.dtstor)
+                )
+
+            else:
+                error_handling.idiags[0] = pulse_variables.istore
+                print(pulse_variables.istore == 1)
+                error_handling.report_error(125)
+
+        if pulse_variables.istore < 3:
+
+            #  Scale costs_module.c2253 with net electric power
+
+            costs_module.c2253 = (
+                costs_module.c2253 * heat_transport_variables.pnetelmw / 1200.0e0
+            )
+
+            #  It is necessary to convert from 1992 pounds to 1990 dollars
+            #  Reasonable guess for the exchange rate + inflation factor
+            #  inflation = 5% per annum; exchange rate = 1.5 dollars per pound
+
+            costs_module.c2253 = costs_module.c2253 * 1.36e0
+
+        costs_module.c2253 = cost_variables.fkind * costs_module.c2253

@@ -60,6 +60,7 @@ from process.availability import Availability
 from process.ife import IFE
 from process.caller import Caller
 
+
 from pathlib import Path
 import sys
 import os
@@ -480,11 +481,14 @@ class Models:
         self.vacuum = Vacuum()
         self.water_use = WaterUse()
         self.pulse = Pulse()
-        self.ife = IFE(availability=self.availability)
-        self.stellarator = Stellarator(
-            availability=self.availability, buildings=self.buildings, vacuum=self.vacuum
-        )
         self.costs = Costs()
+        self.ife = IFE(availability=self.availability, costs=self.costs)
+        self.stellarator = Stellarator(
+            availability=self.availability,
+            buildings=self.buildings,
+            vacuum=self.vacuum,
+            costs=self.costs,
+        )
 
 
 def main(args=None):

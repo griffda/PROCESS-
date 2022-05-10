@@ -18,6 +18,7 @@ from process.fortran import heat_transport_variables
 from process.fortran import pf_power_variables
 from process.fortran import pulse_variables
 from process.fortran import times_variables
+from process.fortran import error_handling as eh
 from process import fortran
 import pytest
 import numpy
@@ -34,6 +35,24 @@ def costs():
     :rtype: process.pulse.Pulse
     """
     return Costs()
+
+
+@pytest.fixture
+def initialise_error_module(monkeypatch):
+    """pytest fixture to initialise error module
+
+    Any routine which can raise an error should initialise
+    the error module otherwise segmentation faults can occur.
+
+    This fixture also resets the `fdiags` array to 0's.
+
+    :param monkeypatch: Mock fixture
+    :type monkeypatch: object
+    """
+    eh.init_error_handling()
+    eh.initialise_error_list()
+    # monkeypatch.setattr(eh, 'fdiags', np.zeros(8))
+    # monkeypatch.setattr(eh, 'errors_on', False)
 
 
 def acc2261_param(**kwargs):
@@ -5039,3 +5058,103 @@ def test_acc9_rut(acc9param, monkeypatch, costs):
     assert costs_module.cindrt == pytest.approx(acc9param.expected_cindrt)
 
     assert costs_module.ccont == pytest.approx(acc9param.expected_ccont)
+
+
+class Acc2253Param(NamedTuple):
+
+    ucblss: Any = None
+
+    fkind: Any = None
+
+    pthermmw: Any = None
+
+    pnetelmw: Any = None
+
+    lpulse: Any = None
+
+    dtstor: Any = None
+
+    istore: Any = None
+
+    tdown: Any = None
+
+    c22: Any = None
+
+    c225: Any = None
+
+    c2253: Any = None
+
+    expected_c2253: Any = None
+
+
+@pytest.mark.parametrize(
+    "acc2253param",
+    (
+        Acc2253Param(
+            ucblss=90,
+            fkind=1,
+            pthermmw=2620.2218111502593,
+            pnetelmw=493.01760776192009,
+            lpulse=1,
+            dtstor=300,
+            istore=1,
+            tdown=854.42613938735622,
+            c22=0,
+            c225=0,
+            c2253=0,
+            expected_c2253=20.785622343242554,
+        ),
+        Acc2253Param(
+            ucblss=90,
+            fkind=1,
+            pthermmw=2619.4223856129224,
+            pnetelmw=422.4198205312706,
+            lpulse=1,
+            dtstor=300,
+            istore=1,
+            tdown=854.42613938735622,
+            c22=3474.7391916096453,
+            c225=185.05656643685359,
+            c2253=20.785622343242554,
+            expected_c2253=17.809219633598371,
+        ),
+    ),
+)
+def test_acc2253_urt(acc2253param, monkeypatch, costs, initialise_error_module):
+    """
+    Automatically generated Regression Unit Test for acc2253.
+
+    This test was generated using data from tracking/baseline_2018/baseline_2018_IN.DAT.
+
+    :param acc2253param: the data used to mock and assert in this test.
+    :type acc2253param: acc2253param
+
+    :param monkeypatch: pytest fixture used to mock module/class variables
+    :type monkeypatch: _pytest.monkeypatch.monkeypatch
+    """
+
+    monkeypatch.setattr(cost_variables, "ucblss", acc2253param.ucblss)
+
+    monkeypatch.setattr(cost_variables, "fkind", acc2253param.fkind)
+
+    monkeypatch.setattr(heat_transport_variables, "pthermmw", acc2253param.pthermmw)
+
+    monkeypatch.setattr(heat_transport_variables, "pnetelmw", acc2253param.pnetelmw)
+
+    monkeypatch.setattr(pulse_variables, "lpulse", acc2253param.lpulse)
+
+    monkeypatch.setattr(pulse_variables, "dtstor", acc2253param.dtstor)
+
+    monkeypatch.setattr(pulse_variables, "istore", acc2253param.istore)
+
+    monkeypatch.setattr(times_variables, "tdown", acc2253param.tdown)
+
+    monkeypatch.setattr(costs_module, "c22", acc2253param.c22)
+
+    monkeypatch.setattr(costs_module, "c225", acc2253param.c225)
+
+    monkeypatch.setattr(costs_module, "c2253", acc2253param.c2253)
+
+    costs.acc2253()
+
+    assert costs_module.c2253 == pytest.approx(acc2253param.expected_c2253)
