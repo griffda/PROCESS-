@@ -20,6 +20,8 @@ class IFE:
 
         :param availability: a pointer to the availability model, allowing use of availability's variables/methods
         :type availability: process.availability.Availability
+        :param costs: a pointer to the costs model, allowing the use of costs' variables/methods
+        :type costs: process.costs.Costs
         """
 
         self.outfile: int = constants.nout

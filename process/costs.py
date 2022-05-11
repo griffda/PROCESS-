@@ -147,7 +147,7 @@ class Costs:
 
     def costs(self, output: bool):
         """
-                Cost accounting for a fusion power plant
+        Cost accounting for a fusion power plant
         author: P J Knight, CCFE, Culham Science Centre
         outfile : input integer : output file unit
         iprint : input integer : switch for writing to output file (1=yes)
@@ -369,6 +369,7 @@ class Costs:
                 self.c2214,
             )
             po.ocosts(self.outfile, "(c2215)", "Divertor cost (M$)", self.c2215)
+            # TODO: Convert fortran format to Python
             #     if (cost_variables.ifueltyp == 1) :
             #         po.oblnkl(self.outfile)
             #         write(self.outfile,20)
@@ -492,7 +493,7 @@ class Costs:
                     "Vacuum vessel assembly cost (M$)",
                     self.c2223,
                 )
-
+                # TODO: Convert fortran format to Python
                 #     if ((physics_variables.itart == 1)and(cost_variables.ifueltyp == 1)) :
                 #         po.oblnkl(self.outfile)
                 #         write(self.outfile,30)
@@ -1109,7 +1110,7 @@ class Costs:
         and the replacement first wall cost is treated as a fuel costs.
         AEA FUS 251: A User's Guide to the PROCESS Systems Code
         """
-        cmlsa = 0.5000e0, 0.7500e0, 0.8750e0, 1.0000e0
+        cmlsa = [0.5000e0, 0.7500e0, 0.8750e0, 1.0000e0]
 
         if ife_variables.ife != 1:
             self.c2211 = (
@@ -1270,7 +1271,7 @@ class Costs:
         This routine evaluates the Account 221.3 (shield) costs.
         AEA FUS 251: A User's Guide to the PROCESS Systems Code
         """
-        cmlsa = 0.5000e0, 0.7500e0, 0.8750e0, 1.0000e0
+        cmlsa = [0.5000e0, 0.7500e0, 0.8750e0, 1.0000e0]
 
         if ife_variables.ife != 1:
             self.c22131 = (
@@ -1530,7 +1531,7 @@ class Costs:
         are used.
         AEA FUS 251: A User's Guide to the PROCESS Systems Code
         """
-        cmlsa = 0.6900e0, 0.8450e0, 0.9225e0, 1.0000e0
+        cmlsa = [0.6900e0, 0.8450e0, 0.9225e0, 1.0000e0]
 
         #  Total length of PF coil windings (m)
 
@@ -2913,7 +2914,7 @@ class Costs:
         )
 
         po.osubhd(self.outfile, "Power Generation Costs :")
-
+        # TODO: Convert fortran format to Python
         # if ((annfwbl != annfwbl) or (annfwbl > 1.0e10) or (annfwbl < 0.0e0)) :
         #     write(outfile,*)'Problem with annfwbl'
         #     write(outfile,*)'fwallcst=', fwallcst, '  blkcst=', cost_variables.blkcst

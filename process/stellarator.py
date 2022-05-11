@@ -26,6 +26,10 @@ class Stellarator:
         :type availability: process.availability.Availability
         :param buildings: a pointer to the buildings model, allowing use of buildings's variables/methods
         :type buildings: process.buildings.Buildings
+        :param Vacuum: a pointer to the vacuum model, allowing use of vacuum's variables/methods
+        :type Vacuum: process.vacuum.Vacuum
+        :param Costs: a pointer to the costs model, allowing use of costs' variables/methods
+        :type Costs: process.costs.Costs
         """
 
         self.outfile: int = constants.nout
