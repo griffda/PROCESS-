@@ -1130,6 +1130,27 @@ class PFCoil:
 
         # Turn vertical cross-sectionnal area
         pfv.a_oh_turn = pfv.areaoh / pfv.turns[pfv.nohc - 1]
+        
+        # CS coil turn geometry calculation - stadium shape
+        # Literature: https://doi.org/10.1016/j.fusengdes.2017.04.052
+        
+        # Depth/width of cs turn conduit
+        pfv.d_cond_cst = (pfv.a_oh_turn/pfv.ld_ratio_cst)**0.5 
+        # length of cs turn conduit 
+        pfv.l_cond_cst = pfv.ld_ratio_cst*pfv.d_cond_cst            
+        # Radius of turn space = pfv.r_in_cst
+        # Radius of curved outer corrner pfv.r_out_cst = 3mm from literature
+        # pfv.ld_ratio_cst = 70 / 22 from literature
+        p1_cst = ( ( pfv.l_cond_cst - pfv.d_cond_cst ) / pi )**2
+        p2_cst = ((( pfv.l_cond_cst * pfv.d_cond_cst ) - ( 4-pi )*( pfv.r_out_cst**2 ) -  ( pfv.a_oh_turn * pfv.oh_steel_frac ) ) / pi)
+        pfv.r_in_cst = - ( ( pfv.l_cond_cst-pfv.d_cond_cst )/pi ) + sqrt(p1_cst+p2_cst)
+        # Thickness of steel conduit in cs turn
+        pfv.t_structural_radial = (pfv.d_cond_cst/2) - pfv.r_in_cst
+        # In this model the vertical and radial have the same thickness 
+        pfv.t_structural_vertical = pfv.t_structural_radial
+        # add a check for negative conduit thickness 
+        if (pfv.t_structural_radial < 1.0E-3):
+            pfv.t_structural_radial  = 1.0E-3
 
         # Non-steel area void fraction for coolant
         pfv.vf[pfv.nohc - 1] = pfv.vfohc
@@ -2212,12 +2233,18 @@ class PFCoil:
                     )
                     op.ovarre(
                         self.outfile,
-                        "Allowable number of cycles till CS fpfv.racture",
+                        "Allowable number of cycles till CS fracture",
                         "(csfv.n_cycle)",
                         csfv.n_cycle,
                         "OP ",
                     )
-
+                    op.ovarre(
+                        self.outfile,
+                        "Minimum number of cycles required till CS fracture",
+                        "(csfv.n_cycle_min)",
+                        csfv.n_cycle_min,
+                        "OP ",
+                    )
                 # Check whether CS coil is hitting any limits
                 # iteration variable (39) fjohc0
                 # iteration variable(38) fjohc
