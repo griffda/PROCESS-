@@ -113,7 +113,6 @@ LIST(APPEND PROCESS_SRCS
     times_variables.f90
     ife_variables.f90
     ife.f90
-    costs.f90
     costs_2015.f90
     heat_transport_variables.f90
     buildings_variables.f90

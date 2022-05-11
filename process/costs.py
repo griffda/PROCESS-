@@ -1,4 +1,4 @@
-from process.fortran import constants, costs_module, cost_variables
+from process.fortran import constants, cost_variables
 from process.fortran import process_output as po
 from process.fortran import ife_variables, fwbs_variables
 from process.fortran import tfcoil_variables
@@ -15,12 +15,132 @@ from process.fortran import pf_power_variables
 from process.fortran import pulse_variables
 from process.fortran import times_variables
 from process.fortran import error_handling
+from process.variables import AnnotatedVariable
 import numpy
 
 
 class Costs:
     def __init__(self):
         self.outfile = constants.nout
+
+        # Various cost account values (M$)
+        self.c228 = AnnotatedVariable(
+            float, 0.0, docstring="c228 account cost", units="M$"
+        )
+        self.c229 = AnnotatedVariable(
+            float, 0.0, docstring="c229 account cost", units="M$"
+        )
+        self.c23 = AnnotatedVariable(
+            float, 0.0, docstring="c23 account cost", units="M$"
+        )
+        self.c25 = AnnotatedVariable(
+            float, 0.0, docstring="c25 account cost", units="M$"
+        )
+        self.c26 = AnnotatedVariable(
+            float, 0.0, docstring="c26 account cost", units="M$"
+        )
+        self.cindrt = AnnotatedVariable(
+            float, 0.0, docstring="cindrt account cost", units="M$"
+        )
+        self.ccont = AnnotatedVariable(
+            float, 0.0, docstring="ccont account cost", units="M$"
+        )
+
+        # Account 226 - Heat transport system
+        self.c226 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c2261 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c2262 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c2263 = AnnotatedVariable(float, 0.0, docstring="", units="")
+
+        # Account 227 - Fuel handling
+        self.c227 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c2271 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c2272 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c2273 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c2274 = AnnotatedVariable(float, 0.0, docstring="", units="")
+
+        # Account 24 - electrical plant equipment
+        self.c24 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c241 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c242 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c243 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c244 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c245 = AnnotatedVariable(float, 0.0, docstring="", units="")
+
+        # Module Variables
+        self.c21 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c211 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c212 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c213 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c214 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c2141 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c2142 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c215 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c216 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c217 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c2171 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c2172 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c2173 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c2174 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c22 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c2211 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c2212 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c22121 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c22122 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c22123 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c22124 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c22125 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c22126 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c22127 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c2213 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c22131 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c22132 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c2214 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c2215 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c2221 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c22211 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c22212 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c22213 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c22214 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c22215 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c2222 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c22221 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c22222 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c22223 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c22224 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c2223 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c223 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c2231 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c2232 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c2233 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c2234 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c224 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c2241 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c2242 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c2243 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c2244 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c2245 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c2246 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c225 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c2251 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c22511 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c22512 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c22513 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c22514 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c22515 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c2252 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c22521 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c22522 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c22523 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c22524 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c22525 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c22526 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c22527 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c2253 = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.chx = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.cpp = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.cppa = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.c22128 = AnnotatedVariable(float, 0.0, docstring="", units="")
 
     def run(self, output: bool = False):
         self.costs(output)
@@ -63,23 +183,16 @@ class Costs:
         self.acc26()
 
         #  Total plant direct cost
-        # cdirt = c21 + c22 + costs_module.c23 + costs_module.c24 + costs_module.c25 + costs_module.c26 + chplant
+        # cdirt = c21 + c22 + self.c23 + self.c24 + self.c25 + self.c26 + chplant
         cost_variables.cdirt = (
-            costs_module.c21
-            + costs_module.c22
-            + costs_module.c23
-            + costs_module.c24
-            + costs_module.c25
-            + costs_module.c26
+            self.c21 + self.c22 + self.c23 + self.c24 + self.c25 + self.c26
         )
 
         #  Account 9 : Indirect cost and project contingency
         self.acc9()
 
         #  Constructed cost
-        cost_variables.concost = (
-            cost_variables.cdirt + costs_module.cindrt + costs_module.ccont
-        )
+        cost_variables.concost = cost_variables.cdirt + self.cindrt + self.ccont
 
         #  Cost of electricity
         if (cost_variables.ireactor == 1) and (cost_variables.ipnet == 0):
@@ -103,177 +216,159 @@ class Costs:
                 self.outfile,
                 "(c211)",
                 "Site improvements, facilities, land (M$)",
-                costs_module.c211,
+                self.c211,
             )
-            po.ocosts(
-                self.outfile, "(c212)", "Reactor building cost (M$)", costs_module.c212
-            )
-            po.ocosts(
-                self.outfile, "(c213)", "Turbine building cost (M$)", costs_module.c213
-            )
+            po.ocosts(self.outfile, "(c212)", "Reactor building cost (M$)", self.c212)
+            po.ocosts(self.outfile, "(c213)", "Turbine building cost (M$)", self.c213)
             po.ocosts(
                 self.outfile,
                 "(c2141)",
                 "Reactor maintenance building cost (M$)",
-                costs_module.c2141,
+                self.c2141,
             )
-            po.ocosts(
-                self.outfile, "(c2142)", "Warm shop cost (M$)", costs_module.c2142
-            )
-            po.ocosts(
-                self.outfile, "(c215)", "Tritium building cost (M$)", costs_module.c215
-            )
+            po.ocosts(self.outfile, "(c2142)", "Warm shop cost (M$)", self.c2142)
+            po.ocosts(self.outfile, "(c215)", "Tritium building cost (M$)", self.c215)
             po.ocosts(
                 self.outfile,
                 "(c216)",
                 "Electrical equipment building cost (M$)",
-                costs_module.c216,
+                self.c216,
             )
             po.ocosts(
                 self.outfile,
                 "(c2171)",
                 "Additional buildings cost (M$)",
-                costs_module.c2171,
+                self.c2171,
             )
             po.ocosts(
                 self.outfile,
                 "(c2172)",
                 "Control room buildings cost (M$)",
-                costs_module.c2172,
+                self.c2172,
             )
             po.ocosts(
                 self.outfile,
                 "(c2173)",
                 "Shop and warehouses cost (M$)",
-                costs_module.c2173,
+                self.c2173,
             )
             po.ocosts(
                 self.outfile,
                 "(c2174)",
                 "Cryogenic building cost (M$)",
-                costs_module.c2174,
+                self.c2174,
             )
             po.oblnkl(self.outfile)
-            po.ocosts(
-                self.outfile, "(c21)", "Total account 21 cost (M$)", costs_module.c21
-            )
+            po.ocosts(self.outfile, "(c21)", "Total account 21 cost (M$)", self.c21)
 
             po.oshead(self.outfile, "Reactor Systems")
-            po.ocosts(
-                self.outfile, "(c2211)", "First wall cost (M$)", costs_module.c2211
-            )
+            po.ocosts(self.outfile, "(c2211)", "First wall cost (M$)", self.c2211)
             if ife_variables.ife != 1:
                 if fwbs_variables.iblanket == 4:
                     po.ocosts(
                         self.outfile,
                         "(c22121)",
                         "Blanket lithium-lead cost (M$)",
-                        costs_module.c22121,
+                        self.c22121,
                     )
                     po.ocosts(
                         self.outfile,
                         "(c22122)",
                         "Blanket lithium cost (M$)",
-                        costs_module.c22122,
+                        self.c22122,
                     )
                 else:
                     po.ocosts(
                         self.outfile,
                         "(c22121)",
                         "Blanket beryllium cost (M$)",
-                        costs_module.c22121,
+                        self.c22121,
                     )
                     po.ocosts(
                         self.outfile,
                         "(c22122)",
                         "Blanket breeder material cost (M$)",
-                        costs_module.c22122,
+                        self.c22122,
                     )
 
                 po.ocosts(
                     self.outfile,
                     "(c22123)",
                     "Blanket stainless steel cost (M$)",
-                    costs_module.c22123,
+                    self.c22123,
                 )
                 po.ocosts(
                     self.outfile,
                     "(c22124)",
                     "Blanket vanadium cost (M$)",
-                    costs_module.c22124,
+                    self.c22124,
                 )
             else:  # IFE
                 po.ocosts(
                     self.outfile,
                     "(c22121)",
                     "Blanket beryllium cost (M$)",
-                    costs_module.c22121,
+                    self.c22121,
                 )
                 po.ocosts(
                     self.outfile,
                     "(c22122)",
                     "Blanket lithium oxide cost (M$)",
-                    costs_module.c22122,
+                    self.c22122,
                 )
                 po.ocosts(
                     self.outfile,
                     "(c22123)",
                     "Blanket stainless steel cost (M$)",
-                    costs_module.c22123,
+                    self.c22123,
                 )
                 po.ocosts(
                     self.outfile,
                     "(c22124)",
                     "Blanket vanadium cost (M$)",
-                    costs_module.c22124,
+                    self.c22124,
                 )
                 po.ocosts(
                     self.outfile,
                     "(c22125)",
                     "Blanket carbon cloth cost (M$)",
-                    costs_module.c22125,
+                    self.c22125,
                 )
                 po.ocosts(
                     self.outfile,
                     "(c22126)",
                     "Blanket concrete cost (M$)",
-                    costs_module.c22126,
+                    self.c22126,
                 )
                 po.ocosts(
                     self.outfile,
                     "(c22127)",
                     "Blanket FLiBe cost (M$)",
-                    costs_module.c22127,
+                    self.c22127,
                 )
                 po.ocosts(
                     self.outfile,
                     "(c22128)",
                     "Blanket lithium cost (M$)",
-                    costs_module.c22128,
+                    self.c22128,
                 )
 
-            po.ocosts(
-                self.outfile, "(c2212)", "Blanket total cost (M$)", costs_module.c2212
-            )
-            po.ocosts(
-                self.outfile, "(c22131)", "Bulk shield cost (M$)", costs_module.c22131
-            )
+            po.ocosts(self.outfile, "(c2212)", "Blanket total cost (M$)", self.c2212)
+            po.ocosts(self.outfile, "(c22131)", "Bulk shield cost (M$)", self.c22131)
             po.ocosts(
                 self.outfile,
                 "(c22132)",
                 "Penetration shielding cost (M$)",
-                costs_module.c22132,
+                self.c22132,
             )
-            po.ocosts(
-                self.outfile, "(c2213)", "Total shield cost (M$)", costs_module.c2213
-            )
+            po.ocosts(self.outfile, "(c2213)", "Total shield cost (M$)", self.c2213)
             po.ocosts(
                 self.outfile,
                 "(c2214)",
                 "Total support structure cost (M$)",
-                costs_module.c2214,
+                self.c2214,
             )
-            po.ocosts(self.outfile, "(c2215)", "Divertor cost (M$)", costs_module.c2215)
+            po.ocosts(self.outfile, "(c2215)", "Divertor cost (M$)", self.c2215)
             #     if (cost_variables.ifueltyp == 1) :
             #         po.oblnkl(self.outfile)
             #         write(self.outfile,20)
@@ -301,101 +396,101 @@ class Costs:
                             self.outfile,
                             "(c22211)",
                             "Centrepost costs (M$)",
-                            costs_module.c22211,
+                            self.c22211,
                         )
                     else:
                         po.ocosts(
                             self.outfile,
                             "(c22211)",
                             "Inboard leg cost (M$)",
-                            costs_module.c22211,
+                            self.c22211,
                         )
 
                     po.ocosts(
                         self.outfile,
                         "(c22212)",
                         "Outboard leg cost (M$)",
-                        costs_module.c22212,
+                        self.c22212,
                     )
                     po.ocosts(
                         self.outfile,
                         "(c2221)",
                         "TF magnet assemblies cost (M$)",
-                        costs_module.c2221,
+                        self.c2221,
                     )
                 else:  # Superconducting TF coils
                     po.ocosts(
                         self.outfile,
                         "(c22211)",
                         "TF coil conductor cost (M$)",
-                        costs_module.c22211,
+                        self.c22211,
                     )
                     po.ocosts(
                         self.outfile,
                         "(c22212)",
                         "TF coil winding cost (M$)",
-                        costs_module.c22212,
+                        self.c22212,
                     )
                     po.ocosts(
                         self.outfile,
                         "(c22213)",
                         "TF coil case cost (M$)",
-                        costs_module.c22213,
+                        self.c22213,
                     )
                     po.ocosts(
                         self.outfile,
                         "(c22214)",
                         "TF intercoil structure cost (M$)",
-                        costs_module.c22214,
+                        self.c22214,
                     )
                     po.ocosts(
                         self.outfile,
                         "(c22215)",
                         "TF coil gravity support structure (M$)",
-                        costs_module.c22215,
+                        self.c22215,
                     )
                     po.ocosts(
                         self.outfile,
                         "(c2221)",
                         "TF magnet assemblies cost (M$)",
-                        costs_module.c2221,
+                        self.c2221,
                     )
 
                 po.ocosts(
                     self.outfile,
                     "(c22221)",
                     "PF coil conductor cost (M$)",
-                    costs_module.c22221,
+                    self.c22221,
                 )
                 po.ocosts(
                     self.outfile,
                     "(c22222)",
                     "PF coil winding cost (M$)",
-                    costs_module.c22222,
+                    self.c22222,
                 )
                 po.ocosts(
                     self.outfile,
                     "(c22223)",
                     "PF coil case cost (M$)",
-                    costs_module.c22223,
+                    self.c22223,
                 )
                 po.ocosts(
                     self.outfile,
                     "(c22224)",
                     "PF coil support structure cost (M$)",
-                    costs_module.c22224,
+                    self.c22224,
                 )
                 po.ocosts(
                     self.outfile,
                     "(c2222)",
                     "PF magnet assemblies cost (M$)",
-                    costs_module.c2222,
+                    self.c2222,
                 )
                 po.ocosts(
                     self.outfile,
                     "(c2223)",
                     "Vacuum vessel assembly cost (M$)",
-                    costs_module.c2223,
+                    self.c2223,
                 )
 
                 #     if ((physics_variables.itart == 1)and(cost_variables.ifueltyp == 1)) :
@@ -422,54 +517,40 @@ class Costs:
                     self.outfile,
                     "(c2231)",
                     "IFE driver system cost (M$)",
-                    costs_module.c2231,
+                    self.c2231,
                 )
             else:
-                po.ocosts(
-                    self.outfile, "(c2231)", "ECH system cost (M$)", costs_module.c2231
-                )
+                po.ocosts(self.outfile, "(c2231)", "ECH system cost (M$)", self.c2231)
                 po.ocosts(
                     self.outfile,
                     "(c2232)",
                     "Lower hybrid system cost (M$)",
-                    costs_module.c2232,
+                    self.c2232,
                 )
                 po.ocosts(
                     self.outfile,
                     "(c2233)",
                     "Neutral beam system cost (M$)",
-                    costs_module.c2233,
+                    self.c2233,
                 )
 
             po.oblnkl(self.outfile)
-            po.ocosts(
-                self.outfile, "(c223)", "Total account 223 cost (M$)", costs_module.c223
-            )
+            po.ocosts(self.outfile, "(c223)", "Total account 223 cost (M$)", self.c223)
 
             po.oshead(self.outfile, "Vacuum Systems")
             po.ocosts(
                 self.outfile,
                 "(c2241)",
                 "High vacuum pumps cost (M$)",
-                costs_module.c2241,
+                self.c2241,
             )
-            po.ocosts(
-                self.outfile, "(c2242)", "Backing pumps cost (M$)", costs_module.c2242
-            )
-            po.ocosts(
-                self.outfile, "(c2243)", "Vacuum duct cost (M$)", costs_module.c2243
-            )
-            po.ocosts(self.outfile, "(c2244)", "Valves cost (M$)", costs_module.c2244)
-            po.ocosts(
-                self.outfile, "(c2245)", "Duct shielding cost (M$)", costs_module.c2245
-            )
-            po.ocosts(
-                self.outfile, "(c2246)", "Instrumentation cost (M$)", costs_module.c2246
-            )
+            po.ocosts(self.outfile, "(c2242)", "Backing pumps cost (M$)", self.c2242)
+            po.ocosts(self.outfile, "(c2243)", "Vacuum duct cost (M$)", self.c2243)
+            po.ocosts(self.outfile, "(c2244)", "Valves cost (M$)", self.c2244)
+            po.ocosts(self.outfile, "(c2245)", "Duct shielding cost (M$)", self.c2245)
+            po.ocosts(self.outfile, "(c2246)", "Instrumentation cost (M$)", self.c2246)
             po.oblnkl(self.outfile)
-            po.ocosts(
-                self.outfile, "(c224)", "Total account 224 cost (M$)", costs_module.c224
-            )
+            po.ocosts(self.outfile, "(c224)", "Total account 224 cost (M$)", self.c224)
 
             if ife_variables.ife != 1:
                 po.oshead(self.outfile, "Power Conditioning")
@@ -477,98 +558,98 @@ class Costs:
                     self.outfile,
                     "(c22511)",
                     "TF coil power supplies cost (M$)",
-                    costs_module.c22511,
+                    self.c22511,
                 )
                 po.ocosts(
                     self.outfile,
                     "(c22512)",
                     "TF coil breakers cost (M$)",
-                    costs_module.c22512,
+                    self.c22512,
                 )
                 po.ocosts(
                     self.outfile,
                     "(c22513)",
                     "TF coil dump resistors cost (M$)",
-                    costs_module.c22513,
+                    self.c22513,
                 )
                 po.ocosts(
                     self.outfile,
                     "(c22514)",
                     "TF coil instrumentation and control (M$)",
-                    costs_module.c22514,
+                    self.c22514,
                 )
                 po.ocosts(
                     self.outfile,
                     "(c22515)",
                     "TF coil bussing cost (M$)",
-                    costs_module.c22515,
+                    self.c22515,
                 )
                 po.ocosts(
                     self.outfile,
                     "(c2251)",
                     "Total, TF coil power costs (M$)",
-                    costs_module.c2251,
+                    self.c2251,
                 )
                 po.ocosts(
                     self.outfile,
                     "(c22521)",
                     "PF coil power supplies cost (M$)",
-                    costs_module.c22521,
+                    self.c22521,
                 )
                 po.ocosts(
                     self.outfile,
                     "(c22522)",
                     "PF coil instrumentation and control (M$)",
-                    costs_module.c22522,
+                    self.c22522,
                 )
                 po.ocosts(
                     self.outfile,
                     "(c22523)",
                     "PF coil bussing cost (M$)",
-                    costs_module.c22523,
+                    self.c22523,
                 )
                 po.ocosts(
                     self.outfile,
                     "(c22524)",
                     "PF coil burn power supplies cost (M$)",
-                    costs_module.c22524,
+                    self.c22524,
                 )
                 po.ocosts(
                     self.outfile,
                     "(c22525)",
                     "PF coil breakers cost (M$)",
-                    costs_module.c22525,
+                    self.c22525,
                 )
                 po.ocosts(
                     self.outfile,
                     "(c22526)",
                     "PF coil dump resistors cost (M$)",
-                    costs_module.c22526,
+                    self.c22526,
                 )
                 po.ocosts(
                     self.outfile,
                     "(c22527)",
                     "PF coil ac breakers cost (M$)",
-                    costs_module.c22527,
+                    self.c22527,
                 )
                 po.ocosts(
                     self.outfile,
                     "(c2252)",
                     "Total, PF coil power costs (M$)",
-                    costs_module.c2252,
+                    self.c2252,
                 )
                 po.ocosts(
                     self.outfile,
                     "(c2253)",
                     "Total, energy storage cost (M$)",
-                    costs_module.c2253,
+                    self.c2253,
                 )
                 po.oblnkl(self.outfile)
                 po.ocosts(
                     self.outfile,
                     "(c225)",
                     "Total account 225 cost (M$)",
-                    costs_module.c225,
+                    self.c225,
                 )
 
             po.oshead(self.outfile, "Heat Transport System")
@@ -576,73 +657,65 @@ class Costs:
                 self.outfile,
                 "(cpp)",
                 "Pumps and piping system cost (M$)",
-                costs_module.cpp,
+                self.cpp,
             )
             po.ocosts(
                 self.outfile,
                 "(chx)",
                 "Primary heat exchanger cost (M$)",
-                costs_module.chx,
+                self.chx,
             )
             po.ocosts(
                 self.outfile,
                 "(c2261)",
                 "Total, reactor cooling system cost (M$)",
-                costs_module.c2261,
+                self.c2261,
             )
-            po.ocosts(
-                self.outfile, "(cppa)", "Pumps, piping cost (M$)", costs_module.cppa
-            )
+            po.ocosts(self.outfile, "(cppa)", "Pumps, piping cost (M$)", self.cppa)
             po.ocosts(
                 self.outfile,
                 "(c2262)",
                 "Total, auxiliary cooling system cost (M$)",
-                costs_module.c2262,
+                self.c2262,
             )
             po.ocosts(
                 self.outfile,
                 "(c2263)",
                 "Total, cryogenic system cost (M$)",
-                costs_module.c2263,
+                self.c2263,
             )
             po.oblnkl(self.outfile)
-            po.ocosts(
-                self.outfile, "(c226)", "Total account 226 cost (M$)", costs_module.c226
-            )
+            po.ocosts(self.outfile, "(c226)", "Total account 226 cost (M$)", self.c226)
 
             po.oshead(self.outfile, "Fuel Handling System")
-            po.ocosts(
-                self.outfile, "(c2271)", "Fuelling system cost (M$)", costs_module.c2271
-            )
+            po.ocosts(self.outfile, "(c2271)", "Fuelling system cost (M$)", self.c2271)
             po.ocosts(
                 self.outfile,
                 "(c2272)",
                 "Fuel processing and purification cost (M$)",
-                costs_module.c2272,
+                self.c2272,
             )
             po.ocosts(
                 self.outfile,
                 "(c2273)",
                 "Atmospheric recovery systems cost (M$)",
-                costs_module.c2273,
+                self.c2273,
             )
             po.ocosts(
                 self.outfile,
                 "(c2274)",
                 "Nuclear building ventilation cost (M$)",
-                costs_module.c2274,
+                self.c2274,
             )
             po.oblnkl(self.outfile)
-            po.ocosts(
-                self.outfile, "(c227)", "Total account 227 cost (M$)", costs_module.c227
-            )
+            po.ocosts(self.outfile, "(c227)", "Total account 227 cost (M$)", self.c227)
 
             po.oshead(self.outfile, "Instrumentation and Control")
             po.ocosts(
                 self.outfile,
                 "(c228)",
                 "Instrumentation and control cost (M$)",
-                costs_module.c228,
+                self.c228,
             )
 
             po.oshead(self.outfile, "Maintenance Equipment")
@@ -650,20 +723,18 @@ class Costs:
                 self.outfile,
                 "(c229)",
                 "Maintenance equipment cost (M$)",
-                costs_module.c229,
+                self.c229,
             )
 
             po.oshead(self.outfile, "Total Account 22 Cost")
-            po.ocosts(
-                self.outfile, "(c22)", "Total account 22 cost (M$)", costs_module.c22
-            )
+            po.ocosts(self.outfile, "(c22)", "Total account 22 cost (M$)", self.c22)
 
             po.oshead(self.outfile, "Turbine Plant Equipment")
             po.ocosts(
                 self.outfile,
                 "(c23)",
                 "Turbine plant equipment cost (M$)",
-                costs_module.c23,
+                self.c23,
             )
 
             po.oshead(self.outfile, "Electric Plant Equipment")
@@ -671,40 +742,36 @@ class Costs:
                 self.outfile,
                 "(c241)",
                 "Switchyard equipment cost (M$)",
-                costs_module.c241,
+                self.c241,
             )
-            po.ocosts(
-                self.outfile, "(c242)", "Transformers cost (M$)", costs_module.c242
-            )
+            po.ocosts(self.outfile, "(c242)", "Transformers cost (M$)", self.c242)
             po.ocosts(
                 self.outfile,
                 "(c243)",
                 "Low voltage equipment cost (M$)",
-                costs_module.c243,
+                self.c243,
             )
             po.ocosts(
                 self.outfile,
                 "(c244)",
                 "Diesel backup equipment cost (M$)",
-                costs_module.c244,
+                self.c244,
             )
             po.ocosts(
                 self.outfile,
                 "(c245)",
                 "Auxiliary facilities cost (M$)",
-                costs_module.c245,
+                self.c245,
             )
             po.oblnkl(self.outfile)
-            po.ocosts(
-                self.outfile, "(c24)", "Total account 24 cost (M$)", costs_module.c24
-            )
+            po.ocosts(self.outfile, "(c24)", "Total account 24 cost (M$)", self.c24)
 
             po.oshead(self.outfile, "Miscellaneous Plant Equipment")
             po.ocosts(
                 self.outfile,
                 "(c25)",
                 "Miscellaneous plant equipment cost (M$)",
-                costs_module.c25,
+                self.c25,
             )
 
             po.oshead(self.outfile, "Heat Rejection System")
@@ -712,7 +779,7 @@ class Costs:
                 self.outfile,
                 "(c26)",
                 "Heat rejection system cost (M$)",
-                costs_module.c26,
+                self.c26,
             )
 
             po.oshead(self.outfile, "Plant Direct Cost")
@@ -729,12 +796,10 @@ class Costs:
             )
 
             po.oshead(self.outfile, "Indirect Cost")
-            po.ocosts(self.outfile, "(c9)", "Indirect cost (M$)", costs_module.cindrt)
+            po.ocosts(self.outfile, "(c9)", "Indirect cost (M$)", self.cindrt)
 
             po.oshead(self.outfile, "Total Contingency")
-            po.ocosts(
-                self.outfile, "(ccont)", "Total contingency (M$)", costs_module.ccont
-            )
+            po.ocosts(self.outfile, "(ccont)", "Total contingency (M$)", self.ccont)
 
             po.oshead(self.outfile, "Constructed Cost")
             po.ocosts(
@@ -805,21 +870,19 @@ class Costs:
         self.acc229()
 
         #  Reactor core costs
-        cost_variables.crctcore = (
-            cost_variables.c221 + cost_variables.c222 + costs_module.c223
-        )
+        cost_variables.crctcore = cost_variables.c221 + cost_variables.c222 + self.c223
 
         #  Total account 22
-        costs_module.c22 = (
+        self.c22 = (
             cost_variables.c221
             + cost_variables.c222
-            + costs_module.c223
-            + costs_module.c224
-            + costs_module.c225
-            + costs_module.c226
-            + costs_module.c227
-            + costs_module.c228
-            + costs_module.c229
+            + self.c223
+            + self.c224
+            + self.c225
+            + self.c226
+            + self.c227
+            + self.c228
+            + self.c229
         )
 
     def acc221(self):
@@ -857,11 +920,7 @@ class Costs:
         #  Total account 221
 
         cost_variables.c221 = (
-            costs_module.c2211
-            + costs_module.c2212
-            + costs_module.c2213
-            + costs_module.c2214
-            + costs_module.c2215
+            self.c2211 + self.c2212 + self.c2213 + self.c2214 + self.c2215
         )
 
     def acc222(self):
@@ -890,9 +949,7 @@ class Costs:
 
         #  Total account 222
 
-        cost_variables.c222 = (
-            costs_module.c2221 + costs_module.c2222 + costs_module.c2223
-        )
+        cost_variables.c222 = self.c2221 + self.c2222 + self.c2223
 
     def acc225(self):
         """
@@ -903,7 +960,7 @@ class Costs:
         AEA FUS 251: A User's Guide to the PROCESS Systems Code
         """
         if ife_variables.ife == 1:
-            costs_module.c225 = 0.0e0
+            self.c225 = 0.0e0
         else:
 
             #  Account 225.1 : TF coil power conditioning
@@ -920,9 +977,7 @@ class Costs:
 
             #  Total account 225
 
-            costs_module.c225 = (
-                costs_module.c2251 + costs_module.c2252 + costs_module.c2253
-            )
+            self.c225 = self.c2251 + self.c2252 + self.c2253
 
     def acc21(self):
         """
@@ -945,13 +1000,13 @@ class Costs:
         #  Account 211 : Site improvements, facilities and land
         #  N.B. Land unaffected by LSA
 
-        costs_module.c211 = (
+        self.c211 = (
             cost_variables.csi * cmlsa[cost_variables.lsa - 1] + cost_variables.cland
         )
 
         #  Account 212 : Reactor building
 
-        costs_module.c212 = (
+        self.c212 = (
             1.0e-6
             * cost_variables.ucrb
             * buildings_variables.rbvol**exprb
@@ -961,29 +1016,29 @@ class Costs:
         #  Account 213 : Turbine building
 
         if cost_variables.ireactor == 1:
-            costs_module.c213 = cost_variables.cturbb * cmlsa[cost_variables.lsa - 1]
+            self.c213 = cost_variables.cturbb * cmlsa[cost_variables.lsa - 1]
         else:
-            costs_module.c213 = 0.0e0
+            self.c213 = 0.0e0
 
         #  Account 214 : Reactor maintenance and warm shops buildings
 
-        costs_module.c2141 = (
+        self.c2141 = (
             1.0e-6
             * cost_variables.ucmb
             * buildings_variables.rmbvol**exprb
             * cmlsa[cost_variables.lsa - 1]
         )
-        costs_module.c2142 = (
+        self.c2142 = (
             1.0e-6
             * cost_variables.ucws
             * buildings_variables.wsvol**exprb
             * cmlsa[cost_variables.lsa - 1]
         )
-        costs_module.c214 = costs_module.c2141 + costs_module.c2142
+        self.c214 = self.c2141 + self.c2142
 
         #  Account 215 : Tritium building
 
-        costs_module.c215 = (
+        self.c215 = (
             1.0e-6
             * cost_variables.uctr
             * buildings_variables.triv**exprb
@@ -992,7 +1047,7 @@ class Costs:
 
         #  Account 216 : Electrical equipment building
 
-        costs_module.c216 = (
+        self.c216 = (
             1.0e-6
             * cost_variables.ucel
             * buildings_variables.elevol**exprb
@@ -1003,47 +1058,42 @@ class Costs:
         #  Includes administration, control, shops, cryogenic
         #  plant and an allowance for miscellaneous structures
 
-        costs_module.c2171 = (
+        self.c2171 = (
             1.0e-6
             * cost_variables.ucad
             * buildings_variables.admvol**exprb
             * cmlsa[cost_variables.lsa - 1]
         )
-        costs_module.c2172 = (
+        self.c2172 = (
             1.0e-6
             * cost_variables.ucco
             * buildings_variables.convol**exprb
             * cmlsa[cost_variables.lsa - 1]
         )
-        costs_module.c2173 = (
+        self.c2173 = (
             1.0e-6
             * cost_variables.ucsh
             * buildings_variables.shovol**exprb
             * cmlsa[cost_variables.lsa - 1]
         )
-        costs_module.c2174 = (
+        self.c2174 = (
             1.0e-6
             * cost_variables.uccr
             * buildings_variables.cryvol**exprb
             * cmlsa[cost_variables.lsa - 1]
         )
-        costs_module.c217 = (
-            costs_module.c2171
-            + costs_module.c2172
-            + costs_module.c2173
-            + costs_module.c2174
-        )
+        self.c217 = self.c2171 + self.c2172 + self.c2173 + self.c2174
 
         #  Total for Account 21
 
-        costs_module.c21 = (
-            costs_module.c211
-            + costs_module.c212
-            + costs_module.c213
-            + costs_module.c214
-            + costs_module.c215
-            + costs_module.c216
-            + costs_module.c217
+        self.c21 = (
+            self.c211
+            + self.c212
+            + self.c213
+            + self.c214
+            + self.c215
+            + self.c216
+            + self.c217
         )
 
     def acc2211(self):
@@ -1062,7 +1112,7 @@ class Costs:
         cmlsa = 0.5000e0, 0.7500e0, 0.8750e0, 1.0000e0
 
         if ife_variables.ife != 1:
-            costs_module.c2211 = (
+            self.c2211 = (
                 1.0e-6
                 * cmlsa[cost_variables.lsa - 1]
                 * (
@@ -1072,7 +1122,7 @@ class Costs:
                 )
             )
         else:
-            costs_module.c2211 = (
+            self.c2211 = (
                 1.0e-6
                 * cmlsa[cost_variables.lsa - 1]
                 * (
@@ -1103,13 +1153,13 @@ class Costs:
                 )
             )
 
-        costs_module.c2211 = cost_variables.fkind * costs_module.c2211
+        self.c2211 = cost_variables.fkind * self.c2211
 
         if cost_variables.ifueltyp == 1:
-            cost_variables.fwallcst = costs_module.c2211
-            costs_module.c2211 = 0.0e0
+            cost_variables.fwallcst = self.c2211
+            self.c2211 = 0.0e0
         elif cost_variables.ifueltyp == 2:
-            cost_variables.fwallcst = costs_module.c2211
+            cost_variables.fwallcst = self.c2211
         else:
             cost_variables.fwallcst = 0.0e0
 
@@ -1134,52 +1184,38 @@ class Costs:
 
             if fwbs_variables.iblanket == 4:
                 #  Liquid blanket (LiPb + Li)
-                costs_module.c22121 = (
-                    1.0e-6 * fwbs_variables.wtbllipb * cost_variables.ucbllipb
-                )
-                costs_module.c22122 = (
-                    1.0e-6 * fwbs_variables.whtblli * cost_variables.ucblli
-                )
+                self.c22121 = 1.0e-6 * fwbs_variables.wtbllipb * cost_variables.ucbllipb
+                self.c22122 = 1.0e-6 * fwbs_variables.whtblli * cost_variables.ucblli
             else:
                 #  Solid blanket (Li2O + Be)
-                costs_module.c22121 = (
-                    1.0e-6 * fwbs_variables.whtblbe * cost_variables.ucblbe
-                )
+                self.c22121 = 1.0e-6 * fwbs_variables.whtblbe * cost_variables.ucblbe
                 if fwbs_variables.iblanket == 2:
                     # KIT model
-                    costs_module.c22122 = (
+                    self.c22122 = (
                         1.0e-6 * fwbs_variables.whtblbreed * cost_variables.ucblbreed
                     )
                 else:
                     # CCFE model
-                    costs_module.c22122 = (
+                    self.c22122 = (
                         1.0e-6 * fwbs_variables.wtblli2o * cost_variables.ucblli2o
                     )
 
-            costs_module.c22123 = (
-                1.0e-6 * fwbs_variables.whtblss * cost_variables.ucblss
-            )
-            costs_module.c22124 = (
-                1.0e-6 * fwbs_variables.whtblvd * cost_variables.ucblvd
-            )
-            costs_module.c22125 = 0.0e0
-            costs_module.c22126 = 0.0e0
-            costs_module.c22127 = 0.0e0
+            self.c22123 = 1.0e-6 * fwbs_variables.whtblss * cost_variables.ucblss
+            self.c22124 = 1.0e-6 * fwbs_variables.whtblvd * cost_variables.ucblvd
+            self.c22125 = 0.0e0
+            self.c22126 = 0.0e0
+            self.c22127 = 0.0e0
 
         else:
 
             #  IFE blanket; materials present are Li2O, steel, carbon, concrete,
             #  FLiBe and lithium
 
-            costs_module.c22121 = 0.0e0
-            costs_module.c22122 = (
-                1.0e-6 * fwbs_variables.wtblli2o * cost_variables.ucblli2o
-            )
-            costs_module.c22123 = (
-                1.0e-6 * fwbs_variables.whtblss * cost_variables.ucblss
-            )
-            costs_module.c22124 = 0.0e0
-            costs_module.c22125 = (
+            self.c22121 = 0.0e0
+            self.c22122 = 1.0e-6 * fwbs_variables.wtblli2o * cost_variables.ucblli2o
+            self.c22123 = 1.0e-6 * fwbs_variables.whtblss * cost_variables.ucblss
+            self.c22124 = 0.0e0
+            self.c22125 = (
                 1.0e-6
                 * ife_variables.uccarb
                 * (
@@ -1188,7 +1224,7 @@ class Costs:
                     + ife_variables.blmatm(3, 2)
                 )
             )
-            costs_module.c22126 = (
+            self.c22126 = (
                 1.0e-6
                 * ife_variables.ucconc
                 * (
@@ -1197,48 +1233,32 @@ class Costs:
                     + ife_variables.blmatm(3, 5)
                 )
             )
-            costs_module.c22127 = 1.0e-6 * ife_variables.ucflib * ife_variables.mflibe
-            costs_module.c22128 = (
-                1.0e-6 * cost_variables.ucblli * fwbs_variables.whtblli
-            )
+            self.c22127 = 1.0e-6 * ife_variables.ucflib * ife_variables.mflibe
+            self.c22128 = 1.0e-6 * cost_variables.ucblli * fwbs_variables.whtblli
 
-        costs_module.c22121 = (
-            cost_variables.fkind * costs_module.c22121 * cmlsa[cost_variables.lsa - 1]
-        )
-        costs_module.c22122 = (
-            cost_variables.fkind * costs_module.c22122 * cmlsa[cost_variables.lsa - 1]
-        )
-        costs_module.c22123 = (
-            cost_variables.fkind * costs_module.c22123 * cmlsa[cost_variables.lsa - 1]
-        )
-        costs_module.c22124 = (
-            cost_variables.fkind * costs_module.c22124 * cmlsa[cost_variables.lsa - 1]
-        )
-        costs_module.c22125 = (
-            cost_variables.fkind * costs_module.c22125 * cmlsa[cost_variables.lsa - 1]
-        )
-        costs_module.c22126 = (
-            cost_variables.fkind * costs_module.c22126 * cmlsa[cost_variables.lsa - 1]
-        )
-        costs_module.c22127 = (
-            cost_variables.fkind * costs_module.c22127 * cmlsa[cost_variables.lsa - 1]
-        )
+        self.c22121 = cost_variables.fkind * self.c22121 * cmlsa[cost_variables.lsa - 1]
+        self.c22122 = cost_variables.fkind * self.c22122 * cmlsa[cost_variables.lsa - 1]
+        self.c22123 = cost_variables.fkind * self.c22123 * cmlsa[cost_variables.lsa - 1]
+        self.c22124 = cost_variables.fkind * self.c22124 * cmlsa[cost_variables.lsa - 1]
+        self.c22125 = cost_variables.fkind * self.c22125 * cmlsa[cost_variables.lsa - 1]
+        self.c22126 = cost_variables.fkind * self.c22126 * cmlsa[cost_variables.lsa - 1]
+        self.c22127 = cost_variables.fkind * self.c22127 * cmlsa[cost_variables.lsa - 1]
 
-        costs_module.c2212 = (
-            costs_module.c22121
-            + costs_module.c22122
-            + costs_module.c22123
-            + costs_module.c22124
-            + costs_module.c22125
-            + costs_module.c22126
-            + costs_module.c22127
+        self.c2212 = (
+            self.c22121
+            + self.c22122
+            + self.c22123
+            + self.c22124
+            + self.c22125
+            + self.c22126
+            + self.c22127
         )
 
         if cost_variables.ifueltyp == 1:
-            cost_variables.blkcst = costs_module.c2212
-            costs_module.c2212 = 0.0e0
+            cost_variables.blkcst = self.c2212
+            self.c2212 = 0.0e0
         elif cost_variables.ifueltyp == 2:
-            cost_variables.blkcst = costs_module.c2212
+            cost_variables.blkcst = self.c2212
         else:
             cost_variables.blkcst = 0.0e0
 
@@ -1253,14 +1273,14 @@ class Costs:
         cmlsa = 0.5000e0, 0.7500e0, 0.8750e0, 1.0000e0
 
         if ife_variables.ife != 1:
-            costs_module.c22131 = (
+            self.c22131 = (
                 1.0e-6
                 * fwbs_variables.whtshld
                 * cost_variables.ucshld
                 * cmlsa[cost_variables.lsa - 1]
             )
         else:
-            costs_module.c22131 = (
+            self.c22131 = (
                 1.0e-6
                 * cmlsa[cost_variables.lsa - 1]
                 * (
@@ -1291,22 +1311,22 @@ class Costs:
                 )
             )
 
-        costs_module.c22131 = cost_variables.fkind * costs_module.c22131
+        self.c22131 = cost_variables.fkind * self.c22131
 
         #  Penetration shield assumed to be typical steel plate
         if ife_variables.ife != 1:
-            costs_module.c22132 = (
+            self.c22132 = (
                 1.0e-6
                 * fwbs_variables.wpenshld
                 * cost_variables.ucpens
                 * cmlsa[cost_variables.lsa - 1]
             )
         else:
-            costs_module.c22132 = 0.0e0
+            self.c22132 = 0.0e0
 
-        costs_module.c22132 = cost_variables.fkind * costs_module.c22132
+        self.c22132 = cost_variables.fkind * self.c22132
 
-        costs_module.c2213 = costs_module.c22131 + costs_module.c22132
+        self.c2213 = self.c22131 + self.c22132
 
     def acc2214(self):
         """
@@ -1319,13 +1339,13 @@ class Costs:
         """
         cmlsa = [0.6700e0, 0.8350e0, 0.9175e0, 1.0000e0]
 
-        costs_module.c2214 = (
+        self.c2214 = (
             1.0e-6
             * structure_variables.gsmass
             * cost_variables.ucgss
             * cmlsa[cost_variables.lsa - 1]
         )
-        costs_module.c2214 = cost_variables.fkind * costs_module.c2214
+        self.c2214 = cost_variables.fkind * self.c2214
 
     def acc2215(self):
         """
@@ -1344,21 +1364,19 @@ class Costs:
         AEA FUS 251: A User's Guide to the PROCESS Systems Code
         """
         if ife_variables.ife != 1:
-            costs_module.c2215 = (
-                1.0e-6 * divertor_variables.divsur * cost_variables.ucdiv
-            )
-            costs_module.c2215 = cost_variables.fkind * costs_module.c2215
+            self.c2215 = 1.0e-6 * divertor_variables.divsur * cost_variables.ucdiv
+            self.c2215 = cost_variables.fkind * self.c2215
 
             if cost_variables.ifueltyp == 1:
-                cost_variables.divcst = costs_module.c2215
-                costs_module.c2215 = 0.0e0
+                cost_variables.divcst = self.c2215
+                self.c2215 = 0.0e0
             elif cost_variables.ifueltyp == 2:
-                cost_variables.divcst = costs_module.c2215
+                cost_variables.divcst = self.c2215
             else:
                 cost_variables.divcst = 0.0e0
 
         else:
-            costs_module.c2215 = 0.0e0
+            self.c2215 = 0.0e0
             cost_variables.divcst = 0.0e0
 
     def acc2221(self):
@@ -1382,34 +1400,34 @@ class Costs:
 
             #  Account 222.1.1 : Inboard TF coil legs
 
-            costs_module.c22211 = (
+            self.c22211 = (
                 1.0e-6
                 * tfcoil_variables.whtcp
                 * cost_variables.uccpcl1
                 * cmlsa[cost_variables.lsa - 1]
             )
-            costs_module.c22211 = cost_variables.fkind * costs_module.c22211
+            self.c22211 = cost_variables.fkind * self.c22211
 
             cost_variables.cpstcst = 0.0e0  # TART centrepost
             if (physics_variables.itart == 1) and (cost_variables.ifueltyp == 1):
-                cost_variables.cpstcst = costs_module.c22211
-                costs_module.c22211 = 0.0e0
+                cost_variables.cpstcst = self.c22211
+                self.c22211 = 0.0e0
             elif (physics_variables.itart == 1) and (cost_variables.ifueltyp == 2):
-                cost_variables.cpstcst = costs_module.c22211
+                cost_variables.cpstcst = self.c22211
 
             #  Account 222.1.2 : Outboard TF coil legs
 
-            costs_module.c22212 = (
+            self.c22212 = (
                 1.0e-6
                 * tfcoil_variables.whttflgs
                 * cost_variables.uccpclb
                 * cmlsa[cost_variables.lsa - 1]
             )
-            costs_module.c22212 = cost_variables.fkind * costs_module.c22212
+            self.c22212 = cost_variables.fkind * self.c22212
 
             #  Total (copper) TF coil costs
 
-            costs_module.c2221 = costs_module.c22211 + costs_module.c22212
+            self.c2221 = self.c22211 + self.c22212
 
         else:  # Superconducting TF coils
 
@@ -1441,77 +1459,59 @@ class Costs:
 
             #  Total conductor costs
 
-            costs_module.c22211 = (
+            self.c22211 = (
                 1.0e-6
                 * ctfconpm
                 * tfcoil_variables.n_tf
                 * tfcoil_variables.tfleng
                 * tfcoil_variables.n_tf_turn
             )
-            costs_module.c22211 = (
-                cost_variables.fkind
-                * costs_module.c22211
-                * cmlsa[cost_variables.lsa - 1]
+            self.c22211 = (
+                cost_variables.fkind * self.c22211 * cmlsa[cost_variables.lsa - 1]
             )
 
             #  Account 222.1.2 : Winding
 
-            costs_module.c22212 = (
+            self.c22212 = (
                 1.0e-6
                 * cost_variables.ucwindtf
                 * tfcoil_variables.n_tf
                 * tfcoil_variables.tfleng
                 * tfcoil_variables.n_tf_turn
             )
-            costs_module.c22212 = (
-                cost_variables.fkind
-                * costs_module.c22212
-                * cmlsa[cost_variables.lsa - 1]
+            self.c22212 = (
+                cost_variables.fkind * self.c22212 * cmlsa[cost_variables.lsa - 1]
             )
 
             #  Account 222.1.3 : Case
 
-            costs_module.c22213 = (
+            self.c22213 = (
                 1.0e-6
                 * (tfcoil_variables.whtcas * cost_variables.uccase)
                 * tfcoil_variables.n_tf
             )
-            costs_module.c22213 = (
-                cost_variables.fkind
-                * costs_module.c22213
-                * cmlsa[cost_variables.lsa - 1]
+            self.c22213 = (
+                cost_variables.fkind * self.c22213 * cmlsa[cost_variables.lsa - 1]
             )
 
             #  Account 222.1.4 : Intercoil structure
 
-            costs_module.c22214 = (
-                1.0e-6 * structure_variables.aintmass * cost_variables.ucint
-            )
-            costs_module.c22214 = (
-                cost_variables.fkind
-                * costs_module.c22214
-                * cmlsa[cost_variables.lsa - 1]
+            self.c22214 = 1.0e-6 * structure_variables.aintmass * cost_variables.ucint
+            self.c22214 = (
+                cost_variables.fkind * self.c22214 * cmlsa[cost_variables.lsa - 1]
             )
 
             #  Account 222.1.5 : Gravity support structure
 
-            costs_module.c22215 = (
-                1.0e-6 * structure_variables.clgsmass * cost_variables.ucgss
-            )
-            costs_module.c22215 = (
-                cost_variables.fkind
-                * costs_module.c22215
-                * cmlsa[cost_variables.lsa - 1]
+            self.c22215 = 1.0e-6 * structure_variables.clgsmass * cost_variables.ucgss
+            self.c22215 = (
+                cost_variables.fkind * self.c22215 * cmlsa[cost_variables.lsa - 1]
             )
 
             #  Total (superconducting) TF coil costs
 
-            costs_module.c2221 = (
-                costs_module.c22211
-                + costs_module.c22212
-                + costs_module.c22213
-                + costs_module.c22214
-                + costs_module.c22215
+            self.c2221 = (
+                self.c22211 + self.c22212 + self.c22213 + self.c22214 + self.c22215
             )
 
     def acc2222(self):
@@ -1559,7 +1559,7 @@ class Costs:
         else:
             npf = pfcoil_variables.nohc
 
-        costs_module.c22221 = 0.0e0
+        self.c22221 = 0.0e0
 
         for i in range(0, npf):
 
@@ -1608,7 +1608,7 @@ class Costs:
 
             #  Total account 222.2.1 (PF coils excluding Central Solenoid)
 
-            costs_module.c22221 = costs_module.c22221 + (
+            self.c22221 = self.c22221 + (
                 1.0e-6
                 * constants.twopi
                 * pfcoil_variables.rpf[i]
@@ -1665,7 +1665,7 @@ class Costs:
 
             #  Total account 222.2.1 (PF+Central Solenoid coils)
 
-            costs_module.c22221 = costs_module.c22221 + (
+            self.c22221 = self.c22221 + (
                 1.0e-6
                 * constants.twopi
                 * pfcoil_variables.rpf[pfcoil_variables.nohc - 1]
@@ -1673,41 +1673,26 @@ class Costs:
                 * cpfconpm
             )
 
-        costs_module.c22221 = (
-            cost_variables.fkind * costs_module.c22221 * cmlsa[cost_variables.lsa - 1]
-        )
+        self.c22221 = cost_variables.fkind * self.c22221 * cmlsa[cost_variables.lsa - 1]
 
         #  Account 222.2.2 : Winding
 
-        costs_module.c22222 = 1.0e-6 * cost_variables.ucwindpf * pfwndl
-        costs_module.c22222 = (
-            cost_variables.fkind * costs_module.c22222 * cmlsa[cost_variables.lsa - 1]
-        )
+        self.c22222 = 1.0e-6 * cost_variables.ucwindpf * pfwndl
+        self.c22222 = cost_variables.fkind * self.c22222 * cmlsa[cost_variables.lsa - 1]
 
         #  Account 222.2.3 : Steel case - will be zero for resistive coils
 
-        costs_module.c22223 = 1.0e-6 * cost_variables.uccase * pfcoil_variables.whtpfs
-        costs_module.c22223 = (
-            cost_variables.fkind * costs_module.c22223 * cmlsa[cost_variables.lsa - 1]
-        )
+        self.c22223 = 1.0e-6 * cost_variables.uccase * pfcoil_variables.whtpfs
+        self.c22223 = cost_variables.fkind * self.c22223 * cmlsa[cost_variables.lsa - 1]
 
         #  Account 222.2.4 : Support structure
 
-        costs_module.c22224 = (
-            1.0e-6 * cost_variables.ucfnc * structure_variables.fncmass
-        )
-        costs_module.c22224 = (
-            cost_variables.fkind * costs_module.c22224 * cmlsa[cost_variables.lsa - 1]
-        )
+        self.c22224 = 1.0e-6 * cost_variables.ucfnc * structure_variables.fncmass
+        self.c22224 = cost_variables.fkind * self.c22224 * cmlsa[cost_variables.lsa - 1]
 
         #  Total account 222.2
 
-        costs_module.c2222 = (
-            costs_module.c22221
-            + costs_module.c22222
-            + costs_module.c22223
-            + costs_module.c22224
-        )
+        self.c2222 = self.c22221 + self.c22222 + self.c22223 + self.c22224
 
     def acc2223(self):
         """
@@ -1719,10 +1704,8 @@ class Costs:
         """
         cmlsa = [0.6900e0, 0.8450e0, 0.9225e0, 1.0000e0]
 
-        costs_module.c2223 = 1.0e-6 * fwbs_variables.vvmass * cost_variables.uccryo
-        costs_module.c2223 = (
-            cost_variables.fkind * costs_module.c2223 * cmlsa[cost_variables.lsa - 1]
-        )
+        self.c2223 = 1.0e-6 * fwbs_variables.vvmass * cost_variables.uccryo
+        self.c2223 = cost_variables.fkind * self.c2223 * cmlsa[cost_variables.lsa - 1]
 
     def acc223(self):
         """
@@ -1746,55 +1729,49 @@ class Costs:
 
             #  Account 223.1 : ECH
 
-            costs_module.c2231 = (
+            self.c2231 = (
                 1.0e-6
                 * cost_variables.ucech
                 * (1.0e6 * current_drive_variables.echpwr) ** exprf
             )
 
             if cost_variables.ifueltyp == 1:
-                costs_module.c2231 = (
-                    1.0e0 - cost_variables.fcdfuel
-                ) * costs_module.c2231
-                costs_module.c2231 = cost_variables.fkind * costs_module.c2231
+                self.c2231 = (1.0e0 - cost_variables.fcdfuel) * self.c2231
+                self.c2231 = cost_variables.fkind * self.c2231
 
             #  Account 223.2 : Lower Hybrid or ICH
 
             if current_drive_variables.iefrf != 2:
-                costs_module.c2232 = (
+                self.c2232 = (
                     1.0e-6
                     * cost_variables.uclh
                     * (1.0e6 * current_drive_variables.plhybd) ** exprf
                 )
             else:
-                costs_module.c2232 = (
+                self.c2232 = (
                     1.0e-6
                     * cost_variables.ucich
                     * (1.0e6 * current_drive_variables.plhybd) ** exprf
                 )
 
             if cost_variables.ifueltyp == 1:
-                costs_module.c2232 = (
-                    1.0e0 - cost_variables.fcdfuel
-                ) * costs_module.c2232
-                costs_module.c2232 = cost_variables.fkind * costs_module.c2232
+                self.c2232 = (1.0e0 - cost_variables.fcdfuel) * self.c2232
+                self.c2232 = cost_variables.fkind * self.c2232
 
                 #  Account 223.3 : Neutral Beam
 
-                # costs_module.c2233 = 1.0e-6 * cost_variables.ucnbi * (1.0e6*pnbeam)**exprf
+                # self.c2233 = 1.0e-6 * cost_variables.ucnbi * (1.0e6*pnbeam)**exprf
                 # #327
 
-                costs_module.c2233 = (
+                self.c2233 = (
                     1.0e-6
                     * cost_variables.ucnbi
                     * (1.0e6 * current_drive_variables.pnbitot) ** exprf
                 )
 
             if cost_variables.ifueltyp == 1:
-                costs_module.c2233 = (
-                    1.0e0 - cost_variables.fcdfuel
-                ) * costs_module.c2233
-                costs_module.c2233 = cost_variables.fkind * costs_module.c2233
+                self.c2233 = (1.0e0 - cost_variables.fcdfuel) * self.c2233
+                self.c2233 = cost_variables.fkind * self.c2233
 
         else:
 
@@ -1811,47 +1788,40 @@ class Costs:
                     )
 
                 if ife_variables.edrive <= switch:
-                    costs_module.c2231 = ife_variables.mcdriv * (
+                    self.c2231 = ife_variables.mcdriv * (
                         ife_variables.cdriv1
                         + ife_variables.dcdrv1 * 1.0e-6 * ife_variables.edrive
                     )
                 else:
-                    costs_module.c2231 = ife_variables.mcdriv * (
+                    self.c2231 = ife_variables.mcdriv * (
                         ife_variables.cdriv2
                         + ife_variables.dcdrv2 * 1.0e-6 * ife_variables.edrive
                     )
 
             elif ife_variables.ifedrv == 3:
-                costs_module.c2231 = (
+                self.c2231 = (
                     ife_variables.mcdriv
                     * 1.0e-6
                     * ife_variables.cdriv3
                     * (ife_variables.edrive / ife_variables.etadrv)
                 )
             else:
-                costs_module.c2231 = ife_variables.mcdriv * (
+                self.c2231 = ife_variables.mcdriv * (
                     ife_variables.cdriv0
                     + ife_variables.dcdrv0 * 1.0e-6 * ife_variables.edrive
                 )
 
             if cost_variables.ifueltyp == 1:
-                costs_module.c2231 = (
-                    1.0e0 - cost_variables.fcdfuel
-                ) * costs_module.c2231
-                costs_module.c2231 = cost_variables.fkind * costs_module.c2231
-                costs_module.c2232 = 0.0e0
-                costs_module.c2233 = 0.0e0
-                costs_module.c2234 = 0.0e0
+                self.c2231 = (1.0e0 - cost_variables.fcdfuel) * self.c2231
+                self.c2231 = cost_variables.fkind * self.c2231
+                self.c2232 = 0.0e0
+                self.c2233 = 0.0e0
+                self.c2234 = 0.0e0
 
         #  Total account 223
 
-        costs_module.c223 = (
-            costs_module.c2231
-            + costs_module.c2232
-            + costs_module.c2233
-            + costs_module.c2234
-        )
-        cost_variables.cdcost = costs_module.c223
+        self.c223 = self.c2231 + self.c2232 + self.c2233 + self.c2234
+        cost_variables.cdcost = self.c223
 
     def acc224(self):
         """
@@ -1863,66 +1833,57 @@ class Costs:
         AEA FUS 251: A User's Guide to the PROCESS Systems Code
         """
         if vacuum_variables.ntype == 1:
-            costs_module.c2241 = (
-                1.0e-6 * vacuum_variables.vpumpn * cost_variables.uccpmp
-            )
+            self.c2241 = 1.0e-6 * vacuum_variables.vpumpn * cost_variables.uccpmp
         else:
-            costs_module.c2241 = (
-                1.0e-6 * vacuum_variables.vpumpn * cost_variables.uctpmp
-            )
+            self.c2241 = 1.0e-6 * vacuum_variables.vpumpn * cost_variables.uctpmp
 
-        costs_module.c2241 = cost_variables.fkind * costs_module.c2241
+        self.c2241 = cost_variables.fkind * self.c2241
 
         #  Account 224.2 : Backing pumps
 
-        costs_module.c2242 = 1.0e-6 * vacuum_variables.nvduct * cost_variables.ucbpmp
-        costs_module.c2242 = cost_variables.fkind * costs_module.c2242
+        self.c2242 = 1.0e-6 * vacuum_variables.nvduct * cost_variables.ucbpmp
+        self.c2242 = cost_variables.fkind * self.c2242
 
         #  Account 224.3 : Vacuum duct
 
-        costs_module.c2243 = (
+        self.c2243 = (
             1.0e-6
             * vacuum_variables.nvduct
             * vacuum_variables.dlscal
             * cost_variables.ucduct
         )
-        costs_module.c2243 = cost_variables.fkind * costs_module.c2243
+        self.c2243 = cost_variables.fkind * self.c2243
 
         #  Account 224.4 : Valves
 
-        costs_module.c2244 = (
+        self.c2244 = (
             1.0e-6
             * 2.0e0
             * vacuum_variables.nvduct
             * (vacuum_variables.vcdimax * 1.2e0) ** 1.4e0
             * cost_variables.ucvalv
         )
-        costs_module.c2244 = cost_variables.fkind * costs_module.c2244
+        self.c2244 = cost_variables.fkind * self.c2244
 
         #  Account 224.5 : Duct shielding
 
-        costs_module.c2245 = (
+        self.c2245 = (
             1.0e-6
             * vacuum_variables.nvduct
             * vacuum_variables.vacdshm
             * cost_variables.ucvdsh
         )
-        costs_module.c2245 = cost_variables.fkind * costs_module.c2245
+        self.c2245 = cost_variables.fkind * self.c2245
 
         #  Account 224.6 : Instrumentation
 
-        costs_module.c2246 = 1.0e-6 * cost_variables.ucviac
-        costs_module.c2246 = cost_variables.fkind * costs_module.c2246
+        self.c2246 = 1.0e-6 * cost_variables.ucviac
+        self.c2246 = cost_variables.fkind * self.c2246
 
         #  Total account 224
 
-        costs_module.c224 = (
-            costs_module.c2241
-            + costs_module.c2242
-            + costs_module.c2243
-            + costs_module.c2244
-            + costs_module.c2245
-            + costs_module.c2246
+        self.c224 = (
+            self.c2241 + self.c2242 + self.c2243 + self.c2244 + self.c2245 + self.c2246
         )
 
     def acc2251(self):
@@ -1939,67 +1900,57 @@ class Costs:
         """
 
         expel = 0.7e0
-        costs_module.c22511 = (
+        self.c22511 = (
             1.0e-6
             * cost_variables.uctfps
             * (tfcoil_variables.tfckw * 1.0e3 + tfcoil_variables.tfcmw * 1.0e6) ** expel
         )
-        costs_module.c22511 = cost_variables.fkind * costs_module.c22511
+        self.c22511 = cost_variables.fkind * self.c22511
 
         #  Account 225.1.2 : TF coil breakers (zero cost for copper coils)
 
         if tfcoil_variables.i_tf_sup == 1:
-            costs_module.c22512 = 1.0e-6 * (
+            self.c22512 = 1.0e-6 * (
                 cost_variables.uctfbr
                 * tfcoil_variables.n_tf
                 * (tfcoil_variables.cpttf * tfcoil_variables.vtfskv * 1.0e3) ** expel
                 + cost_variables.uctfsw * tfcoil_variables.cpttf
             )
         else:
-            costs_module.c22512 = 0.0e0
+            self.c22512 = 0.0e0
 
-        costs_module.c22512 = cost_variables.fkind * costs_module.c22512
+        self.c22512 = cost_variables.fkind * self.c22512
 
         #  Account 225.1.3 : TF coil dump resistors
 
-        costs_module.c22513 = 1.0e-6 * (
+        self.c22513 = 1.0e-6 * (
             1.0e9 * cost_variables.uctfdr * tfcoil_variables.estotftgj
             + cost_variables.uctfgr * 0.5e0 * tfcoil_variables.n_tf
         )
-        costs_module.c22513 = cost_variables.fkind * costs_module.c22513
+        self.c22513 = cost_variables.fkind * self.c22513
 
         #  Account 225.1.4 : TF coil instrumentation and control
 
-        costs_module.c22514 = (
-            1.0e-6 * cost_variables.uctfic * (30.0e0 * tfcoil_variables.n_tf)
-        )
-        costs_module.c22514 = cost_variables.fkind * costs_module.c22514
+        self.c22514 = 1.0e-6 * cost_variables.uctfic * (30.0e0 * tfcoil_variables.n_tf)
+        self.c22514 = cost_variables.fkind * self.c22514
 
         #  Account 225.1.5 : TF coil bussing
 
         if tfcoil_variables.i_tf_sup != 1:
-            costs_module.c22515 = (
-                1.0e-6 * cost_variables.uctfbus * tfcoil_variables.tfbusmas
-            )
+            self.c22515 = 1.0e-6 * cost_variables.uctfbus * tfcoil_variables.tfbusmas
         else:
-            costs_module.c22515 = (
+            self.c22515 = (
                 1.0e-6
                 * cost_variables.ucbus
                 * tfcoil_variables.cpttf
                 * tfcoil_variables.tfbusl
             )
 
-        costs_module.c22515 = cost_variables.fkind * costs_module.c22515
+        self.c22515 = cost_variables.fkind * self.c22515
 
         #  Total account 225.1
 
-        costs_module.c2251 = (
-            costs_module.c22511
-            + costs_module.c22512
-            + costs_module.c22513
-            + costs_module.c22514
-            + costs_module.c22515
-        )
+        self.c2251 = self.c22511 + self.c22512 + self.c22513 + self.c22514 + self.c22515
 
     def acc2252(self):
         """
@@ -2012,74 +1963,70 @@ class Costs:
         <A HREF="pfpwr.html">pfpwr</A> routine from the plant power module.
         AEA FUS 251: A User's Guide to the PROCESS Systems Code
         """
-        costs_module.c22521 = (
-            1.0e-6 * cost_variables.ucpfps * heat_transport_variables.peakmva
-        )
-        costs_module.c22521 = cost_variables.fkind * costs_module.c22521
+        self.c22521 = 1.0e-6 * cost_variables.ucpfps * heat_transport_variables.peakmva
+        self.c22521 = cost_variables.fkind * self.c22521
 
         #  Account 225.2.2 : PF coil instrumentation and control
 
-        costs_module.c22522 = (
+        self.c22522 = (
             1.0e-6 * cost_variables.ucpfic * pf_power_variables.pfckts * 30.0e0
         )
-        costs_module.c22522 = cost_variables.fkind * costs_module.c22522
+        self.c22522 = cost_variables.fkind * self.c22522
 
         #  Account 225.2.3 : PF coil bussing
 
-        costs_module.c22523 = (
+        self.c22523 = (
             1.0e-6
             * cost_variables.ucpfb
             * pf_power_variables.spfbusl
             * pf_power_variables.acptmax
         )
-        costs_module.c22523 = cost_variables.fkind * costs_module.c22523
+        self.c22523 = cost_variables.fkind * self.c22523
 
         #  Account 225.2.4 : PF coil burn power supplies
 
         if pf_power_variables.pfckts != 0.0e0:
-            costs_module.c22524 = (
+            self.c22524 = (
                 1.0e-6
                 * cost_variables.ucpfbs
                 * pf_power_variables.pfckts
                 * (pf_power_variables.srcktpm / pf_power_variables.pfckts) ** 0.7e0
             )
         else:
-            costs_module.c22524 = 0.0e0
+            self.c22524 = 0.0e0
 
-        costs_module.c22524 = cost_variables.fkind * costs_module.c22524
+        self.c22524 = cost_variables.fkind * self.c22524
 
         #  Account 225.2.5 : PF coil breakers
 
-        costs_module.c22525 = (
+        self.c22525 = (
             1.0e-6
             * cost_variables.ucpfbk
             * pf_power_variables.pfckts
             * (pf_power_variables.acptmax * pf_power_variables.vpfskv) ** 0.7e0
         )
-        costs_module.c22525 = cost_variables.fkind * costs_module.c22525
+        self.c22525 = cost_variables.fkind * self.c22525
 
         #  Account 225.2.6 : PF coil dump resistors
 
-        costs_module.c22526 = (
-            1.0e-6 * cost_variables.ucpfdr1 * pf_power_variables.ensxpfm
-        )
-        costs_module.c22526 = cost_variables.fkind * costs_module.c22526
+        self.c22526 = 1.0e-6 * cost_variables.ucpfdr1 * pf_power_variables.ensxpfm
+        self.c22526 = cost_variables.fkind * self.c22526
 
         #  Account 225.2.7 : PF coil AC breakers
 
-        costs_module.c22527 = 1.0e-6 * cost_variables.ucpfcb * pf_power_variables.pfckts
-        costs_module.c22527 = cost_variables.fkind * costs_module.c22527
+        self.c22527 = 1.0e-6 * cost_variables.ucpfcb * pf_power_variables.pfckts
+        self.c22527 = cost_variables.fkind * self.c22527
 
         #  Total account 225.2
 
-        costs_module.c2252 = (
-            costs_module.c22521
-            + costs_module.c22522
-            + costs_module.c22523
-            + costs_module.c22524
-            + costs_module.c22525
-            + costs_module.c22526
-            + costs_module.c22527
+        self.c2252 = (
+            self.c22521
+            + self.c22522
+            + self.c22523
+            + self.c22524
+            + self.c22525
+            + self.c22526
+            + self.c22527
         )
 
     def acc226(self):
@@ -2092,7 +2039,7 @@ class Costs:
         system loops developed in the heatpwr module of the code.
         AEA FUS 251: A User's Guide to the PROCESS Systems Code
         """
-        costs_module.c226 = costs_module.c2261 + costs_module.c2262 + costs_module.c2263
+        self.c226 = self.c2261 + self.c2262 + self.c2263
 
     def acc2261(self):
         """
@@ -2109,7 +2056,7 @@ class Costs:
         #  N.B. with blktmodel > 0, the blanket is assumed to be helium-cooled,
         #  but the shield etc. is water-cooled (coolwh=2). Therefore, a slight
         #  inconsistency exists here...
-        costs_module.cpp = (
+        self.cpp = (
             1.0e-6
             * cost_variables.uchts[fwbs_variables.coolwh - 1]
             * (
@@ -2119,12 +2066,10 @@ class Costs:
             )
         )
 
-        costs_module.cpp = (
-            cost_variables.fkind * costs_module.cpp * cmlsa[cost_variables.lsa - 1]
-        )
+        self.cpp = cost_variables.fkind * self.cpp * cmlsa[cost_variables.lsa - 1]
 
         #  Primary heat exchangers
-        costs_module.chx = (
+        self.chx = (
             1.0e-6
             * cost_variables.ucphx
             * heat_transport_variables.nphx
@@ -2135,11 +2080,9 @@ class Costs:
             )
             ** exphts
         )
-        costs_module.chx = (
-            cost_variables.fkind * costs_module.chx * cmlsa[cost_variables.lsa - 1]
-        )
+        self.chx = cost_variables.fkind * self.chx * cmlsa[cost_variables.lsa - 1]
 
-        costs_module.c2261 = costs_module.chx + costs_module.cpp
+        self.c2261 = self.chx + self.cpp
 
     def acc2262(self):
         """
@@ -2153,7 +2096,7 @@ class Costs:
         exphts = 0.7e0
 
         #  Pumps and piping system
-        costs_module.cppa = (
+        self.cppa = (
             1.0e-6
             * cost_variables.ucahts
             * (
@@ -2166,17 +2109,15 @@ class Costs:
         )
 
         if ife_variables.ife == 1:
-            costs_module.cppa = costs_module.cppa + 1.0e-6 * cost_variables.ucahts * (
+            self.cppa = self.cppa + 1.0e-6 * cost_variables.ucahts * (
                 (1.0e6 * ife_variables.tdspmw) ** exphts
                 + (1.0e6 * ife_variables.tfacmw) ** exphts
             )
 
         #  Apply Nth kind and safety assurance factors
-        costs_module.cppa = (
-            cost_variables.fkind * costs_module.cppa * cmlsa[cost_variables.lsa - 1]
-        )
+        self.cppa = cost_variables.fkind * self.cppa * cmlsa[cost_variables.lsa - 1]
 
-        costs_module.c2262 = costs_module.cppa
+        self.c2262 = self.cppa
 
     def acc2263(self):
         """
@@ -2189,7 +2130,7 @@ class Costs:
         cmlsa = 0.4000e0, 0.7000e0, 0.8500e0, 1.0000e0
         expcry = 0.67e0
 
-        costs_module.c2263 = (
+        self.c2263 = (
             1.0e-6
             * cost_variables.uccry
             * 4.5e0
@@ -2198,9 +2139,7 @@ class Costs:
         )
 
         #  Apply Nth kind and safety factors
-        costs_module.c2263 = (
-            cost_variables.fkind * costs_module.c2263 * cmlsa[cost_variables.lsa - 1]
-        )
+        self.c2263 = cost_variables.fkind * self.c2263 * cmlsa[cost_variables.lsa - 1]
 
     def acc227(self):
         """
@@ -2211,12 +2150,7 @@ class Costs:
         Costs are scaled from TETRA reactor code runs.
         AEA FUS 251: A User's Guide to the PROCESS Systems Code
         """
-        costs_module.c227 = (
-            costs_module.c2271
-            + costs_module.c2272
-            + costs_module.c2273
-            + costs_module.c2274
-        )
+        self.c227 = self.c2271 + self.c2272 + self.c2273 + self.c2274
 
     def acc2271(self):
         """
@@ -2226,10 +2160,10 @@ class Costs:
         This routine evaluates the Account 2271 - Fuelling system
         AEA FUS 251: A User's Guide to the PROCESS Systems Code
         """
-        costs_module.c2271 = 1.0e-6 * cost_variables.ucf1
+        self.c2271 = 1.0e-6 * cost_variables.ucf1
 
         #  Apply Nth kind factor
-        costs_module.c2271 = cost_variables.fkind * costs_module.c2271
+        self.c2271 = cost_variables.fkind * self.c2271
 
     def acc2272(self):
         """
@@ -2265,13 +2199,13 @@ class Costs:
             physics_variables.wtgpd = targtm * ife_variables.reprat * 86400.0e0
 
         #  Assumes that He3 costs same as tritium to process...
-        costs_module.c2272 = (
+        self.c2272 = (
             1.0e-6
             * cost_variables.ucfpr
             * (0.5e0 + 0.5e0 * (physics_variables.wtgpd / 60.0e0) ** 0.67e0)
         )
 
-        costs_module.c2272 = cost_variables.fkind * costs_module.c2272
+        self.c2272 = cost_variables.fkind * self.c2272
 
     def acc2273(self):
         """
@@ -2285,7 +2219,7 @@ class Costs:
 
         #  No detritiation needed if purely D-He3 reaction
         if physics_variables.ftrit > 1.0e-3:
-            costs_module.c2273 = (
+            self.c2273 = (
                 1.0e-6
                 * cost_variables.ucdtc
                 * (
@@ -2294,9 +2228,9 @@ class Costs:
                 )
             )
         else:
-            costs_module.c2273 = 0.0e0
+            self.c2273 = 0.0e0
 
-        costs_module.c2273 = cost_variables.fkind * costs_module.c2273
+        self.c2273 = cost_variables.fkind * self.c2273
 
     def acc2274(self):
         """
@@ -2306,14 +2240,14 @@ class Costs:
         This routine evaluates the Account 2274 - Nuclear building ventilation
         AEA FUS 251: A User's Guide to the PROCESS Systems Code
         """
-        costs_module.c2274 = (
+        self.c2274 = (
             1.0e-6
             * cost_variables.ucnbv
             * (buildings_variables.volrci + buildings_variables.wsvol) ** 0.8e0
         )
 
         #  Apply Nth kind factor
-        costs_module.c2274 = cost_variables.fkind * costs_module.c2274
+        self.c2274 = cost_variables.fkind * self.c2274
 
     def acc228(self):
         """
@@ -2326,8 +2260,8 @@ class Costs:
         Costs are based on TFCX and INTOR.
         AEA FUS 251: A User's Guide to the PROCESS Systems Code
         """
-        costs_module.c228 = 1.0e-6 * cost_variables.uciac
-        costs_module.c228 = cost_variables.fkind * costs_module.c228
+        self.c228 = 1.0e-6 * cost_variables.uciac
+        self.c228 = cost_variables.fkind * self.c228
 
     def acc229(self):
         """
@@ -2338,8 +2272,8 @@ class Costs:
         This routine evaluates the Account 229 (maintenance equipment) costs.
         AEA FUS 251: A User's Guide to the PROCESS Systems Code
         """
-        costs_module.c229 = 1.0e-6 * cost_variables.ucme
-        costs_module.c229 = cost_variables.fkind * costs_module.c229
+        self.c229 = 1.0e-6 * cost_variables.ucme
+        self.c229 = cost_variables.fkind * self.c229
 
     def acc23(self):
         """
@@ -2353,7 +2287,7 @@ class Costs:
 
         exptpe = 0.83e0
         if cost_variables.ireactor == 1:
-            costs_module.c23 = (
+            self.c23 = (
                 1.0e-6
                 * cost_variables.ucturb[fwbs_variables.coolwh - 1]
                 * (heat_transport_variables.pgrossmw / 1200.0e0) ** exptpe
@@ -2368,13 +2302,7 @@ class Costs:
         This routine evaluates the Account 24 (electric plant equipment) costs.
         AEA FUS 251: A User's Guide to the PROCESS Systems Code
         """
-        costs_module.c24 = (
-            costs_module.c241
-            + costs_module.c242
-            + costs_module.c243
-            + costs_module.c244
-            + costs_module.c245
-        )
+        self.c24 = self.c241 + self.c242 + self.c243 + self.c244 + self.c245
 
     def acc241(self):
         """
@@ -2387,9 +2315,7 @@ class Costs:
         cmlsa = 0.5700e0, 0.7850e0, 0.8925e0, 1.0000e0
 
         #  Account 241 : Switchyard
-        costs_module.c241 = (
-            1.0e-6 * cost_variables.ucswyd * cmlsa[cost_variables.lsa - 1]
-        )
+        self.c241 = 1.0e-6 * cost_variables.ucswyd * cmlsa[cost_variables.lsa - 1]
 
     def acc242(self):
         """
@@ -2403,13 +2329,13 @@ class Costs:
         expepe = 0.9e0
 
         #  Account 242 : Transformers
-        costs_module.c242 = 1.0e-6 * (
+        self.c242 = 1.0e-6 * (
             cost_variables.ucpp * (heat_transport_variables.pacpmw * 1.0e3) ** expepe
             + cost_variables.ucap * (heat_transport_variables.fcsht * 1.0e3)
         )
 
         #  Apply safety assurance factor
-        costs_module.c242 = costs_module.c242 * cmlsa[cost_variables.lsa - 1]
+        self.c242 = self.c242 * cmlsa[cost_variables.lsa - 1]
 
     def acc243(self):
         """
@@ -2423,7 +2349,7 @@ class Costs:
 
         #  Account 243 : Low voltage
         #  (include 0.8 factor for transformer efficiency)
-        costs_module.c243 = (
+        self.c243 = (
             1.0e-6
             * cost_variables.uclv
             * heat_transport_variables.tlvpmw
@@ -2443,7 +2369,7 @@ class Costs:
         cmlsa = [0.5700e0, 0.7850e0, 0.8925e0, 1.0000e0]
 
         #  Account 244 : Diesel generator (8 MW per generator,  assume 4 )
-        costs_module.c244 = (
+        self.c244 = (
             1.0e-6 * cost_variables.ucdgen * 4.0e0 * cmlsa[cost_variables.lsa - 1]
         )
 
@@ -2458,7 +2384,7 @@ class Costs:
         cmlsa = 0.5700e0, 0.7850e0, 0.8925e0, 1.0000e0
 
         #  Account 245 : Auxiliary facility power needs
-        costs_module.c245 = 1.0e-6 * cost_variables.ucaf * cmlsa[cost_variables.lsa - 1]
+        self.c245 = 1.0e-6 * cost_variables.ucaf * cmlsa[cost_variables.lsa - 1]
 
     def acc25(self):
         """
@@ -2472,9 +2398,7 @@ class Costs:
         """
         cmlsa = 0.7700e0, 0.8850e0, 0.9425e0, 1.0000e0
 
-        costs_module.c25 = (
-            1.0e-6 * cost_variables.ucmisc * cmlsa[cost_variables.lsa - 1]
-        )
+        self.c25 = 1.0e-6 * cost_variables.ucmisc * cmlsa[cost_variables.lsa - 1]
 
     def acc26(self):
         """
@@ -2503,7 +2427,7 @@ class Costs:
             )
 
         # cost_variables.uchrs - reference cost of heat rejection system [$]
-        costs_module.c26 = (
+        self.c26 = (
             1.0e-6
             * cost_variables.uchrs
             * pwrrej
@@ -2528,7 +2452,7 @@ class Costs:
         J. Delene, private communication, ORNL, June 1990
         AEA FUS 251: A User's Guide to the PROCESS Systems Code
         """
-        costs_module.cindrt = (
+        self.cindrt = (
             cost_variables.cfind[cost_variables.lsa - 1]
             * cost_variables.cdirt
             * (1.0e0 + cost_variables.cowner)
@@ -2536,9 +2460,7 @@ class Costs:
 
         #  Contingency costs
 
-        costs_module.ccont = cost_variables.fcontng * (
-            cost_variables.cdirt + costs_module.cindrt
-        )
+        self.ccont = cost_variables.fcontng * (cost_variables.cdirt + self.cindrt)
 
     def acc2253(self):
         """
@@ -2548,7 +2470,7 @@ class Costs:
         This routine evaluates the Account 225.3 (energy storage) costs.
         AEA FUS 251: A User's Guide to the PROCESS Systems Code
         """
-        costs_module.c2253 = 0.0e0
+        self.c2253 = 0.0e0
 
         #  Thermal storage options for a pulsed reactor
         #  See F/MPE/MOD/CAG/PROCESS/PULSE/0008 and 0014
@@ -2563,22 +2485,22 @@ class Costs:
                 #  Pulsed Fusion Reactor Study : AEA FUS 205
 
                 #  Increased condensate tank capacity
-                costs_module.c2253 = 0.1e0
+                self.c2253 = 0.1e0
 
                 #  Additional electrically-driven feedpump (50 per cent duty)
-                costs_module.c2253 = costs_module.c2253 + 0.8e0
+                self.c2253 = self.c2253 + 0.8e0
 
                 #  Increased turbine-generator duty (5 per cent duty)
-                costs_module.c2253 = costs_module.c2253 + 4.0e0
+                self.c2253 = self.c2253 + 4.0e0
 
                 #  Additional auxiliary transformer capacity and ancillaries
-                costs_module.c2253 = costs_module.c2253 + 0.5e0
+                self.c2253 = self.c2253 + 0.5e0
 
                 #  Increased drum capacity
-                costs_module.c2253 = costs_module.c2253 + 2.8e0
+                self.c2253 = self.c2253 + 2.8e0
 
                 #  Externally fired superheater
-                costs_module.c2253 = costs_module.c2253 + 29.0e0
+                self.c2253 = self.c2253 + 29.0e0
 
             elif pulse_variables.istore == 2:
 
@@ -2586,29 +2508,29 @@ class Costs:
                 #  Pulsed Fusion Reactor Study : AEA FUS 205
 
                 #  Increased condensate tank capacity
-                costs_module.c2253 = 0.1e0
+                self.c2253 = 0.1e0
 
                 #  Additional electrically-driven feedpump (50 per cent duty)
-                costs_module.c2253 = costs_module.c2253 + 0.8e0
+                self.c2253 = self.c2253 + 0.8e0
 
                 #  Increased drum capacity
-                costs_module.c2253 = costs_module.c2253 + 2.8e0
+                self.c2253 = self.c2253 + 2.8e0
 
                 #  Increased turbine-generator duty (5 per cent duty)
-                costs_module.c2253 = costs_module.c2253 + 4.0e0
+                self.c2253 = self.c2253 + 4.0e0
 
                 #  Additional fired boiler (1 x 100 per cent duty)
-                costs_module.c2253 = costs_module.c2253 + 330.0e0
+                self.c2253 = self.c2253 + 330.0e0
 
                 #  HP/LP steam bypass system for auxiliary boiler
                 #  (30 per cent boiler capacity)
-                costs_module.c2253 = costs_module.c2253 + 1.0e0
+                self.c2253 = self.c2253 + 1.0e0
 
                 #  Dump condenser
-                costs_module.c2253 = costs_module.c2253 + 2.0e0
+                self.c2253 = self.c2253 + 2.0e0
 
                 #  Increased cooling water system capacity
-                costs_module.c2253 = costs_module.c2253 + 18.0e0
+                self.c2253 = self.c2253 + 18.0e0
 
             elif pulse_variables.istore == 3:
 
@@ -2621,7 +2543,7 @@ class Costs:
                 #  stainless steel block (input)
 
                 shcss = 520.0e0
-                costs_module.c2253 = (
+                self.c2253 = (
                     cost_variables.ucblss
                     * (heat_transport_variables.pthermmw * 1.0e6)
                     * times_variables.tdown
@@ -2635,19 +2557,17 @@ class Costs:
 
         if pulse_variables.istore < 3:
 
-            #  Scale costs_module.c2253 with net electric power
+            #  Scale self.c2253 with net electric power
 
-            costs_module.c2253 = (
-                costs_module.c2253 * heat_transport_variables.pnetelmw / 1200.0e0
-            )
+            self.c2253 = self.c2253 * heat_transport_variables.pnetelmw / 1200.0e0
 
             #  It is necessary to convert from 1992 pounds to 1990 dollars
             #  Reasonable guess for the exchange rate + inflation factor
             #  inflation = 5% per annum; exchange rate = 1.5 dollars per pound
 
-            costs_module.c2253 = costs_module.c2253 * 1.36e0
+            self.c2253 = self.c2253 * 1.36e0
 
-        costs_module.c2253 = cost_variables.fkind * costs_module.c2253
+        self.c2253 = cost_variables.fkind * self.c2253
 
     def coelc(self, iprint):
         """
