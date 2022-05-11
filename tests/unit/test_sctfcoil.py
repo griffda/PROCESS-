@@ -3,7 +3,7 @@ import numpy
 from typing import NamedTuple, Any
 
 from process.fortran import sctfcoil_module
-from process.fortran import tfcoil_variables
+from process.fortran import tfcoil_variables, pfcoil_variables
 from process.fortran import global_variables
 from process.fortran import physics_variables
 from process.fortran import build_variables
@@ -3381,3 +3381,661 @@ def test_tf_wp_currents(tfwpcurrentsparam, monkeypatch, sctfcoil):
     sctfcoil.tf_wp_currents()
 
     assert tfcoil_variables.jwptf == pytest.approx(tfwpcurrentsparam.expected_jwptf)
+
+
+class StressclParam(NamedTuple):
+
+    tfcth: Any = None
+
+    r_tf_inboard_mid: Any = None
+
+    bore: Any = None
+
+    ohcth: Any = None
+
+    hmax: Any = None
+
+    r_tf_inboard_in: Any = None
+
+    casestr: Any = None
+
+    n_tf_turn: Any = None
+
+    dr_tf_wp: Any = None
+
+    i_tf_tresca: Any = None
+
+    acstf: Any = None
+
+    vforce: Any = None
+
+    ritfc: Any = None
+
+    jwptf: Any = None
+
+    sig_tf_cs_bucked: Any = None
+
+    sig_tf_case: Any = None
+
+    sig_tf_wp: Any = None
+
+    thwcndut: Any = None
+
+    insstrain: Any = None
+
+    tinstf: Any = None
+
+    thicndut: Any = None
+
+    acndttf: Any = None
+
+    tfinsgap: Any = None
+
+    acasetf: Any = None
+
+    sig_tf_case_max: Any = None
+
+    poisson_steel: Any = None
+
+    poisson_copper: Any = None
+
+    poisson_al: Any = None
+
+    n_tf_graded_layers: Any = None
+
+    i_tf_sup: Any = None
+
+    i_tf_bucking: Any = None
+
+    fcoolcp: Any = None
+
+    eyoung_cond_axial: Any = None
+
+    eyoung_steel: Any = None
+
+    eyoung_res_tf_buck: Any = None
+
+    eyoung_ins: Any = None
+
+    eyoung_al: Any = None
+
+    eyoung_copper: Any = None
+
+    aiwp: Any = None
+
+    aswp: Any = None
+
+    cpttf: Any = None
+
+    n_tf: Any = None
+
+    i_tf_stress_model: Any = None
+
+    sig_tf_wp_max: Any = None
+
+    i_tf_turns_integer: Any = None
+
+    casthi: Any = None
+
+    acond: Any = None
+
+    avwp: Any = None
+
+    awphec: Any = None
+
+    poisson_ins: Any = None
+
+    eyoung_cond_trans: Any = None
+
+    poisson_cond_axial: Any = None
+
+    poisson_cond_trans: Any = None
+
+    dhecoil: Any = None
+
+    fcutfsu: Any = None
+
+    str_wp: Any = None
+
+    n_tf_wp_layers: Any = None
+
+    ipfres: Any = None
+
+    oh_steel_frac: Any = None
+
+    ohhghf: Any = None
+
+    coheof: Any = None
+
+    cohbop: Any = None
+
+    ncls: Any = None
+
+    cptdin: Any = None
+
+    awpc: Any = None
+
+    a_tf_steel: Any = None
+
+    a_tf_ins: Any = None
+
+    r_wp_inner: Any = None
+
+    r_wp_outer: Any = None
+
+    t_wp_toroidal: Any = None
+
+    t_wp_toroidal_av: Any = None
+
+    t_lat_case_av: Any = None
+
+    a_case_front: Any = None
+
+    a_case_nose: Any = None
+
+    theta_coil: Any = None
+
+    tan_theta_coil: Any = None
+
+    t_cable_radial: Any = None
+
+    t_cable: Any = None
+
+    vforce_inboard_tot: Any = None
+
+    iprint: Any = None
+
+    outfile: Any = None
+
+    n_radial_array: Any = None
+
+    n_tf_layer: Any = None
+
+    expected_casestr: Any = None
+
+    expected_sig_tf_case: Any = None
+
+    expected_sig_tf_wp: Any = None
+
+    expected_insstrain: Any = None
+
+    expected_str_wp: Any = None
+
+
+@pytest.mark.parametrize(
+    "stressclparam",
+    (
+        StressclParam(
+            tfcth=1.208,
+            r_tf_inboard_mid=3.5979411851091103,
+            bore=2.3322000000000003,
+            ohcth=0.55242000000000002,
+            hmax=9.0730900215620327,
+            r_tf_inboard_in=2.9939411851091102,
+            casestr=0,
+            n_tf_turn=200,
+            dr_tf_wp=0.54261087836601019,
+            i_tf_tresca=0,
+            acstf=0.001293323051622732,
+            vforce=250545611.13801825,
+            ritfc=236885604.60000002,
+            jwptf=23124470.793774806,
+            sig_tf_cs_bucked=0,
+            sig_tf_case=0,
+            sig_tf_wp=0,
+            thwcndut=0.0080000000000000002,
+            insstrain=0,
+            tinstf=0.0080000000000000019,
+            thicndut=0.002,
+            acndttf=0.0014685061538103825,
+            tfinsgap=0.01,
+            acasetf=1.0015169239205168,
+            sig_tf_case_max=580000000,
+            poisson_steel=0.29999999999999999,
+            poisson_copper=0.34999999999999998,
+            poisson_al=0.34999999999999998,
+            n_tf_graded_layers=1,
+            i_tf_sup=1,
+            i_tf_bucking=1,
+            fcoolcp=0.29999999999999999,
+            eyoung_cond_axial=0,
+            eyoung_steel=205000000000,
+            eyoung_res_tf_buck=150000000000,
+            eyoung_ins=20000000000,
+            eyoung_al=69000000000,
+            eyoung_copper=117000000000,
+            aiwp=0.087880174466980876,
+            aswp=0.29370123076207649,
+            cpttf=74026.751437500003,
+            n_tf=16,
+            i_tf_stress_model=1,
+            sig_tf_wp_max=580000000,
+            i_tf_turns_integer=1,
+            casthi=0.060000000000000012,
+            acond=0.1653572639592335,
+            avwp=0.07759938309736393,
+            awphec=0.015707963267948974,
+            poisson_ins=0.34000000000000002,
+            eyoung_cond_trans=0,
+            poisson_cond_axial=0.30000001192092896,
+            poisson_cond_trans=0.30000001192092896,
+            dhecoil=0.010000000000000002,
+            fcutfsu=0.80884,
+            str_wp=0,
+            n_tf_wp_layers=5,
+            ipfres=0,
+            oh_steel_frac=0.57874999999999999,
+            ohhghf=0.90000000000000002,
+            coheof=20726000,
+            cohbop=0,
+            ncls=numpy.array(
+                numpy.array((1, 1, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0), order="F"), order="F"
+            ).transpose(),
+            cptdin=numpy.array(
+                numpy.array(
+                    (
+                        42200,
+                        42200,
+                        42200,
+                        42200,
+                        43000,
+                        43000,
+                        43000,
+                        43000,
+                        40000,
+                        40000,
+                        40000,
+                        40000,
+                        40000,
+                        40000,
+                        40000,
+                        40000,
+                        40000,
+                        40000,
+                        40000,
+                        40000,
+                        40000,
+                        40000,
+                    ),
+                    order="F",
+                ),
+                order="F",
+            ).transpose(),
+            awpc=0.70527618095271016,
+            a_tf_steel=1.2952181546825934,
+            a_tf_ins=0.11646247019991701,
+            r_wp_inner=3.5185911851091101,
+            r_wp_outer=4.06120206347512,
+            t_wp_toroidal=1.299782604942499,
+            t_wp_toroidal_av=1.299782604942499,
+            t_lat_case_av=0.10396600719086938,
+            a_case_front=0.18607458590131154,
+            a_case_nose=0.70261616505511615,
+            theta_coil=0.19634954084936207,
+            tan_theta_coil=0.19891236737965801,
+            t_cable_radial=0.030661087836601014,
+            t_cable=0.036389912284773368,
+            vforce_inboard_tot=4008729778.208292,
+            iprint=0,
+            outfile=11,
+            n_radial_array=100,
+            n_tf_layer=3,
+            expected_casestr=0.00094360452596334093,
+            expected_sig_tf_case=543381805.25001633,
+            expected_sig_tf_wp=397005702.35272157,
+            expected_insstrain=-0.006687152422925652,
+            expected_str_wp=0.0015619754370069119,
+        ),
+        StressclParam(
+            tfcth=1.208,
+            r_tf_inboard_mid=3.5979411851091103,
+            bore=2.3322000000000003,
+            ohcth=0.55242000000000002,
+            hmax=9.0730900215620327,
+            r_tf_inboard_in=2.9939411851091102,
+            casestr=0.00094360452596334093,
+            n_tf_turn=200,
+            dr_tf_wp=0.54261087836601019,
+            i_tf_tresca=0,
+            acstf=0.001293323051622732,
+            vforce=250545611.13801825,
+            ritfc=236885604.60000002,
+            jwptf=23124470.793774806,
+            sig_tf_cs_bucked=0,
+            sig_tf_case=543381805.25001633,
+            sig_tf_wp=397005702.35272157,
+            thwcndut=0.0080000000000000002,
+            insstrain=0,
+            tinstf=0.0080000000000000019,
+            thicndut=0.002,
+            acndttf=0.0014685061538103825,
+            tfinsgap=0.01,
+            acasetf=1.0015169239205168,
+            sig_tf_case_max=580000000,
+            poisson_steel=0.29999999999999999,
+            poisson_copper=0.34999999999999998,
+            poisson_al=0.34999999999999998,
+            n_tf_graded_layers=1,
+            i_tf_sup=1,
+            i_tf_bucking=1,
+            fcoolcp=0.29999999999999999,
+            eyoung_cond_axial=0,
+            eyoung_steel=205000000000,
+            eyoung_res_tf_buck=150000000000,
+            eyoung_ins=20000000000,
+            eyoung_al=69000000000,
+            eyoung_copper=117000000000,
+            aiwp=0.087880174466980876,
+            aswp=0.29370123076207649,
+            cpttf=74026.751437500003,
+            n_tf=16,
+            i_tf_stress_model=1,
+            sig_tf_wp_max=580000000,
+            i_tf_turns_integer=1,
+            casthi=0.060000000000000012,
+            acond=0.1653572639592335,
+            avwp=0.07759938309736393,
+            awphec=0.015707963267948974,
+            poisson_ins=0.34000000000000002,
+            eyoung_cond_trans=0,
+            poisson_cond_axial=0.30000001192092896,
+            poisson_cond_trans=0.30000001192092896,
+            dhecoil=0.010000000000000002,
+            fcutfsu=0.80884,
+            str_wp=0.0015619754370069119,
+            n_tf_wp_layers=5,
+            ipfres=0,
+            oh_steel_frac=0.57874999999999999,
+            ohhghf=0.90000000000000002,
+            coheof=20726000,
+            cohbop=19311657.760000002,
+            ncls=numpy.array(
+                numpy.array((1, 1, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0), order="F"), order="F"
+            ).transpose(),
+            cptdin=numpy.array(
+                numpy.array(
+                    (
+                        42200,
+                        42200,
+                        42200,
+                        42200,
+                        43000,
+                        43000,
+                        43000,
+                        43000,
+                        40000,
+                        40000,
+                        40000,
+                        40000,
+                        40000,
+                        40000,
+                        40000,
+                        40000,
+                        40000,
+                        40000,
+                        40000,
+                        40000,
+                        40000,
+                        40000,
+                    ),
+                    order="F",
+                ),
+                order="F",
+            ).transpose(),
+            awpc=0.70527618095271016,
+            a_tf_steel=1.2952181546825934,
+            a_tf_ins=0.11646247019991701,
+            r_wp_inner=3.5185911851091101,
+            r_wp_outer=4.06120206347512,
+            t_wp_toroidal=1.299782604942499,
+            t_wp_toroidal_av=1.299782604942499,
+            t_lat_case_av=0.10396600719086938,
+            a_case_front=0.18607458590131154,
+            a_case_nose=0.70261616505511615,
+            theta_coil=0.19634954084936207,
+            tan_theta_coil=0.19891236737965801,
+            t_cable_radial=0.030661087836601014,
+            t_cable=0.036389912284773368,
+            vforce_inboard_tot=4008729778.208292,
+            iprint=0,
+            outfile=11,
+            n_radial_array=100,
+            n_tf_layer=3,
+            expected_casestr=0.00094360452596334093,
+            expected_sig_tf_case=543381805.25001633,
+            expected_sig_tf_wp=397005702.35272157,
+            expected_insstrain=-0.006687152422925652,
+            expected_str_wp=0.0015619754370069119,
+        ),
+    ),
+)
+def test_stresscl(stressclparam, monkeypatch, sctfcoil):
+    """
+    Automatically generated Regression Unit Test for stresscl.
+
+    This test was generated using data from tracking/baseline_2018/baseline_2018_IN.DAT.
+
+    :param stressclparam: the data used to mock and assert in this test.
+    :type stressclparam: stressclparam
+
+    :param monkeypatch: pytest fixture used to mock module/class variables
+    :type monkeypatch: _pytest.monkeypatch.monkeypatch
+    """
+
+    monkeypatch.setattr(build_variables, "tfcth", stressclparam.tfcth)
+
+    monkeypatch.setattr(
+        build_variables, "r_tf_inboard_mid", stressclparam.r_tf_inboard_mid
+    )
+
+    monkeypatch.setattr(build_variables, "bore", stressclparam.bore)
+
+    monkeypatch.setattr(build_variables, "ohcth", stressclparam.ohcth)
+
+    monkeypatch.setattr(build_variables, "hmax", stressclparam.hmax)
+
+    monkeypatch.setattr(
+        build_variables, "r_tf_inboard_in", stressclparam.r_tf_inboard_in
+    )
+
+    monkeypatch.setattr(tfcoil_variables, "casestr", stressclparam.casestr)
+
+    monkeypatch.setattr(tfcoil_variables, "n_tf_turn", stressclparam.n_tf_turn)
+
+    monkeypatch.setattr(tfcoil_variables, "dr_tf_wp", stressclparam.dr_tf_wp)
+
+    monkeypatch.setattr(tfcoil_variables, "i_tf_tresca", stressclparam.i_tf_tresca)
+
+    monkeypatch.setattr(tfcoil_variables, "acstf", stressclparam.acstf)
+
+    monkeypatch.setattr(tfcoil_variables, "vforce", stressclparam.vforce)
+
+    monkeypatch.setattr(tfcoil_variables, "ritfc", stressclparam.ritfc)
+
+    monkeypatch.setattr(tfcoil_variables, "jwptf", stressclparam.jwptf)
+
+    monkeypatch.setattr(
+        tfcoil_variables, "sig_tf_cs_bucked", stressclparam.sig_tf_cs_bucked
+    )
+
+    monkeypatch.setattr(tfcoil_variables, "sig_tf_case", stressclparam.sig_tf_case)
+
+    monkeypatch.setattr(tfcoil_variables, "sig_tf_wp", stressclparam.sig_tf_wp)
+
+    monkeypatch.setattr(tfcoil_variables, "thwcndut", stressclparam.thwcndut)
+
+    monkeypatch.setattr(tfcoil_variables, "insstrain", stressclparam.insstrain)
+
+    monkeypatch.setattr(tfcoil_variables, "tinstf", stressclparam.tinstf)
+
+    monkeypatch.setattr(tfcoil_variables, "thicndut", stressclparam.thicndut)
+
+    monkeypatch.setattr(tfcoil_variables, "acndttf", stressclparam.acndttf)
+
+    monkeypatch.setattr(tfcoil_variables, "tfinsgap", stressclparam.tfinsgap)
+
+    monkeypatch.setattr(tfcoil_variables, "acasetf", stressclparam.acasetf)
+
+    monkeypatch.setattr(
+        tfcoil_variables, "sig_tf_case_max", stressclparam.sig_tf_case_max
+    )
+
+    monkeypatch.setattr(tfcoil_variables, "poisson_steel", stressclparam.poisson_steel)
+
+    monkeypatch.setattr(
+        tfcoil_variables, "poisson_copper", stressclparam.poisson_copper
+    )
+
+    monkeypatch.setattr(tfcoil_variables, "poisson_al", stressclparam.poisson_al)
+
+    monkeypatch.setattr(
+        tfcoil_variables, "n_tf_graded_layers", stressclparam.n_tf_graded_layers
+    )
+
+    monkeypatch.setattr(tfcoil_variables, "i_tf_sup", stressclparam.i_tf_sup)
+
+    monkeypatch.setattr(tfcoil_variables, "i_tf_bucking", stressclparam.i_tf_bucking)
+
+    monkeypatch.setattr(tfcoil_variables, "fcoolcp", stressclparam.fcoolcp)
+
+    monkeypatch.setattr(
+        tfcoil_variables, "eyoung_cond_axial", stressclparam.eyoung_cond_axial
+    )
+
+    monkeypatch.setattr(tfcoil_variables, "eyoung_steel", stressclparam.eyoung_steel)
+
+    monkeypatch.setattr(
+        tfcoil_variables, "eyoung_res_tf_buck", stressclparam.eyoung_res_tf_buck
+    )
+
+    monkeypatch.setattr(tfcoil_variables, "eyoung_ins", stressclparam.eyoung_ins)
+
+    monkeypatch.setattr(tfcoil_variables, "eyoung_al", stressclparam.eyoung_al)
+
+    monkeypatch.setattr(tfcoil_variables, "eyoung_copper", stressclparam.eyoung_copper)
+
+    monkeypatch.setattr(tfcoil_variables, "aiwp", stressclparam.aiwp)
+
+    monkeypatch.setattr(tfcoil_variables, "aswp", stressclparam.aswp)
+
+    monkeypatch.setattr(tfcoil_variables, "cpttf", stressclparam.cpttf)
+
+    monkeypatch.setattr(tfcoil_variables, "n_tf", stressclparam.n_tf)
+
+    monkeypatch.setattr(
+        tfcoil_variables, "i_tf_stress_model", stressclparam.i_tf_stress_model
+    )
+
+    monkeypatch.setattr(tfcoil_variables, "sig_tf_wp_max", stressclparam.sig_tf_wp_max)
+
+    monkeypatch.setattr(
+        tfcoil_variables, "i_tf_turns_integer", stressclparam.i_tf_turns_integer
+    )
+
+    monkeypatch.setattr(tfcoil_variables, "casthi", stressclparam.casthi)
+
+    monkeypatch.setattr(tfcoil_variables, "acond", stressclparam.acond)
+
+    monkeypatch.setattr(tfcoil_variables, "avwp", stressclparam.avwp)
+
+    monkeypatch.setattr(tfcoil_variables, "awphec", stressclparam.awphec)
+
+    monkeypatch.setattr(tfcoil_variables, "poisson_ins", stressclparam.poisson_ins)
+
+    monkeypatch.setattr(
+        tfcoil_variables, "eyoung_cond_trans", stressclparam.eyoung_cond_trans
+    )
+
+    monkeypatch.setattr(
+        tfcoil_variables, "poisson_cond_axial", stressclparam.poisson_cond_axial
+    )
+
+    monkeypatch.setattr(
+        tfcoil_variables, "poisson_cond_trans", stressclparam.poisson_cond_trans
+    )
+
+    monkeypatch.setattr(tfcoil_variables, "dhecoil", stressclparam.dhecoil)
+
+    monkeypatch.setattr(tfcoil_variables, "fcutfsu", stressclparam.fcutfsu)
+
+    monkeypatch.setattr(tfcoil_variables, "str_wp", stressclparam.str_wp)
+
+    monkeypatch.setattr(
+        tfcoil_variables, "n_tf_wp_layers", stressclparam.n_tf_wp_layers
+    )
+
+    monkeypatch.setattr(pfcoil_variables, "ipfres", stressclparam.ipfres)
+
+    monkeypatch.setattr(pfcoil_variables, "oh_steel_frac", stressclparam.oh_steel_frac)
+
+    monkeypatch.setattr(pfcoil_variables, "ohhghf", stressclparam.ohhghf)
+
+    monkeypatch.setattr(pfcoil_variables, "coheof", stressclparam.coheof)
+
+    monkeypatch.setattr(pfcoil_variables, "cohbop", stressclparam.cohbop)
+
+    monkeypatch.setattr(pfcoil_variables, "ncls", stressclparam.ncls)
+
+    monkeypatch.setattr(pfcoil_variables, "cptdin", stressclparam.cptdin)
+
+    monkeypatch.setattr(sctfcoil_module, "awpc", stressclparam.awpc)
+
+    monkeypatch.setattr(sctfcoil_module, "a_tf_steel", stressclparam.a_tf_steel)
+
+    monkeypatch.setattr(sctfcoil_module, "a_tf_ins", stressclparam.a_tf_ins)
+
+    monkeypatch.setattr(sctfcoil_module, "r_wp_inner", stressclparam.r_wp_inner)
+
+    monkeypatch.setattr(sctfcoil_module, "r_wp_outer", stressclparam.r_wp_outer)
+
+    monkeypatch.setattr(sctfcoil_module, "t_wp_toroidal", stressclparam.t_wp_toroidal)
+
+    monkeypatch.setattr(
+        sctfcoil_module, "t_wp_toroidal_av", stressclparam.t_wp_toroidal_av
+    )
+
+    monkeypatch.setattr(sctfcoil_module, "t_lat_case_av", stressclparam.t_lat_case_av)
+
+    monkeypatch.setattr(sctfcoil_module, "a_case_front", stressclparam.a_case_front)
+
+    monkeypatch.setattr(sctfcoil_module, "a_case_nose", stressclparam.a_case_nose)
+
+    monkeypatch.setattr(sctfcoil_module, "theta_coil", stressclparam.theta_coil)
+
+    monkeypatch.setattr(sctfcoil_module, "tan_theta_coil", stressclparam.tan_theta_coil)
+
+    monkeypatch.setattr(sctfcoil_module, "t_cable_radial", stressclparam.t_cable_radial)
+
+    monkeypatch.setattr(sctfcoil_module, "t_cable", stressclparam.t_cable)
+
+    monkeypatch.setattr(
+        sctfcoil_module, "vforce_inboard_tot", stressclparam.vforce_inboard_tot
+    )
+
+    sctfcoil.stresscl(
+        # iprint=stressclparam.iprint,
+        # outfile=stressclparam.outfile,
+        n_radial_array=stressclparam.n_radial_array,
+        n_tf_layer=stressclparam.n_tf_layer,
+        output=False,
+    )
+
+    assert tfcoil_variables.casestr == pytest.approx(
+        stressclparam.expected_casestr, rel=0.01
+    )
+
+    assert tfcoil_variables.sig_tf_case == pytest.approx(
+        stressclparam.expected_sig_tf_case, rel=0.01
+    )
+
+    assert tfcoil_variables.sig_tf_wp == pytest.approx(
+        stressclparam.expected_sig_tf_wp, rel=0.01
+    )
+
+    assert tfcoil_variables.insstrain == pytest.approx(
+        stressclparam.expected_insstrain, rel=0.01
+    )
+
+    assert tfcoil_variables.str_wp == pytest.approx(
+        stressclparam.expected_str_wp, rel=0.01
+    )
