@@ -588,8 +588,8 @@ module physics_variables
   real(dp) :: pcoef
   !! profile factor (= n-weighted T / average T)
 
-  real(dp) :: pcoreradmw
-  !! total core radiation power (MW)
+  real(dp) :: pinnerzoneradmw
+  !! radiation power from inner zone (MW)
 
   real(dp) :: pcoreradpv
   !! total core radiation power per volume (MW/m3)
@@ -615,8 +615,8 @@ module physics_variables
   real(dp) :: pdt
   !! deuterium-tritium fusion power (MW)
 
-  real(dp) :: pedgeradmw
-  !! edge radiation power (MW)
+  real(dp) :: pouterzoneradmw
+  !! radiation power from outer zone (MW)
 
   real(dp) :: pedgeradpv
   !! edge radiation power per volume (MW/m3)
@@ -661,10 +661,13 @@ module physics_variables
   !! plasma poloidal perimeter (m)
 
   real(dp) :: pradmw
-  !! total radiation power (MW)
+  !! total radiation power from inside LCFS (MW)
 
   real(dp) :: pradpv
   !! total radiation power per volume (MW/m3)
+
+  real(dp) :: pradsolmw
+  !! radiation power from SoL (MW)
 
   real(dp) :: protonrate
   !! proton production rate (particles/m3/sec)
@@ -747,8 +750,8 @@ module physics_variables
   real(dp) :: rad_fraction_sol
   !! SoL radiation fraction
 
-  real(dp) :: rad_fraction
-  !! Radiation fraction = total radiation / total power deposited in plasma
+  real(dp) :: rad_fraction_total
+  !! Radiation fraction total = SoL + LCFS radiation / total power deposited in plasma
 
   real(dp) :: ralpne
   !! thermal alpha density/electron density (`iteration variable 109`) (calculated if `ipedestal=3`)
@@ -1011,7 +1014,7 @@ module physics_variables
     pchargemw = 0.0D0
     pchargepv = 0.0D0
     pcoef = 0.0D0
-    pcoreradmw = 0.0D0
+    pinnerzoneradmw = 0.0D0
     pcoreradpv = 0.0D0
     pdd = 0.0D0
     pdhe3 = 0.0D0
@@ -1020,7 +1023,7 @@ module physics_variables
     pdivu = 0.0D0
     pdivmax = 0.0D0
     pdt = 0.0D0
-    pedgeradmw = 0.0D0
+    pouterzoneradmw = 0.0D0
     pedgeradpv = 0.0D0
     pfuscmw = 0.0D0
     phiint = 0.0D0
@@ -1037,6 +1040,7 @@ module physics_variables
     pperim = 0.0D0
     pradmw = 0.0D0
     pradpv = 0.0D0
+    pradsolmw = 0.0D0
     protonrate = 0.0D0
     psolradmw = 0.0D0
     psyncpv = 0.0D0
@@ -1056,7 +1060,7 @@ module physics_variables
     qlim = 0.0D0
     qstar = 0.0D0
     rad_fraction_sol = 0.8D0
-    rad_fraction = 0.0D0
+    rad_fraction_total = 0.0D0
     ralpne = 0.10D0
     protium = 0.0D0
     rli = 0.9D0

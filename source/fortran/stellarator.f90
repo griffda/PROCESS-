@@ -489,11 +489,11 @@ contains
       dntau, ealphadt, eps, falpe, falpha, falpi, fdeut, fhe3, figmer, ftrit, &
       fusionrate, hfact, ifalphap, ignite, iinvqd, isc, iwalld, kappa, &
       kappa95, kappaa, palpepv, palpepv, palpfwmw, palpipv, palpmw, pbrempv, &
-      pchargemw, pcoreradmw, pcoreradpv, pdd, pdhe3, pdivt, pdt, pedgeradmw, &
+      pchargemw, pinnerzoneradmw, pcoreradpv, pdd, pdhe3, pdivt, pdt, pouterzoneradmw, &
       pfuscmw, pedgeradpv, photon_wall, piepv, plascur, plinepv, pneutmw, &
       pneutpv, pohmmw, powerht, powfmw, pradmw, pradpv, protonrate, &
       pscalingmw, psolradmw, psyncpv, ptremw, ptrepv, ptrimw, ptripv, q, q95, &
-      qfuel, qstar, rad_fraction, rmajor, rminor, rndfuel, sarea, tauee, &
+      qfuel, qstar, rad_fraction_total, rmajor, rminor, rndfuel, sarea, tauee, &
       taueff, tauei, taup, te, ten, ti, tin, vol, wallmw, xarea, zeff, zeffai, &
       ffwal, palpnb, palppv, pchargepv
     use profiles_module, only: plasma_profiles
@@ -592,8 +592,8 @@ contains
     !  Calculate radiation power
     call radpwr(pbrempv,plinepv,psyncpv, pcoreradpv,pedgeradpv,pradpv)
 
-    pcoreradmw = pcoreradpv*vol
-    pedgeradmw = pedgeradpv*vol
+    pinnerzoneradmw = pcoreradpv*vol
+    pouterzoneradmw = pedgeradpv*vol
     pradmw = pradpv*vol
 
     !  Heating power to plasma (= Psol in divertor model)
@@ -640,7 +640,7 @@ contains
 
     peakradwallload = photon_wall * peakfactrad
 
-    rad_fraction = pradmw / (falpha*palpmw+pchargemw+pohmmw+pinjmw)
+    rad_fraction_total = pradmw / (falpha*palpmw+pchargemw+pohmmw+pinjmw)
 
     !  Calculate density limit
 
