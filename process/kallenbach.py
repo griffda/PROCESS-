@@ -1,3 +1,10 @@
+"""Contains the kallenbach scan routine.
+
+This routine runs the kallenbach scan over Process
+before exiting, this is instead of running a full
+Process run (ie VMCON won't run).
+"""
+
 import logging
 import numpy
 from process.fortran import (
@@ -18,6 +25,32 @@ logger.addHandler(s_handler)
 
 
 def kallenbach_scan():
+    """Perform a scan over the divertor_kallenbach routine.
+
+    Below is an example input file, using values from the kallenbach paper:
+
+    kallenbach_scan_IN.DAT
+    ```
+    kallenbach_scan_switch = 1
+    kallenbach_scan_var = 0
+    kallenbach_scan_start = 900
+    kallenbach_scan_end = 1000
+    kallenbach_scan_num = 10
+
+    rmajor = 8.0
+    aspect = 2.91
+    bt = 5.38806125
+    q = 3.0
+    kappa = 0.99
+    triang = 0.6
+
+    target_spread = 7.0D-3
+    lambda_q_omp = 0.002D0
+    netau_sol = 0.5
+    targetangle = 2.3D0
+    qtargettotal = 4.175D6
+    ```
+    """
     physics_variables.rminor = physics_variables.rmajor / physics_variables.aspect
 
     xi, thetai, xo, thetao = plasma_geometry_module.xparam(

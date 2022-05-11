@@ -1,3 +1,9 @@
+"""Contains some methods from the now-removed kallenbach_module.f90 file.
+
+Running this file will run the kallenbach_paper routine, which should probably
+become a test at some point.
+"""
+
 import logging
 from pathlib import Path
 import numpy
