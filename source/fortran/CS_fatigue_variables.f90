@@ -11,8 +11,11 @@ module CS_fatigue_variables
   real(dp) :: residual_sig_hoop
   !! residual hoop stress in strucutal material (Pa)
 
-  real(dp) :: N_cycle
-  !! Allowable number of cycles for CS
+  real(dp) :: n_cycle
+  !! Allowable number of cycles for CS stress model
+
+  real(dp) :: n_cycle_min
+  !! Minimum llowable number of cycles for CS stress model
 
   real(dp) :: t_crack_radial
   !! Initial depth of crack in thickness of conduit (m)
@@ -35,7 +38,8 @@ module CS_fatigue_variables
     residual_sig_hoop = 2.4D8
     t_crack_radial = 6.0D-3
     t_crack_vertical = 2.0D-3
-    N_cycle = 0.0D0
+    n_cycle = 0.0D0
+    n_cycle_min = 2.0D4
     t_structural_vertical = 0.022D0
     t_structural_radial = 0.07D0
 
