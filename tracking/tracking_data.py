@@ -110,7 +110,7 @@ class ProcessTracker:
         "pnucblkt",
         "triang",
         "triang95",
-        "pcoreradmw",
+        "pinnerzoneradmw",
         "tesep",
         "ralpne",
         "ieped",

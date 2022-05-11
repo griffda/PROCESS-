@@ -54,6 +54,7 @@ from process.build import Build
 from process.utilities.f2py_string_patch import string_to_f2py_compatible
 import argparse
 from process.costs_step import CostsStep
+from process.pfcoil import PFCoil
 from process.tfcoil import TFcoil
 from process.divertor import Divertor
 from process.availability import Availability
@@ -464,6 +465,7 @@ class Models:
         This also initialises module variables in the Fortran for that module.
         """
         self.costs_step = CostsStep()
+        self.pfcoil = PFCoil()
         self.build = Build()
         self.tfcoil = TFcoil(build=self.build)
         self.divertor = Divertor()

@@ -139,11 +139,14 @@ LIST(APPEND PROCESS_SRCS
     global_variables.f90
     constraint_variables.f90
     vacuum_variables.f90
+    CS_fatigue.f90
+    CS_fatigue_variables.f90
     impurity_radiation.f90
     pulse_variables.f90
     pf_power_variables.f90
     read_and_get_atomic_data.f90
     plot_radiation.f90
+    rebco_variables.f90
 )
 
 PREPROCESS()

@@ -31,7 +31,6 @@ subroutine init_all_module_vars
   use ife_variables, only: init_ife_variables
   use impurity_radiation_module, only: init_impurity_radiation_module
   use vmcon_module, only: init_vmcon_module
-  use pfcoil_module, only: init_pfcoil_module
   use physics_module, only: init_physics_module
   use physics_variables, only: init_physics_variables
   use power_module, only: init_power_module
@@ -88,7 +87,6 @@ subroutine init_all_module_vars
   call init_ife_variables
   call init_impurity_radiation_module
   call init_vmcon_module
-  call init_pfcoil_module
   call init_physics_module
   call init_physics_variables
   call init_power_module

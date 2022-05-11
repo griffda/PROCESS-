@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1592-g962112e9
-    Branch : divertor-costs-into-cost-model-2-more-stable
-   Git log : Removed\ costs_step.f90\ as\ superceded\ by\ python\ ver
- Date/time : 19 Apr 2022 11:33:10 +01:00(hh:mm) UTC
-      User : jg6173
-  Computer : L1088
- Directory : /tmp/pytest-of-jg6173/pytest-70/test_solver0
-     Input : /tmp/pytest-of-jg6173/pytest-70/test_scenario_stellarator_0/IN.DAT
+   Tag No. : v2.1-1403-gecefea14 code contains untracked changes
+    Branch : 1456-convert-pfcoil-f90-to-python
+   Git log : Convert\ superconpf()\ to\ Python
+ Date/time : 29 Apr 2022 11:00:01 +01:00(hh:mm) UTC
+      User : jon
+  Computer : jon-Precision-3560
+ Directory : /home/jon/code/process
+     Input : /tmp/pytest-of-jon/pytest-77/popen-gw3/test_scenario_stellarator_0/IN.DAT
  Run title : HELIAS-5B
   Run type : Reactor concept design: Stellarator model, (c) CCFE
  

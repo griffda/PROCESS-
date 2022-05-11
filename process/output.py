@@ -119,17 +119,14 @@ def write(models, outfile):
         models.tfcoil.cntrpst()
         models.tfcoil.iprint = 0
 
-    # Poloidal field coil model !
-    ft.pfcoil_module.outpf(outfile)
-
-    # TODO what is outvolt?
-    ft.pfcoil_module.outvolt(outfile)
+    # Poloidal field coil model
+    models.pfcoil.output()
 
     # Structure Model
     models.structure.run(output=True)
 
     # Poloidal field coil inductance calculation
-    ft.pfcoil_module.induct(outfile, 1)
+    models.pfcoil.output_induct()
 
     # Blanket model
     # Blanket switch values
