@@ -1,6 +1,6 @@
 # Testing
 ## Understanding testing
-The purpose of testing is to check that the existing code behaves as it is expected to, and that any code changes don't produce unexpected results, such as breaking pre-existing functionality or creating an unwanted side-effect. It allows changes to be made with confidence and it increases confidence in the results produced by the code.
+The purpose of testing is to check that the existing code behaves as it is expected to, and that any code changes don't produce unexpected results, such as breaking pre-existing functionality or creating an unwanted side-effect. It allows changes to be made with confidence and it increases confidence in the results produced by the code. 
 
 Tests run part of the code with a given input and assert that the observed output is equal to an expected output. If the assertion is true the test will pass, if it is false, it will fail. A collection of tests in known as a test suite, and they can be classified into three different testing scopes:
 
@@ -17,11 +17,11 @@ Regression tests detect changes in the entire program's behaviour by checking th
 Process uses the `pytest` testing framework in its test suite. `pytest` tests are modular, quick to write with little code and produce helpful information when they fail. It is used widely in the Python world.
 
 ### Running pytest
-`pytest` can be run locally by running `pytest` in the project root directory. This will run all tests. `pytest` can also be configured to run in the sidebar of VS Code.
+`pytest` can be run locally by running `pytest` in the project root directory. This will run all tests. `pytest` can also be configured to run in the sidebar of VS Code. 
 
 Individual test collections can be run by specifying the test directory to run, e.g.
 ```BASH
-pytest tests/unit
+pytest tests/unit 
 ```
 will only run unit tests.
 
@@ -45,7 +45,7 @@ To run the regression tests with a 5% tolerance run `pytest tests/regression --r
 
 To overwrite the references, run `pytest --overwrite` which will re-run the test suite, overwriting both the Python-Fortran dictionaries and the regression scenario reference files. Running the test suite again with `pytest` should then pass.
 
-Please see below (pytest failures on older OS's) for caveats on this process.
+Please see below (pytest failures on older OS's) for caveats on this process. 
 
 For the correct way to contribute code to Process (including how to update the test references), see CONTRIBUTING.md.
 
@@ -80,7 +80,7 @@ In a branch with code changes that affect the output, it is helpful to commit th
 Specific aspects of the CONTRIBUTING.md procedure are reasoned below.
 
 ### Step 5: Merging develop into the issue branch
-This ensures that the code and test references are up to date with develop, which may have changed whilst the issue branch was being worked on. This ensures that when the test references are overwritten, the reference changes are only as a result of the branch code changes and the reference changes are relative to the latest references on develop.
+This ensures that the code and test references are up to date with develop, which may have changed whilst the issue branch was being worked on. This ensures that when the test references are overwritten, the reference changes are only as a result of the branch code changes and the reference changes are relative to the latest references on develop. 
 
 If the issue branch was merged to develop without merging develop into the branch first, there would be problems. The tests would pass on the branch after overwriting, but on merging to develop there could be merge conflicts in the references (they would have been changed on both branches). After resolving the conflicts, or even if there weren't any, it is highly likely that the resulting references on develop would result in a failure of the test suite. This is because the references would then be a product of two branches overwriting different parts of them, and hence they wouldn't correspond to a single output of a regression scenario any more.
 

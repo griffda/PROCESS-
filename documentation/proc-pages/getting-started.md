@@ -64,7 +64,7 @@ To clone the default branch (develop) from the remote enter:
 git clone git@git.ccfe.ac.uk:process/process.git <folder_name>
 ```
 
-Where `<folder_name>` is the name of the folder which will be created locally when
+Where `<folder_name>` is the name of the folder which will be created locally when 
 cloning the repository.
 
 To get a different branch:
@@ -73,13 +73,13 @@ To get a different branch:
 git clone git@git.ccfe.ac.uk:process/process.git -b <branch_name> <folder_name>
 ```
 
-Where `<branch_name>` is the name of the branch to checkout from the remote
+Where `<branch_name>` is the name of the branch to checkout from the remote 
 repository.
 <br><br>
 
 ## The `process.py` script
-In the project root directory, there's a script called `process.py` which aims
-to make running the code simpler for newcomers and more efficient for more
+In the project root directory, there's a script called `process.py` which aims 
+to make running the code simpler for newcomers and more efficient for more 
 experienced users.
 
 First, make sure that the `utilities` directory is on your PYTHONPATH:
@@ -88,7 +88,7 @@ First, make sure that the `utilities` directory is on your PYTHONPATH:
 echo $PYTHONPATH
 ```
 
-If this includes the `/utilities` directory already, then proceed to the
+If this includes the `/utilities` directory already, then proceed to the 
 next step. Otherwise, add it to your PYTHONPATH:
 
 ```bash
@@ -97,23 +97,23 @@ export PYTHONPATH=$PYTHONPATH:~/<process>/utilities/
 
 where `<process>` is the path to the PROCESS directory.
 
-Navigate into the PROCESS root directory, where `process.py` is located, and
+Navigate into the PROCESS root directory, where `process.py` is located, and 
 run:
 
 ```bash
 ./process.py -h
 ```
 
-This displays the help for the script's command line interface, and shows you
-how the script can be used. For example, to build (`-b`) the source, then
+This displays the help for the script's command line interface, and shows you 
+how the script can be used. For example, to build (`-b`) the source, then 
 validate and run on an input (`-i`) file, run:
 
 ```bash
 ./process.py -b -i tracking/baseline_2018/baseline_2018_IN.DAT
 ```
 
-The output files will be put in the same directory as the supplied input file.
-Detailed information for the `process.py` utility can be found
+The output files will be put in the same directory as the supplied input file. 
+Detailed information for the `process.py` utility can be found 
 [here](io/utilities-guide.md).
 <br><br>
 
@@ -122,7 +122,7 @@ Detailed information for the `process.py` utility can be found
 !!! Note "On Freia cluster"
     Replace the `cmake` commands below with `cmake3`
 
-Inside the PROCESS directory, run `cmake` to build, compile and generate the
+Inside the PROCESS directory, run `cmake` to build, compile and generate the 
 executable and shared object:
 
 ```bash
@@ -133,7 +133,7 @@ or to use all compiler warnings (`-Wall` and `-Wextra`) run:
 
 ```bash
 cmake -H. -Bbuild -Ddebug=ON
-```
+``` 
 
 !!! Note "Single executable"
     The single executable is used to compare against legacy code
@@ -142,7 +142,7 @@ or to compile into single executable without dll:
 
 ```bash
 cmake -H. -Bbuild -Ddll=OFF
-```
+``` 
 
 After compile the code giving the build directory:
 
@@ -164,7 +164,7 @@ cmake --build build --target <target_name>
 ```
 
 | Target Name | Description |
-| - | - |
+| - | - | 
 | dicts          | Makes Python dictionaries used for Python tools |
 | doc            | Makes all documentation: PDF and HTML |
 | vardes         | Make compact vardes.html file |
@@ -185,7 +185,7 @@ cmake --build build --target <target_name>
 
 Create input file IN.DAT ([see input file section](io/input-guide.md)).
 
-To run the code (by default will try to use an input file called `IN.DAT` in
+To run the code (by default will try to use an input file called `IN.DAT` in 
 the current directory):
 
 ```bash
@@ -206,9 +206,9 @@ The results are output to the following output files:
 - `PLOT.DAT`
 
 
-Optionally, one can run the `utilities/run_process.py` script in conjunction
-with a config file to randomly vary the starting point of the input parameter
-set until a feasible solution is found. To look a the utility documentation
+Optionally, one can run the `utilities/run_process.py` script in conjunction 
+with a config file to randomly vary the starting point of the input parameter 
+set until a feasible solution is found. To look a the utility documentation 
 compile the utilities document as described [here](io/utilities-guide.md).
 <br><br>
 
