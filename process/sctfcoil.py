@@ -2895,6 +2895,7 @@ class Sctfcoil:
         Seting the WP, case and turns geometry for SC magnets
         """
 
+        # Calculating the WP / ground insulation areas
         self.tf_wp_geom(i_tf_wp_geom)
 
         # Calculating the TF steel casing areas
@@ -2903,32 +2904,29 @@ class Sctfcoil:
         # WP/trun currents
         self.tf_wp_currents()
 
+        # sctfcoil_module.sc_tf_internal_geom(
+        #     i_tf_wp_geom, i_tf_case_geom, i_tf_turns_integer
+        # )
+
         # Setting the WP turn geometry / areas
         if i_tf_turns_integer == 0:
+            # Non-ingeger number of turns
+            sctfcoil_module.tf_averaged_turn_geom_wrapper()
+
+        else:
+            # Integer number of turns
             (
                 tfcoil_variables.acstf,
                 tfcoil_variables.acndttf,
                 tfcoil_variables.insulation_area,
-                tfcoil_variables.n_tf_turn,
-            ) = self.tf_averaged_turn_geom(
-                tfcoil_variables.jwptf,
-                tfcoil_variables.thwcndut,
-                tfcoil_variables.thicndut,
-                tfcoil_variables.i_tf_sc_mat,  # Inputs
-            )  # Outputs
-        else:
-            (
-                tfcoil_variables.acstf,
-                tfcoil_variables.acndttf,
-                tfcoil_variables.insulation_area,  # Outputs
                 tfcoil_variables.cpttf,
                 tfcoil_variables.n_tf_turn,
             ) = self.tf_integer_turn_geom(
                 tfcoil_variables.n_layer,
                 tfcoil_variables.n_pancake,
                 tfcoil_variables.thwcndut,
-                tfcoil_variables.thicndut,  # Inputs
-            )  # Outputs
+                tfcoil_variables.thicndut,
+            )
 
         # Areas and fractions
         # -------------------
@@ -3346,6 +3344,7 @@ class Sctfcoil:
         areas and the (float) number of turns
         """
         acstf = 0
+        acndttf = 0
         if tfcoil_variables.t_turn_tf_is_input:
 
             # Turn area [m2]
