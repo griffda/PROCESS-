@@ -43,6 +43,7 @@ Box file T&amp;M/PKNIGHT/PROCESS (from 24/01/12)
 """
 from process import fortran
 from process.buildings import Buildings
+from process.costs import Costs
 from process.io import plot_proc
 from process.kallenbach import kallenbach_scan
 from process.pulse import Pulse
@@ -60,6 +61,7 @@ from process.divertor import Divertor
 from process.availability import Availability
 from process.ife import IFE
 from process.caller import Caller
+
 
 from pathlib import Path
 import sys
@@ -475,9 +477,13 @@ class Models:
         self.vacuum = Vacuum()
         self.water_use = WaterUse()
         self.pulse = Pulse()
-        self.ife = IFE(availability=self.availability)
+        self.costs = Costs()
+        self.ife = IFE(availability=self.availability, costs=self.costs)
         self.stellarator = Stellarator(
-            availability=self.availability, buildings=self.buildings, vacuum=self.vacuum
+            availability=self.availability,
+            buildings=self.buildings,
+            vacuum=self.vacuum,
+            costs=self.costs,
         )
 
 
