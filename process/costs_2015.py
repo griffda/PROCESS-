@@ -1,5 +1,4 @@
 import logging
-import numpy
 from process.fortran import constants
 from process.fortran import costs_2015_module
 from process.fortran import cost_variables
@@ -8,6 +7,7 @@ from process.fortran import process_output as po
 from process.fortran import global_variables
 from process.fortran import fwbs_variables
 from process.fortran import build_variables
+from process.utilities.f2py_string_patch import string_to_f2py_compatible
 
 
 logger = logging.getLogger(__name__)
@@ -31,7 +31,7 @@ class Costs2015:
         PROCESS Costs Paper (M. Kovari, J. Morris)
         """
         costs_2015_module.ip = int(output)
-        costs_2015_module.ofile = self.outfile
+        costs_2015_module.outfile = self.outfile
 
         # ###############################################
 
@@ -115,24 +115,24 @@ class Costs2015:
         if (abs(cost_variables.concost) > 9.99e99) or (
             cost_variables.concost != cost_variables.concost
         ):
-            costs_2015_module.write_costs_to_output
-            for i in 100:
+            self.write_costs_to_output()
+            for i in 100:  # noqa: E741
                 logger.log(
-                    costs_2015_module.s_label[i],
-                    costs_2015_module.s_kref[i],
-                    costs_2015_module.s_k[i],
-                    costs_2015_module.s_cref[i],
-                    costs_2015_module.s_cost[i],
-                    costs_2015_module.s_cost_factor[i],
+                    costs_2015_module.s_label[i],  # noqa: E741
+                    costs_2015_module.s_kref[i],  # noqa: E741
+                    costs_2015_module.s_k[i],  # noqa: E741
+                    costs_2015_module.s_cref[i],  # noqa: E741
+                    costs_2015_module.s_cost[i],  # noqa: E741
+                    costs_2015_module.s_cost_factor[i],  # noqa: E741
                 )
                 po.ocmmnt(
                     self.outfile,
-                    costs_2015_module.s_label[i],
-                    costs_2015_module.s_kref[i],
-                    costs_2015_module.s_k[i],
-                    costs_2015_module.s_cref[i],
-                    costs_2015_module.s_cost[i],
-                    costs_2015_module.s_cost_factor[i],
+                    costs_2015_module.s_label[i],  # noqa: E741
+                    costs_2015_module.s_kref[i],  # noqa: E741
+                    costs_2015_module.s_k[i],  # noqa: E741
+                    costs_2015_module.s_cref[i],  # noqa: E741
+                    costs_2015_module.s_cost[i],  # noqa: E741
+                    costs_2015_module.s_cost_factor[i],  # noqa: E741
                 )
 
             return
@@ -143,7 +143,7 @@ class Costs2015:
         if (costs_2015_module.ip == 0) or (cost_variables.output_costs == 0):
             return
 
-        costs_2015_module.write_costs_to_output()
+        self.write_costs_to_output()
 
     def calc_fwbs_costs(self):
         """
@@ -155,8 +155,10 @@ class Costs2015:
         PROCESS Costs Paper (M. Kovari, J. Morris)
         """
 
-        for i in (21, 26):
-            costs_2015_module.s_cost_factor[i] = cost_variables.cost_factor_fwbs
+        for i in range(21, 27):  # noqa: E741
+            costs_2015_module.s_cost_factor[
+                i
+            ] = cost_variables.cost_factor_fwbs  # noqa: E741
 
         # Enrichment
         # Costs based on the number of separative work units (SWU) required
@@ -181,13 +183,13 @@ class Costs2015:
             tail_to_product_mass_ratio = (product_li6 - feed_li6) / (
                 feed_li6 - tail_li6
             )
-            costs_2015_module.value_function(product_li6, costs_2015_module.p_v)
-            costs_2015_module.value_function(tail_li6, costs_2015_module.t_v)
-            costs_2015_module.value_function(feed_li6, costs_2015_module.f_v)
+            p_v = costs_2015_module.value_function(product_li6)
+            t_v = costs_2015_module.value_function(tail_li6)
+            f_v = costs_2015_module.value_function(feed_li6)
             swu = (
-                costs_2015_module.p_v
-                + tail_to_product_mass_ratio * costs_2015_module.t_v
-                - feed_to_product_mass_ratio * costs_2015_module.f_v
+                p_v
+                + tail_to_product_mass_ratio * t_v
+                - feed_to_product_mass_ratio * f_v
             )
             if abs(swu - 2.66e0) < 2.0e-2:
                 po.ocmmnt(
@@ -217,14 +219,16 @@ class Costs2015:
                 po.ocmmnt(self.outfile, "Reference cost for enrichment ERROR")
 
         # Lithium 6 enrichment cost ($)
-        costs_2015_module.s_label[21] = "Lithium enrichment"
+        costs_2015_module.s_label[21] = string_to_f2py_compatible(
+            costs_2015_module.s_label[21], "Lithium enrichment"
+        )
 
         # Zero cost for natural enrichment
         if fwbs_variables.li6enrich <= 7.42e0:
             costs_2015_module.s_cost[21] = 0.0e0
         else:
             # Percentage of lithium 6 in the product
-            product_li6 = numpy.min(costs_2015_module.li6enrich, 99.99e0) / 100.0e0
+            product_li6 = min(fwbs_variables.li6enrich, 99.99e0) / 100.0e0
             # SWU will be calculated for a unit mass of product (P=1)
 
             # Feed to product mass ratio
@@ -238,15 +242,15 @@ class Costs2015:
             )
 
             # Calculate value functions
-            costs_2015_module.value_function(product_li6, costs_2015_module.p_v)
-            costs_2015_module.value_function(tail_li6, costs_2015_module.t_v)
-            costs_2015_module.value_function(feed_li6, costs_2015_module.f_v)
+            p_v = costs_2015_module.value_function(product_li6)
+            t_v = costs_2015_module.value_function(tail_li6)
+            f_v = costs_2015_module.value_function(feed_li6)
 
             # Calculate separative work units per kg
             swu = (
-                costs_2015_module.p_v
-                + tail_to_product_mass_ratio * costs_2015_module.t_v
-                - feed_to_product_mass_ratio * costs_2015_module.f_v
+                p_v
+                + tail_to_product_mass_ratio * t_v
+                - feed_to_product_mass_ratio * f_v
             )
 
             # Mass of lithium (kg).  Lithium orthosilicate is 22% lithium by mass.
@@ -327,7 +331,152 @@ class Costs2015:
 
         costs_2015_module.s_label[26] = "Total first wall and blanket cost"
         costs_2015_module.s_cost[26] = 0.0e0
-        for j in (21, 25):
+        for j in range(21, 26):
             costs_2015_module.s_cost[26] = (
                 costs_2015_module.s_cost[26] + costs_2015_module.s_cost[j]
             )
+
+    def write_costs_to_output(self):
+        """
+        Function to output the costs calculations
+        author: J Morris, CCFE, Culham Science Centre
+        None
+        This routine outputs the costs to output file
+        PROCESS Costs Paper (M. Kovari, J. Morris)
+        """
+        po.oheadr(
+            self.outfile,
+            'Estimate of "overnight" capital cost for a first of kind power plant (2014 M$)',
+        )
+
+        po.oshead(self.outfile, "Buildings (M$)")
+        for i in range(9):  # noqa: E741
+            costs_2015_module.ocost(
+                self.outfile,
+                costs_2015_module.s_label[i],  # noqa: E741
+                i + 1,  # noqa: E741
+                costs_2015_module.s_cost[i] / 1.0e6,  # noqa: E741
+            )
+
+        po.oshead(self.outfile, "Land (M$)")
+
+        for j in range(9, 13):
+            costs_2015_module.ocost(
+                self.outfile,
+                costs_2015_module.s_label[j],
+                j + 1,
+                costs_2015_module.s_cost[j] / 1.0e6,
+            )
+
+        po.oshead(self.outfile, "TF Coils (M$)")
+
+        for k in range(13, 21):
+            costs_2015_module.ocost(
+                self.outfile,
+                costs_2015_module.s_label[k],
+                k + 1,
+                costs_2015_module.s_cost[k] / 1.0e6,
+            )
+
+        po.oshead(self.outfile, "First wall and blanket (M$)")
+        for l in range(21, 27):  # noqa: E741
+            costs_2015_module.ocost(
+                self.outfile,
+                costs_2015_module.s_label[l],
+                l + 1,
+                costs_2015_module.s_cost[l] / 1.0e6,
+            )
+
+        po.oshead(self.outfile, "Active maintenance and remote handling (M$)")
+        costs_2015_module.ocost(
+            self.outfile,
+            costs_2015_module.s_label[27],
+            28,
+            costs_2015_module.s_cost[27] / 1.0e6,
+        )
+        costs_2015_module.ocost(
+            self.outfile,
+            costs_2015_module.s_label[28],
+            29,
+            costs_2015_module.s_cost[28] / 1.0e6,
+        )
+        costs_2015_module.ocost(
+            self.outfile,
+            costs_2015_module.s_label[30],
+            31,
+            costs_2015_module.s_cost[30] / 1.0e6,
+        )
+
+        po.oshead(self.outfile, "Vacuum vessel and liquid nitrogen plant (M$)")
+        for n in range(31, 34):
+            costs_2015_module.ocost(
+                self.outfile,
+                costs_2015_module.s_label[n],
+                n + 1,
+                costs_2015_module.s_cost[n] / 1.0e6,
+            )
+
+        po.oshead(self.outfile, "System for converting heat to electricity (M$)")
+        costs_2015_module.ocost(
+            self.outfile,
+            costs_2015_module.s_label[34],
+            35,
+            costs_2015_module.s_cost[34] / 1.0e6,
+        )
+
+        po.oshead(self.outfile, "Remaining subsystems (M$)")
+        for q in range(35, 61):
+            costs_2015_module.ocost(
+                self.outfile,
+                costs_2015_module.s_label[q],
+                q + 1,
+                costs_2015_module.s_cost[q] / 1.0e6,
+            )
+
+        po.oblnkl(self.outfile)
+        costs_2015_module.ocost_vname(
+            self.outfile,
+            "TOTAL OVERNIGHT CAPITAL COST (M$)",
+            "(total_costs)",
+            costs_2015_module.total_costs / 1.0e6,
+        )
+        costs_2015_module.ocost_vname(
+            self.outfile,
+            "Annual maintenance cost (M$)",
+            "(maintenance)",
+            costs_2015_module.maintenance / 1.0e6,
+        )
+        po.oblnkl(self.outfile)
+        po.ovarrf(
+            self.outfile,
+            "Net electric output (MW)",
+            "(pnetelmw)",
+            heat_transport_variables.pnetelmw,
+            "OP ",
+        )
+        po.ovarrf(
+            self.outfile, "Capacity factor", "(cpfact)", cost_variables.cpfact, "OP "
+        )
+        po.ovarrf(
+            self.outfile,
+            "Mean electric output (MW)",
+            "(mean_electric_output)",
+            costs_2015_module.mean_electric_output,
+            "OP ",
+        )
+        po.ovarrf(
+            self.outfile,
+            "Capital cost / mean electric output ($/W)",
+            "",
+            costs_2015_module.total_costs
+            / costs_2015_module.mean_electric_output
+            / 1.0e6,
+            "OP ",
+        )
+        po.ovarrf(
+            self.outfile,
+            "Levelized cost of electricity ($/MWh)",
+            "(coe)",
+            cost_variables.coe,
+            "OP ",
+        )
