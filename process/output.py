@@ -38,7 +38,7 @@ def write(models, outfile):
     if ft.cost_variables.cost_model == 0:
         ft.costs_module.costs(outfile, 1)
     elif ft.cost_variables.cost_model == 1:
-        ft.costs_2015_module.costs_2015(outfile, 1)
+        models.costs_2015.run(output=True)
     elif ft.cost_variables.cost_model == 2:
         models.costs_step.output()
 

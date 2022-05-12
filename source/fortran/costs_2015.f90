@@ -46,7 +46,7 @@ module costs_2015_module
       s_kref, s_k, s_cref, s_cost, s_cost_factor
 
    ! Public variables/subroutines
-   public :: costs_2015
+   ! public :: costs_2015
 
 contains
 
@@ -74,98 +74,7 @@ contains
 
    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-   subroutine costs_2015(outfile,iprint)
-      !! Cost accounting for a fusion power plant
-      !! author: J Morris, CCFE, Culham Science Centre
-      !! outfile : input integer : output file unit
-      !! iprint : input integer : switch for writing to output file (1=yes)
-      !! This routine performs the cost accounting for a fusion power plant.
-      !! PROCESS Costs Paper (M. Kovari, J. Morris)
-      !
-      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-      use heat_transport_variables, only: pnetelmw
-      use cost_variables, only: concost, cpfact, maintenance_fwbs, maintenance_gen, &
-         amortization, output_costs, coe
-
-      implicit none
-
-      ! Arguments
-      integer, intent(in) :: iprint, outfile
-      integer :: i
-
-      ! Assign module private variables to iprint and outfile
-      ip = iprint
-      ofile = outfile
-
-      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-      ! Calculate building costs
-      call calc_building_costs
-
-      ! Calculate land costs
-      call calc_land_costs
-
-      ! Calculate tf coil costs
-      call calc_tf_coil_costs
-
-      ! Calculate fwbs costs
-      call calc_fwbs_costs
-
-      ! Calculate remote handling costs
-      call calc_remote_handling_costs
-
-      ! Calculate N plant and vacuum vessel costs
-      call calc_n_plant_and_vv_costs
-
-      ! Calculate energy conversion system costs
-      call calc_energy_conversion_system
-
-      ! Calculate remaining subsystems costs
-      call calc_remaining_subsystems
-
-      ! Calculate total capital cost
-      total_costs = s_cost(9) + s_cost(13) + s_cost(21) + &
-         s_cost(27) + s_cost(31) + s_cost(34) + &
-         s_cost(35) + s_cost(61)
-
-      ! Save as concost, the variable used as a Figure of Merit (M$)
-      concost = total_costs/1.0D6
-
-      ! Electrical output (given availability) for a whole year
-      mean_electric_output = pnetelmw * cpfact
-      annual_electric_output = mean_electric_output * 24.0D0*265.25D0
-
-      ! Annual maintenance cost.
-      maintenance =  (s_cost(27) + s_cost(38) ) * maintenance_fwbs + &
-         (s_cost(9) + s_cost(31) + s_cost(34) + s_cost(35) + &
-         s_cost(41) + s_cost(43) + s_cost(45) + s_cost(47) + &
-         s_cost(48) + s_cost(49) + s_cost(50) + s_cost(51) + &
-         s_cost(52) + s_cost(53) + s_cost(54) + s_cost(58))* &
-         maintenance_gen
-
-      ! Levelized cost of electricity (LCOE) ($/MWh)
-      if(annual_electric_output.gt.0.00001) then
-         coe = (1.0D0/annual_electric_output)*(total_costs/amortization + maintenance)
-      endif
-
-      ! Switch on output if there is a NaN error
-      if ((abs(concost) > 9.99D99).or.(concost /= concost)) then
-         call write_costs_to_output
-         do i=1,100
-            write(*,*) s_label(i), s_kref(i), s_k(i), s_cref(i), s_cost(i), s_cost_factor(i)
-         end do
-         return
-      end if
-
-      ! Output costs !
-      ! !!!!!!!!!!!!!!!
-
-      if ((ip == 0).or.(output_costs == 0)) return
-
-      call write_costs_to_output
-
-   end subroutine costs_2015
 
    subroutine calc_building_costs
 
@@ -961,7 +870,7 @@ contains
       do j=36, 60
          s_cost(61) = s_cost(61) + s_cost(j)
       end do
-      !!! end break
+
    end subroutine calc_remaining_subsystems
 
 

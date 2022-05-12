@@ -187,7 +187,7 @@ class Caller:
         if ft.cost_variables.cost_model == 0:
             ft.costs_module.costs(ft.constants.nout, 0)
         elif ft.cost_variables.cost_model == 1:
-            ft.costs_2015_module.costs_2015(0, 0)
+            self.models.costs_2015.run(output=False)
         elif ft.cost_variables.cost_model == 2:
             self.models.costs_step.run()
 

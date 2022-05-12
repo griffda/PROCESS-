@@ -58,6 +58,7 @@ from process.tfcoil import TFcoil
 from process.divertor import Divertor
 from process.availability import Availability
 from process.ife import IFE
+from process.costs_2015 import Costs2015
 from process.caller import Caller
 
 from pathlib import Path
@@ -485,6 +486,7 @@ class Models:
         self.stellarator = Stellarator(
             availability=self.availability, buildings=self.buildings, vacuum=self.vacuum
         )
+        self.costs_2015 = Costs2015()
 
 
 def main(args=None):
