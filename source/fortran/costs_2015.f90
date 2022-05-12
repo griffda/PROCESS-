@@ -894,7 +894,7 @@ contains
       s_cost(52) = s_cost_factor(52) * s_cref(52) * (s_k(52) / s_kref(52))**costexp
 
       s_label(53) = "Neutral beam heating and current drive system"
-      !  Cost of ITER NB H & CD
+      !  Cost of ITER NB H and CD
       s_cref(53) = 814.0D6
       !  Scale with total auxiliary injected power (MW)
       s_k(53) = pinjmw
