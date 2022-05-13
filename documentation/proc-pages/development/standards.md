@@ -10,7 +10,7 @@ For optimal readability, a limit of 100 characters for maximum line length has b
 ## Double declarations
 
 PROCESS uses the Fortran 2008+ intrinsic precision module as shown in the example below. The
-use statement will need to be at the module level. See the
+use statement will need to be at the module level. See the 
 [fortran wiki](http://fortranwiki.org/fortran/show/Real+precision) for more information.
 
 ```fortran
@@ -67,15 +67,15 @@ r_plasma_centre = 9.0d0
 
 z_plasma_centre = 0.0d0
 
-theta_ =
+theta_ = 
 ```
 
 For dimensions
 
 ```fortran
-dr_cs =
+dr_cs = 
 
-dz_cs =
+dz_cs = 
 
 dtheta_description =
 ```
@@ -118,17 +118,17 @@ ii
 | `sig_tf_r` | TF radial stress  | Pa |
 | `` |  |  |
 
-Please see <a href="https://git.ccfe.ac.uk/process/process/-/issues/939">issue 939 to discuss
+Please see <a href="https://git.ccfe.ac.uk/process/process/-/issues/939">issue 939 to discuss 
 new conventions.</a>.
 
 # Code Documentation Using FORD
 
-PROCESS uses FORD (FORtran Documentation) to automatically generate documentation from comments
-in the FORTRAN code. FORD parses FORTRAN source to understand the structure of the project as well
+PROCESS uses FORD (FORtran Documentation) to automatically generate documentation from comments 
+in the FORTRAN code. FORD parses FORTRAN source to understand the structure of the project as well 
 as picking up "docmarked" comments in the source to create the documentation.
 
-Regular Fortran comments are prefixed with a "!"; these are ignored by FORD and don't go into
-the documentation. FORD comments are prefixed by a "!!", called a docmark; these are picked up
+Regular Fortran comments are prefixed with a "!"; these are ignored by FORD and don't go into 
+the documentation. FORD comments are prefixed by a "!!", called a docmark; these are picked up 
 by FORD and go into the documentation.
 
 The "!!" docmark goes after the statement it documents. For example, to document variables:
@@ -152,13 +152,13 @@ module global_variables
   !! well-suited to any of the other 'variables' modules.
 ```
 
-This documentation will appear in the
-[FORD docs](http://process.gitpages.ccfe.ac.uk/process/ford_site/index.html) section in the
-left-hand navigation bar. Within this site, the "Variables" section in the top navigation bar
-provides variable descriptions in the same manner as the original "vardes" page.
+This documentation will appear in the 
+[FORD docs](http://process.gitpages.ccfe.ac.uk/process/ford_site/index.html) section in the 
+left-hand navigation bar. Within this site, the "Variables" section in the top navigation bar 
+provides variable descriptions in the same manner as the original "vardes" page. 
 
-To document a statement before it occurs in the source, use "!>". However, it is encouraged to
-use "!!" for consistency. The rationale behind this and further information is included on the
+To document a statement before it occurs in the source, use "!>". However, it is encouraged to 
+use "!!" for consistency. The rationale behind this and further information is included on the 
 [FORD wiki](https://github.com/Fortran-FOSS-Programmers/ford/wiki/Writing-Documentation).
 
 The FORD project on github can be found [here](https://github.com/Fortran-FOSS-Programmers/ford).
@@ -173,7 +173,7 @@ subroutine constraint_eqn_001(args)
   !!
   !! Relationship between beta, temperature (keV) and density
   !!
-  !! \begin{equation}
+  !! \begin{equation} 
   !! c_i = 1 - \frac{1}{\beta}\left( \beta_{ft} + \beta_{NBI} + 2 \times 10^3 \mu_0 e
   !! \left( \frac{n_e T_e + n_i T_i}{B_{tot}^2} \right) \right)
   !! \end{equation}

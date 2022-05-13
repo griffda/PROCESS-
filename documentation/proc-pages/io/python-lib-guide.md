@@ -1,6 +1,6 @@
 # Introduction
 
-The Python library files are in:
+The Python library files are in: 
 
 ```
 /utilities/process_io_lib/
@@ -10,7 +10,7 @@ The Python library files are in:
 
 > `./utilities/process.io.in_dat.py`
 
-A set of Python classes to read, modify and write an `IN.DAT` file.
+A set of Python classes to read, modify and write an `IN.DAT` file. 
 
 ### `class InDat`
 
@@ -85,7 +85,7 @@ To open an MFILE.DAT as a Python object:
 m = MFile(filename="MFILE.DAT")
 ```
 
-As a PROCESS run may contain a scan, access to the MFILE data is determined
+As a PROCESS run may contain a scan, access to the MFILE data is determined 
 by scan number. To find the number of scans use
 
 ```python
@@ -98,14 +98,14 @@ To get an individual scan for a variable use
 m.data["rmajor"].get_scan(2)
 ```
 
-If the file contains no scan, but a single data point then one can use the above
+If the file contains no scan, but a single data point then one can use the above 
 with the argument of `-1` like below
 
 ```python
 m.data["rmajor"].get_scan(-1)
 ```
 
-To get all of the scans as a list (if there is a single point it returns list
+To get all of the scans as a list (if there is a single point it returns list 
 length of 1) use
 
 ```python

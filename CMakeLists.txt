@@ -87,7 +87,6 @@ LIST(TRANSFORM REFPROP_SRCS PREPEND ${REFPROP_SRC_DIR}/ OUTPUT_VARIABLE REFPROP_
 # Define interface source filenames to wrap
 LIST(APPEND PROCESS_SRCS
     div_kal_vars.f90
-    kallenbach_module.f90
     numerics.f90
     scan.f90
     fw.f90
@@ -113,7 +112,6 @@ LIST(APPEND PROCESS_SRCS
     times_variables.f90
     ife_variables.f90
     ife.f90
-    costs.f90
     costs_2015.f90
     heat_transport_variables.f90
     buildings_variables.f90
@@ -140,9 +138,14 @@ LIST(APPEND PROCESS_SRCS
     global_variables.f90
     constraint_variables.f90
     vacuum_variables.f90
+    CS_fatigue.f90
+    CS_fatigue_variables.f90
     impurity_radiation.f90
     pulse_variables.f90
     pf_power_variables.f90
+    read_and_get_atomic_data.f90
+    plot_radiation.f90
+    rebco_variables.f90
 )
 
 PREPROCESS()

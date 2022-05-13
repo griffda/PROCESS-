@@ -6,8 +6,8 @@ Figure 1 shows the overall power transfer mechanisms within the power plant outs
 
 <figure>
     <center>
-    <img src="../../images/powerflow3.png" alt="power flow 3"
-    title="Power flow schematic diagram"
+    <img src="../../images/powerflow3.png" alt="power flow 3" 
+    title="Power flow schematic diagram" 
     width="650" height="100" />
     <br><br>
     <figcaption><i>Figure 1: Schematic diagram of the flow of power beyond the fusion power core, showing the origin of the high-grade and waste heat and the electrical power balance within the plant. Variable names are give in [...]. The input power contributions in green boxes originate in Figure 2.
@@ -18,8 +18,8 @@ Figure 1 shows the overall power transfer mechanisms within the power plant outs
 
 <figure>
     <center>
-    <img src="../../images/powerflow1.png" alt="power flow 1"
-    title="Power flows"
+    <img src="../../images/powerflow1.png" alt="power flow 1" 
+    title="Power flows" 
     width="650" height="100" />
     <br><br>
     <figcaption><i>Figure 2: Power flows

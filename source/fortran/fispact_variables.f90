@@ -1,3 +1,5 @@
+! # TODO: fispact_variables are used in safety.f90 so the module won't be removed
+! despite the fact that fispact.f90 and lib/fispact/ have both gone
 module fispact_variables
   !! author: J. Morris (UKAEA)
   !!

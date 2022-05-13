@@ -36,7 +36,7 @@ def write(models, outfile):
     # 2    |  2019 STEP model
 
     if ft.cost_variables.cost_model == 0:
-        ft.costs_module.costs(outfile, 1)
+        models.costs.run(output=True)
     elif ft.cost_variables.cost_model == 1:
         ft.costs_2015_module.costs_2015(outfile, 1)
     elif ft.cost_variables.cost_model == 2:
@@ -119,17 +119,14 @@ def write(models, outfile):
         models.tfcoil.cntrpst()
         models.tfcoil.iprint = 0
 
-    # Poloidal field coil model !
-    ft.pfcoil_module.outpf(outfile)
-
-    # TODO what is outvolt?
-    ft.pfcoil_module.outvolt(outfile)
+    # Poloidal field coil model
+    models.pfcoil.output()
 
     # Structure Model
     models.structure.run(output=True)
 
     # Poloidal field coil inductance calculation
-    ft.pfcoil_module.induct(outfile, 1)
+    models.pfcoil.output_induct()
 
     # Blanket model
     # Blanket switch values
