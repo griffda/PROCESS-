@@ -705,23 +705,24 @@ module cost_variables
   !!
   !! - =0 Site with river infrastructure
   !! - =1 Site with sea infrastructure
+  !! - =2 Land-locked site (uses lake/artificial waterfront)
 
   integer :: isiteaccomm
   !! switch for including Campus Accommodation:
   !!
-  !! - =0 no campus accommodation
-  !! - =1 campus accommodation included
+  !! - =0 no campus accommodation required in costing
+  !! - =1 campus accommodation costed
 
   integer :: igridconn
   !! switch for site connection (outgoing) to electricity grid:
   !!
-  !! - =0 site has no connection to grid
+  !! - =0 site has no connection to grid and has to be costed
   !! - =1 site already has connection to grid
 
   integer :: irailaccess
   !! switch for rail access to site:
   !!
-  !! - =0 site has no rail access
+  !! - =0 site has no rail access and has to be costed
   !! - =1 site already has rail access
 
   contains
@@ -931,8 +932,8 @@ module cost_variables
     whole_site_area = 1.0D6
     isitetype = 0
     isiteaccomm = 0
-    igridconn = 1
-    irailaccess = 1
+    igridconn = 0
+    irailaccess = 0
 
   end subroutine init_cost_variables
 end module cost_variables

@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1584-gb02d427b
-    Branch : 1091-add-iter-to-the-test-suite
-   Git log : Merge\ branch\ |develop|\ into\ 1091-add-iter-to-the-t
- Date/time :  5 May 2022 13:19:28 +01:00(hh:mm) UTC
+   Tag No. : v2.1-1607-g9ca790cb code contains untracked changes
+    Branch : 1639-hcd-cost-output-is-not-transparent
+   Git log : Merge\ branch\ |1642-lock-numpy-versions-to-make-1-2
+ Date/time : 13 May 2022 13:46:44 +01:00(hh:mm) UTC
       User : jg6173
   Computer : L1088
- Directory : /tmp/pytest-of-jg6173/pytest-85/test_solver0
-     Input : /tmp/pytest-of-jg6173/pytest-85/test_scenario_stellarator_0/IN.DAT
+ Directory : /tmp/pytest-of-jg6173/pytest-92/test_solver0
+     Input : /tmp/pytest-of-jg6173/pytest-92/test_scenario_stellarator_0/IN.DAT
  Run title : HELIAS-5B
   Run type : Reactor concept design: Stellarator model, (c) CCFE
  

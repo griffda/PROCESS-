@@ -669,10 +669,11 @@ class CostsStep:
             # Marine transportation - jetty complete with conveyor (inc. dismantling at project end)
             step21010502 = cv.site_imp_uc[56]
             step210105 += step21010502
-        # 21.01.05.03 Sea/Flood Defence
-        # Armour and mass fill to increase height of existing defences in line with flood analysis.
-        step21010503 = cv.site_imp_uc[57]
-        step210105 += step21010503
+        if cv.isitetype != 2:
+            # 21.01.05.03 Sea/Flood Defence
+            # Armour and mass fill to increase height of existing defences in line with flood analysis.
+            step21010503 = cv.site_imp_uc[57]
+            step210105 += step21010503
         if cv.isitetype == 1:
             # 21.01.05.04 Other Waterfront Improvements
             # Excluded (no benchmark cost data available)
