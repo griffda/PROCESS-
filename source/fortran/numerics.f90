@@ -19,7 +19,7 @@ module numerics
   integer, parameter :: ipnvars = 175
   !!  ipnvars FIX : total number of variables available for iteration
 
-  integer, parameter :: ipeqns = 89
+  integer, parameter :: ipeqns = 90
   !!  ipeqns  FIX : number of constraint equations available
 
   integer, parameter :: ipnfoms = 19
@@ -191,7 +191,8 @@ module numerics
   !!  <LI> (86) Constraint for TF coil turn dimension
   !!  <LI> (87) Constraint for cryogenic power
   !!  <LI> (88) Constraint for TF coil strain absolute value
-  !!  <LI> (89) Constraint for CS coil quench protection</UL>
+  !!  <LI> (89) Constraint for CS coil quench protection
+  !!  <LI> (90) Lower Limit on number of stress load cycles for CS (itr 165 fncycle) </UL>
 
 
   integer, dimension(ipnvars) :: ixc
@@ -367,7 +368,7 @@ module numerics
   !! <LI> (164) f_crypmw : f-value for cryogenic plant power
   !! <LI> (165) fstr_wp : f-value for TF coil strain absolute value
   !! <LI> (166) f_copperaoh_m2 : CS coil current /copper area < Maximum value
-  !! <LI> (167) EMPTY : Description
+  !! <LI> (167) fncycle : f-value for minimum CS coil stress load cycles
   !! <LI> (168) EMPTY : Description
   !! <LI> (169) EMPTY : Description
   !! <LI> (170) EMPTY : Description
@@ -538,7 +539,8 @@ contains
       'TFC turn dimension               ', &
       'Cryogenic plant power            ', &
       'TF coil strain absolute value    ', &
-      'CS current/copper area < Max     '  &
+      'CS current/copper area < Max     ', &
+      'CS stress load cycles            '  &
       /)
 
     ! Please note: All strings between '...' above must be exactly 33 chars long
