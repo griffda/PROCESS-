@@ -284,6 +284,8 @@ contains
         case (88); call constraint_eqn_088(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
          ! ensure that OH coil current / copper area < Maximum value ONLY used for croco HTS coil
         case (89); call constraint_eqn_089(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
+         ! Constraint for minimum CS stress load cycles
+        case (90); call constraint_eqn_090(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
        case default
 
         idiags(1) = icc(i)
@@ -3358,5 +3360,30 @@ contains
       tmp_units = 'A/m2'
 
    end subroutine constraint_eqn_089
+
+   subroutine constraint_eqn_090(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
+      !! author: A. Pearce, CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for minimum CS coil stress load cycles
+      !! fncycle : input real : f-value for constraint n_cycle > n_cycle_min
+      !! n_cycle : input real : Allowable number of cycles for CS
+      !! n_cycle_min : input real :  Minimum required cycles for CS
+      
+      use CS_fatigue_variables, only: n_cycle, n_cycle_min
+      use constraint_variables, only: fncycle
+      implicit none
+            real(dp), intent(out) :: tmp_cc
+      real(dp), intent(out) :: tmp_con
+      real(dp), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
+
+      tmp_cc =  1.0D0 - fncycle * n_cycle / n_cycle_min
+      tmp_con = n_cycle_min * (1.0D0 - tmp_cc)
+      tmp_err = n_cycle * tmp_cc
+      tmp_symbol = '>'
+      tmp_units = ''
+   end subroutine constraint_eqn_090
 
 end module constraints
