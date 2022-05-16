@@ -15,8 +15,7 @@ module CS_fatigue
 
 contains
 
-subroutine Ncycle(N_cycle, max_hoop_stress,residual_stress,t_crack_vertical,t_crack_radial, &
-    t_structural_vertical,t_structural_radial)
+subroutine Ncycle(n_cycle, max_hoop_stress,residual_stress,t_crack_vertical,t_crack_radial,t_structural_vertical,t_structural_radial)
 
     use constants, only: pi
     implicit none
@@ -24,7 +23,7 @@ subroutine Ncycle(N_cycle, max_hoop_stress,residual_stress,t_crack_vertical,t_cr
     ! Arguments
     real(dp), intent(in) :: max_hoop_stress, residual_stress
     real(dp), intent(in) :: t_crack_vertical, t_structural_vertical, t_structural_radial
-    real(dp), intent(inout) :: N_cycle, t_crack_radial
+    real(dp), intent(inout) :: n_cycle, t_crack_radial
 
     ! local variables
     real(dp) :: Const, C0, m, R, delta, deltaN
@@ -48,7 +47,7 @@ subroutine Ncycle(N_cycle, max_hoop_stress,residual_stress,t_crack_vertical,t_cr
     c = t_crack_radial
 
     !mean stress ratio
-    delta_hoop_stress_MPa = max_hoop_stress_MPa - residual_stress_MPa
+    delta_hoop_stress_MPa = max_hoop_stress_MPa + residual_stress_MPa
     R = residual_stress_MPa / (max_hoop_stress_MPa + residual_stress_MPa)
     ! mean stress corrected C - without using walker equaution
     C0 = 1.0
@@ -57,7 +56,7 @@ subroutine Ncycle(N_cycle, max_hoop_stress,residual_stress,t_crack_vertical,t_cr
     delta = 1.0D-4
 
     !Initialise number of cycles
-    N_cycle = 0.0
+    n_cycle = 0.0
     N_pulse = 0.0
     Kmax = 0.0
 
@@ -78,7 +77,7 @@ subroutine Ncycle(N_cycle, max_hoop_stress,residual_stress,t_crack_vertical,t_cr
         N_pulse = N_pulse + deltaN
 
     ! two pulses - ramp to Vsmax and ramp down per cycle
-    N_cycle = N_pulse / 2.0D0
+    n_cycle = N_pulse / 2.0D0
     end do
 
 end subroutine Ncycle
