@@ -1145,12 +1145,12 @@ class PFCoil:
         p2_cst = ((( pfv.l_cond_cst * pfv.d_cond_cst ) - ( 4-constants.pi )*( pfv.r_out_cst**2 ) -  ( pfv.a_oh_turn * pfv.oh_steel_frac ) ) / constants.pi)
         pfv.r_in_cst = - ( ( pfv.l_cond_cst-pfv.d_cond_cst )/constants.pi ) + math.sqrt(p1_cst+p2_cst)
         # Thickness of steel conduit in cs turn
-        pfv.t_structural_radial = (pfv.d_cond_cst/2) - pfv.r_in_cst
+        csfv.t_structural_radial = (pfv.d_cond_cst/2) - pfv.r_in_cst
         # In this model the vertical and radial have the same thickness 
-        pfv.t_structural_vertical = pfv.t_structural_radial
+        csfv.t_structural_vertical = csfv.t_structural_radial
         # add a check for negative conduit thickness 
-        if (pfv.t_structural_radial < 1.0E-3):
-            pfv.t_structural_radial  = 1.0E-3
+        if (csfv.t_structural_radial < 1.0E-3):
+            csfv.t_structural_radial  = 1.0E-3
 
         # Non-steel area void fraction for coolant
         pfv.vf[pfv.nohc - 1] = pfv.vfohc
@@ -2218,6 +2218,30 @@ class PFCoil:
                         "Initial radial crack size (m)",
                         "(csfv.t_crack_radial)",
                         csfv.t_crack_radial,
+                    )
+                    op.ovarre(
+                        self.outfile,
+                        "CS turn area (m)",
+                        "(pfv.a_oh_turn)",
+                        pfv.a_oh_turn,
+                    )
+                    op.ovarre(
+                        self.outfile,
+                        "CS turn length (m)",
+                        "(pfv.l_cond_cst)",
+                        pfv.l_cond_cst,
+                    )
+                    op.ovarre(
+                        self.outfile,
+                        "CS r_in (m)",
+                        "(r_in_cst)",
+                        pfv.r_in_cst,
+                    )
+                    op.ovarre(
+                        self.outfile,
+                        "CS turn width (m)",
+                        "(pfv.d_cond_cst)",
+                        pfv.d_cond_cst,
                     )
                     op.ovarre(
                         self.outfile,
