@@ -2,7 +2,7 @@
 import pytest
 import numpy
 from typing import NamedTuple, Any
-
+from process.costs_2015 import Costs2015
 
 from process.fortran import pfcoil_variables
 from process.fortran import heat_transport_variables
@@ -14,6 +14,16 @@ from process.fortran import fwbs_variables
 from process.fortran import build_variables
 from process.fortran import physics_variables
 from process.fortran import pf_power_variables
+
+
+@pytest.fixture
+def costs2015():
+    """Provides Costs2015 object for testing.
+
+    :return costs2015: initialised costs2015 object
+    :type costs2015: process.costs2015.Costs2015
+    """
+    return Costs2015()
 
 
 class CalcBuildingCostsParam(NamedTuple):
@@ -2260,7 +2270,7 @@ class CalcBuildingCostsParam(NamedTuple):
         ),
     ),
 )
-def test_calc_building_costs(calcbuildingcostsparam, monkeypatch):
+def test_calc_building_costs(calcbuildingcostsparam, monkeypatch, costs2015):
     """
     Automatically generated Regression Unit Test for calc_building_costs.
 
@@ -2329,7 +2339,7 @@ def test_calc_building_costs(calcbuildingcostsparam, monkeypatch):
         costs_2015_module, "s_cost_factor", calcbuildingcostsparam.s_cost_factor
     )
 
-    costs_2015_module.calc_building_costs()
+    costs2015.calc_building_costs()
 
     assert costs_2015_module.s_kref == pytest.approx(
         calcbuildingcostsparam.expected_s_kref
@@ -4566,7 +4576,7 @@ class CalcLandCostsParam(NamedTuple):
         ),
     ),
 )
-def test_calc_land_costs(calclandcostsparam, monkeypatch):
+def test_calc_land_costs(calclandcostsparam, monkeypatch, costs2015):
     """
     Automatically generated Regression Unit Test for calc_land_costs.
 
@@ -4609,7 +4619,7 @@ def test_calc_land_costs(calclandcostsparam, monkeypatch):
         costs_2015_module, "s_cost_factor", calclandcostsparam.s_cost_factor
     )
 
-    costs_2015_module.calc_land_costs()
+    costs2015.calc_land_costs()
 
     assert costs_2015_module.s_kref == pytest.approx(calclandcostsparam.expected_s_kref)
 
@@ -6844,7 +6854,7 @@ class CalcTfCoilCostsParam(NamedTuple):
         ),
     ),
 )
-def test_calc_tf_coil_costs(calctfcoilcostsparam, monkeypatch):
+def test_calc_tf_coil_costs(calctfcoilcostsparam, monkeypatch, costs2015):
     """
     Automatically generated Regression Unit Test for calc_tf_coil_costs.
 
@@ -6887,7 +6897,7 @@ def test_calc_tf_coil_costs(calctfcoilcostsparam, monkeypatch):
         costs_2015_module, "s_cost_factor", calctfcoilcostsparam.s_cost_factor
     )
 
-    costs_2015_module.calc_tf_coil_costs()
+    costs2015.calc_tf_coil_costs()
 
     assert costs_2015_module.s_kref == pytest.approx(
         calctfcoilcostsparam.expected_s_kref
@@ -9120,7 +9130,9 @@ class CalcRemoteHandlingCostsParam(NamedTuple):
         ),
     ),
 )
-def test_calc_remote_handling_costs(calcremotehandlingcostsparam, monkeypatch):
+def test_calc_remote_handling_costs(
+    calcremotehandlingcostsparam, monkeypatch, costs2015
+):
     """
     Automatically generated Regression Unit Test for calc_remote_handling_costs.
 
@@ -9169,7 +9181,7 @@ def test_calc_remote_handling_costs(calcremotehandlingcostsparam, monkeypatch):
         costs_2015_module, "s_cost_factor", calcremotehandlingcostsparam.s_cost_factor
     )
 
-    costs_2015_module.calc_remote_handling_costs()
+    costs2015.calc_remote_handling_costs()
 
     assert costs_2015_module.s_kref == pytest.approx(
         calcremotehandlingcostsparam.expected_s_kref
@@ -11404,7 +11416,7 @@ class CalcNPlantAndVvCostsParam(NamedTuple):
         ),
     ),
 )
-def test_calc_n_plant_and_vv_costs(calcnplantandvvcostsparam, monkeypatch):
+def test_calc_n_plant_and_vv_costs(calcnplantandvvcostsparam, monkeypatch, costs2015):
     """
     Automatically generated Regression Unit Test for calc_n_plant_and_vv_costs.
 
@@ -11443,7 +11455,7 @@ def test_calc_n_plant_and_vv_costs(calcnplantandvvcostsparam, monkeypatch):
         costs_2015_module, "s_cost_factor", calcnplantandvvcostsparam.s_cost_factor
     )
 
-    costs_2015_module.calc_n_plant_and_vv_costs()
+    costs2015.calc_n_plant_and_vv_costs()
 
     assert costs_2015_module.s_kref == pytest.approx(
         calcnplantandvvcostsparam.expected_s_kref
@@ -13670,7 +13682,9 @@ class CalcEnergyConversionSystemParam(NamedTuple):
         ),
     ),
 )
-def test_calc_energy_conversion_system(calcenergyconversionsystemparam, monkeypatch):
+def test_calc_energy_conversion_system(
+    calcenergyconversionsystemparam, monkeypatch, costs2015
+):
     """
     Automatically generated Regression Unit Test for calc_energy_conversion_system.
 
@@ -13717,7 +13731,7 @@ def test_calc_energy_conversion_system(calcenergyconversionsystemparam, monkeypa
         calcenergyconversionsystemparam.s_cost_factor,
     )
 
-    costs_2015_module.calc_energy_conversion_system()
+    costs2015.calc_energy_conversion_system()
 
     assert costs_2015_module.s_kref == pytest.approx(
         calcenergyconversionsystemparam.expected_s_kref
@@ -15992,7 +16006,9 @@ class CalcRemainingSubsystemsParam(NamedTuple):
         ),
     ),
 )
-def test_calc_remaining_subsystems(calcremainingsubsystemsparam, monkeypatch):
+def test_calc_remaining_subsystems(
+    calcremainingsubsystemsparam, monkeypatch, costs2015
+):
     """
     Automatically generated Regression Unit Test for calc_remaining_subsystems.
 
@@ -16073,7 +16089,7 @@ def test_calc_remaining_subsystems(calcremainingsubsystemsparam, monkeypatch):
         costs_2015_module, "s_cost_factor", calcremainingsubsystemsparam.s_cost_factor
     )
 
-    costs_2015_module.calc_remaining_subsystems()
+    costs2015.calc_remaining_subsystems()
 
     assert costs_2015_module.s_kref == pytest.approx(
         calcremainingsubsystemsparam.expected_s_kref
@@ -16116,7 +16132,7 @@ class ValueFunctionParam(NamedTuple):
         ),
     ),
 )
-def test_value_function(valuefunctionparam, monkeypatch):
+def test_value_function(valuefunctionparam, monkeypatch, costs2015):
     """
     Automatically generated Regression Unit Test for value_function.
 
@@ -16129,6 +16145,6 @@ def test_value_function(valuefunctionparam, monkeypatch):
     :type monkeypatch: _pytest.monkeypatch.monkeypatch
     """
 
-    v = costs_2015_module.value_function(x=valuefunctionparam.x)
+    v = costs2015.value_function(x=valuefunctionparam.x)
 
     assert v == pytest.approx(valuefunctionparam.expected_v)

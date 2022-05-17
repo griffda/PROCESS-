@@ -1,4 +1,5 @@
 import logging
+import numpy
 from process.fortran import constants
 from process.fortran import costs_2015_module
 from process.fortran import cost_variables
@@ -7,6 +8,11 @@ from process.fortran import process_output as po
 from process.fortran import global_variables
 from process.fortran import fwbs_variables
 from process.fortran import build_variables
+from process.fortran import current_drive_variables
+from process.fortran import pfcoil_variables
+from process.fortran import tfcoil_variables
+from process.fortran import pf_power_variables
+from process.fortran import physics_variables
 from process.utilities.f2py_string_patch import string_to_f2py_compatible
 
 
@@ -36,28 +42,28 @@ class Costs2015:
         # ###############################################
 
         # Calculate building costs
-        costs_2015_module.calc_building_costs()
+        self.calc_building_costs()
 
         # Calculate land costs
-        costs_2015_module.calc_land_costs()
+        self.calc_land_costs()
 
         # Calculate tf coil costs
-        costs_2015_module.calc_tf_coil_costs()
+        self.calc_tf_coil_costs()
 
         # Calculate fwbs costs
         self.calc_fwbs_costs()
 
         # Calculate remote handling costs
-        costs_2015_module.calc_remote_handling_costs()
+        self.calc_remote_handling_costs()
 
         # Calculate N plant and vacuum vessel costs
-        costs_2015_module.calc_n_plant_and_vv_costs()
+        self.calc_n_plant_and_vv_costs()
 
         # Calculate energy conversion system costs
-        costs_2015_module.calc_energy_conversion_system()
+        self.calc_energy_conversion_system()
 
         # Calculate remaining subsystems costs
-        costs_2015_module.calc_remaining_subsystems()
+        self.calc_remaining_subsystems()
 
         # Calculate total capital cost
         costs_2015_module.total_costs = (
@@ -183,9 +189,9 @@ class Costs2015:
             tail_to_product_mass_ratio = (product_li6 - feed_li6) / (
                 feed_li6 - tail_li6
             )
-            p_v = costs_2015_module.value_function(product_li6)
-            t_v = costs_2015_module.value_function(tail_li6)
-            f_v = costs_2015_module.value_function(feed_li6)
+            p_v = self.value_function(product_li6)
+            t_v = self.value_function(tail_li6)
+            f_v = self.value_function(feed_li6)
             swu = (
                 p_v
                 + tail_to_product_mass_ratio * t_v
@@ -242,9 +248,9 @@ class Costs2015:
             )
 
             # Calculate value functions
-            p_v = costs_2015_module.value_function(product_li6)
-            t_v = costs_2015_module.value_function(tail_li6)
-            f_v = costs_2015_module.value_function(feed_li6)
+            p_v = self.value_function(product_li6)
+            t_v = self.value_function(tail_li6)
+            f_v = self.value_function(feed_li6)
 
             # Calculate separative work units per kg
             swu = (
@@ -351,7 +357,7 @@ class Costs2015:
 
         po.oshead(self.outfile, "Buildings (M$)")
         for i in range(9):  # noqa: E741
-            costs_2015_module.ocost(
+            self.ocost(
                 self.outfile,
                 costs_2015_module.s_label[i],  # noqa: E741
                 i + 1,  # noqa: E741
@@ -361,7 +367,7 @@ class Costs2015:
         po.oshead(self.outfile, "Land (M$)")
 
         for j in range(9, 13):
-            costs_2015_module.ocost(
+            self.ocost(
                 self.outfile,
                 costs_2015_module.s_label[j],
                 j + 1,
@@ -371,7 +377,7 @@ class Costs2015:
         po.oshead(self.outfile, "TF Coils (M$)")
 
         for k in range(13, 21):
-            costs_2015_module.ocost(
+            self.ocost(
                 self.outfile,
                 costs_2015_module.s_label[k],
                 k + 1,
@@ -380,7 +386,7 @@ class Costs2015:
 
         po.oshead(self.outfile, "First wall and blanket (M$)")
         for l in range(21, 27):  # noqa: E741
-            costs_2015_module.ocost(
+            self.ocost(
                 self.outfile,
                 costs_2015_module.s_label[l],
                 l + 1,
@@ -388,19 +394,19 @@ class Costs2015:
             )
 
         po.oshead(self.outfile, "Active maintenance and remote handling (M$)")
-        costs_2015_module.ocost(
+        self.ocost(
             self.outfile,
             costs_2015_module.s_label[27],
             28,
             costs_2015_module.s_cost[27] / 1.0e6,
         )
-        costs_2015_module.ocost(
+        self.ocost(
             self.outfile,
             costs_2015_module.s_label[28],
             29,
             costs_2015_module.s_cost[28] / 1.0e6,
         )
-        costs_2015_module.ocost(
+        self.ocost(
             self.outfile,
             costs_2015_module.s_label[30],
             31,
@@ -409,7 +415,7 @@ class Costs2015:
 
         po.oshead(self.outfile, "Vacuum vessel and liquid nitrogen plant (M$)")
         for n in range(31, 34):
-            costs_2015_module.ocost(
+            self.ocost(
                 self.outfile,
                 costs_2015_module.s_label[n],
                 n + 1,
@@ -417,7 +423,7 @@ class Costs2015:
             )
 
         po.oshead(self.outfile, "System for converting heat to electricity (M$)")
-        costs_2015_module.ocost(
+        self.ocost(
             self.outfile,
             costs_2015_module.s_label[34],
             35,
@@ -426,7 +432,7 @@ class Costs2015:
 
         po.oshead(self.outfile, "Remaining subsystems (M$)")
         for q in range(35, 61):
-            costs_2015_module.ocost(
+            self.ocost(
                 self.outfile,
                 costs_2015_module.s_label[q],
                 q + 1,
@@ -434,13 +440,13 @@ class Costs2015:
             )
 
         po.oblnkl(self.outfile)
-        costs_2015_module.ocost_vname(
+        self.ocost(
             self.outfile,
             "TOTAL OVERNIGHT CAPITAL COST (M$)",
             "(total_costs)",
             costs_2015_module.total_costs / 1.0e6,
         )
-        costs_2015_module.ocost_vname(
+        self.ocost(
             self.outfile,
             "Annual maintenance cost (M$)",
             "(maintenance)",
@@ -480,3 +486,854 @@ class Costs2015:
             cost_variables.coe,
             "OP ",
         )
+
+    def calc_building_costs(self):
+        """
+        Function to calculate the cost of all buildings.
+        author: J Morris, CCFE, Culham Science Centre
+        None
+        This routine calculates the building costs for a fusion power plant
+        based on the costings in the PROCESS costs Paper.
+        Buildings have a different scaling law, with fixed cost per unit volume.
+        Cref is therefore now f.Viter.unit_cost
+        The costs for individual buildings must not be output,
+        as the same mean cost per unit volume has been used both for light
+        and for shielded buildings
+        The exponent =1
+        PROCESS Costs Paper (M. Kovari, J. Morris)
+        """
+        for i in range(0, 9):
+            costs_2015_module.s_cost_factor[i] = cost_variables.cost_factor_buildings
+
+        # Power plant admin buildings cost ($)
+        costs_2015_module.s_label[0] = "Admin Buildings"
+        costs_2015_module.s_cref[0] = (
+            129000.0e0 * cost_variables.light_build_cost_per_vol
+        )
+        costs_2015_module.s_cost[0] = (
+            costs_2015_module.s_cost_factor[0] * costs_2015_module.s_cref[0]
+        )
+
+        # Tokamak complex excluding hot cell cost ($)
+        costs_2015_module.s_label[1] = "Tokamak Complex (excluding hot cell)"
+        costs_2015_module.s_cref[1] = (
+            1100000.0e0 * cost_variables.tok_build_cost_per_vol
+        )
+        # ITER cryostat volume (m^3)
+        costs_2015_module.s_k[1] = (
+            (numpy.pi * fwbs_variables.rdewex**2) * 2.0e0 * fwbs_variables.zdewex
+        )
+        costs_2015_module.s_kref[1] = 18712.0e0
+        costs_2015_module.s_cost[1] = (
+            costs_2015_module.s_cost_factor[1]
+            * costs_2015_module.s_cref[1]
+            * (costs_2015_module.s_k[1] / costs_2015_module.s_kref[1])
+        )
+
+        # Neutral beam buildings cost ($)
+        costs_2015_module.s_label[2] = "Neutral beam buildings"
+        costs_2015_module.s_cref[2] = (
+            28000.0e0 * cost_variables.light_build_cost_per_vol
+        )
+        # Scale with neutral beam wall plug power (MW)
+        costs_2015_module.s_k[2] = current_drive_variables.pwpnb
+        costs_2015_module.s_kref[2] = 120.0e0
+        costs_2015_module.s_cost[2] = (
+            costs_2015_module.s_cost_factor[2]
+            * costs_2015_module.s_cref[2]
+            * (costs_2015_module.s_k[2] / costs_2015_module.s_kref[2])
+        )
+
+        # Cryoplant buildings cost ($)
+        costs_2015_module.s_label[3] = "Cryoplant buildings"
+        costs_2015_module.s_cref[3] = (
+            130000.0e0 * cost_variables.light_build_cost_per_vol
+        )
+        # Scale with the total heat load on the cryoplant at ~4.5K (kW)
+        costs_2015_module.s_k[3] = heat_transport_variables.helpow / 1.0e3
+        costs_2015_module.s_kref[3] = 61.0e0
+        costs_2015_module.s_cost[3] = (
+            costs_2015_module.s_cost_factor[3]
+            * costs_2015_module.s_cref[3]
+            * (costs_2015_module.s_k[3] / costs_2015_module.s_kref[3])
+        )
+
+        # PF Coil winding building cost ($)
+        costs_2015_module.s_label[4] = "PF Coil winding building"
+        costs_2015_module.s_cref[4] = (
+            190000.0e0 * cost_variables.light_build_cost_per_vol
+        )
+        # Scale with the radius of the largest PF coil squared (m^2)
+        costs_2015_module.s_k[4] = pfcoil_variables.pfrmax**2
+        costs_2015_module.s_kref[4] = 12.4e0**2
+        costs_2015_module.s_cost[4] = (
+            costs_2015_module.s_cost_factor[4]
+            * costs_2015_module.s_cref[4]
+            * (costs_2015_module.s_k[4] / costs_2015_module.s_kref[4])
+        )
+
+        # Magnet power supplies and related buildings cost ($)
+        costs_2015_module.s_label[5] = "Magnet power supplies and related buildings"
+        costs_2015_module.s_cref[5] = (
+            110000.0e0 * cost_variables.light_build_cost_per_vol
+        )
+        # Scale with TF current per coil (MA)
+        costs_2015_module.s_k[5] = (
+            tfcoil_variables.ritfc / tfcoil_variables.n_tf
+        ) / 1.0e6
+        costs_2015_module.s_kref[5] = 9.1e0
+        costs_2015_module.s_cost[5] = (
+            costs_2015_module.s_cost_factor[5]
+            * costs_2015_module.s_cref[5]
+            * (costs_2015_module.s_k[5] / costs_2015_module.s_kref[5])
+        )
+
+        # Magnet discharge buildings cost ($)
+        costs_2015_module.s_label[6] = "Magnet discharge buildings"
+        costs_2015_module.s_cref[6] = (
+            35000.0e0 * cost_variables.light_build_cost_per_vol
+        )
+        # Scale with total stored energy in TF coils (GJ)
+        costs_2015_module.s_k[6] = tfcoil_variables.estotftgj
+        costs_2015_module.s_kref[6] = 41.0e0
+        costs_2015_module.s_cost[6] = (
+            costs_2015_module.s_cost_factor[6]
+            * costs_2015_module.s_cref[6]
+            * (costs_2015_module.s_k[6] / costs_2015_module.s_kref[6])
+        )
+
+        # Heat removal system buildings cost ($)
+        costs_2015_module.s_label[7] = "Heat removal system buildings"
+        # ITER volume of cooling water buildings (m^3)
+        costs_2015_module.s_cref[7] = (
+            51000.0e0 * cost_variables.light_build_cost_per_vol
+        )
+        # Scale with total thermal power removed from the core (MW)
+        costs_2015_module.s_k[7] = (
+            heat_transport_variables.pthermmw + heat_transport_variables.psechtmw
+        )
+        costs_2015_module.s_kref[7] = 880.0e0
+        costs_2015_module.s_cost[7] = (
+            costs_2015_module.s_cost_factor[7]
+            * costs_2015_module.s_cref[7]
+            * (costs_2015_module.s_k[7] / costs_2015_module.s_kref[7])
+        )
+
+        # Total cost of buildings ($)
+        costs_2015_module.s_label[8] = "Total cost of buildings"
+        costs_2015_module.s_cost[8] = 0.0e0
+        for j in range(0, 8):
+            costs_2015_module.s_cost[8] = (
+                costs_2015_module.s_cost[8] + costs_2015_module.s_cost[j]
+            )
+
+    def calc_land_costs(self):
+        """
+        Function to calculate the cost of land for the power plant
+        author: J Morris, CCFE, Culham Science Centre
+        None
+        Land also uses a unit cost, but area is scaled.
+        PROCESS Costs Paper (M. Kovari, J. Morris)
+        """
+        for i in range(9, 13):
+            costs_2015_module.s_cost_factor[i] = cost_variables.cost_factor_land
+
+        # Land purchasing cost ($)
+        costs_2015_module.s_label[9] = "Land purchasing"
+        # ITER Land area (hectares)
+        ITER_total_land_area = 180.0e0
+        # ITER Land area for key buildings (hectares)
+        ITER_key_buildings_land_area = 42.0e0
+        # ITER buffer land (hectares)
+        ITER_buffer_land_area = ITER_total_land_area - ITER_key_buildings_land_area
+
+        # Scale with area of cryostat (m)
+        costs_2015_module.s_k[9] = numpy.pi * fwbs_variables.rdewex**2
+        costs_2015_module.s_kref[9] = 638.0e0
+        # Cost of land per hectare (2014 $ / ha)
+        costs_2015_module.s_cref[9] = 318000.0e0
+        # Cost of power plant land (2014 $)
+        costs_2015_module.s_cost[9] = (
+            costs_2015_module.s_cost_factor[9]
+            * costs_2015_module.s_cref[9]
+            * (
+                ITER_key_buildings_land_area
+                * (costs_2015_module.s_k[9] / costs_2015_module.s_kref[9])
+                ** cost_variables.costexp
+                + ITER_buffer_land_area
+            )
+        )
+
+        # Land improvement costs ($)
+        costs_2015_module.s_label[10] = "Land improvement"
+        # Cost of clearing ITER land
+        costs_2015_module.s_cref[10] = 214.0e6
+        # Scale with area of cryostat (m)
+        costs_2015_module.s_k[10] = numpy.pi * fwbs_variables.rdewex**2
+        costs_2015_module.s_kref[10] = 638.0e0
+        costs_2015_module.s_cost[10] = (
+            costs_2015_module.s_cost_factor[10]
+            * (costs_2015_module.s_k[10] / costs_2015_module.s_kref[10])
+            ** cost_variables.costexp
+            * costs_2015_module.s_cref[10]
+        )
+
+        # Road improvements cost ($)
+        costs_2015_module.s_label[11] = "Road improvements"
+        # Cost of ITER road improvements
+        costs_2015_module.s_cref[11] = 150.0e6
+        # Scale with TF coil longest dimension
+        costs_2015_module.s_k[11] = (
+            max(build_variables.dh_tf_inner_bore, build_variables.dr_tf_inner_bore)
+            + 2.0e0 * build_variables.tfcth
+        )
+        costs_2015_module.s_kref[11] = 14.0e0
+        costs_2015_module.s_cost[11] = (
+            costs_2015_module.s_cost_factor[11]
+            * costs_2015_module.s_cref[11]
+            * (costs_2015_module.s_k[11] / costs_2015_module.s_kref[11])
+            ** cost_variables.costexp
+        )
+
+        # Total land costs ($)
+        costs_2015_module.s_label[12] = "Total land costs"
+        costs_2015_module.s_cost[12] = 0.0e0
+        for j in range(9, 12):
+            costs_2015_module.s_cost[12] = (
+                costs_2015_module.s_cost[12] + costs_2015_module.s_cost[j]
+            )
+
+    def calc_tf_coil_costs(self):
+        """
+                Function to calculate the cost of the TF coils for the power plant
+        author: J Morris, CCFE, Culham Science Centre
+        None
+        This routine calculates the cost of the TF coils for a fusion power
+        plant based on the costings in the PROCESS costs Paper.
+        PROCESS Costs Paper (M. Kovari, J. Morris)
+        """
+        for i in range(13, 20):
+            costs_2015_module.s_cost_factor[i] = cost_variables.cost_factor_tf_coils
+
+        # TF coil insertion and welding costs ($)
+        costs_2015_module.s_label[13] = "TF Coil insertion and welding"
+        # ITER coil insertion and welding cost (2014 $)
+        costs_2015_module.s_cref[13] = 258.0e6
+        # Scale with total TF coil length (m)
+        costs_2015_module.s_k[13] = tfcoil_variables.n_tf * tfcoil_variables.tfleng
+        costs_2015_module.s_kref[13] = 18.0e0 * 34.1e0
+        costs_2015_module.s_cost[13] = (
+            costs_2015_module.s_cost_factor[13]
+            * costs_2015_module.s_cref[13]
+            * (costs_2015_module.s_k[13] / costs_2015_module.s_kref[13])
+            ** cost_variables.costexp
+        )
+
+        # TF coil winding costs ($)
+        costs_2015_module.s_label[15] = "TF coil winding"
+        # ITER winding cost (2014 $)
+        costs_2015_module.s_cref[15] = 414.0e6
+        # Scale with the total turn length (m)
+        costs_2015_module.s_k[15] = (
+            tfcoil_variables.n_tf * tfcoil_variables.tfleng * tfcoil_variables.n_tf_turn
+        )
+        costs_2015_module.s_kref[15] = 82249.0e0
+        costs_2015_module.s_cost[15] = (
+            costs_2015_module.s_cost_factor[15]
+            * costs_2015_module.s_cref[15]
+            * (costs_2015_module.s_k[15] / costs_2015_module.s_kref[15])
+            ** cost_variables.costexp
+        )
+
+        # Copper stand cost for TF coil ($)
+        costs_2015_module.s_label[16] = "Copper strand for TF coil"
+        # ITER Chromium plated Cu strand for TF SC cost (2014 $)
+        costs_2015_module.s_cref[16] = 21.0e6
+        # Scale with total copper mass (kg)
+        costs_2015_module.s_k[16] = tfcoil_variables.whtconcu * tfcoil_variables.n_tf
+        costs_2015_module.s_kref[16] = 244.0e3
+        costs_2015_module.s_cost[16] = (
+            costs_2015_module.s_cost_factor[16]
+            * costs_2015_module.s_cref[16]
+            * (costs_2015_module.s_k[16] / costs_2015_module.s_kref[16])
+            ** cost_variables.costexp
+        )
+
+        # superconductor strand cost ($)
+        costs_2015_module.s_label[
+            17
+        ] = "Strands with Nb3Sn superconductor and copper stabiliser"
+        # ITER Nb3Sn SC strands cost (2014 $)
+        costs_2015_module.s_cref[17] = 526.0e6
+        # Scale with the total mass of Nb3Sn (kg)
+        costs_2015_module.s_k[17] = tfcoil_variables.whtconsc * tfcoil_variables.n_tf
+        costs_2015_module.s_kref[17] = 210.0e3
+        costs_2015_module.s_cost[17] = (
+            costs_2015_module.s_cost_factor[17]
+            * costs_2015_module.s_cref[17]
+            * (costs_2015_module.s_k[17] / costs_2015_module.s_kref[17])
+            ** cost_variables.costexp
+        )
+
+        # Superconductor testing cost ($)
+        costs_2015_module.s_label[18] = "Testing of superconducting strands"
+        # ITER Nb3Sn strand test costs (2014 $)
+        costs_2015_module.s_cref[18] = 4.0e6
+        costs_2015_module.s_cost[18] = (
+            costs_2015_module.s_cost_factor[18] * costs_2015_module.s_cref[18]
+        )
+
+        # Superconductor cabling and jacketing cost ($)
+        costs_2015_module.s_label[19] = "Cabling and jacketing"
+        # ITER cabling and jacketing costs (2014 $)
+        costs_2015_module.s_cref[19] = 81.0e6
+        # Scale with total turn length.
+        costs_2015_module.s_k[19] = (
+            tfcoil_variables.n_tf * tfcoil_variables.tfleng * tfcoil_variables.n_tf_turn
+        )
+        costs_2015_module.s_kref[19] = 82249.0e0
+        costs_2015_module.s_cost[19] = (
+            costs_2015_module.s_cost_factor[19]
+            * costs_2015_module.s_cref[19]
+            * (costs_2015_module.s_k[19] / costs_2015_module.s_kref[19])
+            ** cost_variables.costexp
+        )
+
+        # Total TF coil costs ($)
+        costs_2015_module.s_label[20] = "Total TF coil costs"
+        costs_2015_module.s_cost[20] = 0.0e0
+        for j in range(13, 20):
+            costs_2015_module.s_cost[20] = (
+                costs_2015_module.s_cost[20] + costs_2015_module.s_cost[j]
+            )
+
+    def calc_remote_handling_costs(self):
+        """
+        Function to calculate the cost of the remote handling facilities
+        author: J Morris, CCFE, Culham Science Centre
+        None
+        PROCESS Costs Paper (M. Kovari, J. Morris)
+        """
+        for i in range(27, 31):
+            costs_2015_module.s_cost_factor[i] = cost_variables.cost_factor_rh
+
+        # K:\Power Plant Physics and Technology\Costs\Remote handling
+        # From Sam Ha.
+
+        costs_2015_module.s_label[27] = "Moveable equipment"
+        costs_2015_module.s_cref[27] = 1.0e6 * (
+            139.0e0 * cost_variables.num_rh_systems + 410.0e0
+        )
+        #  Scale with total mass of armour, first wall and blanket (kg)
+        costs_2015_module.s_kref[27] = 4.35e6
+        costs_2015_module.s_k[27] = fwbs_variables.armour_fw_bl_mass
+        costs_2015_module.s_cost[27] = (
+            costs_2015_module.s_cost_factor[27]
+            * costs_2015_module.s_cref[27]
+            * (costs_2015_module.s_k[27] / costs_2015_module.s_kref[27])
+            ** cost_variables.costexp
+        )
+
+        costs_2015_module.s_label[
+            28
+        ] = "Active maintenance facility with fixed equipment"
+        costs_2015_module.s_cref[28] = 1.0e6 * (
+            95.0e0 * cost_variables.num_rh_systems + 2562.0e0
+        )
+        #  Scale with total mass of armour, first wall and blanket (kg)
+        costs_2015_module.s_kref[28] = 4.35e6
+        costs_2015_module.s_k[28] = fwbs_variables.armour_fw_bl_mass
+        costs_2015_module.s_cost[28] = (
+            costs_2015_module.s_cost_factor[28]
+            * costs_2015_module.s_cref[28]
+            * (costs_2015_module.s_k[28] / costs_2015_module.s_kref[28])
+            ** cost_variables.costexp
+        )
+
+        # s(30) is not in use
+
+        costs_2015_module.s_label[30] = "Total remote handling costs"
+        costs_2015_module.s_cost[30] = (
+            costs_2015_module.s_cost[27] + costs_2015_module.s_cost[28]
+        )
+
+    def calc_n_plant_and_vv_costs(self):
+        """
+        Function to calculate the cost of the nitrogen plant and vacuum vessel
+        author: J Morris, CCFE, Culham Science Centre
+        None
+        This routine calculates the cost of the nitrogen plant and vacuum vessel
+        for a fusion power plant based on the costings in the PROCESS costs paper.
+        PROCESS Costs Paper (M. Kovari, J. Morris)
+        """
+        for i in range(31, 34):
+            costs_2015_module.s_cost_factor[i] = cost_variables.cost_factor_vv
+
+        #  Vacuum vessel
+        costs_2015_module.s_label[31] = "Vacuum vessel"
+        #  ITER reference vacuum vessel cost (2014 $)
+        costs_2015_module.s_cref[31] = 537.0e6
+        #  Scale with outermost midplane radius of vacuum vessel squared (m2)
+        costs_2015_module.s_k[31] = (
+            build_variables.rsldo + build_variables.d_vv_out
+        ) ** 2
+        costs_2015_module.s_kref[31] = 94.09e0
+        costs_2015_module.s_cost[31] = (
+            costs_2015_module.s_cost_factor[31]
+            * costs_2015_module.s_cref[31]
+            * (costs_2015_module.s_k[31] / costs_2015_module.s_kref[31])
+            ** cost_variables.costexp
+        )
+
+        #  Nitrogen plant
+        costs_2015_module.s_label[32] = "Liquid nitrogen plant"
+        #  ITER reference cost (2014 $)
+        costs_2015_module.s_cref[32] = 86.0e6
+        #  Scale with 4.5K cryopower (W)
+        costs_2015_module.s_k[32] = heat_transport_variables.helpow
+        costs_2015_module.s_kref[32] = 50.0e3
+        costs_2015_module.s_cost[32] = (
+            costs_2015_module.s_cost_factor[32]
+            * costs_2015_module.s_cref[32]
+            * (costs_2015_module.s_k[32] / costs_2015_module.s_kref[32])
+            ** cost_variables.costexp
+        )
+
+        costs_2015_module.s_label[33] = "Total liquid nitrogen plant and vacuum vessel"
+        costs_2015_module.s_cost[33] = 0.0e0
+        for j in range(31, 33):
+            costs_2015_module.s_cost[33] = (
+                costs_2015_module.s_cost[33] + costs_2015_module.s_cost[j]
+            )
+
+    def calc_energy_conversion_system(self):
+        """
+        Function to calculate the cost of the energy conversion system
+        author: J Morris, CCFE, Culham Science Centre
+        None
+        This routine calculates the cost of the energy conversion system
+        for a fusion power plant based on the costings in the PROCESS costs paper.
+        PROCESS Costs Paper (M. Kovari, J. Morris)
+        """
+        costs_2015_module.s_label[34] = "Energy conversion system"
+        #  Set cost factor for energy conversion system
+        costs_2015_module.s_cost_factor[34] = cost_variables.cost_factor_bop
+        #  Cost of reference energy conversion system (Rolls Royce)
+        costs_2015_module.s_cref[34] = 511.0e6
+        #  Scale with gross electric power (MWe)
+        costs_2015_module.s_k[34] = heat_transport_variables.pgrossmw
+        costs_2015_module.s_kref[34] = 692.0e0
+        costs_2015_module.s_cost[34] = (
+            costs_2015_module.s_cost_factor[34]
+            * costs_2015_module.s_cref[34]
+            * (costs_2015_module.s_k[34] / costs_2015_module.s_kref[34])
+            ** cost_variables.costexp
+        )
+
+    def calc_remaining_subsystems(self):
+        """
+        Function to calculate the cost of the remaining subsystems
+        author: J Morris, CCFE, Culham Science Centre
+        None
+        This routine calculates the cost of the remaining subsystems
+        for a fusion power plant based on the costings in the PROCESS costs paper.
+        PROCESS Costs Paper (M. Kovari, J. Morris)
+        """
+        for i in range(35, 60):
+            costs_2015_module.s_cost_factor[i] = cost_variables.cost_factor_misc
+
+        costs_2015_module.s_label[35] = "CS and PF coils"
+        # #  Cost of ITER CS and PF magnets
+        costs_2015_module.s_cref[35] = 1538.0e6
+        #  Scale with sum of (A x turns x radius) of CS and all PF coils
+        costs_2015_module.s_k[35] = pfcoil_variables.itr_sum
+        costs_2015_module.s_kref[35] = 7.4e8
+        costs_2015_module.s_cost[35] = (
+            costs_2015_module.s_cost_factor[35]
+            * costs_2015_module.s_cref[35]
+            * (costs_2015_module.s_k[35] / costs_2015_module.s_kref[35])
+            ** cost_variables.costexp
+        )
+
+        costs_2015_module.s_label[
+            36
+        ] = "Vacuum vessel in-wall shielding, ports and in-vessel coils"
+        #  Cost of ITER VV in-wall shielding, ports and in-vessel coils
+        costs_2015_module.s_cref[36] = 211.0e6
+        #  Scale with vacuum vessel mass (kg)
+        costs_2015_module.s_k[36] = fwbs_variables.vvmass
+        costs_2015_module.s_kref[36] = 5.2360e6
+        costs_2015_module.s_cost[36] = (
+            costs_2015_module.s_cost_factor[36]
+            * costs_2015_module.s_cref[36]
+            * (costs_2015_module.s_k[36] / costs_2015_module.s_kref[36])
+            ** cost_variables.costexp
+        )
+
+        costs_2015_module.s_label[37] = "Divertor"
+        #  Cost of ITER divertor
+        costs_2015_module.s_cref[37] = 381.0e6
+        #  Scale with max power to SOL (MW)
+        costs_2015_module.s_k[37] = physics_variables.pdivt
+        costs_2015_module.s_kref[37] = 140.0e0
+        costs_2015_module.s_cost[37] = (
+            costs_2015_module.s_cost_factor[37]
+            * costs_2015_module.s_cref[37]
+            * (costs_2015_module.s_k[37] / costs_2015_module.s_kref[37])
+            ** cost_variables.costexp
+        )
+
+        costs_2015_module.s_label[38] = "not used"
+        costs_2015_module.s_label[39] = "not used"
+
+        costs_2015_module.s_label[
+            40
+        ] = "Ex-vessel neutral beam remote handling equipment"
+        #  Cost of ITER Ex-vessel NBI RH equipment
+        # Increased to 90 Mdollar because of press release
+        costs_2015_module.s_cref[40] = 90.0e6
+        #  Scale with total aux injected power (MW)
+        costs_2015_module.s_k[40] = current_drive_variables.pinjmw
+        costs_2015_module.s_kref[40] = 50.0e0
+        costs_2015_module.s_cost[40] = (
+            costs_2015_module.s_cost_factor[40]
+            * costs_2015_module.s_cref[40]
+            * (costs_2015_module.s_k[40] / costs_2015_module.s_kref[40])
+            ** cost_variables.costexp
+        )
+
+        costs_2015_module.s_label[41] = "not used"
+
+        costs_2015_module.s_label[42] = "Vacuum vessel pressure suppression system"
+        #  Cost of ITER Vacuum vessel pressure suppression system
+        costs_2015_module.s_cref[42] = 40.0e6
+        #  Scale with total thermal power removed from fusion core (MW)
+        costs_2015_module.s_k[42] = (
+            heat_transport_variables.pthermmw + heat_transport_variables.psechtmw
+        )
+        costs_2015_module.s_kref[42] = 550.0e0
+        costs_2015_module.s_cost[42] = (
+            costs_2015_module.s_cost_factor[42]
+            * costs_2015_module.s_cref[42]
+            * (costs_2015_module.s_k[42] / costs_2015_module.s_kref[42])
+            ** cost_variables.costexp
+        )
+
+        costs_2015_module.s_label[43] = "Cryostat"
+        #  Cost of ITER cryostat
+        costs_2015_module.s_cref[43] = 351.0e6
+        #  Scale with cryostat external volume (m3)
+        costs_2015_module.s_k[43] = (
+            (numpy.pi * fwbs_variables.rdewex**2.0e0) * 2.0e0 * fwbs_variables.zdewex
+        )
+        costs_2015_module.s_kref[43] = 18700.0e0
+        costs_2015_module.s_cost[43] = (
+            costs_2015_module.s_cost_factor[43]
+            * costs_2015_module.s_cref[43]
+            * (costs_2015_module.s_k[43] / costs_2015_module.s_kref[43])
+            ** cost_variables.costexp
+        )
+
+        costs_2015_module.s_label[44] = "Heat removal system"
+        #  Cost of ITER cooling water system
+        costs_2015_module.s_cref[44] = 724.0e6
+        #  Scale with total thermal power removed from fusion core (MW)
+        costs_2015_module.s_k[44] = (
+            heat_transport_variables.pthermmw + heat_transport_variables.psechtmw
+        )
+        costs_2015_module.s_kref[44] = 550.0e0
+        costs_2015_module.s_cost[44] = (
+            costs_2015_module.s_cost_factor[44]
+            * costs_2015_module.s_cref[44]
+            * (costs_2015_module.s_k[44] / costs_2015_module.s_kref[44])
+            ** cost_variables.costexp
+        )
+
+        costs_2015_module.s_label[45] = "Thermal shields"
+        #  Cost of ITER thermal shields
+        costs_2015_module.s_cref[45] = 126.0e6
+        #  Scale with cryostat surface area (m2)
+        costs_2015_module.s_k[45] = (
+            2.0e0 * numpy.pi * fwbs_variables.rdewex * 2.0e0 * fwbs_variables.zdewex
+            + 2 * (numpy.pi * fwbs_variables.rdewex**2)
+        )
+        costs_2015_module.s_kref[45] = 3902.0e0
+        costs_2015_module.s_cost[45] = (
+            costs_2015_module.s_cost_factor[45]
+            * costs_2015_module.s_cref[45]
+            * (costs_2015_module.s_k[45] / costs_2015_module.s_kref[45])
+            ** cost_variables.costexp
+        )
+
+        costs_2015_module.s_label[46] = "Pellet injection system"
+        #  Cost of ITER pellet injector and pellet injection system
+        costs_2015_module.s_cref[46] = 25.0e6
+        #  Scale with fusion power (MW)
+        costs_2015_module.s_k[46] = physics_variables.powfmw
+        costs_2015_module.s_kref[46] = 500.0e0
+        costs_2015_module.s_cost[46] = (
+            costs_2015_module.s_cost_factor[46]
+            * costs_2015_module.s_cref[46]
+            * (costs_2015_module.s_k[46] / costs_2015_module.s_kref[46])
+            ** cost_variables.costexp
+        )
+
+        costs_2015_module.s_label[47] = "Gas injection and wall conditioning system"
+        # #  Cost of ITER gas injection system, GDC, Gi valve boxes
+        costs_2015_module.s_cref[47] = 32.0e6
+        #  Scale with fusion power (MW)
+        costs_2015_module.s_k[47] = physics_variables.powfmw
+        costs_2015_module.s_kref[47] = 500.0e0
+        costs_2015_module.s_cost[47] = (
+            costs_2015_module.s_cost_factor[47]
+            * costs_2015_module.s_cref[47]
+            * (costs_2015_module.s_k[47] / costs_2015_module.s_kref[47])
+            ** cost_variables.costexp
+        )
+
+        costs_2015_module.s_label[48] = "Vacuum pumping"
+        #  Cost of ITER vacuum pumping
+        costs_2015_module.s_cref[48] = 201.0e6
+        #  Scale with fusion power (MW)
+        costs_2015_module.s_k[48] = physics_variables.powfmw
+        costs_2015_module.s_kref[48] = 500.0e0
+        costs_2015_module.s_cost[48] = (
+            costs_2015_module.s_cost_factor[48]
+            * costs_2015_module.s_cref[48]
+            * (costs_2015_module.s_k[48] / costs_2015_module.s_kref[48])
+            ** cost_variables.costexp
+        )
+
+        costs_2015_module.s_label[49] = "Tritium plant"
+        #  Cost of ITER tritium plant
+        costs_2015_module.s_cref[49] = 226.0e6
+        #  Scale with fusion power (MW)
+        costs_2015_module.s_k[49] = physics_variables.powfmw
+        costs_2015_module.s_kref[49] = 500.0e0
+        costs_2015_module.s_cost[49] = (
+            costs_2015_module.s_cost_factor[49]
+            * costs_2015_module.s_cref[49]
+            * (costs_2015_module.s_k[49] / costs_2015_module.s_kref[49])
+            ** cost_variables.costexp
+        )
+
+        costs_2015_module.s_label[50] = "Cryoplant and distribution"
+        #  Cost of ITER Cryoplant and distribution
+        costs_2015_module.s_cref[50] = 397.0e6
+        #  Scale with heat removal at 4.5 K approx (W)
+        costs_2015_module.s_k[50] = heat_transport_variables.helpow
+        costs_2015_module.s_kref[50] = 50000.0e0
+        costs_2015_module.s_cost[50] = (
+            costs_2015_module.s_cost_factor[50]
+            * costs_2015_module.s_cref[50]
+            * (costs_2015_module.s_k[50] / costs_2015_module.s_kref[50])
+            ** cost_variables.costexp
+        )
+
+        costs_2015_module.s_label[51] = "Electrical power supply and distribution"
+        #  Cost of ITER electrical power supply and distribution
+        costs_2015_module.s_cref[51] = 1188.0e6
+        #  Scale with total magnetic energy in the poloidal field / resistive diffusion time (W)
+        #  For ITER value see
+        #  K:\Power Plant Physics and Technology\PROCESS\PROCESS documentation papers\resistive diffusion time.xmcd or pdf
+        costs_2015_module.s_k[51] = (
+            pf_power_variables.ensxpfm * 1.0e6 / physics_variables.res_time
+        )
+        costs_2015_module.s_kref[51] = 8.0e9 / 953.0e0
+        costs_2015_module.s_cost[51] = (
+            costs_2015_module.s_cost_factor[51]
+            * costs_2015_module.s_cref[51]
+            * (costs_2015_module.s_k[51] / costs_2015_module.s_kref[51])
+            ** cost_variables.costexp
+        )
+
+        costs_2015_module.s_label[52] = "Neutral beam heating and current drive system"
+        #  Cost of ITER NB H and CD
+        costs_2015_module.s_cref[52] = 814.0e6
+        #  Scale with total auxiliary injected power (MW)
+        costs_2015_module.s_k[52] = current_drive_variables.pinjmw
+        costs_2015_module.s_kref[52] = 50.0e0
+        costs_2015_module.s_cost[52] = (
+            costs_2015_module.s_cost_factor[52]
+            * costs_2015_module.s_cref[52]
+            * (costs_2015_module.s_k[52] / costs_2015_module.s_kref[52])
+            ** cost_variables.costexp
+        )
+
+        costs_2015_module.s_label[53] = "Diagnostics systems"
+        #  Cost of ITER diagnostic systems
+        costs_2015_module.s_cref[53] = 640.0e6
+        # No scaling
+        costs_2015_module.s_cost[53] = (
+            costs_2015_module.s_cost_factor[53] * costs_2015_module.s_cref[53]
+        )
+
+        costs_2015_module.s_label[54] = "Radiological protection"
+        #  Cost of ITER radiological protection
+        costs_2015_module.s_cref[54] = 19.0e6
+        #  Scale with fusion power (MW)
+        costs_2015_module.s_k[54] = physics_variables.powfmw
+        costs_2015_module.s_kref[54] = 500.0e0
+        costs_2015_module.s_cost[54] = (
+            costs_2015_module.s_cost_factor[54]
+            * costs_2015_module.s_cref[54]
+            * (costs_2015_module.s_k[54] / costs_2015_module.s_kref[54])
+            ** cost_variables.costexp
+        )
+
+        costs_2015_module.s_label[55] = "Access control and security systems"
+        #  Cost of ITER access control and security systems
+        #  Scale with area of cryostat (m2)
+        costs_2015_module.s_k[55] = numpy.pi * fwbs_variables.rdewex**2
+        costs_2015_module.s_kref[55] = 640.0e0
+        costs_2015_module.s_cref[55] = 42.0e6
+        costs_2015_module.s_cost[55] = (
+            costs_2015_module.s_cost_factor[55]
+            * costs_2015_module.s_cref[55]
+            * (costs_2015_module.s_k[55] / costs_2015_module.s_kref[55])
+            ** cost_variables.costexp
+        )
+
+        costs_2015_module.s_label[56] = "Assembly"
+        #  Cost of ITER assembly
+        costs_2015_module.s_cref[56] = 732.0e6
+        #  Scale with total cost of reactor items (cryostat and everything inside it)
+        costs_2015_module.s_k[56] = (
+            costs_2015_module.s_cost[20]
+            + costs_2015_module.s_cost[26]
+            + costs_2015_module.s_cost[31]
+            + costs_2015_module.s_cost[35]
+            + costs_2015_module.s_cost[36]
+            + costs_2015_module.s_cost[37]
+            + costs_2015_module.s_cost[43]
+            + costs_2015_module.s_cost[45]
+            + costs_2015_module.s_cost[48]
+        )
+        costs_2015_module.s_kref[56] = (
+            costs_2015_module.s_cref[20]
+            + costs_2015_module.s_cref[26]
+            + costs_2015_module.s_cref[31]
+            + costs_2015_module.s_cref[35]
+            + costs_2015_module.s_cref[36]
+            + costs_2015_module.s_cref[37]
+            + costs_2015_module.s_cref[43]
+            + costs_2015_module.s_cref[45]
+            + costs_2015_module.s_cref[48]
+        )
+        costs_2015_module.s_cost[56] = (
+            costs_2015_module.s_cost_factor[56]
+            * costs_2015_module.s_cref[56]
+            * (costs_2015_module.s_k[56] / costs_2015_module.s_kref[56])
+        )
+
+        costs_2015_module.s_label[57] = "Control and communication"
+        #  Cost of ITER control and data access and communication
+        costs_2015_module.s_cref[57] = 219.0e6
+        #  Scale with total cost of reactor items (cryostat and everythign inside it)
+        costs_2015_module.s_k[57] = (
+            costs_2015_module.s_cost[20]
+            + costs_2015_module.s_cost[26]
+            + costs_2015_module.s_cost[31]
+            + costs_2015_module.s_cost[35]
+            + costs_2015_module.s_cost[36]
+            + costs_2015_module.s_cost[37]
+            + costs_2015_module.s_cost[43]
+            + costs_2015_module.s_cost[45]
+            + costs_2015_module.s_cost[48]
+        )
+        costs_2015_module.s_kref[57] = (
+            costs_2015_module.s_cref[20]
+            + costs_2015_module.s_cref[26]
+            + costs_2015_module.s_cref[31]
+            + costs_2015_module.s_cref[35]
+            + costs_2015_module.s_cref[36]
+            + costs_2015_module.s_cref[37]
+            + costs_2015_module.s_cref[43]
+            + costs_2015_module.s_cref[45]
+            + costs_2015_module.s_cref[48]
+        )
+        costs_2015_module.s_cost[57] = (
+            costs_2015_module.s_cost_factor[57]
+            * costs_2015_module.s_cref[57]
+            * (costs_2015_module.s_k[57] / costs_2015_module.s_kref[57])
+            ** cost_variables.costexp
+        )
+
+        costs_2015_module.s_label[58] = "Additional project expenditure"
+        #  Cost of ITER additional ITER IO expenditure
+        costs_2015_module.s_cref[58] = 1624.0e6
+        costs_2015_module.s_cost[58] = (
+            costs_2015_module.s_cost_factor[58] * costs_2015_module.s_cref[58]
+        )
+
+        # Calculate miscellaneous costs
+        costs_2015_module.s_label[59] = "Logistics"
+        costs_2015_module.s_cref[59] = 129.0e6
+        #  Scale with cryostat external volume (m)
+        costs_2015_module.s_k[59] = (
+            numpy.pi * fwbs_variables.rdewex**2 * 2.0e0 * fwbs_variables.zdewex
+        )
+        costs_2015_module.s_kref[59] = 18700.0e0
+        costs_2015_module.s_cost[59] = (
+            costs_2015_module.s_cost_factor[59]
+            * costs_2015_module.s_cref[59]
+            * (costs_2015_module.s_k[59] / costs_2015_module.s_kref[59])
+            ** cost_variables.costexp
+        )
+
+        costs_2015_module.s_label[60] = "Total remaining subsystem costs"
+        costs_2015_module.s_cost[60] = 0.0e0
+        for j in range(35, 60):
+            costs_2015_module.s_cost[60] = (
+                costs_2015_module.s_cost[60] + costs_2015_module.s_cost[j]
+            )
+
+    def value_function(self, x):
+        """
+        Value function
+        author: J Morris, CCFE, Culham Science Centre
+        None
+        Function for separative work unit calculation for enrichment cost
+        PROCESS Costs Paper (M. Kovari, J. Morris)
+        """
+        return (1.0e0 - 2.0e0 * x) * numpy.log((1.0e0 - x) / x)
+
+    def ocost(self, file, descr, vname, value):
+        """
+        Routine to print out the code, description and value
+        of a cost item from array s in costs_2015
+        """
+
+        #  Local variables
+        # character(len=70) :: dum70
+
+        if descr == "not used":
+            return
+
+        #  Replace descr with dummy string of the correct length.
+        #       dum70 = descr
+        #       write(file,10) dum70, value, ' '
+        # 10    format(1x,a,t73,f10.0, tl1, a)
+
+        # Create variable name of format s + array entry
+        print(f"(s {vname} )")
+
+        po.ovarrf(constants.mfile, descr, vname, value)
+
+    def ocost_vname(self, file, descr, vname, value):
+        """
+        Routine to print out the code, description and value
+        of a cost item not in the array s in costs_2015
+        """
+
+        # character(len=70) :: dum70
+
+        if descr == "not used":
+            return
+
+        #  Replace descr with dummy string of the correct length.
+        #       dum70 = descr
+        #       write(file,10) dum70, value, ' '
+        # 10    format(1x,a,t73,f10.0, tl1, a)
+
+        po.ovarrf(constants.mfile, descr, vname, value)
