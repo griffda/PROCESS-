@@ -1141,9 +1141,9 @@ class PFCoil:
         # Radius of turn space = pfv.r_in_cst
         # Radius of curved outer corrner pfv.r_out_cst = 3mm from literature
         # pfv.ld_ratio_cst = 70 / 22 from literature
-        p1_cst = ( ( pfv.l_cond_cst - pfv.d_cond_cst ) / pi )**2
-        p2_cst = ((( pfv.l_cond_cst * pfv.d_cond_cst ) - ( 4-pi )*( pfv.r_out_cst**2 ) -  ( pfv.a_oh_turn * pfv.oh_steel_frac ) ) / pi)
-        pfv.r_in_cst = - ( ( pfv.l_cond_cst-pfv.d_cond_cst )/pi ) + sqrt(p1_cst+p2_cst)
+        p1_cst = ( ( pfv.l_cond_cst - pfv.d_cond_cst ) / constants.pi )**2
+        p2_cst = ((( pfv.l_cond_cst * pfv.d_cond_cst ) - ( 4-constants.pi )*( pfv.r_out_cst**2 ) -  ( pfv.a_oh_turn * pfv.oh_steel_frac ) ) / constants.pi)
+        pfv.r_in_cst = - ( ( pfv.l_cond_cst-pfv.d_cond_cst )/constants.pi ) + math.sqrt(p1_cst+p2_cst)
         # Thickness of steel conduit in cs turn
         pfv.t_structural_radial = (pfv.d_cond_cst/2) - pfv.r_in_cst
         # In this model the vertical and radial have the same thickness 
