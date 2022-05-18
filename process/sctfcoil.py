@@ -15,6 +15,7 @@ from process.fortran import error_handling
 from process.fortran import fwbs_variables
 from process.fortran import pfcoil_variables
 from process.fortran import maths_library
+from process.fortran import numerics
 
 from process.utilities.f2py_string_patch import f2py_compatible_to_string
 
@@ -1253,7 +1254,7 @@ class Sctfcoil:
         )
 
         if output:
-            sctfcoil_module.outtf(self.outfile, peaktfflag)
+            self.outtf(peaktfflag)
 
     def protect(self, aio, tfes, acs, aturn, tdump, fcond, fcu, tba, tmax):
         """Finds the current density limited by the protection limit
@@ -4457,3 +4458,1337 @@ class Sctfcoil:
                 )
 
         return sigr, sigt, r_deflect, rradius
+
+    def outtf(self, peaktfflag):
+        """Writes superconducting TF coil output to file
+        author: P J Knight, CCFE, Culham Science Centre
+        outfile : input integer : output file unit
+        peaktfflag : input integer : warning flag from peak TF calculation
+        This routine writes the superconducting TF coil results
+        to the output file.
+        PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
+        """
+
+        # General coil parameters
+        po.osubhd(self.outfile, "TF design")
+        po.ovarin(
+            self.outfile,
+            "Conductor technology",
+            "(i_tf_sup)",
+            tfcoil_variables.i_tf_sup,
+        )
+
+        if tfcoil_variables.i_tf_sup == 0:
+            po.ocmmnt(
+                self.outfile, "  -> Resitive coil : Water cooled copper (GLIDCOP AL-15)"
+            )
+        elif tfcoil_variables.i_tf_sup == 1:
+            po.ocmmnt(self.outfile, "  -> Superconducting coil (SC)")
+        elif tfcoil_variables.i_tf_sup == 2:
+            po.ocmmnt(self.outfile, "  -> Reisitive coil : Helium cooled aluminium")
+
+        # SC material scaling
+        if tfcoil_variables.i_tf_sup == 1:
+            po.ovarin(
+                self.outfile,
+                "Superconductor material",
+                "(i_tf_sc_mat)",
+                tfcoil_variables.i_tf_sc_mat,
+            )
+
+            if tfcoil_variables.i_tf_sc_mat == 1:
+                po.ocmmnt(self.outfile, "  -> ITER Nb3Sn critical surface model")
+            elif tfcoil_variables.i_tf_sc_mat == 2:
+                po.ocmmnt(self.outfile, "  -> Bi-2212 high temperature superconductor")
+            elif tfcoil_variables.i_tf_sc_mat == 3:
+                po.ocmmnt(self.outfile, "  -> NbTi")
+            elif tfcoil_variables.i_tf_sc_mat == 4:
+                po.ocmmnt(
+                    self.outfile,
+                    "  -> ITER Nb3Sn critical surface model, user-defined parameters",
+                )
+            elif tfcoil_variables.i_tf_sc_mat == 5:
+                po.ocmmnt(self.outfile, "  -> WST Nb3Sn")
+            elif tfcoil_variables.i_tf_sc_mat == 6:
+                po.ocmmnt(
+                    self.outfile,
+                    "  -> High temperature superconductor: REBCO HTS tape in CroCo strand",
+                )
+            elif tfcoil_variables.i_tf_sc_mat == 7:
+                po.ocmmnt(
+                    self.outfile,
+                    "  ->  Durham Ginzburg-Landau critical surface model for Nb-Ti",
+                )
+            elif tfcoil_variables.i_tf_sc_mat == 8:
+                po.ocmmnt(
+                    self.outfile,
+                    "  ->  Durham Ginzburg-Landau critical surface model for REBCO",
+                )
+            elif tfcoil_variables.i_tf_sc_mat == 9:
+                po.ocmmnt(
+                    self.outfile,
+                    "  ->  Hazelton experimental data + Zhai conceptual model for REBCO",
+                )
+
+        # Joints strategy
+        po.ovarin(
+            self.outfile,
+            "Presence of TF demountable joints",
+            "(itart)",
+            physics_variables.itart,
+        )
+        if physics_variables.itart == 1:
+            po.ocmmnt(
+                self.outfile, "  -> TF coil made of a Centerpost (CP) and outer legs"
+            )
+            po.ocmmnt(self.outfile, "     interfaced with demountable joints")
+        else:
+            po.ocmmnt(self.outfile, "  -> Coils without demountable joints")
+
+        # Centring forces support strategy
+        po.ovarin(
+            self.outfile,
+            "TF inboard leg support strategy",
+            "(i_tf_bucking)",
+            tfcoil_variables.i_tf_bucking,
+        )
+
+        if tfcoil_variables.i_tf_bucking == 0:
+            po.ocmmnt(self.outfile, "  -> No support structure")
+        elif tfcoil_variables.i_tf_bucking == 1:
+            if tfcoil_variables.i_tf_sup == 1:
+                po.ocmmnt(self.outfile, "  -> Steel casing")
+            elif (
+                abs(tfcoil_variables.eyoung_res_tf_buck - 205.0e9)
+                < numpy.finfo(float(tfcoil_variables.eyoung_res_tf_buck)).eps
+            ):
+                po.ocmmnt(self.outfile, "  -> Steel bucking cylinder")
+            else:
+                po.ocmmnt(self.outfile, "  -> Bucking cylinder")
+
+        elif tfcoil_variables.i_tf_bucking in (2, 3):
+            po.ocmmnt(
+                self.outfile, "  -> TF in contact with CS (bucked and weged design)"
+            )
+
+        # TF coil geometry
+        po.osubhd(self.outfile, "TF coil Geometry :")
+        po.ovarin(
+            self.outfile, "Number of TF coils", "(n_tf)", int(tfcoil_variables.n_tf)
+        )
+        po.ovarre(
+            self.outfile,
+            "Inboard leg centre radius (m)",
+            "(r_tf_inboard_mid)",
+            build_variables.r_tf_inboard_mid,
+            "OP ",
+        )
+        po.ovarre(
+            self.outfile,
+            "Outboard leg centre radius (m)",
+            "(r_tf_outboard_mid)",
+            build_variables.r_tf_outboard_mid,
+            "OP ",
+        )
+        po.ovarre(
+            self.outfile,
+            "Total inboard leg radial thickness (m)",
+            "(tfcth)",
+            build_variables.tfcth,
+        )
+        po.ovarre(
+            self.outfile,
+            "Total outboard leg radial thickness (m)",
+            "(tfthko)",
+            build_variables.tfthko,
+        )
+        po.ovarre(
+            self.outfile,
+            "Outboard leg toroidal thickness (m)",
+            "(tftort)",
+            tfcoil_variables.tftort,
+            "OP ",
+        )
+        po.ovarre(
+            self.outfile,
+            "Maximum inboard edge height (m)",
+            "(hmax)",
+            build_variables.hmax,
+            "OP ",
+        )
+        if physics_variables.itart == 1:
+            po.ovarre(
+                self.outfile,
+                "Mean coil circumference (inboard leg not included) (m)",
+                "(tfleng)",
+                tfcoil_variables.tfleng,
+                "OP ",
+            )
+            po.ovarre(
+                self.outfile,
+                "Length of the inboard segment (m)",
+                "(cplen)",
+                tfcoil_variables.cplen,
+                "OP ",
+            )
+        else:
+            po.ovarre(
+                self.outfile,
+                "Mean coil circumference (including inboard leg length) (m)",
+                "(tfleng)",
+                tfcoil_variables.tfleng,
+                "OP ",
+            )
+
+        # Vertical shape
+        po.ovarin(
+            self.outfile,
+            "Vertical TF shape",
+            "(i_tf_shape)",
+            tfcoil_variables.i_tf_shape,
+        )
+        if tfcoil_variables.i_tf_shape == 1:
+            po.oblnkl(self.outfile)
+            po.ocmmnt(self.outfile, "D-shape coil, inner surface shape approximated by")
+            po.ocmmnt(
+                self.outfile,
+                "by a straight segment and elliptical arcs between the following points:",
+            )
+            po.oblnkl(self.outfile)
+        elif tfcoil_variables.i_tf_shape == 2:
+            po.oblnkl(self.outfile)
+            po.ocmmnt(self.outfile, "Picture frame coil, inner surface approximated by")
+            po.ocmmnt(
+                self.outfile, "by a straight segment between the following points:"
+            )
+            po.oblnkl(self.outfile)
+
+        po.write(self.outfile, "  point              x(m)              y(m)")
+        for ii in range(5):
+            po.write(
+                self.outfile,
+                f"  {ii}              {tfcoil_variables.xarc[ii]}              {tfcoil_variables.yarc[ii]}",
+            )
+            po.ovarre(
+                constants.mfile,
+                f"TF coil arc point {ii} R (m)",
+                f"(tfcoil_variables.xarc({ii}))",
+                tfcoil_variables.xarc[ii],
+            )
+            po.ovarre(
+                constants.mfile,
+                f"TF coil arc point {ii} Z (m)",
+                f"(tfcoil_variables.yarc({ii}))",
+                tfcoil_variables.yarc[ii],
+            )
+
+        # CP tapering geometry
+        if physics_variables.itart == 1 and tfcoil_variables.i_tf_sup != 1:
+            po.osubhd(self.outfile, "Tapered Centrepost TF coil Dimensions:")
+            po.ovarre(
+                self.outfile,
+                "TF coil centrepost outer radius at midplane (m)",
+                "(r_tf_inboard_out)",
+                build_variables.r_tf_inboard_out,
+            )
+            po.ovarre(
+                self.outfile,
+                "TF coil centrepost outer radius at its top (m)",
+                "(r_cp_top)",
+                build_variables.r_cp_top,
+            )
+            po.ovarre(
+                self.outfile,
+                "Top/miplane TF CP radius ratio (-)",
+                "(f_r_cp)",
+                build_variables.f_r_cp,
+            )
+            po.ovarre(
+                self.outfile,
+                "Distance from the midplane to the top of the tapered section (m)",
+                "(h_cp_top)",
+                sctfcoil_module.h_cp_top,
+            )
+            po.ovarre(
+                self.outfile,
+                "Distance from the midplane to the top of the centrepost (m)",
+                "(hmax + tfthko)",
+                build_variables.hmax + build_variables.tfthko,
+            )
+
+        # Turn/WP gemoetry
+        if tfcoil_variables.i_tf_sup == 1:
+
+            # Total material fraction
+            po.osubhd(self.outfile, "Global material area/fractions:")
+            po.ovarre(
+                self.outfile,
+                "TF cross-section (total) (m2)",
+                "(tfareain)",
+                tfcoil_variables.tfareain,
+            )
+            po.ovarre(
+                self.outfile,
+                "Total steel cross-section (m2)",
+                "(a_tf_steel*n_tf)",
+                sctfcoil_module.a_tf_steel * tfcoil_variables.n_tf,
+            )
+            po.ovarre(
+                self.outfile,
+                "Total steel TF fraction",
+                "(f_tf_steel)",
+                sctfcoil_module.f_tf_steel,
+            )
+            po.ovarre(
+                self.outfile,
+                "Total Insulation cross-section (total) (m2)",
+                "(a_tf_ins*n_tf)",
+                sctfcoil_module.a_tf_ins * tfcoil_variables.n_tf,
+            )
+            po.ovarre(
+                self.outfile,
+                "Total Insulation fraction",
+                "(f_tf_ins)",
+                sctfcoil_module.f_tf_ins,
+            )
+
+            # External casing
+            po.osubhd(self.outfile, "External steel Case Information :")
+            po.ovarre(
+                self.outfile,
+                "Casing cross section area (per leg) (m2)",
+                "(acasetf)",
+                tfcoil_variables.acasetf,
+            )
+            po.ovarre(
+                self.outfile,
+                "Inboard leg case plasma side wall thickness (m)",
+                "(casthi)",
+                tfcoil_variables.casthi,
+            )
+            po.ovarre(
+                self.outfile,
+                'Inboard leg case inboard "nose" thickness (m)',
+                "(thkcas)",
+                tfcoil_variables.thkcas,
+            )
+            po.ovarre(
+                self.outfile,
+                "Inboard leg case sidewall thickness at its narrowest point (m)",
+                "(casths)",
+                tfcoil_variables.casths,
+            )
+            po.ovarre(
+                self.outfile,
+                "External case mass per coil (kg)",
+                "(whtcas)",
+                tfcoil_variables.whtcas,
+                "OP ",
+            )
+
+            # Winding pack structure
+            po.osubhd(self.outfile, "TF winding pack (WP) geometry:")
+            po.ovarre(
+                self.outfile,
+                "WP cross section area with insulation and insertion (per coil) (m2)",
+                "(awpc)",
+                sctfcoil_module.awpc,
+            )
+            po.ovarre(
+                self.outfile,
+                "WP cross section area (per coil) (m2)",
+                "(aswp)",
+                sctfcoil_module.awptf,
+            )
+            po.ovarre(
+                self.outfile,
+                "Winding pack radial thickness (m)",
+                "(dr_tf_wp)",
+                tfcoil_variables.dr_tf_wp,
+                "OP ",
+            )
+            if tfcoil_variables.i_tf_turns_integer == 1:
+                po.ovarre(
+                    self.outfile,
+                    "Winding pack toroidal width (m)",
+                    "(wwp1)",
+                    tfcoil_variables.wwp1,
+                    "OP ",
+                )
+            else:
+                po.ovarre(
+                    self.outfile,
+                    "Winding pack toroidal width 1 (m)",
+                    "(wwp1)",
+                    tfcoil_variables.wwp1,
+                    "OP ",
+                )
+                po.ovarre(
+                    self.outfile,
+                    "Winding pack toroidal width 2 (m)",
+                    "(wwp2)",
+                    tfcoil_variables.wwp2,
+                    "OP ",
+                )
+
+            po.ovarre(
+                self.outfile,
+                "Ground wall insulation thickness (m)",
+                "(tinstf)",
+                tfcoil_variables.tinstf,
+            )
+            po.ovarre(
+                self.outfile,
+                "Winding pack insertion gap (m)",
+                "(tfinsgap)",
+                tfcoil_variables.tfinsgap,
+            )
+
+            # WP material fraction
+            po.osubhd(self.outfile, "TF winding pack (WP) material area/fractions:")
+            po.ovarre(
+                self.outfile,
+                "Steel WP cross-section (total) (m2)",
+                "(aswp*n_tf)",
+                tfcoil_variables.aswp * tfcoil_variables.n_tf,
+            )
+            po.ovarre(
+                self.outfile,
+                "Steel WP fraction",
+                "(aswp/awpc)",
+                tfcoil_variables.aswp / sctfcoil_module.awpc,
+            )
+            po.ovarre(
+                self.outfile,
+                "Insulation WP fraction",
+                "(aiwp/awpc)",
+                tfcoil_variables.aiwp / sctfcoil_module.awpc,
+            )
+            po.ovarre(
+                self.outfile,
+                "Cable WP fraction",
+                "((awpc-aswp-aiwp)/awpc)",
+                (sctfcoil_module.awpc - tfcoil_variables.aswp - tfcoil_variables.aiwp)
+                / sctfcoil_module.awpc,
+            )
+
+            # Number of turns
+            po.osubhd(self.outfile, "WP turn information:")
+            po.ovarin(
+                self.outfile,
+                "Turn parametrisation",
+                "(i_tf_turns_integer)",
+                tfcoil_variables.i_tf_turns_integer,
+            )
+            if tfcoil_variables.i_tf_turns_integer == 0:
+                po.ocmmnt(self.outfile, "  Non-integer number of turns")
+            else:
+                po.ocmmnt(self.outfile, "  Integer number of turns")
+
+            po.ovarre(
+                self.outfile,
+                "Number of turns per TF coil",
+                "(n_tf_turn)",
+                tfcoil_variables.n_tf_turn,
+                "OP ",
+            )
+            if tfcoil_variables.i_tf_turns_integer == 1:
+                po.ovarin(
+                    self.outfile,
+                    "Number of TF pancakes",
+                    "(n_pancake)",
+                    tfcoil_variables.n_pancake,
+                )
+                po.ovarin(
+                    self.outfile,
+                    "Number of TF layers",
+                    "(n_layer)",
+                    tfcoil_variables.n_layer,
+                )
+
+            po.oblnkl(self.outfile)
+
+            if tfcoil_variables.i_tf_turns_integer == 1:
+                po.ovarre(
+                    self.outfile,
+                    "Radial width of turn (m)",
+                    "(t_turn_radial)",
+                    sctfcoil_module.t_turn_radial,
+                )
+                po.ovarre(
+                    self.outfile,
+                    "Toroidal width of turn (m)",
+                    "(t_turn_toroidal)",
+                    sctfcoil_module.t_turn_toroidal,
+                )
+                po.ovarre(
+                    self.outfile,
+                    "Radial width of conductor (m)",
+                    "(elonductor_radial)",
+                    sctfcoil_module.t_conductor_radial,
+                    "OP ",
+                )
+                po.ovarre(
+                    self.outfile,
+                    "Toroidal width of conductor (m)",
+                    "(t_conductor_toroidal)",
+                    sctfcoil_module.t_conductor_toroidal,
+                    "OP ",
+                )
+                po.ovarre(
+                    self.outfile,
+                    "Radial width of cable space",
+                    "(t_cable_radial)",
+                    sctfcoil_module.t_cable_radial,
+                )
+                po.ovarre(
+                    self.outfile,
+                    "Toroidal width of cable space",
+                    "(t_cable_toroidal)",
+                    sctfcoil_module.t_cable_toroidal,
+                )
+            else:
+                po.ovarre(
+                    self.outfile,
+                    "Width of turn including inter-turn insulation (m)",
+                    "(t_turn_tf)",
+                    tfcoil_variables.t_turn_tf,
+                    "OP ",
+                )
+                po.ovarre(
+                    self.outfile,
+                    "Width of conductor (square) (m)",
+                    "(t_conductor)",
+                    tfcoil_variables.t_conductor,
+                    "OP ",
+                )
+                po.ovarre(
+                    self.outfile,
+                    "Width of space inside conductor (m)",
+                    "(t_cable)",
+                    sctfcoil_module.t_cable,
+                    "OP ",
+                )
+
+            po.ovarre(
+                self.outfile,
+                "Steel conduit thickness (m)",
+                "(thwcndut)",
+                tfcoil_variables.thwcndut,
+            )
+            po.ovarre(
+                self.outfile,
+                "Inter-turn insulation thickness (m)",
+                "(thicndut)",
+                tfcoil_variables.thicndut,
+            )
+
+            if tfcoil_variables.i_tf_sc_mat in (1, 2, 3, 4, 5, 7, 8, 9):
+                po.osubhd(self.outfile, "Conductor information:")
+                po.ovarre(
+                    self.outfile,
+                    "Diameter of central helium channel in cable",
+                    "(dhecoil)",
+                    tfcoil_variables.dhecoil,
+                )
+                po.ocmmnt(self.outfile, "Fractions by area")
+                po.ovarre(
+                    self.outfile,
+                    "internal area of the cable space",
+                    "(acstf)",
+                    tfcoil_variables.acstf,
+                )
+                po.ovarre(
+                    self.outfile,
+                    "Coolant fraction in conductor excluding central channel",
+                    "(vftf)",
+                    tfcoil_variables.vftf,
+                )
+                po.ovarre(
+                    self.outfile,
+                    "Copper fraction of conductor",
+                    "(fcutfsu)",
+                    tfcoil_variables.fcutfsu,
+                )
+                po.ovarre(
+                    self.outfile,
+                    "Superconductor fraction of conductor",
+                    "(1-tfcoil_variables.fcutfsu)",
+                    1 - tfcoil_variables.fcutfsu,
+                )
+                # TODO
+                # po.ovarre(self.outfile,'Conductor fraction of winding pack','(tfcoil_variables.acond/ap)',acond/ap, 'OP ')
+                # po.ovarre(self.outfile,'Conduit fraction of winding pack','(tfcoil_variables.n_tf_turn*tfcoil_variables.acndttf/ap)',n_tf_turn*tfcoil_variables.acndttf/ap, 'OP ')
+                # po.ovarre(self.outfile,'Insulator fraction of winding pack','(tfcoil_variables.aiwp/ap)',aiwp/ap, 'OP ')
+                # po.ovarre(self.outfile,'Helium area fraction of winding pack excluding central channel','(tfcoil_variables.avwp/ap)',avwp/ap, 'OP ')
+                # po.ovarre(self.outfile,'Central helium channel area as fraction of winding pack','(tfcoil_variables.awphec/ap)',awphec/ap, 'OP ')
+                ap = (
+                    tfcoil_variables.acond
+                    + tfcoil_variables.n_tf_turn * tfcoil_variables.acndttf
+                    + tfcoil_variables.aiwp
+                    + tfcoil_variables.avwp
+                    + tfcoil_variables.awphec
+                )
+                po.ovarrf(
+                    self.outfile,
+                    "Check total area fractions in winding pack = 1",
+                    "",
+                    (
+                        tfcoil_variables.acond
+                        + tfcoil_variables.n_tf_turn * tfcoil_variables.acndttf
+                        + tfcoil_variables.aiwp
+                        + tfcoil_variables.avwp
+                        + tfcoil_variables.awphec
+                    )
+                    / ap,
+                )
+                po.ovarrf(
+                    self.outfile,
+                    "minimum TF conductor temperature margin  (K)",
+                    "(tmargmin_tf)",
+                    tfcoil_variables.tmargmin_tf,
+                )
+                po.ovarrf(
+                    self.outfile,
+                    "TF conductor temperature margin (K)",
+                    "(tmargtf)",
+                    tfcoil_variables.tmargtf,
+                )
+
+                po.ovarin(
+                    self.outfile,
+                    "Elastic properties behavior",
+                    "(i_tf_cond_eyoung_axial)",
+                    tfcoil_variables.i_tf_cond_eyoung_axial,
+                )
+                if tfcoil_variables.i_tf_cond_eyoung_axial == 0:
+                    po.ocmmnt(self.outfile, "  Conductor stiffness neglected")
+                elif tfcoil_variables.i_tf_cond_eyoung_axial == 1:
+                    po.ocmmnt(self.outfile, "  Conductor stiffness is user-input")
+                elif tfcoil_variables.i_tf_cond_eyoung_axial == 2:
+                    po.ocmmnt(
+                        self.outfile,
+                        "  Conductor stiffness is set by material-specific default",
+                    )
+
+                po.ovarre(
+                    self.outfile,
+                    "Conductor axial Young" "s modulus",
+                    "(eyoung_cond_axial)",
+                    tfcoil_variables.eyoung_cond_axial,
+                )
+                po.ovarre(
+                    self.outfile,
+                    "Conductor transverse Young" "s modulus",
+                    "(eyoung_cond_trans)",
+                    tfcoil_variables.eyoung_cond_trans,
+                )
+        else:
+
+            # External casing
+            po.osubhd(self.outfile, "Bucking cylinder information:")
+            po.ovarre(
+                self.outfile,
+                "Casing cross section area (per leg) (m2)",
+                "(acasetf)",
+                tfcoil_variables.acasetf,
+            )
+            po.ovarre(
+                self.outfile,
+                "Inboard leg case plasma side wall thickness (m)",
+                "(casthi)",
+                tfcoil_variables.casthi,
+            )
+            po.ovarre(
+                self.outfile,
+                "Inboard leg bucking cylinder thickness (m)",
+                "(thkcas)",
+                tfcoil_variables.thkcas,
+            )
+
+            # Conductor layer geometry
+            po.osubhd(self.outfile, "Inboard TFC conductor sector geometry:")
+            po.ovarre(
+                self.outfile,
+                "Inboard TFC conductor sector area with gr insulation (per leg) (m2)",
+                "(awpc)",
+                sctfcoil_module.awpc,
+            )
+            po.ovarre(
+                self.outfile,
+                "Inboard TFC conductor sector area, NO ground & gap (per leg) (m2)",
+                "(awptf)",
+                sctfcoil_module.awptf,
+            )
+            po.ovarre(
+                self.outfile,
+                "Inboard conductor sector radial thickness (m)",
+                "(dr_tf_wp)",
+                tfcoil_variables.dr_tf_wp,
+            )
+            if physics_variables.itart == 1:
+                po.ovarre(
+                    self.outfile,
+                    "Central collumn top conductor sector radial thickness (m)",
+                    "(dr_tf_wp_top)",
+                    sctfcoil_module.dr_tf_wp_top,
+                )
+
+            po.ovarre(
+                self.outfile,
+                "Ground wall insulation thickness (m)",
+                "(tinstf)",
+                tfcoil_variables.tinstf,
+            )
+            # Turn info
+            po.osubhd(self.outfile, "Coil turn information:")
+            po.ovarre(
+                self.outfile,
+                "Number of turns per TF leg",
+                "(n_tf_turn)",
+                tfcoil_variables.n_tf_turn,
+            )
+            po.ovarre(
+                self.outfile,
+                "Turn insulation thickness",
+                "(thicndut)",
+                tfcoil_variables.thicndut,
+            )
+            po.ovarre(
+                self.outfile,
+                "Mid-plane CP cooling fraction",
+                "(fcoolcp)",
+                tfcoil_variables.fcoolcp,
+            )
+            po.ovarre(
+                self.outfile,
+                "Outboard leg current per turn (A)",
+                "(cpttf)",
+                tfcoil_variables.cpttf,
+            )
+            po.ovarre(
+                self.outfile,
+                "Inboard leg conductor volume (m3)",
+                "(vol_cond_cp)",
+                tfcoil_variables.vol_cond_cp,
+            )
+            po.ovarre(
+                self.outfile,
+                "Outboard leg volume per coil (m3)",
+                "(voltfleg)",
+                tfcoil_variables.voltfleg,
+            )
+
+        # Coil masses
+        po.osubhd(self.outfile, "TF coil mass:")
+        po.ovarre(
+            self.outfile,
+            "Superconductor mass per coil (kg)",
+            "(whtconsc)",
+            tfcoil_variables.whtconsc,
+            "OP ",
+        )
+        po.ovarre(
+            self.outfile,
+            "Copper mass per coil (kg)",
+            "(whtconcu)",
+            tfcoil_variables.whtconcu,
+            "OP ",
+        )
+        po.ovarre(
+            self.outfile,
+            "Steel conduit mass per coil (kg)",
+            "(whtconsh)",
+            tfcoil_variables.whtconsh,
+            "OP ",
+        )
+        po.ovarre(
+            self.outfile,
+            "Conduit insulation mass per coil (kg)",
+            "(whtconin)",
+            tfcoil_variables.whtconin,
+            "OP ",
+        )
+        if tfcoil_variables.i_tf_sup == 1:
+            po.ovarre(
+                self.outfile,
+                "Total conduit mass per coil (kg)",
+                "(whtcon)",
+                tfcoil_variables.whtcon,
+                "OP ",
+            )
+
+        if physics_variables.itart == 1:
+            po.ovarre(
+                self.outfile,
+                "Mass of inboard legs (kg)",
+                "(whtcp)",
+                tfcoil_variables.whtcp,
+                "OP ",
+            )
+            po.ovarre(
+                self.outfile,
+                "Mass of outboard legs (kg)",
+                "(whttflgs)",
+                tfcoil_variables.whttflgs,
+                "OP ",
+            )
+
+        po.ovarre(
+            self.outfile,
+            "Mass of each TF coil (kg)",
+            "(whttf/n_tf)",
+            tfcoil_variables.whttf / tfcoil_variables.n_tf,
+            "OP ",
+        )
+        po.ovarre(
+            self.outfile,
+            "Total TF coil mass (kg)",
+            "(whttf)",
+            tfcoil_variables.whttf,
+            "OP ",
+        )
+
+        # TF current and field
+        po.osubhd(self.outfile, "Maximum B field and currents:")
+        po.ovarre(
+            self.outfile,
+            "Nominal peak field assuming toroidal symmetry (T)",
+            "(bmaxtf)",
+            tfcoil_variables.bmaxtf,
+            "OP ",
+        )
+        po.ovarre(
+            self.outfile,
+            "Total current in all TF coils (MA)",
+            "(ritfc/1.D6)",
+            1.0e-6 * tfcoil_variables.ritfc,
+            "OP ",
+        )
+        po.ovarre(
+            self.outfile,
+            "TF coil current (summed over all coils) (A)",
+            "(ritfc)",
+            tfcoil_variables.ritfc,
+        )
+        if tfcoil_variables.i_tf_sup == 1:
+            po.ovarre(
+                self.outfile,
+                "Actual peak field at discrete conductor (T)",
+                "(bmaxtfrp)",
+                tfcoil_variables.bmaxtfrp,
+                "OP ",
+            )
+            po.ovarre(
+                self.outfile,
+                "Winding pack current density (A/m2)",
+                "(jwptf)",
+                tfcoil_variables.jwptf,
+                "OP ",
+            )
+
+        po.ovarre(
+            self.outfile,
+            "Inboard leg mid-plane conductor current density (A/m2)",
+            "(oacdcp)",
+            tfcoil_variables.oacdcp,
+        )
+        if physics_variables.itart == 1:
+            po.ovarre(
+                self.outfile,
+                "Outboard leg conductor current density (A/m2)",
+                "(cdtfleg)",
+                tfcoil_variables.cdtfleg,
+            )
+
+        po.ovarre(
+            self.outfile,
+            "Total stored energy in TF coils (GJ)",
+            "(estotftgj)",
+            tfcoil_variables.estotftgj,
+            "OP ",
+        )
+
+        # TF forces
+        po.osubhd(self.outfile, "TF Forces:")
+        po.ovarre(
+            self.outfile,
+            "Inboard vertical tension per coil (N)",
+            "(vforce)",
+            tfcoil_variables.vforce,
+            "OP ",
+        )
+        po.ovarre(
+            self.outfile,
+            "Outboard vertical tension per coil (N)",
+            "(vforce_outboard)",
+            tfcoil_variables.vforce_outboard,
+            "OP ",
+        )
+        po.ovarre(
+            self.outfile,
+            "inboard vertical tension fraction (-)",
+            "(f_vforce_inboard)",
+            tfcoil_variables.f_vforce_inboard,
+            "OP ",
+        )
+        po.ovarre(
+            self.outfile,
+            "Centring force per coil (N/m)",
+            "(cforce)",
+            tfcoil_variables.cforce,
+            "OP ",
+        )
+
+        # Resistive coil parameters
+        if tfcoil_variables.i_tf_sup != 1:
+            po.osubhd(self.outfile, "Resitive loss parameters:")
+            if tfcoil_variables.i_tf_sup == 0:
+                po.ocmmnt(
+                    self.outfile,
+                    "Resistive Material : GLIDCOP AL-15 - Dispersion Strengthened Copper",
+                )
+            elif tfcoil_variables.i_tf_sup == 2:
+                po.ocmmnt(
+                    self.outfile, "Resistive Material : Pure Aluminium (99.999+ %)"
+                )
+
+            if physics_variables.itart == 1:
+                po.ovarre(
+                    self.outfile,
+                    "CP resistivity (ohm.m)",
+                    "(rhocp)",
+                    tfcoil_variables.rhocp,
+                )
+                po.ovarre(
+                    self.outfile,
+                    "Leg resistivity (ohm.m)",
+                    "(rhotfleg)",
+                    tfcoil_variables.rhotfleg,
+                )
+                po.ovarre(
+                    self.outfile,
+                    "CP resistive power loss (W)",
+                    "(prescp)",
+                    tfcoil_variables.prescp,
+                )
+                po.ovarre(
+                    self.outfile,
+                    "Leg resitive power loss, (per leg) (W)",
+                    "(presleg)",
+                    tfcoil_variables.presleg,
+                )
+                po.ovarre(
+                    self.outfile,
+                    "joints resistive power loss (W)",
+                    "(pres_joints)",
+                    tfcoil_variables.pres_joints,
+                )
+                po.ovarre(
+                    self.outfile,
+                    "Outboard leg resistance per coil (ohm)",
+                    "(tflegres)",
+                    tfcoil_variables.tflegres,
+                )
+                po.ovarre(
+                    self.outfile,
+                    "Average CP temperature (K)",
+                    "(tcpav)",
+                    tfcoil_variables.tcpav,
+                )
+                po.ovarre(
+                    self.outfile,
+                    "Average leg temperature (K)",
+                    "(tlegav)",
+                    tfcoil_variables.tlegav,
+                )
+
+            else:
+                po.ovarre(
+                    self.outfile,
+                    "TF resistivity (ohm.m)",
+                    "(prescp)",
+                    tfcoil_variables.rhocp,
+                )
+                po.ovarre(
+                    self.outfile,
+                    "TF coil resistive power less (total) (ohm.m)",
+                    "(prescp)",
+                    tfcoil_variables.prescp,
+                )
+                po.ovarre(
+                    self.outfile,
+                    "Average coil temperature (K)",
+                    "(tcpav)",
+                    tfcoil_variables.tcpav,
+                )
+
+        # Ripple calculations
+        po.osubhd(self.outfile, "Ripple information:")
+        if tfcoil_variables.i_tf_shape == 1:
+
+            if peaktfflag == 1:
+                error_handling.report_error(144)
+            elif peaktfflag == 2:
+                error_handling.report_error(145)
+
+            po.ovarre(
+                self.outfile,
+                "Max allowed tfcoil_variables.ripple amplitude at plasma outboard midplane (%)",
+                "(ripmax)",
+                tfcoil_variables.ripmax,
+            )
+            po.ovarre(
+                self.outfile,
+                "Ripple amplitude at plasma outboard midplane (%)",
+                "(ripple)",
+                tfcoil_variables.ripple,
+                "OP ",
+            )
+        else:
+            po.ovarre(
+                self.outfile,
+                "Max allowed tfcoil_variables.ripple amplitude at plasma (%)",
+                "(ripmax)",
+                tfcoil_variables.ripmax,
+            )
+            po.ovarre(
+                self.outfile,
+                "Ripple at plasma edge (%)",
+                "(ripple)",
+                tfcoil_variables.ripple,
+            )
+            po.ocmmnt(
+                self.outfile,
+                "  Ripple calculation to be re-defined for picure frame coils",
+            )
+
+        # Quench information
+        if tfcoil_variables.i_tf_sup == 1:
+            po.osubhd(self.outfile, "Quench information :")
+            po.ovarre(
+                self.outfile,
+                "Allowable stress in vacuum vessel (VV) due to quench (Pa)",
+                "(sigvvall)",
+                tfcoil_variables.sigvvall,
+            )
+            po.ovarre(
+                self.outfile,
+                "Minimum allowed quench time due to stress in VV (s)",
+                "(taucq)",
+                tfcoil_variables.taucq,
+                "OP ",
+            )
+            po.ovarre(
+                self.outfile,
+                "Actual quench time (or time constant) (s)",
+                "(tdmptf)",
+                tfcoil_variables.tdmptf,
+            )
+            po.ovarre(
+                self.outfile,
+                "Maximum allowed voltage during quench due to insulation (kV)",
+                "(vdalw)",
+                tfcoil_variables.vdalw,
+            )
+            po.ovarre(
+                self.outfile,
+                "Actual quench voltage (kV)",
+                "(vtfskv)",
+                tfcoil_variables.vtfskv,
+                "OP ",
+            )
+
+            if tfcoil_variables.i_tf_sc_mat in (1, 2, 3, 4, 5):
+                po.ovarre(
+                    self.outfile,
+                    "Maximum allowed temp rise during a quench (K)",
+                    "(tmaxpro)",
+                    tfcoil_variables.tmaxpro,
+                )
+            elif tfcoil_variables == 6:
+                po.ocmmnt(self.outfile, "CroCo cable with jacket: ")
+
+                if 75 in numerics.icc:
+                    po.ovarre(
+                        self.outfile,
+                        "Maximum permitted TF coil current / copper area (A/m2)",
+                        "(copperA_m2_max)",
+                        rebco_variables.copperA_m2_max,
+                    )
+
+                po.ovarre(
+                    self.outfile,
+                    "Actual TF coil current / copper area (A/m2)",
+                    "(copperA_m2)",
+                    rebco_variables.copperA_m2,
+                )
+
+        # TF coil radial build
+        po.osubhd(self.outfile, "Radial build of TF coil centre-line :")
+        # po.write(self.outfile,5)
+        # 5   format(t43,'Thickness (m)',t60,'Outer radius (m)')
+
+        radius = build_variables.r_tf_inboard_in
+        po.obuild(self.outfile, "Innermost edge of TF coil", radius, radius)
+
+        # Radial build for SC TF coils
+        if tfcoil_variables.i_tf_sup == 1:
+
+            radius = radius + tfcoil_variables.thkcas
+            po.obuild(
+                self.outfile,
+                'Coil case ("nose")',
+                tfcoil_variables.thkcas,
+                radius,
+                "(thkcas)",
+            )
+
+            radius = radius + tfcoil_variables.tfinsgap
+            po.obuild(
+                self.outfile,
+                "Insertion gap for winding pack",
+                tfcoil_variables.tfinsgap,
+                radius,
+                "(tfinsgap)",
+            )
+
+            radius = radius + tfcoil_variables.tinstf
+            po.obuild(
+                self.outfile,
+                "Winding pack ground insulation",
+                tfcoil_variables.tinstf,
+                radius,
+                "(tinstf)",
+            )
+
+            radius = (
+                radius
+                + 0.5e0 * tfcoil_variables.dr_tf_wp
+                - tfcoil_variables.tinstf
+                - tfcoil_variables.tfinsgap
+            )
+            po.obuild(
+                self.outfile,
+                "Winding - first half",
+                tfcoil_variables.dr_tf_wp / 2e0
+                - tfcoil_variables.tinstf
+                - tfcoil_variables.tfinsgap,
+                radius,
+                "(dr_tf_wp/2-tinstf-tfinsgap)",
+            )
+
+            radius = (
+                radius
+                + 0.5e0 * tfcoil_variables.dr_tf_wp
+                - tfcoil_variables.tinstf
+                - tfcoil_variables.tfinsgap
+            )
+            po.obuild(
+                self.outfile,
+                "Winding - second half",
+                tfcoil_variables.dr_tf_wp / 2e0
+                - tfcoil_variables.tinstf
+                - tfcoil_variables.tfinsgap,
+                radius,
+                "(dr_tf_wp/2-tinstf-tfinsgap)",
+            )
+
+            radius = radius + tfcoil_variables.tinstf
+            po.obuild(
+                self.outfile,
+                "Winding pack insulation",
+                tfcoil_variables.tinstf,
+                radius,
+                "(tinstf)",
+            )
+
+            radius = radius + tfcoil_variables.tfinsgap
+            po.obuild(
+                self.outfile,
+                "Insertion gap for winding pack",
+                tfcoil_variables.tfinsgap,
+                radius,
+                "(tfinsgap)",
+            )
+
+            radius = radius + tfcoil_variables.casthi
+            po.obuild(
+                self.outfile,
+                "Plasma side case min radius",
+                tfcoil_variables.casthi,
+                radius,
+                "(casthi)",
+            )
+
+            radius = radius / numpy.cos(numpy.pi / tfcoil_variables.n_tf)
+            po.obuild(
+                self.outfile,
+                "Plasma side case max radius",
+                build_variables.r_tf_inboard_out,
+                radius,
+                "(r_tf_inboard_out)",
+            )
+
+        # Radial build for restive coil
+        else:
+            radius = radius + tfcoil_variables.thkcas
+            po.obuild(
+                self.outfile,
+                "Coil bucking cylindre",
+                tfcoil_variables.thkcas,
+                radius,
+                "(thkcas)",
+            )
+
+            radius = radius + tfcoil_variables.tinstf
+            po.obuild(
+                self.outfile,
+                "Conductor ground insulation",
+                tfcoil_variables.tinstf,
+                radius,
+                "(tinstf)",
+            )
+
+            radius = (
+                radius + 0.5e0 * tfcoil_variables.dr_tf_wp - tfcoil_variables.tinstf
+            )
+            po.obuild(
+                self.outfile,
+                "Conductor - first half",
+                tfcoil_variables.dr_tf_wp / 2e0 - tfcoil_variables.tinstf,
+                radius,
+                "(tfcoil_variables.dr_tf_wp/2-tfcoil_variables.tinstf)",
+            )
+
+            radius = (
+                radius + 0.5e0 * tfcoil_variables.dr_tf_wp - tfcoil_variables.tinstf
+            )
+            po.obuild(
+                self.outfile,
+                "Conductor - second half",
+                tfcoil_variables.dr_tf_wp / 2e0 - tfcoil_variables.tinstf,
+                radius,
+                "(tfcoil_variables.dr_tf_wp/2-tfcoil_variables.tinstf)",
+            )
+
+            radius = radius + tfcoil_variables.tinstf
+            po.obuild(
+                self.outfile,
+                "Conductor ground insulation",
+                tfcoil_variables.tinstf,
+                radius,
+                "(tinstf)",
+            )
+
+            radius = radius + tfcoil_variables.casthi
+            po.obuild(
+                self.outfile,
+                "Plasma side TF coil support",
+                tfcoil_variables.casthi,
+                radius,
+                "(casthi)",
+            )
+
+        # Radial build consistency check
+        if (
+            abs(radius - build_variables.r_tf_inboard_in - build_variables.tfcth)
+            < 10.0e0 * numpy.finfo(float(radius)).eps
+        ):
+            po.ocmmnt(self.outfile, "TF coil dimensions are consistent")
+        else:
+            po.ocmmnt(self.outfile, "ERROR: TF coil dimensions are NOT consistent:")
+            po.ovarre(
+                self.outfile,
+                "Radius of plasma-facing side of inner leg SHOULD BE [m]",
+                "",
+                build_variables.r_tf_inboard_in + build_variables.tfcth,
+            )
+            po.ovarre(
+                self.outfile,
+                "Inboard TF coil radial thickness [m]",
+                "(tfcth)",
+                build_variables.tfcth,
+            )
+            po.oblnkl(self.outfile)
+
+        # Top section TF coil radial build (physics_variables.itart = 1 only)
+        if physics_variables.itart == 1 and tfcoil_variables.i_tf_sup != 1:
+
+            po.osubhd(self.outfile, "Radial build of TF coil at central collumn top :")
+            # write(self.outfile,5)
+
+            # Restart the radial build at bucking cylindre inner radius
+            radius = build_variables.r_tf_inboard_in
+            po.obuild(self.outfile, "Innermost edge of TF coil", radius, radius)
+
+            radius = radius + tfcoil_variables.thkcas
+            po.obuild(
+                self.outfile,
+                "Coil bucking cylindre",
+                tfcoil_variables.thkcas,
+                radius,
+                "(thkcas)",
+            )
+
+            radius = radius + tfcoil_variables.tinstf
+            po.obuild(
+                self.outfile,
+                "Conductor ground insulation",
+                tfcoil_variables.tinstf,
+                radius,
+                "(tinstf)",
+            )
+
+            radius = (
+                radius + 0.5e0 * sctfcoil_module.dr_tf_wp_top - tfcoil_variables.tinstf
+            )
+            po.obuild(
+                self.outfile,
+                "Conductor - first half",
+                0.5e0 * sctfcoil_module.dr_tf_wp_top - tfcoil_variables.tinstf,
+                radius,
+                "(dr_tf_wp_top/2-tinstf)",
+            )
+
+            radius = (
+                radius + 0.5e0 * sctfcoil_module.dr_tf_wp_top - tfcoil_variables.tinstf
+            )
+            po.obuild(
+                self.outfile,
+                "Conductor - second half",
+                0.5e0 * sctfcoil_module.dr_tf_wp_top - tfcoil_variables.tinstf,
+                radius,
+                "(dr_tf_wp_top/2-tinstf)",
+            )
+
+            radius = radius + tfcoil_variables.tinstf
+            po.obuild(
+                self.outfile,
+                "Conductor ground insulation",
+                tfcoil_variables.tinstf,
+                radius,
+                "(tinstf)",
+            )
+
+            radius = radius + tfcoil_variables.casthi
+            po.obuild(
+                self.outfile,
+                "Plasma side TF coil support",
+                tfcoil_variables.casthi,
+                radius,
+                "(casthi)",
+            )
+
+            # Consistency check
+            if abs(radius - build_variables.r_cp_top) < numpy.finfo(float(radius)).eps:
+                po.ocmmnt(self.outfile, "Top TF coil dimensions are consistent")
+            else:
+                po.ocmmnt(self.outfile, "ERROR: TF coil dimensions are NOT consistent:")
+                po.ovarre(
+                    self.outfile,
+                    "Radius of plasma-facing side of inner leg SHOULD BE [m]",
+                    "",
+                    build_variables.r_cp_top,
+                )
+                po.oblnkl(self.outfile)
