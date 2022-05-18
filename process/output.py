@@ -36,7 +36,7 @@ def write(models, outfile):
     # 2    |  2019 STEP model
 
     if ft.cost_variables.cost_model == 0:
-        ft.costs_module.costs(outfile, 1)
+        models.costs.run(output=True)
     elif ft.cost_variables.cost_model == 1:
         models.costs_2015.run(output=True)
     elif ft.cost_variables.cost_model == 2:

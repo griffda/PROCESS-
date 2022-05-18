@@ -52,7 +52,7 @@ In the terminal, run the python script `create_changelog.py`, e.g:
 ```bash
 python changelog_update/create_changelog.py
 ```
-This script will create a .yaml file in the changelog_update directory where the name is that of your current git branch issue number.yaml.
+This script will create a .yaml file in the changelog_update directory where the name is that of your current git branch issue number.yaml. 
 
 ### Step 2
 Look in the changelog_update dir for your generated YAML file (determined by issue number)- This means your issue must have been created by a merge request. If you do NOT have an issue number in fornt of your current branch name, then you must create a merge request so your branch includes this issue number.
@@ -75,7 +75,7 @@ Removed:
 ### Step 4
 Now you must add your changes to the YAML file manually. As seen in the section ['How the YAML file will look'](#how-the-yaml-file-will-look), each entry of a change is split into the different headers depending on the nature of the change. You are able to have multiple entries per header, and this just requires you to add another bullet point (hyphen) to a given category.
 
-An example of what the changes may look like if there is more than one entry can be seen below. **Syntax in the YAML file includes an important requirement for having a space between the hyphen and your text.** Also, no quotation marks are needed.
+An example of what the changes may look like if there is more than one entry can be seen below. **Syntax in the YAML file includes an important requirement for having a space between the hyphen and your text.** Also, no quotation marks are needed. 
 
 At the end of each comment under each header, please add, in brackets, a hash followed by your issue number (see below). This is so it is possible to track at which point the changes were made. If you have made an entry that corresponds to multiple issues, please include these in the same format as seen in the example below.
 
@@ -90,18 +90,18 @@ Changed:
   - Changed feature 2 (#1234,#5678)
 
 Deprecated:
-  -
+  - 
 
 Removed:
-  -
+  - 
 
 Fixed:
   - Fixed bug 1 (#1234)
 ```
-Also, as seen above, if you haven't made changes, sections can be left empty. In this case we do not have a `Security` tag as there should be no changes invovled that would lead to any vulnerabilities.
+Also, as seen above, if you haven't made changes, sections can be left empty. In this case we do not have a `Security` tag as there should be no changes invovled that would lead to any vulnerabilities. 
 
 ### Step 5
-All you need to do now is save your YAML file once you have added the changes to it, commit these changes and that is all. No changes need to be made to the CHANGELOG.md as this will be done automatically upon Process upversioning.
+All you need to do now is save your YAML file once you have added the changes to it, commit these changes and that is all. No changes need to be made to the CHANGELOG.md as this will be done automatically upon Process upversioning. 
 
 ## What warrants a changelog entry?
 You can see the current CHANGELOG.md in the process directory, which has previous examples of what should be included in the changelog. Using [Gitlab guides](https://docs.gitlab.com/ee/development/changelog.html), a few key changelog entries are:
@@ -162,8 +162,8 @@ is required to transfer the tag to the remote.
 
 ### Working with tags
 |Command|Description|
-|--------|--------|
-|`git describe`|show the current tag|
+|--------|--------| 
+|`git describe`|show the current tag| 
 |`git tag`|list all tags|
 |`git tag -l "1.0.*"`|list tags contained in `1.0.z`|
 |`git checkout vX.Y.Z`|checkout a specific tag|
@@ -177,5 +177,5 @@ Between user tags `git` will create tags in the following format:
 - `11` is the number of commits since that tag
 - `g3f1b433` is a unique identifier for this specific commit
 
-This allows the user to checkout a specific commit between tagged versions. PROCESS now outputs this information into the `OUT.DAT` and `MFILE.DAT` and is
+This allows the user to checkout a specific commit between tagged versions. PROCESS now outputs this information into the `OUT.DAT` and `MFILE.DAT` and is 
 updated upon compilation. This way each output file is trackable to a specific commit.

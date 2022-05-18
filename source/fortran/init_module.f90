@@ -31,6 +31,7 @@ contains
       use ife_variables, only: init_ife_variables
       use impurity_radiation_module, only: init_impurity_radiation_module
       use vmcon_module, only: init_vmcon_module
+      use pfcoil_module, only: init_pfcoil_module
       use physics_module, only: init_physics_module
       use physics_variables, only: init_physics_variables
       use power_module, only: init_power_module
@@ -59,7 +60,6 @@ contains
       use fispact_variables, only: init_fispact_variables
       use rebco_variables, only: init_rebco_variables
       use reinke_variables, only: init_reinke_variables
-      use costs_module, only: init_costs_module
       use divertor_ode_var, only: init_divertor_ode_var
       use green_func_ext, only: init_green_func_ext
       use kit_hcll_module, only: init_kit_hcll_module
@@ -86,6 +86,7 @@ contains
       call init_ife_variables
       call init_impurity_radiation_module
       call init_vmcon_module
+      call init_pfcoil_module
       call init_physics_module
       call init_physics_variables
       call init_power_module
@@ -114,7 +115,6 @@ contains
       call init_fispact_variables
       call init_rebco_variables
       call init_reinke_variables
-      call init_costs_module
       call init_divertor_ode_var
       call init_green_func_ext
       call init_kit_hcll_module

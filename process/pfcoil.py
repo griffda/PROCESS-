@@ -214,7 +214,7 @@ class PFCoil:
                 # PF coil is in general location
                 # See issue 1418
                 # https://git.ccfe.ac.uk/process/process/-/issues/1418
-                for k in pfv.ncls[j]:
+                for k in range(pfv.ncls[j]):
                     pf.zcls[j, k] = pv.rminor * pfv.zref[j] * signn[k]
                     pf.rcls[j, k] = pv.rminor * pfv.rref[j] + pv.rmajor
 
@@ -495,15 +495,15 @@ class PFCoil:
 
                 # Currents at different times:
 
-                # If PF coil currents are computed, not input via pfv.pf.ccl0_ma, pfv.pf.ccls_ma:
-                # Then set pfv.pf.ccl0_ma,pfv.pf.ccls_ma from the computed pf.ccl0,pf.ccls
+                # If PF coil currents are computed, not input via pfv.ccl0_ma, pfv.ccls_ma:
+                # Then set pfv.ccl0_ma,pfv.ccls_ma from the computed pf.ccl0,pf.ccls
                 if pfv.i_pf_current != 0:
                     pfv.ccl0_ma[nng] = 1.0e-6 * pf.ccl0[nng]
                     pfv.ccls_ma[nng] = 1.0e-6 * pf.ccls[nng]
                 else:
-                    # Otherwise set pf.ccl0,pf.ccls via the input pfv.pf.ccl0_ma and pfv.pf.ccls_ma
-                    pf.ccl0[nng] = 1.0e6 * pfv.pf.ccl0_ma[nng]
-                    pf.ccls[nng] = 1.0e6 * pfv.pf.ccls_ma[nng]
+                    # Otherwise set pf.ccl0,pf.ccls via the input pfv.ccl0_ma and pfv.ccls_ma
+                    pf.ccl0[nng] = 1.0e6 * pfv.ccl0_ma[nng]
+                    pf.ccls[nng] = 1.0e6 * pfv.ccls_ma[nng]
 
                 # Beginning of pulse: t = tv.tramp
                 pfv.curpfs[ncl] = 1.0e-6 * pf.ccl0[nng]
