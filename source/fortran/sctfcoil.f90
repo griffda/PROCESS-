@@ -431,228 +431,6 @@ n_radial_array, n_tf_bucking, outfile, sig_file)
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine plane_stress( nu, rad, ey, j,          & ! Inputs
-                         nlayers, n_radial_array, & ! Inputs
-                         sigr, sigt, r_deflect, rradius ) ! Outputs
-
-    !! Calculates the stresses in a superconductor TF coil
-    !! inboard leg at the midplane using the plain stress approximation
-    !! author: P J Knight, CCFE, Culham Science Centre
-    !! author: J Morris, CCFE, Culham Science Centre
-    !! author: S Kahn, CCFE, Culham Science Centre
-    !! This routine calculates the stresses in a superconductor TF coil
-    !! inboard leg at midplane.
-    !! <P>A 2 layer plane stress model developed by CCFE is used. The first layer
-    !! is the steel case inboard of the winding pack, and the second
-    !! layer is the winding pack itself.
-    !! PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    use constants, only: pi, rmu0
-    use maths_library, only: linesolv
-    implicit none
-
-    !  Arguments
-
-    integer, intent(in) :: n_radial_array
-    !! Number of elements per layers used in stress analysis
-    !! quantities arrays (stress, strain, displacement)
-
-    integer, intent(in) :: nlayers
-    !! Number of layers considered in the stress model
-
-    real(dp), dimension(:), intent(in) :: nu
-    !! Poisson's ratio
-
-    real(dp), dimension(:), intent(in) :: rad
-    !! Layers delimitation radii [m]
-
-    real(dp), dimension(:), intent(in) :: ey
-    !! Young modulae [Pa]
-
-    real(dp), dimension(:), intent(in) :: j
-    !! Layers effective current density [A/m2]
-
-    real(dp), dimension(nlayers*n_radial_array), intent(out) :: sigr
-    !! Radial stress radial distribution [Pa]
-
-    real(dp), dimension(nlayers*n_radial_array), intent(out) :: sigt
-    !! Toroidal stress radial distribution [Pa]
-
-    real(dp), dimension(nlayers*n_radial_array), intent(out) :: r_deflect
-    !! Radial deflection (displacement) radial distribution [m]
-
-    real(dp), dimension(nlayers*n_radial_array), intent(out) :: rradius
-    !! Radius array [m]
-
-
-    ! Local variables
-    ! ---
-    real(dp), dimension(nlayers) :: alpha
-    real(dp), dimension(nlayers) :: beta
-    !! Lorentz body force parametres
-
-    real(dp), dimension(nlayers) :: kk
-    !! Strain to stress hooke's law coeficient
-
-    real(dp), dimension(nlayers) :: area
-    !! Layer area
-
-    real(dp), dimension(2*nlayers, 2*nlayers) :: aa
-    !! Matrix encoding the integration constant cc coeficients
-
-    real(dp), dimension(2*nlayers) :: bb
-    !! Vector encoding the alpha/beta (lorentz forces) contribution
-
-    real(dp), dimension(2*nlayers) :: cc
-    real(dp), dimension(nlayers) :: c1, c2
-    !! Integration constants vector (solution)
-
-    real(dp) :: dradius
-    real(dp) :: inner_layer_curr
-    real(dp) :: rad_c
-    !! Variables used for radial stress distribution
-
-    integer :: ii
-    integer :: jj
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    ! Layer parameterisation
-    ! ***
-    ! Array equation
-    kk = ey/(1.0D0 - nu**2)
-
-    ! Lorentz forces parametrisation coeficients (array equation)
-    alpha = 0.5D0*rmu0 * j**2 / kk
-
-    inner_layer_curr = 0.0D0
-    do ii = 1, nlayers
-
-        beta(ii) = 0.5D0*rmu0 * j(ii) * ( inner_layer_curr - pi*j(ii)*rad(ii)**2 ) / (pi*kk(ii))
-
-        ! Layer area
-        area(ii) = pi * (rad(ii+1)**2 - rad(ii)**2)
-
-        ! Total current carried by the inners layers
-        inner_layer_curr = inner_layer_curr + area(ii)*j(ii)
-    end do
-    ! ***
-
-
-    ! Left hand side matrix aa
-    ! ***
-    aa(:,:) = 0.0D0
-
-    ! Null radial stress at R(1)
-    aa(1,1) = kk(1) * (1.0D0+nu(1))
-    aa(1,2) = -kk(1) * (1.0D0-nu(1))/(rad(1)**2)
-
-
-    ! Inter-layer boundary conditions
-    if ( nlayers /= 1 ) then
-        do ii = 1, nlayers - 1
-
-            ! Continuous radial normal stress at R(ii+1)
-            aa(2*ii, 2*ii-1) = kk(ii) * ( 1.0D0 + nu(ii) )
-            aa(2*ii, 2*ii  ) = -kk(ii) * ( 1.0D0 - nu(ii) ) / rad(ii+1)**2
-            aa(2*ii, 2*ii+1) = -kk(ii+1) * ( 1.0D0 + nu(ii+1) )
-            aa(2*ii, 2*ii+2) = kk(ii+1) * ( 1.0D0 - nu(ii+1) ) / rad(ii+1)**2
-
-            ! Continuous displacement at R(ii+1)
-            aa(2*ii+1, 2*ii-1) = rad(ii+1)
-            aa(2*ii+1, 2*ii  ) = 1.0D0 / rad(ii+1)
-            aa(2*ii+1, 2*ii+1) = -rad(ii+1)
-            aa(2*ii+1, 2*ii+2) = -1.0D0 / rad(ii+1)
-
-        end do
-    end if
-
-    ! Radial stress = 0
-    aa(2*nlayers, 2*nlayers - 1) =  kk(nlayers) * ( 1.0D0 + nu(nlayers) )
-    aa(2*nlayers, 2*nlayers    ) = -kk(nlayers) * ( 1.0D0 - nu(nlayers) ) / rad(nlayers+1)**2
-    ! ***
-
-    ! Right hand side vector bb
-    ! ***
-    ! Null radial stress at R(1)
-    bb(1) = -kk(1) * ( 0.125D0*alpha(1)*(3.0D0+nu(1))*rad(1)**2   &
-                     + 0.5D0*beta(1)*(1.0D0 + (1.0D0+nu(1))*log(rad(1))) )
-
-    ! Inter-layer boundary conditions
-    if ( nlayers /= 1 ) then
-        do ii = 1, nlayers - 1
-
-            ! Continuous radial normal stress at R(ii+1)
-            bb(2*ii) = -kk(ii) * ( 0.125D0*alpha(ii)*(3.0D0+nu(ii))*rad(ii+1)**2   &
-                                  + 0.5D0*beta(ii)*(1.0D0 + (1.0D0+nu(ii))*log(rad(ii+1))) ) &
-                       +kk(ii+1) * ( 0.125D0*alpha(ii+1)*(3.0D0+nu(ii+1))*rad(ii+1)**2   &
-                                  + 0.5D0*beta(ii+1)*(1.0D0 + (1.0D0+nu(ii+1))*log(rad(ii+1))) )
-
-            ! Continuous displacement at R(ii+1)
-            bb(2*ii+1) = - 0.125D0*alpha(ii)  * rad(ii+1)**3 - 0.5D0*beta(ii)  *rad(ii+1)*log(rad(ii+1))  &
-                         + 0.125D0*alpha(ii+1)* rad(ii+1)**3 + 0.5D0*beta(ii+1)*rad(ii+1)*log(rad(ii+1))
-        end do
-    end if
-
-    ! Null radial stress at R(nlayers+1)
-    bb(2*nlayers) = -kk(nlayers) * ( 0.125D0*alpha(nlayers)*(3.0D0+nu(nlayers))*rad(nlayers+1)**2  &
-                                   + 0.5D0*beta(nlayers)*(1.0D0 + (1.0D0+nu(nlayers))*log(rad(nlayers+1))) )
-    ! ***
-
-    !  Find solution vector cc
-    ! ***
-    cc(:) = 0.0D0
-    call linesolv(aa, 2*nlayers, bb, cc)
-
-    !  Multiply c by (-1) (John Last, internal CCFE memorandum, 21/05/2013)
-    do ii = 1, nlayers
-        c1(ii) = cc(2*ii-1)
-        c2(ii) = cc(2*ii)
-    end do
-    ! ***
-    ! ------
-
-
-    ! Radial/toroidal/vertical stress radial distribution
-    ! ------
-    rradius(:) = 0.0D0
-    sigr(:) = 0.0D0
-    sigt(:) = 0.0D0
-    r_deflect(:) = 0.0D0
-
-    do ii = 1, nlayers
-
-        dradius = (rad(ii+1) - rad(ii)) / dble(n_radial_array)
-        do jj = (ii-1)*n_radial_array + 1, ii*n_radial_array
-
-            rad_c = rad(ii) + dradius*dble(jj - n_radial_array*(ii-1) - 1)
-            rradius(jj) = rad_c
-
-
-            ! Radial stress radial distribution [Pa]
-            sigr(jj) = kk(ii) * ( (1.0D0+nu(ii))*c1(ii) - ((1.0D0-nu(ii))*c2(ii))/ rad_c**2 &
-                                  + 0.125D0*(3.0D0 + nu(ii))*alpha(ii)* rad_c**2            &
-                                  + 0.5D0*beta(ii)*(1.0D0 + (1.0D0+nu(ii))*log(rad_c)) )
-
-            ! Radial stress radial distribution [Pa]
-            sigt(jj) = kk(ii) * ( (1.0D0+nu(ii))*c1(ii) + (1.0D0-nu(ii))*c2(ii)/ rad_c**2 &
-                                  + 0.125D0*(1.0D0+3.0D0*nu(ii))*alpha(ii)*rad_c**2       &
-                                  + 0.5D0*beta(ii)*(nu(ii) + (1.0D0+nu(ii))*log(rad_c)) )
-
-            !  Deflection [m]
-            r_deflect(jj) = c1(ii)*rad_c + c2(ii)/rad_c      &
-                              + 0.125D0*alpha(ii) * rad_c**3 &
-                              + 0.5D0*beta(ii) * rad_c*log(rad_c)
-
-        end do
-    end do
-   ! ---
-
-   !-! end break
-
-end subroutine plane_stress
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 subroutine generalized_plane_strain( nu_p, nu_z, ey_p, ey_z, rad, d_curr, v_force,   & ! Inputs
                                      nlayers, n_radial_array, i_tf_bucking,          & ! Inputs
                                      rradius, sigr, sigt, sigz,              & ! Outputs
@@ -2542,158 +2320,156 @@ subroutine outtf(outfile, peaktfflag)
 end subroutine outtf
 
 
-subroutine tf_averaged_turn_geom( jwptf, thwcndut, thicndut, i_tf_sc_mat,    & ! Inputs
-                                      acstf, acndttf, insulation_area, n_tf_turn ) ! Outputs
+subroutine tf_averaged_turn_geom( jwptf, thwcndut, thicndut, i_tf_sc_mat,    &
+                                      acstf, acndttf, insulation_area, n_tf_turn )
 
-        !! Authors : J. Morris, CCFE
-        !! Authors : S. Kahn, CCFE
-        !! Setting the TF WP turn geometry for SC magnets from the number
-        !! the current per turn.
-        !! This calculation has two purposes, first to check if a turn can exist
-        !! (positive cable space) and the second to provide its dimensions,
-        !! areas and the (float) number of turns
+    !! Authors : J. Morris, CCFE
+    !! Authors : S. Kahn, CCFE
+    !! Setting the TF WP turn geometry for SC magnets from the number
+    !! the current per turn.
+    !! This calculation has two purposes, first to check if a turn can exist
+    !! (positive cable space) and the second to provide its dimensions,
+    !! areas and the (float) number of turns
 
-        use error_handling, only: fdiags, report_error
-        use constants, only: pi
-        use tfcoil_variables, only : layer_ins, t_conductor, t_turn_tf, &
-            t_turn_tf_is_input, cpttf, t_cable_tf, t_cable_tf_is_input
+    use error_handling, only: fdiags, report_error
+    use constants, only: pi
+    use tfcoil_variables, only : layer_ins, t_conductor, t_turn_tf, &
+        t_turn_tf_is_input, cpttf, t_cable_tf, t_cable_tf_is_input
 
-        implicit none
+    implicit none
 
-        ! Inputs
-        ! ------
-        integer, intent(in) :: i_tf_sc_mat
-        !! Switch for superconductor material in TF coils
+    ! Inputs
+    ! ------
+    integer, intent(in) :: i_tf_sc_mat
+    !! Switch for superconductor material in TF coils
 
-        real(dp), intent(in) :: jwptf
-        !! Winding pack engineering current density [A/m2]
+    real(dp), intent(in) :: jwptf
+    !! Winding pack engineering current density [A/m2]
 
-        real(dp), intent(in) :: thwcndut
-        !! Steel conduit thickness [m]
+    real(dp), intent(in) :: thwcndut
+    !! Steel conduit thickness [m]
 
-        real(dp), intent(in) :: thicndut
-        !! Turn insulation thickness [m]
-        ! ------
-
-
-        ! Outputs
-        ! -------
-        real(dp), intent(out) :: acstf
-        !! Cable space area (per turn)  [m2]
-
-        real(dp), intent(out) :: acndttf
-        !! Steel conduit area (per turn) [m2]
-
-        real(dp), intent(out) :: insulation_area
-        !! Turn insulation area (per turn) [m2]
-
-        real(dp), intent(out) :: n_tf_turn
-        !! Number of turns per WP (float)
-        ! -------
+    real(dp), intent(in) :: thicndut
+    !! Turn insulation thickness [m]
+    ! ------
 
 
-        ! Local variables
-        !----------------
-        real(dp) :: a_turn
-        !! Turn squared dimension [m2]
+    ! Outputs
+    ! -------
+    real(dp), intent(out) :: acstf
+    !! Cable space area (per turn)  [m2]
 
-        real(dp) :: rbcndut
-        !! Radius of rounded corners of cable space inside conduit [m]
-        !----------------
-        ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    real(dp), intent(out) :: acndttf
+    !! Steel conduit area (per turn) [m2]
+
+    real(dp), intent(out) :: insulation_area
+    !! Turn insulation area (per turn) [m2]
+
+    real(dp), intent(out) :: n_tf_turn
+    !! Number of turns per WP (float)
+    ! -------
 
 
-        ! Turn dimension is a an input
-        if ( t_turn_tf_is_input ) then
+    ! Local variables
+    !----------------
+    real(dp) :: a_turn
+    !! Turn squared dimension [m2]
 
-            ! Turn area [m2]
-            a_turn = t_turn_tf**2
+    real(dp) :: rbcndut
+    !! Radius of rounded corners of cable space inside conduit [m]
+    !----------------
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-            ! Current per turn [A]
-            cpttf = a_turn * jwptf
 
-        ! Turn cable dimension is an input
-        else if ( t_cable_tf_is_input ) then
+    ! Turn dimension is a an input
+    if ( t_turn_tf_is_input ) then
 
-            ! Turn squared dimension [m]
-            t_turn_tf = t_cable_tf + 2.0D0 * ( thicndut + thwcndut )
+        ! Turn area [m2]
+        a_turn = t_turn_tf**2
 
-            ! Turn area [m2]
-            a_turn = t_turn_tf**2
+        ! Current per turn [A]
+        cpttf = a_turn * jwptf
 
-            ! Current per turn [A]
-            cpttf = a_turn * jwptf
+    ! Turn cable dimension is an input
+    else if ( t_cable_tf_is_input ) then
 
-        ! Current per turn is an input
-        else
-            ! Turn area [m2]
-            ! Allow for additional inter-layer insulation MDK 13/11/18
-            ! Area of turn including conduit and inter-layer insulation
-            a_turn = cpttf / jwptf
+        ! Turn squared dimension [m]
+        t_turn_tf = t_cable_tf + 2.0D0 * ( thicndut + thwcndut )
 
-            ! Dimension of square cross-section of each turn including inter-turn insulation [m]
-            t_turn_tf = sqrt(a_turn)
+        ! Turn area [m2]
+        a_turn = t_turn_tf**2
 
-        end if
+        ! Current per turn [A]
+        cpttf = a_turn * jwptf
 
-        ! Square turn assumption
-        t_turn_radial = t_turn_tf
-        t_turn_toroidal = t_turn_tf
+    ! Current per turn is an input
+    else
+        ! Turn area [m2]
+        ! Allow for additional inter-layer insulation MDK 13/11/18
+        ! Area of turn including conduit and inter-layer insulation
+        a_turn = cpttf / jwptf
 
-        ! See derivation in the following document
-        ! k:\power plant physics and technology\process\hts\hts coil module for process.docx
-        t_conductor = (-layer_ins + sqrt(layer_ins**2 + 4.0D00*a_turn))/2.d0 &
-                    - 2.0D0*thicndut
+        ! Dimension of square cross-section of each turn including inter-turn insulation [m]
+        t_turn_tf = sqrt(a_turn)
 
-        ! Total number of turns per TF coil (not required to be an integer)
-        n_tf_turn = awptf / a_turn
+    end if
 
-        ! Area of inter-turn insulation: single turn [m2]
-        insulation_area = a_turn - t_conductor**2
+    ! Square turn assumption
+    t_turn_radial = t_turn_tf
+    t_turn_toroidal = t_turn_tf
 
-        ! ITER like turn structure
-        if ( i_tf_sc_mat /= 6 ) then
+    ! See derivation in the following document
+    ! k:\power plant physics and technology\process\hts\hts coil module for process.docx
+    t_conductor = (-layer_ins + sqrt(layer_ins**2 + 4.0D00*a_turn))/2.d0 &
+                - 2.0D0*thicndut
 
-            ! Radius of rounded corners of cable space inside conduit [m]
-            rbcndut = thwcndut * 0.75D0
+    ! Total number of turns per TF coil (not required to be an integer)
+    n_tf_turn = awptf / a_turn
 
-            ! Dimension of square cable space inside conduit [m]
-            t_cable = t_conductor - 2.0D0*thwcndut
+    ! Area of inter-turn insulation: single turn [m2]
+    insulation_area = a_turn - t_conductor**2
 
-            ! Cross-sectional area of cable space per turn
-            ! taking account of rounded inside corners [m2]
-            acstf = t_cable**2 - (4.0D0-pi)*rbcndut**2
+    ! ITER like turn structure
+    if ( i_tf_sc_mat /= 6 ) then
 
-            if (acstf <= 0.0D0) then
-                if ( t_conductor < 0.0D0 ) then
-                    fdiags(1) = acstf
-                    fdiags(2) = t_cable
-                    call report_error(101)
-                else
-                    fdiags(1) = acstf
-                    fdiags(2) = t_cable
-                    call report_error(102)
-                    rbcndut = 0.0D0
-                    acstf = t_cable**2
-                end if
+        ! Radius of rounded corners of cable space inside conduit [m]
+        rbcndut = thwcndut * 0.75D0
+
+        ! Dimension of square cable space inside conduit [m]
+        t_cable = t_conductor - 2.0D0*thwcndut
+
+        ! Cross-sectional area of cable space per turn
+        ! taking account of rounded inside corners [m2]
+        acstf = t_cable**2 - (4.0D0-pi)*rbcndut**2
+
+        if (acstf <= 0.0D0) then
+            if ( t_conductor < 0.0D0 ) then
+                fdiags(1) = acstf
+                fdiags(2) = t_cable
+                call report_error(101)
+            else
+                fdiags(1) = acstf
+                fdiags(2) = t_cable
+                call report_error(102)
+                rbcndut = 0.0D0
+                acstf = t_cable**2
             end if
-
-            ! Cross-sectional area of conduit jacket per turn [m2]
-            acndttf = t_conductor**2 - acstf
-
-        ! REBCO turn structure
-        else if ( i_tf_sc_mat == 6 ) then
-
-            ! Diameter of circular cable space inside conduit [m]
-            t_cable = t_conductor - 2.0D0*thwcndut
-
-            ! Cross-sectional area of conduit jacket per turn [m2]
-            acndttf = t_conductor**2 - acstf
-
         end if
 
-        !!- end break
+        ! Cross-sectional area of conduit jacket per turn [m2]
+        acndttf = t_conductor**2 - acstf
 
-    end subroutine tf_averaged_turn_geom
+    ! REBCO turn structure
+    else if ( i_tf_sc_mat == 6 ) then
+
+        ! Diameter of circular cable space inside conduit [m]
+        t_cable = t_conductor - 2.0D0*thwcndut
+
+        ! Cross-sectional area of conduit jacket per turn [m2]
+        acndttf = t_conductor**2 - acstf
+
+    end if
+
+end subroutine tf_averaged_turn_geom
 
 end module sctfcoil_module

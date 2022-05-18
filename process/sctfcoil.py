@@ -14,6 +14,7 @@ from process.fortran import process_output as po
 from process.fortran import error_handling
 from process.fortran import fwbs_variables
 from process.fortran import pfcoil_variables
+from process.fortran import maths_library
 
 from process.utilities.f2py_string_patch import f2py_compatible_to_string
 
@@ -3927,7 +3928,7 @@ class Sctfcoil:
         # ---
         if tfcoil_variables.i_tf_stress_model == 1:
             # Plane stress calculation (SC) [Pa]
-            sig_tf_r, sig_tf_t, deflect, radial_array = sctfcoil_module.plane_stress(
+            sig_tf_r, sig_tf_t, deflect, radial_array = self.plane_stress(
                 poisson_trans,
                 radtf,
                 eyoung_trans,
@@ -4262,3 +4263,197 @@ class Sctfcoil:
                 self.outfile,
                 constants.sig_file,
             )
+
+    def plane_stress(self, nu, rad, ey, j, nlayers, n_radial_array):
+        """Calculates the stresses in a superconductor TF coil
+        inboard leg at the midplane using the plain stress approximation
+        author: P J Knight, CCFE, Culham Science Centre
+        author: J Morris, CCFE, Culham Science Centre
+        author: S Kahn, CCFE, Culham Science Centre
+        This routine calculates the stresses in a superconductor TF coil
+        inboard leg at midplane.
+        <P>A 2 layer plane stress model developed by CCFE is used. The first layer
+        is the steel case inboard of the winding pack, and the second
+        layer is the winding pack itself.
+        PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
+        """
+        alpha = numpy.zeros((nlayers,))
+        beta = numpy.zeros((nlayers,))
+        # Lorentz body force parametres
+
+        area = numpy.zeros((nlayers,))
+        # Layer area
+
+        aa = numpy.zeros(
+            (
+                2 * nlayers,
+                2 * nlayers,
+            ),
+            order="F",  # needed for 2d array passed through f2py interface
+        )
+        # Matrix encoding the integration constant cc coeficients
+
+        bb = numpy.zeros((2 * nlayers,))
+        # Vector encoding the alpha/beta (lorentz forces) contribution
+
+        cc = numpy.zeros((2 * nlayers,))
+        c1 = numpy.zeros((nlayers,))
+        c2 = numpy.zeros((nlayers,))
+        # Integration constants vector (solution)
+
+        rradius = numpy.zeros((nlayers * n_radial_array,))
+        # Radius array [m]
+
+        sigr = numpy.zeros((nlayers * n_radial_array,))
+        # Radial stress radial distribution [Pa]
+
+        sigt = numpy.zeros((nlayers * n_radial_array,))
+        # Toroidal stress radial distribution [Pa]
+
+        r_deflect = numpy.zeros((nlayers * n_radial_array,))
+        # Radial deflection (displacement) radial distribution [m]
+
+        kk = ey / (1.0e0 - nu**2)
+
+        # Lorentz forces parametrisation coeficients (array equation)
+        alpha = 0.5e0 * constants.rmu0 * j**2 / kk
+
+        inner_layer_curr = 0.0e0
+        for ii in range(nlayers):
+
+            beta[ii] = (
+                0.5e0
+                * constants.rmu0
+                * j[ii]
+                * (inner_layer_curr - numpy.pi * j[ii] * rad[ii] ** 2)
+                / (numpy.pi * kk[ii])
+            )
+
+            # Layer area
+            area[ii] = numpy.pi * (rad[ii + 1] ** 2 - rad[ii] ** 2)
+
+            # Total current carried by the inners layers
+            inner_layer_curr = inner_layer_curr + area[ii] * j[ii]
+        # ***
+
+        # Null radial stress at R(1)
+        aa[0][0] = kk[0] * (1.0e0 + nu[0])
+        aa[0][1] = -kk[0] * (1.0e0 - nu[0]) / (rad[0] ** 2)
+
+        # Inter-layer boundary conditions
+        if nlayers != 1:
+            for ii in range(1, nlayers):
+
+                # Continuous radial normal stress at R[ii+1]
+                aa[(2 * ii) - 1][(2 * ii) - 2] = kk[ii - 1] * (1.0e0 + nu[ii - 1])
+                aa[(2 * ii) - 1][(2 * ii) - 1] = (
+                    -kk[ii - 1] * (1.0e0 - nu[ii - 1]) / rad[ii] ** 2
+                )
+                aa[(2 * ii - 1)][2 * ii] = -kk[ii] * (1.0e0 + nu[ii])
+                aa[(2 * ii) - 1][(2 * ii) + 1] = (
+                    kk[ii] * (1.0e0 - nu[ii]) / rad[ii] ** 2
+                )
+
+                # Continuous displacement at R[ii+1]
+                aa[2 * ii][(2 * ii) - 2] = rad[ii]
+                aa[2 * ii][(2 * ii) - 1] = 1.0e0 / rad[ii]
+                aa[2 * ii][2 * ii] = -rad[ii]
+                aa[2 * ii][(2 * ii) + 1] = -1.0e0 / rad[ii]
+
+        # Radial stress = 0
+        aa[(2 * nlayers) - 1][(2 * nlayers) - 2] = kk[nlayers - 1] * (
+            1.0e0 + nu[nlayers - 1]
+        )
+        aa[(2 * nlayers) - 1][(2 * nlayers) - 1] = (
+            -kk[nlayers - 1] * (1.0e0 - nu[nlayers - 1]) / rad[nlayers] ** 2
+        )
+        # ***
+
+        # Right hand side vector bb
+        # ***
+        # Null radial stress at R(1)
+        bb[0] = -kk[0] * (
+            0.125e0 * alpha[0] * (3.0e0 + nu[0]) * rad[0] ** 2
+            + 0.5e0 * beta[0] * (1.0e0 + (1.0e0 + nu[0]) * numpy.log(rad[0]))
+        )
+
+        # Inter-layer boundary conditions
+        if nlayers != 1:
+            for ii in range(1, nlayers):
+
+                # Continuous radial normal stress at R[ii+1]
+                bb[(2 * ii) - 1] = -kk[ii - 1] * (
+                    0.125e0 * alpha[ii - 1] * (3.0e0 + nu[ii - 1]) * rad[ii] ** 2
+                    + 0.5e0
+                    * beta[ii - 1]
+                    * (1.0e0 + (1.0e0 + nu[ii - 1]) * numpy.log(rad[ii]))
+                ) + kk[ii] * (
+                    0.125e0 * alpha[ii] * (3.0e0 + nu[ii]) * rad[ii] ** 2
+                    + 0.5e0 * beta[ii] * (1.0e0 + (1.0e0 + nu[ii]) * numpy.log(rad[ii]))
+                )
+
+                # Continuous displacement at R[ii+1]
+                bb[2 * ii] = (
+                    -0.125e0 * alpha[ii - 1] * rad[ii] ** 3
+                    - 0.5e0 * beta[ii - 1] * rad[ii] * numpy.log(rad[ii])
+                    + 0.125e0 * alpha[ii] * rad[ii] ** 3
+                    + 0.5e0 * beta[ii] * rad[ii] * numpy.log(rad[ii])
+                )
+
+        # Null radial stress at R(nlayers+1)
+        bb[(2 * nlayers) - 1] = -kk[nlayers - 1] * (
+            0.125e0 * alpha[nlayers - 1] * (3.0e0 + nu[nlayers - 1]) * rad[nlayers] ** 2
+            + 0.5e0
+            * beta[nlayers - 1]
+            * (1.0e0 + (1.0e0 + nu[nlayers - 1]) * numpy.log(rad[nlayers]))
+        )
+        # ***
+
+        #  Find solution vector cc
+        # ***
+
+        maths_library.linesolv(aa, bb, cc)
+
+        #  Multiply c by (-1) (John Last, internal CCFE memorandum, 21/05/2013)
+        for ii in range(1, nlayers + 1):
+            c1[ii - 1] = cc[(2 * ii) - 2]
+            c2[ii - 1] = cc[(2 * ii) - 1]
+        # ***
+        # ------
+
+        # Radial/toroidal/vertical stress radial distribution
+        # ------
+
+        for ii in range(nlayers):
+
+            dradius = (rad[ii + 1] - rad[ii]) / n_radial_array
+            for jj in range(ii * n_radial_array, (ii + 1) * n_radial_array):
+
+                rad_c = rad[ii] + dradius * (jj - (n_radial_array * ii))
+                rradius[jj] = rad_c
+
+                # Radial stress radial distribution [Pa]
+                sigr[jj] = kk[ii] * (
+                    (1.0e0 + nu[ii]) * c1[ii]
+                    - ((1.0e0 - nu[ii]) * c2[ii]) / rad_c**2
+                    + 0.125e0 * (3.0e0 + nu[ii]) * alpha[ii] * rad_c**2
+                    + 0.5e0 * beta[ii] * (1.0e0 + (1.0e0 + nu[ii]) * numpy.log(rad_c))
+                )
+
+                # Radial stress radial distribution [Pa]
+                sigt[jj] = kk[ii] * (
+                    (1.0e0 + nu[ii]) * c1[ii]
+                    + (1.0e0 - nu[ii]) * c2[ii] / rad_c**2
+                    + 0.125e0 * (1.0e0 + 3.0e0 * nu[ii]) * alpha[ii] * rad_c**2
+                    + 0.5e0 * beta[ii] * (nu[ii] + (1.0e0 + nu[ii]) * numpy.log(rad_c))
+                )
+
+                #  Deflection [m]
+                r_deflect[jj] = (
+                    c1[ii] * rad_c
+                    + c2[ii] / rad_c
+                    + 0.125e0 * alpha[ii] * rad_c**3
+                    + 0.5e0 * beta[ii] * rad_c * numpy.log(rad_c)
+                )
+
+        return sigr, sigt, r_deflect, rradius
