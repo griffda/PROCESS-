@@ -1050,7 +1050,7 @@ contains
         iprimshld, pinjwp, fachtmw, pgrossmw, psechtmw, trithtmw, psechcd, &
         tfacpd, htpmw, etath, crypmw, psecdiv, pinjht, htpsecmw, helpow_cryal
     use pfcoil_variables, only: pfwpmw
-    use physics_variables, only: palpmw, ignite, pcoreradmw, pradmw, psolradmw, itart, &
+    use physics_variables, only: palpmw, ignite, pinnerzoneradmw, pradmw, itart, &
         pdivt, palpfwmw, idivrt, pohmmw, iradloss, powfmw, pchargemw, &
         pscalingmw, falpha
     use process_output, only: ovarin, ocmmnt, ovarrf, oheadr, ovarre, oblnkl, &
@@ -1393,9 +1393,9 @@ contains
     else if (iradloss == 1) then
         call ocmmnt(outfile,'Total power loss is scaling power plus core radiation only (iradloss = 1)')
         call ovarrf(outfile,'Transport power from scaling law (MW)','(pscalingmw)',pscalingmw, 'OP ')
-        call ovarrf(outfile,'Radiation power from inside "coreradius" (MW)','(pcoreradmw.)',pcoreradmw, 'OP ')
-        call ovarrf(outfile,'Total (MW)','',pscalingmw+pcoreradmw, 'OP ')
-        sum = pscalingmw+pcoreradmw
+        call ovarrf(outfile,'Radiation power from inside "coreradius" (MW)','(pinnerzoneradmw.)',pinnerzoneradmw, 'OP ')
+        call ovarrf(outfile,'Total (MW)','',pscalingmw+pinnerzoneradmw, 'OP ')
+        sum = pscalingmw+pinnerzoneradmw
     else if (iradloss == 2) then
         call ocmmnt(outfile,'Total power loss is scaling power only (iradloss = 1).')
         call ocmmnt(outfile,'This is not recommended for power plant models.')
