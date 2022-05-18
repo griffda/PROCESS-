@@ -601,7 +601,7 @@ contains
     real(dp) :: chi_neo_e, chi_PROCESS_e, q_neo, q_PROCESS,q_PROCESS_r1, gamma_neo, gamma_PROCESS, total_q_neo,&
                   q_neo_e, q_neo_D, q_neo_a, q_neo_T, g_neo_e, g_neo_D, g_neo_a, g_neo_T, &
                   dndt_neo_e, dndt_neo_D, dndt_neo_a, dndt_neo_T, dndt_neo_fuel, dmdt_neo_fuel,dmdt_neo_fuel_from_e, &
-                  total_q_neo_e, nu_star_e, nu_star_i
+                  total_q_neo_e, nu_star_e, nu_star_d, nu_star_T, nu_star_He
 
     ! These parameters are used for the stellarator 0.5D turbulence module
     real(dp) :: q_turb, chi_turb, total_q_turb
@@ -806,12 +806,14 @@ contains
 
          call ovarre(outfile,'Radius of Maximum ne gradient (m)','(r_max_dn)',rho_max_dn*rminor)
          call ovarre(outfile,'Radius of Maximum te gradient (m)','(r_max_dt)',rho_max_dt*rminor)
-         call ovarre(outfile,'Maxium ne gradient (/m4)','(drdn_max)',dndrho_max/rminor)
+         call ovarre(outfile,'Maxium ne gradient (10^20/m4)','(drdn_max)',dndrho_max/rminor)
          call ovarre(outfile,'Maxium te gradient (keV/m)','(drdt_max)',dtdrho_max/rminor)
 
          call ovarre(outfile,'Normalized ion Larmor radius', '(rho_star)', rho_star)
          call ovarre(outfile,'Normalized collisionality (electrons)', '(nu_star_e)',nu_star_e)
-         call ovarre(outfile,'Normalized collisionality (ions)', '(nu_star_i)',nu_star_i)
+         call ovarre(outfile,'Normalized collisionality (D)', '(nu_star_D)',nu_star_D)
+         call ovarre(outfile,'Normalized collisionality (T)', '(nu_star_T)',nu_star_T)
+         call ovarre(outfile,'Normalized collisionality (He)', '(nu_star_He)',nu_star_He)
 
       end subroutine stphys_output
 
@@ -920,7 +922,9 @@ contains
          chi_PROCESS_e = st_calc_eff_chi()
 
          nu_star_e = neo_at_rhocore%nu_star_averaged(1)
-         nu_star_i = neo_at_rhocore%nu_star_averaged(2)
+         nu_star_d = neo_at_rhocore%nu_star_averaged(2)
+         nu_star_T = neo_at_rhocore%nu_star_averaged(3)
+         nu_star_He = neo_at_rhocore%nu_star_averaged(4)
 
 
 

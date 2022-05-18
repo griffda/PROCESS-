@@ -408,11 +408,11 @@ contains
 
       !  Total steady state AC power demand, MW
       tfacpd = tfacpd + rpower/etatf
+
       !  Total TF coil power conversion building floor area, m2
-
       tftsp = tfcfsp
-      !  Total TF coil power conversion building volume, m3
 
+      !  Total TF coil power conversion building volume, m3
       tftbv = tfcbv
 
       !  Output section
@@ -1050,13 +1050,14 @@ contains
         iprimshld, pinjwp, fachtmw, pgrossmw, psechtmw, trithtmw, psechcd, &
         tfacpd, htpmw, etath, crypmw, psecdiv, pinjht, htpsecmw, helpow_cryal
     use pfcoil_variables, only: pfwpmw
-    use physics_variables, only: palpmw, ignite, pcoreradmw, pradmw, itart, &
+    use physics_variables, only: palpmw, ignite, pcoreradmw, pradmw, psolradmw, itart, &
         pdivt, palpfwmw, idivrt, pohmmw, iradloss, powfmw, pchargemw, &
         pscalingmw, falpha
     use process_output, only: ovarin, ocmmnt, ovarrf, oheadr, ovarre, oblnkl, &
         osubhd
     use tfcoil_variables, only: ppump, i_tf_sup, tfcmw, tmpcry, tcoolin, &
         eff_tf_cryo
+    use stellarator_variables, only: istell
     use primary_pumping_variables, only: htpmw_fw_blkt
     use constants, only: rmu0, mfile, pi
     implicit none
@@ -1385,7 +1386,9 @@ contains
         call ocmmnt(outfile,'Total power loss is scaling power plus radiation (iradloss = 0)')
         call ovarrf(outfile,'Transport power from scaling law (MW)','(pscalingmw)',pscalingmw, 'OP ')
         call ovarrf(outfile,'Total net radiation power (MW)','(pradmw)',pradmw, 'OP ')
-        sum = pscalingmw+pradmw
+        if (istell /= 0) call ovarrf(outfile,'Radiation power in SOL (subtracted from pradmw) (MW)','(psolradmw)',psolradmw, 'OP ')
+        if (istell == 0) sum = pscalingmw+pradmw
+        if (istell /= 0) sum = pscalingmw+pradmw-psolradmw ! pradmw includes psolradmw for stellarators
         call ovarrf(outfile,'Total (MW)','',sum, 'OP ')
     else if (iradloss == 1) then
         call ocmmnt(outfile,'Total power loss is scaling power plus core radiation only (iradloss = 1)')
@@ -1767,6 +1770,7 @@ contains
     end if
 
     !  45% extra miscellaneous, piping and reserves
+    
     qmisc = 0.45D0 * (qss + qnuc + qac + qcl)
     helpow = max(0.0D0, qmisc + qss + qnuc + qac + qcl)
 

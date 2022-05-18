@@ -45,8 +45,8 @@ module neoclassics_module
         real(dp), dimension(4,no_roots) :: nu = 0
         !  90-degree deflection frequency on GL roots
         real(dp), dimension(4,no_roots) :: nu_star = 0
-        !  Dimensionless 90-degree deflection frequency on GL roots
-        real(dp), dimension(2) :: nu_star_averaged = 0
+        !  Dimensionless deflection frequency
+        real(dp), dimension(4) :: nu_star_averaged = 0
         !  Maxwellian averaged dimensionless 90-degree deflection frequency for electrons (index 1) and ions (index 2)
         real(dp), dimension(4,no_roots) :: vd = 0
         !  Drift velocity on GL roots
@@ -94,7 +94,7 @@ module neoclassics_module
         procedure :: calc_KT => neoclassics_calc_KT
         procedure :: calc_nu => neoclassics_calc_nu
         procedure :: calc_nu_star => neoclassics_calc_nu_star
-        procedure :: avg_nu_star => neoclassics_average_nu_star
+        procedure :: avg_nu_star => neoclassics_calc_nu_star_fromT
         procedure :: calc_D11_mono => neoclassics_calc_D11_mono
         procedure :: calc_vd => neoclassics_calc_vd
         procedure :: calc_D111 => neoclassics_calc_D111
@@ -335,25 +335,56 @@ contains
 
     end function neoclassics_calc_nu_star
 
-    function neoclassics_average_nu_star(self) result(nu_star_averaged)
-        !! Averages the normalized collision frequency
+
+    function neoclassics_calc_nu_star_fromT(self)
+        !! Calculates the collision frequency
         !
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        use const_and_precisions, only: pi, me_, mp_, eps0_,e_, keV_
+        use physics_variables, only: rmajor, te,ti, dene,deni, dnalp, fdeut
 
-        use const_and_precisions, only: pi
-
+        real(dp),dimension(4) :: neoclassics_calc_nu_star_fromT
         class(neoclassics), intent(in) :: self
-        real(dp),dimension(2) :: nu_star_averaged
+        real(dp) :: t,erfn,phixmgx,expxk,xk, lnlambda,x,v
+        real(dp),dimension(4) :: temp, mass,density,z
 
-        real(dp),dimension(no_roots) :: xi,wi
 
-        xi = self%gauss_laguerre%roots
-        wi = self%gauss_laguerre%weights
-     
-        nu_star_averaged(1) = sum(self%nu_star(1,:) * xi * wi)/sum(xi * wi)
-        nu_star_averaged(2) = 0.5*(sum(self%nu_star(2,:) * xi * wi)/sum(xi * wi)+sum(self%nu_star(3,:) * xi * wi)/sum(xi * wi))
+        integer :: jj,kk
 
-    end function neoclassics_average_nu_star
+        temp = (/te,ti,ti,ti /) * keV_
+        density = (/dene,deni * fdeut,deni*(1-fdeut),dnalp /)
+
+        !          e      D      T         a (He)
+        mass = (/me_,mp_*2.0d0,mp_*3.0d0,mp_*4.0d0/)
+        z = (/-1.0d0,1.0d0,1.0d0,2.0d0/) * e_
+
+        ! transform the temperature back in eV
+        ! Formula from L. Spitzer.Physics of fully ionized gases.  Interscience, New York, 1962
+        lnlambda = 32.2d0 - 1.15d0*log10(density(1)) + 2.3d0*log10(temp(1)/e_)
+
+        neoclassics_calc_nu_star_fromT(:) = 0.0d0
+
+        do jj = 1, 4
+            v = sqrt(2d0 * temp(jj)/mass(jj))
+            do kk = 1,4
+                xk = (mass(kk)/mass(jj))*(temp(jj)/temp(kk))
+                
+                if (xk < 200.d0) then
+                    expxk = exp(-xk)
+                else
+                    expxk = 0.0d0
+                endif
+
+                t = 1.0d0/(1.0d0+0.3275911d0*sqrt(xk))
+                erfn = 1.0d0-t*(.254829592d0 + t*(-.284496736d0 + t*(1.421413741d0       &
+                        + t*(-1.453152027d0 +t*1.061405429d0))))*expxk
+                phixmgx = (1.0d0-0.5d0/xk)*erfn + expxk/sqrt(pi*xk)
+                neoclassics_calc_nu_star_fromT(jj) = neoclassics_calc_nu_star_fromT(jj) + density(kk)*(z(jj)*z(kk))**2 &
+                            *lnlambda*phixmgx/(4.0d0*pi*eps0_**2*mass(jj)**2*v**4) * rmajor/self%iota
+            enddo
+        enddo
+
+    end function neoclassics_calc_nu_star_fromT
 
     function neoclassics_calc_D111(self)
         !! Calculates the integrated radial transport coefficients (index 1)
@@ -371,10 +402,10 @@ contains
         xi = self%gauss_laguerre%roots
         wi = self%gauss_laguerre%weights
      
-        D111(1) = sum(2.0d0/sqrt(pi) * self%D11_mono(1,:) * xi**(1.0-0.5) * wi)
-        D111(2) = sum(2.0d0/sqrt(pi) * self%D11_mono(2,:) * xi**(1.0-0.5) * wi)
-        D111(3) = sum(2.0d0/sqrt(pi) * self%D11_mono(3,:) * xi**(1.0-0.5) * wi)
-        D111(4) = sum(2.0d0/sqrt(pi) * self%D11_mono(4,:) * xi**(1.0-0.5) * wi)
+        D111(1) = sum(2.0d0/sqrt(pi) * self%D11_mono(1,:) * xi**(1.0d0-0.5d0) * wi)
+        D111(2) = sum(2.0d0/sqrt(pi) * self%D11_mono(2,:) * xi**(1.0d0-0.5d0) * wi)
+        D111(3) = sum(2.0d0/sqrt(pi) * self%D11_mono(3,:) * xi**(1.0d0-0.5d0) * wi)
+        D111(4) = sum(2.0d0/sqrt(pi) * self%D11_mono(4,:) * xi**(1.0d0-0.5d0) * wi)
 
         neoclassics_calc_D111 = D111
 
@@ -396,10 +427,10 @@ contains
         xi = self%gauss_laguerre%roots
         wi = self%gauss_laguerre%weights
      
-        D112(1) = sum(2.0d0/sqrt(pi) * self%D11_mono(1,:) * xi**(2.0-0.5) * wi)
-        D112(2) = sum(2.0d0/sqrt(pi) * self%D11_mono(2,:) * xi**(2.0-0.5) * wi)
-        D112(3) = sum(2.0d0/sqrt(pi) * self%D11_mono(3,:) * xi**(2.0-0.5) * wi)
-        D112(4) = sum(2.0d0/sqrt(pi) * self%D11_mono(4,:) * xi**(2.0-0.5) * wi)
+        D112(1) = sum(2.0d0/sqrt(pi) * self%D11_mono(1,:) * xi**(2.0d0-0.5d0) * wi)
+        D112(2) = sum(2.0d0/sqrt(pi) * self%D11_mono(2,:) * xi**(2.0d0-0.5d0) * wi)
+        D112(3) = sum(2.0d0/sqrt(pi) * self%D11_mono(3,:) * xi**(2.0d0-0.5d0) * wi)
+        D112(4) = sum(2.0d0/sqrt(pi) * self%D11_mono(4,:) * xi**(2.0d0-0.5d0) * wi)
 
         neoclassics_calc_D112 = D112
 
@@ -421,10 +452,10 @@ contains
         xi = self%gauss_laguerre%roots
         wi = self%gauss_laguerre%weights
      
-        D113(1) = sum(2.0d0/sqrt(pi) * self%D11_mono(1,:) * xi**(3.0-0.5) * wi)
-        D113(2) = sum(2.0d0/sqrt(pi) * self%D11_mono(2,:) * xi**(3.0-0.5) * wi)
-        D113(3) = sum(2.0d0/sqrt(pi) * self%D11_mono(3,:) * xi**(3.0-0.5) * wi)
-        D113(4) = sum(2.0d0/sqrt(pi) * self%D11_mono(4,:) * xi**(3.0-0.5) * wi)
+        D113(1) = sum(2.0d0/sqrt(pi) * self%D11_mono(1,:) * xi**(3.0d0-0.5d0) * wi)
+        D113(2) = sum(2.0d0/sqrt(pi) * self%D11_mono(2,:) * xi**(3.0d0-0.5d0) * wi)
+        D113(3) = sum(2.0d0/sqrt(pi) * self%D11_mono(3,:) * xi**(3.0d0-0.5d0) * wi)
+        D113(4) = sum(2.0d0/sqrt(pi) * self%D11_mono(4,:) * xi**(3.0d0-0.5d0) * wi)
 
         neoclassics_calc_D113 = D113
     end function neoclassics_calc_D113
@@ -449,7 +480,6 @@ contains
         mass = (/me_,mp_*2.0d0,mp_*3.0d0,mp_*4.0d0/)
         z = (/-1.0d0,1.0d0,1.0d0,2.0d0/) * e_
 
-        
         ! transform the temperature back in eV
         ! Formula from L. Spitzer.Physics of fully ionized gases.  Interscience, New York, 1962
         lnlambda = 32.2d0 - 1.15d0*log10(density(1)) + 2.3d0*log10(temp(1)/e_)
@@ -465,13 +495,14 @@ contains
                  t = 1.0d0/(1.0d0+0.3275911d0*sqrt(xk))
                  erfn = 1.0d0-t*(.254829592d0 + t*(-.284496736d0 + t*(1.421413741d0       &
                          + t*(-1.453152027d0 +t*1.061405429d0))))*expxk
-                 phixmgx = (1.0-0.5/xk)*erfn + expxk/sqrt(pi*xk)
-                 v = sqrt(2.*x*temp(jj)/mass(jj))
+                 phixmgx = (1.0d0-0.5d0/xk)*erfn + expxk/sqrt(pi*xk)
+                 v = sqrt(2.0d0*x*temp(jj)/mass(jj))
                  neoclassics_calc_nu(jj,ii) = neoclassics_calc_nu(jj,ii) + density(kk)*(z(jj)*z(kk))**2 &
                               *lnlambda *phixmgx/(4.0*pi*eps0_**2*mass(jj)**2*v**3)
               enddo
            enddo
         enddo
+
     end function neoclassics_calc_nu
 
     type(profile_values) function init_profile_values_from_PROCESS(rho)
@@ -505,15 +536,15 @@ contains
         densa = dnalp*(1+alphan) * (1-rho**2)**alphan
 
         ! Derivatives in real space
-        dr_tempe = -2 * 1.0d0/rminor * te0 * rho * (1-rho**2)**(alphat-1) * alphat * keV_
-        dr_tempT = -2 * 1.0d0/rminor * ti0 * rho * (1-rho**2)**(alphat-1) * alphat * keV_
-        dr_tempD = -2 * 1.0d0/rminor * ti0 * rho * (1-rho**2)**(alphat-1) * alphat * keV_
-        dr_tempa = -2 * 1.0d0/rminor * ti0 * rho * (1-rho**2)**(alphat-1) * alphat * keV_
+        dr_tempe = -2.0d0 * 1.0d0/rminor * te0 * rho * (1.0d0-rho**2)**(alphat-1.0d0) * alphat * keV_
+        dr_tempT = -2.0d0 * 1.0d0/rminor * ti0 * rho * (1.0d0-rho**2)**(alphat-1.0d0) * alphat * keV_
+        dr_tempD = -2.0d0 * 1.0d0/rminor * ti0 * rho * (1.0d0-rho**2)**(alphat-1.0d0) * alphat * keV_
+        dr_tempa = -2.0d0 * 1.0d0/rminor * ti0 * rho * (1.0d0-rho**2)**(alphat-1.0d0) * alphat * keV_
 
-        dr_dense = -2 * 1.0d0/rminor * rho * ne0 *             (1-rho**2)**(alphan-1) * alphan
-        dr_densT = -2 * 1.0d0/rminor * rho * (1-fdeut) * ni0 * (1-rho**2)**(alphan-1) * alphan
-        dr_densD = -2 * 1.0d0/rminor * rho * fdeut *ni0 *      (1-rho**2)**(alphan-1) * alphan
-        dr_densa = -2 * 1.0d0/rminor * rho * dnalp*(1+alphan)* (1-rho**2)**(alphan-1) * alphan
+        dr_dense = -2.0d0 * 1.0d0/rminor * rho * ne0 *             (1.0d0-rho**2)**(alphan-1.0d0) * alphan
+        dr_densT = -2.0d0 * 1.0d0/rminor * rho * (1-fdeut) * ni0 * (1.0d0-rho**2)**(alphan-1.0d0) * alphan
+        dr_densD = -2.0d0 * 1.0d0/rminor * rho * fdeut *ni0 *      (1.0d0-rho**2)**(alphan-1.0d0) * alphan
+        dr_densa = -2.0d0 * 1.0d0/rminor * rho * dnalp*(1+alphan)* (1.0d0-rho**2)**(alphan-1.0d0) * alphan
 
         dens(1) = dense
         dens(2) = densD

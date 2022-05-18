@@ -156,7 +156,6 @@ contains
 
     alphap = alphan + alphat
 
-
     ! The gradient information for ipedestal = 0:
     if (ipedestal == 0) then
       if(alphat > 1.0) then
@@ -167,10 +166,10 @@ contains
 
       elseif (alphat .le. 1.0d0 .and. alphaT > 0.0d0) then
          ! This makes the profiles very 'boxy'
-         ! The gradient diverges here at the edge so define some 'wrong' value of 0.99
+         ! The gradient diverges here at the edge so define some 'wrong' value of 0.95
          ! to approximate the gradient
-         rho_max_dt = 0.99d0
-         dtdrho_max = -100.0d0*0.02d0**alphat*alphat
+         rho_max_dt = 0.95d0
+         dtdrho_max = -2.0d0 * alphat * rho_max_dt*(1.d0-rho_max_dt**2)**(-1.0d0+alphat)
 
       else
          print *, "ERROR: alphat is negative!"
@@ -185,10 +184,10 @@ contains
 
       elseif (alphan .le. 1.0d0 .and. alphan > 0.0d0) then
          ! This makes the profiles very 'boxy'
-         ! The gradient diverges here at the edge so define some 'wrong' value of 0.99
+         ! The gradient diverges here at the edge so define some 'wrong' value of 0.95
          ! to approximate the gradient
-         rho_max_dn = 0.99d0
-         dndrho_max = -100.0d0*0.02d0**alphan*alphan
+         rho_max_dn = 0.95d0
+         dndrho_max = -2.0d0 * alphan * rho_max_dn*(1.d0-rho_max_dn**2)**(-1.0d0+alphan)
 
       else
          print *, "ERROR: alphan is negative!"

@@ -3836,7 +3836,8 @@ module physics_module
       triang, pneutmw, tauee, betalim, rlp, te, dlimit, ne0, qstar, dnalp, &
       taup, sarea, ti0, plhthresh, bp, dnitot, pradmw, csawth, rndfuel, q95, &
       rhopedt, tauratio, pperim, tesep, vsind, ibss, alphaj, dnz, q, ssync, &
-      psolradmw, tauei, ishape, plinepv, palpmw, icurr, pdivt, gammaft, powfmw
+      psolradmw, tauei, ishape, plinepv, palpmw, palpfwmw, icurr, pdivt, &
+      gammaft, powfmw
     use physics_variables, only: betaft, tauscl, fgwsep, rmajor, falpha, &
       nesep, facoh, kappa, dlimit, beta, dlimit, eps, pthrmw, dnla, bt, &
       pthrmw, pthrmw, pthrmw, idivrt, ips, idia
@@ -4251,6 +4252,8 @@ module physics_module
         '(maxradwallload)', maxradwallload, 'IP ')
     call ovarre(outfile,'Peak radiation wall load (MW/m^2)', &
         '(peakradwallload)', peakradwallload, 'OP ')
+    call ovarre(outfile,'Fast alpha particle power incident on the first wall (MW)', &
+        '(palpfwmw)', palpfwmw, 'OP ')
     call ovarre(outfile,'Nominal mean neutron load on inside surface of reactor (MW/m2)', &
         '(wallmw)', wallmw, 'OP ')
     if (istell == 0) then
