@@ -1937,6 +1937,8 @@ contains
    use const_and_precisions, only: pi, keV_
    use physics_variables, only: te, dene, alphan, alphat, powerht, pscalingmw,vol, bt
    use constants, only: nout
+   use stellarator_variables, only: istell
+   use physics_module, only: physics
    implicit none
 
    !  Arguments
@@ -1965,7 +1967,11 @@ contains
    bt_old = bt
    bt = min(bt_ecrh_max,bt)
 
-   call stphys(nout,0)
+   if(istell/=0) then
+      call stphys(nout,0)
+   else
+      call physics()
+   end if
 
    powerht_out = max(powerht,0.00001D0) ! the radiation module sometimes returns negative heating power
    pscalingmw_out = pscalingmw
@@ -1976,7 +1982,11 @@ contains
    dene = dene_old
    bt = bt_old
 
-   call stphys(nout,0)
+   if(istell/=0) then
+      call stphys(nout,0)
+   else
+      call physics()
+   end if
 
 
 

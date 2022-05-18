@@ -1050,7 +1050,7 @@ contains
         iprimshld, pinjwp, fachtmw, pgrossmw, psechtmw, trithtmw, psechcd, &
         tfacpd, htpmw, etath, crypmw, psecdiv, pinjht, htpsecmw, helpow_cryal
     use pfcoil_variables, only: pfwpmw
-    use physics_variables, only: palpmw, ignite, pinnerzoneradmw, pradmw, itart, &
+    use physics_variables, only: palpmw, ignite, pinnerzoneradmw, pradmw, psolradmw, itart, &
         pdivt, palpfwmw, idivrt, pohmmw, iradloss, powfmw, pchargemw, &
         pscalingmw, falpha
     use process_output, only: ovarin, ocmmnt, ovarrf, oheadr, ovarre, oblnkl, &
