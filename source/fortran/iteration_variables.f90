@@ -3779,8 +3779,6 @@ contains
   end subroutine  set_itv_165
 
   !---------------------------------
-  ! DUMMY variables below here
-  !---------------------------------
 
   subroutine init_itv_166
     !! <LI> (166) f_copperaoh_m2 : CS coil current / copper area < Maximum value
@@ -3806,8 +3804,6 @@ contains
   end subroutine  set_itv_166
 
   !---------------------------------
-  ! DUMMY variables below here
-  !---------------------------------
 
   subroutine init_itv_167 
     !! <LI> (165) fncycle : f-value for minimum CS coil stress load cycles
@@ -3831,6 +3827,8 @@ contains
     fncycle = ratio
   end subroutine  set_itv_167
 
+  !---------------------------------
+  ! DUMMY VARIABLES
   !---------------------------------
 
   subroutine init_itv_168
