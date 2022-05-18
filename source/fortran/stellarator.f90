@@ -101,6 +101,7 @@ contains
 
     !  These lines switch off tokamak specifics (solenoid, pf coils, pulses etc.).
     !  Are they still up to date? (11/03/20 JL)
+    
     !  Build quantities
 
     ohcth = 0.0D0

@@ -158,7 +158,7 @@ contains
 
     ! The gradient information for ipedestal = 0:
     if (ipedestal == 0) then
-      if(alphat > 1.0) then
+      if(alphat > 1.0d0) then
          ! Rho (normalized radius), where temperature derivative is largest
          rho_max_dt = 1.0d0/sqrt(-1.0d0 +2.0d0 * alphat)
          dtdrho_max = -2.0d0**alphat*(-1.0d0 + alphat)**(-1.0d0 + alphat)*alphat*(-1.0d0 + &

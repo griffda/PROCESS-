@@ -277,7 +277,7 @@ module stellarator_configuration
              output_config%min_plasma_coil_distance = 1.7d0
              output_config%derivative_min_LCFS_coils_dist = -1.0d0 ! this is approximated for now
  
-             output_config%min_bend_radius = 0.86 ! [m]
+             output_config%min_bend_radius = 0.86d0 ! [m]
  
              output_config%neutron_peakfactor = 1.6d0
 
