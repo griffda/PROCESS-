@@ -13,7 +13,7 @@
                     generation script imports, and inspects, process.
 """
 
-from re import search, sub
+from re import sub
 import subprocess
 from sys import stderr
 from process.io.python_fortran_dicts import get_dicts
