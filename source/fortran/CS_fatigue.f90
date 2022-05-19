@@ -27,7 +27,7 @@ subroutine Ncycle(n_cycle, max_hoop_stress,residual_stress,t_crack_vertical,t_cr
     real(dp), intent(inout) :: n_cycle, t_crack_radial
 
     ! local variables
-    real(dp) :: Const, C0, m, R, delta, deltaN, mw, n, CR
+    real(dp) :: C0, m, R, delta, deltaN, mw, n, CR
     real(dp) :: Kmax, Ka, Kc, a, c, N_pulse
     real(dp) :: max_hoop_stress_MPa, residual_stress_MPa, hoop_stress_MPa
 
