@@ -39,7 +39,7 @@ subroutine Ncycle(n_cycle, max_hoop_stress,residual_stress,t_crack_vertical,t_cr
     m = 3.5D0
     ! Walker Coefficient
     mw = 0.436D0
-    n= -m*(mw-1)
+    n= -m*(mw-1.0D0)
   
     ! Set units to MPa
     max_hoop_stress_MPa = max_hoop_stress / 1.0D6
