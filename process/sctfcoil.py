@@ -4233,7 +4233,7 @@ class Sctfcoil:
         # ----------------
 
         if output:
-            sctfcoil_module.out_stress(
+            self.out_stress(
                 sig_tf_r_max,
                 sig_tf_t_max,
                 sig_tf_z_max,
@@ -4261,8 +4261,6 @@ class Sctfcoil:
                 str_tf_z,
                 n_radial_array,
                 n_tf_bucking,
-                self.outfile,
-                constants.sig_file,
             )
 
     def plane_stress(self, nu, rad, ey, j, nlayers, n_radial_array):
@@ -4672,13 +4670,13 @@ class Sctfcoil:
             po.ovarre(
                 constants.mfile,
                 f"TF coil arc point {ii} R (m)",
-                f"(tfcoil_variables.xarc({ii}))",
+                f"(xarc({ii+1}))",
                 tfcoil_variables.xarc[ii],
             )
             po.ovarre(
                 constants.mfile,
                 f"TF coil arc point {ii} Z (m)",
-                f"(tfcoil_variables.yarc({ii}))",
+                f"(yarc({ii+1}))",
                 tfcoil_variables.yarc[ii],
             )
 
@@ -5013,7 +5011,7 @@ class Sctfcoil:
                 po.ovarre(
                     self.outfile,
                     "Superconductor fraction of conductor",
-                    "(1-tfcoil_variables.fcutfsu)",
+                    "(1-fcutfsu)",
                     1 - tfcoil_variables.fcutfsu,
                 )
                 # TODO
@@ -5792,3 +5790,337 @@ class Sctfcoil:
                     build_variables.r_cp_top,
                 )
                 po.oblnkl(self.outfile)
+
+    def out_stress(
+        self,
+        sig_tf_r_max,
+        sig_tf_t_max,
+        sig_tf_z_max,
+        sig_tf_vmises_max,
+        sig_tf_tresca_max,
+        deflect,
+        eyoung_axial,
+        eyoung_trans,
+        eyoung_wp_axial,
+        eyoung_wp_trans,
+        poisson_wp_trans,
+        radial_array,
+        s_tresca_cond_cea,
+        poisson_wp_axial,
+        sig_tf_r,
+        sig_tf_smeared_r,
+        sig_tf_smeared_t,
+        sig_tf_smeared_z,
+        sig_tf_t,
+        sig_tf_tresca,
+        sig_tf_vmises,
+        sig_tf_z,
+        str_tf_r,
+        str_tf_t,
+        str_tf_z,
+        n_radial_array,
+        n_tf_bucking,
+    ):
+        """Subroutine showing the writing the TF midplane stress analysis
+        in the output file and the stress distribution in the SIG_TF.DAT
+        file used to plot stress distributions
+        Author : S. Kahn
+        """
+
+        def table_format_arrays(a, mult=1, delim="\t\t"):
+            return delim.join([str(i * mult) for i in a])
+
+        # Stress output section
+        po.oheadr(self.outfile, "TF coils ")
+        po.osubhd(self.outfile, "TF Coil Stresses (CCFE model) :")
+
+        if tfcoil_variables.i_tf_stress_model == 1:
+            po.ocmmnt(self.outfile, "Plane stress model with smeared properties")
+        else:
+            po.ocmmnt(self.outfile, "Generalized plane strain model")
+
+        po.ovarre(
+            self.outfile,
+            "Allowable maximum shear stress in TF coil case (Tresca criterion) (Pa)",
+            "(sig_tf_case_max)",
+            tfcoil_variables.sig_tf_case_max,
+        )
+
+        po.ovarre(
+            self.outfile,
+            "Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa)",
+            "(sig_tf_wp_max)",
+            tfcoil_variables.sig_tf_wp_max,
+        )
+        if tfcoil_variables.i_tf_tresca == 1 and tfcoil_variables.i_tf_sup == 1:
+            po.ocmmnt(
+                self.outfile,
+                "WP conduit Tresca criterion corrected using CEA formula (i_tf_tresca = 1)",
+            )
+
+        if tfcoil_variables.i_tf_bucking >= 3:
+            po.ocmmnt(
+                self.outfile, "No stress limit imposed on the TF-CS interface layer"
+            )
+            po.ocmmnt(
+                self.outfile, "  -> Too much unknow on it material choice/properties"
+            )
+
+        # OUT.DAT data on maximum shear stress values for the Tresca criterion
+        po.ocmmnt(
+            self.outfile,
+            "Materal stress of the point of maximum shear stress (Tresca criterion) for each layer",
+        )
+        po.ocmmnt(
+            self.outfile,
+            "Please use utilities/plot_stress_tf.py for radial plots plots summary",
+        )
+
+        if tfcoil_variables.i_tf_bucking == 0:
+            if tfcoil_variables.i_tf_sup == 1:
+                po.write(self.outfile, "  Layers \t\t\t\t WP \t\t Outer case")
+            else:
+                po.write(self.outfile, "  Layers \t\t\t\t conductor \t\t Outer case")
+
+        elif tfcoil_variables.i_tf_bucking == 1:
+            if tfcoil_variables.i_tf_sup == 1:
+                po.write(
+                    self.outfile, "  Layers \t\t\t\t Steel case \t\t WP \t\t Outer case"
+                )
+            else:
+                po.write(
+                    self.outfile,
+                    "  Layers \t\t\t\t bucking \t\t conductor \t\t Outer case",
+                )
+
+        elif tfcoil_variables.i_tf_bucking == 2:
+            if tfcoil_variables.i_tf_sup == 1:
+                po.write(
+                    self.outfile,
+                    "  Layers \t\t\t\t CS \t\t Steel case \t\t WP \t\t Outer case",
+                )
+            else:
+                po.write(
+                    self.outfile,
+                    "  Layers \t\t\t\t CS \t\t bucking \t\t conductor \t\t Outer case",
+                )
+
+        elif tfcoil_variables.i_tf_bucking == 3:
+            if tfcoil_variables.i_tf_sup == 1:
+                po.write(
+                    self.outfile,
+                    "  Layers \t\t\t\t CS \t\t interface \t\t Steel case \t\t WP \t\t Outer case",
+                )
+            else:
+                po.write(
+                    self.outfile,
+                    "  Layers \t\t\t\t CS \t\t interface \t\t bucking \t\t conductor \t\t Outer case",
+                )
+
+        po.write(
+            self.outfile,
+            f"  Radial stress \t\t\t (MPa) \t\t {table_format_arrays(sig_tf_r_max, 1e-6)}",
+        )
+        po.write(
+            self.outfile,
+            f"  Toroidal stress \t\t\t (MPa) \t\t {table_format_arrays(sig_tf_t_max, 1e-6)}",
+        )
+        po.write(
+            self.outfile,
+            f"  Vertical stress \t\t\t (MPa) \t\t {table_format_arrays(sig_tf_z_max, 1e-6)}",
+        )
+        po.write(
+            self.outfile,
+            f"  Von-Mises stress \t\t\t (MPa) \t\t {table_format_arrays(sig_tf_vmises_max, 1e-6)}",
+        )
+
+        if tfcoil_variables.i_tf_tresca == 1 and tfcoil_variables.i_tf_sup == 1:
+            po.write(
+                self.outfile,
+                f"  Shear (CEA Tresca) \t\t\t (MPa) \t\t {table_format_arrays(sig_tf_tresca_max, 1e-6)}",
+            )
+        else:
+            po.write(
+                self.outfile,
+                f"  Shear (Tresca) \t\t\t (MPa) \t\t {table_format_arrays(sig_tf_tresca_max, 1e-6)}",
+            )
+
+        po.write(self.outfile, "")
+        po.write(
+            self.outfile,
+            f"  Toroidal modulus \t\t\t (GPa) \t\t {table_format_arrays(eyoung_trans, 1e-9)}",
+        )
+        po.write(
+            self.outfile,
+            f"  Vertical modulus \t\t\t (GPa) \t\t {table_format_arrays(eyoung_axial, 1e-9)}",
+        )
+        po.write(self.outfile, "")
+        po.ovarre(
+            self.outfile,
+            "WP transverse modulus (GPa)",
+            "(eyoung_wp_trans*1.0d-9)",
+            eyoung_wp_trans * 1.0e-9,
+            "OP ",
+        )
+        po.ovarre(
+            self.outfile,
+            "WP vertical modulus (GPa)",
+            "(eyoung_wp_axial*1.0d-9)",
+            eyoung_wp_axial * 1.0e-9,
+            "OP ",
+        )
+        po.ovarre(
+            self.outfile,
+            "WP transverse Poisson" "s ratio",
+            "(poisson_wp_trans)",
+            poisson_wp_trans,
+            "OP ",
+        )
+        po.ovarre(
+            self.outfile,
+            "WP vertical-transverse Pois. rat.",
+            "(poisson_wp_axial)",
+            poisson_wp_axial,
+            "OP ",
+        )
+
+        # MFILE.DAT data
+        for ii in range(n_tf_bucking + 2):
+            po.ovarre(
+                constants.mfile,
+                f"Radial    stress at maximum shear of layer {ii+1} (Pa)",
+                f"(sig_tf_r_max({ii+1}))",
+                sig_tf_r_max[ii],
+            )
+            po.ovarre(
+                constants.mfile,
+                f"toroidal  stress at maximum shear of layer {ii+1} (Pa)",
+                f"(sig_tf_t_max({ii+1}))",
+                sig_tf_t_max[ii],
+            )
+            po.ovarre(
+                constants.mfile,
+                f"Vertical  stress at maximum shear of layer {ii+1} (Pa)",
+                f"(sig_tf_z_max({ii+1}))",
+                sig_tf_z_max[ii],
+            )
+            po.ovarre(
+                constants.mfile,
+                f"Von-Mises stress at maximum shear of layer {ii+1} (Pa)",
+                f"(sig_tf_vmises_max({ii+1}))",
+                sig_tf_vmises_max[ii],
+            )
+            if tfcoil_variables.i_tf_tresca == 1 and tfcoil_variables.i_tf_sup == 1:
+                po.ovarre(
+                    constants.mfile,
+                    f"Maximum shear stress for CEA Tresca yield criterion {ii+1} (Pa)",
+                    f"(sig_tf_tresca_max({ii+1}))",
+                    sig_tf_tresca_max[ii],
+                )
+            else:
+                po.ovarre(
+                    constants.mfile,
+                    f"Maximum shear stress for the Tresca yield criterion {ii+1} (Pa)",
+                    f"(sig_tf_tresca_max({ii+1}))",
+                    sig_tf_tresca_max[ii],
+                )
+
+        # SIG_TF.DAT storage
+        po.write(constants.sig_file, f"Points per layers {n_radial_array}")
+        po.write(constants.sig_file, "")
+        po.write(
+            constants.sig_file,
+            f"  Radius \t\t\t\t (m) \t\t {table_format_arrays(radial_array, )}",
+        )
+        po.write(
+            constants.sig_file,
+            f"  Radial stress \t\t\t\t (MPa) \t\t {table_format_arrays(sig_tf_r, 1e-6, )}",
+        )
+        po.write(
+            constants.sig_file,
+            f"  Toroidal stress \t\t\t\t (MPa) \t\t {table_format_arrays(sig_tf_t, 1e-6, )}",
+        )
+        po.write(
+            constants.sig_file,
+            f"  Vertical stress \t\t\t\t (MPa) \t\t {table_format_arrays(sig_tf_z, 1e-6, )}",
+        )
+        po.write(
+            constants.sig_file,
+            f"  Radial smear stress \t\t\t\t (MPa) \t\t {table_format_arrays(sig_tf_smeared_r, 1e-6, )}",
+        )
+        po.write(
+            constants.sig_file,
+            f"  Toroidal smear stress \t\t\t\t (MPa) \t\t {table_format_arrays(sig_tf_smeared_t, 1e-6, )}",
+        )
+        po.write(
+            constants.sig_file,
+            f"  Vertical smear stress \t\t\t\t (MPa) \t\t {table_format_arrays(sig_tf_smeared_z, 1e-6, )}",
+        )
+
+        po.write(
+            constants.sig_file,
+            f"  Von-Mises stress \t\t\t\t (MPa) \t\t {table_format_arrays(sig_tf_vmises, 1e-6, )}",
+        )
+
+        if tfcoil_variables.i_tf_sup == 1:
+            po.write(
+                constants.sig_file,
+                f"  CEA Tresca stress \t\t\t\t (MPa) \t\t {table_format_arrays(s_tresca_cond_cea, 1e-6, )}",
+            )
+        else:
+            po.write(
+                constants.sig_file,
+                f"  CEA Tresca stress \t\t\t\t (MPa) \t\t {table_format_arrays(sig_tf_tresca, 1e-6, )}",
+            )
+
+        po.write(constants.sig_file, "")
+        po.write(constants.sig_file, "Displacement")
+        po.write(
+            constants.sig_file,
+            f"  rad. displacement \t\t\t\t (mm) \t\t {table_format_arrays(deflect, 1e3, )}",
+        )
+        if tfcoil_variables.i_tf_stress_model != 1:
+            po.write(constants.sig_file, "")
+            po.write(constants.sig_file, "Strain")
+            po.write(
+                constants.sig_file,
+                f"  Radial strain \t\t\t\t\t\t {table_format_arrays(str_tf_r)}",
+            )
+            po.write(
+                constants.sig_file,
+                f"  Toroidal strain \t\t\t\t\t\t {table_format_arrays(str_tf_t)}",
+            )
+            po.write(
+                constants.sig_file,
+                f"  Vertical strain \t\t\t\t\t\t {table_format_arrays(str_tf_z)}",
+            )
+
+        # TODO sig_tf_wp_av_z is always undefined here. This needs correcting or removing
+        # if ( tfcoil_variables.i_tf_sup == 1 ) :
+        # write(constants.sig_file,'(t2, "WP"    ," smeared stress", t20, "(MPa)",t26, *(F11.3,3x))') sig_tf_wp_av_z*1.0e-6
+        #
+
+        # Quantities from the plane stress stress formulation (no resitive coil output)
+        if tfcoil_variables.i_tf_stress_model == 1 and tfcoil_variables.i_tf_sup == 1:
+            # Other quantities (displacement strain, etc..)
+            po.ovarre(
+                self.outfile,
+                "Maximum radial deflection at midplane (m)",
+                "(deflect)",
+                deflect[n_radial_array - 1],
+                "OP ",
+            )
+            po.ovarre(
+                self.outfile,
+                "Vertical strain on casing",
+                "(casestr)",
+                tfcoil_variables.casestr,
+                "OP ",
+            )
+            po.ovarre(
+                self.outfile,
+                "Radial strain on insulator",
+                "(insstrain)",
+                tfcoil_variables.insstrain,
+                "OP ",
+            )
