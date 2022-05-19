@@ -2,6 +2,7 @@
 from process import main
 from shutil import copy
 
+
 def test_single_run(temp_data):
     """Test a SingleRun Process run with CLI args.
 
@@ -17,6 +18,7 @@ def test_single_run(temp_data):
     # Run a SingleRun with an explicitly defined IN.DAT
     main.main(args=["-i", input_file])
 
+
 def test_single_run_cwd(temp_data_cwd):
     """SingleRun without defining an input file.
 
@@ -29,6 +31,7 @@ def test_single_run_cwd(temp_data_cwd):
     copy(temp_data_cwd / "baseline_2018_IN.DAT", temp_data_cwd / "IN.DAT")
     # Run: args must be emptylist; if None, argparse tries to use CLI args
     main.main(args=[])
+
 
 def test_vary_run(temp_data):
     """Test a VaryRun with CLI args.
@@ -44,6 +47,7 @@ def test_vary_run(temp_data):
     # Run a VaryRun with an explicit conf file name
     main.main(args=["--varyiterparams", "--varyiterparamsconfig", conf_file])
 
+
 def test_vary_run_cwd(temp_data_cwd):
     """Test VaryRun without explicitly defining the conf file name.
 
@@ -52,6 +56,7 @@ def test_vary_run_cwd(temp_data_cwd):
     :type temp_data_cwd: Path
     """
     main.main(args=["--varyiterparams"])
+
 
 def test_plot_proc(temp_data, mfile_name):
     """Run plot proc via CLI.

@@ -189,7 +189,7 @@ contains
     !! T&amp;M/PKNIGHT/LOGBOOK24, p.6
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    
+
     use constants, only: echarge
     use maths_library, only: quanc8
     implicit none
@@ -213,7 +213,7 @@ contains
          alow = 0.0D0
          bhigh = 1.0D0
          epsq8 = 1.0D-9
- 
+
          ! Find fusion power
          ! Integrate over plasma profiles to obtain fusion reaction rate
          palppv = 0.0D0
@@ -223,19 +223,19 @@ contains
          alpharate = 0.0D0
          protonrate = 0.0D0
          pddpv = 0.0D0
- 
+
          do ireaction = 1,4
              ! Fusion reaction rate (m3/s) is calculated in fint for each ireaction
              ! sigmav is the volume-averaged fusion reaction rate (m3/s)
              ! = integral(2 rho sigv(rho).ni(rho)^2 drho) / (deni**2)
- 
+
              call quanc8(fint,alow,bhigh,epsq8,epsq8,sigmav,errest,nofun,flag)
              if (ireaction == DT) sigvdt = sigmav
- 
+
              select case (ireaction)
- 
+
                  case (DT)  ! D + T --> 4He + n reaction
- 
+
                      etot = 17.59D0 * echarge  ! MJ
                      fpow = 1.0D0 * sigmav * etot * fdeut*ftrit * deni*deni  ! MW/m3
                      pa = 0.2D0 * fpow
@@ -245,9 +245,9 @@ contains
                      arate = frate
                      prate = 0.0D0
                      pdtpv = fpow
- 
+
                  case (DHE3)  ! D + 3He --> 4He + p reaction
- 
+
                      etot = 18.35D0 * echarge  ! MJ
                      fpow = 1.0D0 * sigmav * etot * fdeut*fhe3 * deni*deni  ! MW/m3
                      pa = 0.2D0 * fpow
@@ -257,9 +257,9 @@ contains
                      arate = frate
                      prate = frate      ! proton production /m3/second
                      pdhe3pv = fpow
- 
+
                  case (DD1)  ! D + D --> 3He + n reaction
-                     
+
                      ! The 0.5 branching ratio is assumed to be included in sigmav
                      etot = 3.27D0 * echarge  ! MJ
                      fpow = 1.0D0 * sigmav * etot * 0.5D0*fdeut*fdeut * deni*deni  ! MW/m3
@@ -270,9 +270,9 @@ contains
                      arate = 0.0D0
                      prate = 0.0D0      ! Issue #557: No proton production
                      pddpv = pddpv + fpow
- 
+
                  case (DD2)  !  D + D --> T + p reaction
-                 
+
                      ! The 0.5 branching ratio is assumed to be included in sigmav
                      etot = 4.03D0 * echarge  ! MJ
                      fpow = 1.0D0 * sigmav * etot * 0.5D0*fdeut*fdeut * deni*deni  ! MW/m3
@@ -283,22 +283,22 @@ contains
                      arate = 0.0D0
                      prate = frate      ! proton production /m3/second
                      pddpv = pddpv + fpow
- 
+
              end select
- 
+
              palppv = palppv + pa
              pchargepv = pchargepv + pc
              pneutpv = pneutpv + pn
              fusionrate = fusionrate + frate
              alpharate = alpharate + arate
              protonrate = protonrate + prate
- 
+
          end do
- 
+
      contains
- 
+
          ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- 
+
     function fint(rho)
 
       !! Integrand for fusion power integration
@@ -688,7 +688,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         use constants, only: echarge, mproton
-       
+
         implicit none
 
         ! Arguments
@@ -773,7 +773,7 @@ contains
             implicit none
 
             real(dp) :: xbrak
-            
+
             ! Arguments
             real(dp), intent(in) :: e0, ec
 
@@ -914,7 +914,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     use constants, only: mproton, echarge
-    
+
     implicit none
 
     real(dp) :: fsv
@@ -1014,7 +1014,7 @@ contains
     !! https://idm.euro-fusion.org/?uid=2MSZ4T
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use physics_variables, only: triang, plascur, rmajor, kappa, & 
+    use physics_variables, only: triang, plascur, rmajor, kappa, &
         normalised_total_beta, rminor, eped_sf
     implicit none
 
@@ -1040,13 +1040,13 @@ contains
     ! Correction for single null and for ELMs = 0.65
     ! Elongation and triangularity are defined at the plasma boundary.
     ! Total normalised plasma beta is used.
-    t_eped_scaling =  0.65d0 * c0 * triang**a_delta * (plascur/1.0d6)**a_ip * & 
+    t_eped_scaling =  0.65d0 * c0 * triang**a_delta * (plascur/1.0d6)**a_ip * &
                       rmajor**a_r * kappa**a_kappa  * &
                       normalised_total_beta**a_beta  * rminor**a_a
 
     !Issue #730 - add scaling factor to eped model
     t_eped_scaling = eped_sf * t_eped_scaling
-    
+
   end function t_eped_scaling
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1214,8 +1214,8 @@ contains
   subroutine imprad(radb, radl, radcore, radtot)
     !! author: H Lux (UKAEA)
 !!
-    !! This routine calculates the total radiation losses from impurity line 
-    !! radiation and bremsstrahlung for all elements for a given temperature 
+    !! This routine calculates the total radiation losses from impurity line
+    !! radiation and bremsstrahlung for all elements for a given temperature
     !! and density profile.
     !!
 !! **References**
@@ -1224,14 +1224,14 @@ contains
     !! - L(z) data (coronal equilibrium) from Marco Sertoli, ASDEX-U, private communication
 !! - Kallenbach et al., Plasma Phys. Control. Fus. 55 (2013) 124041
 
-    use impurity_radiation_module, only: impurity_arr, coreradius, &
-        coreradiationfraction, fradcore, impradprofile
+    use impurity_radiation_module, only: coreradius, &
+        coreradiationfraction, fradcore, impradprofile, impurity_arr_frac
     use physics_variables, only: rhopedt, rhopedn, te0, teped, tesep, alphan, &
         alphat, tbeta, ne0, neped, nesep
     use profiles_module, only: tprofile, nprofile
 
     implicit none
-    
+
     real(dp), intent(out) :: radb
     !! bremsstrahlung only [MW/m\(^3\)]
 
@@ -1269,11 +1269,11 @@ contains
       trho = tprofile(rho, rhopedt, te0, teped, tesep, alphat, tbeta)
       nrho = nprofile(rho, rhopedn, ne0, neped, nesep, alphan)
 
-      do imp = 1, size(impurity_arr)
+      do imp = 1, size(impurity_arr_frac)
 
-        if (impurity_arr(imp)%frac > 1.0D-30) then
+        if (impurity_arr_frac(imp) > 1.0D-30) then
 
-          call impradprofile(impurity_arr(imp), nrho, trho, pimp, pbrem, pline)
+          call impradprofile(imp, nrho, trho, pimp, pbrem, pline)
 
           radtot  = radtot  + pimp*rho
           radcore = radcore + pimp*rho * fradcore(rho,coreradius,coreradiationfraction)
@@ -1300,7 +1300,7 @@ contains
     !! Volume measure of plasma elongation using the IPB definition
     !!
     !! See Otto Kardaun et al 2008 Nucl. Fusion 48 099801
-     
+
     ! Module variables
     use physics_variables, only : vol, rminor, rmajor
     use constants, only : pi
@@ -1308,22 +1308,22 @@ contains
     real(dp) :: plasma_elongation_IPB
     !! Plasma elongation (IPB)
 
-    plasma_elongation_IPB = vol / ( 2.0D0 * pi*pi * rminor*rminor * rmajor ) 
+    plasma_elongation_IPB = vol / ( 2.0D0 * pi*pi * rminor*rminor * rmajor )
     !! \begin{equation} \kappa_{IPB} = \frac{V}{2\pi a^2 R_0} \end{equation}
     !!
     !! - \( V \) -- Plasma volume [m\(^3\)]
     !! - \( a \) -- Plasma minor radius [m]
     !! - \( R_0 \) -- Plasma major radius [m]
-    
+
   end function plasma_elongation_IPB
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   function total_mag_field()
     !! author: J. Morris (UKAEA)
-    !! 
+    !!
     !! Calculates the total magnetic field
-     
+
     ! Module variables
     use physics_variables, only : bt, bp
 
@@ -1341,7 +1341,7 @@ contains
     !! author: J. Morris (UKAEA)
     !!
     !! Calculates total poloidal beta
-     
+
     ! Module variables
     use physics_variables, only : btot, bp, beta
 
@@ -1350,7 +1350,7 @@ contains
 
     beta_poloidal = beta * ( btot/bp )**2
     !! \begin{equation} \beta_p = \beta \left( \frac{B_{tot}}{B_p} \right)^2 \end{equation}
-    !! See J.P. Freidberg, "Plasma physics and fusion energy", Cambridge University Press (2007) 
+    !! See J.P. Freidberg, "Plasma physics and fusion energy", Cambridge University Press (2007)
     !! Page 270 ISBN 0521851076
 
   end function beta_poloidal
@@ -1361,7 +1361,7 @@ contains
     !! author: J. Morris (UKAEA)
     !!
     !! Calculates resistive diffusion time
-     
+
     ! Module variables
     use physics_variables, only : rmajor, rplas, kappa95
     use constants, only : rmu0
@@ -1371,7 +1371,7 @@ contains
 
     res_diff_time = 2.0D0*rmu0*rmajor / (rplas*kappa95)
     !! Resistive diffusion time equals the current penetration time which is approximated by:
-    !! \begin{equation} t_{\text{res-diff}} \sim 
+    !! \begin{equation} t_{\text{res-diff}} \sim
     !! \frac{2\mu_0.R_0}{\rho_{\text{plasma}}\kappa_{95}}\end{equation}
     !!
     !! * \( \mu_0 \) -- permittivity of free space [H/m]

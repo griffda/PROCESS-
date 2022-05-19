@@ -1,3 +1,5 @@
+from process.variables import AnnotatedVariable
+
 from process import fortran as ft
 from process.fortran import constants
 from process.fortran import build_variables as bv
@@ -36,25 +38,48 @@ class CostsStep:
         self.iprint = 0  # switch for writing to output file (1=yes)
 
         # Various cost account values (M$)
-        self.step20: float = 0.0
-        self.step21: float = 0.0
-        self.step22: float = 0.0
-        self.step23: float = 0.0
-        self.step24: float = 0.0
-        self.step25: float = 0.0
-        self.step27: float = 0.0
-        self.step91: float = 0.0
-        self.step92: float = 0.0
-        self.step93: float = 0.0
+        self.step20 = AnnotatedVariable(
+            float, 0.0, docstring="step20 account cost", units="M$"
+        )
+        self.step21 = AnnotatedVariable(
+            float, 0.0, docstring="step21 account cost", units="M$"
+        )
+        self.step22 = AnnotatedVariable(
+            float, 0.0, docstring="step22 account cost", units="M$"
+        )
+        self.step23 = AnnotatedVariable(
+            float, 0.0, docstring="step23 account cost", units="M$"
+        )
+        self.step24 = AnnotatedVariable(
+            float, 0.0, docstring="step24 account cost", units="M$"
+        )
+        self.step25 = AnnotatedVariable(
+            float, 0.0, docstring="step25 account cost", units="M$"
+        )
+        self.step27 = AnnotatedVariable(
+            float, 0.0, docstring="step27 account cost", units="M$"
+        )
+        self.step91 = AnnotatedVariable(
+            float, 0.0, docstring="step91 account cost", units="M$"
+        )
+        self.step92 = AnnotatedVariable(
+            float, 0.0, docstring="step92 account cost", units="M$"
+        )
+        self.step93 = AnnotatedVariable(
+            float, 0.0, docstring="step93 account cost", units="M$"
+        )
+        # TODO provide appropriate docstring for this variable
+        self.fwblkcost = AnnotatedVariable(
+            float, 0.0, docstring="account cost", units="M$"
+        )
 
         # Scaling Properties
-        self.fwblkcost: float = 0.0
-        self.vfi: float = 0.0
-        self.vfi_star: float = 0.0
-        self.ptherm_star: float = 0.0
-        self.rmajor_star: float = 0.0
-        self.rminor_star: float = 0.0
-        self.pth: float = 0.0
+        self.vfi = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.vfi_star = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.ptherm_star = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.rmajor_star = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.rminor_star = AnnotatedVariable(float, 0.0, docstring="", units="")
+        self.pth = AnnotatedVariable(float, 0.0, docstring="", units="")
 
     def run(self):
         """Run main costs_step subroutine."""
@@ -94,7 +119,11 @@ class CostsStep:
 
         # Output header
         if self.iprint == 1 and cv.output_costs == 1:
-            title = "STEP Costing Model (" + f2py_compatible_to_string(cv.step_currency) + ")"
+            title = (
+                "STEP Costing Model ("
+                + f2py_compatible_to_string(cv.step_currency)
+                + ")"
+            )
             po.oheadr(self.outfile, title.strip())
 
         # Account 20 : Land and Rights
@@ -190,14 +219,12 @@ class CostsStep:
 
         # 21.01 Site Improvements
         # Original STARFIRE value
-        step2101 = cv.step_ref[2]
-        # step21 should be 0 at this point so I have removed
-        # step21 = step21 + step2101
+        step2101 = self.step_a2101()
         self.step21 = step2101
 
         # 21.02 Reactor Building
-        step2102 = 8.665e3 * bldgsv.a_reactor_bldg ** 1.2132 * 1.0e-6
-        # * 1.0D-6 converts to M$
+        step2102 = 8.665e3 * bldgsv.a_reactor_bldg**1.2132 * 1.0e-6
+        # * 1.0e-6 converts to M$
         self.step21 += step2102
 
         # 21.03 Turbine Building
@@ -267,8 +294,8 @@ class CostsStep:
         self.step21 += step2118
 
         # 21.98 Spares
-        # STARFIRE percentage
-        step2198 = 6.541e-3 * self.step21
+        # 2% as per Atkins estimation
+        step2198 = 0.02e0 * self.step21
         self.step21 += step2198
 
         # 21.99 Contingency
@@ -330,6 +357,349 @@ class CostsStep:
             po.ocosts(
                 self.outfile, "(step21)", "Total Account 21 Cost (M$)", self.step21
             )
+
+    def step_a2101(self):
+        """Account 21.01 : Site Improvements
+        Author: R Chapman, UKAEA
+        This routine evaluates the Account 21.01 (Site Improvements) costs,
+        following defined Cost Breakdown Structure.
+        Accounts are a mixture of unit costings that scale with site area
+        and fixed provisional allowances, for which more precise costings
+        should be completed following site selection.
+        """
+        # Initialise total Site Improvement costs
+        step2101 = 0.0e0
+
+        # 21.01.01 Site Improvements - general
+
+        # 21.01.01.01 Grading to surface level
+        # Movement of existing material around site to facilitate construction activities
+        # (cost per m2) * (site area)
+        step21010101 = cv.site_imp_uc[0] * cv.whole_site_area
+        step210101 = step21010101
+
+        # 21.01.01.02 General Excavation
+        # Excavation up to actual construction depth including transport on site
+        # and double handling material; assumed 1m depth excavation
+        # (cost per m2) * (site area)
+        step21010102 = cv.site_imp_uc[1] * cv.whole_site_area
+        step210101 += step21010102
+
+        # 21.01.01.03 Soil treatment
+        # Soil treatment; remediation and contamination
+        # Provisional allowance only; site specific
+        # (cost per m2) * (site area)
+        step21010103 = cv.site_imp_uc[2] * cv.whole_site_area
+        step210101 += step21010103
+
+        # 21.01.01.04 Filling & backfill
+        # Filling and backfill site-won material and imported granular fill;
+        # asssumed 2m deep average
+        # (cost per m3) * (site area) * (2m depth)
+        step21010104 = cv.site_imp_uc[3] * cv.whole_site_area * 2.0e0
+        step210101 += step21010104
+
+        # 21.01.01.05 Disposal
+        # Provisional allowance only; site specific; fixed cost
+        # 21.01.01.05.01 Allowance for disposal offsite, non-hazardous contaminated material
+        step2101010501 = cv.site_imp_uc[4]
+        # 21.01.01.05.02 Allowance for disposal offsite, hazardous contaminated material
+        step2101010502 = cv.site_imp_uc[5]
+        # 21.01.01.05.03 Disposal off site inert and contaminated soil in excavation below
+        # actual construction depth as additional settlement mitigation
+        step2101010503 = cv.site_imp_uc[6]
+        step21010105 = step2101010501 + step2101010502 + step2101010503
+        step210101 += step21010105
+
+        # 21.01.01.06 Site Clearance
+        # (cost per m2) * (site area)
+        step21010106 = cv.site_imp_uc[7] * cv.whole_site_area
+        step210101 += step21010106
+
+        # 21.01.01.07 Removal of Trees & Vegetation
+        # Provisional allowance only; site specific
+        # 21.01.01.07.01 Vegetation & tree clearance
+        # (cost per m2) * (site area) * (proportion of site)
+        step2101010701 = cv.site_imp_uc[8] * cv.whole_site_area * 0.2e0
+        # 21.01.01.07.02 Allowance for removal of trees
+        step2101010702 = cv.site_imp_uc[9]
+        step21010107 = step2101010701 + step2101010702
+        step210101 += step21010107
+
+        # 21.01.01.08 New Landscaping
+        # (cost per m2) * (site area) * (proportion of site)
+        # 21.01.01.08.01 Landscaping
+        step2101010801 = cv.site_imp_uc[10] * cv.whole_site_area * 0.2e0
+        # 21.01.01.08.02 Hedges
+        step2101010802 = cv.site_imp_uc[11] * cv.whole_site_area * 2.3e-3
+        step21010108 = step2101010801 + step2101010802
+        step210101 += step21010108
+
+        # 21.01.01.09 Constraints and Mitigation
+        # Provisional allowance only; site specific
+        # (cost per m2) * (site area)
+        # 21.01.01.09.01 Environmental
+        step2101010901 = cv.site_imp_uc[12] * cv.whole_site_area
+        # 21.01.01.09.02 Unexploded Ordnance (UXO)
+        step2101010902 = cv.site_imp_uc[13] * cv.whole_site_area
+        # 21.01.01.09.03 Archaeological
+        step2101010903 = cv.site_imp_uc[14] * cv.whole_site_area
+        # 21.01.01.09.04 Local Stakeholders (including landowners and rights of way etc.)
+        step2101010904 = cv.site_imp_uc[15] * cv.whole_site_area
+        step21010109 = step2101010901 + step2101010902 + step2101010903 + step2101010904
+        step210101 += step21010109
+
+        # 21.01.01.10 Roads, pavements and parking areas (Main Site-wide road network)
+        # Site internal access; Main road onsite including secondary roads,
+        # road surface water network and parking and utilities
+        # (cost per m2) * (site area)
+        step21010110 = cv.site_imp_uc[16] * cv.whole_site_area
+        step210101 += step21010110
+
+        # 21.01.01.11 External Lighting
+        # Street lighting columns, including 44W and 67W LED street lighting luminaires,
+        # ducting, cables and excavation works, backfilling, pull pit chambers,
+        # feeder pillars, earth blocks and MCCBs to lighting circuits and columns
+        # (cost per m2) * (site area)
+        step21010111 = cv.site_imp_uc[17] * cv.whole_site_area
+        step210101 += step21010111
+
+        # 21.01.01.12 Connection to Electricity grid (outgoing)
+        # Includes transformers, busbars, cabling installation, fire protection, earthing.
+        # Based upon a circa 3GW power production plant.
+        step21010112 = cv.site_imp_uc[18]
+        step210101 += step21010112
+
+        # 21.01.01.13 Retaining Walls
+        # Site specific; retaining walls varying height from 1.2m to 3m high.
+        # Note: NOT sea defence solution.
+        # (cost per m) * SQRT(site area)
+        step21010113 = cv.site_imp_uc[19] * (cv.whole_site_area) ** 0.5
+        step210101 += step21010113
+
+        # 21.01.01.14 Fencing
+        # Acoustic Fencing, height 5m; Construction Fence 3m height with mesh panel frame,
+        # independent gate posts, post and rail type wooden fence; proposed CCTV cameras,
+        # card site access control posts for vehicles, pedestrians; hostile vehicle mitigation
+        # (cost per m) * SQRT(site area)
+        step21010114 = cv.site_imp_uc[20] * (cv.whole_site_area) ** 0.5
+        step210101 += step21010114
+
+        # 21.01.01.15 Railings
+        # Excluded (no benchmark cost data available)
+        step21010115 = 0.0e0
+        step210101 += step21010115
+
+        # 21.01.01.16 Gateways
+        # Excluded (no benchmark cost data available)
+        step21010116 = 0.0e0
+        step210101 += step21010116
+
+        # 21.01.01.17 Sanitary Sewer System (Foul water system)
+        # Foul water drainage network including 6 pumping stations (duty and standby),
+        # instrumentations and controls. Assumes local water authority has sufficient
+        # capacity to absorb effluent without need for additional reinforcement.
+        step21010117 = cv.site_imp_uc[21]
+        step210101 += step21010117
+
+        # 21.01.01.18 Yard Drainage and Storm Sewer System (Surface water system)
+        # 21.01.01.18.01 Surface water system
+        # Carrier drains, filter drains, excavations, bedding, manholes, swales to
+        # main areas of the site (excludes surface water to power station and buildings)
+        step2101011801 = cv.site_imp_uc[22]
+        # 21.01.01.18.02 Groundwater & surface water treatment buildings
+        # Includes for groundwater treatment plant, surface water treatment plant,
+        # surface water pumping station and connection to existing system
+        step2101011802 = cv.site_imp_uc[23]
+        # 21.01.01.18.03 Allowance for a single Water Management Zone
+        # Provisional allowance
+        step2101011803 = cv.site_imp_uc[24]
+        step21010118 = step2101011801 + step2101011802 + step2101011803
+        step210101 += step21010118
+
+        # 21.01.01.19 Foundation Preparation for construction area
+        # Geogrid Reinforcement, including geotextile separation layer
+        # & concrete hardstanding 0.5m thick
+        # (cost per m2) * (site area)
+        step21010119 = cv.site_imp_uc[25] * cv.whole_site_area
+        step210101 += step21010119
+
+        # 21.01.01.20 Diaphragm Wall
+        # 21.01.01.20.01 Cut off Diaphragm Wall approx. 1,000m long, 52m deep, 1.5m thick
+        step2101012001 = cv.site_imp_uc[26]
+        # 21.01.01.20.02 Dewatering to cut off wall
+        step2101012002 = cv.site_imp_uc[27]
+        step21010120 = step2101012001 + step2101012002
+        step210101 += step21010120
+
+        # Running total (M$)
+        step2101 = step2101 + (step210101 / 1.0e6)
+
+        # 21.01.02 Diversions
+        # Awaiting appropriate estimate
+        step210102 = 0.0e0
+
+        # Running total (M$)
+        step2101 = step2101 + (step210102 / 1.0e6)
+
+        # 21.01.03 Relocation of Buildings & services
+        # 21.01.03.01 Demolition of existing buildings
+        step21010301 = cv.site_imp_uc[28]
+        # 21.01.03.02 Access to site and internal transportation
+        # Access road from existing highway; main road onsite & secondary roads
+        step21010302 = cv.site_imp_uc[29]
+        # 21.01.03.03 Incoming utilities & construction site setup
+        # Includes all incoming services for entire site
+        step21010303 = cv.site_imp_uc[30]
+        step210103 = step21010301 + step21010302 + step21010303
+
+        # Running total (M$)
+        step2101 += step210103 / 1.0e6
+
+        # 21.01.04 Associated developments
+        step210104 = 0.0e0
+
+        # 21.01.04.01 Park & Ride facilities
+        # Includes 2457 car park spaces, external works, services, landscaping, etc.
+        step21010401 = cv.site_imp_uc[31]
+        step210104 += step21010401
+
+        # 21.01.04.02 Other site facilities/activities
+        # Include vehicle inspection areas, security facilities for lorry parking, etc.
+        step21010402 = cv.site_imp_uc[32]
+        step210104 += step21010402
+
+        # 21.01.04.03 Entrance Plaza
+        # Site prep. & ext. works: hardstandings, gantries for freight management, bus stops.
+        step21010403 = cv.site_imp_uc[33]
+        step210104 += step21010403
+
+        # 21.01.04.04 Campus Accommodation
+        # 21.01.04.04.01 Residential
+        # Campus accommodation including canteen, shops, laundry,
+        # internal recreation facilities, medical centre and sports pitches.
+        step2101040401 = cv.site_imp_uc[34]
+        # 21.01.04.04.02 Bus service
+        # Bus station building and site maintenance and services.
+        step2101040402 = cv.site_imp_uc[35]
+        step210104 += step2101040401 + step2101040402
+
+        # 21.01.04.05 Multi-storey Car parks
+        step21010405 = cv.site_imp_uc[36]
+        step210104 += step21010405
+
+        # 21.01.04.06 Ancillary buildings
+        # Generic costs from BCIS building rates
+        # 21.01.04.06 Medical Centre​
+        step2101040601 = cv.site_imp_uc[37]
+        # 21.01.04.06 Public information centre
+        step2101040602 = cv.site_imp_uc[38]
+        # 21.01.04.06 Indoor sports and entertainment centre​
+        step2101040603 = cv.site_imp_uc[39]
+        step210104 += step2101040601 + step2101040602 + step2101040603
+
+        # 21.01.04.07 Permanent configuration buildings - ancillary
+        # Generic costs from BCIS building rates
+        # 21.01.04.07.01 Operation staff buildings/Archive and Documentation building/Ground samples Warehouse/Occupational  Medical Centre
+        step2101040701 = cv.site_imp_uc[40]
+        # 21.01.04.07.02 Main site office
+        step2101040702 = cv.site_imp_uc[41]
+        # 21.01.04.07.03 Fire Training Centre for Plant Staff
+        step2101040703 = cv.site_imp_uc[42]
+        # 21.01.04.07.04 Fire fighting Water building
+        step2101040704 = cv.site_imp_uc[43]
+        # 21.01.04.07.05 Fire and rescue centre
+        step2101040705 = cv.site_imp_uc[44]
+        # 21.01.04.07.06 Administrative Office Building/ Administrative warehouse/In-site Restaurant
+        step2101040706 = cv.site_imp_uc[45]
+        # 21.01.04.07.07 Maintenance Staff Office
+        step2101040707 = cv.site_imp_uc[46]
+        # 21.01.04.07.08 Meteorological station
+        step2101040708 = cv.site_imp_uc[47]
+        # 21.01.04.07.09 Goods Entry Relay Store
+        step2101040709 = cv.site_imp_uc[48]
+        # 21.01.04.07.10 Offsite Vehicle Search Area
+        step2101040710 = cv.site_imp_uc[49]
+        # 21.01.04.07.11 Vehicle Inspection Cabins
+        step2101040711 = cv.site_imp_uc[50]
+        # 21.01.04.07.12 Security search facility
+        step2101040712 = cv.site_imp_uc[51]
+        # 21.01.04.07.13 Service Water Pump Building
+        step2101040713 = cv.site_imp_uc[52]
+        # 21.01.04.07.14 Simulator Training Building
+        step2101040714 = cv.site_imp_uc[53]
+
+        step21010407 = (
+            step2101040701
+            + step2101040702
+            + step2101040703
+            + step2101040704
+            + step2101040705
+            + step2101040706
+            + step2101040707
+            + step2101040708
+            + step2101040709
+            + step2101040710
+            + step2101040711
+            + step2101040712
+            + step2101040713
+            + step2101040714
+        )
+
+        step210104 += step21010407
+
+        # Running total (M$)
+        step2101 = step2101 + (step210104 / 1.0e6)
+
+        # 21.01.05 Waterfront Improvements
+        # 21.01.05.01 Marine
+        # 21.01.05.01.01 Cooling installations - offshore intake, discharge, fish return, heat sink.
+        # (Scaling used relates to thermal power of Hinckley C)
+        step2101050101 = cv.site_imp_uc[54] * htv.pthermmw * (0.5e0 / 4524)
+        # 21.01.05.01.02 Breakwater - harbour breakwater construction
+        step2101050102 = cv.site_imp_uc[55]
+        step21010501 = step2101050101 + step2101050102
+        # 21.01.05.02 Material Offloading Facility
+        # Marine transportation - jetty complete with conveyor (inc. dismantling at project end)
+        step21010502 = cv.site_imp_uc[56]
+        # 21.01.05.03 Sea Defence
+        # Armour and mass fill to increase height of existing defences in line with flood analysis.
+        step21010503 = cv.site_imp_uc[57]
+        # 21.01.05.04 Other Waterfront Improvements
+        # Excluded (no benchmark cost data available)
+        step21010504 = 0.0e0
+
+        step210105 = step21010501 + step21010502 + step21010503 + step21010504
+
+        # Running total (M$)
+        step2101 += step210105 / 1.0e6
+
+        # 21.01.06 Reinstatement & Landscaping
+        # 21.01.06.01 Reinstatement of campus
+        step21010601 = cv.site_imp_uc[58]
+        # 21.01.06.02 Reinstatement of construction plot area
+        step21010602 = cv.site_imp_uc[59]
+        step210106 = step21010601 + step21010602
+
+        # Running total (M$)
+        step2101 += step210106 / 1.0e6
+
+        # 21.01.07 Transport access
+        # 21.01.07.01 Highway Access - offsite highway improvements
+        # Includes new roads & junctions, widening, upgrade, etc.
+        step21010701 = cv.site_imp_uc[60]
+        # 21.01.07.02 Rail Access
+        # Includes new track and associated provisions, interface with existing rail
+        step21010702 = cv.site_imp_uc[61]
+        # 21.01.07.03 Air Access
+        # Excluded (no benchmark cost data available)
+        step21010703 = 0.0e0
+        step210107 = step21010701 + step21010702 + step21010703
+
+        # Running total (M$)
+        step2101 += step210107 / 1.0e6
+
+        return step2101
 
     def step_a22(self):
         """Account 22 : Reactor Plant Equipment.
@@ -747,21 +1117,21 @@ class CostsStep:
 
         # if (lpulse.eq.1) then
         #   if (istore.eq.1) then
-        #     annoam1 = 51.0D0
+        #     annoam1 = 51.0e0
         #   else if (istore.eq.2) then
-        #     annoam1 = 22.2D0
-        #   else
+        #     annoam1 = 22.2e0
+        #   else:
         #     continue
         #   end if
 
         #   Scale with net electric power
-        #   annoam1 = annoam1 * pnetelmw/1200.0D0
+        #   annoam1 = annoam1 * pnetelmw/1200.0e0
 
         #   It is necessary to convert from 1992 pounds to 1990 dollars
         #   Reasonable guess for the exchange rate + inflation factor
         #   inflation = 5% per annum; exchange rate = 1.5 dollars per pound
 
-        #   annoam1 = annoam1 * 1.36D0
+        #   annoam1 = annoam1 * 1.36e0
 
         #   annoam = annoam + annoam1
 
@@ -876,7 +1246,8 @@ class CostsStep:
                 po.ocmmnt(self.outfile, "feffwbl=", feffwbl, "  fwbllife=", fwbllife)
 
             po.write(
-                self.outfile, "\t" * 9 + "Annual Costs, M$" + "\t" * 1 + " " * 4 + "COE, m$/kWh"
+                self.outfile,
+                "\t" * 9 + "Annual Costs, M$" + "\t" * 1 + " " * 4 + "COE, m$/kWh",
             )
             po.dblcol(self.outfile, "Capital Investment", anncap, cv.coecap)
             po.dblcol(self.outfile, "Operation & Maintenance", annoam, cv.coeoam)
@@ -961,7 +1332,6 @@ class CostsStep:
         # Add shield cost to total cost, step2201, in M$
         step2201 += step220102
         # STARFIRE percentage for spares
-        step2298 = 9.985e-2 * step220102
         spares = 9.985e-2 * step220102
 
         # 22.01.03.01 TF Coils
@@ -1013,23 +1383,31 @@ class CostsStep:
         step2201 += step220107
 
         # 22.01.08 Impurity Control
-        # Original STARFIRE value, no scaling
-        step220108 = cv.step_ref[29]
-        step2201 += step220108
+        # Superseded and deleted
 
         # 22.01.09 ECRH Plasma Breakdown
-        # Original STARFIRE value, no scaling
-        step220109 = cv.step_ref[30]
-        step2201 += step220109
+        # Superseded and deleted
 
         # 22.01.10 Divertor
-        # Cost Model 0 cost for STARFIRE sized device
-        # 58.62% increase between 1980 and 1990
-        # http://www.in2013dollars.com/1980-dollars-in-1990
-        # Scaling with product of rmajor and rminor
-        step220110 = cv.step_ref[31] * (
-            (pv.rmajor * pv.rminor) / (self.rmajor_star * self.rminor_star)
-        )
+        # Caveat: rough estimate, using rmajor (rather than e.g. rnull) and
+        # treating the divertor limbs as vertically oriented cylinders.
+        # Greater precision in geometry would provide more accurate results,
+        # but (at the time of writing) the divertor design is not yet
+        # advanced enough to warrant such precision.
+        # Reference cost and area values are for ITER.
+
+        # Use 2D profile of divertor legs to estimate surface area (m2)
+        div_profile_length = dv.divleg_profile_inner + dv.divleg_profile_outer
+        if pv.idivrt == 2:
+            # double-null = double divertor length
+            div_profile_length = div_profile_length * 2.0e0
+        div_sarea = 2.0e0 * constants.pi * pv.rmajor * div_profile_length
+
+        # divertor cost = ref * (div area / ref area)**0.8
+        step220110 = cv.step_ref[31] * (div_sarea / 60.0e0) ** 0.8e0
+        # adjust to 2017$ (from 2014$) using CPI index
+        step220110 = step220110 * (229.0e0 / 228.0e0)
+
         if cv.ifueltyp == 1:
             cv.divcst = step220110
             step220110 = 0.0e0
@@ -1128,10 +1506,6 @@ class CostsStep:
                 self.outfile, "(step220106)", "Reactor Vacuum System (M$)", step220106
             )
             po.ocosts(self.outfile, "(step220107)", "Power Supplies (M$)", step220107)
-            po.ocosts(self.outfile, "(step220108)", "Impurity Control (M$)", step220108)
-            po.ocosts(
-                self.outfile, "(step220109)", "ECRH Plasma Breakdown (M$)", step220109
-            )
             po.ocosts(self.outfile, "(step220110)", "Divertor (M$)", step220110)
             po.oblnkl(self.outfile)
             po.ocosts(
@@ -1277,7 +1651,7 @@ class CostsStep:
             2.0e0
             * (hshld + bv.shldtth)
             * constants.pi
-            * (r1 ** 2 - (r1 - shldith_corr) ** 2)
+            * (r1**2 - (r1 - shldith_corr) ** 2)
         )
 
         # Scale shield material volume (allow for 10% volume coolant, 5% steel)
@@ -1520,18 +1894,36 @@ class CostsStep:
         # Cost per Watt depends on technology/hardware used;
         # inflation adjustment applied as appropriate to source for costs
         # (tech adjusted from 1990 $ is costed as per Cost Model 0)
+        # Notes:
+        # NBI and EC/EBW calculations will be zero if this tech is not included.
+        # HCD requirements for start-up and ramp-down calculated in
+        # relation to requirements for flat-top operation.
+
+        # Total injected power [W] =
+        #      1.0e-6 *
+        #      (flat-top operation [MW] +
+        #       (startupratio * flat-top operation [MW])
+        #       )
+        totinjpow_nbi = 0.0e0
+        totinjpow_ec = 0.0e0
+        totinjpow_ic = 0.0e0
+        # Cost calculated from 'cost per injected Watt', coverted to 2017 M$.
 
         # NBI cost per injected Watt (adjusted from 2020 $):
-        step220104 = cdv.pnbitot * cv.step_ref[68] * (229.0e0 / 258.84e0)
+        totinjpow_nbi = 1.0e-6 * (cdv.pnbitot + (cv.startupratio * cdv.pnbitot))
+        step220104 = (totinjpow_nbi * cv.step_ref[68] * (229.0e0 / 258.84e0)) / 1.0e-6
 
         # EC or EBW cost per injected Watt (adjusted from 2020 $):
-        step220104 += cdv.echpwr * cv.step_ref[69] * (229.0e0 / 258.84e0)
+        totinjpow_ec = 1.0e-6 * (cdv.echpwr + (cv.startupratio * cdv.echpwr))
+        step220104 += (totinjpow_ec * cv.step_ref[69] * (229.0e0 / 258.84e0)) / 1.0e-6
 
         if cdv.iefrf == 2 or cdv.iefrffix == 2:
+            # if primary *or* secondary current drive efficiency model is
             # Ion Cyclotron current drive (adjusted from 1990 $):
-            step220104 += 1.0e-6 * cv.ucich * (1.0e6 * cdv.plhybd) * (229.0e0 / 76.7e0)
+            totinjpow_ic = 1.0e-6 * (cdv.plhybd + (cv.startupratio * cdv.plhybd))
+            step220104 += (totinjpow_ic * cv.ucich * (229.0e0 / 76.7e0)) / 1.0e-6
 
-        # TODO why is there a duplicate of everything below?
+        # if primary current drive efficiency model is any of the following...
         if (
             (cdv.iefrf == 1)
             or (cdv.iefrf == 1)
@@ -1540,8 +1932,9 @@ class CostsStep:
             or (cdv.iefrf == 6)
             or (cdv.iefrf == 6)
         ):
-            # Lower Hybrid system (adjusted from 1990 $):
-            step220104 += 1.0e-6 * cv.uclh * (1.0e6 * cdv.plhybd) * (229.0e0 / 76.7e0)
+            # ...use calculation for Lower Hybrid system (adjusted from 1990 $):
+            totinjpow_ic = 1.0e-6 * (cdv.plhybd + (cv.startupratio * cdv.plhybd))
+            step220104 += (totinjpow_ic * cv.uclh * (229.0e0 / 76.7e0)) / 1.0e-6
 
         if cv.ifueltyp == 1:
             # fraction `fcdfuel` of HCD cost treated as fuel cost
@@ -1582,49 +1975,18 @@ class CostsStep:
         None
         This routine evaluates the Account 22.03 (Cryogenic Cooling
         System) costs.
-        STARFIRE - A Commercial Tokamak Fusion Power Plant Study (1980)
 
         :return: cost 2203
         :rtype: float
         """
-        # 22.03.01 Helium Refrigerator
-        # Original STARFIRE value, scaling with fusion island volume
-        step220301 = cv.step_ref[33] * (self.vfi / self.vfi_star) ** (2.0e0 / 3.0e0)
-        step2203 = step220301
-
-        # 22.03.02 Liquid Helium Transfer and Storage
-        # Original STARFIRE value, scaling with fusion island volume
-        step220302 = cv.step_ref[34] * (self.vfi / self.vfi_star) ** (2.0e0 / 3.0e0)
-        step2203 += step220302
-
-        # 22.03.03 Gas Helium Storage
-        # Original STARFIRE value, scaling with fusion island volume
-        step220303 = cv.step_ref[35] * (self.vfi / self.vfi_star) ** (2.0e0 / 3.0e0)
-        step2203 += step220303
-
-        # 22.03.04 Liquid Nitrogen Storage
-        # Original STARFIRE value, scaling with fusion island volume
-        step220304 = cv.step_ref[36] * (self.vfi / self.vfi_star) ** (2.0e0 / 3.0e0)
-        step2203 += step220304
+        # Cryoplant - will be zero for resistive coils
+        # Parametric costing of cryo systems based on refrigeration capacity produced at Helium temp of 4.5K
+        step2203 = 6.14e0 * tfv.cryo_cool_req**0.63
 
         # Output costs
         if (self.iprint == 1) and (cv.output_costs == 1):
             po.write(self.outfile, "******************* 22.03 Cryogenic Cooling System")
-            po.ocosts(
-                self.outfile, "(step220301)", "Helium Refrigerator (M$)", step220301
-            )
-            po.ocosts(
-                self.outfile,
-                "(step220302)",
-                "Liquid Helium Transfer and Storage (M$)",
-                step220302,
-            )
-            po.ocosts(
-                self.outfile, "(step220303)", "Gas Helium Storage (M$)", step220303
-            )
-            po.ocosts(
-                self.outfile, "(step220304)", "Liquid Nitrogen Storage (M$)", step220304
-            )
+            po.ocosts(self.outfile, "(step2203)", "Cryoplant (M$)", step2203)
             po.oblnkl(self.outfile)
             po.ocosts(
                 self.outfile, "(step2203)", "Total Account 22.03 Cost (M$)", step2203
@@ -1721,7 +2083,7 @@ class CostsStep:
         # 22.06.01 Maintenance Equipment
         # Original STARFIRE value, scaling with fusion island volume
         # Depreciated by the remote handling scaling in cost account 27.
-        step220601 = 0.0  # step_ref(42) * (vfi / vfi_star)**(2.0D0/3.0D0)
+        step220601 = 0.0  # step_ref(42) * (vfi / vfi_star)**(2.0e0/3.0e0)
         step2206 = step220601
         # STARFIRE percentage for spares
         spares = 4.308e-1 * step220601

@@ -1,6 +1,6 @@
 # Development image for Process, used in challenging environments to give
-# identical results to CI or to quickly provide a working environment to a 
-# casual user. Differs from CI image by not using virtual environments for 
+# identical results to CI or to quickly provide a working environment to a
+# casual user. Differs from CI image by not using virtual environments for
 # differt Python versions and doesn't require the CI script to perform extra
 # installations
 FROM ubuntu:20.04

@@ -11,23 +11,26 @@
 import os
 import sys
 import json
-import subprocess
 import argparse
-import collections
 from collections import OrderedDict
 from grip import export
 
 # PROCESS libraries
-from process_io_lib.in_dat import InDat
-from process_io_lib.mfile import MFile
-from process_io_lib.process_plots import plot_pulse_timings, radial_bar_plot, \
-    plasma_profiles_plot
+from process.io.in_dat import InDat
+from process.io.mfile import MFile
+from process_io_lib.process_plots import (
+    plot_pulse_timings,
+    radial_bar_plot,
+    plasma_profiles_plot,
+)
 
 try:
     import process_io_lib.process_dicts as proc_dict
 except ImportError:
-    print("The Python dictionaries have not yet been created. Please run",
-          " 'make dicts'!")
+    print(
+        "The Python dictionaries have not yet been created. Please run",
+        " 'make dicts'!",
+    )
     exit()
 
 # Constants
@@ -48,20 +51,21 @@ FOM = proc_dict.DICT_OPTIMISATION_VARS
 
 # Markdown
 
+
 def bold(x):
-    return("**" + str(x) + "**")
+    return "**" + str(x) + "**"
 
 
 def unbold(x):
-    return(x.replace("*", ""))
+    return x.replace("*", "")
 
 
 def code(x):
-    return("`" + str(x) + "`")
+    return "`" + str(x) + "`"
 
 
 def bold_italics(x):
-    return("**_" + str(x) + "_**")
+    return "**_" + str(x) + "_**"
 
 
 def output_line(x):
@@ -69,11 +73,11 @@ def output_line(x):
 
 
 def heading(x, y):
-    OUTFILE.write("{0} {1}\n\n".format("#"*x, y))
+    OUTFILE.write("{0} {1}\n\n".format("#" * x, y))
 
 
 def output_below_table_comment(x, y, z):
-    OUTFILE.write("> **{0}** : **{1}** : {2}\n\n".format(x,y, z))
+    OUTFILE.write("> **{0}** : **{1}** : {2}\n\n".format(x, y, z))
 
 
 def output_newline():
@@ -82,8 +86,7 @@ def output_newline():
 
 def heading_comment(x):
     if x in COMMENTS:
-        OUTFILE.write("> {0}\n\n".
-            format(" ".join(COMMENTS[x])))
+        OUTFILE.write("> {0}\n\n".format(" ".join(COMMENTS[x])))
 
 
 def return_to_top():
@@ -106,11 +109,12 @@ def content_heading(x):
 
 def content_subheading(x):
     tag = x.lower().replace(" ", "-").replace(":", "")
-    OUTFILE.write("{0}[{1}](#{2})\n\n".format("&nbsp;"*8, x, tag))
+    OUTFILE.write("{0}[{1}](#{2})\n\n".format("&nbsp;" * 8, x, tag))
+
 
 def content_subsubheading(x):
     tag = x.lower().replace(" ", "-").replace(":", "")
-    OUTFILE.write("{0}[{1}](#{2})\n\n".format("&nbsp;"*16, x, tag))
+    OUTFILE.write("{0}[{1}](#{2})\n\n".format("&nbsp;" * 16, x, tag))
 
 
 def section_ro(section_name):
@@ -120,9 +124,11 @@ def section_ro(section_name):
     ro_name = DATA[section_name]["ro"]["name"]
     ro_email = DATA[section_name]["ro"]["email"]
     ro_lab = DATA[section_name]["ro"]["institute"]
-    OUTFILE.write("PMU RO: [{0}](mailto:{1}) ({2})\n\n".format(ro_name, ro_email, ro_lab))
+    OUTFILE.write(
+        "PMU RO: [{0}](mailto:{1}) ({2})\n\n".format(ro_name, ro_email, ro_lab)
+    )
 
- 
+
 def table_heading(headings):
     header_line = "|"
     under_line = "|"
@@ -135,7 +141,7 @@ def table_heading(headings):
 
 def table_line(items, form):
     item_line = "|"
-    item_format = "{0:"+ "{0}".format(form) + "}"
+    item_format = "{0:" + "{0}".format(form) + "}"
     for item in items:
         if type(item) == float:
             item_line += item_format.format(item) + " |"
@@ -149,6 +155,7 @@ def table_line(items, form):
                 item_line += " {0} |".format(item)
     OUTFILE.write(item_line + "\n")
 
+
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
@@ -157,7 +164,7 @@ def get_itvar_values():
     Get iteration variable values from MFILE
     """
     itvar_vals = dict()
-    
+
     for item in MFILE_LIST:
         if item[:5] == "itvar":
             name = MFILE.data[item].var_description
@@ -171,15 +178,15 @@ def get_indat_comments():
     Get IN.DAT #tag comments
     """
     lines = open(COMMAND_ARGS.f).readlines()
-    
+
     for line in lines:
         if line[:2] == "*#":
             try:
                 split_line = line.split(":", 1)
                 key = split_line[0][2:].replace(" ", "")
                 value = split_line[1].strip(" ").strip("\n")
-                COMMENTS.setdefault(key,[]).append(value)
-            except:
+                COMMENTS.setdefault(key, []).append(value)
+            except Exception:
                 print("Error with comment for line in IN.DAT :: {0}".format(line))
 
 
@@ -228,10 +235,16 @@ def output_contents():
         fom_type = "maximise"
     else:
         fom_type = "minimise"
-    bold_info("Figure of merit", "{0} {1}".format(fom_type,figure_of_merit.lower()))
+    bold_info("Figure of merit", "{0} {1}".format(fom_type, figure_of_merit.lower()))
 
-    bold_info("PROCESS references", "[website](http://www.ccfe.ac.uk/powerplants.aspx), [physics paper](http://www.sciencedirect.com/science/article/pii/S0920379614005961), [engineering paper](http://www.sciencedirect.com/science/article/pii/S0920379616300072)")
-    bold_info("Contacts", "[James Morris](mailto:james.morris2@ukaea.uk), [Hanni Lux](mailto:hanni.lux@ukaea.uk), [Michael Kovari](mailto:michael.kovari@ukaea.uk)")
+    bold_info(
+        "PROCESS references",
+        "[website](http://www.ccfe.ac.uk/powerplants.aspx), [physics paper](http://www.sciencedirect.com/science/article/pii/S0920379614005961), [engineering paper](http://www.sciencedirect.com/science/article/pii/S0920379616300072)",
+    )
+    bold_info(
+        "Contacts",
+        "[James Morris](mailto:james.morris2@ukaea.uk), [Hanni Lux](mailto:hanni.lux@ukaea.uk), [Michael Kovari](mailto:michael.kovari@ukaea.uk)",
+    )
 
     # Top level comment
     output_line(bold("IN.DAT Comment"))
@@ -268,7 +281,7 @@ def include_diagram(filename, caption):
         output_pic(caption, filename, caption)
         output_line("Figure {0}: {1}".format(CAPTIONNUMBER, caption))
         CAPTIONNUMBER += 1
-    except:
+    except Exception:
         print("Cannot find image {0}".format(filename))
         pass
 
@@ -287,15 +300,27 @@ def output_constraints(k, numbers=False):
             # else:
             #     print("Requested constraint {0} not a constraint for this MFILE".format(c))
     else:
-        MODULE_ICC_LIST = sum([MODULES[key] for key in MODULES.keys() if key in DATA[k]["constraints"]], [])
+        MODULE_ICC_LIST = sum(
+            [MODULES[key] for key in MODULES.keys() if key in DATA[k]["constraints"]],
+            [],
+        )
 
     if len(MODULE_ICC_LIST) == 0:
         return
 
     heading(4, "Constraints")
 
-    table_heading(["Constraint", "Description", "Limit Name", "Limit", "Value",
-        "F-Value Name", "F-Value Value"])    
+    table_heading(
+        [
+            "Constraint",
+            "Description",
+            "Limit Name",
+            "Limit",
+            "Value",
+            "F-Value Name",
+            "F-Value Value",
+        ]
+    )
 
     for item in MODULE_ICC_LIST:
 
@@ -330,20 +355,30 @@ def output_constraints(k, numbers=False):
             con_lim_name = "consistency"
             con_f_val = "-"
             con_lim = "-"
-        
+
         if con_f_val != "-" and con_lim != "-" and con_lim != bold("calculated"):
             if type(con_lim) == str:
                 con_lim = unbold(con_lim)
             if type(con_f_val) == str:
                 con_f_val = unbold(con_f_val)
-            actual_value = "{0:.2e}".format(float(con_lim)*float(con_f_val))
+            actual_value = "{0:.2e}".format(float(con_lim) * float(con_f_val))
             con_lim = "{0:.2e}".format(float(con_lim))
             con_f_val = "{0:.2e}".format(float(con_f_val))
         else:
             actual_value = "-"
-        
-        table_line([str(item), con_name, con_lim_name, con_lim, actual_value,
-            con_f_val_name, con_f_val], ".4g")
+
+        table_line(
+            [
+                str(item),
+                con_name,
+                con_lim_name,
+                con_lim,
+                actual_value,
+                con_f_val_name,
+                con_f_val,
+            ],
+            ".4g",
+        )
 
     constraint_comments(k, MODULE_ICC_LIST)
 
@@ -361,38 +396,60 @@ def output_itvars(k, numbers=False):
                 MODULES_IXC_NUMBERS_LIST.append(it)
             # else:
             #     print("Requested iteration variable {0} not iteration variable for this MFILE".format(it))
-        MODULES_IXC_NAMES_LIST = [IXC_FULL[str(ixc)]["name"] for ixc in MODULES_IXC_NUMBERS_LIST]
+        MODULES_IXC_NAMES_LIST = [
+            IXC_FULL[str(ixc)]["name"] for ixc in MODULES_IXC_NUMBERS_LIST
+        ]
 
     else:
         mod_names = DATA[k]["iteration-variables"]
-        MODULES_IXC_NAMES_LIST = [IXC_FULL[str(ixc)]["name"] for ixc in IT_VARS 
-            if any(IXC_FULL[str(ixc)]["name"] in MODULES_FULL[mod_name] 
-                for mod_name in mod_names)]
+        MODULES_IXC_NAMES_LIST = [
+            IXC_FULL[str(ixc)]["name"]
+            for ixc in IT_VARS
+            if any(
+                IXC_FULL[str(ixc)]["name"] in MODULES_FULL[mod_name]
+                for mod_name in mod_names
+            )
+        ]
 
-        MODULES_IXC_NUMBERS_LIST = [ixc for ixc in IT_VARS 
-            if any(IXC_FULL[str(ixc)]["name"] in MODULES_FULL[mod_name] 
-                for mod_name in mod_names)]
+        MODULES_IXC_NUMBERS_LIST = [
+            ixc
+            for ixc in IT_VARS
+            if any(
+                IXC_FULL[str(ixc)]["name"] in MODULES_FULL[mod_name]
+                for mod_name in mod_names
+            )
+        ]
 
     if len(MODULES_IXC_NAMES_LIST) == 0:
         return
 
     heading(4, "Iteration Variables")
     output_line("* Values in **bold** are **not default** but user inputs.")
-    table_heading(["No.", "Name", "Final Value", "Description", "Starting Value", "Lower Bound", "Upper Bound"])
+    table_heading(
+        [
+            "No.",
+            "Name",
+            "Final Value",
+            "Description",
+            "Starting Value",
+            "Lower Bound",
+            "Upper Bound",
+        ]
+    )
 
     for item in IT_VARS:
-    
+
         item_name = IXC_FULL[str(item)]["name"]
         if "fimp(" in item_name:
             item_description = DES_FIMP[item_name]
         else:
             item_description = DESCRIPTIONS[item_name].split("\n")[0]
-        
+
         if item_name in IT_VAR_VALUES.keys():
             item_value = IT_VAR_VALUES[item_name]
         else:
             item_value = MFILE.data[item_name].get_scan(-1)
-        
+
         if item_name in INPUTS_LIST:
             starting_value = INFILE.data[item_name].value
             starting_value = bold(starting_value)
@@ -400,10 +457,10 @@ def output_itvars(k, numbers=False):
             if "fimp(" in item_name:
                 starting_value = item_value
                 fimp_index = int(item_name.split("(")[-1].split(")")[0])
-                starting_value = INFILE.data["fimp"].value[fimp_index-1]
+                starting_value = INFILE.data["fimp"].value[fimp_index - 1]
             else:
                 starting_value = IXC_DEF[item_name]
-        
+
         if item_name in MODULES_IXC_NAMES_LIST:
 
             if str(item) in BOUNDS.keys():
@@ -418,12 +475,23 @@ def output_itvars(k, numbers=False):
                     up_bound = bold(up_bound)
                 else:
                     up_bound = IXC_FULL[str(item)]["ub"]
-                
+
             else:
                 low_bound = IXC_FULL[str(item)]["lb"]
                 up_bound = IXC_FULL[str(item)]["ub"]
 
-            table_line([str(item), code(item_name), item_value, item_description, starting_value, low_bound, up_bound], ".4g")
+            table_line(
+                [
+                    str(item),
+                    code(item_name),
+                    item_value,
+                    item_description,
+                    starting_value,
+                    low_bound,
+                    up_bound,
+                ],
+                ".4g",
+            )
 
     iteration_comments(k, MODULES_IXC_NUMBERS_LIST)
 
@@ -441,25 +509,38 @@ def output_inputs(k, manual=False):
             if inp in INPUTS_LIST:
                 MODULE_INPUT_LIST.append(inp)
             elif inp in MFILE_LIST:
-                if MFILE.data[inp].var_flag != "OP" and MFILE.data[inp].var_flag != "ITV":
+                if (
+                    MFILE.data[inp].var_flag != "OP"
+                    and MFILE.data[inp].var_flag != "ITV"
+                ):
                     mfile_values.append(inp)
                     MODULE_INPUT_LIST.append(inp)
             # else:
             #     print("The input you requested {0} is not in the input file".format(inp))
-    else:            
+    else:
         mod_names = DATA[k]["input-sections"]
-        MODULE_INPUT_LIST = [item for item in INPUTS_LIST if any(item in MODULES_FULL[mod_name] for mod_name in mod_names)]
+        MODULE_INPUT_LIST = [
+            item
+            for item in INPUTS_LIST
+            if any(item in MODULES_FULL[mod_name] for mod_name in mod_names)
+        ]
 
     if len(MODULE_INPUT_LIST) == 0:
         return
 
     heading(4, "Inputs")
-    output_line("* Values in **bold** are **default** input values. Output in MFILE but **NOT** specified in IN.DAT.")
+    output_line(
+        "* Values in **bold** are **default** input values. Output in MFILE but **NOT** specified in IN.DAT."
+    )
     table_heading(["Input", "Value", "Description", "Comment"])
-    
+
     for item in MODULE_INPUT_LIST:
-        if item not in IT_VAR_LIST and item not in EXCLUSIONS and item not in DATA[k]["exclusions"]:
-            
+        if (
+            item not in IT_VAR_LIST
+            and item not in EXCLUSIONS
+            and item not in DATA[k]["exclusions"]
+        ):
+
             if "fimp(" in item:
                 item_name = "fimp"
             else:
@@ -472,13 +553,13 @@ def output_inputs(k, manual=False):
                     item_value = INFILE.data[item].value
                 else:
                     fimp_index = int(item.split("(")[-1].split(")")[0])
-                    item_value = str(INFILE.data["fimp"].value[fimp_index-1])
+                    item_value = str(INFILE.data["fimp"].value[fimp_index - 1])
 
             if "fimp(" not in item:
                 item_des = DESCRIPTIONS[item].split("\n")[0]
 
             if "in-" + item in COMMENTS.keys():
-                comment = " ".join(COMMENTS["in-"+item])
+                comment = " ".join(COMMENTS["in-" + item])
                 if comment == "":
                     comment = ""
             else:
@@ -488,20 +569,36 @@ def output_inputs(k, manual=False):
                 table_line([code(item), bold("array"), item_des], ".4g")
                 for i in range(len(item_value)):
                     if "fimp" in item:
-                        item_des = DES_FIMP["fimp({0})".format(i+1)]
+                        item_des = DES_FIMP["fimp({0})".format(i + 1)]
                     else:
                         item_des = "-"
-                    table_line([code(item) + "[{0}]".format(i), item_value[i], item_des, comment], ".4g")
+                    table_line(
+                        [
+                            code(item) + "[{0}]".format(i),
+                            item_value[i],
+                            item_des,
+                            comment,
+                        ],
+                        ".4g",
+                    )
             elif "," in item_value:
                 table_line([code(item), bold("array"), item_des], ".4g")
                 item_value = item_value.split(",")
                 for i in range(len(item_value)):
                     if item_value[i] != "":
                         if "fimp" in item:
-                            item_des = DES_FIMP["fimp({0})".format(i+1)]
+                            item_des = DES_FIMP["fimp({0})".format(i + 1)]
                         else:
                             item_des = "-"
-                        table_line([code(item) + "[{0}]".format(i), item_value[i], item_des, comment], ".4g")
+                        table_line(
+                            [
+                                code(item) + "[{0}]".format(i),
+                                item_value[i],
+                                item_des,
+                                comment,
+                            ],
+                            ".4g",
+                        )
             else:
                 if item_name not in INPUTS_LIST:
                     table_line([code(item), bold(item_value), item_des, comment], ".4g")
@@ -543,7 +640,7 @@ def output_output_sections(k):
 
     for item in DATA[k]["output-sections"]:
         outputs_list += DATA[item]["outputs"]
-    
+
     output_outputs(k, mod_out_list=outputs_list)
 
 
@@ -566,7 +663,7 @@ def output_section(k):
             if type(DATA[k]["constraints"][0]) == str:
                 output_itvars(k)
             else:
-                output_itvars(k, numbers=True)    
+                output_itvars(k, numbers=True)
         else:
             output_itvars(k, numbers=True)
 
@@ -609,7 +706,7 @@ def output_projects():
         if v["project"]:
             output_section_topper(1, k, v)
             output_section(k)
-            
+
             if len(v["children"]) != 0:
                 for child in v["children"]:
                     output_section_topper(2, child, DATA[child])
@@ -634,11 +731,18 @@ def output_vertical_build():
     else:
         vert_build = DATA["Builds"]["Vertical Build"]["double"]
 
-    tot_height = MFILE.data["hmax"].get_scan(-1) - MFILE.data["shldlth"].get_scan(-1) \
-        - MFILE.data["divfix"].get_scan(-1) - MFILE.data["vgap"].get_scan(-1) \
-        + MFILE.data["vgaptop"].get_scan(-1) + MFILE.data["shldtth"].get_scan(-1) \
-        + MFILE.data["fwtth"].get_scan(-1) + MFILE.data["blnktth"].get_scan(-1) \
-        + MFILE.data["vvblgap"].get_scan(-1) + MFILE.data["tfcth"].get_scan(-1)
+    tot_height = (
+        MFILE.data["hmax"].get_scan(-1)
+        - MFILE.data["shldlth"].get_scan(-1)
+        - MFILE.data["divfix"].get_scan(-1)
+        - MFILE.data["vgap"].get_scan(-1)
+        + MFILE.data["vgaptop"].get_scan(-1)
+        + MFILE.data["shldtth"].get_scan(-1)
+        + MFILE.data["fwtth"].get_scan(-1)
+        + MFILE.data["blnktth"].get_scan(-1)
+        + MFILE.data["vvblgap"].get_scan(-1)
+        + MFILE.data["tfcth"].get_scan(-1)
+    )
 
     v_build_sum = tot_height
 
@@ -647,7 +751,7 @@ def output_vertical_build():
         item_name = vert_build[k]["name"]
         item_des = vert_build[k]["des"]
         item_combined = vert_build[k]["combination"]
-        
+
         if item_combined:
             combo_type = vert_build[k]["combo_type"]
             items = item_name.replace(" ", "").split(combo_type)
@@ -659,7 +763,7 @@ def output_vertical_build():
                 item_value = item_1_value * item_2_value
         else:
             item_value = MFILE.data[item_name].get_scan(-1)
-        
+
         if int(k) < 10:
             table_line([code(item_name), item_value, v_build_sum, item_des], ".3f")
             v_build_sum -= item_value
@@ -683,9 +787,9 @@ def output_radial_build():
         radial_plot_file = DATA["Builds"]["radial_diagram"]["filename"]
         radial_plot_caption = DATA["Builds"]["radial_diagram"]["caption"]
         include_diagram(radial_plot_file, radial_plot_caption)
-    except:
-        print("Cannot find image {0}".format(filename))
-        pass       
+    except Exception:
+        print("Cannot find image {0}".format(radial_plot_file["filename"]))
+        pass
 
     table_heading(["Name", "Thickness [m]", "Radial Position [m]", "Description"])
 
@@ -697,7 +801,7 @@ def output_radial_build():
         item_name = rad_build[k]["name"]
         item_des = rad_build[k]["des"]
         item_combined = rad_build[k]["combination"]
-        
+
         if item_combined:
             if rad_build[k]["combo_type"] == "+":
                 item_1 = item_name.split("+")[0].replace(" ", "")
@@ -713,9 +817,9 @@ def output_radial_build():
                 item_value = item_1_value * item_2_value
         else:
             item_value = MFILE.data[item_name].get_scan(-1)
-        
+
         r_build_sum += item_value
-        
+
         table_line([code(item_name), item_value, r_build_sum, item_des], ".3f")
 
     return
@@ -726,17 +830,17 @@ def output_modules():
     Output the modules to markdown
     """
 
-    icc = INFILE.data["icc"].value 
+    icc = INFILE.data["icc"].value
 
     for item in icc:
         module = proc_dict.DICT_ICC_MODULE[str(item)]
-        MODULES.setdefault(module,[]).append(item)
+        MODULES.setdefault(module, []).append(item)
 
     get_indat_comments()
 
     output_contents()
 
-    heading(1,"Output PDF")
+    heading(1, "Output PDF")
     include_diagram("process_diagram.png", "PROCESS output diagrams")
 
     output_section_topper(1, "Builds", DATA["Builds"])
@@ -757,14 +861,29 @@ def create_plots():
         save_p = ""
     else:
         save_p = "documentation/figures/"
-    
+
     # create pulse timings plot
     plot_pulse_timings(MFILE, save=True, show=False, save_path=save_p)
 
     # create radial build plot
     # TODO: non-hard coded list needed
-    radial_build = ["bore", "ohcth", "precomp", "gapoh", "tfcth", "deltf", "thshield", 
-         "gapds", "d_vv_in", "shldith", "vvblgap", "blnkith", "fwith", "scrapli", "rminor"]
+    radial_build = [
+        "bore",
+        "ohcth",
+        "precomp",
+        "gapoh",
+        "tfcth",
+        "deltf",
+        "thshield",
+        "gapds",
+        "d_vv_in",
+        "shldith",
+        "vvblgap",
+        "blnkith",
+        "fwith",
+        "scrapli",
+        "rminor",
+    ]
     radial_bar_plot(radial_build, MFILE, show=False, save=True, save_path=save_p)
 
     # create plasma profiles plot
@@ -780,14 +899,19 @@ def main(cargs):
 
     output_modules()
 
-    export(path=cargs.o+".md", 
-        password="e35a21bfce5462bebbecc2e43d12bf4ec2ba469d", render_wide=True, 
-        render_inline=True, out_filename=cargs.o+".html", 
-        title="PROCESS Output")
+    export(
+        path=cargs.o + ".md",
+        password="e35a21bfce5462bebbecc2e43d12bf4ec2ba469d",
+        render_wide=True,
+        render_inline=True,
+        out_filename=cargs.o + ".html",
+        title="PROCESS Output",
+    )
 
     print("Over...")
 
     return
+
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -795,29 +919,44 @@ if __name__ == "__main__":
 
     PARSER = argparse.ArgumentParser(
         description="Create PROCESS output document."
-        "For info contact james.morris2@ukaea.uk")
+        "For info contact james.morris2@ukaea.uk"
+    )
 
-    PARSER.add_argument("-f", metavar='MFILENAME', type=str,
-                        default="", help='specify PROCESS MFILE')
+    PARSER.add_argument(
+        "-f", metavar="MFILENAME", type=str, default="", help="specify PROCESS MFILE"
+    )
 
-    PARSER.add_argument("-j", metavar='JSONFILE', type=str,
-                        default="output_detailed.json", help='specify JSON file location and name')
-    
-    PARSER.add_argument("-o", metavar='OUTFILENAME', type=str,
-                        default="output_detailed", help='specify output file')
+    PARSER.add_argument(
+        "-j",
+        metavar="JSONFILE",
+        type=str,
+        default="output_detailed.json",
+        help="specify JSON file location and name",
+    )
+
+    PARSER.add_argument(
+        "-o",
+        metavar="OUTFILENAME",
+        type=str,
+        default="output_detailed",
+        help="specify output file",
+    )
 
     COMMAND_ARGS = PARSER.parse_args()
 
     # read json
     try:
         json_filename = COMMAND_ARGS.j
-        DATA = json.load(open(json_filename), 
-            object_pairs_hook=OrderedDict)
+        DATA = json.load(open(json_filename), object_pairs_hook=OrderedDict)
     except ValueError as e:
         print("Error in JSON config file. Please correct error: {0}".format(e))
         sys.exit()
-    except FileNotFoundError as fe:
-        print("Cannot find JSON config file. Expecting file in: {0}".format(COMMAND_ARGS.j))
+    except FileNotFoundError:
+        print(
+            "Cannot find JSON config file. Expecting file in: {0}".format(
+                COMMAND_ARGS.j
+            )
+        )
         sys.exit()
 
     if COMMAND_ARGS.f:

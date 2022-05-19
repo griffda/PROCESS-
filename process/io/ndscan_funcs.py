@@ -7,6 +7,9 @@ Date: August 2014 - initial released version
 
 Notes:
 22/08/2014 HL moved functions from process_config.py to this file
+24/11/2021 Global dictionary variables moved within the functions
+            to avoid cyclic dependencies. This is because the dicts
+            generation script imports, and inspects, process.
 
 Compatible with PROCESS version 319
 """
@@ -16,9 +19,6 @@ import collections as col
 import subprocess
 from process.io.python_fortran_dicts import get_dicts
 
-# Load dicts from dicts JSON file
-process_dicts = get_dicts()
-DICT_IXC_SIMPLE = process_dicts['DICT_IXC_SIMPLE']
 
 def get_var_name_or_number(variable):
     """
@@ -40,25 +40,25 @@ def get_var_name_or_number(variable):
     Dependencies:
             process_dicts: DICT_IXC_SIMPLE
     """
+    # Load dicts from dicts JSON file
+    dicts = get_dicts()
 
     if isinstance(variable, str):
-        for key in DICT_IXC_SIMPLE:
-            if DICT_IXC_SIMPLE[key] == variable.lower():
+        for key in dicts["DICT_IXC_SIMPLE"]:
+            if dicts["DICT_IXC_SIMPLE"][key] == variable.lower():
                 return int(key)
 
         return False
     elif isinstance(variable, int):
         try:
-            return DICT_IXC_SIMPLE[str(variable)]
+            return dicts["DICT_IXC_SIMPLE"][str(variable)]
         except KeyError:
             return False
-
 
     return None
 
 
-
-def get_iter_vars(inputfile='IN.DAT', makeboundarydict=False):
+def get_iter_vars(inputfile="IN.DAT", makeboundarydict=False):
 
     """
     Opens IN.DAT file at inputfile, and returns the value of ixc,
@@ -86,15 +86,15 @@ def get_iter_vars(inputfile='IN.DAT', makeboundarydict=False):
         collections module
     """
 
-    #Stored as a dictionary, where the KEY is the number and the
-    #VALUE is the name.
+    # Stored as a dictionary, where the KEY is the number and the
+    # VALUE is the name.
     indat = InDat(inputfile)
     output = col.OrderedDict({})
     if not makeboundarydict:
-        for iternumber in indat.data['ixc'].get_value:
+        for iternumber in indat.data["ixc"].get_value:
             output[iternumber] = get_var_name_or_number(iternumber)
     else:
-        for iternumber in indat.data['ixc'].get_value:
+        for iternumber in indat.data["ixc"].get_value:
             output[get_var_name_or_number(iternumber)] = [0, 0]
     return output
 
@@ -121,7 +121,7 @@ def backup_in_file(setting, destination="IN.DATBACKUP"):
         subprocess
 
     """
-    if setting is "w":
+    if setting == "w":
         subprocess.call(["cp", "IN.DAT", destination])
-    if setting is "r":
+    if setting == "r":
         subprocess.call(["cp", destination, "IN.DAT"])

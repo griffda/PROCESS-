@@ -23,7 +23,11 @@ module impurity_radiation_module
 
   private
   public :: initialise_imprad, impradprofile, z2index, element2index, fradcore
-  public :: imp_dat, Zav_of_te, init_impurity_radiation_module, impdir
+  public :: Zav_of_te, init_impurity_radiation_module, impdir
+  public :: impurity_arr_amass, impurity_arr_frac, impurity_arr_Label, &
+   impurity_arr_len_tab, impurity_arr_Lz_Wm3, impurity_arr_Temp_keV, &
+   impurity_arr_Z, impurity_arr_Zav
+  public :: pimpden, pbremden, import_impdata, init_imp_element
 
 
   !! (It is recommended to turn on
@@ -71,23 +75,43 @@ module impurity_radiation_module
 
   !  Declare impurity data type
 
-  type :: imp_dat
+!   type :: imp_dat
 
-     character(len=2)  :: Label    !  Element name
-     integer           :: Z        !  Charge number
-     real(dp) :: amass    !  Atomic mass
-     real(dp) :: frac     !  Number density fraction (relative to ne)
-     integer           :: len_tab  !  Length of temperature vs. Lz table
-     !  Table of temperature values
-     real(dp), allocatable, dimension(:) :: Temp_keV
-     !  Table of corresponding Lz values
-     real(dp), allocatable, dimension(:) :: Lz_Wm3
-     !  Table of corresponding average atomic charge values
-     real(dp), allocatable, dimension(:) :: Zav
+!      character(len=2)  :: Label    !  Element name
+!      integer           :: Z        !  Charge number
+!      real(dp) :: amass    !  Atomic mass
+!      real(dp) :: frac     !  Number density fraction (relative to ne)
+!      integer           :: len_tab  !  Length of temperature vs. Lz table
+!      !  Table of temperature values
+!      real(dp), allocatable, dimension(:) :: Temp_keV
+!      !  Table of corresponding Lz values
+!      real(dp), allocatable, dimension(:) :: Lz_Wm3
+!      !  Table of corresponding average atomic charge values
+!      real(dp), allocatable, dimension(:) :: Zav
 
-  end type imp_dat
+!   end type imp_dat
 
-  type(imp_dat),  dimension(nimp), save, public :: impurity_arr
+  ! derived type imp_dat (and hence impurity_arr) were
+  ! incompatible with f2py and have been replaced with
+  ! a less moder, but supported way of achieveing the
+  ! same results
+
+  integer, parameter :: all_array_hotfix_len = 100
+  ! maximum length of the second dimensions of
+  ! Temp_keV, Lz_Wm3, Zav
+  ! since these can no longer be allocatable
+
+  character(len=2), dimension(nimp) :: impurity_arr_Label
+  integer, dimension(nimp) :: impurity_arr_Z
+  real(dp), dimension(nimp) :: impurity_arr_amass
+  real(dp), dimension(nimp) :: impurity_arr_frac
+  integer, dimension(nimp) :: impurity_arr_len_tab
+  real(dp), dimension(nimp, all_array_hotfix_len) :: impurity_arr_Temp_keV
+  real(dp), dimension(nimp, all_array_hotfix_len) :: impurity_arr_Lz_Wm3
+  real(dp), dimension(nimp, all_array_hotfix_len) :: impurity_arr_Zav
+
+
+!   type(imp_dat),  dimension(nimp), save, public :: impurity_arr
 
   logical :: toolow
   !! Used for reporting error in function pimpden
@@ -133,7 +157,13 @@ contains
       fimpvar = 1.0D-3
       impvar = 9
       toolow = .false.
-      impurity_arr = imp_dat("  ", 0, 0.0D0, 0.0D0, 0)
+      impurity_arr_Label = "  "
+      impurity_arr_Z = 0
+      impurity_arr_amass = 0.0D0
+      impurity_arr_len_tab = 0.0D0
+      impurity_arr_Temp_keV = 0.0D0
+      impurity_arr_Lz_Wm3 = 0.0D0
+      impurity_arr_Zav = 0.0D0
       ! Re-initialise entire array
   end subroutine init_impurity_radiation_module
 
@@ -281,28 +311,19 @@ contains
 
     if (error == 1) return
 
-    if (no > size(impurity_arr)) then
-       idiags(1) = no ; idiags(2) = size(impurity_arr)
+    if (no > size(impurity_arr_Label)) then
+       idiags(1) = no ; idiags(2) = size(impurity_arr_Label)
        call report_error(27)
     end if
 
-    impurity_arr(no)%label   = label
-    impurity_arr(no)%Z       = Z
-    impurity_arr(no)%amass   = amass
-    impurity_arr(no)%frac    = frac
-    impurity_arr(no)%len_tab = len_tab
+    impurity_arr_Label(no)   = label
+    impurity_arr_Z(no)      = Z
+    impurity_arr_amass(no)   = amass
+    impurity_arr_frac(no)    = frac
+    impurity_arr_len_tab(no) = len_tab
 
-    ! Guard against re-allocation
-    if (allocated(impurity_arr(no)%Temp_keV)) deallocate(impurity_arr(no)%Temp_keV)
-    if (allocated(impurity_arr(no)%Lz_Wm3)) deallocate(impurity_arr(no)%Lz_Wm3)
-    if (allocated(impurity_arr(no)%Zav)) deallocate(impurity_arr(no)%Zav)
-    allocate( &
-         impurity_arr(no)%Temp_keV(len_tab), &
-         impurity_arr(no)%Lz_Wm3(len_tab), &
-         impurity_arr(no)%Zav(len_tab), &
-         stat=status)
-    if (status /= 0) then
-       idiags(1) = status ; call report_error(28)
+    if (len_tab > all_array_hotfix_len) then
+      print *, "ERROR: len_tab is ", len_tab, " but has a maximum value of ", all_array_hotfix_len
     end if
 
     !  Read tabulated data in from file, assuming it exists
@@ -319,7 +340,7 @@ contains
     inquire(file=trim(fullpath), exist=iexist)
     if (iexist) then
        call import_impdata(fullpath, len_tab, &
-            impurity_arr(no)%Temp_keV, impurity_arr(no)%Lz_Wm3, impurity_arr(no)%Zav)
+            impurity_arr_Temp_keV(no, :), impurity_arr_Lz_Wm3(no, :), impurity_arr_Zav(no, :))
     else
        write(*,*) "# Warning :  Cannot find impurity data please check path."
        write(*,*) "# Error   :  Current path is: ", trim(fullpath)
@@ -329,8 +350,8 @@ contains
     !  Convert tabulated units if necessary
 
     do i = 1, len_tab
-       impurity_arr(no)%Temp_keV(i) = impurity_arr(no)%Temp_keV(i) * TinkeV ! keV
-       impurity_arr(no)%Lz_Wm3(i)   = impurity_arr(no)%Lz_Wm3(i)   * LzinWm3 ! W/m3
+       impurity_arr_Temp_keV(no, i) = impurity_arr_Temp_keV(no, i) * TinkeV ! keV
+       impurity_arr_Lz_Wm3(no, i)   = impurity_arr_Lz_Wm3(no, i)   * LzinWm3 ! W/m3
     end do
 
   end subroutine init_imp_element
@@ -450,8 +471,8 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    do i = 1, size(impurity_arr)
-       if (zimp == impurity_arr(i)%Z) then
+    do i = 1, size(impurity_arr_Label)
+       if (zimp == impurity_arr_Z(i)) then
           z2index = i
           return
        end if
@@ -477,7 +498,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-		use error_handling, only: report_error 
+		use error_handling, only: report_error
     implicit none
 
     integer :: element2index
@@ -492,8 +513,8 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    do i = 1, size(impurity_arr)
-       if (element_label == impurity_arr(i)%label) then
+    do i = 1, size(impurity_arr_Label)
+       if (element_label == impurity_arr_Label(i)) then
           element2index = i
           return
        end if
@@ -507,7 +528,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine impradprofile(imp_element, ne, te, pimp, pbrem, pline)
+  subroutine impradprofile(imp_element_index, ne, te, pimp, pbrem, pline)
 
     !! Implementation of Bremsstrahlung and loss-function curves
     !! author: R Kemp, CCFE, Culham Science Centre
@@ -533,7 +554,7 @@ contains
 
     !  Arguments
 
-    type(imp_dat), intent(in) :: imp_element
+    integer, intent(in) :: imp_element_index
     real(dp), intent(in) :: ne, te
     real(dp), intent(out) :: pimp, pbrem, pline
 
@@ -541,11 +562,11 @@ contains
 
     !  Bremsstrahlung
 
-    pbrem = pbremden(imp_element, ne, te)
+    pbrem = pbremden(imp_element_index, ne, te)
 
     !  Total impurity radiation
 
-    pimp = pimpden(imp_element, ne, te)
+    pimp = pimpden(imp_element_index, ne, te)
 
     if (pimp >= pbrem) then
        pline = pimp - pbrem
@@ -558,7 +579,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function pbremden(imp_element, ne, te)
+  function pbremden(imp_element_index, ne, te)
 
     !! Bremsstrahlung radiation density (W/m3)
     !! author: R Kemp, CCFE, Culham Science Centre
@@ -579,19 +600,19 @@ contains
 
     !  Arguments
 
-    type(imp_dat),  intent(in) :: imp_element
+    integer,  intent(in) :: imp_element_index
     real(dp), intent(in) :: ne, te
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    pbremden = imp_element%frac * ne * ne * Zav_of_te(imp_element,te)**2 &
+    pbremden = impurity_arr_frac(imp_element_index) * ne * ne * Zav_of_te(imp_element_index,te)**2 &
          * 5.355D-37 * sqrt(te)
 
   end function pbremden
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function pimpden(imp_element, ne, te)
+  function pimpden(imp_element_index, ne, te)
 
     !! Total impurity radiation density (W/m3)
     !! author: H Lux, CCFE, Culham Science Centre
@@ -615,7 +636,7 @@ contains
 
     !  Arguments
 
-    type(imp_dat),  intent(in) :: imp_element
+    integer,  intent(in) :: imp_element_index
     real(dp), intent(in) :: ne, te
 
     !  Local variables
@@ -631,32 +652,32 @@ contains
     !  are dealt with by taking the lz value at the nearest tabulated
     !  temperature point
 
-    if (te <= imp_element%Temp_keV(1)) then
+    if (te <= impurity_arr_Temp_keV(imp_element_index, 1)) then
 
-       lz = imp_element%Lz_Wm3(1)
+       lz = impurity_arr_Lz_Wm3(imp_element_index, 1)
 
        if (.not.toolow) then  !  Only print warning once during a run
           toolow = .true.
           fdiags(1) = te ; call report_error(35)
        end if
 
-    else if (te >= imp_element%Temp_keV(imp_element%len_tab)) then
+    else if (te >= impurity_arr_Temp_keV(imp_element_index, impurity_arr_len_tab(imp_element_index))) then
        !  This is okay because Bremsstrahlung will dominate at higher temp.
-       lz = imp_element%Lz_Wm3(imp_element%len_tab)
+       lz = impurity_arr_Lz_Wm3(imp_element_index, impurity_arr_len_tab(imp_element_index))
 
     else
 
-       do i = 1, imp_element%len_tab-1
+       do i = 1, impurity_arr_len_tab(imp_element_index)-1
 
           !  Linear interpolation in log-log space
 
-          if ( (te > imp_element%Temp_keV(i)) .and. &
-               (te <= imp_element%Temp_keV(i+1)) ) then
+          if ( (te > impurity_arr_Temp_keV(imp_element_index,i)) .and. &
+               (te <= impurity_arr_Temp_keV(imp_element_index, i+1)) ) then
 
-             yi = log(imp_element%Lz_Wm3(i))
-             xi = log(imp_element%Temp_keV(i))
-             c  = (log(imp_element%Lz_Wm3(i+1)) - yi) / &
-                  (log(imp_element%Temp_keV(i+1)) - xi)
+             yi = log(impurity_arr_Lz_Wm3(imp_element_index,i))
+             xi = log(impurity_arr_Temp_keV(imp_element_index,i))
+             c  = (log(impurity_arr_Lz_Wm3(imp_element_index,i+1)) - yi) / &
+                  (log(impurity_arr_Temp_keV(imp_element_index,i+1)) - xi)
              lz = exp( yi + c * (log(te) - xi) )
              exit
           end if
@@ -665,7 +686,7 @@ contains
 
     end if
 
-    pimpden = imp_element%frac * ne * ne * lz
+    pimpden = impurity_arr_frac(imp_element_index) * ne * ne * lz
 
   end function pimpden
 
@@ -710,7 +731,7 @@ contains
   end function fradcore
 
 
-  function Zav_of_te(imp_element,te)
+  function Zav_of_te(imp_element_index,te)
 
     !! Electron temperature dependent average atomic number
     !! author: H Lux, CCFE, Culham Science Centre
@@ -729,7 +750,7 @@ contains
 
     !  Arguments
 
-    type(imp_dat),  intent(in) :: imp_element
+    integer,  intent(in) :: imp_element_index
     real(dp), intent(in) :: te
 
     !  Local variables
@@ -745,27 +766,27 @@ contains
     !  are dealt with by taking the Zav value at the nearest tabulated
     !  temperature point
 
-    if (te <= imp_element%Temp_keV(1)) then
+    if (te <= impurity_arr_Temp_keV(imp_element_index, 1)) then
        ! This should not be too unreasonable.
-       Zav_of_te = imp_element%Zav(1)
+       Zav_of_te = impurity_arr_Zav(imp_element_index,1)
 
-    else if (te >= imp_element%Temp_keV(imp_element%len_tab)) then
+    else if (te >= impurity_arr_Temp_keV(imp_element_index, impurity_arr_len_tab(imp_element_index))) then
        !  This should be okay, as most elements are fully ionised by now.
-       Zav_of_te = imp_element%Zav(imp_element%len_tab)
+       Zav_of_te = impurity_arr_Zav(imp_element_index, impurity_arr_len_tab(imp_element_index))
 
     else
 
-       do i = 1, imp_element%len_tab-1
+       do i = 1, impurity_arr_len_tab(imp_element_index)-1
 
           !  Linear interpolation in log-lin space
 
-          if ( (te > imp_element%Temp_keV(i)) .and. &
-               (te <= imp_element%Temp_keV(i+1)) ) then
+          if ( (te > impurity_arr_Temp_keV(imp_element_index, i)) .and. &
+               (te <= impurity_arr_Temp_keV(imp_element_index, i+1)) ) then
 
-             yi = imp_element%Zav(i)
-             xi = log(imp_element%Temp_keV(i))
-             c  = (imp_element%Zav(i+1) - yi) / &
-                  (log(imp_element%Temp_keV(i+1)) - xi)
+             yi = impurity_arr_Zav(imp_element_index, i)
+             xi = log(impurity_arr_Temp_keV(imp_element_index, i))
+             c  = (impurity_arr_Zav(imp_element_index, i+1) - yi) / &
+                  (log(impurity_arr_Temp_keV(imp_element_index,i+1)) - xi)
              Zav_of_te = yi + c * (log(te) - xi)
              exit
           end if

@@ -5,8 +5,10 @@ from process.optimiser import Optimiser
 from process import final
 import numpy as np
 
-class Scan():
+
+class Scan:
     """Perform a parameter scan using the Fortran scan module."""
+
     def __init__(self, models):
         """Immediately run the run_scan() method.
 
@@ -19,10 +21,10 @@ class Scan():
 
     def run_scan(self):
         """Call VMCON over a range of values of one of the variables.
-        
-        This method calls the optimisation routine VMCON a number of times, by 
-        performing a sweep over a range of values of a particular variable. A 
-        number of output variable values are written to the PLOT.DAT file at 
+
+        This method calls the optimisation routine VMCON a number of times, by
+        performing a sweep over a range of values of a particular variable. A
+        number of output variable values are written to the PLOT.DAT file at
         each scan point, for plotting or other post-processing purposes.
         """
         # Turn off error reporting (until next output)
@@ -58,8 +60,8 @@ class Scan():
         # defined in Python and passed in as an argument, in similar style to
         # an intent(inout) argument. They are modified, but not returned.
         # Initialise intent(out) array outvar
-        outvar = np.zeros((scan_module.noutvars, scan_module.ipnscns), 
-            dtype=np.float64, order="F"
+        outvar = np.zeros(
+            (scan_module.noutvars, scan_module.ipnscns), dtype=np.float64, order="F"
         )
 
         for iscan in range(1, scan_module.isweep + 1):
@@ -67,10 +69,14 @@ class Scan():
             self.doopt()
 
             final.finalise(self.models, self.optimiser.vmcon.ifail)
-            
+
             # outvar is an intent(out) of scan_1d_store_output()
-            outvar = scan_module.scan_1d_store_output(iscan, self.optimiser.vmcon.ifail, \
-                scan_module.noutvars, scan_module.ipnscns)
+            outvar = scan_module.scan_1d_store_output(
+                iscan,
+                self.optimiser.vmcon.ifail,
+                scan_module.noutvars,
+                scan_module.ipnscns,
+            )
 
         # outvar now contains results
         scan_module.scan_1d_write_plot(iscan, outvar)
@@ -78,35 +84,33 @@ class Scan():
     def scan_2d(self):
         """Run a 2-D scan."""
         # Initialise intent(out) arrays
-        outvar = np.zeros((scan_module.noutvars, scan_module.ipnscns), 
-            dtype=np.float64, order="F"
+        outvar = np.zeros(
+            (scan_module.noutvars, scan_module.ipnscns), dtype=np.float64, order="F"
         )
-        sweep_1_vals = np.ndarray(scan_module.ipnscns, dtype=np.float64, 
-            order="F"
-        )
-        sweep_2_vals = np.ndarray(scan_module.ipnscns, dtype=np.float64, 
-            order="F"
-        )
+        sweep_1_vals = np.ndarray(scan_module.ipnscns, dtype=np.float64, order="F")
+        sweep_2_vals = np.ndarray(scan_module.ipnscns, dtype=np.float64, order="F")
 
         scan_module.scan_2d_init()
         iscan = 1
 
         for iscan_1 in range(1, scan_module.isweep + 1):
             for iscan_2 in range(1, scan_module.isweep_2 + 1):
-                iscan_R = scan_module.scan_2d_write_point_header(iscan, iscan_1,
-                    iscan_2
+                iscan_R = scan_module.scan_2d_write_point_header(
+                    iscan, iscan_1, iscan_2
                 )
                 self.doopt()
-                
+
                 final.finalise(self.models, self.optimiser.vmcon.ifail)
-                
-                outvar, sweep_1_vals, sweep_2_vals = scan_module.scan_2d_store_output(self.optimiser.vmcon.ifail, iscan_1,
-                    iscan_R, iscan, scan_module.noutvars, scan_module.ipnscns, 
+
+                outvar, sweep_1_vals, sweep_2_vals = scan_module.scan_2d_store_output(
+                    self.optimiser.vmcon.ifail,
+                    iscan_1,
+                    iscan_R,
+                    iscan,
+                    scan_module.noutvars,
+                    scan_module.ipnscns,
                 )
 
                 iscan = iscan + 1
 
-        scan_module.scan_2d_write_plot(iscan, outvar, sweep_1_vals, 
-            sweep_2_vals
-        )
-        
+        scan_module.scan_2d_write_plot(iscan, outvar, sweep_1_vals, sweep_2_vals)

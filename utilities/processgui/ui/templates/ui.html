@@ -34,7 +34,7 @@ $(document).ready( function() {
     //Same for textarea
     sel = $("textarea[readonly!='readonly']");
     sel.attr("onkeyup", "syncval(this)")
-    $.each(sel, function() {highlight(this)}); 
+    $.each(sel, function() {highlight(this)});
 
 });
 
@@ -60,7 +60,7 @@ $(document).ready( function() {
                     </colgroup>
                     <tr>
                         <td>Run Description</td> <td> <textarea rows="10" cols="80" name="Run_Description">{{inputvalues.Run_Description}}</textarea></td>
-                    </tr>  
+                    </tr>
                 </table>
             </div>
         </div>
@@ -73,7 +73,7 @@ $(document).ready( function() {
                 {% for num, desc in lablcc.items %}
                 <tr>
                     <td>
-                        {{num}} {{desc}} 
+                        {{num}} {{desc}}
                     </td>
                     <td>
                         {% if num in inputvalues.icc %}

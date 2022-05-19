@@ -73,6 +73,14 @@ module divertor_variables
   real(dp) :: divfix
   !! divertor structure vertical thickness (m)
 
+  real(dp) :: divleg_profile_inner
+  !! length of 2D profile of inner leg surface (m)
+  !! default value = estimated from side-view strawperson diagram, August 2021
+
+  real(dp) :: divleg_profile_outer
+  !! length of 2D profile of outer leg surface (m)
+  !! default value = estimated from side-view strawperson diagram, August 2021
+
   real(dp) :: divmas
   !! divertor plate mass (kg)
 
@@ -127,7 +135,7 @@ module divertor_variables
 
   real(dp) :: prn1
   !! n-scrape-off / n-average plasma; (input for `ipedestal=0`, = nesep/dene if `ipedestal>=1`)
-  
+
   real(dp) :: ptpdiv
   !! peak temperature at the plate (eV)
 
@@ -160,7 +168,7 @@ module divertor_variables
 
   real(dp) :: zeffdiv
   !! Zeff in the divertor region (if `divdum/=0`)
-  
+
   contains
 
   subroutine init_divertor_variables
@@ -185,6 +193,8 @@ module divertor_variables
     divdens = 1.0D4
     divdum = 0
     divfix = 0.2D0
+    divleg_profile_inner = 0.563D0
+    divleg_profile_outer = 2.596D0
     divmas = 0.0D0
     divplt = 0.035D0
     divsur = 0.0D0

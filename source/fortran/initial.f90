@@ -51,11 +51,11 @@ subroutine initial
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !! boundl(ipnvars) /../ : lower bounds on iteration variables 
-    !! boundu(ipnvars) /../ : upper bounds on iteration variables 
+    !! boundl(ipnvars) /../ : lower bounds on iteration variables
+    !! boundu(ipnvars) /../ : upper bounds on iteration variables
 
     ! Issue #287  The initialization subroutines for the iteration variables are called
-    call init_itv_1       
+    call init_itv_1
     call init_itv_2
     call init_itv_3
     call init_itv_4
@@ -76,9 +76,9 @@ subroutine initial
     call init_itv_19
     call init_itv_20
     call init_itv_21
-    
+
     call init_itv_23
-    
+
     call init_itv_25
     call init_itv_26
     call init_itv_27
@@ -97,7 +97,7 @@ subroutine initial
     call init_itv_40
     call init_itv_41
     call init_itv_42
-    
+
     call init_itv_44
     call init_itv_45
     call init_itv_46
@@ -109,7 +109,7 @@ subroutine initial
     call init_itv_52
     call init_itv_53
     call init_itv_54
-    
+
     call init_itv_56
     call init_itv_57
     call init_itv_58
@@ -131,19 +131,19 @@ subroutine initial
     call init_itv_74
     call init_itv_75
 
-    
-    
-    
+
+
+
     call init_itv_79
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
+
     call init_itv_89
     call init_itv_90
     call init_itv_91
@@ -257,14 +257,14 @@ subroutine check
     use global_variables, only: icase
     use heat_transport_variables, only: trithtmw
     use ife_variables, only: ife
-    use impurity_radiation_module, only: nimp, impurity_arr, fimp
+    use impurity_radiation_module, only: nimp, impurity_arr_frac, fimp
     use numerics, only: ixc, icc, ioptimz, neqns, nineqns, nvar, boundl, &
         boundu
     use pfcoil_variables, only: ipfres, ngrp, pfclres, ipfloc, ncls, isumatoh
     use physics_variables, only: aspect, eped_sf, fdeut, fgwped, fhe3, &
         fgwsep, ftrit, ibss, i_single_null, icurr, ieped, idivrt, ishape, &
         iradloss, isc, ipedestal, ilhthresh, itart, nesep, rhopedn, rhopedt, &
-        rnbeam, ifispact, neped, te, tauee_in, tesep, teped
+        rnbeam, ifispact, neped, te, tauee_in, tesep, teped, itartpf
     use plasmod_variables, only: plasmod_contrpovr, plasmod_i_equiltype, &
         plasmod_i_modeltype, plasmod_contrpovs
     use pulse_variables, only: lpulse
@@ -275,7 +275,9 @@ subroutine check
         n_tf_graded_layers, n_tf_stress_layers, tlegav,  i_tf_stress_model, &
         i_tf_sc_mat, i_tf_wp_geom, i_tf_turns_integer, tinstf, thwcndut, &
         tfinsgap, rcool, dhecoil, thicndut, i_cp_joints, t_turn_tf_is_input, &
-        t_turn_tf, tftmp, t_cable_tf, t_cable_tf_is_input, tftmp, tmpcry
+        t_turn_tf, tftmp, t_cable_tf, t_cable_tf_is_input, tftmp, tmpcry, &
+        i_tf_cond_eyoung_axial, eyoung_cond_axial, eyoung_cond_trans, &
+        i_tf_cond_eyoung_trans, i_str_wp
     use stellarator_variables, only: istell
     use sctfcoil_module, only: initialise_cables
     use vacuum_variables, only: vacuum_model
@@ -354,7 +356,7 @@ subroutine check
 
     !  Impurity fractions
     do imp = 1,nimp
-        impurity_arr(imp)%frac = fimp(imp)
+        impurity_arr_frac(imp) = fimp(imp)
     end do
 
     ! The 1/R B field dependency constraint variable is being depreciated
@@ -369,7 +371,7 @@ subroutine check
     if ( any( ixc == 12 ) ) then
         call report_error(236)
         stop 1
-    end if 
+    end if
 
     !  Warn if ion power balance equation is being used with the new radiation model
     if (any(icc == 3)) then
@@ -381,7 +383,7 @@ subroutine check
     ! to converge.
     if ( any(ixc == 120 ) .and. kallenbach_switch == 1 ) then
         call report_error(237)
-    end if 
+    end if
 
     !  Plasma profile consistency checks
     if (ife /= 1) then
@@ -419,12 +421,12 @@ subroutine check
              !  Case where pedestal density is set manually
              ! ---------------
              if ( (fgwped < 0) .or. (.not.any(ixc==145)) ) then
-            
+
                  ! Issue #589 Pedestal density is set manually using neped but it is less than nesep.
                  if ( neped < nesep ) then
                      fdiags(1) = neped ; fdiags(2) = nesep
                      call report_error(151)
-                 end if  
+                 end if
 
                  ! Issue #589 Pedestal density is set manually using neped,
                  ! but pedestal width = 0.
@@ -432,7 +434,7 @@ subroutine check
                      fdiags(1) = rhopedn ; fdiags(2) = neped ; fdiags(3) = nesep
                      call report_error(152)
                  end if
-             end if 
+             end if
 
              ! Issue #862 : Variable ne0/neped ratio without constraint eq 81 (ne0>neped)
              !  -> Potential hollowed density profile
@@ -444,7 +446,7 @@ subroutine check
      end if
      ! ---------------
 
-     
+
      ! Cannot use Psep/R and PsepB/qAR limits at the same time
      if(any(icc == 68) .and. any(icc == 56)) then
         call report_error(178)
@@ -645,7 +647,7 @@ subroutine check
      !if using Reinke iteration variable fzactual, then assign to imp. array
      ! This is also done in iteration_variables.f90 - leave it in for the moment.
      if (any(ixc == 148)) then
-        impurity_arr(impvardiv)%frac = fzactual / impurity_enrichment(impvardiv)
+        impurity_arr_frac(impvardiv) = fzactual / impurity_enrichment(impvardiv)
      endif
 
      if (i_single_null == 0) then
@@ -665,7 +667,7 @@ subroutine check
 
         icase  = 'Tight aspect ratio tokamak model'
 
-        ! Disabled Forcing that no inboard breeding blanket is used 
+        ! Disabled Forcing that no inboard breeding blanket is used
         ! Disabled iblnkith = 0
 
         ! Check if the choice of plasma current is addapted for ST
@@ -675,27 +677,30 @@ subroutine check
             idiags(1) = icurr ; call report_error(37)
         end if
 
-        ! Location of the TF coils 
+        !! If using Peng and Strickler (1986) model (itartpf == 0)
+        ! Overwrite the location of the TF coils
         ! 2 : PF coil on top of TF coil
         ! 3 : PF coil outside of TF coil
-        ipfloc(1) = 2
-        ipfloc(2) = 3
-        ipfloc(3) = 3
+        if (itartpf == 0) then
+          ipfloc(1) = 2
+          ipfloc(2) = 3
+          ipfloc(3) = 3
+        end if
 
         ! Water cooled copper magnets initalisation / checks
         if ( i_tf_sup == 0 ) then
             ! Check if the initial centrepost coolant loop adapted to the magnet technology
-            ! Ice cannot flow so tcoolin > 273.15 K 
+            ! Ice cannot flow so tcoolin > 273.15 K
             if ( tcoolin < 273.15D0 ) call report_error(234)
 
-            ! Temperature of the TF legs cannot be cooled down 
+            ! Temperature of the TF legs cannot be cooled down
             if ( abs(tlegav+1.0D0) > epsilon(tlegav) .and. tlegav < 273.15D0 ) call report_error(239)
 
             ! Check if conductor upper limit is properly set to 50 K or below
             if ( any(ixc == 20 ) .and. boundu(20) < 273.15D0 ) call report_error(241)
 
         ! Call a lvl 3 error if superconductor magnets are used
-        else if ( i_tf_sup == 1 ) then 
+        else if ( i_tf_sup == 1 ) then
             call report_error(233)
 
         ! Aluminium magnets initalisation / checks
@@ -705,16 +710,16 @@ subroutine check
             ! Call a lvl 3 error if the inlet coolant temperature is too large
             ! Motivation : ill-defined aluminium resistivity fit for T > 40-50 K
             if ( tcoolin > 40.0D0 ) call report_error(235)
-            
+
             ! Check if the leg average temperature is low enough for the resisitivity fit
             if ( tlegav > 50.0D0 ) call report_error(238)
 
             ! Check if conductor upper limit is properly set to 50 K or below
             if ( any(ixc == 20 ) .and. boundu(20) > 50.0D0 ) call report_error(240)
 
-            ! Otherwise intitialise the average conductor temperature at 
+            ! Otherwise intitialise the average conductor temperature at
             tcpav = tcoolin
-        
+
         end if
 
         ! Check if the boostrap current selection is addapted to ST
@@ -726,21 +731,21 @@ subroutine check
         ! Set the TF coil shape to picture frame (if default value)
         if ( i_tf_shape == 0 ) i_tf_shape = 2
 
-        ! Warning stating that the CP fast neutron fluence calculation 
+        ! Warning stating that the CP fast neutron fluence calculation
         ! is not addapted for cryoaluminium calculations yet
         if ( i_tf_sup == 2 .and. any( icc == 85 ) .and. itart == 1 ) then
             call report_error(260)
         end if
 
-        ! Setting the CP joints default options : 
+        ! Setting the CP joints default options :
         !  0 : No joints for superconducting magents (i_tf_sup = 1)
-        !  1 : Sliding joints for resistive magnets (i_tf_sup = 0, 2)  
+        !  1 : Sliding joints for resistive magnets (i_tf_sup = 0, 2)
         if ( i_cp_joints == -1 ) then
-            if ( i_tf_sup == 1 ) then 
+            if ( i_tf_sup == 1 ) then
                 i_cp_joints = 0
-            else 
+            else
                 i_cp_joints = 1
-            end if 
+            end if
         end if
 
         ! Checking the CP TF top radius
@@ -750,7 +755,7 @@ subroutine check
         end if
     ! --------------------------------
 
-    
+
     ! Conventionnal aspect ratios specific
     ! ------------------------------------
     else
@@ -805,18 +810,18 @@ subroutine check
     ! Unless i_tf_stress_model == 2
     ! -> If bore + gapoh + ohcth = 0 and fixed and stress constraint is used
     !    Generate a lvl 3 error proposing not to use any stress constraints
-    if (       ( .not. ( any(ixc == 16 ) .or. any(ixc == 29 ) .or. any(ixc == 42 ) ) ) & ! No bore,gapoh, ohcth iteration  
+    if (       ( .not. ( any(ixc == 16 ) .or. any(ixc == 29 ) .or. any(ixc == 42 ) ) ) & ! No bore,gapoh, ohcth iteration
          .and. ( abs(bore + gapoh + ohcth + precomp) < epsilon(bore) )                 & ! bore + gapoh + ohcth = 0
-         .and. ( any(icc == 31) .or. any(icc == 32) )                                  & ! Stress constraints (31 or 32) is used 
-         .and. ( i_tf_stress_model /= 2 ) ) then                                         ! TF stress model can't handle no bore                                           
+         .and. ( any(icc == 31) .or. any(icc == 32) )                                  & ! Stress constraints (31 or 32) is used
+         .and. ( i_tf_stress_model /= 2 ) ) then                                         ! TF stress model can't handle no bore
 
         call report_error(246)
         stop 1
     end if
-     
+
     ! Make sure that plane stress model is not used for resistive magnets
     if ( i_tf_stress_model == 1 .and. i_tf_sup /= 1 ) call report_error(253)
-     
+
     ! bucking cylinder default option setting
     !  - bucking (casing) for SC i_tf_bucking ( i_tf_bucking = 1 )
     !  - No bucking for copper magnets ( i_tf_bucking = 0 )
@@ -827,9 +832,9 @@ subroutine check
         else
             i_tf_bucking = 1
         end if
-    end if 
+    end if
 
-    ! Ensure that no pre-compression structure 
+    ! Ensure that no pre-compression structure
     ! is used for bucked and wedged design
     if ( i_tf_bucking >= 2 .and. iprecomp == 1 ) then
         call report_error(252)
@@ -847,8 +852,8 @@ subroutine check
 
     ! Setting the default cryo-plants efficiencies
     !-!
-    if ( abs(eff_tf_cryo + 1.0D0) < epsilon(eff_tf_cryo) ) then 
-        
+    if ( abs(eff_tf_cryo + 1.0D0) < epsilon(eff_tf_cryo) ) then
+
         ! The ITER cyoplant efficiency is used for SC
         if ( i_tf_sup == 1 ) then
             eff_tf_cryo = 0.13D0
@@ -857,13 +862,13 @@ subroutine check
         else if ( i_tf_sup == 2 ) then
             eff_tf_cryo = 0.40D0
         end if
-    
+
     ! Cryo-plane efficiency must be in [0-1.0]
     else if ( eff_tf_cryo >  1.0D0 .or. eff_tf_cryo < 0.0D0 ) then
         call report_error(248)
         stop 1
     end if
-    !-!  
+    !-!
 
     ! Integer turns option not yet available for REBCO taped turns
     !-!
@@ -883,11 +888,11 @@ subroutine check
         if ( i_tf_sup == 0 ) then
             eyoung_ins = 20.0D9
 
-        ! SC magnets 
+        ! SC magnets
         ! Value from DDD11-2 v2 2 (2009)
         else if ( i_tf_sup == 1 ) then
             eyoung_ins = 20.0D9
-        
+
         ! Cryo-aluminum magnets (Kapton polymer)
         else if ( i_tf_sup == 2 ) then
             eyoung_ins = 2.5D9
@@ -900,9 +905,42 @@ subroutine check
     if ( i_tf_wp_geom == -1 ) then
         if ( i_tf_turns_integer == 0 ) i_tf_wp_geom = 1
         if ( i_tf_turns_integer == 1 ) i_tf_wp_geom = 0
-    end if 
+    end if
     !-!
-    
+
+    !-! Setting the TF coil conductor elastic properties
+    !-!
+    if ( i_tf_cond_eyoung_axial == 0 ) then
+        ! Conductor stiffness is not considered
+        eyoung_cond_axial = 0
+        eyoung_cond_trans = 0
+    else if ( i_tf_cond_eyoung_axial == 2 ) then
+        ! Select sensible defaults from the literature
+        select case (i_tf_sc_mat)
+            case (1,4,5)
+                ! Nb3Sn: Nyilas, A et. al, Superconductor Science and Technology 16, no. 9 (2003): 1036–42. https://doi.org/10.1088/0953-2048/16/9/313.
+                eyoung_cond_axial = 32D9
+            case (2)
+                ! Bi-2212: Brown, M. et al, IOP Conference Series: Materials Science and Engineering 279 (2017): 012022. https://doi.org/10.1088/1757-899X/279/1/012022.
+                eyoung_cond_axial = 80D9
+            case (3,7)
+                ! NbTi: Vedrine, P. et. al, IEEE Transactions on Applied Superconductivity 9, no. 2 (1999): 236–39. https://doi.org/10.1109/77.783280.
+                eyoung_cond_axial = 6.8D9
+            case (6,8,9)
+                ! REBCO: Fujishiro, H. et. al, Physica C: Superconductivity, 426–431 (2005): 699–704. https://doi.org/10.1016/j.physc.2005.01.045.
+                eyoung_cond_axial = 145D9
+        end select
+
+        if ( i_tf_cond_eyoung_trans == 0) then
+            ! Transverse stiffness is not considered
+            eyoung_cond_trans = 0
+        else
+            ! Transverse stiffness is significant
+            eyoung_cond_trans = eyoung_cond_axial
+        end if
+    end if
+    !-!
+
     ! Check if the WP/conductor radial thickness (dr_tf_wp) is large enough
     ! To contains the insulation, cooling and the support structure
     ! Rem : Only verified if the WP thickness is used
@@ -915,9 +953,9 @@ subroutine check
             ! Steel conduit thickness (can be an iteration variable)
             if ( any(ixc(1:nvar) == 58 ) ) then
                 dr_tf_wp_min = dr_tf_wp_min + 2.0D0 * boundl(58)
-            else 
+            else
                 dr_tf_wp_min = dr_tf_wp_min + 2.0D0 * thwcndut
-            end if 
+            end if
 
         ! Minimal conductor layer thickness
         else if ( i_tf_sup == 0 .or. i_tf_sup == 2 ) then
@@ -926,8 +964,8 @@ subroutine check
 
         if ( boundl(140) < dr_tf_wp_min ) then
             fdiags(1) = dr_tf_wp_min
-            call report_error(255) 
-        end if 
+            call report_error(255)
+        end if
     end if
 
     ! Setting t_turn_tf_is_input to true if t_turn_tf is an input
@@ -939,8 +977,8 @@ subroutine check
 
     ! Impossible to set the turn size of integer turn option
     if ( t_turn_tf_is_input .and. i_tf_turns_integer == 1 ) then
-        call report_error(269) 
-    end if 
+        call report_error(269)
+    end if
 
     ! Setting t_cable_tf_is_input to true if t_cable_tf is an input
     if ( abs(t_cable_tf) < epsilon(t_cable_tf) ) then
@@ -951,8 +989,8 @@ subroutine check
 
     ! Impossible to set the cable size of integer turn option
     if ( t_cable_tf_is_input .and. i_tf_turns_integer == 1 ) then
-        call report_error(269) 
-    end if 
+        call report_error(269)
+    end if
 
     ! Impossible to set both the TF coil turn and the cable dimension
     if ( t_turn_tf_is_input .and. t_cable_tf_is_input ) then
@@ -965,11 +1003,11 @@ subroutine check
            i_tf_sc_mat == 4 .or. &
            i_tf_sc_mat == 5 ) .and. tftmp > 10.0D0 ) then
         call report_error(270)
-    end if 
+    end if
     ! -------
 
 
-    
+
     !  PF coil resistivity is zero if superconducting
     if (ipfres == 0) pfclres = 0.0D0
 
@@ -1061,8 +1099,6 @@ subroutine check
         call report_error(222)
     end if
 
-    errors_on = .false.
-
     ! Cannot use temperature margin constraint with REBCO TF coils
     if(any(icc == 36) .and. ((i_tf_sc_mat == 8).or.(i_tf_sc_mat == 9))) then
         call report_error(265)
@@ -1072,11 +1108,22 @@ subroutine check
     if(any(icc == 60) .and. (isumatoh == 8)) then
         call report_error(264)
     endif
-    
+
     ! Cold end of the cryocooler should be colder than the TF
     if(tmpcry > tftmp) then
         call report_error(273)
     endif
+
+    ! Cannot use TF coil strain limit if i_str_wp is off:
+    if(any(icc == 88) .and. (i_str_wp == 0)) then
+        call report_error(275)
+    endif
+
+    errors_on = .false.
+
+    ! Disable error logging only after all checks have been performed.
+    ! (CPSS #1582: Why is error logging disabled at all?)
+    errors_on = .false.
 
 
 end subroutine check

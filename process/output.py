@@ -19,12 +19,12 @@ def write(models, outfile):
 
     # Call stellarator output routine instead if relevant
     if ft.stellarator_variables.istell != 0:
-        ft.stellarator_module.stout(outfile)
+        models.stellarator.run(output=True)
         return
 
     #  Call IFE output routine instead if relevant
     if ft.ife_variables.ife != 0:
-        ft.ife_module.ifeout(outfile)
+        models.ife.run(output=True)
         return
 
     # Costs model
@@ -36,24 +36,14 @@ def write(models, outfile):
     # 2    |  2019 STEP model
 
     if ft.cost_variables.cost_model == 0:
-        ft.costs_module.costs(outfile, 1)
+        models.costs.run(output=True)
     elif ft.cost_variables.cost_model == 1:
         ft.costs_2015_module.costs_2015(outfile, 1)
     elif ft.cost_variables.cost_model == 2:
         models.costs_step.output()
 
     # Availability model
-    # Availability switch values
-    # No.  |  model
-    # ---- | ------
-    # 0    |  Input value for cfactr
-    # 1    |  Ward and Taylor model (1999)
-    # 2    |  Morris model (2015)
-
-    if ft.cost_variables.iavail > 1:
-        ft.availability_module.avail_2(outfile, 1)  # Morris model (2015)
-    else:
-        ft.availability_module.avail(outfile, 1)  # Taylor and Ward model (1999)
+    models.availability.run(output=True)
 
     # Writing the output from physics.f90 into OUT.DAT + MFILE.DAT
     ft.physics_module.outplas(outfile)
@@ -69,7 +59,7 @@ def write(models, outfile):
     ft.current_drive_module.cudriv(outfile, 1)
 
     # Pulsed reactor model
-    ft.pulse_module.pulse(outfile, 1)
+    models.pulse.run(output=True)
     ft.physics_module.outtim(outfile)
 
     # Divertor Model
@@ -107,14 +97,14 @@ def write(models, outfile):
 
     else:
         # Old Divertor Model: Comment this out MDK 30/11/16
-        ft.divertor_module.divcall(outfile, 1)
+        models.divertor.run(output=True)
 
     # Machine Build Model
     # Radial build
-    ft.build_module.radialb(outfile, 1)
+    models.build.radialb(output=True)
 
     # Vertical build
-    ft.build_module.vbuild(outfile, 1)
+    models.build.vbuild(output=True)
 
     # Toroidal field coil model
     models.tfcoil.output()
@@ -129,17 +119,14 @@ def write(models, outfile):
         models.tfcoil.cntrpst()
         models.tfcoil.iprint = 0
 
-    # Poloidal field coil model !
-    ft.pfcoil_module.outpf(outfile)
-
-    # TODO what is outvolt?
-    ft.pfcoil_module.outvolt(outfile)
+    # Poloidal field coil model
+    models.pfcoil.output()
 
     # Structure Model
-    ft.structure_module.strucall(outfile, 1)
+    models.structure.run(output=True)
 
     # Poloidal field coil inductance calculation
-    ft.pfcoil_module.induct(outfile, 1)
+    models.pfcoil.output_induct()
 
     # Blanket model
     # Blanket switch values
@@ -184,10 +171,10 @@ def write(models, outfile):
     ft.power_module.pfpwr(outfile, 1)
 
     # Vacuum model
-    ft.vacuum_module.vaccall(outfile, 1)
+    models.vacuum.run(output=True)
 
     # Buildings model
-    ft.buildings_module.bldgcall(outfile, 1)
+    models.buildings.run(output=True)
 
     # Plant AC power requirements
     ft.power_module.acpow(outfile, 1)
@@ -197,4 +184,4 @@ def write(models, outfile):
     ft.power_module.power3(ft.constants.nout, 1)
 
     # Water usage in secondary cooling system
-    ft.water_use_module.waterusecall(outfile, 1)
+    models.water_use.run(output=True)

@@ -26,6 +26,11 @@ FindPreprocessingVars()
 
 SET(CMAKE_Fortran_FLAGS "-cpp -ffree-line-length-none -fPIC -ftest-coverage -fprofile-arcs -fcheck=all,no-array-temps -finit-local-zero")
 
+IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    # space before -g is very necessary
+    STRING(CONCAT CMAKE_Fortran_FLAGS ${CMAKE_Fortran_FLAGS} " -g -O0")
+ENDIF()
+
 # Get System information, log as much information as we can
 # for ease later on when debugging system specific issues
 CMAKE_HOST_SYSTEM_INFORMATION(RESULT OS_LABEL QUERY OS_NAME)
@@ -42,10 +47,13 @@ MESSAGE(STATUS "\tFortran Compiler: ${CMAKE_Fortran_COMPILER}")
 MESSAGE(STATUS "\tFortran Compiler ID: ${CMAKE_Fortran_COMPILER_ID}")
 MESSAGE(STATUS "\tFortran Compiler Version: ${CMAKE_Fortran_COMPILER_VERSION}")
 MESSAGE(STATUS "\tPROCESS Module Installation Directory: ${PROCESS_MODULE_INSTALL_LOCATION}")
+MESSAGE(STATUS "\tBuild type: ${CMAKE_BUILD_TYPE}")
+MESSAGE(STATUS "\tFortran arguments: ${CMAKE_Fortran_FLAGS}")
 
 # Define various addresses for locations of files
 # relative to the CMake root directory
 SET(PROCESS_SRC_DIR ${CMAKE_SOURCE_DIR}/source/fortran)
+SET(PROCESS_PYTHON_SRC_DIR ${CMAKE_SOURCE_DIR}/process)
 SET(PLASMOD_SRC_DIR ${CMAKE_SOURCE_DIR}/lib/PLASMOD)
 SET(REFPROP_SRC_DIR ${CMAKE_SOURCE_DIR}/lib/REFPROP)
 
@@ -54,6 +62,7 @@ SET(PYTHON_LIBS_DIR ${PYTHON_MODULE_DIR}/lib)
 SET(PYTHON_SOURCE_IO_DIR ${PYTHON_MODULE_DIR}/io)
 
 FILE(GLOB PROCESS_SRC_PATHS ${PROCESS_SRC_DIR}/*.f90 ${PROCESS_SRC_DIR}/*.f)
+FILE(GLOB PROCESS_PYTHON_SRC_PATHS ${PROCESS_PYTHON_SRC_DIR}/*.py)
 
 # 'Cherry Pick' Files to Compile in REFPROP, PLASMOD and PROCESS libraries
 
@@ -78,7 +87,6 @@ LIST(TRANSFORM REFPROP_SRCS PREPEND ${REFPROP_SRC_DIR}/ OUTPUT_VARIABLE REFPROP_
 # Define interface source filenames to wrap
 LIST(APPEND PROCESS_SRCS
     div_kal_vars.f90
-    kallenbach_module.f90
     numerics.f90
     scan.f90
     fw.f90
@@ -94,9 +102,7 @@ LIST(APPEND PROCESS_SRCS
     stellarator_variables.f90
     plant_power.f90
     final_module.f90
-    availability.f90
     cost_variables.f90
-    divertor.f90
     divertor_variables.f90
     fwbs_variables.f90
     physics.f90
@@ -106,10 +112,8 @@ LIST(APPEND PROCESS_SRCS
     times_variables.f90
     ife_variables.f90
     ife.f90
-    costs.f90
     costs_2015.f90
     heat_transport_variables.f90
-    buildings.f90
     buildings_variables.f90
     maths_library.f90
     iteration_variables.f90
@@ -119,13 +123,8 @@ LIST(APPEND PROCESS_SRCS
     water_usage_variables.f90
     constraint_equations.f90
     stellarator.f90
-    machine_build.f90
-    pulse.f90
     divertor_ode.f90
     constants.f90
-    structure.f90
-    vacuum.f90
-    water_usage.f90
     hcll.f90
     build_variables.f90
     current_drive_variables.f90
@@ -137,6 +136,16 @@ LIST(APPEND PROCESS_SRCS
     main_module.f90
     error_handling.f90
     global_variables.f90
+    constraint_variables.f90
+    vacuum_variables.f90
+    CS_fatigue.f90
+    CS_fatigue_variables.f90
+    impurity_radiation.f90
+    pulse_variables.f90
+    pf_power_variables.f90
+    read_and_get_atomic_data.f90
+    plot_radiation.f90
+    rebco_variables.f90
 )
 
 PREPROCESS()
@@ -148,7 +157,7 @@ PIP_INSTALL()
 # Stage 1: Compile Fortran sources to a shared library
 # (libprocess.so on Linux)
 ADD_LIBRARY(${PROJECT_NAME} SHARED ${PROCESS_SRC_PATHS} ${PLASMOD_SRC_PATHS} ${REFPROP_SRC_PATHS})
-SET_TARGET_PROPERTIES(${PROJECT_NAME} 
+SET_TARGET_PROPERTIES(${PROJECT_NAME}
     PROPERTIES LINKER_LANGUAGE Fortran
     LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/process/lib
 )
@@ -179,7 +188,7 @@ GET_GFORTRANLIBS()
 SET(PROCESS_MODULE_DIST ${CMAKE_SOURCE_DIR}/process_dist)
 
 # Delete any existing .gcda files
-ADD_CUSTOM_TARGET(coverage_cleanup 
+ADD_CUSTOM_TARGET(coverage_cleanup
     COMMAND echo "-- Deleting any existing .gcda coverage files..."
     COMMAND find ${CMAKE_SOURCE_DIR}/build/ -name '*.gcda' -exec rm -rf {} \\\;
 )
@@ -189,7 +198,7 @@ ADD_CUSTOM_TARGET(install_process ALL
     COMMAND ${PYTHON_EXECUTABLE} -m pip install --no-cache-dir ${CMAKE_SOURCE_DIR}
 )
 
-ADD_DEPENDENCIES(install_process ${PIP_NAME} ${F2PY_NAME} ${FORD_NAME} ${DICTS_NAME} ${GFORTLIB_NAME} coverage_cleanup)
+ADD_DEPENDENCIES(install_process ${PIP_NAME} ${F2PY_NAME} ${FORD_NAME} ${GFORTLIB_NAME} ${DICTS_NAME} coverage_cleanup)
 
 if (EXISTS ${CMAKE_SOURCE_DIR}/lcov_results)
   execute_process(COMMAND echo "-- Delete existing lcov_coverage directory...")

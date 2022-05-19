@@ -4,7 +4,7 @@ module utilities
   use, intrinsic :: iso_fortran_env, only: dp=>real64
 #endif
   implicit none
-  
+
 contains
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   subroutine upper_case(string,start,finish)

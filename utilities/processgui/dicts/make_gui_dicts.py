@@ -36,17 +36,22 @@ import logging
 import copy
 import argparse
 from create_dicts import print_dict
-from process_io_lib.process_dicts import DICT_DEFAULT, DICT_IXC_FULL, \
-                                        DICT_DESCRIPTIONS, DICT_MODULE
+from process_io_lib.process_dicts import (
+    DICT_DEFAULT,
+    DICT_IXC_FULL,
+    DICT_DESCRIPTIONS,
+    DICT_MODULE,
+)
+
 
 def print_list(li, name, comment=""):
     """Prints a list with format:
-       #comment
-       name = [
-         li[0],
-         li[1],
-         ...
-       ]
+    #comment
+    name = [
+      li[0],
+      li[1],
+      ...
+    ]
 
     """
     if len(li) == 0:
@@ -57,17 +62,18 @@ def print_list(li, name, comment=""):
         print("\t", value, ",")
     print("]")
 
+
 def parse_labl(labl):
     """Parses a 'labl' format description from DICT_DESCRIPTION
-       eg ( 1) * aspect
-          ( 2) * bt
-       Returns a list of (number, checked, desc) tuples where 'number' is
-       number in brackets, 'checked' indicates whether an asterix is present
-       and 'desc' is everything that follows
+    eg ( 1) * aspect
+       ( 2) * bt
+    Returns a list of (number, checked, desc) tuples where 'number' is
+    number in brackets, 'checked' indicates whether an asterix is present
+    and 'desc' is everything that follows
 
-   """
+    """
     ret = []
-    for line in labl.split('\n'):
+    for line in labl.split("\n"):
         regex = r"""\(([\d ]+)\)     #capture the digits and whitespace
                                     #in brackets at the beginning
 
@@ -87,29 +93,25 @@ def parse_labl(labl):
             ret.append((num, checked, desc))
     return ret
 
+
 def get_desc(name):
     """Gets an entry from DICT_DESCRIPTIONS and returns the short style
-       description and the long style description with character " removed
+    description and the long style description with character " removed
 
     """
 
     desc = DICT_DESCRIPTIONS[name]
-    #make sure no " characters are passed to html
+    # make sure no " characters are passed to html
     if '"' in desc:
-        logging.warning('Removing " characters from ' + name + ' description')
-        desc = desc.replace('"', '')
+        logging.warning('Removing " characters from ' + name + " description")
+        desc = desc.replace('"', "")
 
-    shortdesc = desc.split('\n')[0]
+    shortdesc = desc.split("\n")[0]
     return shortdesc, desc
 
 
-
-
-
 def main():
-    """Main program routine. Creates and prints the dictionaries
-
-    """
+    """Main program routine. Creates and prints the dictionaries"""
     temp_dict_module = copy.deepcopy(DICT_MODULE)
     dict_module = {}
 
@@ -118,12 +120,12 @@ def main():
             modulename = modulename[:-10]
         dict_module[modulename] = value
 
-    #get rid of inertial confinement and reverse field pinch settings
+    # get rid of inertial confinement and reverse field pinch settings
     del dict_module["Ife"]
     del dict_module["Rfp"]
 
-    #get rid of ixc, icc, boundl, boundu
-    #these are dealt with seperately
+    # get rid of ixc, icc, boundl, boundu
+    # these are dealt with seperately
     dict_module["Numerics"].remove("ixc")
     dict_module["Numerics"].remove("icc")
     dict_module["Numerics"].remove("neqns")
@@ -131,11 +133,11 @@ def main():
     dict_module["Numerics"].remove("boundl")
     dict_module["Numerics"].remove("boundu")
 
-    #get rid of runtitle
-    #dict_module["Global"].remove("runtitle")
+    # get rid of runtitle
+    # dict_module["Global"].remove("runtitle")
 
     gui_module = OrderedDict()
-    #make gui_module
+    # make gui_module
     for module, varlist in dict_module.items():
         tuplist = []
         for varname in varlist:
@@ -153,54 +155,61 @@ def main():
 
         gui_module[module] = tuplist
 
-    #set of all variable names in main body, not printed
+    # set of all variable names in main body, not printed
     gui_module_var_set = set()
     for varlist in dict_module.values():
         gui_module_var_set.update(varlist)
 
-
     gui_lablxc = OrderedDict()
-    #make the LABLXC dict
+    # make the LABLXC dict
     for num, dummy, dummy in parse_labl(DICT_DESCRIPTIONS["lablxc"]):
         name = DICT_IXC_FULL[str(num)]["name"]
-        #check that the name is included in the description given in lablxc
+        # check that the name is included in the description given in lablxc
         assert name in dummy
 
         if "obsolete" in dummy.lower():
-            logging.warning(" Iteration variable " + name + \
-            " is marked obsolete in lablxc so is being excluded")
+            logging.warning(
+                " Iteration variable "
+                + name
+                + " is marked obsolete in lablxc so is being excluded"
+            )
             continue
 
-        #tftort should be marked obsolete
+        # tftort should be marked obsolete
         if name == "tftort":
             continue
 
         if name not in gui_module_var_set:
-            logging.warning(" Iteration variable " + name + \
-            " does not appear in main body of gui_module so is being excluded")
+            logging.warning(
+                " Iteration variable "
+                + name
+                + " does not appear in main body of gui_module so is being excluded"
+            )
             continue
 
-        #The description given in DICT_DESCRIPTION is better than in lablxc
+        # The description given in DICT_DESCRIPTION is better than in lablxc
         shortdesc, desc = get_desc(name)
-        #descriptions like (iteration variable 2) are redundant when in
-        #the GUI
+        # descriptions like (iteration variable 2) are redundant when in
+        # the GUI
         shortdesc = shortdesc.split(" (iter")[0]
         desctup = (shortdesc, desc)
         gui_lablxc[num] = (name,) + desctup
 
-
     gui_lablcc = OrderedDict()
-    #Create GUI_LABLCC
+    # Create GUI_LABLCC
     for num, dummy, desc in parse_labl(DICT_DESCRIPTIONS["lablcc"]):
-        desc = desc.capitalize().replace('"', '')
+        desc = desc.capitalize().replace('"', "")
         if "Unused" in desc:
-            logging.warning(" Constraint " + str(num) + " is marked unused " + \
-                    "so is being excluded")
+            logging.warning(
+                " Constraint "
+                + str(num)
+                + " is marked unused "
+                + "so is being excluded"
+            )
             continue
         gui_lablcc[num] = desc
 
-
-    #Print the header
+    # Print the header
     header = """
 \"\"\"
 This file contains dictionaries for use by the PROCESS GUI.
@@ -214,7 +223,7 @@ from collections import OrderedDict
     """
     print(header)
 
-    #print everything
+    # print everything
     print("\n#List that sets order of main body variables")
     print("GUI_MODULE = OrderedDict()")
     for modname, varlist in sorted(gui_module.items()):
@@ -230,11 +239,12 @@ from collections import OrderedDict
     print_dict(gui_lablcc, "GUI_LABLCC", comment, dict_type="OrderedDict()")
 
 
-
 if __name__ == "__main__":
 
-    desc = "Produces dictionaries for use by the GUI. Prints to stdout. " + \
-           "Redirect to file using '>'"
+    desc = (
+        "Produces dictionaries for use by the GUI. Prints to stdout. "
+        + "Redirect to file using '>'"
+    )
     PARSER = argparse.ArgumentParser(description=desc)
 
     PARSER.parse_args()

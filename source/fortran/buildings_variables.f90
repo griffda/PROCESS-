@@ -8,18 +8,18 @@ module buildings_variables
     !!### References
     !!
     !! - AEA FUS 251: A User's Guide to the PROCESS Systems Code
-  
+
 #ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
 #endif
-  
+
     implicit none
-  
+
     public
 
     real(dp) :: admv
     !! administration building volume (m3)
-  
+
     real(dp) :: admvol
     !! volume of administration buildings (m3)
 
@@ -30,14 +30,14 @@ module buildings_variables
     !! Site-Wide Auxiliary Cooling Water facility length, width, height (m)
 
     real(dp) :: bioshld_thk
-    !! Radial thickness of bio-shield around reactor (m) 
+    !! Radial thickness of bio-shield around reactor (m)
 
     real(dp) :: chemlab_l, chemlab_w, chemlab_h
     !! Chemistry labs and treatment buldings length, width, height (m)
 
     real(dp) :: clh1
     !! vertical clearance from TF coil to cryostat (m) (calculated for tokamaks)
-  
+
     real(dp) :: clh2
     !! clearance beneath TF coil to foundation (including basement) (m)
 
@@ -51,19 +51,19 @@ module buildings_variables
     !! volume of control, protection and i&c building (m3)
 
     real(dp) :: crane_arm_h
-    !! vertical dimension of crane arm, operating over reactor (m)  
+    !! vertical dimension of crane arm, operating over reactor (m)
 
     real(dp) :: crane_clrnc_h
     !! horizontal clearance to building wall for crane operation (m)
 
     real(dp) :: crane_clrnc_v
     !! vertical clearance for crane operation (m)
-  
+
     real(dp) :: cryomag_l, cryomag_w, cryomag_h
     !! Cryogenic Buildings for Magnet and Fuel Cycle length, width, height (m)
 
     real(dp) :: cryostore_l, cryostore_w, cryostore_h
-    !! Magnet Cryo Storage Tanks length, width, height (m)  
+    !! Magnet Cryo Storage Tanks length, width, height (m)
 
     real(dp) :: cryostat_clrnc
     !! vertical clearance from TF coil to cryostat (m)
@@ -73,7 +73,7 @@ module buildings_variables
 
     real(dp) :: efloor
     !! effective total floor space (m2)
-  
+
     real(dp) :: elecdist_l, elecdist_w, elecdist_h
     !! Transformers and electrical distribution facilities length, width, height (m)
 
@@ -106,7 +106,7 @@ module buildings_variables
 
     real(dp) :: hccl
     !! clearance around components in hot cell (m)
-  
+
     real(dp) :: hcwt
     !! hot cell wall thickness (m)
 
@@ -121,7 +121,7 @@ module buildings_variables
 
     real(dp) :: hw_storage_l, hw_storage_w, hw_storage_h
     !! hazardous waste storage building length, width, height (m)
-  
+
     integer :: i_bldgs_size
     !! switch between routines estimating building sizes (0 = default; 1 = STEP-derived)
 
@@ -130,13 +130,13 @@ module buildings_variables
 
     real(dp) :: ilw_smelter_l, ilw_smelter_w, ilw_smelter_h
     !! radioactive waste smelting facility length, width, height (m)
-    
+
     real(dp) :: ilw_storage_l, ilw_storage_w, ilw_storage_h
     !! ILW waste storage building length, width, height (m)
 
     real(dp) :: llw_storage_l, llw_storage_w, llw_storage_h
     !! LLW waste storage building length, width, height (m)
-  
+
     real(dp) :: magnet_pulse_l, magnet_pulse_w, magnet_pulse_h
     !! pulsed magnet power building length, width, height (m)
 
@@ -150,7 +150,7 @@ module buildings_variables
     !! maintenance building volume multiplication factor
 
     real(dp) :: nbi_sys_l, nbi_sys_w
-    !! NBI system length, width (m)  
+    !! NBI system length, width (m)
 
     real(dp) :: pfbldgm3
     !! volume of PF coil power supply building (m3)
@@ -163,7 +163,7 @@ module buildings_variables
 
     real(dp) :: rbvfac
     !! reactor building volume multiplication factor
-    
+
     real(dp) :: rbrt
     !! reactor building roof thickness (m)
 
@@ -175,17 +175,17 @@ module buildings_variables
 
     real(dp) :: reactor_clrnc
     !! clearance around reactor (m)
-  
+
     real(dp) :: reactor_fndtn_thk
     !! reactor building foundation thickness (m)
 
     real(dp) :: reactor_hall_l, reactor_hall_w, reactor_hall_h
     !! reactor building length, width, height (m)
-    
+
     real(dp) :: reactor_roof_thk
     !! reactor building roof thickness (m)
 
-    real(dp) :: reactor_wall_thk 
+    real(dp) :: reactor_wall_thk
     !! reactor building wall thickness (m)
 
     real(dp) :: rmbvol
@@ -208,11 +208,11 @@ module buildings_variables
 
     real(dp) :: shov
     !! shops and warehouse volume (m3)
-  
+
     real(dp) :: shovol
     !! volume of shops and buildings for plant auxiliaries (m3)
 
-    real(dp) :: staff_buildings_area 
+    real(dp) :: staff_buildings_area
     !! footprint of staff buildings (m2)
 
     real(dp) :: staff_buildings_h
@@ -226,7 +226,7 @@ module buildings_variables
 
     real(dp) :: transp_clrnc
     !! transportation clearance between components (m)
-    
+
     real(dp) :: trcl
     !! transportation clearance between components (m)
 
@@ -244,8 +244,8 @@ module buildings_variables
 
     real(dp) :: volnucb
     !! sum of nuclear buildings volumes (m3)
-  
-    real(dp) :: warm_shop_l, warm_shop_w, warm_shop_h 
+
+    real(dp) :: warm_shop_l, warm_shop_w, warm_shop_h
     !! warm shop length, width, height (m)
 
     real(dp) :: water_buildings_l, water_buildings_w, water_buildings_h
@@ -253,13 +253,13 @@ module buildings_variables
 
     real(dp) :: wgt
     !! reactor building crane capacity (kg) (calculated if 0 is input)
-  
+
     real(dp) :: wgt2
     !! hot cell crane capacity (kg) (calculated if 0 is input)
 
     real(dp) :: workshop_l, workshop_w, workshop_h
-    !! [cold] workshop buildings length, width, height (m)  
-  
+    !! [cold] workshop buildings length, width, height (m)
+
     real(dp) :: wrbi
     !! distance from centre of machine to building wall (m)
 
@@ -276,40 +276,40 @@ module buildings_variables
 
     real(dp) :: a_ee_ps_bldg
     !! Floor area of electrical equipment and power supply building in m^2, used as GIFA in costs_step
-    
+
     real(dp) :: a_aux_services_bldg
     !! Floor area of auxiliary services building in m^2, used as GIFA in costs_step
-    
+
     real(dp) :: a_hot_cell_bldg
     !! Floor area of hot cell building in m^2, used as GIFA in costs_step
-    
+
     real(dp) :: a_reactor_service_bldg
     !! Floor area of reactor service building in m^2, used as GIFA in costs_step
-    
+
     real(dp) :: a_service_water_bldg
     !! Floor area of service water building in m^2, used as GIFA in costs_step
-    
+
     real(dp) :: a_fuel_handling_bldg
     !! Floor area of fuel handling and storage building in m^2, used as GIFA in costs_step
-    
+
     real(dp) :: a_control_room_bldg
     !! Floor area of controlroom building in m^2, used as GIFA in costs_step
-    
+
     real(dp) :: a_ac_ps_bldg
     !! Floor area of AC power supply building in m^2, used as GIFA in costs_step
-    
+
     real(dp) :: a_admin_bldg
     !! Floor area of admin building in m^2, used as GIFA in costs_step
-    
+
     real(dp) :: a_site_service_bldg
     !! Floor area of site service building in m^2, used as GIFA in costs_step
-    
+
     real(dp) :: a_cryo_inert_gas_bldg
     !! Floor area of cryogenics and inert gas storage building in m^2, used as GIFA in costs_step
-    
+
     real(dp) :: a_security_bldg
     !! Floor area of security building in m^2, used as GIFA in costs_step
-    
+
 
     contains
 
@@ -318,7 +318,7 @@ module buildings_variables
       implicit none
 
       admv = 1.0D5
-      admvol = 0.0D0     
+      admvol = 0.0D0
       aux_build_l = 60.0D0
       aux_build_w = 30.0D0
       aux_build_h = 5.0D0
@@ -471,7 +471,7 @@ module buildings_variables
       a_site_service_bldg = 8.3D3
       a_cryo_inert_gas_bldg = 1.838D4
       a_security_bldg = 4.552D3
-      
+
     end subroutine init_buildings_variables
 
   end module buildings_variables

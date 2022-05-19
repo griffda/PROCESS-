@@ -2,13 +2,13 @@
 
 Depending of the type of scans, different actions will be taken:
 1D SCANS: a simple graph using the scanned variable for x axis
-and the selected variable on the y axis. 
+and the selected variable on the y axis.
 - Any number of output variables can be selected, a plot will be
 made for each
 - Several inputs files can be used at the same time if the same variable
 is scanned. The different runs results will be plotted in the same
 graph.
-- If several inputs are used, the folder name or the file is used as 
+- If several inputs are used, the folder name or the file is used as
 a legend
 
 - 2D SCANS: n_scan_1 graph will be plotted using the second scanned variable
@@ -32,7 +32,6 @@ from argparse import RawTextHelpFormatter
 from pathlib import Path
 
 # PROCESS libraries
-from process.io.python_fortran_dicts import get_dicts
 import process.io.mfile as mf
 
 
@@ -191,20 +190,30 @@ def main(args=None):
     labels["triang"] = r"$\delta_\mathrm{sep}$"
     labels["f_tf_steel"] = r"f_\mathrm{steel}^\mathrm{TF}"
     labels["plascur/1d6"] = r"$I_{\mathrm{p}}$[$MA$]"
-    labels["n_cycle"] = r'$N_{\mathrm{cycle}}$'
-    labels['alstroh'] = r'$\sigma_{\mathrm{oh}}^{\mathrm{max}}$[$Pa$]'
-    labels['ohcth'] = r'$\Delta R_{\mathrm{CS}}$[$m$]'
-    labels['bore'] = r'$\Delta R_{\mathrm{bore}}$[$m$]'
-    labels['dnla'] = r'$\bar{n}_{\mathrm{e}}$[$m^{-3}$]'
-    labels['dnla_gw'] = r'$f_{\mathrm{GW}}$'
-    labels['normalised_toroidal_beta'] = r'$\beta_{N,\mathrm{tor}}$'
+    labels["n_cycle"] = r"$N_{\mathrm{cycle}}$"
+    labels["alstroh"] = r"$\sigma_{\mathrm{oh}}^{\mathrm{max}}$[$Pa$]"
+    labels["ohcth"] = r"$\Delta R_{\mathrm{CS}}$[$m$]"
+    labels["bore"] = r"$\Delta R_{\mathrm{bore}}$[$m$]"
+    labels["dnla"] = r"$\bar{n}_{\mathrm{e}}$[$m^{-3}$]"
+    labels["dnla_gw"] = r"$f_{\mathrm{GW}}$"
+    labels["normalised_toroidal_beta"] = r"$\beta_{N,\mathrm{tor}}$"
+    labels["copperaoh_m2"] = r"$\frac{I_{\mathrm{CS}}}{CuA} [$A m$^{-2}$$]$"
+    labels["copperaoh_m2_max"] = r"$max\frac{I_{\mathrm{CS}}}{CuA} [$A m$^{-2}$$]$"
+    labels["coreradius"] = r"$r_{core} [M]$"
+    labels[
+        "fcuohsu"
+    ] = r"$f_{\mathrm{Cu}}^{\mathrm{CS}}$"  # copper fraction of strand in central solenoid
+    labels["coheof"] = r"$J [A M^{-2}]$"
+    labels["ohcth"] = r"$ ohcth [m]$"
+    labels["ohhghf"] = r"$ ohghf [m]$"
+
     # ------------
 
     # nsweep varible dict
     # -------------------
     # TODO WOULD BE GREAT TO HAVE IT AUTOMATICALLY GENERATED ON THE PROCESS CMAKE!
     #        THE SAME WAY THE DICTS ARE
-    # This needs to be kept in sync automatically; this will break frequently 
+    # This needs to be kept in sync automatically; this will break frequently
     # otherwise
     # Rem : Some variables are not in the MFILE, making the defintion rather tricky...
     nsweep_dict = dict()
@@ -269,10 +278,11 @@ def main(args=None):
     nsweep_dict[58] = "scrapli"
     nsweep_dict[59] = "scraplo"
     nsweep_dict[60] = "sig_tf_wp_max"
+    nsweep_dict[61] = "copperaoh_m2_max"
+    nsweep_dict[62] = "coheof"
+    nsweep_dict[63] = "ohcth"
+    nsweep_dict[64] = "ohhghf"
     # -------------------
-
-    # Load PROCESS dicts from JSON files
-    proc_dict = get_dicts()
 
     # Getting the scanned variable name
     m_file = mf.MFile(filename=input_files[-1])
@@ -297,14 +307,14 @@ def main(args=None):
         exit()
 
     # Check if the scan variable is present in the
-    if not scan_var_name in m_file.data.keys():
+    if scan_var_name not in m_file.data.keys():
         print("ERROR : `{}` does not exist in PROCESS dicts".format(scan_var_name))
         print("ERROR : The scan variable is probably an upper/lower boundary")
         print("ERROR : Please modify 'nsweep_dict' dict with the constrained var")
         exit()
 
     # Check if the (first) scan variable LaTeX label is set
-    if not scan_var_name in labels:
+    if scan_var_name not in labels:
         print(
             "WARNING: The {} variable LaTeX label is not defined".format(scan_var_name)
         )
@@ -313,7 +323,7 @@ def main(args=None):
 
     if is_2D_scan:
         # Check if the second scan variable is present in the
-        if not scan_2_var_name in m_file.data.keys():
+        if scan_2_var_name not in m_file.data.keys():
             print(
                 "ERROR : `{}` does not exist in PROCESS dicts".format(scan_2_var_name)
             )
@@ -322,7 +332,7 @@ def main(args=None):
             exit()
 
         # Check if the second scan variable LaTeX label is set
-        if not scan_2_var_name in labels:
+        if scan_2_var_name not in labels:
             print("The {} variable LaTeX label is not defined".format(scan_2_var_name))
             print("Please update the 'label' dict")
             labels[scan_var_name] = scan_var_name
@@ -407,7 +417,7 @@ def main(args=None):
                 ouput_array = np.zeros(n_scan)
 
                 # Check if the output variable exists in the MFILE
-                if not output_name in m_file.data.keys():
+                if output_name not in m_file.data.keys():
                     print(
                         "Warning : `{}` does not exist in PROCESS dicts".format(
                             output_name
@@ -417,7 +427,7 @@ def main(args=None):
                     continue
 
                 # Check if the output LaTeX variable label exist
-                if not output_name in labels:
+                if output_name not in labels:
                     print(
                         "Warning : The {} variable LaTeX label is not defined".format(
                             output_name
@@ -440,7 +450,7 @@ def main(args=None):
                 for output_name in output_names:
 
                     # Check if the output variable exists in the MFILE
-                    if not output_name in m_file.data.keys():
+                    if output_name not in m_file.data.keys():
                         continue
 
                     print(
@@ -455,7 +465,7 @@ def main(args=None):
         for output_name in output_names:
 
             # Check if the output variable exists in the MFILE
-            if not output_name in m_file.data.keys():
+            if output_name not in m_file.data.keys():
                 continue
 
             # Loop over inputs
@@ -497,7 +507,7 @@ def main(args=None):
                         args.outputdir, scan_var_name, output_name, save_format
                     )
                 )
-            
+
             # Display plot (used in Jupyter notebooks)
             plt.show()
             plt.clf()
@@ -541,7 +551,7 @@ def main(args=None):
         for output_name in output_names:
 
             # Check if the output variable exists in the MFILE
-            if not output_name in m_file.data.keys():
+            if output_name not in m_file.data.keys():
                 print(
                     "Warning : `{}` does not exist in PROCESS dicts".format(output_name)
                 )
@@ -549,7 +559,7 @@ def main(args=None):
                 continue
 
             # Check if the output LaTeX variable label exist
-            if not output_name in labels:
+            if output_name not in labels:
                 print(
                     "Warning : The {} variable LaTeX label is not defined".format(
                         output_name
@@ -559,8 +569,6 @@ def main(args=None):
                 labels[output_name] = output_name
 
             # Declaring the outputs
-            scan_1_var_arrays = list()
-            scan_2_var_arrays = list()
             output_arrays = list()
 
             # Converged indexes
@@ -601,7 +609,7 @@ def main(args=None):
                     save_format,
                 )
             )
-            
+
             # Display plot (used in Jupyter notebooks)
             plt.show()
             plt.clf()

@@ -32,13 +32,13 @@ class Caller:
         # Perform the various function calls
         # Stellarator caller
         if ft.stellarator_variables.istell != 0:
-            ft.stellarator_module.stcall()
+            self.models.stellarator.run(output=False)
             # TODO Is this return safe?
             return
 
         # Inertial Fusion Energy calls
         if ft.ife_variables.ife != 0:
-            ft.ife_module.ifecll()
+            self.models.ife.run(output=False)
             return
 
         # Tokamak calls
@@ -47,20 +47,21 @@ class Caller:
 
         # Machine Build Model
         # Radial build
-        ft.build_module.radialb(ft.constants.nout, 0)
+        self.models.build.radialb(output=False)
 
         # Vertical build
-        ft.build_module.vbuild(ft.constants.nout, 0)
+        self.models.build.vbuild(output=False)
 
         ft.physics_module.physics()
 
         # call build subroutines again if PLASMOD used, issue #650
         if ft.physics_variables.ipedestal == 3:
             # Radial build
-            ft.build_module.radialb(ft.constants.nout, 0)
+            self.models.build.radialb(output=False)
 
+            # TODO: is the vertical build needed again?
             # Vertical build
-            ft.build_module.vbuild(ft.constants.nout, 0)
+            self.models.build.vbuild(output=False)
 
         # startup model (not used)
         # call startup(ft.constants.nout,0)  !  commented-out for speed reasons
@@ -72,17 +73,11 @@ class Caller:
         if ft.tfcoil_variables.i_tf_sup == 1:
             ft.sctfcoil_module.tfspcall(ft.constants.nout, 0)
 
-        # Poloidal field and Central Solenoid model
-        ft.pfcoil_module.pfcoil()
-
-        # Poloidal field coil inductance calculation
-        ft.pfcoil_module.induct(ft.constants.nout, 0)
-
-        # Volt-second capability of PF coil set
-        ft.pfcoil_module.vsec()
+        # Poloidal field and central solenoid model
+        self.models.pfcoil.run()
 
         # Pulsed reactor model
-        ft.pulse_module.pulse(ft.constants.nout, 0)
+        self.models.pulse.run(output=False)
 
         # Blanket model
         """Blanket switch values
@@ -143,10 +138,10 @@ class Caller:
             )
         elif ft.div_kal_vars.kallenbach_switch == 0:
             # Old Divertor Model ! Comment this out MDK 30/11/16
-            ft.divertor_module.divcall(ft.constants.nout, 0)
+            self.models.divertor.run(output=False)
 
         # Structure Model
-        ft.structure_module.strucall(ft.constants.nout, 0)
+        self.models.structure.run(output=False)
 
         # Tight aspect ratio machine model
         if ft.physics_variables.itart == 1 and ft.tfcoil_variables.i_tf_sup != 1:
@@ -162,10 +157,10 @@ class Caller:
         ft.power_module.power1()
 
         # Vacuum model
-        ft.vacuum_module.vaccall(ft.constants.nout, 0)
+        self.models.vacuum.run(output=False)
 
         # Buildings model
-        ft.buildings_module.bldgcall(ft.constants.nout, 0)
+        self.models.buildings.run(output=False)
 
         # Plant AC power requirements
         ft.power_module.acpow(ft.constants.nout, 0)
@@ -176,22 +171,10 @@ class Caller:
         ft.power_module.power3(ft.constants.nout, 0)
 
         # Availability model
-        """Availability switch values
-        No.  |  model
-        ---- | ------
-        0    |  Input value for cfactr
-        1    |  Ward and Taylor model (1999)
-        2    |  Morris model (2015)
-        """
-        if ft.cost_variables.iavail > 1:
-            ft.availability_module.avail_2(ft.constants.nout, 0)  # Morris model (2015)
-        else:
-            ft.availability_module.avail(
-                ft.constants.nout, 0
-            )  # Taylor and Ward model (1999)
+        self.models.availability.run(output=False)
 
         # Water usage in secondary cooling system
-        ft.water_use_module.waterusecall(ft.constants.nout, 0)
+        self.models.water_use.run(output=False)
 
         # Costs model
         """Cost switch values
@@ -202,7 +185,7 @@ class Caller:
         2    |  2019 STEP model
         """
         if ft.cost_variables.cost_model == 0:
-            ft.costs_module.costs(ft.constants.nout, 0)
+            self.models.costs.run(output=False)
         elif ft.cost_variables.cost_model == 1:
             ft.costs_2015_module.costs_2015(0, 0)
         elif ft.cost_variables.cost_model == 2:

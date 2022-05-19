@@ -41,7 +41,7 @@ contains
     use global_variables, only: run_tests, verbose, output_prefix
 		use constants, only: mfile
     use maths_library, only: secant_solve
-    use plasmod_variables, only: plasmod_nchannels, numerics_transp, & 
+    use plasmod_variables, only: plasmod_nchannels, numerics_transp, &
       plasmod_chisawpos, plasmod_x_heat, geom, plasmod_psepplh_sup, &
       plasmod_pfus, plasmod_dx_heat, plasmod_maxpauxor, plasmod_dtinc, num, &
       plasmod_test, plasmod_ainc, plasmod_dt, inp0, plasmod_dtmaxmax, &
@@ -327,14 +327,14 @@ contains
     !! file : input integer : Fortran output unit identifier
     !! string : input character string : Character string to be used
     implicit none
-    
+
     !  Arguments
     integer, intent(in) :: file
     character(len=*), intent(in) :: string
-    
+
     write(file,*) trim(string)
   end subroutine write
-  
+
   subroutine dblcol(file, desc, val1, val2)
     !! Write a description and 2 columns of values to 2dp in standard notation.
     !! file : input integer : Fortran output unit identifier
@@ -463,6 +463,7 @@ contains
     character(len=30) :: dum20
     character(len=20) :: stripped
     character(len=3) :: flag
+    integer :: dotindex
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -474,6 +475,12 @@ contains
     dum20 = varnam
     ! Remove the "(" and ")" from the varnam
     stripped = varnam(2:len(varnam)-1)
+
+    ! May need to strip Python module name (e.g. the pfv. from pfv.coheof)
+    ! This ensures the ITV flag is still added when required in output files
+    dotindex = scan(stripped,".")
+    stripped = stripped(dotindex+1:)
+
     if (present(output_flag)) then
         flag = output_flag
     else
