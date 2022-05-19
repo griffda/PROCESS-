@@ -27,17 +27,20 @@ subroutine Ncycle(n_cycle, max_hoop_stress,residual_stress,t_crack_vertical,t_cr
     real(dp), intent(inout) :: n_cycle, t_crack_radial
 
     ! local variables
-    real(dp) :: Const, C0, m, R, delta, deltaN
+    real(dp) :: Const, C0, m, R, delta, deltaN, mw, n, CR
     real(dp) :: Kmax, Ka, Kc, a, c, N_pulse
-    real(dp) :: max_hoop_stress_MPa, residual_stress_MPa, delta_hoop_stress_MPa
-
+    real(dp) :: max_hoop_stress_MPa, residual_stress_MPa, hoop_stress_MPa
 
     ! Set material parameters
-    ! X. Sarasola et al, IEEE Transactions on Applied Superconductivity,
-    ! vol. 30,  no. 4, pp. 1-5, June 2020
-    Const = 1.75D-13
-    m = 3.7D0
-
+    ! Magnet Structural Design Criteria, Part I, C. Bachmann c, p.67
+    ! https://idm.euro-fusion.org/?uid=2MFLQE
+    ! Steel type: 316LN Steel
+    C0 = 0.39D-12
+    m = 3.5D0
+    ! Walker Coefficient
+    mw = 0.436D0
+    n= -m*(mw-1)
+  
     ! Set units to MPa
     max_hoop_stress_MPa = max_hoop_stress / 1.0D6
     residual_stress_MPa = residual_stress / 1.0D6
@@ -47,11 +50,17 @@ subroutine Ncycle(n_cycle, max_hoop_stress,residual_stress,t_crack_vertical,t_cr
     a = t_crack_vertical
     c = t_crack_radial
 
-    !mean stress ratio
-    delta_hoop_stress_MPa = max_hoop_stress_MPa + residual_stress_MPa
+    ! Cyclic element of stress
+    hoop_stress_MPa = max_hoop_stress_MPa
+    
+    ! Mean stress ratio
+    ! Fatigue Stress Assessment in Fusion Magnet Components
+    ! J. Lorenzo, X. Sarasola, M. Mantsinen
     R = residual_stress_MPa / (max_hoop_stress_MPa + residual_stress_MPa)
-    ! mean stress corrected C - without using walker equaution
-    C0 = 1.0
+    
+    ! Calculated constant for a given stress ratio
+    ! https://idm.euro-fusion.org/?uid=2MFLQE
+    CR = C0/(1.0D0-R)**n
 
     ! select given increase in crack (area or length?)
     delta = 1.0D-4
@@ -65,12 +74,12 @@ subroutine Ncycle(n_cycle, max_hoop_stress,residual_stress,t_crack_vertical,t_cr
     ! CS steel undergoes fast fracture when SIF > 200 MPa, under a saftey factor 2 we use 100MPa
     do while ((a.le.t_structural_vertical/2.0D0).and.(c.le.t_structural_radial/2.0D0).and.(Kmax.le.1.0D2))
         ! find SIF max from SIF_a and SIF_c
-        Ka = surface_stress_intensity_factor(delta_hoop_stress_MPa, t_structural_vertical, t_structural_radial, a, c, pi/2.0D0)
-        Kc = surface_stress_intensity_factor(delta_hoop_stress_MPa, t_structural_vertical, t_structural_radial, a, c, 0.0D0)
+        Ka = surface_stress_intensity_factor(hoop_stress_MPa, t_structural_vertical, t_structural_radial, a, c, pi/2.0D0)
+        Kc = surface_stress_intensity_factor(hoop_stress_MPa, t_structural_vertical, t_structural_radial, a, c, 0.0D0)
         Kmax = max(Ka,Kc)
-
+    
         ! run euler_method and find number of cycles needed to give crack increase
-        deltaN = delta / (C0 * Const * Kmax ** m)
+        deltaN = delta / (CR * (Kmax**m))
 
         ! update a and c, N
         a = a + delta * (Ka / Kmax) ** m
