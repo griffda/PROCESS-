@@ -206,12 +206,12 @@ def main(args=None):
     labels["coheof"] = r"$J [A M^{-2}]$"
     labels["ohcth"] = r"$ ohcth [m]$"
     labels["ohhghf"] = r"$ ohghf [m]$"
-    labels["n_cycle_min"] = r"n_cycle_min_CS"
-    labels["n_cycle"] = r"n_cycle"
-    labels["a_oh_turn"] = r"cs_turn_area"
+    labels["csfv.n_cycle_min"] = r"n_cycle_min_CS"
+    labels["csfv.n_cycle"] = r"n_cycle"
+    labels["pfv.a_oh_turn"] = r"cs_turn_area"
     labels["tbrnmn"] = r"tburn"
-    labels["oh_steel_frac"] = r"oh_steel_frac"
-    labels["t_structural_radial"] = r"t_structural_radial"
+    labels["pfv.oh_steel_frac"] = r"oh_steel_frac"
+    labels["csfv.t_structural_radial"] = r"t_structural_radial"
 
     # ------------
 
@@ -288,8 +288,8 @@ def main(args=None):
     nsweep_dict[62] = "coheof"
     nsweep_dict[63] = "ohcth"
     nsweep_dict[64] = "ohhghf"
-    nsweep_dict[65] = "n_cycle_min"
-    nsweep_dict[66] = "oh_steel_frac"
+    nsweep_dict[65] = "csfv.n_cycle_min"
+    nsweep_dict[66] = "pfv.oh_steel_frac"
     # -------------------
 
     # Getting the scanned variable name
