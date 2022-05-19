@@ -2841,7 +2841,7 @@ contains
           call parse_real_variable('startupratio', startupratio, 0.0D0, 10.0D0, &
                'Ratio (additional HCD power for start-up) / (flat-top operational requirements)')
        case ('isitetype')
-          call parse_int_variable('isitetype', isitetype, 0, 1, &
+          call parse_int_variable('isitetype', isitetype, 0, 2, &
                 'Switch for type of site (river/sea/lakeside)')
        case ('isiteaccomm')
           call parse_int_variable('isiteaccomm', isiteaccomm, 0, 1, &
