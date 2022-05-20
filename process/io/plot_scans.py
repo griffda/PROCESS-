@@ -212,6 +212,7 @@ def main(args=None):
     labels["cnstv.tbrnmn"] = r"tbrnmn"
     labels["pfv.oh_steel_frac"] = r"oh_steel_frac"
     labels["csfv.t_structural_radial"] = r"t_structural_radial"
+    labels["csfv.t_crack_vertical"] = r"csfv.t_crack_vertical"
 
     # ------------
 
@@ -290,6 +291,7 @@ def main(args=None):
     nsweep_dict[64] = "ohhghf"
     nsweep_dict[65] = "csfv.n_cycle_min"
     nsweep_dict[66] = "pfv.oh_steel_frac"
+    nsweep_dict[67] = "csfv.t_crack_vertical"
     # -------------------
 
     # Getting the scanned variable name
