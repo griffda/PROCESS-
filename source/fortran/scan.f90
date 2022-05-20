@@ -21,7 +21,7 @@ module scan_module
   integer, parameter :: ipnscns = 1000
   !! Maximum number of scan points
 
-  integer, parameter :: ipnscnv = 66
+  integer, parameter :: ipnscnv = 67
   !! Number of available scan variables
 
   integer, parameter :: noutvars = 84
@@ -102,7 +102,8 @@ module scan_module
   !!         <LI> 63 ohcth : CS thickness (m)
   !!         <LI> 64 ohhghf : CS height (m)
   !!         <LI> 65 n_cycle_min : Minimum cycles for CS stress model constraint 90
-  !!         <LI> 66 oh_steel_frac: Steel fraction in CS coil </UL>
+  !!         <LI> 66 oh_steel_frac: Steel fraction in CS coil
+  !!         <LI> 67 t_crack_vertical: Initial crack vertical dimension (m) </UL>
   integer :: nsweep_2
   !! nsweep_2 /3/ : switch denoting quantity to scan for 2D scan:
 
@@ -631,7 +632,7 @@ contains
     use heat_transport_variables, only: crypmw_max
     use rebco_variables, only: copperaoh_m2_max
     use pfcoil_variables, only: coheof, ohhghf, oh_steel_frac
-    use CS_fatigue_variables, only: n_cycle_min
+    use CS_fatigue_variables, only: n_cycle_min, t_crack_vertical
     implicit none
 
     ! Arguments
@@ -846,6 +847,9 @@ contains
         case (66)
            oh_steel_frac = swp(iscn)
             vlab = 'oh_steel_frac' ; xlab = 'CS steel fraction'
+        case (67)
+          t_crack_vertical = swp(iscn)
+            vlab = 't_crack_vertical' ; xlab = 'Initial crack vertical size (m)'
         case default
             idiags(1) = nwp ; call report_error(96)
 
