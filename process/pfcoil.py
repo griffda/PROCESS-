@@ -14,6 +14,7 @@ from process.fortran import process_output as op
 from process.fortran import numerics
 from process.fortran import superconductors as sc
 from process.fortran import rebco_variables as rcv
+from process.fortran import constraint_variables as cnstv
 from process import maths_library as pml
 from process.utilities.f2py_string_patch import f2py_compatible_to_string
 from process import fortran as ft
@@ -2203,9 +2204,15 @@ class PFCoil:
                 if pv.facoh > 0.0e-4:
                     op.ovarre(
                         self.outfile,
-                        "residual hoop stress in CS Steel (Pa)",
+                        "Residual hoop stress in CS Steel (Pa)",
                         "(csfv.residual_sig_hoop)",
                         csfv.residual_sig_hoop,
+                    )
+                    op.ovarre(
+                        self.outfile,
+                        "Minimum burn time (s)",
+                        "(cnstv.tbrnmn",
+                        cnstv.tbrnmn,
                     )
                     op.ovarre(
                         self.outfile,
