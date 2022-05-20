@@ -204,12 +204,12 @@ def main(args=None):
         "fcuohsu"
     ] = r"$f_{\mathrm{Cu}}^{\mathrm{CS}}$"  # copper fraction of strand in central solenoid
     labels["coheof"] = r"$J [A M^{-2}]$"
-    labels["ohcth"] = r"$ ohcth [m]$"
-    labels["ohhghf"] = r"$ ohghf [m]$"
+    labels["bv.ohcth."] = r"$ ohcth [m]$"
+    labels["bv.ohhghf"] = r"$ ohghf [m]$"
     labels["csfv.n_cycle_min"] = r"n_cycle_min_CS"
     labels["csfv.n_cycle"] = r"n_cycle"
     labels["pfv.a_oh_turn"] = r"cs_turn_area"
-    labels["tbrnmn"] = r"tburn"
+    labels["cnstv.tbrnmn"] = r"tbrnmn"
     labels["pfv.oh_steel_frac"] = r"oh_steel_frac"
     labels["csfv.t_structural_radial"] = r"t_structural_radial"
 
@@ -244,7 +244,7 @@ def main(args=None):
     ] = "bmaxtf"  # bmxlim the maximum T field upper limit is the scan variable
     nsweep_dict[18] = "gammax"
     nsweep_dict[19] = "boundl(16)"
-    nsweep_dict[20] = "tbrnmn"
+    nsweep_dict[20] = "cnstv.tbrnmn"
     nsweep_dict[21] = ""
     nsweep_dict[22] = "cfactr"
     nsweep_dict[23] = "boundu(72)"
