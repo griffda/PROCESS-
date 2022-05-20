@@ -298,7 +298,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Power incident on the divertor targets (MW)                              (ptarmw)                  3.417E+00  OP 
  Fraction of power to the lower divertor                                  (ftar)                    1.000E+00  IP 
  Outboard side heat flux decay length (m)                                 (lambdaio)                1.570E-03  OP 
- Midplane seperation of the two magnetic closed flux surfaces (m)         (drsep)                   -Infinity  OP 
+ Midplane seperation of the two magnetic closed flux surfaces (m)         (drsep)                  -1.500E-02  OP 
  Fraction of power on the inner targets                                   (fio)                     4.100E-01  OP 
  Fraction of power incident on the lower inner target                     (fLI)                     4.100E-01  OP 
  Fraction of power incident on the lower outer target                     (fLO)                     5.900E-01  OP 
