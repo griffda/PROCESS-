@@ -1797,7 +1797,6 @@ class CostsStep:
                 cv.cpstcst = c_tf_inboard_legs
                 if tfv.i_tf_sup == 0:
                     # Subtract from capital cost
-                    # TODO confirm that subtraction should be multiplied by fkind
                     step22010301 = step22010301 - (cv.fkind * c_tf_inboard_legs)
             elif cv.ifueltyp == 2:
                 # Treat centrepost cost as capital and fuel cost

@@ -303,7 +303,6 @@ def test_step_a2201(monkeypatch, costs_step, fkind, exp):
     monkeypatch.setattr(costs_step, "rminor_star", 1.9)
 
     # exp1 = 1573.1259947
-    # TODO update spares expected value
     # exp2 = 1.0199574292e1
     step2201, spares = costs_step.step_a2201()
     assert pytest.approx(step2201) == exp
