@@ -9869,7 +9869,7 @@
         "fnbshinef": "f-value for maximum neutral beam shine-through fraction\n (`constraint equation 59`, `iteration variable 105`)",
         "fncmass": "PF coil outer support fence mass (kg)",
         "fndt": "foundation thickness (m)",
-        "fne0": "f-value for the constraint ne(0) > ne(sep) (`constraint equation 81`)\n (`Iteration variable 154`)",
+        "fne0": "f-value for the constraint ne(0) > ne(ped) (`constraint equation 81`)\n (`Iteration variable 154`)",
         "fnesep": "f-value for Eich critical separatrix density\n (`constraint equation 76`, `iteration variable 144`)",
         "fniterpump": "f-value for constraint that number of pumps < tfno\n (`constraint equation 63`, `iteration variable 111`)",
         "foh_stress": "f-value for Tresca yield criterion in Central Solenoid\n (`constraint equation 72`, `iteration variable 123`)",
