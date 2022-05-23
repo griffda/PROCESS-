@@ -3372,12 +3372,17 @@ contains
       
       use CS_fatigue_variables, only: n_cycle, n_cycle_min
       use constraint_variables, only: fncycle
+      use cost_variables, only: ibkt_life, bktcycles
       implicit none
             real(dp), intent(out) :: tmp_cc
       real(dp), intent(out) :: tmp_con
       real(dp), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
+      
+      if (ibkt_life == 1) then
+         n_cycle_min = bktcycles
+      end if
 
       tmp_cc =  1.0D0 - fncycle * n_cycle / n_cycle_min
       tmp_con = n_cycle_min * (1.0D0 - tmp_cc)
