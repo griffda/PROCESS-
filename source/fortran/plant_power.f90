@@ -1902,7 +1902,7 @@ contains
       else
          write(*,*) 'secondary_cycle does not appear to have a value within its range (0-4)'
       end if
-
+      !!! end break
    end subroutine plant_thermal_efficiency
 
 end module power_module

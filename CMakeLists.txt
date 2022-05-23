@@ -146,6 +146,7 @@ LIST(APPEND PROCESS_SRCS
     read_and_get_atomic_data.f90
     plot_radiation.f90
     rebco_variables.f90
+    primary_pumping_variables.f90
 )
 
 PREPROCESS()

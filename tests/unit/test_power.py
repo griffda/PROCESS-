@@ -12,6 +12,12 @@ from process.fortran import physics_variables
 from process.fortran import build_variables
 from process.fortran import pf_power_variables
 from process.fortran import times_variables
+from process.fortran import buildings_variables
+from process.fortran import primary_pumping_variables as ppv
+from process.fortran import constraint_variables
+from process.fortran import cost_variables
+from process.fortran import current_drive_variables
+from process.fortran import tfcoil_variables
 
 
 class CryoParam(NamedTuple):
@@ -1814,10 +1820,6 @@ def test_pfpwr(pfpwrparam, monkeypatch):
 
     monkeypatch.setattr(times_variables, "tim", pfpwrparam.tim)
 
-    monkeypatch.setattr(times_variables, "intervallabel", pfpwrparam.intervallabel)
-
-    monkeypatch.setattr(times_variables, "timelabel", pfpwrparam.timelabel)
-
     monkeypatch.setattr(times_variables, "tohs", pfpwrparam.tohs)
 
     power_module.pfpwr(outfile=pfpwrparam.outfile, iprint=pfpwrparam.iprint)
@@ -1847,3 +1849,935 @@ def test_pfpwr(pfpwrparam, monkeypatch):
     assert pf_power_variables.acptmax == pytest.approx(pfpwrparam.expected_acptmax)
 
     assert pf_power_variables.srcktpm == pytest.approx(pfpwrparam.expected_srcktpm)
+
+
+class AcpowParam(NamedTuple):
+
+    efloor: Any = None
+
+    baseel: Any = None
+
+    crypmw: Any = None
+
+    vachtmw: Any = None
+
+    tfacpd: Any = None
+
+    trithtmw: Any = None
+
+    pinjwp: Any = None
+
+    tlvpmw: Any = None
+
+    peakmva: Any = None
+
+    fcsht: Any = None
+
+    fmgdmw: Any = None
+
+    pwpm2: Any = None
+
+    htpmw: Any = None
+
+    pacpmw: Any = None
+
+    iscenr: Any = None
+
+    srcktpm: Any = None
+
+    iprint: Any = None
+
+    outfile: Any = None
+
+    expected_pacpmw: Any = None
+
+
+@pytest.mark.parametrize(
+    "acpowparam",
+    (
+        AcpowParam(
+            efloor=379218.8908858358,
+            baseel=5000000,
+            crypmw=37.900388528497025,
+            vachtmw=0.5,
+            tfacpd=9.1507079104675704,
+            trithtmw=15,
+            pinjwp=129.94611930107126,
+            tlvpmw=0,
+            peakmva=736.39062584245937,
+            fcsht=0,
+            fmgdmw=0,
+            pwpm2=150,
+            htpmw=234.28554165620102,
+            pacpmw=0,
+            iscenr=2,
+            srcktpm=1071.1112934857531,
+            iprint=0,
+            outfile=11,
+            expected_pacpmw=1226.1273281650574,
+        ),
+        AcpowParam(
+            efloor=381580.9594357388,
+            baseel=5000000,
+            crypmw=108.74512702403499,
+            vachtmw=0.5,
+            tfacpd=9.1507079104675704,
+            trithtmw=15,
+            pinjwp=129.94611930107126,
+            tlvpmw=699.34943812129745,
+            peakmva=90.673341440806112,
+            fcsht=61.882833632875375,
+            fmgdmw=0,
+            pwpm2=150,
+            htpmw=234.2162627659944,
+            pacpmw=1226.1273281650574,
+            iscenr=2,
+            srcktpm=1069.8879533693198,
+            iprint=0,
+            outfile=11,
+            expected_pacpmw=651.53859031110437,
+        ),
+    ),
+)
+def test_acpow(acpowparam, monkeypatch):
+    """
+    Automatically generated Regression Unit Test for acpow.
+
+    This test was generated using data from tracking/baseline_2018/baseline_2018_IN.DAT.
+
+    :param acpowparam: the data used to mock and assert in this test.
+    :type acpowparam: acpowparam
+
+    :param monkeypatch: pytest fixture used to mock module/class variables
+    :type monkeypatch: _pytest.monkeypatch.monkeypatch
+    """
+
+    monkeypatch.setattr(buildings_variables, "efloor", acpowparam.efloor)
+
+    monkeypatch.setattr(heat_transport_variables, "baseel", acpowparam.baseel)
+
+    monkeypatch.setattr(heat_transport_variables, "crypmw", acpowparam.crypmw)
+
+    monkeypatch.setattr(heat_transport_variables, "vachtmw", acpowparam.vachtmw)
+
+    monkeypatch.setattr(heat_transport_variables, "tfacpd", acpowparam.tfacpd)
+
+    monkeypatch.setattr(heat_transport_variables, "trithtmw", acpowparam.trithtmw)
+
+    monkeypatch.setattr(heat_transport_variables, "pinjwp", acpowparam.pinjwp)
+
+    monkeypatch.setattr(heat_transport_variables, "tlvpmw", acpowparam.tlvpmw)
+
+    monkeypatch.setattr(heat_transport_variables, "peakmva", acpowparam.peakmva)
+
+    monkeypatch.setattr(heat_transport_variables, "fcsht", acpowparam.fcsht)
+
+    monkeypatch.setattr(heat_transport_variables, "fmgdmw", acpowparam.fmgdmw)
+
+    monkeypatch.setattr(heat_transport_variables, "pwpm2", acpowparam.pwpm2)
+
+    monkeypatch.setattr(heat_transport_variables, "htpmw", acpowparam.htpmw)
+
+    monkeypatch.setattr(heat_transport_variables, "pacpmw", acpowparam.pacpmw)
+
+    monkeypatch.setattr(pf_power_variables, "iscenr", acpowparam.iscenr)
+
+    monkeypatch.setattr(pf_power_variables, "srcktpm", acpowparam.srcktpm)
+
+    power_module.acpow(iprint=acpowparam.iprint, outfile=acpowparam.outfile)
+
+    assert heat_transport_variables.pacpmw == pytest.approx(acpowparam.expected_pacpmw)
+
+
+class Power2Param(NamedTuple):
+
+    pnetelin: Any = None
+
+    ipnet: Any = None
+
+    ireactor: Any = None
+
+    pinjmw: Any = None
+
+    emultmw: Any = None
+
+    inuclear: Any = None
+
+    pnucblkt: Any = None
+
+    pradfw: Any = None
+
+    qnuc: Any = None
+
+    etahtp: Any = None
+
+    emult: Any = None
+
+    praddiv: Any = None
+
+    fdiv: Any = None
+
+    fhcd: Any = None
+
+    secondary_cycle: Any = None
+
+    pnuc_cp: Any = None
+
+    pnucdiv: Any = None
+
+    primary_pumping: Any = None
+
+    ptfnuc: Any = None
+
+    pnuchcd: Any = None
+
+    pnucshld: Any = None
+
+    pradhcd: Any = None
+
+    pnucfw: Any = None
+
+    htpmw_shld: Any = None
+
+    htpmw_blkt: Any = None
+
+    psecshld: Any = None
+
+    fpumpshld: Any = None
+
+    tturb: Any = None
+
+    pnetelmw: Any = None
+
+    fpumpdiv: Any = None
+
+    fpumpblkt: Any = None
+
+    vachtmw: Any = None
+
+    htpmw_div: Any = None
+
+    nphx: Any = None
+
+    helpow: Any = None
+
+    htpmw_fw: Any = None
+
+    precircmw: Any = None
+
+    pthermmw: Any = None
+
+    fpumpfw: Any = None
+
+    fcsht: Any = None
+
+    iprimshld: Any = None
+
+    pinjwp: Any = None
+
+    fachtmw: Any = None
+
+    pgrossmw: Any = None
+
+    psechtmw: Any = None
+
+    trithtmw: Any = None
+
+    psechcd: Any = None
+
+    tfacpd: Any = None
+
+    htpmw: Any = None
+
+    etath: Any = None
+
+    crypmw: Any = None
+
+    psecdiv: Any = None
+
+    pinjht: Any = None
+
+    htpsecmw: Any = None
+
+    helpow_cryal: Any = None
+
+    pfwpmw: Any = None
+
+    palpmw: Any = None
+
+    ignite: Any = None
+
+    pinnerzoneradmw: Any = None
+
+    pradmw: Any = None
+
+    itart: Any = None
+
+    pdivt: Any = None
+
+    palpfwmw: Any = None
+
+    idivrt: Any = None
+
+    pohmmw: Any = None
+
+    iradloss: Any = None
+
+    powfmw: Any = None
+
+    pchargemw: Any = None
+
+    pscalingmw: Any = None
+
+    falpha: Any = None
+
+    ppump: Any = None
+
+    i_tf_sup: Any = None
+
+    tfcmw: Any = None
+
+    tmpcry: Any = None
+
+    tcoolin: Any = None
+
+    eff_tf_cryo: Any = None
+
+    htpmw_fw_blkt: Any = None
+
+    htpmwe_shld: Any = None
+
+    htpmwe_div: Any = None
+
+    htpmw_mech: Any = None
+
+    pthermfw_blkt: Any = None
+
+    htpmwe_fw_blkt: Any = None
+
+    pthermdiv: Any = None
+
+    pthermfw: Any = None
+
+    pthermshld: Any = None
+
+    ppumpmw: Any = None
+
+    pcoresystems: Any = None
+
+    pdivfraction: Any = None
+
+    qss: Any = None
+
+    qac: Any = None
+
+    qcl: Any = None
+
+    qmisc: Any = None
+
+    outfile: Any = None
+
+    iprint: Any = None
+
+    expected_pnetelmw: Any = None
+
+    expected_precircmw: Any = None
+
+    expected_fachtmw: Any = None
+
+    expected_pgrossmw: Any = None
+
+    expected_psechtmw: Any = None
+
+    expected_pcoresystems: Any = None
+
+
+@pytest.mark.parametrize(
+    "power2param",
+    (
+        Power2Param(
+            pnetelin=500,
+            ipnet=0,
+            ireactor=1,
+            pinjmw=51.978447720428512,
+            emultmw=377.93233088402548,
+            inuclear=1,
+            pnucblkt=1504.711566619962,
+            pradfw=254.87601794907812,
+            qnuc=12920,
+            etahtp=0.87000000000000011,
+            emult=1.2690000534057617,
+            praddiv=33.119482558354782,
+            fdiv=0.115,
+            fhcd=0,
+            secondary_cycle=2,
+            pnuc_cp=0,
+            pnucdiv=182.69222981118057,
+            primary_pumping=3,
+            ptfnuc=0.044178296011112193,
+            pnuchcd=0,
+            pnucshld=1.3609360176065353,
+            pradhcd=0,
+            pnucfw=276.76827393356979,
+            htpmw_shld=0.0068046800880326762,
+            htpmw_blkt=0,
+            psecshld=0,
+            fpumpshld=0.0050000000000000001,
+            tturb=0,
+            pnetelmw=0,
+            fpumpdiv=0.0050000000000000001,
+            fpumpblkt=0.0050000000000000001,
+            vachtmw=0.5,
+            htpmw_div=1.7942175899286208,
+            nphx=3,
+            helpow=76851.741036987034,
+            htpmw_fw=0,
+            precircmw=0,
+            pthermmw=2620.2218111502593,
+            fpumpfw=0.0050000000000000001,
+            fcsht=61.882833632875375,
+            iprimshld=1,
+            pinjwp=129.94611930107126,
+            fachtmw=0,
+            pgrossmw=0,
+            psechtmw=0,
+            trithtmw=15,
+            psechcd=0,
+            tfacpd=9.1507079104675704,
+            htpmw=234.28554165620102,
+            etath=0.37500000000000006,
+            crypmw=37.900388528497025,
+            psecdiv=0,
+            pinjht=77.967671580642758,
+            htpsecmw=30.457120415306122,
+            helpow_cryal=0,
+            pfwpmw=0.89998039031509891,
+            palpmw=396.66154806848488,
+            ignite=0,
+            pinnerzoneradmw=113.53817859231452,
+            pradmw=287.99550050743289,
+            itart=0,
+            pdivt=143.03180561618876,
+            palpfwmw=19.833077403424262,
+            idivrt=1,
+            pohmmw=0.61391840981850698,
+            iradloss=1,
+            powfmw=1985.785106643267,
+            pchargemw=1.6064693283140403,
+            pscalingmw=325.08626176539281,
+            falpha=0.94999999999999996,
+            ppump=0,
+            i_tf_sup=1,
+            tfcmw=0,
+            tmpcry=4.5,
+            tcoolin=313.14999999999998,
+            eff_tf_cryo=0.13,
+            htpmw_fw_blkt=202.02739897087824,
+            htpmwe_shld=0.0078214713655548,
+            htpmwe_div=2.0623190688834718,
+            htpmw_mech=203.8284212408949,
+            pthermfw_blkt=2258.2163348769122,
+            htpmwe_fw_blkt=232.21540111595198,
+            pthermdiv=360.63773557565275,
+            pthermfw=0,
+            pthermshld=1.3677406976945679,
+            ppumpmw=0,
+            pcoresystems=0,
+            pdivfraction=0.13763633828287813,
+            qss=20361.633927097802,
+            qac=3611.3456752656607,
+            qcl=16108.2211128,
+            qmisc=23850.540321823562,
+            outfile=11,
+            iprint=0,
+            expected_pnetelmw=493.01760776192009,
+            expected_precircmw=489.56557141942733,
+            expected_fachtmw=61.882833632875375,
+            expected_pgrossmw=982.58317918134742,
+            expected_psechtmw=233.80288075411508,
+            expected_pcoresystems=125.33391046215507,
+        ),
+        Power2Param(
+            pnetelin=500,
+            ipnet=0,
+            ireactor=1,
+            pinjmw=51.978447720428512,
+            emultmw=377.8143718115644,
+            inuclear=1,
+            pnucblkt=1549.9285082739402,
+            pradfw=254.87601794907812,
+            qnuc=12920,
+            etahtp=0.87000000000000011,
+            emult=1.2690000534057617,
+            praddiv=33.119482558354782,
+            fdiv=0.115,
+            fhcd=0,
+            secondary_cycle=2,
+            pnuc_cp=0,
+            pnucdiv=182.6352084763719,
+            primary_pumping=3,
+            ptfnuc=0.045535131445547841,
+            pnuchcd=0,
+            pnucshld=1.4036212304705389,
+            pradhcd=0,
+            pnucfw=230.95082168283884,
+            htpmw_shld=0.0070181061523526943,
+            htpmw_blkt=0,
+            psecshld=0,
+            fpumpshld=0.0050000000000000001,
+            tturb=0,
+            pnetelmw=493.01760776192009,
+            fpumpdiv=0.0050000000000000001,
+            fpumpblkt=0.0050000000000000001,
+            vachtmw=0.5,
+            htpmw_div=1.7933419035282543,
+            nphx=3,
+            helpow=220505.71684249729,
+            htpmw_fw=0,
+            precircmw=489.56557141942733,
+            pthermmw=2619.4223856129224,
+            fpumpfw=0.0050000000000000001,
+            fcsht=62.237143915360818,
+            iprimshld=1,
+            pinjwp=129.94611930107126,
+            fachtmw=61.882833632875375,
+            pgrossmw=982.58317918134742,
+            psechtmw=233.80288075411508,
+            trithtmw=15,
+            psechcd=0,
+            tfacpd=9.1507079104675704,
+            htpmw=234.2162627659944,
+            etath=0.37500000000000006,
+            crypmw=108.74512702403499,
+            psecdiv=0,
+            pinjht=77.967671580642758,
+            htpsecmw=30.448114159579291,
+            helpow_cryal=0,
+            pfwpmw=0.068213156646500808,
+            palpmw=396.53774329057228,
+            ignite=0,
+            pinnerzoneradmw=113.53817859231452,
+            pradmw=287.99550050743289,
+            itart=0,
+            pdivt=142.91368967092416,
+            palpfwmw=19.826887164528632,
+            idivrt=1,
+            pohmmw=0.61391840981850698,
+            iradloss=1,
+            powfmw=1985.1653095257811,
+            pchargemw=1.6059679220663614,
+            pscalingmw=325.00280675287695,
+            falpha=0.94999999999999996,
+            ppump=0,
+            i_tf_sup=1,
+            tfcmw=0,
+            tmpcry=4.5,
+            tcoolin=313.14999999999998,
+            eff_tf_cryo=0.13,
+            htpmw_fw_blkt=201.96778859673452,
+            htpmwe_shld=0.0080667886808651647,
+            htpmwe_div=2.0613125327910966,
+            htpmw_mech=203.76814860641511,
+            pthermfw_blkt=2257.5500236671205,
+            htpmwe_fw_blkt=232.14688344452242,
+            pthermdiv=360.46172260917911,
+            pthermfw=0,
+            pthermshld=1.4106393366228915,
+            ppumpmw=0,
+            pcoresystems=125.33391046215507,
+            pdivfraction=0.13761114839248584,
+            qss=20342.863776957758,
+            qac=102701.82327748176,
+            qcl=16108.2211128,
+            qmisc=68432.80867525778,
+            outfile=11,
+            iprint=0,
+            expected_pnetelmw=422.4198205312706,
+            expected_precircmw=559.86357407357548,
+            expected_fachtmw=62.237143915360818,
+            expected_pgrossmw=982.28339460484608,
+            expected_psechtmw=304.16251287817744,
+            expected_pcoresystems=195.70119200650984,
+        ),
+    ),
+)
+def test_power2(power2param, monkeypatch):
+    """
+    Automatically generated Regression Unit Test for power2.
+
+    This test was generated using data from tracking/baseline_2018/baseline_2018_IN.DAT.
+
+    :param power2param: the data used to mock and assert in this test.
+    :type power2param: power2param
+
+    :param monkeypatch: pytest fixture used to mock module/class variables
+    :type monkeypatch: _pytest.monkeypatch.monkeypatch
+    """
+
+    monkeypatch.setattr(constraint_variables, "pnetelin", power2param.pnetelin)
+
+    monkeypatch.setattr(cost_variables, "ipnet", power2param.ipnet)
+
+    monkeypatch.setattr(cost_variables, "ireactor", power2param.ireactor)
+
+    monkeypatch.setattr(current_drive_variables, "pinjmw", power2param.pinjmw)
+
+    monkeypatch.setattr(fwbs_variables, "emultmw", power2param.emultmw)
+
+    monkeypatch.setattr(fwbs_variables, "inuclear", power2param.inuclear)
+
+    monkeypatch.setattr(fwbs_variables, "pnucblkt", power2param.pnucblkt)
+
+    monkeypatch.setattr(fwbs_variables, "pradfw", power2param.pradfw)
+
+    monkeypatch.setattr(fwbs_variables, "qnuc", power2param.qnuc)
+
+    monkeypatch.setattr(fwbs_variables, "etahtp", power2param.etahtp)
+
+    monkeypatch.setattr(fwbs_variables, "emult", power2param.emult)
+
+    monkeypatch.setattr(fwbs_variables, "praddiv", power2param.praddiv)
+
+    monkeypatch.setattr(fwbs_variables, "fdiv", power2param.fdiv)
+
+    monkeypatch.setattr(fwbs_variables, "fhcd", power2param.fhcd)
+
+    monkeypatch.setattr(fwbs_variables, "secondary_cycle", power2param.secondary_cycle)
+
+    monkeypatch.setattr(fwbs_variables, "pnuc_cp", power2param.pnuc_cp)
+
+    monkeypatch.setattr(fwbs_variables, "pnucdiv", power2param.pnucdiv)
+
+    monkeypatch.setattr(fwbs_variables, "primary_pumping", power2param.primary_pumping)
+
+    monkeypatch.setattr(fwbs_variables, "ptfnuc", power2param.ptfnuc)
+
+    monkeypatch.setattr(fwbs_variables, "pnuchcd", power2param.pnuchcd)
+
+    monkeypatch.setattr(fwbs_variables, "pnucshld", power2param.pnucshld)
+
+    monkeypatch.setattr(fwbs_variables, "pradhcd", power2param.pradhcd)
+
+    monkeypatch.setattr(fwbs_variables, "pnucfw", power2param.pnucfw)
+
+    monkeypatch.setattr(heat_transport_variables, "htpmw_shld", power2param.htpmw_shld)
+
+    monkeypatch.setattr(heat_transport_variables, "htpmw_blkt", power2param.htpmw_blkt)
+
+    monkeypatch.setattr(heat_transport_variables, "psecshld", power2param.psecshld)
+
+    monkeypatch.setattr(heat_transport_variables, "fpumpshld", power2param.fpumpshld)
+
+    monkeypatch.setattr(heat_transport_variables, "tturb", power2param.tturb)
+
+    monkeypatch.setattr(heat_transport_variables, "pnetelmw", power2param.pnetelmw)
+
+    monkeypatch.setattr(heat_transport_variables, "fpumpdiv", power2param.fpumpdiv)
+
+    monkeypatch.setattr(heat_transport_variables, "fpumpblkt", power2param.fpumpblkt)
+
+    monkeypatch.setattr(heat_transport_variables, "vachtmw", power2param.vachtmw)
+
+    monkeypatch.setattr(heat_transport_variables, "htpmw_div", power2param.htpmw_div)
+
+    monkeypatch.setattr(heat_transport_variables, "nphx", power2param.nphx)
+
+    monkeypatch.setattr(heat_transport_variables, "helpow", power2param.helpow)
+
+    monkeypatch.setattr(heat_transport_variables, "htpmw_fw", power2param.htpmw_fw)
+
+    monkeypatch.setattr(heat_transport_variables, "precircmw", power2param.precircmw)
+
+    monkeypatch.setattr(heat_transport_variables, "pthermmw", power2param.pthermmw)
+
+    monkeypatch.setattr(heat_transport_variables, "fpumpfw", power2param.fpumpfw)
+
+    monkeypatch.setattr(heat_transport_variables, "fcsht", power2param.fcsht)
+
+    monkeypatch.setattr(heat_transport_variables, "iprimshld", power2param.iprimshld)
+
+    monkeypatch.setattr(heat_transport_variables, "pinjwp", power2param.pinjwp)
+
+    monkeypatch.setattr(heat_transport_variables, "fachtmw", power2param.fachtmw)
+
+    monkeypatch.setattr(heat_transport_variables, "pgrossmw", power2param.pgrossmw)
+
+    monkeypatch.setattr(heat_transport_variables, "psechtmw", power2param.psechtmw)
+
+    monkeypatch.setattr(heat_transport_variables, "trithtmw", power2param.trithtmw)
+
+    monkeypatch.setattr(heat_transport_variables, "psechcd", power2param.psechcd)
+
+    monkeypatch.setattr(heat_transport_variables, "tfacpd", power2param.tfacpd)
+
+    monkeypatch.setattr(heat_transport_variables, "htpmw", power2param.htpmw)
+
+    monkeypatch.setattr(heat_transport_variables, "etath", power2param.etath)
+
+    monkeypatch.setattr(heat_transport_variables, "crypmw", power2param.crypmw)
+
+    monkeypatch.setattr(heat_transport_variables, "psecdiv", power2param.psecdiv)
+
+    monkeypatch.setattr(heat_transport_variables, "pinjht", power2param.pinjht)
+
+    monkeypatch.setattr(heat_transport_variables, "htpsecmw", power2param.htpsecmw)
+
+    monkeypatch.setattr(
+        heat_transport_variables, "helpow_cryal", power2param.helpow_cryal
+    )
+
+    monkeypatch.setattr(pfcoil_variables, "pfwpmw", power2param.pfwpmw)
+
+    monkeypatch.setattr(physics_variables, "palpmw", power2param.palpmw)
+
+    monkeypatch.setattr(physics_variables, "ignite", power2param.ignite)
+
+    monkeypatch.setattr(
+        physics_variables, "pinnerzoneradmw", power2param.pinnerzoneradmw
+    )
+
+    monkeypatch.setattr(physics_variables, "pradmw", power2param.pradmw)
+
+    monkeypatch.setattr(physics_variables, "itart", power2param.itart)
+
+    monkeypatch.setattr(physics_variables, "pdivt", power2param.pdivt)
+
+    monkeypatch.setattr(physics_variables, "palpfwmw", power2param.palpfwmw)
+
+    monkeypatch.setattr(physics_variables, "idivrt", power2param.idivrt)
+
+    monkeypatch.setattr(physics_variables, "pohmmw", power2param.pohmmw)
+
+    monkeypatch.setattr(physics_variables, "iradloss", power2param.iradloss)
+
+    monkeypatch.setattr(physics_variables, "powfmw", power2param.powfmw)
+
+    monkeypatch.setattr(physics_variables, "pchargemw", power2param.pchargemw)
+
+    monkeypatch.setattr(physics_variables, "pscalingmw", power2param.pscalingmw)
+
+    monkeypatch.setattr(physics_variables, "falpha", power2param.falpha)
+
+    monkeypatch.setattr(tfcoil_variables, "ppump", power2param.ppump)
+
+    monkeypatch.setattr(tfcoil_variables, "i_tf_sup", power2param.i_tf_sup)
+
+    monkeypatch.setattr(tfcoil_variables, "tfcmw", power2param.tfcmw)
+
+    monkeypatch.setattr(tfcoil_variables, "tmpcry", power2param.tmpcry)
+
+    monkeypatch.setattr(tfcoil_variables, "tcoolin", power2param.tcoolin)
+
+    monkeypatch.setattr(tfcoil_variables, "eff_tf_cryo", power2param.eff_tf_cryo)
+
+    monkeypatch.setattr(ppv, "htpmw_fw_blkt", power2param.htpmw_fw_blkt)
+
+    monkeypatch.setattr(power_module, "htpmwe_shld", power2param.htpmwe_shld)
+
+    monkeypatch.setattr(power_module, "htpmwe_div", power2param.htpmwe_div)
+
+    monkeypatch.setattr(power_module, "htpmw_mech", power2param.htpmw_mech)
+
+    monkeypatch.setattr(power_module, "pthermfw_blkt", power2param.pthermfw_blkt)
+
+    monkeypatch.setattr(power_module, "htpmwe_fw_blkt", power2param.htpmwe_fw_blkt)
+
+    monkeypatch.setattr(power_module, "pthermdiv", power2param.pthermdiv)
+
+    monkeypatch.setattr(power_module, "pthermfw", power2param.pthermfw)
+
+    monkeypatch.setattr(power_module, "pthermshld", power2param.pthermshld)
+
+    monkeypatch.setattr(power_module, "ppumpmw", power2param.ppumpmw)
+
+    monkeypatch.setattr(power_module, "pcoresystems", power2param.pcoresystems)
+
+    monkeypatch.setattr(power_module, "pdivfraction", power2param.pdivfraction)
+
+    monkeypatch.setattr(power_module, "qss", power2param.qss)
+
+    monkeypatch.setattr(power_module, "qac", power2param.qac)
+
+    monkeypatch.setattr(power_module, "qcl", power2param.qcl)
+
+    monkeypatch.setattr(power_module, "qmisc", power2param.qmisc)
+
+    power_module.power2(outfile=power2param.outfile, iprint=power2param.iprint)
+
+    assert heat_transport_variables.pnetelmw == pytest.approx(
+        power2param.expected_pnetelmw
+    )
+
+    assert heat_transport_variables.precircmw == pytest.approx(
+        power2param.expected_precircmw
+    )
+
+    assert heat_transport_variables.fachtmw == pytest.approx(
+        power2param.expected_fachtmw
+    )
+
+    assert heat_transport_variables.pgrossmw == pytest.approx(
+        power2param.expected_pgrossmw
+    )
+
+    assert heat_transport_variables.psechtmw == pytest.approx(
+        power2param.expected_psechtmw
+    )
+
+    assert power_module.pcoresystems == pytest.approx(power2param.expected_pcoresystems)
+
+
+class Power3Param(NamedTuple):
+
+    etacd: Any = None
+
+    htpmw: Any = None
+
+    pinjmax: Any = None
+
+    crypmw: Any = None
+
+    vachtmw: Any = None
+
+    tfacpd: Any = None
+
+    trithtmw: Any = None
+
+    pinjwp: Any = None
+
+    fachtmw: Any = None
+
+    pgrossmw: Any = None
+
+    poloidalpower: Any = None
+
+    tramp: Any = None
+
+    tburn: Any = None
+
+    theat: Any = None
+
+    tdwell: Any = None
+
+    tqnch: Any = None
+
+    tohs: Any = None
+
+    outfile: Any = None
+
+    iprint: Any = None
+
+
+@pytest.mark.parametrize(
+    "power3param",
+    (
+        Power3Param(
+            etacd=0.40000000000000002,
+            htpmw=234.28554165620102,
+            pinjmax=120,
+            crypmw=37.900388528497025,
+            vachtmw=0.5,
+            tfacpd=9.1507079104675704,
+            trithtmw=15,
+            pinjwp=129.94611930107126,
+            fachtmw=61.882833632875375,
+            pgrossmw=982.58317918134742,
+            poloidalpower=numpy.array(
+                numpy.array(
+                    (59332953.082890816, 43806300.444207191, 0, 0, -211211992.31967318),
+                    order="F",
+                ),
+                order="F",
+            ).transpose(),
+            tramp=500,
+            tburn=0,
+            theat=10,
+            tdwell=0,
+            tqnch=177.21306969367816,
+            tohs=177.21306969367816,
+            outfile=11,
+            iprint=0,
+        ),
+        Power3Param(
+            etacd=0.40000000000000002,
+            htpmw=234.2162627659944,
+            pinjmax=120,
+            crypmw=108.74512702403499,
+            vachtmw=0.5,
+            tfacpd=9.1507079104675704,
+            trithtmw=15,
+            pinjwp=129.94611930107126,
+            fachtmw=62.237143915360818,
+            pgrossmw=982.28339460484608,
+            poloidalpower=numpy.array(
+                numpy.array(
+                    (
+                        59043243.553314812,
+                        -69656470.894853994,
+                        0,
+                        9900000000,
+                        -211199033.0608803,
+                    ),
+                    order="F",
+                ),
+                order="F",
+            ).transpose(),
+            tramp=500,
+            tburn=10230.533336387543,
+            theat=10,
+            tdwell=0,
+            tqnch=177.21306969367816,
+            tohs=177.21306969367816,
+            outfile=11,
+            iprint=0,
+        ),
+    ),
+)
+def test_power3(power3param, monkeypatch):
+    """
+    Automatically generated Regression Unit Test for power3.
+
+    This test was generated using data from tracking/baseline_2018/baseline_2018_IN.DAT.
+
+    :param power3param: the data used to mock and assert in this test.
+    :type power3param: power3param
+
+    :param monkeypatch: pytest fixture used to mock module/class variables
+    :type monkeypatch: _pytest.monkeypatch.monkeypatch
+    """
+
+    monkeypatch.setattr(current_drive_variables, "etacd", power3param.etacd)
+
+    monkeypatch.setattr(heat_transport_variables, "htpmw", power3param.htpmw)
+
+    monkeypatch.setattr(heat_transport_variables, "pinjmax", power3param.pinjmax)
+
+    monkeypatch.setattr(heat_transport_variables, "crypmw", power3param.crypmw)
+
+    monkeypatch.setattr(heat_transport_variables, "vachtmw", power3param.vachtmw)
+
+    monkeypatch.setattr(heat_transport_variables, "tfacpd", power3param.tfacpd)
+
+    monkeypatch.setattr(heat_transport_variables, "trithtmw", power3param.trithtmw)
+
+    monkeypatch.setattr(heat_transport_variables, "pinjwp", power3param.pinjwp)
+
+    monkeypatch.setattr(heat_transport_variables, "fachtmw", power3param.fachtmw)
+
+    monkeypatch.setattr(heat_transport_variables, "pgrossmw", power3param.pgrossmw)
+
+    monkeypatch.setattr(pf_power_variables, "poloidalpower", power3param.poloidalpower)
+
+    monkeypatch.setattr(times_variables, "tramp", power3param.tramp)
+
+    monkeypatch.setattr(times_variables, "tburn", power3param.tburn)
+
+    monkeypatch.setattr(times_variables, "theat", power3param.theat)
+
+    monkeypatch.setattr(times_variables, "tdwell", power3param.tdwell)
+
+    monkeypatch.setattr(times_variables, "tqnch", power3param.tqnch)
+
+    monkeypatch.setattr(times_variables, "tohs", power3param.tohs)
+
+    power_module.power3(outfile=power3param.outfile, iprint=power3param.iprint)
