@@ -680,8 +680,6 @@ class CostsStep:
             step21010504 = 0.0e0
             step210105 += step21010504
 
-        # step210105 = step21010501 + step21010502 + step21010503 + step21010504
-
         # Running total (M$)
         step2101 += step210105 / 1.0e6
 
@@ -710,8 +708,6 @@ class CostsStep:
         # Excluded (no benchmark cost data available)
         step21010703 = 0.0e0
         step210107 += step21010703
-
-        # step210107 = step21010701 + step21010702 + step21010703
 
         # Running total (M$)
         step2101 += step210107 / 1.0e6
