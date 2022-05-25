@@ -132,7 +132,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  ***************** 21. Building and Site Service Infrastructure *****************
  
- (step2101)          Site Improvements (M$)                                                                     4223.38
+ (step2101)          Site Improvements (M$)                                                                     2520.83
  (step2102)          Reactor Building (M$)                                                                       493.93
  (step2103)          Turbine Building (M$)                                                                       535.95
  (step2104)          Cooling System Structures (M$)                                                              184.42
@@ -150,10 +150,10 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  (step2116)          Security Building (M$)                                                                       14.90
  (step2117)          Ventilation Stack (M$)                                                                        8.78
  (step2118)          Waste Facilities Buildings (M$)                                                             100.00
- (step2198)          Spares (M$)                                                                                 131.12
- (step2199)          Contingency (M$)                                                                           1003.07
+ (step2198)          Spares (M$)                                                                                  97.07
+ (step2199)          Contingency (M$)                                                                            742.58
  
- (step21)            Total Account 21 Cost (M$)                                                                 7690.22
+ (step21)            Total Account 21 Cost (M$)                                                                 5693.13
  
  ************************* 22. Reactor Plant Equipment **************************
  
@@ -261,44 +261,44 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  ***************************** 27. Remote Handling ******************************
  
- (step2701)          Remote Handing (M$)                                                                        1636.47
+ (step2701)          Remote Handing (M$)                                                                        1486.68
  
- (step27)            Total Account 27 Cost (M$)                                                                 1636.47
+ (step27)            Total Account 27 Cost (M$)                                                                 1486.68
  
  ****************************** Plant Direct Cost *******************************
  
- (cdirt)             Plant direct cost (M$)                                                                    23456.02
+ (cdirt)             Plant direct cost (M$)                                                                    21309.14
  
  ******************************** Indirect Cost *********************************
  
- (step91)            Construction Facilities, Equipment and Services (M$)                                       7036.80
- (step92)            Engineering and Costruction Management Services (M$)                                       7623.21
- (step93)            Other Costs (M$)                                                                           3518.40
+ (step91)            Construction Facilities, Equipment and Services (M$)                                       6392.74
+ (step92)            Engineering and Costruction Management Services (M$)                                       6925.47
+ (step93)            Other Costs (M$)                                                                           3196.37
  
  ******************************* Constructed Cost *******************************
  
- (concost)           Constructed Cost (M$)                                                                     41634.43
+ (concost)           Constructed Cost (M$)                                                                     37823.73
  
  ************************* Interest during Construction *************************
  
- (moneyint)          Interest during construction (M$)                                                          6245.16
+ (moneyint)          Interest during construction (M$)                                                          5673.56
  
  *************************** Total Capital Investment ***************************
  
- (capcost)           Total capital investment (M$)                                                             47879.59
+ (capcost)           Total capital investment (M$)                                                             43497.29
  
  *************************************** Cost of Electricity, 2017 US$ ****************************************
  
  First wall / blanket life (years)                                        (fwbllife)                    5.343     
  Divertor life (years)                                                    (divlife.)                    0.286     
- Cost of electricity (m$/kWh)                                             (coe)                       421.856     
+ Cost of electricity (m$/kWh)                                             (coe)                       384.260     
  
  Power Generation Costs :
  
  									Annual Costs, M$	    COE, m$/kWh
- Capital Investment                                                          3112.17                   407.32
+ Capital Investment                                                          2827.32                   370.04
  Operation & Maintenance                                                       73.58                     9.63
- Decommissioning Fund                                                          26.31                     3.44
+ Decommissioning Fund                                                          23.90                     3.13
  Fuel Charge Breakdown
  	Blanket & first wall                                                          0.00                     0.00
  	Divertors                                                                     0.00                     0.00
@@ -307,7 +307,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  	Actual Fuel                                                                   3.37                     0.44
  	Waste Disposal                                                                7.79                     1.02
  Total Fuel Cost                                                               11.17                     1.46
- Total Cost                                                                  3223.24                   421.86
+ Total Cost                                                                  2935.98                   384.26
  
  ********************************************* Plant Availability *********************************************
  

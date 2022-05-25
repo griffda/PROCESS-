@@ -187,12 +187,12 @@ def test_costs_step(monkeypatch, costs_step):
     assert costs_step.rminor_star == 7.0 / 3.6
 
     # Total plant direct cost with remote handling
-    exp = 8449.0439399
+    exp = 6935.8739399
     obs = cv.cdirt
     assert pytest.approx(obs) == exp
 
     # Constructed cost
-    exp_concost = 14997.0529932
+    exp_concost = 12311.1762433
     obs_concost = cv.concost
     assert pytest.approx(obs_concost) == exp_concost
 
@@ -218,7 +218,13 @@ def test_step_a20(monkeypatch, costs_step):
     assert pytest.approx(obs) == exp
 
 
-def test_step_a21(monkeypatch, costs_step):
+@pytest.mark.parametrize(
+    "isitetype, isiteaccomm, igridconn, irailaccess, exp",
+    ((0, 0, 0, 0, 5.0877341e3), (1, 1, 1, 1, 6.1786241e3), (2, 0, 0, 0, 4.9938941e3)),
+)
+def test_step_a21(
+    monkeypatch, costs_step, isitetype, isiteaccomm, igridconn, irailaccess, exp
+):
     """Validate sum of cost account 21.
 
     :param monkeypatch: mocking fixture
@@ -228,10 +234,13 @@ def test_step_a21(monkeypatch, costs_step):
     """
     # Mock module vars
     monkeypatch.setattr(costs_step, "step21", 0.0)
+    monkeypatch.setattr(cv, "isitetype", isitetype)
+    monkeypatch.setattr(cv, "isiteaccomm", isiteaccomm)
+    monkeypatch.setattr(cv, "igridconn", igridconn)
+    monkeypatch.setattr(cv, "irailaccess", irailaccess)
 
     # Run and assert result in M$
     costs_step.step_a21()
-    exp = 6.495334e3
     obs = costs_step.step21
     assert pytest.approx(obs) == exp
 
