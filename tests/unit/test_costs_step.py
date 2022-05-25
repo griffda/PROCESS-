@@ -271,7 +271,8 @@ def test_step_a22(monkeypatch, costs_step):
     assert pytest.approx(obs) == exp
 
 
-def test_step_a2201(monkeypatch, costs_step):
+@pytest.mark.parametrize("fkind, exp", ((1, 1573.1259947), (0.5, 1001.8129973)))
+def test_step_a2201(monkeypatch, costs_step, fkind, exp):
     """Validate sum of cost account 22.01.
 
     :param monkeypatch: mocking fixture
@@ -282,6 +283,8 @@ def test_step_a2201(monkeypatch, costs_step):
     # Mock module var set in subroutine: increase is value of step2201
     monkeypatch.setattr(costs_step, "step22", 0.0)
     monkeypatch.setattr(cv, "step_ref", np.zeros(70, order="F"))
+    monkeypatch.setattr(cv, "fkind", fkind)
+
     # Only mock used array elements
     cv.step_ref[23] = 5.9e1
     cv.step_ref[24] = 3.254e1
@@ -299,15 +302,17 @@ def test_step_a2201(monkeypatch, costs_step):
     monkeypatch.setattr(costs_step, "rmajor_star", 7.0)
     monkeypatch.setattr(costs_step, "rminor_star", 1.9)
 
-    exp1 = 1573.1259947
-    # TODO update spares expected value
     # exp2 = 1.0199574292e1
     step2201, spares = costs_step.step_a2201()
-    assert pytest.approx(step2201) == exp1
+    assert pytest.approx(step2201) == exp
     # assert pytest.approx(spares) == exp2
 
 
-def test_step_a220101(monkeypatch, costs_step):
+@pytest.mark.parametrize(
+    "fkind, fwallcst_exp, blkcst_exp, exp",
+    ((1, 5.0e-5, 0.095, 0.09505), (0.5, 2.5e-5, 0.0475, 0.047525)),
+)
+def test_step_a220101(monkeypatch, costs_step, fkind, fwallcst_exp, blkcst_exp, exp):
     """Validate sum of cost account 22.01.01.
 
     :param monkeypatch: mocking fixture
@@ -331,6 +336,7 @@ def test_step_a220101(monkeypatch, costs_step):
     monkeypatch.setattr(cv, "step_ucblss", 500)
     monkeypatch.setattr(fwbsv, "whtblvd", 10.0)
     monkeypatch.setattr(cv, "step_ucblvd", 200)
+    monkeypatch.setattr(cv, "fkind", fkind)
 
     # Account 22.01.01.01 : First wall
     (
@@ -341,20 +347,21 @@ def test_step_a220101(monkeypatch, costs_step):
         step2201010202,
         step2201010203,
     ) = costs_step.step_a220101()
-    fwallcst_exp = 5.0e-5
     fwallcst_obs = cv.fwallcst
     assert pytest.approx(fwallcst_obs) == fwallcst_exp
 
     # Test blkcst is correct
-    blkcst_exp = 0.095
     blkcst_obs = cv.blkcst
     assert pytest.approx(blkcst_obs) == blkcst_exp
 
     # Test that the value of step220101 is calculated correctly
-    assert pytest.approx(step220101) == 0.09505
+    # exp = 0.09505
+    obs = step220101
+    assert pytest.approx(obs) == exp
 
 
-def test_step_a220102(monkeypatch, costs_step):
+@pytest.mark.parametrize("fkind, exp", ((1, 6.38925762e1), (0.5, 3.19462881e1)))
+def test_step_a220102(monkeypatch, costs_step, fkind, exp):
     """Validate sum of cost account 22.01.02.
 
     :param monkeypatch: mocking fixture
@@ -381,13 +388,17 @@ def test_step_a220102(monkeypatch, costs_step):
     monkeypatch.setattr(pv, "rminor", 1.0)
     monkeypatch.setattr(pv, "kappa", 1.792)
     monkeypatch.setattr(pv, "idivrt", 1)
+    monkeypatch.setattr(cv, "fkind", fkind)
 
     obs = costs_step.step_a220102()
-    exp = 6.38925762e1
     assert pytest.approx(obs) == exp
 
 
-def test_step_a22010301(monkeypatch, costs_step):
+@pytest.mark.parametrize(
+    "fkind, cop_exp, sc_exp, cryoal_exp",
+    ((1, 629.24550, 507.24287, 15.552), (0.5, 314.62275, 253.621435, 7.776)),
+)
+def test_step_a22010301(monkeypatch, costs_step, fkind, cop_exp, sc_exp, cryoal_exp):
     """Cost of TF coils for different materials (22.01.03.01).
 
     :param monkeypatch: fixture for mocking variables
@@ -427,28 +438,31 @@ def test_step_a22010301(monkeypatch, costs_step):
     monkeypatch.setattr(sv, "aintmass", 1.335e6)
     monkeypatch.setattr(costs_step, "vfi", 5e3)
     monkeypatch.setattr(costs_step, "vfi_star", 6.737e3)
+    monkeypatch.setattr(cv, "fkind", fkind)
 
     # Copper coils
     monkeypatch.setattr(tfv, "i_tf_sup", 0)
-    expected = 629.24550
     observed = costs_step.step_a22010301()
-    assert pytest.approx(observed) == expected
+    assert pytest.approx(observed) == cop_exp
 
     # Superconducting coils
     monkeypatch.setattr(tfv, "i_tf_sup", 1)
     # expected = 4129.54087
-    expected = 507.24287
+    # expected = 507.24287
     observed = costs_step.step_a22010301()
-    assert pytest.approx(observed) == expected
+    assert pytest.approx(observed) == sc_exp
 
     # Cryo-aluminium coils
     monkeypatch.setattr(tfv, "i_tf_sup", 2)
-    expected = 15.552
+    # expected = 15.552
     obs = costs_step.step_a22010301()
-    assert pytest.approx(obs) == expected
+    assert pytest.approx(obs) == cryoal_exp
 
 
-def test_step_a22010302(monkeypatch, costs_step):
+@pytest.mark.parametrize(
+    "fkind, exp", ((1, 11.682954760169723), (0.5, 5.84147738008486))
+)
+def test_step_a22010302(monkeypatch, costs_step, fkind, exp):
     """Test evaluation of account 22.01.03.02 (PF magnet) costs
     :param monkeypatch: fixture for mocking variables
     :type monkeypatch: MonkeyPatch
@@ -465,13 +479,14 @@ def test_step_a22010302(monkeypatch, costs_step):
     monkeypatch.setattr(pfv, "vf", np.full(22, 0.5, order="F"))
     monkeypatch.setattr(pfv, "ric", np.full(22, 5.0, order="F"))
     monkeypatch.setattr(pfv, "rjconpf", np.full(22, 1.0e7, order="F"))
+    monkeypatch.setattr(cv, "fkind", fkind)
 
-    exp = 11.682954760169723
     obs = costs_step.step_a22010302()
     assert pytest.approx(obs) == exp
 
 
-def test_step_a220104(monkeypatch, costs_step):
+@pytest.mark.parametrize("fkind, exp", ((1, 2.04634910e3), (0.5, 1.02317455e3)))
+def test_step_a220104(monkeypatch, costs_step, fkind, exp):
     """Test evaluation of account costs: 22.01.04
     (Auxiliary Heating and Current Drive)
 
@@ -489,22 +504,25 @@ def test_step_a220104(monkeypatch, costs_step):
     monkeypatch.setattr(cdv, "iefrffix", 5.0)
     monkeypatch.setattr(cdv, "echpwr", 90.0)
     monkeypatch.setattr(cv, "step_ref", np.zeros(70, order="F"))
+    monkeypatch.setattr(cv, "fkind", fkind)
     # Only mock used array elements
     cv.step_ref[68] = 19.21
     cv.step_ref[69] = 12.85
 
-    exp = 2.04634910e3
     obs = costs_step.step_a220104()
     assert pytest.approx(obs) == exp
 
 
-def test_step_a2202(costs_step):
+@pytest.mark.parametrize("fkind, exp", ((1, 4.611899e1), (0.5, 2.3059495e1)))
+def test_step_a2202(monkeypatch, costs_step, fkind, exp):
     """Validate sum of cost account 22.02.
 
     :param costs_step: fixture to mock commonly-used cost vars
     :type costs_step: process.costs_step.CostsStep
     """
-    exp = 4.611899e1
+    # Mock module vars used in subroutine
+    monkeypatch.setattr(cv, "fkind", fkind)
+
     obs = costs_step.step_a2202()
     assert pytest.approx(obs) == exp
 
@@ -525,50 +543,63 @@ def test_step_a2203(monkeypatch, costs_step):
     assert pytest.approx(obs) == exp
 
 
-def test_step_a2204(costs_step):
+@pytest.mark.parametrize("fkind, exp", ((1, 4.8e0), (0.5, 2.4e0)))
+def test_step_a2204(monkeypatch, costs_step, fkind, exp):
     """Validate sum of cost account 22.04.
 
     :param costs_step: fixture to mock commonly-used cost vars
     :type costs_step: process.costs_step.CostsStep
     """
-    exp = 4.8e0
+    # Mock module var set in subroutine
+    monkeypatch.setattr(cv, "fkind", fkind)
+
     obs = costs_step.step_a2204()
     assert pytest.approx(obs) == exp
 
 
-def test_step_a2205(costs_step):
+@pytest.mark.parametrize(
+    "fkind, exp1, exp2", ((1, 3.86e1, 1.940036), (0.5, 1.93e1, 0.970018))
+)
+def test_step_a2205(monkeypatch, costs_step, fkind, exp1, exp2):
     """Validate sum of cost account 22.05.
 
     :param costs_step: fixture to mock commonly-used cost vars
     :type costs_step: process.costs_step.CostsStep
     """
-    exp1 = 3.86e1
-    exp2 = 1.940036
+    # Mock module var set in subroutine
+    monkeypatch.setattr(cv, "fkind", fkind)
+
     step2205, spares = costs_step.step_a2205()
     assert pytest.approx(step2205) == exp1
     assert pytest.approx(spares) == exp2
 
 
-def test_step_a2206(costs_step):
+@pytest.mark.parametrize("fkind, exp1", ((1, 5.45e0), (0.5, 2.725)))
+def test_step_a2206(monkeypatch, costs_step, fkind, exp1):
     """Validate sum of cost account 22.06.
 
     :param costs_step: fixture to mock commonly-used cost vars
     :type costs_step: process.costs_step.CostsStep
     """
-    exp1 = 5.45e0
+    # Mock module var set in subroutine
+    monkeypatch.setattr(cv, "fkind", fkind)
+
     exp2 = 8.3e-1
     step2206, spares = costs_step.step_a2206()
     assert pytest.approx(step2206) == exp1
     assert pytest.approx(spares) == exp2
 
 
-def test_step_a2207(costs_step):
+@pytest.mark.parametrize("fkind, exp", ((1, 2.341e1), (0.5, 1.1705e1)))
+def test_step_a2207(monkeypatch, costs_step, fkind, exp):
     """Validate sum of cost account 22.07.
 
     :param costs_step: fixture to mock commonly-used cost vars
     :type costs_step: process.costs_step.CostsStep
     """
-    exp = 2.341e1
+    # Mock module var set in subroutine
+    monkeypatch.setattr(cv, "fkind", fkind)
+
     obs = costs_step.step_a2207()
     assert pytest.approx(obs) == exp
 
@@ -624,7 +655,8 @@ def test_step_a25(monkeypatch, costs_step):
     assert pytest.approx(obs) == exp
 
 
-def test_step_a27(monkeypatch, costs_step):
+@pytest.mark.parametrize("fkind, exp", ((1, 10.0), (0.5, 5.0)))
+def test_step_a27(monkeypatch, costs_step, fkind, exp):
     """Validate sum of cost account 27.
 
     :param monkeypatch: mocking fixture
@@ -636,8 +668,8 @@ def test_step_a27(monkeypatch, costs_step):
     monkeypatch.setattr(costs_step, "step27", 0.0)
     monkeypatch.setattr(cv, "step_rh_costfrac", 0.05)
     monkeypatch.setattr(cv, "cdirt", 200.0)
+    monkeypatch.setattr(cv, "fkind", fkind)
 
-    exp = 10.0
     costs_step.step_a27()
     obs = costs_step.step27
     assert pytest.approx(obs) == exp
