@@ -302,7 +302,6 @@ def test_step_a2201(monkeypatch, costs_step, fkind, exp):
     monkeypatch.setattr(costs_step, "rmajor_star", 7.0)
     monkeypatch.setattr(costs_step, "rminor_star", 1.9)
 
-    # exp1 = 1573.1259947
     # exp2 = 1.0199574292e1
     step2201, spares = costs_step.step_a2201()
     assert pytest.approx(step2201) == exp
@@ -348,12 +347,10 @@ def test_step_a220101(monkeypatch, costs_step, fkind, fwallcst_exp, blkcst_exp, 
         step2201010202,
         step2201010203,
     ) = costs_step.step_a220101()
-    # fwallcst_exp = 5.0e-5
     fwallcst_obs = cv.fwallcst
     assert pytest.approx(fwallcst_obs) == fwallcst_exp
 
     # Test blkcst is correct
-    # blkcst_exp = 0.095
     blkcst_obs = cv.blkcst
     assert pytest.approx(blkcst_obs) == blkcst_exp
 
@@ -394,7 +391,6 @@ def test_step_a220102(monkeypatch, costs_step, fkind, exp):
     monkeypatch.setattr(cv, "fkind", fkind)
 
     obs = costs_step.step_a220102()
-    # exp = 6.38925762e1
     assert pytest.approx(obs) == exp
 
 
@@ -446,7 +442,6 @@ def test_step_a22010301(monkeypatch, costs_step, fkind, cop_exp, sc_exp, cryoal_
 
     # Copper coils
     monkeypatch.setattr(tfv, "i_tf_sup", 0)
-    # expected = 629.24550
     observed = costs_step.step_a22010301()
     assert pytest.approx(observed) == cop_exp
 
@@ -486,7 +481,6 @@ def test_step_a22010302(monkeypatch, costs_step, fkind, exp):
     monkeypatch.setattr(pfv, "rjconpf", np.full(22, 1.0e7, order="F"))
     monkeypatch.setattr(cv, "fkind", fkind)
 
-    # exp = 11.682954760169723
     obs = costs_step.step_a22010302()
     assert pytest.approx(obs) == exp
 
@@ -515,7 +509,6 @@ def test_step_a220104(monkeypatch, costs_step, fkind, exp):
     cv.step_ref[68] = 19.21
     cv.step_ref[69] = 12.85
 
-    # exp = 2.04634910e3
     obs = costs_step.step_a220104()
     assert pytest.approx(obs) == exp
 
@@ -530,7 +523,6 @@ def test_step_a2202(monkeypatch, costs_step, fkind, exp):
     # Mock module vars used in subroutine
     monkeypatch.setattr(cv, "fkind", fkind)
 
-    # exp = 4.611899e1
     obs = costs_step.step_a2202()
     assert pytest.approx(obs) == exp
 
@@ -561,7 +553,6 @@ def test_step_a2204(monkeypatch, costs_step, fkind, exp):
     # Mock module var set in subroutine
     monkeypatch.setattr(cv, "fkind", fkind)
 
-    # exp = 4.8e0
     obs = costs_step.step_a2204()
     assert pytest.approx(obs) == exp
 
@@ -578,8 +569,6 @@ def test_step_a2205(monkeypatch, costs_step, fkind, exp1, exp2):
     # Mock module var set in subroutine
     monkeypatch.setattr(cv, "fkind", fkind)
 
-    # exp1 = 3.86e1
-    # exp2 = 1.940036
     step2205, spares = costs_step.step_a2205()
     assert pytest.approx(step2205) == exp1
     assert pytest.approx(spares) == exp2
@@ -595,7 +584,6 @@ def test_step_a2206(monkeypatch, costs_step, fkind, exp1):
     # Mock module var set in subroutine
     monkeypatch.setattr(cv, "fkind", fkind)
 
-    # exp1 = 5.45e0
     exp2 = 8.3e-1
     step2206, spares = costs_step.step_a2206()
     assert pytest.approx(step2206) == exp1
@@ -612,7 +600,6 @@ def test_step_a2207(monkeypatch, costs_step, fkind, exp):
     # Mock module var set in subroutine
     monkeypatch.setattr(cv, "fkind", fkind)
 
-    # exp = 2.341e1
     obs = costs_step.step_a2207()
     assert pytest.approx(obs) == exp
 
@@ -683,7 +670,6 @@ def test_step_a27(monkeypatch, costs_step, fkind, exp):
     monkeypatch.setattr(cv, "cdirt", 200.0)
     monkeypatch.setattr(cv, "fkind", fkind)
 
-    # exp = 10.0
     costs_step.step_a27()
     obs = costs_step.step27
     assert pytest.approx(obs) == exp
