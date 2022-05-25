@@ -3371,7 +3371,7 @@ class Sctfcoil:
         # transverse (radial/toroidal) direction. Used in the stress
         # models [Pa]
 
-        poisson_trans = numpy.zeros((n_tf_layer,))
+        poisson_trans = numpy.zeros((n_tf_layer,), order="F")
         # Poisson's ratios (one per layer) of the TF coil between the
         # two transverse directions (radial and toroidal). Used in the
         # stress models.
@@ -3967,7 +3967,6 @@ class Sctfcoil:
             # Generalized plane strain calculation [Pa]
             # Issues #977 and #991
             # build_variables.bore > 0, O(n^3) in layers
-
             (
                 radial_array,
                 sig_tf_r,
@@ -3985,7 +3984,6 @@ class Sctfcoil:
                 radtf,
                 jeff,
                 sctfcoil_module.vforce_inboard_tot,
-                n_tf_layer,
                 n_radial_array,
                 n_tf_bucking,
             )
@@ -4008,7 +4006,7 @@ class Sctfcoil:
                 str_tf_t,
                 str_tf_z,
                 deflect,
-            ) = sctfcoil_module.extended_plane_strain(
+            ) = self.extended_plane_strain(
                 poisson_trans,
                 poisson_axial,
                 eyoung_trans,
@@ -4336,34 +4334,34 @@ class Sctfcoil:
         # ***
 
         # Null radial stress at R(1)
-        aa[0][0] = kk[0] * (1.0e0 + nu[0])
-        aa[0][1] = -kk[0] * (1.0e0 - nu[0]) / (rad[0] ** 2)
+        aa[0, 0] = kk[0] * (1.0e0 + nu[0])
+        aa[0, 1] = -kk[0] * (1.0e0 - nu[0]) / (rad[0] ** 2)
 
         # Inter-layer boundary conditions
         if nlayers != 1:
             for ii in range(1, nlayers):
 
                 # Continuous radial normal stress at R[ii+1]
-                aa[(2 * ii) - 1][(2 * ii) - 2] = kk[ii - 1] * (1.0e0 + nu[ii - 1])
-                aa[(2 * ii) - 1][(2 * ii) - 1] = (
+                aa[(2 * ii) - 1, (2 * ii) - 2] = kk[ii - 1] * (1.0e0 + nu[ii - 1])
+                aa[(2 * ii) - 1, (2 * ii) - 1] = (
                     -kk[ii - 1] * (1.0e0 - nu[ii - 1]) / rad[ii] ** 2
                 )
-                aa[(2 * ii - 1)][2 * ii] = -kk[ii] * (1.0e0 + nu[ii])
-                aa[(2 * ii) - 1][(2 * ii) + 1] = (
+                aa[(2 * ii - 1), 2 * ii] = -kk[ii] * (1.0e0 + nu[ii])
+                aa[(2 * ii) - 1, (2 * ii) + 1] = (
                     kk[ii] * (1.0e0 - nu[ii]) / rad[ii] ** 2
                 )
 
                 # Continuous displacement at R[ii+1]
-                aa[2 * ii][(2 * ii) - 2] = rad[ii]
-                aa[2 * ii][(2 * ii) - 1] = 1.0e0 / rad[ii]
-                aa[2 * ii][2 * ii] = -rad[ii]
-                aa[2 * ii][(2 * ii) + 1] = -1.0e0 / rad[ii]
+                aa[2 * ii, (2 * ii) - 2] = rad[ii]
+                aa[2 * ii, (2 * ii) - 1] = 1.0e0 / rad[ii]
+                aa[2 * ii, 2 * ii] = -rad[ii]
+                aa[2 * ii, (2 * ii) + 1] = -1.0e0 / rad[ii]
 
         # Radial stress = 0
-        aa[(2 * nlayers) - 1][(2 * nlayers) - 2] = kk[nlayers - 1] * (
+        aa[(2 * nlayers) - 1, (2 * nlayers) - 2] = kk[nlayers - 1] * (
             1.0e0 + nu[nlayers - 1]
         )
-        aa[(2 * nlayers) - 1][(2 * nlayers) - 1] = (
+        aa[(2 * nlayers) - 1, (2 * nlayers) - 1] = (
             -kk[nlayers - 1] * (1.0e0 - nu[nlayers - 1]) / rad[nlayers] ** 2
         )
         # ***
@@ -6124,3 +6122,520 @@ class Sctfcoil:
                 tfcoil_variables.insstrain,
                 "OP ",
             )
+
+    def extended_plane_strain(
+        self,
+        nu_t,
+        nu_zt,
+        ey_t,
+        ey_z,
+        rad,
+        d_curr,
+        v_force,
+        nlayers,
+        n_radial_array,
+        i_tf_bucking,
+    ):
+        """Author : C. Swanson, PPPL and S. Kahn, CCFE
+        September 2021
+        There is a writeup of the derivation of this model on the gitlab server.
+        https://git.ccfe.ac.uk/process/process/-/issues/1414
+        This surboutine estimates the radial displacement, stresses, and strains of
+        the inboard midplane of the TF. It assumes that structures are axisymmetric
+        and long in the axial (z) direction, the "axisymmetric extended plane strain"
+        problem. The TF is assumed to be constructed from some number of layers,
+        within which materials properties and current densities are uniform.
+        The 1D radially-resolved solution is reduced to a 0D matrix inversion problem
+        using analytic solutions to Lame's thick cylinder problem. Materials may be
+        transverse-isotropic in Young's modulus and Poisson's ratio. The consraints
+        are: Either zero radial stress or zero radial displacement at the inner
+        surface (depending on whether the inner radius is zero), zero radial stress
+        at the outer surface, total axial force (tension) is equal to the input,
+        and optionally the axial force of an inner subset of cylinders is zero (slip
+        conditions between the inner and outer subset). The matrix inversion / linear
+        solve is always 4x4, no matter how many layers there are.
+        The problem is formulated around a solution vector (A,B,eps_z,1.0,eps_z_slip)
+        where A and B are the parameters in Lame's solution where u = A*r + B/r, u
+        is the radial displacement. eps_z is the axial strain on the outer, force-
+        carrying layers. eps_z_slip is the axial strain on the inner, non-force-
+        carrying layers (optionally). The solution vector is A,B at the outermost
+        radius, and is transformed via matrix multiplication into those A,B
+        values at other radii. The constraints are inner products with this vector,
+        and so when stacked form a matrix to invert.
+        """
+        # outputs
+        sigr = numpy.zeros((n_radial_array * nlayers,))
+        # Stress distribution in the radial direction (r) [Pa]
+
+        sigt = numpy.zeros((n_radial_array * nlayers,))
+        # Stress distribution in the toroidal direction (t) [Pa]
+
+        sigz = numpy.zeros((n_radial_array * nlayers,))
+        # Stress distribution in the vertical direction (z)
+
+        str_r = numpy.zeros((n_radial_array * nlayers,))
+        # Strain distribution in the radial direction (r)
+
+        str_t = numpy.zeros((n_radial_array * nlayers,))
+        # Strain distribution in the toroidal direction (t)
+
+        str_z = numpy.zeros((n_radial_array * nlayers,))
+        # Uniform strain in the vertical direction (z)
+
+        r_deflect = numpy.zeros((n_radial_array * nlayers,))
+        # Radial displacement radial distribution [m]
+
+        rradius = numpy.zeros((n_radial_array * nlayers,))
+        # Radius array [m]
+
+        # local arrays
+        # Stiffness form of compliance tensor
+        nu_tz = numpy.zeros((nlayers,))
+        # Transverse-axial Poisson's ratio
+        # (ratio of axial strain to transverse strain upon transverse stress)
+        ey_bar_z = numpy.zeros((nlayers,))
+        # Axial effective Young's modulus (zero cross-strains, not stresses) [Pa]
+        ey_bar_t = numpy.zeros((nlayers,))
+        # Transverse effective Young's modulus [Pa]
+        nu_bar_t = numpy.zeros((nlayers,))
+        # Transverse effective Poisson's ratio
+        nu_bar_tz = numpy.zeros((nlayers,))
+        # Transverse-axial effective Poisson's ratio
+        nu_bar_zt = numpy.zeros((nlayers,))
+        # Axial-transverse effective Poisson's ratio
+
+        # Lorentz force parameters
+        currents = numpy.zeros((nlayers,))
+        # Currents in each layer [A]
+        currents_enclosed = numpy.zeros((nlayers,))
+        # Currents enclosed by inner radius of each layer [A]
+        f_lin_fac = numpy.zeros((nlayers,))
+        # Factor that multiplies r linearly in the force density
+        f_rec_fac = numpy.zeros((nlayers,))
+        # Factor that multiplies r reciprocally in the force density
+        f_int_A = numpy.zeros((nlayers,))
+        # Force density integral that adds to Lame parameter A
+        f_int_B = numpy.zeros((nlayers,))
+        # Force density integral that adds to Lame parameter B
+
+        # Layer transfer matrices
+        M_int = numpy.zeros(
+            (
+                5,
+                5,
+                nlayers,
+            ),
+            order="F",
+        )
+        # Matrix that transforms the Lame parmeter vector from the
+        # outer radius to the inner radius of each layer
+        M_ext = numpy.zeros(
+            (
+                5,
+                5,
+                nlayers,
+            ),
+            order="F",
+        )
+        # Matrix that transforms the Lame parmeter vector from the
+        # inner radius of one layer to the outer radius of the
+        # next inner.
+        M_tot = numpy.zeros(
+            (
+                5,
+                5,
+                nlayers,
+            ),
+            order="F",
+        )
+        # Matrix that transforms the Lame parmeter vector from the
+        # outer radius of the outer layer to the inner radius of
+        # each.
+
+        # Axial force inner product
+        v_force_row = numpy.zeros(
+            (
+                1,
+                5,
+            ),
+            order="F",
+        )
+        # Row vector (matrix multiplication is inner product) to
+        # obtain the axial force from the force-carrying layers
+        v_force_row_slip = numpy.zeros(
+            (
+                1,
+                5,
+            ),
+            order="F",
+        )
+        # Row vector (matrix multiplication is inner product) to
+        # obtain the axial force inner slip layers (no net force)
+        rad_row_helper = numpy.zeros(
+            (
+                1,
+                5,
+            ),
+            order="F",
+        )
+        # A helper variable to store [radius, 1, 0, 0, 0] in row
+
+        # Boundary condition matrix
+        M_bc = numpy.zeros(
+            (
+                4,
+                5,
+            ),
+            order="F",
+        )
+        # Boundary condition matrix. Multiply this with the
+        # outermost solution vector, (A,B,eps_z,1.0,eps_z_slip),
+        # to obtain a zero vector.
+        M_toinv = numpy.zeros(
+            (
+                4,
+                4,
+            ),
+            order="F",
+        )
+        # Matrix to invert to get the solution
+        RHS_vec = numpy.zeros((4,))
+        # Right-hand-side vector to divide M_toinv
+        A_vec_solution = numpy.zeros((5,))
+        # Solution vector, Lame parameters at outer radius, strain
+        # of force-carrying layers, and strain of slip layers
+        # (A,B,eps_z,1,eps_z_slip)
+
+        # Constructing the solution everywhere
+        A_vec_layer = numpy.zeros((5,))
+        # Lame parameters and strains vector at outer radius
+        # of each layer
+
+        # The stress calcualtion differential equations is analytically sloved
+        # The final solution is given by the layer boundary conditions on
+        # radial stress and displacement between layers solved
+        # The problem is set as aa.cc = bb, cc being the constant we search
+
+        # Inner slip layers parameters
+        # Section 15 in the writeup
+        # Innermost layer that takes axial force. Layers inner of this
+        # have zero net axial force, to include CS decoupling.
+        # This configuration JUST HAPPENS to work out because of
+        # the specific i_tf_bucking options; if those are changed,
+        # will need a switch here.
+        nonslip_layer = i_tf_bucking
+
+        if nonslip_layer < 1:
+            nonslip_layer = 1
+
+        # Stiffness tensor factors
+        # Section 3 in the writeup
+        # With Section 12 anisotropic materials properties
+        # ***
+        # Dependent Poisson's ratio: nu-transverse-axial
+        # from nu-axial-transverse and the Young's moduli
+        nu_tz[:] = nu_zt * ey_t / ey_z
+
+        # Effective Young's Moduli and Poisson's ratios
+        # holding strain, not stress, cross-terms constant
+        ey_bar_z[:] = ey_z * (1 - nu_t) / (1 - nu_t - 2 * nu_tz * nu_zt)
+        ey_bar_t[:] = (
+            ey_t * (1 - nu_tz * nu_zt) / (1 - nu_t - 2 * nu_tz * nu_zt) / (1 + nu_t)
+        )
+
+        nu_bar_t[:] = (nu_t + nu_tz * nu_zt) / (1 - nu_tz * nu_zt)
+        nu_bar_tz[:] = nu_tz / (1 - nu_t)
+        nu_bar_zt[:] = nu_zt * (1 + nu_t) / (1 - nu_tz * nu_zt)
+
+        # Lorentz force parameters
+        # Section 13 in the writeup
+        # ***
+        # Currents in each layer [A]
+        currents[:] = (
+            numpy.pi * d_curr * (rad[1 : nlayers + 1] ** 2 - rad[:nlayers] ** 2)
+        )
+        # Currents enclosed by inner radius of each layer [A]
+        currents_enclosed[0] = 0.0e0
+
+        for ii in range(1, nlayers):
+            currents_enclosed[ii] = currents_enclosed[ii - 1] + currents[ii - 1]
+        # Factor that multiplies r linearly in the force density
+        f_lin_fac[:] = constants.rmu0 / 2.0e0 * d_curr**2
+        # Factor that multiplies r reciprocally in the force density
+        f_rec_fac[:] = (
+            constants.rmu0
+            / 2.0e0
+            * (d_curr * currents_enclosed / numpy.pi - d_curr**2 * rad[:nlayers] ** 2)
+        )
+        # Force density integral that adds to Lame parameter A
+        f_int_A[:] = 0.5e0 * f_lin_fac * (
+            rad[1 : nlayers + 1] ** 2 - rad[:nlayers] ** 2
+        ) + f_rec_fac * numpy.log(rad[1 : nlayers + 1] / rad[:nlayers])
+        if f_rec_fac[0] == 0e0:
+            f_int_A[0] = 0.5e0 * f_lin_fac[0] * (rad[1] ** 2 - rad[0] ** 2)
+
+        # Force density integral that adds to Lame parameter B
+        f_int_B[:] = 0.25e0 * f_lin_fac * (
+            rad[1 : nlayers + 1] ** 4 - rad[:nlayers] ** 4
+        ) + 0.5e0 * f_rec_fac * (rad[1 : nlayers + 1] ** 2 - rad[:nlayers] ** 2)
+
+        # Transformation matrix from outer to inner Lame parameters
+        # Section 5 in the writeup
+        # With Section 12 anisotropic materials properties
+        # ***
+        # M_int[kk] multiplies Lame parameter vector of layer kk (A,B,eps_z,1.0,eps_z_slip)
+        # and transforms the values at the outer radius to the values at the inner radius
+        for kk in range(nlayers):
+            M_int[0, 0, kk] = 1.0e0
+            M_int[1, 1, kk] = 1.0e0
+            M_int[2, 2, kk] = 1.0e0
+            M_int[3, 3, kk] = 1.0e0
+            M_int[4, 4, kk] = 1.0e0
+
+            M_int[0, 3, kk] = -0.5e0 / ey_bar_t[kk] * f_int_A[kk]
+            M_int[1, 3, kk] = 0.5e0 / ey_bar_t[kk] * f_int_B[kk]
+
+        # Transformation matrix between layers
+        # Section 6 in the writeup
+        # With Section 12 anisotropic materials properties
+        # With Section 15 inner slip-decoupled layers
+        # ***
+        # M_ext[kk] multiplies Lame parameter vector of layer kk (A,B,eps_z,1.0,eps_z_slip)
+        # and transforms the values at the inner radius to the values at the outer radius
+        # of layer kk-1
+        for kk in range(1, nonslip_layer - 1):
+            ey_fac = ey_bar_t[kk] / ey_bar_t[kk - 1]
+            M_ext[0, 2, kk] = 0.0e0
+            M_ext[0, 4, kk] = 0.5e0 * (ey_fac * nu_bar_zt[kk] - nu_bar_zt[kk - 1])
+
+        if nonslip_layer > 1:
+            ey_fac = ey_bar_t[nonslip_layer - 1] / ey_bar_t[nonslip_layer - 2]
+            M_ext[0, 2, nonslip_layer - 1] = (
+                0.5e0 * ey_fac * nu_bar_zt[nonslip_layer - 1]
+            )
+            M_ext[0, 4, nonslip_layer - 1] = 0.5e0 * (-nu_bar_zt[nonslip_layer - 2])
+
+        for kk in range(nonslip_layer, nlayers):
+            ey_fac = ey_bar_t[kk] / ey_bar_t[kk - 1]
+            M_ext[0, 2, kk] = 0.5e0 * (ey_fac * nu_bar_zt[kk] - nu_bar_zt[kk - 1])
+            M_ext[0, 4, kk] = 0.0e0
+
+        for kk in range(1, nlayers):
+            ey_fac = ey_bar_t[kk] / ey_bar_t[kk - 1]
+            M_ext[0, 0, kk] = 0.5e0 * (
+                ey_fac * (1 + nu_bar_t[kk]) + 1 - nu_bar_t[kk - 1]
+            )
+            if rad[kk] > 0e0:
+                M_ext[0, 1, kk] = (
+                    0.5e0
+                    / rad[kk] ** 2
+                    * (1 - nu_bar_t[kk - 1] - ey_fac * (1 - nu_bar_t[kk]))
+                )
+
+            M_ext[1, 0, kk] = rad[kk] ** 2 * (1 - M_ext[0, 0, kk])
+            M_ext[1, 1, kk] = 1 - rad[kk] ** 2 * M_ext[0, 1, kk]
+            M_ext[1, 2, kk] = -rad[kk] ** 2 * M_ext[0, 2, kk]
+            M_ext[1, 4, kk] = -rad[kk] ** 2 * M_ext[0, 4, kk]
+            M_ext[2, 2, kk] = 1.0e0
+            M_ext[3, 3, kk] = 1.0e0
+            M_ext[4, 4, kk] = 1.0e0
+
+        # Total transformation matrix, from Lame parmeters at outside to
+        # Lame parameters at inside of each layer
+        # Section 7 in the writeup
+        # ***
+        M_tot[:, :, nlayers - 1] = M_int[:, :, nlayers - 1]
+
+        for kk in range(nlayers - 2, -1, -1):
+            M_tot[:, :, kk] = M_int[:, :, kk] @ (
+                M_ext[:, :, kk + 1] @ M_tot[:, :, kk + 1]
+            )
+
+        # Axial force inner product. Dot-product this with the
+        # outermost solution vector, (A,B,eps_z,1.0,eps_z_slip),
+        # to obtain the axial force.
+        # Section 8 in the writeup
+        # ***
+        # Axial stiffness products
+        ey_bar_z_area = numpy.pi * sum(
+            ey_bar_z[nonslip_layer - 1 : nlayers]
+            * (
+                rad[nonslip_layer : nlayers + 1] ** 2
+                - rad[nonslip_layer - 1 : nlayers] ** 2
+            )
+        )
+        ey_bar_z_area_slip = numpy.pi * sum(
+            ey_bar_z[: nonslip_layer - 1]
+            * (rad[1:nonslip_layer] ** 2 - rad[: nonslip_layer - 1] ** 2)
+        )
+
+        # Axial stiffness inner product, for layers which carry axial force
+        rad_row_helper[0, :] = [rad[nlayers] ** 2, 1e0, 0e0, 0e0, 0e0]
+        v_force_row[:, :] = (
+            2e0
+            * numpy.pi
+            * ey_bar_z[nlayers - 1]
+            * nu_bar_tz[nlayers - 1]
+            * rad_row_helper
+        )
+        rad_row_helper[0, :] = [rad[nonslip_layer - 1] ** 2, 1e0, 0e0, 0e0, 0e0]
+        v_force_row[:, :] = v_force_row - 2e0 * numpy.pi * ey_bar_z[
+            nonslip_layer - 1
+        ] * nu_bar_tz[nonslip_layer - 1] * (
+            rad_row_helper @ M_tot[:, :, nonslip_layer - 1]
+        )
+        for kk in range(nonslip_layer, nlayers):
+            rad_row_helper[0, :] = [rad[kk] ** 2, 1e0, 0e0, 0e0, 0e0]
+            v_force_row[:, :] = v_force_row + 2e0 * numpy.pi * (
+                ey_bar_z[kk - 1] * nu_bar_tz[kk - 1] - ey_bar_z[kk] * nu_bar_tz[kk]
+            ) * (rad_row_helper @ M_tot[:, :, kk])
+
+        # Include the effect of axial stiffness
+        v_force_row[0, 2] += ey_bar_z_area
+
+        # Axial stiffness inner product, for layers which DON'T carry force
+        if nonslip_layer > 1:
+            rad_row_helper[0, :] = [rad[nonslip_layer - 1] ** 2, 1e0, 0e0, 0e0, 0e0]
+            v_force_row_slip[:, :] = (
+                2e0
+                * numpy.pi
+                * ey_bar_z[nonslip_layer - 2]
+                * nu_bar_tz[nonslip_layer - 2]
+                * (rad_row_helper @ M_tot[:, :, nonslip_layer - 1])
+            )
+            rad_row_helper[0, :] = [rad[0] ** 2, 1e0, 0e0, 0e0, 0e0]
+            v_force_row_slip[:, :] -= (
+                2e0
+                * numpy.pi
+                * ey_bar_z[0]
+                * nu_bar_tz[0]
+                * (rad_row_helper @ M_tot[:, :, 0])
+            )
+            for kk in range(1, nonslip_layer - 1):
+                rad_row_helper[0, :] = [rad[kk] ** 2, 1e0, 0e0, 0e0, 0e0]
+                v_force_row_slip[:, :] += (
+                    2e0
+                    * numpy.pi
+                    * (
+                        ey_bar_z[kk - 1] * nu_bar_tz[kk - 1]
+                        - ey_bar_z[kk] * nu_bar_tz[kk]
+                    )
+                    * (rad_row_helper @ M_tot[:, :, kk])
+                )
+            # Include the effect of axial stiffness
+            v_force_row_slip[0, 4] += ey_bar_z_area_slip
+        else:
+            # If there's no inner slip layer, still need a finite 5th
+            # element to ensure no singular matrix
+            v_force_row_slip[0, :] = [0e0, 0e0, 0e0, 0e0, 1e0]
+
+        # Boundary condition matrix. Multiply this with the
+        # outermost solution vector, (A,B,eps_z,1.0,eps_z_slip),
+        # to obtain a zero vector.
+        # Solved to get the Lame parameters.
+        # Section 9 in the writeup
+        # ***
+        # Outer boundary condition row, zero radial stress
+        M_bc[0, :] = [
+            (1e0 + nu_bar_t[nlayers - 1]) * rad[nlayers] ** 2,
+            -1e0 + nu_bar_t[nlayers - 1],
+            nu_bar_zt[nlayers - 1] * rad[nlayers] ** 2,
+            0e0,
+            0e0,
+        ]
+        # Inner boundary condition row, zero radial stress
+        # or zero displacement if rad(1)=0
+        if nonslip_layer > 1:
+            M_bc[1, :] = [
+                (1e0 + nu_bar_t[0]) * rad[0] ** 2,
+                -1e0 + nu_bar_t[0],
+                0e0,
+                0e0,
+                nu_bar_zt[0] * rad[0] ** 2,
+            ]
+        else:
+            M_bc[1, :] = [
+                (1e0 + nu_bar_t[0]) * rad[0] ** 2,
+                -1e0 + nu_bar_t[0],
+                nu_bar_zt[0] * rad[0] ** 2,
+                0e0,
+                0e0,
+            ]
+
+        M_bc[1, :] = M_bc[1, :] @ M_tot[:, :, 0]
+        # Axial force boundary condition
+        M_bc[2, :] = v_force_row[0, :]
+        M_bc[2, 3] = M_bc[2, 3] - v_force
+        # Axial force boundary condition of slip layers
+        M_bc[3, :] = v_force_row_slip[0, :]
+
+        # The solution, the outermost Lame parameters A,B
+        # and the axial strains of the force-carrying and
+        # slip layers eps_z and eps_z_slip.
+        # Section 10 in the writeup
+        # ***
+        M_toinv[:] = M_bc[
+            :,
+            (0, 1, 2, 4),
+        ]
+        RHS_vec[:] = -M_bc[:, 3]
+
+        maths_library.linesolv(M_toinv, RHS_vec, A_vec_solution[:4])
+        A_vec_solution[4] = A_vec_solution[3]
+        A_vec_solution[3] = 1
+
+        # Radial/toroidal/vertical stress radial distribution
+        # ------
+        # Radial displacement, stress and strain distributions
+
+        A_vec_layer[:] = A_vec_solution[:]
+        for ii in range(nlayers - 1, -1, -1):
+            A_layer = A_vec_layer[0]
+            B_layer = A_vec_layer[1]
+
+            dradius = (rad[ii + 1] - rad[ii]) / (n_radial_array - 1)
+
+            for jj in range(ii * n_radial_array, (ii + 1) * n_radial_array):
+
+                rradius[jj] = rad[ii] + dradius * (jj - (n_radial_array * ii))
+
+                f_int_A_plot = 0.5e0 * f_lin_fac[ii] * (
+                    rad[ii + 1] ** 2 - rradius[jj] ** 2
+                ) + f_rec_fac[ii] * numpy.log(rad[ii + 1] / (rradius[jj]))
+                f_int_B_plot = 0.25e0 * f_lin_fac[ii] * (
+                    rad[ii + 1] ** 4 - rradius[jj] ** 4
+                ) + 0.5e0 * f_rec_fac[ii] * (rad[ii + 1] ** 2 - rradius[jj] ** 2)
+                A_plot = A_layer - 0.5e0 / ey_bar_t[ii] * f_int_A_plot
+                B_plot = B_layer + 0.5e0 / ey_bar_t[ii] * f_int_B_plot
+
+                # Radial displacement
+                r_deflect[jj] = A_plot * rradius[jj] + B_plot / rradius[jj]
+
+                # Radial strain
+                str_r[jj] = A_plot - B_plot / rradius[jj] ** 2
+                # Azimuthal strain
+                str_t[jj] = A_plot + B_plot / rradius[jj] ** 2
+                # Axial strain
+                if ii < nonslip_layer - 1:
+                    str_z[jj] = A_vec_solution[4]
+                else:
+                    str_z[jj] = A_vec_solution[2]
+
+                # Radial stress
+                sigr[jj] = ey_bar_t[ii] * (
+                    str_r[jj] + (nu_bar_t[ii] * str_t[jj]) + (nu_bar_zt[ii] * str_z[jj])
+                )
+                # Aximuthal stress
+                sigt[jj] = ey_bar_t[ii] * (
+                    str_t[jj] + (nu_bar_t[ii] * str_r[jj]) + (nu_bar_zt[ii] * str_z[jj])
+                )
+                # Axial stress
+                sigz[jj] = ey_bar_z[ii] * (
+                    str_z[jj] + (nu_bar_tz[ii] * (str_r[jj] + str_t[jj]))
+                )
+
+            A_vec_layer = M_tot[:, :, ii] @ A_vec_solution
+            A_vec_layer = M_ext[:, :, ii] @ A_vec_layer
+        # ------
+
+        return rradius, sigr, sigt, sigz, str_r, str_t, str_z, r_deflect
