@@ -3370,7 +3370,7 @@ contains
       !! n_cycle : input real : Allowable number of cycles for CS
       !! n_cycle_min : input real :  Minimum required cycles for CS
       
-      use CS_fatigue_variables, only: n_cycle, n_cycle_min
+      use CS_fatigue_variables, only: n_cycle, n_cycle_min, bkt_life_csf
       use constraint_variables, only: fncycle
       use cost_variables, only: ibkt_life, bktcycles
       implicit none
@@ -3380,7 +3380,7 @@ contains
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
       
-      if (ibkt_life == 1) then
+      if (ibkt_life == 1 .and. bkt_life_csf == 1 ) then
          n_cycle_min = bktcycles
       end if
 

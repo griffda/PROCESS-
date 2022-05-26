@@ -376,7 +376,7 @@ contains
     use reinke_variables, only: reinke_mode, fzactual, impvardiv, lhat
     use water_usage_variables, only: airtemp, watertemp, windspeed
     use CS_fatigue_variables, only: residual_sig_hoop, t_crack_radial, t_crack_vertical, &
-      t_structural_vertical, t_structural_radial, n_cycle_min
+      t_structural_vertical, t_structural_radial, n_cycle_min, bkt_life_csf
     implicit none
 
     !  Arguments
@@ -3930,6 +3930,9 @@ contains
        case('ld_ratio_cst')
             call parse_real_variable('ld_ratio_cst',ld_ratio_cst, 0.0D0, 5.0D0, &
                'CS coil turn conduit length to depth ratio')
+       case('bkt_life_csf')
+            call parse_real_variable('bkt_life_csf',bkt_life_csf, 0.0D0, 1.0D0, &
+               'Switch for bkt_life -> n_cycle_min')
 
        case default
           error_message = 'Unknown variable in input file: '//varnam(1:varlen)
