@@ -205,7 +205,7 @@ module physics_variables
   !! F-value for minimum pdivt (`constraint equation 80`)
 
   real(dp) :: fne0
-  !! f-value for the constraint ne(0) > ne(sep) (`constraint equation 81`)
+  !! f-value for the constraint ne(0) > ne(ped) (`constraint equation 81`)
   !! (`Iteration variable 154`)
 
   real(dp) :: ftrit
