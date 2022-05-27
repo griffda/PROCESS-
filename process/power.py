@@ -714,7 +714,7 @@ class Power:
             "OP ",
         )
 
-        if (numerics.ioptimz > 0) and (numerics.active_constraints(66)):
+        if (numerics.ioptimz > 0) and (numerics.active_constraints[65]):
             po.ovarre(
                 self.outfile,
                 "Max permitted abs rate of change of stored energy in poloidal field (MW)",
@@ -1530,13 +1530,13 @@ class Power:
                 po.ocmmnt(
                     self.outfile,
                     "Power conversion cycle efficiency model: "
-                    // "efficiency set according to blanket type (div power to secondary)",
+                    "efficiency set according to blanket type (div power to secondary)",
                 )
             elif fwbs_variables.secondary_cycle == 1:
                 po.ocmmnt(
                     self.outfile,
                     "Power conversion cycle efficiency model: "
-                    // "efficiency set according to blanket type (div power to primary)",
+                    "efficiency set according to blanket type (div power to primary)",
                 )
                 po.ovarrf(
                     self.outfile,
