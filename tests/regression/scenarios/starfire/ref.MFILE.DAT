@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.3.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "29/04/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "11:01"
- User____________________________________________________________________ (username)____________________     "jon"     
+ Date_of_run_____________________________________________________________ (date)________________________     "27/05/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "16:29"
+ User____________________________________________________________________ (username)____________________     "ym1906"  
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "starfire                                                                                           
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1403-gecefea14"                                                                               
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1456-convert-pfcoil-f90-to-python"                                                                 
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Convert\ superconpf()\ to\ Python"                                                                 
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-jon/pytest-77/popen-gw1/test_scenario_starfire_0/IN.DAT                                                                                                                                  "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1747-gc999c585"                                                                               
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1499-update-cs-coil-geometry-model-python"                                                         
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "updated\ ref\ files\ for\ cs_fatigue\ regression\ test"                                            
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-ym1906/pytest-11/test_scenario_starfire_0/IN.DAT                                                                                                                                         "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -337,17 +337,18 @@
  Synchrotron_wall_reflectivity_factor____________________________________ (ssync)_______________________      6.0000E-01    
  Normalised_minor_radius_defining_'core'_________________________________ (coreradius)__________________      7.5000E-01    
  Fraction_of_core_radiation_subtracted_from_P_L__________________________ (coreradiationfraction)_______      6.0000E-01    
- Total_core_radiation_power_(MW)_________________________________________ (pcoreradmw)__________________      3.6259E+01 OP 
- Edge_radiation_power_(MW)_______________________________________________ (pedgeradmw)__________________      1.6600E+01 OP 
- Total_radiation_power_(MW)______________________________________________ (pradmw)______________________      5.2860E+01 OP 
- Core_radiation_fraction_=_total_radiation_in_core_/_total_power_deposite (rad_fraction_core)___________      6.9598E-02 OP 
- SoL_radiation_fraction_=_total_radiation_in_SoL_/_total_power_accross_se (rad_fraction_sol)____________      8.0000E-01 IP 
- Radiation_fraction_=_total_radiation_/_total_power_deposited_in_plasma__ (rad_fraction)________________      8.1392E-01 OP 
+ Radiation_power_from_inner_zone_(MW)____________________________________ (pinnerzoneradmw)_____________      3.6259E+01 OP 
+ Radiation_power_from_outer_zone_(MW)____________________________________ (pouterzoneradmw)_____________      1.6600E+01 OP 
+ Total_radiation_power_from_inside_LCFS_(MW)_____________________________ (pradmw)______________________      5.2860E+01 OP 
+ LCFS_radiation_fraction_=_total_radiation_in_LCFS_/_total_power_deposite (rad_fraction_LCFS)___________      6.9598E-02 OP 
  Nominal_mean_radiation_load_on_inside_surface_of_reactor_(MW/m2)________ (photon_wall)_________________      7.0514E-02 OP 
  Peaking_factor_for_radiation_wall_load__________________________________ (peakfactrad)_________________      3.3300E+00 IP 
  Maximum_permitted_radiation_wall_load_(MW/m^2)__________________________ (maxradwallload)______________      1.0000E+00 IP 
  Peak_radiation_wall_load_(MW/m^2)_______________________________________ (peakradwallload)_____________      2.3481E-01 OP 
  Nominal_mean_neutron_load_on_inside_surface_of_reactor_(MW/m2)__________ (wallmw)______________________      3.7430E+00 OP 
+ Radiation_power_from_SoL_(MW)___________________________________________ (pradsolmw)___________________      5.6532E+02 OP 
+ SoL_radiation_fraction_=_total_radiation_in_SoL_/_total_power_accross_se (rad_fraction_sol)____________      8.0000E-01 IP 
+ Radiation_fraction_total_=_SoL_+_LCFS_radiation_/_total_power_deposited_ (rad_fraction_total)__________      8.1392E-01 OP 
  Power_incident_on_the_divertor_targets_(MW)_____________________________ (ptarmw)______________________      1.4133E+02 OP 
  Fraction_of_power_to_the_lower_divertor_________________________________ (ftar)________________________      1.0000E+00 IP 
  Outboard_side_heat_flux_decay_length_(m)________________________________ (lambdaio)____________________      1.5700E-03 OP 
@@ -701,12 +702,18 @@
  Helium_coolant_temperature_(K)__________________________________________ (tfv.tftmp)___________________      4.7500E+00    
  CS_temperature_margin_(K)_______________________________________________ (pfv.tmargoh)_________________      4.3069E+00 OP 
  Minimum_permitted_temperature_margin_(K)________________________________ (tfv.tmargmin_cs)_____________      1.5000E+00    
- residual_hoop_stress_in_CS_Steel_(Pa)___________________________________ (csfv.residual_sig_hoop)______      2.4000E+08    
- Initial_vertical_crack_size_(m)_________________________________________ (csfv.t_crack_vertical)_______      2.0000E-03    
- Initial_radial_crack_size_(m)___________________________________________ (csfv.t_crack_radial)_________      6.0000E-03    
- CS_structural_vertical_thickness_(m)____________________________________ (csfv.t_structural_vertical)__      2.2000E-02    
- CS_structural_radial_thickness_(m)______________________________________ (csfv.t_structural_radial)____      7.0000E-02    
- Allowable_number_of_cycles_till_CS_fpfv.racture_________________________ (csfv.n_cycle)________________             NaN OP 
+ Residual_hoop_stress_in_CS_Steel_(Pa)___________________________________ (csfv.residual_sig_hoop)______      2.4000E+08    
+ Minimum_burn_time_(s)___________________________________________________ (ctv.tbrnmn___________________      7.2000E+03    
+ Initial_vertical_crack_size_(m)_________________________________________ (csfv.t_crack_vertical)_______      8.9000E-04    
+ Initial_radial_crack_size_(m)___________________________________________ (csfv.t_crack_radial)_________      2.6700E-03    
+ CS_turn_area_(m)________________________________________________________ (pfv.a_oh_turn)_______________      3.1758E-03    
+ CS_turn_length_(m)______________________________________________________ (pfv.l_cond_cst)______________      9.7608E-02    
+ CS_r_in_(m)_____________________________________________________________ (r_in_cst)____________________      6.4053E-03    
+ CS_turn_width_(m)_______________________________________________________ (pfv.d_cond_cst)______________      3.2536E-02    
+ CS_structural_vertical_thickness_(m)____________________________________ (csfv.t_structural_vertical)__      9.8627E-03    
+ CS_structural_radial_thickness_(m)______________________________________ (csfv.t_structural_radial)____      9.8627E-03    
+ Allowable_number_of_cycles_till_CS_fracture_____________________________ (csfv.n_cycle)________________      6.2251E+05 OP 
+ Minimum_number_of_cycles_required_till_CS_fracture______________________ (csfv.n_cycle_min)____________      2.0000E+04 OP 
  PF_coil_superconductor_material_________________________________________ (pfv.isumatpf)________________              3    
  Copper_fraction_in_conductor____________________________________________ (pfv.fcupfsu)_________________      6.9000E-01    
  Maximum_permissible_tensile_stress_(MPa)________________________________ (pfv.sigpfcalw)_______________      5.0000E+02    

@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1403-gecefea14 code contains untracked changes
-    Branch : 1456-convert-pfcoil-f90-to-python
-   Git log : Convert\ superconpf()\ to\ Python
- Date/time : 29 Apr 2022 10:59:49 +01:00(hh:mm) UTC
-      User : jon
-  Computer : jon-Precision-3560
- Directory : /home/jon/code/process
-     Input : /tmp/pytest-of-jon/pytest-77/popen-gw7/test_scenario_FNSF_0/IN.DAT
+   Tag No. : v2.1-1747-gc999c585
+    Branch : 1499-update-cs-coil-geometry-model-python
+   Git log : updated\ ref\ files\ for\ cs_fatigue\ regression\ test
+ Date/time : 27 May 2022 16:26:01 +01:00(hh:mm) UTC
+      User : ym1906
+  Computer : M0542
+ Directory : /tmp/pytest-of-ym1906/pytest-11/test_solver0
+     Input : /tmp/pytest-of-ym1906/pytest-11/test_scenario_FNSF_0/IN.DAT
  Run title : FNSF (Menard et al. 2016)
   Run type : Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
  
@@ -282,18 +282,19 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Synchrotron wall reflectivity factor                                     (ssync)                       0.700     
  Normalised minor radius defining 'core'                                  (coreradius)              7.500E-01     
  Fraction of core radiation subtracted from P_L                           (coreradiationfraction)   6.000E-01     
- Total core radiation power (MW)                                          (pcoreradmw)              3.635E+01  OP 
- Edge radiation power (MW)                                                (pedgeradmw)              5.741E+01  OP 
- Total radiation power (MW)                                               (pradmw)                  9.377E+01  OP 
- Core radiation fraction = total radiation in core / total power deposite (rad_fraction_core)       8.459E-01  OP 
- SoL radiation fraction = total radiation in SoL / total power accross se (rad_fraction_sol)        8.000E-01  IP 
- Radiation fraction = total radiation / total power deposited in plasma   (rad_fraction)            9.692E-01  OP 
+ Radiation power from inner zone (MW)                                     (pinnerzoneradmw)         3.635E+01  OP 
+ Radiation power from outer zone (MW)                                     (pouterzoneradmw)         5.741E+01  OP 
+ Total radiation power from inside LCFS (MW)                              (pradmw)                  9.377E+01  OP 
+ LCFS radiation fraction = total radiation in LCFS / total power deposite (rad_fraction_LCFS)       8.459E-01  OP 
  Nominal mean radiation load on inside surface of reactor (MW/m2)         (photon_wall)             7.369E-01  OP 
  Peaking factor for radiation wall load                                   (peakfactrad)             3.330E+00  IP 
  Maximum permitted radiation wall load (MW/m^2)                           (maxradwallload)          1.000E+00  IP 
  Peak radiation wall load (MW/m^2)                                        (peakradwallload)         2.454E+00  OP 
  Nominal mean neutron load on inside surface of reactor (MW/m2)           (wallmw)                  1.018E+00  OP 
  
+ Radiation power from SoL (MW)                                            (pradsolmw)               1.367E+01  OP 
+ SoL radiation fraction = total radiation in SoL / total power accross se (rad_fraction_sol)        8.000E-01  IP 
+ Radiation fraction total = SoL + LCFS radiation / total power deposited  (rad_fraction_total)      9.692E-01  OP 
  Power incident on the divertor targets (MW)                              (ptarmw)                  3.417E+00  OP 
  Fraction of power to the lower divertor                                  (ftar)                    1.000E+00  IP 
  Outboard side heat flux decay length (m)                                 (lambdaio)                1.570E-03  OP 
@@ -1324,7 +1325,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Only energy deposited in the plasma is included here.
  Total power loss is scaling power plus core radiation only (iradloss = 1)
  Transport power from scaling law (MW)                                    (pscalingmw)                 74.496  OP 
- Radiation power from inside "coreradius" (MW)                            (pcoreradmw.)                36.355  OP 
+ Radiation power from inside "coreradius" (MW)                            (pinnerzoneradmw.)           36.355  OP 
  Total (MW)                                                                                           110.851  OP 
  
  Alpha power deposited in plasma (MW)                                     (falpha*palpmw)              30.752  OP 

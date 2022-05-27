@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1403-gecefea14 code contains untracked changes
-    Branch : 1456-convert-pfcoil-f90-to-python
-   Git log : Convert\ superconpf()\ to\ Python
- Date/time : 29 Apr 2022 10:59:49 +01:00(hh:mm) UTC
-      User : jon
-  Computer : jon-Precision-3560
- Directory : /home/jon/code/process
-     Input : /tmp/pytest-of-jon/pytest-77/popen-gw1/test_scenario_baseline_jan_2010/IN.DAT
+   Tag No. : v2.1-1747-gc999c585
+    Branch : 1499-update-cs-coil-geometry-model-python
+   Git log : updated\ ref\ files\ for\ cs_fatigue\ regression\ test
+ Date/time : 27 May 2022 16:23:32 +01:00(hh:mm) UTC
+      User : ym1906
+  Computer : M0542
+ Directory : /tmp/pytest-of-ym1906/pytest-11/test_solver0
+     Input : /tmp/pytest-of-ym1906/pytest-11/test_scenario_baseline_jan_2010/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -299,18 +299,19 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Synchrotron wall reflectivity factor                                     (ssync)                       0.600     
  Normalised minor radius defining 'core'                                  (coreradius)              7.500E-01     
  Fraction of core radiation subtracted from P_L                           (coreradiationfraction)   6.000E-01     
- Total core radiation power (MW)                                          (pcoreradmw)              1.214E+02  OP 
- Edge radiation power (MW)                                                (pedgeradmw)              1.536E+02  OP 
- Total radiation power (MW)                                               (pradmw)                  2.750E+02  OP 
- Core radiation fraction = total radiation in core / total power deposite (rad_fraction_core)       6.351E-01  OP 
- SoL radiation fraction = total radiation in SoL / total power accross se (rad_fraction_sol)        8.000E-01  IP 
- Radiation fraction = total radiation / total power deposited in plasma   (rad_fraction)            9.270E-01  OP 
+ Radiation power from inner zone (MW)                                     (pinnerzoneradmw)         1.214E+02  OP 
+ Radiation power from outer zone (MW)                                     (pouterzoneradmw)         1.536E+02  OP 
+ Total radiation power from inside LCFS (MW)                              (pradmw)                  2.750E+02  OP 
+ LCFS radiation fraction = total radiation in LCFS / total power deposite (rad_fraction_LCFS)       6.351E-01  OP 
  Nominal mean radiation load on inside surface of reactor (MW/m2)         (photon_wall)             1.629E-01  OP 
  Peaking factor for radiation wall load                                   (peakfactrad)             2.000E+00  IP 
  Maximum permitted radiation wall load (MW/m^2)                           (maxradwallload)          5.000E-01  IP 
  Peak radiation wall load (MW/m^2)                                        (peakradwallload)         3.259E-01  OP 
  Nominal mean neutron load on inside surface of reactor (MW/m2)           (wallmw)                  9.492E-01  OP 
  
+ Radiation power from SoL (MW)                                            (pradsolmw)               1.264E+02  OP 
+ SoL radiation fraction = total radiation in SoL / total power accross se (rad_fraction_sol)        8.000E-01  IP 
+ Radiation fraction total = SoL + LCFS radiation / total power deposited  (rad_fraction_total)      9.270E-01  OP 
  Power incident on the divertor targets (MW)                              (ptarmw)                  3.160E+01  OP 
  Fraction of power to the lower divertor                                  (ftar)                    1.000E+00  IP 
  Outboard side heat flux decay length (m)                                 (lambdaio)                1.570E-03  OP 
@@ -826,12 +827,18 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Helium coolant temperature (K)                                           (tfv.tftmp)               4.750E+00     
  CS temperature margin (K)                                                (pfv.tmargoh)             3.336E+00  OP 
  Minimum permitted temperature margin (K)                                 (tfv.tmargmin_cs)         1.700E+00     
- residual hoop stress in CS Steel (Pa)                                    (csfv.residual_sig_hoop)  2.400E+08     
- Initial vertical crack size (m)                                          (csfv.t_crack_vertical)   2.000E-03     
- Initial radial crack size (m)                                            (csfv.t_crack_radial)     6.000E-03     
- CS structural vertical thickness (m)                                     (csfv.t_structural_vertic 2.200E-02     
- CS structural radial thickness (m)                                       (csfv.t_structural_radial 7.000E-02     
- Allowable number of cycles till CS fpfv.racture                          (csfv.n_cycle)            3.275E+04  OP 
+ Residual hoop stress in CS Steel (Pa)                                    (csfv.residual_sig_hoop)  2.400E+08     
+ Minimum burn time (s)                                                    (ctv.tbrnmn               7.200E+03     
+ Initial vertical crack size (m)                                          (csfv.t_crack_vertical)   8.900E-04     
+ Initial radial crack size (m)                                            (csfv.t_crack_radial)     2.670E-03     
+ CS turn area (m)                                                         (pfv.a_oh_turn)           2.697E-03     
+ CS turn length (m)                                                       (pfv.l_cond_cst)          8.995E-02     
+ CS r_in (m)                                                              (r_in_cst)                9.039E-03     
+ CS turn width (m)                                                        (pfv.d_cond_cst)          2.998E-02     
+ CS structural vertical thickness (m)                                     (csfv.t_structural_vertic 5.952E-03     
+ CS structural radial thickness (m)                                       (csfv.t_structural_radial 5.952E-03     
+ Allowable number of cycles till CS fracture                              (csfv.n_cycle)            1.827E+03  OP 
+ Minimum number of cycles required till CS fracture                       (csfv.n_cycle_min)        2.000E+04  OP 
  
  Superconducting PF coils
  PF coil superconductor material                                          (pfv.isumatpf)                    3     
@@ -1330,7 +1337,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Only energy deposited in the plasma is included here.
  Total power loss is scaling power plus core radiation only (iradloss = 1)
  Transport power from scaling law (MW)                                    (pscalingmw)                311.630  OP 
- Radiation power from inside "coreradius" (MW)                            (pcoreradmw.)               121.426  OP 
+ Radiation power from inside "coreradius" (MW)                            (pinnerzoneradmw.)          121.426  OP 
  Total (MW)                                                                                           433.055  OP 
  
  Alpha power deposited in plasma (MW)                                     (falpha*palpmw)             380.294  OP 
