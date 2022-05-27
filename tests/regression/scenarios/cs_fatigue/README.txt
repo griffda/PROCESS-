@@ -1,13 +1,15 @@
 #-------------------------------------#
 
-Test Case: cs_hts_REBCO
+Test Case: cs_fatigue
 Author: G. Turkington
 
-Date Created: 04/07/22
+Date Created: 27/05/22
 PROCESS version created:
 
 Summary
 
-    Test case is for the REBCO quench protection model in the CS coil.
+    Test case is for the CS coil fatigue model.
+    The model works in conjunction with the blanket fatigue model.
+    n_cycle > n_cycle_min
 
 #-------------------------------------#
