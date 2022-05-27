@@ -1,3 +1,4 @@
+from numpy import power
 from process.fortran import constants
 from process.fortran import physics_module as ph
 from process.fortran import power_module as pw
@@ -19,7 +20,7 @@ class Stellarator:
     NOTE: currently the IFE module is only partially wrapped to unblock the wrapping of availability
     """
 
-    def __init__(self, availability, vacuum, buildings, costs) -> None:
+    def __init__(self, availability, vacuum, buildings, costs, power) -> None:
         """Initialises the IFE module's variables
 
         :param availability: a pointer to the availability model, allowing use of availability's variables/methods
@@ -37,6 +38,7 @@ class Stellarator:
         self.buildings = buildings
         self.vacuum = vacuum
         self.costs = costs
+        self.power = power
 
     def run(self, output: bool):
         """Routine to call the physics and engineering modules
@@ -74,11 +76,11 @@ class Stellarator:
             st.ststrc(self.outfile, 1)
             st.stfwbs(self.outfile, 1)
 
-            pw.tfpwr(self.outfile, 1)
+            self.power.tfpwr(output=True)
             self.buildings.run(output=True)
             self.vacuum.run(output=True)
-            pw.acpow(self.outfile, 1)
-            pw.power2(self.outfile, 1)
+            self.power.acpow(output=True)
+            self.power.power2(output=True)
 
             return
 
@@ -91,12 +93,12 @@ class Stellarator:
         st.stfwbs(self.outfile, 0)
         st.stdiv(self.outfile, 0)
 
-        pw.tfpwr(self.outfile, 0)
-        pw.power1()
+        self.power.tfpwr(output=False)
+        self.power.power1()
         self.buildings.run(output=False)
         self.vacuum.run(output=False)
-        pw.acpow(self.outfile, 0)
-        pw.power2(self.outfile, 0)
+        self.power.acpow(output=False)
+        self.power.power2(output=False)
         # TODO: should availability.run be called
         # rather than availability.avail?
         self.availability.avail(output=False)

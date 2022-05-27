@@ -148,13 +148,13 @@ class Caller:
             self.models.tfcoil.cntrpst()
 
         # Toroidal field coil power model
-        ft.power_module.tfpwr(ft.constants.nout, 0)
+        self.models.power.tfpwr(output=False)
 
         # Poloidal field coil power model
-        ft.power_module.pfpwr(ft.constants.nout, 0)
+        self.models.power.pfpwr(output=False)
 
         # Plant heat transport part 1
-        ft.power_module.power1()
+        self.models.power.power1()
 
         # Vacuum model
         self.models.vacuum.run(output=False)
@@ -163,12 +163,12 @@ class Caller:
         self.models.buildings.run(output=False)
 
         # Plant AC power requirements
-        ft.power_module.acpow(ft.constants.nout, 0)
+        self.models.power.acpow(output=False)
 
         # Plant heat transport pt 2 & 3
-        ft.power_module.power2(ft.constants.nout, 0)
+        self.models.power.power2(output=False)
 
-        ft.power_module.power3(ft.constants.nout, 0)
+        self.models.power.power3(output=False)
 
         # Availability model
         self.models.availability.run(output=False)

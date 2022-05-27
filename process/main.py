@@ -61,6 +61,7 @@ from process.divertor import Divertor
 from process.availability import Availability
 from process.ife import IFE
 from process.caller import Caller
+from process.power import Power
 
 
 from pathlib import Path
@@ -468,6 +469,7 @@ class Models:
         """
         self.costs_step = CostsStep()
         self.pfcoil = PFCoil()
+        self.power = Power()
         self.build = Build()
         self.tfcoil = TFcoil(build=self.build)
         self.divertor = Divertor()
@@ -484,6 +486,7 @@ class Models:
             buildings=self.buildings,
             vacuum=self.vacuum,
             costs=self.costs,
+            power=self.power,
         )
 
 
