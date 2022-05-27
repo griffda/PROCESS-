@@ -20,6 +20,8 @@ import logging
 import argparse
 import json
 import pickle
+
+import numpy
 import create_dicts_config
 from pathlib import Path
 
@@ -305,7 +307,7 @@ class DefaultValues(ProjectDictionary):
         working_dict = self.dict[self.name]
 
         for key, value in working_dict.items():
-            if value:
+            if value is not None and isinstance(value, str):
                 # Guard against None
                 # Is it a list?
                 if type(value) is list or value[0:2] == "(/":
@@ -315,6 +317,8 @@ class DefaultValues(ProjectDictionary):
                     value = self.convert_value_to_float(value)
 
                 working_dict[key] = value
+            elif value is not None and isinstance(value, numpy.ndarray):
+                working_dict[key] = value.tolist()
 
     def convert_value_to_float(self, value):
         # Convert a value to float: 1D3 to 1000

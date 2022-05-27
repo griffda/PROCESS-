@@ -2478,8 +2478,6 @@ class Costs:
 
         if pulse_variables.lpulse == 1:
 
-            print(pulse_variables.istore)
-
             if pulse_variables.istore == 1:
 
                 #  Option 1 from ELECTROWATT report
@@ -2553,7 +2551,7 @@ class Costs:
 
             else:
                 error_handling.idiags[0] = pulse_variables.istore
-                print(pulse_variables.istore == 1)
+
                 error_handling.report_error(125)
 
         if pulse_variables.istore < 3:

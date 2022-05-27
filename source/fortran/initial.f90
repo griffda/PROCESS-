@@ -264,7 +264,7 @@ subroutine check
     use physics_variables, only: aspect, eped_sf, fdeut, fgwped, fhe3, &
         fgwsep, ftrit, ibss, i_single_null, icurr, ieped, idivrt, ishape, &
         iradloss, isc, ipedestal, ilhthresh, itart, nesep, rhopedn, rhopedt, &
-        rnbeam, ifispact, neped, te, tauee_in, tesep, teped, itartpf
+        rnbeam, ifispact, neped, te, tauee_in, tesep, teped, itartpf, ftar
     use plasmod_variables, only: plasmod_contrpovr, plasmod_i_equiltype, &
         plasmod_i_modeltype, plasmod_contrpovs
     use pulse_variables, only: lpulse
@@ -725,8 +725,10 @@ subroutine check
         ! Check if the boostrap current selection is addapted to ST
         if (ibss  == 1) call report_error(38)
 
-        ! Check if a single null divertor is used
-        if (i_single_null == 1) call report_error(39)
+        ! Check if a single null divertor is used in double null machine
+        if (i_single_null == 0 .and. (ftar == 1.0 .or. ftar == 0.0)) then
+            call report_error(39)
+        end if
 
         ! Set the TF coil shape to picture frame (if default value)
         if ( i_tf_shape == 0 ) i_tf_shape = 2

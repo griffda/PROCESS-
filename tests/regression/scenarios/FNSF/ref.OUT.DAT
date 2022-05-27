@@ -13,15 +13,15 @@
  **************************************************************************************************************
  
    Program :
-   Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1403-gecefea14 code contains untracked changes
-    Branch : 1456-convert-pfcoil-f90-to-python
-   Git log : Convert\ superconpf()\ to\ Python
- Date/time : 29 Apr 2022 10:59:49 +01:00(hh:mm) UTC
-      User : jon
-  Computer : jon-Precision-3560
- Directory : /home/jon/code/process
-     Input : /tmp/pytest-of-jon/pytest-77/popen-gw7/test_scenario_FNSF_0/IN.DAT
+   Version : 2.4.0   Release Date :: 2022-05-18
+   Tag No. : v2.1-1732-g6406e21f code contains untracked changes
+    Branch : 1663-pfcoil-variables-in-mfile-start-pfv
+   Git log : Merge\ branch\ |1651-convert-costs_2015-f90-to-pytho
+ Date/time : 19 May 2022 14:48:13 +00:00(hh:mm) UTC
+      User : root
+  Computer : 3ad262c2e59e
+ Directory : /root/process
+     Input : /tmp/pytest-of-root/pytest-0/popen-gw0/test_scenario_FNSF_0/IN.DAT
  Run title : FNSF (Menard et al. 2016)
   Run type : Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
  
@@ -282,22 +282,23 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Synchrotron wall reflectivity factor                                     (ssync)                       0.700     
  Normalised minor radius defining 'core'                                  (coreradius)              7.500E-01     
  Fraction of core radiation subtracted from P_L                           (coreradiationfraction)   6.000E-01     
- Total core radiation power (MW)                                          (pcoreradmw)              3.635E+01  OP 
- Edge radiation power (MW)                                                (pedgeradmw)              5.741E+01  OP 
- Total radiation power (MW)                                               (pradmw)                  9.377E+01  OP 
- Core radiation fraction = total radiation in core / total power deposite (rad_fraction_core)       8.459E-01  OP 
- SoL radiation fraction = total radiation in SoL / total power accross se (rad_fraction_sol)        8.000E-01  IP 
- Radiation fraction = total radiation / total power deposited in plasma   (rad_fraction)            9.692E-01  OP 
+ Radiation power from inner zone (MW)                                     (pinnerzoneradmw)         3.635E+01  OP 
+ Radiation power from outer zone (MW)                                     (pouterzoneradmw)         5.741E+01  OP 
+ Total radiation power from inside LCFS (MW)                              (pradmw)                  9.377E+01  OP 
+ LCFS radiation fraction = total radiation in LCFS / total power deposite (rad_fraction_LCFS)       8.459E-01  OP 
  Nominal mean radiation load on inside surface of reactor (MW/m2)         (photon_wall)             7.369E-01  OP 
  Peaking factor for radiation wall load                                   (peakfactrad)             3.330E+00  IP 
  Maximum permitted radiation wall load (MW/m^2)                           (maxradwallload)          1.000E+00  IP 
  Peak radiation wall load (MW/m^2)                                        (peakradwallload)         2.454E+00  OP 
  Nominal mean neutron load on inside surface of reactor (MW/m2)           (wallmw)                  1.018E+00  OP 
  
+ Radiation power from SoL (MW)                                            (pradsolmw)               1.367E+01  OP 
+ SoL radiation fraction = total radiation in SoL / total power accross se (rad_fraction_sol)        8.000E-01  IP 
+ Radiation fraction total = SoL + LCFS radiation / total power deposited  (rad_fraction_total)      9.692E-01  OP 
  Power incident on the divertor targets (MW)                              (ptarmw)                  3.417E+00  OP 
  Fraction of power to the lower divertor                                  (ftar)                    1.000E+00  IP 
  Outboard side heat flux decay length (m)                                 (lambdaio)                1.570E-03  OP 
- Midplane seperation of the two magnetic closed flux surfaces (m)         (drsep)                   -Infinity  OP 
+ Midplane seperation of the two magnetic closed flux surfaces (m)         (drsep)                  -1.500E-02  OP 
  Fraction of power on the inner targets                                   (fio)                     4.100E-01  OP 
  Fraction of power incident on the lower inner target                     (fLI)                     4.100E-01  OP 
  Fraction of power incident on the lower outer target                     (fLO)                     5.900E-01  OP 
@@ -757,11 +758,11 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  Resistive Power :
  
- PF coil resistive power (W)                                              (pfv.powpfres)            3.443E+08  OP 
+ PF coil resistive power (W)                                              (powpfres)                3.443E+08  OP 
  
  Geometry of PF coils, central solenoid and plasma:
  
- coil			R(m)			Z(m)			dR(m)			dZ(m)			pfv.turns		steel thickness(m)
+ coil			R(m)			Z(m)			dR(m)			dZ(m)			turns		steel thickness(m)
  
  PF 0			9.08e-01	3.62e+00	4.79e-01	4.79e-01	1.64e+02	0.00e+00
  PF 1			9.08e-01	-3.62e+00	4.79e-01	4.79e-01	1.64e+02	0.00e+00
@@ -784,7 +785,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  PF coil current scaling information :
  
  Sum of squares of residuals                                              (pf.ssq0)                 0.000E+00  OP 
- Smoothing parameter                                                      (pfv.alfapf)              5.000E-10     
+ Smoothing parameter                                                      (alfapf)                  5.000E-10     
  
  ****************************************** Volt Second Consumption *******************************************
  
@@ -795,7 +796,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  				-------				-------			-------
  Total:			-6.99				0.00			-6.99
  
- Total volt-second consumption by coils (Wb)                              (pfv.vstot)              -7.000E+00  OP 
+ Total volt-second consumption by coils (Wb)                              (vstot)                  -7.000E+00  OP 
  
  Summary of volt-second consumption by circuit (Wb):
  
@@ -833,12 +834,12 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  2			0.000e+00	0.000e+00	-4.200e+04	-4.200e+04	-4.200e+04	0.0e0
  3			0.000e+00	0.000e+00	-4.200e+04	-4.200e+04	-4.200e+04	0.0e0
  
- Ratio of central solenoid current at beginning of Pulse / end of flat-to (pfv.fcohbop)             9.000E-01     
- Ratio of central solenoid current at beginning of Flat-top / end of flat (pfv.fcohbof)             1.000E+00  OP 
+ Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.000E-01     
+ Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                 1.000E+00  OP 
  
  *************************** PF Circuit Waveform Data ***************************
  
- Number of PF circuits including CS and plasma                            (pfv.ncirt)                       5     
+ Number of PF circuits including CS and plasma                            (ncirt)                           5     
  PF Circuit 0 Time point 0 (A)                                            (pfc0t0)                  0.000E+00     
  PF Circuit 0 Time point 1 (A)                                            (pfc0t1)                  0.000E+00     
  PF Circuit 0 Time point 2 (A)                                            (pfc0t2)                  6.888E+06     
@@ -1324,7 +1325,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Only energy deposited in the plasma is included here.
  Total power loss is scaling power plus core radiation only (iradloss = 1)
  Transport power from scaling law (MW)                                    (pscalingmw)                 74.496  OP 
- Radiation power from inside "coreradius" (MW)                            (pcoreradmw.)                36.355  OP 
+ Radiation power from inside "coreradius" (MW)                            (pinnerzoneradmw.)           36.355  OP 
  Total (MW)                                                                                           110.851  OP 
  
  Alpha power deposited in plasma (MW)                                     (falpha*palpmw)              30.752  OP 

@@ -60,7 +60,6 @@ contains
       use fispact_variables, only: init_fispact_variables
       use rebco_variables, only: init_rebco_variables
       use reinke_variables, only: init_reinke_variables
-      use costs_2015_module, only: init_costs_2015
       use divertor_ode_var, only: init_divertor_ode_var
       use green_func_ext, only: init_green_func_ext
       use kit_hcll_module, only: init_kit_hcll_module
@@ -116,7 +115,6 @@ contains
       call init_fispact_variables
       call init_rebco_variables
       call init_reinke_variables
-      call init_costs_2015
       call init_divertor_ode_var
       call init_green_func_ext
       call init_kit_hcll_module
