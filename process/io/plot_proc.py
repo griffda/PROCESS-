@@ -2234,8 +2234,8 @@ def plot_power_info(axis, mfile_data, scan):
         ped_height,
         ped_pos,
         ("ralpne", "Helium fraction", ""),
-        ("pcoreradmw", "Core radiation", "MW"),
-        ("pradmw", "Total radiation", "MW"),
+        ("pinnerzoneradmw", "inner zone radiation", "MW"),
+        ("pradmw", "Total radiation in LCFS", "MW"),
         ("pnucblkt", "Nuclear heating in blanket", "MW"),
         ("pnucshld", "Nuclear heating in shield", "MW"),
         (crypmw, "TF cryogenic power", "MW"),
@@ -2320,7 +2320,7 @@ def plot_current_drive_info(axis, mfile_data, scan):
 
     powerht = mfile_data.data["powerht"].get_scan(scan)
     psync = mfile_data.data["psyncpv*vol"].get_scan(scan)
-    pbrem = mfile_data.data["pcoreradmw"].get_scan(scan)
+    pbrem = mfile_data.data["pinnerzoneradmw"].get_scan(scan)
     hfact = mfile_data.data["hfact"].get_scan(scan)
     hstar = hfact * (powerht / (powerht + psync + pbrem)) ** 0.31
 

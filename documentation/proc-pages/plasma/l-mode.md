@@ -1,6 +1,6 @@
 # L-mode
 
-Below is a list of constraints, iteration variables and input parameters that are relevant for a power plant design and finding feasible solutions with PROCESS when operating in L-mode.
+Below is a list of constraints, iteration variables and input parameters that are relevant for a power plant design and finding feasible solutions with PROCESS when operating in L-mode.  
 
 ### Constraint Equations
 

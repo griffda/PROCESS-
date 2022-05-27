@@ -221,21 +221,6 @@ def test_run_hare_tests(single_run, monkeypatch):
     single_run.run_hare_tests()
 
 
-def test_kallenbach_tests(single_run, monkeypatch):
-    """Check that the Kallenbach tests can be run if required.
-
-    :param single_run: single_run fixture
-    :type single_run: SingleRun
-    :param monkeypatch: monkeypatch fixture
-    :type monkeypatch: object
-    """
-    # TODO Currently only checking for no exceptions before Fortran mock called
-    monkeypatch.setattr(fortran.div_kal_vars, "kallenbach_tests", 1)
-    # Expect a SystemExit, as the code is exited if the Kallenbach tests are run
-    with pytest.raises(SystemExit):
-        single_run.kallenbach_tests()
-
-
 def test_kallenbach_scan(single_run, monkeypatch):
     """Check the Kallenbach scan can be run.
 

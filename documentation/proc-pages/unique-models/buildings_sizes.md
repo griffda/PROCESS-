@@ -1,31 +1,31 @@
 # Power Plant Buildings Sizes
 
-__Note:__ the following documentation applies only to the STEP building estimates, `subroutine bldgs_sizes`, and does not attempt to explain any prior work.
+__Note:__ the following documentation applies only to the STEP building estimates, `subroutine bldgs_sizes`, and does not attempt to explain any prior work. 
 
 The routine documented here estimates the sizes (footprints and volumes) of buildings within a fusion power plant. Some estimates are scaled with parameters of the fusion plant, some are based on engineering/specialist assumptions, some are derived from footprints/volumes based on assessment of other power plants and/or similar facilities.
 
-## Reactor building
+## Reactor building    
 
-Calculation of the lateral size of the reactor building is driven by the radial width of the largest component, which is assumed to be one of a) PF coil maximum radius, b) cryostat radius, c) TF coil outer radius.
-Space is included for biological shielding around the reactor.
+Calculation of the lateral size of the reactor building is driven by the radial width of the largest component, which is assumed to be one of a) PF coil maximum radius, b) cryostat radius, c) TF coil outer radius. 
+Space is included for biological shielding around the reactor. 
 
 The 'key-width' used in estimating the reactor building size is defined to include the radial width of the largest component twice (to allow space for manoeuvring components during construction), a set clearance distance around the reactor, a transportation clearance between components, and a clearance to the building wall for crane operation. This key-width is then used to estimate the length and width of the reactor building, allowing for the necessity of laying down the largest component during construction.
 
-The estimate of the vertical clearance required around the reactor include the set reactor clearance distance, a transportation clearance between components, clearance from the TF coil to the cryostat, clearance beneath the TF coil, a clearance to the ceiling for crane operation, and a crane arm height. The height of the reactor building is estimated on the assumption that the TF coil is the tallest single component and that twice this height is required to allow for construction/maintenance access, and this is added to the required vertical clearance.
+The estimate of the vertical clearance required around the reactor include the set reactor clearance distance, a transportation clearance between components, clearance from the TF coil to the cryostat, clearance beneath the TF coil, a clearance to the ceiling for crane operation, and a crane arm height. The height of the reactor building is estimated on the assumption that the TF coil is the tallest single component and that twice this height is required to allow for construction/maintenance access, and this is added to the required vertical clearance. 
 
-The external footprint of the reactor building includes a set reactor wall thickness, as is appropriate for nuclear buildings.
-
+The external footprint of the reactor building includes a set reactor wall thickness, as is appropriate for nuclear buildings. 
+    
 ### Heating and Current Drive facility
 
-In the case of an NBI current drive, this facility will be housed within the main reactor building and the length and width of the reactor building is extended accordingly. In the case of EC or EBW heating a separate building is sized.
+In the case of an NBI current drive, this facility will be housed within the main reactor building and the length and width of the reactor building is extended accordingly. In the case of EC or EBW heating a separate building is sized. 
 
 ### Fuel Cycle facilities
 
-This facility will be housed within the main reactor building and the length and width of the reactor building is extended accordingly.
+This facility will be housed within the main reactor building and the length and width of the reactor building is extended accordingly. 
 
 ### Reactor maintenance basement and tunnel
 
-The architecture used in this estimation is that of a basement directly beneath the reactor, enabling the downwards extraction of hot components. The footprint estimated here is oversized to include allowance for a tunnel to the hot cell storage/maintenance building. The height of the basement also includes vertical clearances for crane operation.
+The architecture used in this estimation is that of a basement directly beneath the reactor, enabling the downwards extraction of hot components. The footprint estimated here is oversized to include allowance for a tunnel to the hot cell storage/maintenance building. The height of the basement also includes vertical clearances for crane operation. 
 
 
 ## Hot Cell Facility
@@ -34,7 +34,7 @@ This building provides hot cell facilities to maintain or dismantle highly radio
 
 - The tokomak is toroidally segmented based on number of TF coils
 - Each component will be stored with the largest dimension oriented horizontally
-- Component height is the largest dimension
+- Component height is the largest dimension 
 
 The components included within this estimation are:
 
@@ -45,7 +45,7 @@ The components included within this estimation are:
 
 The storage volume required for each component is calculated from its vertical, radial and toroidal dimensions, including allowance for a hot separation distance around each component. The number of components required is calculated from the number in the machine build, the estimated component lifetime (in full power years), and the estimated power plant lifetime. This number is multiplied by the specified quantity safety factor and a total required storage volume can therefore be estimated for each component type. The total required storage volume is a simple addition of the component volumes; the building height is based upon expert estimates, and hence a footprint is calculated (and, on the assumption of a square building, length, width and a footprint can be estimated). The external footprint of this facility includes a wall thickness appropriate for nuclear buildings.
 
-The user is asked to note that this estimation is based on many suppositions, and its applicability to any one reactor design may vary widely.
+The user is asked to note that this estimation is based on many suppositions, and its applicability to any one reactor design may vary widely. 
 
 ## Reactor Auxiliary buildings
 
@@ -54,12 +54,12 @@ This category of building includes auxiliary buildings supporting reactor proces
 - Chemistry labs, including RA, non-RA and environmental labs, and chemical treatment facilities for coolant circuits
 - Heat sink facilities, includes auxiliary heat sink at heat energy island, low temperature and emergency heat sink facilities, ultimate heat sink facility to sea/river/cooling towers, including pumping, chemical dosing and heat exchangers
 - Non-RA interfacing services such as, hydraulics, compressed air, chilled water, etc.
-
+ 
 These estimates amalgamate multiple individual buildings.
 
 ## Magnet Power facilities
 
-This category of building provides specific electrical supplies for reactor magnets; estimates are based upon dimensions of comparable equipment at the ITER site, and include steady state power trains and pulsed power for the central solenoid.
+This category of building provides specific electrical supplies for reactor magnets; estimates are based upon dimensions of comparable equipment at the ITER site, and include steady state power trains and pulsed power for the central solenoid. 
 
 
 ## Control buildings
@@ -67,9 +67,9 @@ This category of building provides specific electrical supplies for reactor magn
 This category of building includes a Main Control Room, Back-up Control Room, Signal Processing and Distribution Centres [Safety Train A, Safety Train B], HP offices & Data Logging centre, and a Data Storage centre. The estimate amalgamates multiple individual buildings.
 
 
-## Warm Shop
+## Warm Shop 
 
-This facility includes 'hands on' maintenance workshops for low RA dose equipment.
+This facility includes 'hands on' maintenance workshops for low RA dose equipment. 
 
 
 ## Maintenance buildings
@@ -77,7 +77,7 @@ This facility includes 'hands on' maintenance workshops for low RA dose equipmen
 This category of building includes:
 
 - Maintenance workshops and clean rooms for components with no radiation inventory.
-- Robot construction, testing, mock-up facilities, to allow robots to be fully assembled, commissioned and tested in mock-ups of the real environment. Building also houses offices and classrooms.
+- Robot construction, testing, mock-up facilities, to allow robots to be fully assembled, commissioned and tested in mock-ups of the real environment. Building also houses offices and classrooms. 
 - Maintenance control and inspection facilities: includes operations centre, inbound inspection and QA storage facilities.
 
 
@@ -90,7 +90,7 @@ These facilities include:
 - Site-wide auxiliary water cooling, including pumping, chemical dosing, filtration and heat exchangers.
 
 
-## Electrical facilities
+## Electrical facilities 
 
 These facilities include:
 
@@ -103,7 +103,7 @@ This estimate amalgamates multiple individual buildings.
 
 ## Turbine Hall
 
-A review of 18 existing fission power plants found that turbine hall size is largely independent of plant output power. The default footprint used here represents a weighted mean of those plants and a fusion-appropriate design of a Steam Rankine cycle turbine building.
+A review of 18 existing fission power plants found that turbine hall size is largely independent of plant output power. The default footprint used here represents a weighted mean of those plants and a fusion-appropriate design of a Steam Rankine cycle turbine building. 
 
 
 ## Waste buildings
@@ -116,21 +116,21 @@ These estimates amalgamate multiple individual buildings:
 - Tritiated Waste Store.
 
 
-## Site Services
+## Site Services    
 
 These estimates amalgamate multiple individual buildings, grouped by function:
 
 ### Air & Gas supplies
 
-Includes compressed air facility, common gas systems facility, bottled gas storage compounds; these values amalgamate multiple individual buildings.
+Includes compressed air facility, common gas systems facility, bottled gas storage compounds; these values amalgamate multiple individual buildings. 
 
 ### Water, Laundry & Drainage
 
-Includes facilities for potable water, firewater, chilled water; PPE laundry and Respiratory Protective Equipment cleaning; industrial drains & sewage process and discharge; these values amalgamate multiple individual buildings.
+Includes facilities for potable water, firewater, chilled water; PPE laundry and Respiratory Protective Equipment cleaning; industrial drains & sewage process and discharge; these values amalgamate multiple individual buildings. 
 
 ### Site Security & Safety
 
-Includes Security Control Centre and Fire and Ambulance Garages; these values amalgamate multiple individual buildings.
+Includes Security Control Centre and Fire and Ambulance Garages; these values amalgamate multiple individual buildings. 
 
 
 ## Staff Services

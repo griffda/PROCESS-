@@ -1,5 +1,5 @@
 # Installation
-Below are instructions of how to install the applications, code and dependencies such that you can begin working on Process.
+Below are instructions of how to install the applications, code and dependencies such that you can begin working on Process. 
 
 ## Supported environments
 **Please note, only Python3.8 is supported, Python3.9 and Python3.6 are not.**
@@ -15,7 +15,7 @@ Using the Windows Subsystem for Linux (on Windows) or a containerised environmen
 ## Ubuntu and Windows (using Windows Subsystem for Linux) and Installing Visual Studio Code
 *This section is for users on a Windows system, if you are a MacOS or priviledged machine user please go [here](#docker-container), or if you are a using a shared resource, please go [here](#singularity-container).*
 
-To install Windows Subsystem for Linux (WSL) follow the 'Manual Installation Steps' [here](https://docs.microsoft.com/en-us/windows/wsl/install-win10). Choose WSL 2 and Ubuntu 20 (if installing from the Microsoft store then Ubuntu 20 is installed by default).
+To install Windows Subsystem for Linux (WSL) follow the 'Manual Installation Steps' [here](https://docs.microsoft.com/en-us/windows/wsl/install-win10). Choose WSL 2 and Ubuntu 20 (if installing from the Microsoft store then Ubuntu 20 is installed by default). 
 
 
 The following command is used to install WSL:
@@ -25,8 +25,7 @@ wsl --install
 
 However, you need admin privilages to perfom this command. Please ask support to grant you these rights temporarily so you can successsfully install WSL. This can be done via a Marval ticket or email to support if you are a new starter and do not have Nucleus access yet.
 
-If the above procedure fails to work, there is a page on Nucleus giving a further detailed instructions on installing WSL on Windows which have proven to be helpful for some. They can be found [here](https://intranet.ukaea.uk/software/guides/wsl2.html).
-*Unless instructed, please stop before the 'Enable x-forwarding' stage as this has been knwon to cause issues with the speed at which the code will run- see FAQs for more.*
+If the above procedure fails to work, there is a page on Nucleus giving a further detailed instructions on installing WSL on Windows which have proven to be helpful for some. They can be found [here](https://intranet.ukaea.uk/software/guides/wsl2.html). 
 
 Next, you will need to install a source code editor so you are able to work with the Process code. Visual Studio Code, or VSCode for short, is a great choice. It is a lightweight but powerful source code editor which runs on your deskotp and is available for Windows, MacOS and Linux. It has a vast extension package allowing ease of use with a range of languages. More information on VSCode can be found [here](https://code.visualstudio.com/docs).
 
@@ -53,7 +52,7 @@ sudo apt install python3-pip
 sudo apt install lcov
 sudo apt install poppler-utils
 ```
-Next, the code will need to be downloaded so you can work with it. The Process code is stored in a GitLab repository and as such needs to be 'cloned' - i.e bought to your VSCode window from GitLab.
+Next, the code will need to be downloaded so you can work with it. The Process code is stored in a GitLab repository and as such needs to be 'cloned' - i.e bought to your VSCode window from GitLab. 
 
 To clone the PROCESS repository from Gitlab you will need to use an SSH key. A guide on how to find if you have an existing SSH key pair or to generate a new SSH key pair can be found on Gitlab [here](https://docs.gitlab.com/ee/ssh/).
 
@@ -85,7 +84,6 @@ cmake --build build
 If you plan on developing code for Process, please see the `pre-commit` documentation for installing this tool required by developers: [development/pre-commit](http://process.gitpages.ccfe.ac.uk/process/development/pre-commit/)
 
 
-
 An error may be encountered here because `ford` is installed in `.local/bin`, which is not on the `PATH` in some environments, so you will need to add `.local/bin` to the `PATH` if this error occurs. You can do this using `nano`:
 
 First use:
@@ -95,7 +93,7 @@ nano ~/.profile
  Then use the arrow keys to navigate to the bottom of the `nano` editor and type:
 ```bash
 export PATH=$PATH:/home/yourusername/.local/bin
-```
+``` 
 where you use your own username in place of `yourusername` above. Then use `Ctrl-X`, then type `Y`, then press enter. Then either close and reopen the terminal, or type:
 ```bash
 source ~/.profile
@@ -107,7 +105,7 @@ CMake needs to be at least version `3.13.0`. This is so that the command `cmake 
 ```bash
 CMake Error: The source directory "/home/process/build" does not exist.
 Specify --help for usage, or press the help button on the CMake GUI.
-```
+``` 
 subsequently making the `build` directory and running the command again results in:
 ```bash
 CMake Error: The source directory "/home/process/build" does not appear to contain CMakeLists.txt.
@@ -120,7 +118,7 @@ To rebuild, for example after making a change to the Fortran source, run `cmake 
 
 Now, skip to [testing](#testing).
 
-## Docker container
+## Docker container 
 *This section is for users of a priviledged machine of the wrong OS e.g MacOS. If you are a using a shared resource e.g. Freia, please go [here](#singularity-container).*
 
 ### **If you are using a Windows system with WSL and have followed the above steps then this next section is not necessary and you may skip to testing your installation [here](#testing).**
@@ -171,13 +169,13 @@ Now, skip to [testing](#testing).
 
 ## Singularity container
 Singularity is a container environment similar to Docker. This means a user can run PROCESS with all required dependencies installed. Singularity, however, is designed to work with user-level permissions and, as such, is supported by many shared resource administrators (unlike Docker, which poses a security risk).
-
+ 
 Singularity can convert OCI compliant containers into the Singularity Image Format (SIF) to run the Docker container above. Download, and convert the Docker container by running: `singularity pull --docker-login process.sif docker://git.ccfe.ac.uk:4567/process/process/dev:latest`. Singularity will then ask for a username and password, your CCFE GitLab short username and password.
-
+ 
 Singularity will write the container into your current directory, it can then be moved or copied like any file.
-
+ 
 Running `singularity shell process.sif` will load a Singularity shell with the dependencies for PROCESS installed. Singularity will automatically mount your home (`$HOME`) directory into the container. Therefore, if PROCESS lives in `~/process` on your system, it will also live inside of `~/process` in the shell environment.
-
+ 
 It should also be noted that while the Singularity container has a Python 3.8 by default, it will be impossible to pip install any packages without getting a `Read-only file system` error. This is because you are treated as a non-admin user within the container, and, as such, you cannot update the system Python. For this reason, it is recommended that you still use a virtual environment within the Singularity container (as described above). `pip install <package> --user` will work; however, it will cause conflicts with existing Python packages you have installed outside of your container.
 
 ## Testing
@@ -200,11 +198,11 @@ process
 ```
 
 This indicates that the PROCESS Python package has been installed.
-To exit the Python interpreter you can use
+To exit the Python interpreter you can use 
 ```BASH
-exit()
+exit() 
 ```
-and press enter, or use `Ctrl-Z`.
+and press enter, or use `Ctrl-Z`. 
 
 ### PROCESS test suite
 The PROCESS test suite provides through tests that can be used to confirm a successful installation; the tests can then be used to verify changes you make have not affected the wider codebase.
@@ -218,7 +216,7 @@ The test suite uses PyTest and can be fully run using:
 ```BASH
 pytest
 ```
-which runs unit, integration, and regression tests.
+which runs unit, integration, and regression tests. 
 
 A more in-depth discussion of testing can be found [here](http://process.gitpages.ccfe.ac.uk/process/development/testing/).
 
@@ -240,6 +238,7 @@ Dont forget to add a comma before to separate it from already present key value 
 
 
 Now, close your terminal and close VS Code. Reopen and open a new terminal which should now automatically point to the virtual environmnet signalled by an `(env)` in front of your user.
+
 
 ## Prepare Release (not required)
 It is possible to build a standalone module which can be distributed without the need for the source code. This exists as a pippable "wheels" module which is build by running:
