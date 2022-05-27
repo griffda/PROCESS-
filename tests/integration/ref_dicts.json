@@ -306,6 +306,7 @@
         "bigq": 0.0,
         "bigqmin": 10.0,
         "bioshld_thk": 2.5,
+        "bkt_life_csf": 0.0,
         "bktcycles": 1000.0,
         "bktlife": 0.0,
         "blanket_density": 0.0,
@@ -2658,7 +2659,7 @@
         "ipnfoms": 19.0,
         "ipnlaws": 48.0,
         "ipnscns": 1000.0,
-        "ipnscnv": 66.0,
+        "ipnscnv": 67.0,
         "ipnvars": 175.0,
         "ipowerflow": 1.0,
         "iprecomp": 1.0,
@@ -3499,7 +3500,6 @@
         "pchargemw": 0.0,
         "pchargepv": 0.0,
         "pcoef": 0.0,
-        "pinnerzoneradmw": 0.0,
         "pcoreradpv": 0.0,
         "pcoresystems": 0.0,
         "pdd": 0.0,
@@ -3518,7 +3518,6 @@
         "peakpoloidalpower": 0.0,
         "peakradwallload": 0.0,
         "ped": null,
-        "pouterzoneradmw": 0.0,
         "pedgeradpv": 0.0,
         "pfbldgm3": 20000.0,
         "pfcaseth": 0.0,
@@ -3555,6 +3554,7 @@
         "pinjmw": 0.0,
         "pinjwp": 0.0,
         "pinjwpfix": 0.0,
+        "pinnerzoneradmw": 0.0,
         "pitch": 0.02,
         "plascur": 0.0,
         "plasipf": 0.0,
@@ -3696,6 +3696,7 @@
             0.0
         ],
         "porbitlossmw": 0.0,
+        "pouterzoneradmw": 0.0,
         "powerht": 0.0,
         "powfmax": 1500.0,
         "powfmw": 0.0,
@@ -3850,9 +3851,9 @@
         "r_wp_outer": 0.0,
         "ra": 0.0,
         "rad": "pi/180.0_wp_",
-        "rad_fraction_total": 0.0,
         "rad_fraction_LCFS": 0.0,
         "rad_fraction_sol": 0.8,
+        "rad_fraction_total": 0.0,
         "rad_ib": 0.0,
         "rad_ob": 0.0,
         "radctf": [
@@ -7690,7 +7691,7 @@
         "t_conductor_radial": 0.0,
         "t_conductor_toroidal": 0.0,
         "t_crack_radial": 0.006,
-        "t_crack_vertical": 0.002,
+        "t_crack_vertical": 0.00089,
         "t_crit_nbti": 9.04,
         "t_in_bb": 573.13,
         "t_lat_case_av": 0.0,
@@ -9170,6 +9171,7 @@
         "bigq": "Fusion gain; P_fusion / (P_injection + P_ohmic)",
         "bigqmin": "minimum fusion gain Q (`constraint equation 28`)",
         "bioshld_thk": "Radial thickness of bio-shield around reactor (m)",
+        "bkt_life_csf": "Switch to pass bkt_life cycles to n_cycle_min",
         "bktcycles": "Number of fusion cycles to reach allowable DPA from DEMO fw/blanket lifetime calculation",
         "bktlife": "Full power blanket lifetime (years)",
         "blanket_density": "Blanket density [kg/m3]",
@@ -10507,7 +10509,7 @@
         "nre": "",
         "nsix": "",
         "nsixi": "",
-        "nsweep": "Switch denoting quantity to scan:<UL>\n         <LI> 1  aspect\n         <LI> 2  hldivlim\n         <LI> 3  pnetelin\n         <LI> 4  hfact\n         <LI> 5  oacdcp\n         <LI> 6  walalw\n         <LI> 7  beamfus0\n         <LI> 8  fqval\n         <LI> 9  te\n         <LI> 10 boundu(15: fvs)\n         <LI> 11 dnbeta\n         <LI> 12 bscfmax (use negative values only)\n         <LI> 13 boundu(10: hfact)\n         <LI> 14 fiooic\n         <LI> 15 fjprot\n         <LI> 16 rmajor\n         <LI> 17 bmxlim\n         <LI> 18 gammax\n         <LI> 19 boundl(16: ohcth)\n         <LI> 20 tbrnmn\n         <LI> 21 not used\n         <LI> 22 cfactr (N.B. requires iavail=0)\n         <LI> 23 boundu(72: fipir)\n         <LI> 24 powfmax\n         <LI> 25 kappa\n         <LI> 26 triang\n         <LI> 27 tbrmin (for blktmodel > 0 only)\n         <LI> 28 bt\n         <LI> 29 coreradius\n         <LI> 30 fimpvar\n         <LI> 31 taulimit\n         <LI> 32 epsvmc\n         <LI> 33 ttarget\n         <LI> 34 qtargettotal\n         <LI> 35 lambda_q_omp\n         <LI> 36 lambda_target\n         <LI> 37 lcon_factor\n         <LI> 38 Neon upper limit\n         <LI> 39 Argon upper limit\n         <LI> 40 Xenon upper limit\n         <LI> 41 blnkoth\n         <LI> 42 Argon fraction fimp(9)\n         <LI> 43 normalised minor radius at which electron cyclotron current drive is maximum\n         <LI> 44 Allowable maximum shear stress (Tresca) in tf coil structural material\n         <LI> 45 Minimum allowable temperature margin ; tf coils\n         <LI> 46 boundu(150) fgwsep\n         <LI> 47 impurity_enrichment(9) Argon impurity enrichment\n         <LI> 48 TF coil - n_pancake (integer turn winding pack)\n         <LI> 49 TF coil - n_layer (integer turn winding pack)\n         <LI> 50 Xenon fraction fimp(13)\n         <LI> 51 Power fraction to lower DN Divertor ftar\n         <LI> 52 SoL radiation fraction\n         <LI> 54 GL_nbti upper critical field at 0 Kelvin\n         <LI> 55 `shldith` : Inboard neutron shield thickness\n         <LI> 56 crypmw_max: Maximum cryogenic power (ixx=164, ixc=87)\n         <LI> 57 `bt` lower boundary\n         <LI> 58 `scrapli` : Inboard plasma-first wall gap\n         <LI> 59 `scraplo` : Outboard plasma-first wall gap\n         <LI> 60 sig_tf_wp_max: Allowable stress in TF Coil conduit (Tresca)\n         <LI> 61 copperaoh_m2_max : CS coil current / copper area\n         <LI> 62 coheof : CS coil current density at EOF\n         <LI> 63 ohcth : CS thickness (m)\n         <LI> 64 ohhghf : CS height (m)\n         <LI> 65 n_cycle_min : Minimum cycles for CS stress model constraint 90\n         <LI> 66 oh_steel_frac: Steel fraction in CS coil </UL>",
+        "nsweep": "Switch denoting quantity to scan:<UL>\n         <LI> 1  aspect\n         <LI> 2  hldivlim\n         <LI> 3  pnetelin\n         <LI> 4  hfact\n         <LI> 5  oacdcp\n         <LI> 6  walalw\n         <LI> 7  beamfus0\n         <LI> 8  fqval\n         <LI> 9  te\n         <LI> 10 boundu(15: fvs)\n         <LI> 11 dnbeta\n         <LI> 12 bscfmax (use negative values only)\n         <LI> 13 boundu(10: hfact)\n         <LI> 14 fiooic\n         <LI> 15 fjprot\n         <LI> 16 rmajor\n         <LI> 17 bmxlim\n         <LI> 18 gammax\n         <LI> 19 boundl(16: ohcth)\n         <LI> 20 tbrnmn\n         <LI> 21 not used\n         <LI> 22 cfactr (N.B. requires iavail=0)\n         <LI> 23 boundu(72: fipir)\n         <LI> 24 powfmax\n         <LI> 25 kappa\n         <LI> 26 triang\n         <LI> 27 tbrmin (for blktmodel > 0 only)\n         <LI> 28 bt\n         <LI> 29 coreradius\n         <LI> 30 fimpvar\n         <LI> 31 taulimit\n         <LI> 32 epsvmc\n         <LI> 33 ttarget\n         <LI> 34 qtargettotal\n         <LI> 35 lambda_q_omp\n         <LI> 36 lambda_target\n         <LI> 37 lcon_factor\n         <LI> 38 Neon upper limit\n         <LI> 39 Argon upper limit\n         <LI> 40 Xenon upper limit\n         <LI> 41 blnkoth\n         <LI> 42 Argon fraction fimp(9)\n         <LI> 43 normalised minor radius at which electron cyclotron current drive is maximum\n         <LI> 44 Allowable maximum shear stress (Tresca) in tf coil structural material\n         <LI> 45 Minimum allowable temperature margin ; tf coils\n         <LI> 46 boundu(150) fgwsep\n         <LI> 47 impurity_enrichment(9) Argon impurity enrichment\n         <LI> 48 TF coil - n_pancake (integer turn winding pack)\n         <LI> 49 TF coil - n_layer (integer turn winding pack)\n         <LI> 50 Xenon fraction fimp(13)\n         <LI> 51 Power fraction to lower DN Divertor ftar\n         <LI> 52 SoL radiation fraction\n         <LI> 54 GL_nbti upper critical field at 0 Kelvin\n         <LI> 55 `shldith` : Inboard neutron shield thickness\n         <LI> 56 crypmw_max: Maximum cryogenic power (ixx=164, ixc=87)\n         <LI> 57 `bt` lower boundary\n         <LI> 58 `scrapli` : Inboard plasma-first wall gap\n         <LI> 59 `scraplo` : Outboard plasma-first wall gap\n         <LI> 60 sig_tf_wp_max: Allowable stress in TF Coil conduit (Tresca)\n         <LI> 61 copperaoh_m2_max : CS coil current / copper area\n         <LI> 62 coheof : CS coil current density at EOF\n         <LI> 63 ohcth : CS thickness (m)\n         <LI> 64 ohhghf : CS height (m)\n         <LI> 65 n_cycle_min : Minimum cycles for CS stress model constraint 90\n         <LI> 66 oh_steel_frac: Steel fraction in CS coil\n         <LI> 67 t_crack_vertical: Initial crack vertical dimension (m) </UL>",
         "nsweep_2": "nsweep_2 /3/ : switch denoting quantity to scan for 2D scan:",
         "nt": "",
         "ntype": "switch for vacuum pump type:\n<ul>\n<li>=0 - for turbomolecular pump (magnetic bearing) with speed of 2.0 m3/s\n   (1.95 for N2, 1.8 for He, 1.8 for DT)</li>\n<li>=1 - for compound cryopump with nominal speed of 10.0 m3/s\n   (9.0 for N2, 5.0 for He and 25.0 for DT)</li>\n</ul>",
@@ -10557,7 +10559,6 @@
         "pchargemw": "non-alpha charged particle fusion power (MW)",
         "pchargepv": "non-alpha charged particle fusion power per volume (MW/m3)",
         "pcoef": "profile factor (= n-weighted T / average T)",
-        "pinnerzoneradmw": "radiation power from inner zone (MW)",
         "pcoreradpv": "total core radiation power per volume (MW/m3)",
         "pcoresystems": "",
         "pdd": "deuterium-deuterium fusion power (MW)",
@@ -10576,7 +10577,6 @@
         "peakpoloidalpower": "Peak absolute rate of change of stored energy in poloidal field (MW)",
         "peakradwallload": "Peak radiation wall load (MW/m^2) (`constraint equation 67`)",
         "ped": "Derived type containing all pedestal information for PLASMOD",
-        "pouterzoneradmw": "radiation power from outer zone (MW)",
         "pedgeradpv": "edge radiation power per volume (MW/m3)",
         "pfbldgm3": "volume of PF coil power supply building (m3)",
         "pfcaseth": "steel case thickness for PF coil i (m)",
@@ -10613,6 +10613,7 @@
         "pinjmw": "total auxiliary injected power (MW)",
         "pinjwp": "injector wall plug power (MW)",
         "pinjwpfix": "secondary injector wall plug power (MW)",
+        "pinnerzoneradmw": "radiation power from inner zone (MW)",
         "pitch": "pitch of first wall cooling channels (m)",
         "plascur": "plasma current (A)",
         "plasipf": "plasma driven current fraction (Bootstrap + Diamagnetic + PS)",
@@ -10714,6 +10715,7 @@
         "poisson_steel": "Steel Poisson's ratio",
         "poloidalpower": "Poloidal power usage at time t (MW)",
         "porbitlossmw": "neutral beam power lost after ionisation but before thermalisation (orbit loss power) (MW)",
+        "pouterzoneradmw": "radiation power from outer zone (MW)",
         "powerht": "heating power (= transport loss power) (MW) used in confinement time calculation",
         "powfmax": "maximum fusion power (MW) (`constraint equation 9`)",
         "powfmw": "fusion power (MW)",
@@ -10846,9 +10848,9 @@
         "r_wp_outer": "Radial position of outer edge and centre of winding pack [m]",
         "ra": "inner radius of coil i (m)",
         "rad": "",
-        "rad_fraction_total": "Radiation fraction total = SoL + LCFS radiation / total power deposited in plasma",
         "rad_fraction_LCFS": "",
-        "rad_fraction_sol": "SoL radiation fraction ",
+        "rad_fraction_sol": "SoL radiation fraction",
+        "rad_fraction_total": "Radiation fraction total = SoL + LCFS radiation / total power deposited in plasma",
         "rad_ib": "",
         "rad_ob": "",
         "radctf": "radius of arc i (m)",
@@ -12117,6 +12119,10 @@
         "bioshld_thk": {
             "lb": 0.25,
             "ub": 25.0
+        },
+        "bkt_life_csf": {
+            "lb": 0.0,
+            "ub": 1.0
         },
         "blbmith": {
             "lb": 0.0,
@@ -17745,7 +17751,8 @@
             "t_crack_radial",
             "t_crack_vertical",
             "t_structural_radial",
-            "t_structural_vertical"
+            "t_structural_vertical",
+            "bkt_life_csf"
         ],
         "abs_cd": [
             "cdroutine",
@@ -18572,7 +18579,6 @@
             "annual_electric_output",
             "maintenance"
         ],
-        "costs_module": [],
         "costs_step": [
             "fwblkcost",
             "pth",
@@ -19199,7 +19205,6 @@
             "toolow"
         ],
         "init_module": [],
-        "kallenbach_module": [],
         "kit_blanket_model": [
             "np",
             "x_BZ_IB",
@@ -20161,6 +20166,7 @@
             "num",
             "i_flag"
         ],
+        "plot_radiation": [],
         "power_module": [
             "double",
             "htpmwe_shld",
@@ -20853,6 +20859,7 @@
         "n_cycle_min=swp(iscn": "case(66)",
         "n_layer=int(swp(iscn": "case(50)",
         "n_pancake=int(swp(iscn": "case(49)",
+        "oh_steel_frac=swp(iscn": "case(67)",
         "ohcth=swp(iscn": "case(64)",
         "ohhghf=swp(iscn": "case(65)",
         "rad_fraction_sol=swp(iscn": "case(53)",
@@ -20935,6 +20942,7 @@
         "betpmx": "real_variable",
         "bigqmin": "real_variable",
         "bioshld_thk": "real_variable",
+        "bkt_life_csf": "real_variable",
         "blbmith": "real_variable",
         "blbmoth": "real_variable",
         "blbpith": "real_variable",
