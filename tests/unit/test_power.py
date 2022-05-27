@@ -18,6 +18,17 @@ from process.fortran import constraint_variables
 from process.fortran import cost_variables
 from process.fortran import current_drive_variables
 from process.fortran import tfcoil_variables
+from process.power import Power
+
+
+@pytest.fixture
+def power():
+    """Provides power object for testing.
+
+    :returns: initialised power object
+    :rtype: process.power.Power
+    """
+    return Power()
 
 
 class CryoParam(NamedTuple):
@@ -108,7 +119,7 @@ class CryoParam(NamedTuple):
         ),
     ),
 )
-def test_cryo(cryoparam, monkeypatch):
+def test_cryo(cryoparam, monkeypatch, power):
     """
     Automatically generated Regression Unit Test for cryo.
 
@@ -133,7 +144,7 @@ def test_cryo(cryoparam, monkeypatch):
 
     monkeypatch.setattr(power_module, "qmisc", cryoparam.qmisc)
 
-    helpow = power_module.cryo(
+    helpow = power.cryo(
         i_tf_sup=cryoparam.i_tf_sup,
         coldmass=cryoparam.coldmass,
         cpttf=cryoparam.cpttf,
@@ -1739,7 +1750,7 @@ class PfpwrParam(NamedTuple):
         ),
     ),
 )
-def test_pfpwr(pfpwrparam, monkeypatch):
+def test_pfpwr(pfpwrparam, monkeypatch, power):
     """
     Automatically generated Regression Unit Test for pfpwr.
 
@@ -1822,7 +1833,7 @@ def test_pfpwr(pfpwrparam, monkeypatch):
 
     monkeypatch.setattr(times_variables, "tohs", pfpwrparam.tohs)
 
-    power_module.pfpwr(outfile=pfpwrparam.outfile, iprint=pfpwrparam.iprint)
+    power.pfpwr(output=False)
 
     assert heat_transport_variables.peakmva == pytest.approx(
         pfpwrparam.expected_peakmva
@@ -1939,7 +1950,7 @@ class AcpowParam(NamedTuple):
         ),
     ),
 )
-def test_acpow(acpowparam, monkeypatch):
+def test_acpow(acpowparam, monkeypatch, power):
     """
     Automatically generated Regression Unit Test for acpow.
 
@@ -1984,7 +1995,7 @@ def test_acpow(acpowparam, monkeypatch):
 
     monkeypatch.setattr(pf_power_variables, "srcktpm", acpowparam.srcktpm)
 
-    power_module.acpow(iprint=acpowparam.iprint, outfile=acpowparam.outfile)
+    power.acpow(output=False)
 
     assert heat_transport_variables.pacpmw == pytest.approx(acpowparam.expected_pacpmw)
 
@@ -2401,7 +2412,7 @@ class Power2Param(NamedTuple):
         ),
     ),
 )
-def test_power2(power2param, monkeypatch):
+def test_power2(power2param, monkeypatch, power):
     """
     Automatically generated Regression Unit Test for power2.
 
@@ -2602,7 +2613,7 @@ def test_power2(power2param, monkeypatch):
 
     monkeypatch.setattr(power_module, "qmisc", power2param.qmisc)
 
-    power_module.power2(outfile=power2param.outfile, iprint=power2param.iprint)
+    power.power2(output=False)
 
     assert heat_transport_variables.pnetelmw == pytest.approx(
         power2param.expected_pnetelmw
@@ -2733,7 +2744,7 @@ class Power3Param(NamedTuple):
         ),
     ),
 )
-def test_power3(power3param, monkeypatch):
+def test_power3(power3param, monkeypatch, power):
     """
     Automatically generated Regression Unit Test for power3.
 
@@ -2780,4 +2791,4 @@ def test_power3(power3param, monkeypatch):
 
     monkeypatch.setattr(times_variables, "tohs", power3param.tohs)
 
-    power_module.power3(outfile=power3param.outfile, iprint=power3param.iprint)
+    power.power3(output=False)
