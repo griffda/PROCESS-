@@ -30,6 +30,12 @@
 # Setting CI_TEST_OVERWRITE_REG_REFS to "true" will cause the regression
 # references to be overwritten
 
+workflow:
+    rules:
+        # Prevent merge request event pipelines running alongside branch ones
+        - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+          when: never
+
 stages:
     - containers
     - build
