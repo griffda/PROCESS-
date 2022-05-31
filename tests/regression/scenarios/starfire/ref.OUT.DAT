@@ -132,7 +132,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  ***************** 21. Building and Site Service Infrastructure *****************
  
- (step2101)          Site Improvements (M$)                                                                     4223.38
+ (step2101)          Site Improvements (M$)                                                                     2520.83
  (step2102)          Reactor Building (M$)                                                                       493.93
  (step2103)          Turbine Building (M$)                                                                       535.95
  (step2104)          Cooling System Structures (M$)                                                              184.42
@@ -150,10 +150,10 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  (step2116)          Security Building (M$)                                                                       14.90
  (step2117)          Ventilation Stack (M$)                                                                        8.78
  (step2118)          Waste Facilities Buildings (M$)                                                             100.00
- (step2198)          Spares (M$)                                                                                 131.12
- (step2199)          Contingency (M$)                                                                           1003.07
+ (step2198)          Spares (M$)                                                                                  97.07
+ (step2199)          Contingency (M$)                                                                            742.58
  
- (step21)            Total Account 21 Cost (M$)                                                                 7690.22
+ (step21)            Total Account 21 Cost (M$)                                                                 5693.13
  
  ************************* 22. Reactor Plant Equipment **************************
  
@@ -261,44 +261,44 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  ***************************** 27. Remote Handling ******************************
  
- (step2701)          Remote Handing (M$)                                                                        1636.47
+ (step2701)          Remote Handing (M$)                                                                        1486.68
  
- (step27)            Total Account 27 Cost (M$)                                                                 1636.47
+ (step27)            Total Account 27 Cost (M$)                                                                 1486.68
  
  ****************************** Plant Direct Cost *******************************
  
- (cdirt)             Plant direct cost (M$)                                                                    23456.02
+ (cdirt)             Plant direct cost (M$)                                                                    21309.14
  
  ******************************** Indirect Cost *********************************
  
- (step91)            Construction Facilities, Equipment and Services (M$)                                       7036.80
- (step92)            Engineering and Costruction Management Services (M$)                                       7623.21
- (step93)            Other Costs (M$)                                                                           3518.40
+ (step91)            Construction Facilities, Equipment and Services (M$)                                       6392.74
+ (step92)            Engineering and Costruction Management Services (M$)                                       6925.47
+ (step93)            Other Costs (M$)                                                                           3196.37
  
  ******************************* Constructed Cost *******************************
  
- (concost)           Constructed Cost (M$)                                                                     41634.43
+ (concost)           Constructed Cost (M$)                                                                     37823.73
  
  ************************* Interest during Construction *************************
  
- (moneyint)          Interest during construction (M$)                                                          6245.16
+ (moneyint)          Interest during construction (M$)                                                          5673.56
  
  *************************** Total Capital Investment ***************************
  
- (capcost)           Total capital investment (M$)                                                             47879.59
+ (capcost)           Total capital investment (M$)                                                             43497.29
  
  *************************************** Cost of Electricity, 2017 US$ ****************************************
  
  First wall / blanket life (years)                                        (fwbllife)                    5.343     
  Divertor life (years)                                                    (divlife.)                    0.286     
- Cost of electricity (m$/kWh)                                             (coe)                       421.856     
+ Cost of electricity (m$/kWh)                                             (coe)                       384.260     
  
  Power Generation Costs :
  
  									Annual Costs, M$	    COE, m$/kWh
- Capital Investment                                                          3112.17                   407.32
+ Capital Investment                                                          2827.32                   370.04
  Operation & Maintenance                                                       73.58                     9.63
- Decommissioning Fund                                                          26.31                     3.44
+ Decommissioning Fund                                                          23.90                     3.13
  Fuel Charge Breakdown
  	Blanket & first wall                                                          0.00                     0.00
  	Divertors                                                                     0.00                     0.00
@@ -307,7 +307,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  	Actual Fuel                                                                   3.37                     0.44
  	Waste Disposal                                                                7.79                     1.02
  Total Fuel Cost                                                               11.17                     1.46
- Total Cost                                                                  3223.24                   421.86
+ Total Cost                                                                  2935.98                   384.26
  
  ********************************************* Plant Availability *********************************************
  
@@ -940,44 +940,44 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  *************************************** Central Solenoid and PF Coils ****************************************
  
  Superconducting central solenoid
- Central solenoid superconductor material                                 (pfv.isumatoh)                    5     
+ Central solenoid superconductor material                                 (isumatoh)                        5     
   (WST Nb3Sn critical surface model)
  
  Central Solenoid Current Density Limits :
  
- Maximum field at Beginning Of Pulse (T)                                  (pfv.bmaxoh0)             9.577E+00  OP 
- Critical superconductor current density at BOP (A/m2)                    (pfv.jscoh_bop)           9.994E+08  OP 
- Critical strand current density at BOP (A/m2)                            (pfv.jstrandoh_bop)       2.998E+08  OP 
- Allowable overall current density at BOP (A/m2)                          (pfv.rjohc0)              6.412E+07  OP 
- Actual overall current density at BOP (A/m2)                             (pfv.cohbop)              1.268E+07  OP 
+ Maximum field at Beginning Of Pulse (T)                                  (bmaxoh0)                 9.577E+00  OP 
+ Critical superconductor current density at BOP (A/m2)                    (jscoh_bop)               9.994E+08  OP 
+ Critical strand current density at BOP (A/m2)                            (jstrandoh_bop)           2.998E+08  OP 
+ Allowable overall current density at BOP (A/m2)                          (rjohc0)                  6.412E+07  OP 
+ Actual overall current density at BOP (A/m2)                             (cohbop)                  1.268E+07  OP 
  
- Maximum field at End Of Flattop (T)                                      (pfv.bmaxoh)              9.089E+00  OP 
- Critical superconductor current density at EOF (A/m2)                    (pfv.jscoh_eof)           1.104E+09  OP 
- Critical strand current density at EOF (A/m2)                            (pfv.jstrandoh_eof)       3.312E+08  OP 
- Allowable overall current density at EOF (A/m2)                          (pfv.rjohc)               7.082E+07  OP 
- Actual overall current density at EOF (A/m2)                             (pfv.coheof)              1.354E+07     
+ Maximum field at End Of Flattop (T)                                      (bmaxoh)                  9.089E+00  OP 
+ Critical superconductor current density at EOF (A/m2)                    (jscoh_eof)               1.104E+09  OP 
+ Critical strand current density at EOF (A/m2)                            (jstrandoh_eof)           3.312E+08  OP 
+ Allowable overall current density at EOF (A/m2)                          (rjohc)                   7.082E+07  OP 
+ Actual overall current density at EOF (A/m2)                             (coheof)                  1.354E+07     
  
  CS inside radius (m)                                                     (bv.bore.)                1.097E-01     
  CS thickness (m)                                                         (bv.ohcth.)               6.000E-01     
  Gap between central solenoid and TF coil (m)                             (bv.gapoh)                5.000E-02  ITV
- CS overall cross-sectional area (m2)                                     (pfv.areaoh)              6.353E+00  OP 
- CS conductor+void cross-sectional area (m2)                              (pfv.awpoh)               1.941E+00  OP 
-    CS conductor cross-sectional area (m2)                                (pfv.awpoh*(1-pfv.vfohc)) 1.359E+00  OP 
-    CS void cross-sectional area (m2)                                     (pfv.awpoh*pfv.vfohc)     5.822E-01  OP 
- CS steel cross-sectional area (m2)                                       (pfv.areaoh-pfv.awpoh)    4.412E+00  OP 
- CS steel area fraction                                                   (pfv.oh_steel_frac)       6.945E-01  ITV
+ CS overall cross-sectional area (m2)                                     (areaoh)                  6.353E+00  OP 
+ CS conductor+void cross-sectional area (m2)                              (awpoh)                   1.941E+00  OP 
+    CS conductor cross-sectional area (m2)                                (awpoh*(1-vfohc))         1.359E+00  OP 
+    CS void cross-sectional area (m2)                                     (awpoh*vfohc)             5.822E-01  OP 
+ CS steel cross-sectional area (m2)                                       (areaoh-awpoh)            4.412E+00  OP 
+ CS steel area fraction                                                   (oh_steel_frac)           6.945E-01  ITV
  Only hoop stress considered
- Switch for CS stress calculation                                         (pfv.i_cs_stress)                 0     
- Allowable stress in CS steel (Pa)                                        (pfv.alstroh)             6.000E+08     
+ Switch for CS stress calculation                                         (i_cs_stress)                     0     
+ Allowable stress in CS steel (Pa)                                        (alstroh)                 6.000E+08     
  Hoop stress in CS steel (Pa)                                             (sig_hoop)                7.850E+07  OP 
  Axial stress in CS steel (Pa)                                            (sig_axial)              -1.205E+08  OP 
- Maximum shear stress in CS steel for the Tresca criterion (Pa)           (pfv.s_tresca_oh)         7.850E+07  OP 
+ Maximum shear stress in CS steel for the Tresca criterion (Pa)           (s_tresca_oh)             7.850E+07  OP 
  Axial force in CS (N)                                                    (axial_force)            -6.461E+07  OP 
  Residual manufacturing strain in CS superconductor material              (tfcoil_variables.str_cs_-5.000E-03     
- Copper fraction in strand                                                (pfv.fcuohsu)             7.000E-01     
- Void (coolant) fraction in conductor                                     (pfv.vfohc)               3.000E-01     
+ Copper fraction in strand                                                (fcuohsu)                 7.000E-01     
+ Void (coolant) fraction in conductor                                     (vfohc)                   3.000E-01     
  Helium coolant temperature (K)                                           (tfv.tftmp)               4.750E+00     
- CS temperature margin (K)                                                (pfv.tmargoh)             4.307E+00  OP 
+ CS temperature margin (K)                                                (tmargoh)                 4.307E+00  OP 
  Minimum permitted temperature margin (K)                                 (tfv.tmargmin_cs)         1.500E+00     
  Residual hoop stress in CS Steel (Pa)                                    (csfv.residual_sig_hoop)  2.400E+08     
  Minimum burn time (s)                                                    (ctv.tbrnmn               7.200E+03     
@@ -993,18 +993,18 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Minimum number of cycles required till CS fracture                       (csfv.n_cycle_min)        2.000E+04  OP 
  
  Superconducting PF coils
- PF coil superconductor material                                          (pfv.isumatpf)                    3     
+ PF coil superconductor material                                          (isumatpf)                        3     
    (NbTi)
- Copper fraction in conductor                                             (pfv.fcupfsu)             6.900E-01     
+ Copper fraction in conductor                                             (fcupfsu)                 6.900E-01     
  
  PF Coil Case Stress :
  
- Maximum permissible tensile stress (MPa)                                 (pfv.sigpfcalw)           5.000E+02     
- JxB hoop force fraction supported by case                                (pfv.sigpfcf)             6.660E-01     
+ Maximum permissible tensile stress (MPa)                                 (sigpfcalw)               5.000E+02     
+ JxB hoop force fraction supported by case                                (sigpfcf)                 6.660E-01     
  
  Geometry of PF coils, central solenoid and plasma:
  
- coil			R(m)			Z(m)			dR(m)			dZ(m)			pfv.turns		steel thickness(m)
+ coil			R(m)			Z(m)			dR(m)			dZ(m)			turns		steel thickness(m)
  
  PF 0			5.23e+00	7.39e+00	1.24e+00	1.24e+00	4.01e+02	5.52e-02
  PF 1			5.23e+00	-8.47e+00	1.29e+00	1.29e+00	4.36e+02	6.35e-02
@@ -1033,7 +1033,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  PF coil current scaling information :
  
  Sum of squares of residuals                                              (pf.ssq0)                 6.951E-07  OP 
- Smoothing parameter                                                      (pfv.alfapf)              5.000E-10     
+ Smoothing parameter                                                      (alfapf)                  5.000E-10     
  
  ****************************************** Volt Second Consumption *******************************************
  
@@ -1044,7 +1044,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  				-------				-------			-------
  Total:			-96.36				0.00			-96.36
  
- Total volt-second consumption by coils (Wb)                              (pfv.vstot)              -9.600E+01  OP 
+ Total volt-second consumption by coils (Wb)                              (vstot)                  -9.600E+01  OP 
  
  Summary of volt-second consumption by circuit (Wb):
  
@@ -1093,12 +1093,12 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  5			0.000e+00	0.000e+00	-1.065e+05	-1.065e+05	-1.065e+05	0.0e0
  6			0.000e+00	0.000e+00	8.597e+07	8.597e+07	8.597e+07	0.0e0
  
- Ratio of central solenoid current at beginning of Pulse / end of flat-to (pfv.fcohbop)             9.362E-01     
- Ratio of central solenoid current at beginning of Flat-top / end of flat (pfv.fcohbof)             1.000E+00  OP 
+ Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.362E-01     
+ Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                 1.000E+00  OP 
  
  *************************** PF Circuit Waveform Data ***************************
  
- Number of PF circuits including CS and plasma                            (pfv.ncirt)                       8     
+ Number of PF circuits including CS and plasma                            (ncirt)                           8     
  PF Circuit 0 Time point 0 (A)                                            (pfc0t0)                  0.000E+00     
  PF Circuit 0 Time point 1 (A)                                            (pfc0t1)                  4.104E+05     
  PF Circuit 0 Time point 2 (A)                                            (pfc0t2)                  1.694E+07     

@@ -4,6 +4,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.0] - 2022-05-18
+### Added
+- Support for debug builds using `-DCMAKE_BUILD_TYPE=Debug` flag (#1277)
+
+### Changed
+- Converted `pfcoil.f90` to Python (#1456)
+- ChangeLog update procedure (#1574)
+- Converted `pulse.f90` from Fortran to Python
+- Converted `buildings_module.f90` to pure Python (#1552)
+- Converted `water_usage.f90` to Python (#1570)
+- Converted `machine_build.f90` to Python (#1576)
+- Converted `kallenbach_module.f90` to Python, with the non-scanning part becoming utilities (#1579)
+- Converted `structure.f90` to Python (#1538)
+- Converted `costs.f90` to Python (#1637)
+
+### Fixed
+- Bug where fpdivlim was being called for iteration variable 154 when it should be fne0 (#1659)
+- thwcndut may now be input as zero. This is a conduit-free winding pack.
+- Divertor's `run` method was not being called with `output=True` from `output.py` (#1553)
+- Tracker's plotting inner loop should run over `set(titles)` to avoid running in `O(n)` opposed to `O(1)` (#1520)
+- Fixed a typo in the implementation of `extended_plane_strain` from `sctfcoil.f90` (#1565)
+
+### Removed
+- Removed Python 3.6 support in CI (#1490)
+- Majority of `fispact` code (`lib/fispact/` and `fispact.f90`) as it is no longer used in PROCESS (#1650)
 
 
 ## [2.3.0] - 2022-01-20

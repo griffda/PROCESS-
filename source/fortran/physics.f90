@@ -601,12 +601,26 @@ module physics_module
     ! Parameters taken from double null machine
     ! D. Brunner et al
     lambdaio = 1.57d-3
-    drsep = - 2.0d0 * 1.5d-3 * atanh(2.0d0 *(ftar - 0.5d0)) ! this needs updating
+
+    ! Issue #1559 Infinities in drsep when running single null in a double null machine
+    ! C W Ashe
+    if (ftar < 4.5d-5) then
+      drsep = 1.5d-2
+    else if (ftar > (1.0d0 - 4.5d-5)) then
+      drsep = -1.5d-2
+    else
+      drsep = - 2.0d0 * 1.5d-3 * atanh(2.0d0 *(ftar - 0.5d0))
+    ! Model Taken from D3-D paper for conventional divertor
+    ! Journal of Nuclear Materials
+    ! Volumes 290–293, March 2001, Pages 935-939
     ! Find the innner and outer lower target imbalance
+    end if
+
     fio = 0.16d0 + (0.16d0 - 0.41d0) * (1.0d0 - ( 2.0d0 / (1.0d0 + exp(-(drsep/lambdaio)**2))))
     if (idivrt == 2) then
       ! Double Null configuration
       ! Find all the power fractions accross the targets
+      ! Taken from D3-D conventional divertor design
       fLI = ftar * fio
       fLO = ftar * ( 1.0d0 - fio )
       fUI = (1.0d0 - ftar ) * fio
@@ -4254,13 +4268,13 @@ module physics_module
     if (istell == 0) then
     call oblnkl(outfile)
     if (kallenbach_switch == 0) then
-         call ovarre(outfile,'Radiation power from SoL (MW)','(pradsolmw)',pradsolmw, 'OP ')   
+         call ovarre(outfile,'Radiation power from SoL (MW)','(pradsolmw)',pradsolmw, 'OP ')
          call ovarre(outfile,'SoL radiation fraction = total radiation in SoL / total power accross separatrix', &
          '(rad_fraction_sol)', rad_fraction_sol, 'IP ')
          call ovarre(outfile,'Radiation fraction total = SoL + LCFS radiation / total power deposited in plasma', &
          '(rad_fraction_total)', rad_fraction_total, 'OP ')
     end if
-    
+
     call ovarre(outfile,'Power incident on the divertor targets (MW)', &
         '(ptarmw)',ptarmw, 'OP ')
     call ovarre(outfile, 'Fraction of power to the lower divertor', &
