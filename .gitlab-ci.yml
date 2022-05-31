@@ -238,10 +238,13 @@ regression-py38-overwrite:
         - *setup-ssh
         - pytest tests/regression -vs --reg-tolerance=0 --overwrite | tee tests/regression/pytest.log
         # Commit the overwritten regression references to develop (or other branch if testing)
-        # $CI_COMMIT_TITLE will normally be the merge commit on develop
         - git add .
-        - git commit -m "$OVERWRITE_COMMIT_MSG $CI_COMMIT_TITLE"
-        - git push
+        # $CI_COMMIT_TITLE will normally be the merge commit on develop
+        - git commit -m "$OVERWRITE_COMMIT_MSG \"$CI_COMMIT_TITLE\""
+        # Runner runs on a detached HEAD, so git push needs to specifically
+        # target the commit's branch
+        # Skip prevents subsequent pipeline being triggered
+        - git push origin HEAD:$CI_COMMIT_BRANCH -o ci.skip
     artifacts:
         when: on_failure
         paths:
