@@ -7,15 +7,15 @@
  **************************************************************************************************************
  
    Program :
-   Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1747-gc999c585
+   Version : 2.4.0   Release Date :: 2022-05-18
+   Tag No. : v2.1-1801-g405f668e
     Branch : 1499-update-cs-coil-geometry-model-python
-   Git log : updated\ ref\ files\ for\ cs_fatigue\ regression\ test
- Date/time : 27 May 2022 16:23:54 +01:00(hh:mm) UTC
+   Git log : Merged\ develop\ into\ CS\ coil\ fatigue\ model
+ Date/time : 31 May 2022 15:52:29 +01:00(hh:mm) UTC
       User : ym1906
-  Computer : M0542
- Directory : /tmp/pytest-of-ym1906/pytest-11/test_solver0
-     Input : /tmp/pytest-of-ym1906/pytest-11/test_scenario_costs_paper_0/IN.DAT
+  Computer : gtpc
+ Directory : /tmp/pytest-of-ym1906/pytest-1/test_solver0
+     Input : /tmp/pytest-of-ym1906/pytest-1/test_scenario_costs_paper_0/IN.DAT
  Run title : demo 1 model for cost paper
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  

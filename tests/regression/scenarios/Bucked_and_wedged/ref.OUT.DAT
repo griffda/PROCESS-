@@ -6,15 +6,15 @@
  **************************************************************************************************************
  
    Program :
-   Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1747-gc999c585
+   Version : 2.4.0   Release Date :: 2022-05-18
+   Tag No. : v2.1-1801-g405f668e
     Branch : 1499-update-cs-coil-geometry-model-python
-   Git log : updated\ ref\ files\ for\ cs_fatigue\ regression\ test
- Date/time : 27 May 2022 16:23:37 +01:00(hh:mm) UTC
+   Git log : Merged\ develop\ into\ CS\ coil\ fatigue\ model
+ Date/time : 31 May 2022 15:52:14 +01:00(hh:mm) UTC
       User : ym1906
-  Computer : M0542
- Directory : /tmp/pytest-of-ym1906/pytest-11/test_solver0
-     Input : /tmp/pytest-of-ym1906/pytest-11/test_scenario_Bucked_and_wedge0/IN.DAT
+  Computer : gtpc
+ Directory : /tmp/pytest-of-ym1906/pytest-1/test_solver0
+     Input : /tmp/pytest-of-ym1906/pytest-1/test_scenario_Bucked_and_wedge0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -834,12 +834,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  CS inside radius (m)                                                     (bv.bore.)                2.101E+00     
  CS thickness (m)                                                         (bv.ohcth.)               5.109E-01     
  Gap between central solenoid and TF coil (m)                             (bv.gapoh)                1.000E-02  ITV
- CS overall cross-sectional area (m2)                                     (pfv.areaoh)              9.022E+00  OP 
- CS conductor+void cross-sectional area (m2)                              (pfv.awpoh)               4.001E+00  OP 
-    CS conductor cross-sectional area (m2)                                (pfv.awpoh*(1-pfv.vfohc)) 2.801E+00  OP 
-    CS void cross-sectional area (m2)                                     (pfv.awpoh*pfv.vfohc)     1.200E+00  OP 
- CS steel cross-sectional area (m2)                                       (pfv.areaoh-pfv.awpoh)    5.021E+00  OP 
- CS steel area fraction                                                   (pfv.oh_steel_frac)       5.566E-01  ITV
+ CS overall cross-sectional area (m2)                                     (areaoh)                  9.022E+00  OP 
+ CS conductor+void cross-sectional area (m2)                              (awpoh)                   4.001E+00  OP 
+    CS conductor cross-sectional area (m2)                                (awpoh*(1-vfohc))         2.801E+00  OP 
+    CS void cross-sectional area (m2)                                     (awpoh*vfohc)             1.200E+00  OP 
+ CS steel cross-sectional area (m2)                                       (areaoh-awpoh)            5.021E+00  OP 
+ CS steel area fraction                                                   (oh_steel_frac)           5.566E-01  ITV
  Only hoop stress considered
  Switch for CS stress calculation                                         (i_cs_stress)                     0     
  Allowable stress in CS steel (Pa)                                        (alstroh)                 6.600E+08     
@@ -967,8 +967,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  5			0.000e+00	0.000e+00	-4.016e+04	-4.016e+04	8.877e+05	0.0e0
  6			0.000e+00	0.000e+00	-7.685e+05	-7.685e+05	2.021e+08	0.0e0
  
- Ratio of central solenoid current at beginning of Pulse / end of flat-to (pfv.fcohbop)             9.204E-01  ITV
- Ratio of central solenoid current at beginning of Flat-top / end of flat (pfv.fcohbof)            -3.803E-03  OP 
+ Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.204E-01  ITV
+ Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -3.803E-03  OP 
  
  *************************** PF Circuit Waveform Data ***************************
  

@@ -2,15 +2,15 @@
  # Power Reactor Optimisation Code #
  # PROCESS #
  # Power Reactor Optimisation Code #
- PROCESS_version_number__________________________________________________ (procver)_____________________     "2.3.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "27/05/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "16:23"
+ PROCESS_version_number__________________________________________________ (procver)_____________________     "2.4.0   R"
+ Date_of_run_____________________________________________________________ (date)________________________     "31/05/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "15:52"
  User____________________________________________________________________ (username)____________________     "ym1906"  
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "demo 1 model for cost paper                                                                        
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1747-gc999c585"                                                                               
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1801-g405f668e"                                                                               
  PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1499-update-cs-coil-geometry-model-python"                                                         
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "updated\ ref\ files\ for\ cs_fatigue\ regression\ test"                                            
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-ym1906/pytest-11/test_scenario_costs_paper_0/IN.DAT                                                                                                                                      "
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merged\ develop\ into\ CS\ coil\ fatigue\ model"                                                   
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-ym1906/pytest-1/test_scenario_costs_paper_0/IN.DAT                                                                                                                                       "
  
  Scan_point_number_______________________________________________________ (iscan)_______________________              1    
  # Numerics #
@@ -750,12 +750,12 @@
  CS_structural_radial_thickness_(m)______________________________________ (csfv.t_structural_radial)____      5.8113E-03    
  Allowable_number_of_cycles_till_CS_fracture_____________________________ (csfv.n_cycle)________________      1.7642E+03 OP 
  Minimum_number_of_cycles_required_till_CS_fracture______________________ (csfv.n_cycle_min)____________      2.0000E+04 OP 
- PF_coil_superconductor_material_________________________________________ (pfv.isumatpf)________________              3    
- Copper_fraction_in_conductor____________________________________________ (pfv.fcupfsu)_________________      6.9000E-01    
- Maximum_permissible_tensile_stress_(MPa)________________________________ (pfv.sigpfcalw)_______________      5.0000E+02    
- JxB_hoop_force_fraction_supported_by_case_______________________________ (pfv.sigpfcf)_________________      6.6600E-01    
- PF_coil_0_radius_(m)____________________________________________________ (pfv.rpf[0]___________________      6.2459E+00    
- PF_coil_0_vertical_position_(m)_________________________________________ (pfv.zpf[0])__________________      9.2547E+00    
+ PF_coil_superconductor_material_________________________________________ (isumatpf)____________________              3    
+ Copper_fraction_in_conductor____________________________________________ (fcupfsu)_____________________      6.9000E-01    
+ Maximum_permissible_tensile_stress_(MPa)________________________________ (sigpfcalw)___________________      5.0000E+02    
+ JxB_hoop_force_fraction_supported_by_case_______________________________ (sigpfcf)_____________________      6.6600E-01    
+ PF_coil_0_radius_(m)____________________________________________________ (rpf[0]_______________________      6.2459E+00    
+ PF_coil_0_vertical_position_(m)_________________________________________ (zpf[0])______________________      9.2547E+00    
  PF_coil_0_radial_thickness_(m)__________________________________________ (pfdr(0))_____________________      1.3281E+00    
  PF_coil_0_vertical_thickness_(m)________________________________________ (pfdz(0))_____________________      1.3281E+00    
  PF_coil_0_turns_________________________________________________________ (turns[0])____________________      4.5979E+02    
