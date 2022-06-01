@@ -107,7 +107,7 @@ module constraint_variables
 
   real(dp) :: fncycle
   !! f-value for minimum CS coil stress load cycles
-  !! (`constraint equation 90`, `iteration variable 165`)
+  !! (`constraint equation 90`, `iteration variable 167`)
 
   real(dp) :: fnesep
   !! f-value for Eich critical separatrix density

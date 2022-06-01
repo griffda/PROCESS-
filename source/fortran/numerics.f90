@@ -192,7 +192,7 @@ module numerics
   !!  <LI> (87) Constraint for cryogenic power
   !!  <LI> (88) Constraint for TF coil strain absolute value
   !!  <LI> (89) Constraint for CS coil quench protection
-  !!  <LI> (90) Lower Limit on number of stress load cycles for CS (itr 165 fncycle) </UL>
+  !!  <LI> (90) Lower Limit on number of stress load cycles for CS (itr 167 fncycle) </UL>
 
 
   integer, dimension(ipnvars) :: ixc
