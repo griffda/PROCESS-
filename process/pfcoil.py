@@ -15,7 +15,6 @@ from process.fortran import numerics
 from process.fortran import superconductors as sc
 from process.fortran import rebco_variables as rcv
 from process.fortran import constraint_variables as ctv
-from process.fortran import cost_variables as cv
 from process import maths_library as pml
 from process.utilities.f2py_string_patch import f2py_compatible_to_string
 from process import fortran as ft
