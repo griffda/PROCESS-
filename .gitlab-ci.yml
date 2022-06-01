@@ -237,6 +237,8 @@ regression-py38-overwrite:
         # Set up ssh to allow overwrite commit to be pushed
         - *setup-ssh
         - pytest tests/regression -vs --reg-tolerance=0 --overwrite | tee tests/regression/pytest.log
+        # Remote URL is sandboxed inside job, so need to set original SSH push URL
+        - git remote set-url --push origin "git@$CI_SERVER_HOST:$CI_PROJECT_PATH.git"
         # Commit the overwritten regression references to develop (or other branch if testing)
         - git add .
         # $CI_COMMIT_TITLE will normally be the merge commit on develop
