@@ -12477,7 +12477,7 @@ class EyoungParallelParam(NamedTuple):
         ),
     ),
 )
-def test_eyoung_parallel(eyoungparallelparam, monkeypatch):
+def test_eyoung_parallel(eyoungparallelparam, monkeypatch, sctfcoil):
     """
     Automatically generated Regression Unit Test for eyoung_parallel.
 
@@ -12490,7 +12490,7 @@ def test_eyoung_parallel(eyoungparallelparam, monkeypatch):
     :type monkeypatch: _pytest.monkeypatch.monkeypatch
     """
 
-    eyoung_j_3, a_3, poisson_j_perp_3 = sctfcoil_module.eyoung_parallel(
+    eyoung_j_3, a_3, poisson_j_perp_3 = sctfcoil.eyoung_parallel(
         eyoung_j_1=eyoungparallelparam.eyoung_j_1,
         eyoung_j_2=eyoungparallelparam.eyoung_j_2,
         a_1=eyoungparallelparam.a_1,
@@ -12505,4 +12505,342 @@ def test_eyoung_parallel(eyoungparallelparam, monkeypatch):
 
     assert poisson_j_perp_3 == pytest.approx(
         eyoungparallelparam.expected_poisson_j_perp_3
+    )
+
+
+class EyoungTNestedSquaresParam(NamedTuple):
+
+    n: Any = None
+
+    eyoung_j_in: Any = None
+
+    l_in: Any = None
+
+    poisson_j_perp_in: Any = None
+
+    expected_eyoung_j_out: Any = None
+
+    expected_l_out: Any = None
+
+    expected_poisson_j_perp_out: Any = None
+
+    expected_eyoung_stiffest: Any = None
+
+
+class EyoungSeriesParam(NamedTuple):
+
+    eyoung_j_1: Any = None
+
+    eyoung_j_2: Any = None
+
+    l_1: Any = None
+
+    l_2: Any = None
+
+    poisson_j_perp_1: Any = None
+
+    poisson_j_perp_2: Any = None
+
+    expected_eyoung_j_3: Any = None
+
+    expected_l_3: Any = None
+
+    expected_poisson_j_perp_3: Any = None
+
+
+class EyoungParallelArrayParam(NamedTuple):
+
+    n: Any = None
+
+    eyoung_j_in: Any = None
+
+    a_in: Any = None
+
+    poisson_j_perp_in: Any = None
+
+    expected_eyoung_j_out: Any = None
+
+    expected_a_out: Any = None
+
+    expected_poisson_j_perp_out: Any = None
+
+
+@pytest.mark.parametrize(
+    "eyoungtnestedsquaresparam",
+    (
+        EyoungTNestedSquaresParam(
+            n=4,
+            eyoung_j_in=numpy.array(
+                numpy.array((0, 0, 205000000000, 20000000000, 0), order="F"), order="F"
+            ).transpose(),
+            l_in=numpy.array(
+                numpy.array(
+                    (
+                        0.010000000000000002,
+                        0.020661087836601012,
+                        0.016,
+                        0.0041799999999999997,
+                        0,
+                    ),
+                    order="F",
+                ),
+                order="F",
+            ).transpose(),
+            poisson_j_perp_in=numpy.array(
+                numpy.array(
+                    (
+                        0.29999999999999999,
+                        0.30000001192092896,
+                        0.29999999999999999,
+                        0.34000000000000002,
+                        0,
+                    ),
+                    order="F",
+                ),
+                order="F",
+            ).transpose(),
+            expected_eyoung_j_out=38289891367.115105,
+            expected_l_out=0.050841087836601018,
+            expected_poisson_j_perp_out=0.30931445806415137,
+            expected_eyoung_stiffest=116443733140.5881,
+        ),
+        EyoungTNestedSquaresParam(
+            n=4,
+            eyoung_j_in=numpy.array(
+                numpy.array((0, 0, 205000000000, 20000000000, 0), order="F"), order="F"
+            ).transpose(),
+            l_in=numpy.array(
+                numpy.array(
+                    (
+                        0.010000000000000002,
+                        0.020661087836601012,
+                        0.016,
+                        0.0041799999999999997,
+                        0,
+                    ),
+                    order="F",
+                ),
+                order="F",
+            ).transpose(),
+            poisson_j_perp_in=numpy.array(
+                numpy.array(
+                    (
+                        0.29999999999999999,
+                        0.30000001192092896,
+                        0.29999999999999999,
+                        0.34000000000000002,
+                        0,
+                    ),
+                    order="F",
+                ),
+                order="F",
+            ).transpose(),
+            expected_eyoung_j_out=38289891367.115105,
+            expected_l_out=0.050841087836601018,
+            expected_poisson_j_perp_out=0.30931445806415137,
+            expected_eyoung_stiffest=116443733140.5881,
+        ),
+    ),
+)
+def test_eyoung_t_nested_squares(eyoungtnestedsquaresparam, monkeypatch, sctfcoil):
+    """
+    Automatically generated Regression Unit Test for eyoung_t_nested_squares.
+
+    This test was generated using data from tracking/baseline_2018/baseline_2018_IN.DAT.
+
+    :param eyoungtnestedsquaresparam: the data used to mock and assert in this test.
+    :type eyoungtnestedsquaresparam: eyoungtnestedsquaresparam
+
+    :param monkeypatch: pytest fixture used to mock module/class variables
+    :type monkeypatch: _pytest.monkeypatch.monkeypatch
+    """
+
+    (
+        eyoung_j_out,
+        l_out,
+        poisson_j_perp_out,
+        eyoung_stiffest,
+    ) = sctfcoil.eyoung_t_nested_squares(
+        n=eyoungtnestedsquaresparam.n,
+        eyoung_j_in=eyoungtnestedsquaresparam.eyoung_j_in,
+        l_in=eyoungtnestedsquaresparam.l_in,
+        poisson_j_perp_in=eyoungtnestedsquaresparam.poisson_j_perp_in,
+    )
+
+    # assert eyoung_j_out == pytest.approx(
+    #     eyoungtnestedsquaresparam.expected_eyoung_j_out
+    # )
+
+    # assert l_out == pytest.approx(eyoungtnestedsquaresparam.expected_l_out)
+
+    # assert poisson_j_perp_out == pytest.approx(
+    #     eyoungtnestedsquaresparam.expected_poisson_j_perp_out
+    # )
+
+    assert eyoung_stiffest == pytest.approx(
+        eyoungtnestedsquaresparam.expected_eyoung_stiffest
+    )
+
+
+@pytest.mark.parametrize(
+    "eyoungseriesparam",
+    (
+        EyoungSeriesParam(
+            eyoung_j_1=0,
+            eyoung_j_2=117000000000,
+            l_1=0.003949573550844649,
+            l_2=0.016711514285756363,
+            poisson_j_perp_1=0.30000001192092896,
+            poisson_j_perp_2=0.34999999999999998,
+            expected_eyoung_j_3=0,
+            expected_l_3=0.020661087836601012,
+            expected_poisson_j_perp_3=0.30000001192092896,
+        ),
+        EyoungSeriesParam(
+            eyoung_j_1=0,
+            eyoung_j_2=0,
+            l_1=0.020661087836601012,
+            l_2=0.010000000000000002,
+            poisson_j_perp_1=0.30000001192092896,
+            poisson_j_perp_2=0.29999999999999999,
+            expected_eyoung_j_3=0,
+            expected_l_3=0.030661087836601014,
+            expected_poisson_j_perp_3=0.30000001192092896,
+        ),
+    ),
+)
+def test_eyoung_series(eyoungseriesparam, monkeypatch, sctfcoil):
+    """
+    Automatically generated Regression Unit Test for eyoung_series.
+
+    This test was generated using data from tracking/baseline_2018/baseline_2018_IN.DAT.
+
+    :param eyoungseriesparam: the data used to mock and assert in this test.
+    :type eyoungseriesparam: eyoungseriesparam
+
+    :param monkeypatch: pytest fixture used to mock module/class variables
+    :type monkeypatch: _pytest.monkeypatch.monkeypatch
+    """
+
+    eyoung_j_3, l_3, poisson_j_perp_3 = sctfcoil.eyoung_series(
+        eyoung_j_1=eyoungseriesparam.eyoung_j_1,
+        eyoung_j_2=eyoungseriesparam.eyoung_j_2,
+        l_1=eyoungseriesparam.l_1,
+        l_2=eyoungseriesparam.l_2,
+        poisson_j_perp_1=eyoungseriesparam.poisson_j_perp_1,
+        poisson_j_perp_2=eyoungseriesparam.poisson_j_perp_2,
+    )
+
+    assert eyoung_j_3 == pytest.approx(eyoungseriesparam.expected_eyoung_j_3)
+
+    assert l_3 == pytest.approx(eyoungseriesparam.expected_l_3)
+
+    assert poisson_j_perp_3 == pytest.approx(
+        eyoungseriesparam.expected_poisson_j_perp_3
+    )
+
+
+@pytest.mark.parametrize(
+    "eyoungparallelarrayparam",
+    (
+        EyoungParallelArrayParam(
+            n=5,
+            eyoung_j_in=numpy.array(
+                numpy.array((205000000000, 20000000000, 117000000000, 0, 0), order="F"),
+                order="F",
+            ).transpose(),
+            a_in=numpy.array(
+                numpy.array(
+                    (
+                        0.29370123076207649,
+                        0.11646247019991701,
+                        0.13374756938078641,
+                        0.031609694578447076,
+                        0.1297552160314831,
+                    ),
+                    order="F",
+                ),
+                order="F",
+            ).transpose(),
+            poisson_j_perp_in=numpy.array(
+                numpy.array(
+                    (
+                        0.29999999999999999,
+                        0.34000000000000002,
+                        0.34999999999999998,
+                        0.30000001192092896,
+                        0.29999999999999999,
+                    ),
+                    order="F",
+                ),
+                order="F",
+            ).transpose(),
+            expected_eyoung_j_out=110859361820.72557,
+            expected_a_out=0.70527618095271016,
+            expected_poisson_j_perp_out=0.31608714140682664,
+        ),
+        EyoungParallelArrayParam(
+            n=5,
+            eyoung_j_in=numpy.array(
+                numpy.array((205000000000, 20000000000, 117000000000, 0, 0), order="F"),
+                order="F",
+            ).transpose(),
+            a_in=numpy.array(
+                numpy.array(
+                    (
+                        0.29370123076207649,
+                        0.11646247019991701,
+                        0.13374756938078641,
+                        0.031609694578447076,
+                        0.1297552160314831,
+                    ),
+                    order="F",
+                ),
+                order="F",
+            ).transpose(),
+            poisson_j_perp_in=numpy.array(
+                numpy.array(
+                    (
+                        0.29999999999999999,
+                        0.34000000000000002,
+                        0.34999999999999998,
+                        0.30000001192092896,
+                        0.29999999999999999,
+                    ),
+                    order="F",
+                ),
+                order="F",
+            ).transpose(),
+            expected_eyoung_j_out=110859361820.72557,
+            expected_a_out=0.70527618095271016,
+            expected_poisson_j_perp_out=0.31608714140682664,
+        ),
+    ),
+)
+def test_eyoung_parallel_array(eyoungparallelarrayparam, monkeypatch, sctfcoil):
+    """
+    Automatically generated Regression Unit Test for eyoung_parallel_array.
+
+    This test was generated using data from tracking/baseline_2018/baseline_2018_IN.DAT.
+
+    :param eyoungparallelarrayparam: the data used to mock and assert in this test.
+    :type eyoungparallelarrayparam: eyoungparallelarrayparam
+
+    :param monkeypatch: pytest fixture used to mock module/class variables
+    :type monkeypatch: _pytest.monkeypatch.monkeypatch
+    """
+
+    eyoung_j_out, a_out, poisson_j_perp_out = sctfcoil.eyoung_parallel_array(
+        n=eyoungparallelarrayparam.n,
+        eyoung_j_in=eyoungparallelarrayparam.eyoung_j_in,
+        a_in=eyoungparallelarrayparam.a_in,
+        poisson_j_perp_in=eyoungparallelarrayparam.poisson_j_perp_in,
+    )
+
+    assert eyoung_j_out == pytest.approx(eyoungparallelarrayparam.expected_eyoung_j_out)
+
+    assert a_out == pytest.approx(eyoungparallelarrayparam.expected_a_out)
+
+    assert poisson_j_perp_out == pytest.approx(
+        eyoungparallelarrayparam.expected_poisson_j_perp_out
     )

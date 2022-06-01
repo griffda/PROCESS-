@@ -3531,11 +3531,7 @@ class Sctfcoil:
                 # [EDIT: eyoung_cond is for the TF coil, not the CS coil]
 
                 # Get transverse properties
-                (
-                    eyoung_trans[0],
-                    a_working,
-                    poisson_trans[0],
-                ) = sctfcoil_module.eyoung_parallel(
+                (eyoung_trans[0], a_working, poisson_trans[0],) = self.eyoung_parallel(
                     tfcoil_variables.eyoung_steel,
                     pfcoil_variables.oh_steel_frac,
                     tfcoil_variables.poisson_steel,
@@ -3567,7 +3563,7 @@ class Sctfcoil:
                     a_working,
                     poisson_axial[0],
                     eyoung_cs_stiffest_leg,
-                ) = sctfcoil_module.eyoung_t_nested_squares(
+                ) = self.eyoung_t_nested_squares(
                     3, eyoung_member_array, l_member_array, poisson_member_array
                 )
 
@@ -3688,7 +3684,7 @@ class Sctfcoil:
                 eyoung_member_array[1],
                 l_member_array[1],
                 poisson_member_array[1],
-            ) = sctfcoil_module.eyoung_series(
+            ) = self.eyoung_series(
                 tfcoil_variables.eyoung_cond_trans,
                 (t_cable_eyng - tfcoil_variables.dhecoil)
                 * (1.0e0 - tfcoil_variables.fcutfsu),
@@ -3712,7 +3708,7 @@ class Sctfcoil:
                 a_working,
                 poisson_wp_trans,
                 eyoung_wp_stiffest_leg,
-            ) = sctfcoil_module.eyoung_t_nested_squares(
+            ) = self.eyoung_t_nested_squares(
                 4,
                 eyoung_member_array,
                 l_member_array,
@@ -3724,7 +3720,7 @@ class Sctfcoil:
                 eyoung_wp_trans_eff,
                 a_working,
                 poisson_wp_trans_eff,
-            ) = sctfcoil_module.eyoung_series(
+            ) = self.eyoung_series(
                 eyoung_wp_trans,
                 sctfcoil_module.t_wp_toroidal_av,
                 poisson_wp_trans,
@@ -3768,7 +3764,7 @@ class Sctfcoil:
                 eyoung_wp_axial,
                 a_working,
                 poisson_wp_axial,
-            ) = sctfcoil_module.eyoung_parallel_array(
+            ) = self.eyoung_parallel_array(
                 5,
                 eyoung_member_array,
                 l_member_array,
@@ -3781,7 +3777,7 @@ class Sctfcoil:
                 eyoung_wp_axial_eff,
                 a_working,
                 poisson_wp_axial_eff,
-            ) = sctfcoil_module.eyoung_parallel(
+            ) = self.eyoung_parallel(
                 tfcoil_variables.eyoung_steel,
                 a_wp_steel_eff - tfcoil_variables.aswp,
                 tfcoil_variables.poisson_steel,
@@ -3816,11 +3812,7 @@ class Sctfcoil:
 
             # Effective conductor region young modulus in the vertical direction [Pa]
             # Parallel-composite conductor and insulator
-            (
-                eyoung_wp_axial,
-                a_working,
-                poisson_wp_axial,
-            ) = sctfcoil_module.eyoung_parallel(
+            (eyoung_wp_axial, a_working, poisson_wp_axial,) = self.eyoung_parallel(
                 eyoung_cond,
                 (a_wp_eff - sctfcoil_module.a_tf_ins)
                 * (1.0e0 - tfcoil_variables.fcoolcp),
@@ -3830,11 +3822,7 @@ class Sctfcoil:
                 tfcoil_variables.poisson_ins,
             )
             # Parallel-composite cooling pipes into that
-            (
-                eyoung_wp_axial,
-                a_working,
-                poisson_wp_axial,
-            ) = sctfcoil_module.eyoung_parallel(
+            (eyoung_wp_axial, a_working, poisson_wp_axial,) = self.eyoung_parallel(
                 0e0,
                 (a_wp_eff - sctfcoil_module.a_tf_ins) * tfcoil_variables.fcoolcp,
                 poisson_cond,
@@ -6639,3 +6627,231 @@ class Sctfcoil:
         # ------
 
         return rradius, sigr, sigt, sigz, str_r, str_t, str_z, r_deflect
+
+    def eyoung_parallel(
+        self, eyoung_j_1, a_1, poisson_j_perp_1, eyoung_j_2, a_2, poisson_j_perp_2
+    ):
+        """
+        Author : C. Swanson, PPPL
+        January 2022
+        See Issue #1205 for derivation PDF
+        This subroutine gives the smeared elastic properties of two
+        members that are carrying a force in parallel with each other.
+        The force goes in direction j.
+        Members 1 and 2 are the individual members to be smeared.
+        Member 3 is the effective smeared member (output).
+        This is pretty easy because the smeared properties are simply
+        the average weighted by the cross-sectional areas perpendicular
+        to j.
+        The assumption is that the strains in j are equal.
+        If you're dealing with anisotropy, please pay attention to the
+        fact that the specific Young's Modulus used here is that in
+        the j direction, and the specific Poisson's ratio used here is
+        that between the j and transverse directions in that order.
+        (transverse strain / j strain, under j stress)
+        The smeared Poisson's ratio is computed assuming the transverse
+        dynamics are isotropic, and that the two members are free to
+        shrink/expand under Poisson effects without interference from
+        each other. This may not be true of your case.
+
+        To build up a composite smeared member of any number of
+        individual members, you can pass the same properties for
+        members 2 and 3, and call it successively, using the properties
+        of each member as the first triplet of arguments. This way, the
+        last triplet acts as a "working sum":
+        call eyoung_parallel(triplet1, triplet2, tripletOUT)
+        call eyoung_parallel(triplet3, tripletOUT, tripletOUT)
+        call eyoung_parallel(triplet4, tripletOUT, tripletOUT)
+        ... etc.
+        So that tripletOUT would eventually have the smeared properties
+        of the total composite member.
+        """
+        poisson_j_perp_3 = (poisson_j_perp_1 * a_1 + poisson_j_perp_2 * a_2) / (
+            a_1 + a_2
+        )
+        eyoung_j_3 = (eyoung_j_1 * a_1 + eyoung_j_2 * a_2) / (a_1 + a_2)
+        a_3 = a_1 + a_2
+
+        return eyoung_j_3, a_3, poisson_j_perp_3
+
+    def eyoung_parallel_array(self, n, eyoung_j_in, a_in, poisson_j_perp_in):
+        """
+        Author : C. Swanson, PPPL
+        January 2022
+        See Issue #1205 for derivation PDF
+        This subroutine gives the smeared elastic properties of two
+        members that are carrying a force in parallel with each other.
+        The force goes in direction j.
+        Members 1 and 2 are the individual members to be smeared.
+        Member 3 is the effective smeared member (output).
+        This is pretty easy because the smeared properties are simply
+        the average weighted by the cross-sectional areas perpendicular
+        to j.
+        The assumption is that the strains in j are equal.
+        If you're dealing with anisotropy, please pay attention to the
+        fact that the specific Young's Modulus used here is that in
+        the j direction, and the specific Poisson's ratio used here is
+        that between the j and transverse directions in that order.
+        (transverse strain / j strain, under j stress)
+        The smeared Poisson's ratio is computed assuming the transverse
+        dynamics are isotropic, and that the two members are free to
+        shrink/expand under Poisson effects without interference from
+        each other. This may not be true of your case.
+
+        To build up a composite smeared member of any number of
+        individual members, you can pass the same properties for
+        members 2 and 3, and call it successively, using the properties
+        of each member as the first triplet of arguments. This way, the
+        last triplet acts as a "working sum":
+        call eyoung_parallel(triplet1, triplet2, tripletOUT)
+        call eyoung_parallel(triplet3, tripletOUT, tripletOUT)
+        call eyoung_parallel(triplet4, tripletOUT, tripletOUT)
+        ... etc.
+        So that tripletOUT would eventually have the smeared properties
+        of the total composite member.
+        """
+        eyoung_j_out = 0
+        a_out = 0
+        poisson_j_perp_out = 0
+
+        # Parallel-composite them all together
+        for ii in range(n):
+            eyoung_j_out, a_out, poisson_j_perp_out = self.eyoung_parallel(
+                eyoung_j_in[ii],
+                a_in[ii],
+                poisson_j_perp_in[ii],
+                eyoung_j_out,
+                a_out,
+                poisson_j_perp_out,
+            )
+
+        return eyoung_j_out, a_out, poisson_j_perp_out
+
+    def eyoung_series(
+        self, eyoung_j_1, l_1, poisson_j_perp_1, eyoung_j_2, l_2, poisson_j_perp_2
+    ):
+        """
+        Author : C. Swanson, PPPL
+        January 2022
+        See Issue #1205 for derivation PDF
+        This subroutine gives the smeared elastic properties of two
+        members that are carrying a force in series with each other.
+        The force goes in direction j.
+        The assumption is that the stresses in j are equal.
+        The smeared Young's modulus is the inverse of the average of
+        the inverse of the Young's moduli, weighted by the length
+        of the members in j.
+        Members 1 and 2 are the individual members to be smeared.
+        Member 3 is the effective smeared member (output).
+        The smeared Poisson's ratio is the averaged of the Poisson's
+        ratios, weighted by the quantity (Young's modulus / length of
+        the members in j).
+
+        If you're dealing with anisotropy, please pay attention to the
+        fact that the specific Young's Modulus used here is that in
+        the j direction, and the specific Poisson's ratio used here is
+        that between the j and transverse directions in that order.
+        (transverse strain / j strain, under j stress)
+        The smeared Poisson's ratio is computed assuming the transverse
+        dynamics are isotropic, and that the two members are free to
+        shrink/expand under Poisson effects without interference from
+        each other. This may not be true of your case.
+
+        To build up a composite smeared member of any number of
+        individual members, you can pass the same properties for
+        members 2 and 3, and call it successively, using the properties
+        of each member as the first triplet of arguments. This way, the
+        last triplet acts as a "working sum":
+        call eyoung_series(triplet1, triplet2, tripletOUT)
+        call eyoung_series(triplet3, tripletOUT, tripletOUT)
+        call eyoung_series(triplet4, tripletOUT, tripletOUT)
+        ... etc.
+        So that tripletOUT would eventually have the smeared properties
+        of the total composite member.
+        """
+        if eyoung_j_1 * eyoung_j_2 == 0:
+            # poisson_j_perp_3 = 0
+            if eyoung_j_1 == 0:
+                poisson_j_perp_3 = poisson_j_perp_1
+            else:
+                poisson_j_perp_3 = poisson_j_perp_2  #
+
+            eyoung_j_3 = 0
+            l_3 = l_1 + l_2
+        else:
+            poisson_j_perp_3 = (
+                poisson_j_perp_1 * l_1 / eyoung_j_1
+                + poisson_j_perp_2 * l_2 / eyoung_j_2
+            ) / (l_1 / eyoung_j_1 + l_2 / eyoung_j_2)
+            eyoung_j_3 = (l_1 + l_2) / (l_1 / eyoung_j_1 + l_2 / eyoung_j_2)
+            l_3 = l_1 + l_2
+
+        return eyoung_j_3, l_3, poisson_j_perp_3
+
+    def eyoung_t_nested_squares(self, n, eyoung_j_in, l_in, poisson_j_perp_in):
+        """
+        Author : C. Swanson, PPPL
+        January 2022
+        This subroutine gives the smeared transverse elastic
+        properties of n members whose cross sectional areas are
+        nested squares. It uses the subroutines eyoung_series and
+        eyoung_parallel, above, so please be aware of the assumptions
+        inherent in those subroutines.
+
+        It assumes that each "leg" of the square cross section
+        (vertical slice, as described in Figure 10 of the TF coil
+        documentation) is composed of several layers under stress in
+        series, and each leg is under stress in parallel with every
+        other leg.
+        """
+        eyoung_j_working = numpy.zeros((n,))
+        l_working = numpy.zeros((n,))
+        poisson_j_perp_working = numpy.zeros((n,))
+
+        # First member
+        eyoung_j_working[0] = eyoung_j_in[0]
+        l_working[0] = l_in[0]
+        poisson_j_perp_working[0] = poisson_j_perp_in[0]
+
+        for ii in range(1, n):
+
+            # Initialize the leg of which this is the new member
+            eyoung_j_working[ii] = eyoung_j_in[ii]
+            l_working[ii] = l_working[ii - 1] + l_in[ii]
+            poisson_j_perp_working[ii] = poisson_j_perp_in[ii]
+
+            # Serial-composite the new layer of this member into the previous legs
+            # changed from range(ii-1) because range(0) == []
+            for jj in range(ii):
+                (
+                    eyoung_j_working[jj],
+                    l_working[jj],
+                    poisson_j_perp_working[jj],
+                ) = self.eyoung_series(
+                    eyoung_j_working[ii],
+                    l_in[ii],
+                    poisson_j_perp_working[ii],
+                    eyoung_j_working[jj],
+                    l_working[jj],
+                    poisson_j_perp_working[jj],
+                )
+
+        # Find stiffest leg
+        eyoung_stiffest = max(eyoung_j_working)
+
+        eyoung_j_out = 0
+        l_out = 0
+        poisson_j_perp_out = 0
+
+        # Parallel-composite them all together
+        for ii in range(n):
+            eyoung_j_out, l_out, poisson_j_perp_out = self.eyoung_parallel(
+                eyoung_j_working[ii],
+                l_in[ii],
+                poisson_j_perp_working[ii],
+                eyoung_j_out,
+                l_out,
+                poisson_j_perp_out,
+            )
+
+        return eyoung_j_out, l_out, poisson_j_perp_out, eyoung_stiffest
