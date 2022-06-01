@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1592-g962112e9
-    Branch : divertor-costs-into-cost-model-2-more-stable
-   Git log : Removed\ costs_step.f90\ as\ superceded\ by\ python\ ver
- Date/time : 19 Apr 2022 11:31:28 +01:00(hh:mm) UTC
-      User : jg6173
-  Computer : L1088
- Directory : /tmp/pytest-of-jg6173/pytest-70/test_solver0
-     Input : /tmp/pytest-of-jg6173/pytest-70/test_scenario_cs_hts_REBCO_0/IN.DAT
+   Tag No. : v2.1-1614-ge10d543cf
+    Branch : HEAD
+   Git log : Set\ remote\ push\ URL\ explicitly
+ Date/time :  1 Jun 2022  8:28:35 +00:00(hh:mm) UTC
+      User : root
+  Computer : runner-8r7le1vq-project-20-concurrent-0
+ Directory : /builds/process/process
+     Input : /tmp/pytest-of-root/pytest-0/test_scenario_cs_hts_REBCO_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -498,7 +498,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Volt-second considerations:
  
- Total V-s capability of Central Solenoid/PF coils (Wb)                   (abs(pfcoil_variables.vst 7.868E+02     
+ Total V-s capability of Central Solenoid/PF coils (Wb)                   (abs(vstot))              7.868E+02     
  Required volt-seconds during start-up (Wb)                               (vssoft)                  3.648E+02     
  Available volt-seconds during burn (Wb)                                  (vsmax)                   2.308E+02     
  
