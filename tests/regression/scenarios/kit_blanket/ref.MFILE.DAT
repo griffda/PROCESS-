@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.3.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "19/04/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "11:32"
- User____________________________________________________________________ (username)____________________     "jg6173"  
+ Date_of_run_____________________________________________________________ (date)________________________     "01/06/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "08:30"
+ User____________________________________________________________________ (username)____________________     "root"    
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "Michael's test file                                                                                
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1592-g962112e9"                                                                               
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "divertor-costs-into-cost-model-2-more-stable"                                                      
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Removed\ costs_step.f90\ as\ superceded\ by\ python\ ver"                                          
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-jg6173/pytest-70/test_scenario_kit_blanket_0/IN.DAT                                                                                                                                      "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1614-ge10d543cf"                                                                              
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "HEAD"                                                                                              
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Set\ remote\ push\ URL\ explicitly"                                                                
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-root/pytest-0/test_scenario_kit_blanket_0/IN.DAT                                                                                                                                         "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -418,7 +418,7 @@
  Beam_tangency_radius_/_Plasma_major_radius______________________________ (frbeam)______________________      1.0000E+00    
  Beam_centreline_tangency_radius_(m)_____________________________________ (rtanbeam)____________________      9.5184E+00 OP 
  Maximum_possible_tangency_radius_(m)____________________________________ (rtanmax)_____________________      1.5199E+01 OP 
- Total_V-s_capability_of_Central_Solenoid/PF_coils_(Wb)__________________ (abs(pfcoil_variables.vstot))_      8.4599E+02    
+ Total_V-s_capability_of_Central_Solenoid/PF_coils_(Wb)__________________ (abs(vstot))__________________      8.4599E+02    
  Required_volt-seconds_during_start-up_(Wb)______________________________ (vssoft)______________________      4.3940E+02    
  Available_volt-seconds_during_burn_(Wb)_________________________________ (vsmax)_______________________      3.8048E+02    
  # Times #

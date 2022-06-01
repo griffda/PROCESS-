@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.3.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "19/04/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "11:31"
- User____________________________________________________________________ (username)____________________     "jg6173"  
+ Date_of_run_____________________________________________________________ (date)________________________     "01/06/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "08:28"
+ User____________________________________________________________________ (username)____________________     "root"    
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "TF coil testing                                                                                    
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1592-g962112e9"                                                                               
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "divertor-costs-into-cost-model-2-more-stable"                                                      
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Removed\ costs_step.f90\ as\ superceded\ by\ python\ ver"                                          
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-jg6173/pytest-70/test_scenario_G_L_Nb_Ti_0/IN.DAT                                                                                                                                        "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1614-ge10d543cf"                                                                              
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "HEAD"                                                                                              
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Set\ remote\ push\ URL\ explicitly"                                                                
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-root/pytest-0/test_scenario_G_L_Nb_Ti_0/IN.DAT                                                                                                                                           "
  
  Scan_point_number_______________________________________________________ (iscan)_______________________              1    
  # Numerics #
@@ -529,7 +529,7 @@
  Maximum_allowable_ECRH_power_(MW)_______________________________________ (pinjalw)_____________________      5.0000E+01    
  ECH_wall_plug_efficiency________________________________________________ (etaech)______________________      4.0000E-01    
  ECH_wall_plug_power_(MW)________________________________________________ (echwpow)_____________________      1.2500E+02 OP 
- Total_V-s_capability_of_Central_Solenoid/PF_coils_(Wb)__________________ (abs(pfcoil_variables.vstot))_      5.3926E+02    
+ Total_V-s_capability_of_Central_Solenoid/PF_coils_(Wb)__________________ (abs(vstot))__________________      5.3926E+02    
  Required_volt-seconds_during_start-up_(Wb)______________________________ (vssoft)______________________      3.4688E+02    
  Available_volt-seconds_during_burn_(Wb)_________________________________ (vsmax)_______________________      1.8788E+02    
  # Times #
@@ -1662,7 +1662,7 @@
  Maximum_allowable_ECRH_power_(MW)_______________________________________ (pinjalw)_____________________      5.0000E+01    
  ECH_wall_plug_efficiency________________________________________________ (etaech)______________________      4.0000E-01    
  ECH_wall_plug_power_(MW)________________________________________________ (echwpow)_____________________      1.2500E+02 OP 
- Total_V-s_capability_of_Central_Solenoid/PF_coils_(Wb)__________________ (abs(pfcoil_variables.vstot))_      5.4073E+02    
+ Total_V-s_capability_of_Central_Solenoid/PF_coils_(Wb)__________________ (abs(vstot))__________________      5.4073E+02    
  Required_volt-seconds_during_start-up_(Wb)______________________________ (vssoft)______________________      3.4497E+02    
  Available_volt-seconds_during_burn_(Wb)_________________________________ (vsmax)_______________________      1.9116E+02    
  # Times #
@@ -2795,7 +2795,7 @@
  Maximum_allowable_ECRH_power_(MW)_______________________________________ (pinjalw)_____________________      5.0000E+01    
  ECH_wall_plug_efficiency________________________________________________ (etaech)______________________      4.0000E-01    
  ECH_wall_plug_power_(MW)________________________________________________ (echwpow)_____________________      1.2500E+02 OP 
- Total_V-s_capability_of_Central_Solenoid/PF_coils_(Wb)__________________ (abs(pfcoil_variables.vstot))_      5.4219E+02    
+ Total_V-s_capability_of_Central_Solenoid/PF_coils_(Wb)__________________ (abs(vstot))__________________      5.4219E+02    
  Required_volt-seconds_during_start-up_(Wb)______________________________ (vssoft)______________________      3.4310E+02    
  Available_volt-seconds_during_burn_(Wb)_________________________________ (vsmax)_______________________      1.9440E+02    
  # Times #
@@ -3928,7 +3928,7 @@
  Maximum_allowable_ECRH_power_(MW)_______________________________________ (pinjalw)_____________________      5.0000E+01    
  ECH_wall_plug_efficiency________________________________________________ (etaech)______________________      4.0000E-01    
  ECH_wall_plug_power_(MW)________________________________________________ (echwpow)_____________________      1.2500E+02 OP 
- Total_V-s_capability_of_Central_Solenoid/PF_coils_(Wb)__________________ (abs(pfcoil_variables.vstot))_      5.4364E+02    
+ Total_V-s_capability_of_Central_Solenoid/PF_coils_(Wb)__________________ (abs(vstot))__________________      5.4364E+02    
  Required_volt-seconds_during_start-up_(Wb)______________________________ (vssoft)______________________      3.4126E+02    
  Available_volt-seconds_during_burn_(Wb)_________________________________ (vsmax)_______________________      1.9760E+02    
  # Times #
