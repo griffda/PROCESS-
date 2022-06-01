@@ -259,7 +259,7 @@ contains
       step_ucsc, step_ucfnc, step_ucfwa, step_ucfws, step_ucfwps, step91_per, &
       step92_per, step93_per, step_uc_cryo_al, step_mc_cryo_al_per, sitecost, &
       wfbuilding, whole_site_area, site_imp_uc, step_ucoam, step_ucwst, &
-      startupratio
+      startupratio, isitetype, isiteaccomm, igridconn, irailaccess
     use current_drive_variables, only: pinjfixmw, etaech, pinjalw, etanbi, &
       ftritbm, gamma_ecrh, pheat, rho_ecrh, beamwd, enbeam, pheatfix, bscfmax, &
       forbitloss, nbshield, tbeamin, feffcd, iefrf, iefrffix, irfcd, cboot, &
@@ -274,7 +274,7 @@ contains
       c5div, ksic, fififi, divplt, delld, c2div, betao, divdum, tdiv, c6div, &
       omegan, prn1, fgamp, frrp, xpertin, c1div, betai, bpsout, xparain, fdiva, &
       zeffdiv, hldivlim, rlenmax, divfix, c3div, divleg_profile_inner, &
-      divleg_profile_outer 
+      divleg_profile_outer
     use fwbs_variables, only: fblhebpo, vfblkt, fdiv, fvolso, fwcoolant, &
       pitch, iblanket, blktmodel, afwi, fblli2o, nphcdin, breeder_multiplier, &
       fw_armour_thickness, roughness, fwclfr, breedmat, fblli, fblvd, &
@@ -2840,6 +2840,18 @@ contains
        case ('startupratio')
           call parse_real_variable('startupratio', startupratio, 0.0D0, 10.0D0, &
                'Ratio (additional HCD power for start-up) / (flat-top operational requirements)')
+       case ('isitetype')
+          call parse_int_variable('isitetype', isitetype, 0, 2, &
+                'Switch for type of site (river/sea/lakeside)')
+       case ('isiteaccomm')
+          call parse_int_variable('isiteaccomm', isiteaccomm, 0, 1, &
+                'Switch for including Campus Accommodation')
+       case ('igridconn')
+          call parse_int_variable('igridconn', igridconn, 0, 1, &
+                'Switch for site connection (outgoing) to electricity grid')
+       case ('irailaccess')
+          call parse_int_variable('irailaccess', irailaccess, 0, 1, &
+                'Switch for rail access to site')
 
           !  Unit cost settings
 

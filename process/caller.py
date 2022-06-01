@@ -73,14 +73,8 @@ class Caller:
         if ft.tfcoil_variables.i_tf_sup == 1:
             ft.sctfcoil_module.tfspcall(ft.constants.nout, 0)
 
-        # Poloidal field and Central Solenoid model
-        ft.pfcoil_module.pfcoil()
-
-        # Poloidal field coil inductance calculation
-        ft.pfcoil_module.induct(ft.constants.nout, 0)
-
-        # Volt-second capability of PF coil set
-        ft.pfcoil_module.vsec()
+        # Poloidal field and central solenoid model
+        self.models.pfcoil.run()
 
         # Pulsed reactor model
         self.models.pulse.run(output=False)
@@ -191,9 +185,9 @@ class Caller:
         2    |  2019 STEP model
         """
         if ft.cost_variables.cost_model == 0:
-            ft.costs_module.costs(ft.constants.nout, 0)
+            self.models.costs.run(output=False)
         elif ft.cost_variables.cost_model == 1:
-            ft.costs_2015_module.costs_2015(0, 0)
+            self.models.costs_2015.run(output=False)
         elif ft.cost_variables.cost_model == 2:
             self.models.costs_step.run()
 

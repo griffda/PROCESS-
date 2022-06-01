@@ -1,6 +1,6 @@
 # Testing
 ## Understanding testing
-The purpose of testing is to check that the existing code behaves as it is expected to, and that any code changes don't produce unexpected results, such as breaking pre-existing functionality or creating an unwanted side-effect. It allows changes to be made with confidence and it increases confidence in the results produced by the code.
+The purpose of testing is to check that the existing code behaves as it is expected to, and that any code changes don't produce unexpected results, such as breaking pre-existing functionality or creating an unwanted side-effect. It allows changes to be made with confidence and it increases confidence in the results produced by the code. 
 
 Tests run part of the code with a given input and assert that the observed output is equal to an expected output. If the assertion is true the test will pass, if it is false, it will fail. A collection of tests in known as a test suite, and they can be classified into three different testing scopes:
 
@@ -17,11 +17,11 @@ Regression tests detect changes in the entire program's behaviour by checking th
 Process uses the `pytest` testing framework in its test suite. `pytest` tests are modular, quick to write with little code and produce helpful information when they fail. It is used widely in the Python world.
 
 ### Running pytest
-`pytest` can be run locally by running `pytest` in the project root directory. This will run all tests. `pytest` can also be configured to run in the sidebar of VS Code.
+`pytest` can be run locally by running `pytest` in the project root directory. This will run all tests. `pytest` can also be configured to run in the sidebar of VS Code. 
 
 Individual test collections can be run by specifying the test directory to run, e.g.
 ```BASH
-pytest tests/unit
+pytest tests/unit 
 ```
 will only run unit tests.
 

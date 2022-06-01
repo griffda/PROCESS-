@@ -30,8 +30,8 @@ If present, a neutral beam injection system needs sufficient space between the T
 
 <figure>
     <center>
-    <img src="../../images/portsize.png" alt="NBI port"
-    title="Neutral beam access geometry"
+    <img src="../../images/portsize.png" alt="NBI port" 
+    title="Neutral beam access geometry" 
     width="550" height="100" />
     <br><br>
     <figcaption><i>Figure 1: Top-down schematic of the neutral beam access geometry. The beam with the maximum possible tangency radius is shown here.

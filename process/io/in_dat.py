@@ -13,6 +13,7 @@
                     generation script imports, and inspects, process.
 """
 
+from re import sub
 import subprocess
 from sys import stderr
 from process.io.python_fortran_dicts import get_dicts
@@ -676,6 +677,14 @@ def remove_bound(data, bound, bound_type):
             del bounds[bound]
 
 
+def fortran_float_to_py(f: str) -> str:
+    if not isinstance(f, str):
+        return f
+    p = sub(r"([0-9]+\.[0-9]+)(?:D|d)([0-9]+)", r"\1e\2", f)
+
+    return p
+
+
 def parameter_type(name, value):
     """Function to return value in correct format for altering values etc.
 
@@ -696,7 +705,10 @@ def parameter_type(name, value):
 
         # Real array parameter
         if "real_array" in param_type:
-            return [item if item is None else float(item) for item in value]
+            return [
+                item if item is None else float(fortran_float_to_py(item))
+                for item in value
+            ]
             # Convert list to floats, but not if the value is None
 
         # Integer array parameter

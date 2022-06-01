@@ -107,22 +107,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Power Generation Costs :
  
-                                                                           Annual Costs, M$       COE, m$/kWh
-
- Capital Investment                                                                543.32               82.65
- Operation & Maintenance                                                            62.81                9.55
- Decommissioning Fund                                                                4.59                0.70
- Fuel Charge Breakdown
-
-     Blanket & first wall                                                    0.00                0.00
-     Divertors                                                               0.00                0.00
-     Centrepost (TART only)                                                  0.00                0.00
-     Auxiliary Heating                                                       0.00                0.00
-     Actual Fuel                                                             2.88                0.44
-     Waste Disposal                                                          3.60                0.55
- Total Fuel Cost                                                                     6.47                0.98
-
- Total Cost                                                                        617.19               93.88
  
  **************************************** Detailed Costings (1990 US$) ****************************************
  
@@ -417,13 +401,11 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Synchrotron wall reflectivity factor                                     (ssync)                       0.600     
  Normalised minor radius defining 'core'                                  (coreradius)              6.000E-01     
  Fraction of core radiation subtracted from P_L                           (coreradiationfraction)   1.000E+00     
- Total core radiation power (MW)                                          (pcoreradmw)              1.317E+02  OP 
- Edge radiation power (MW)                                                (pedgeradmw)              1.154E+02  OP 
+ Radiation power from inner zone (MW)                                     (pinnerzoneradmw)         1.317E+02  OP 
+ Radiation power from outer zone (MW)                                     (pouterzoneradmw)         1.154E+02  OP 
  SOL radiation power (MW)                                                 (psolradmw)               2.956E+02  OP 
- Total radiation power (MW)                                               (pradmw)                  5.428E+02  OP 
- Core radiation fraction = total radiation in core / total power deposite (rad_fraction_core)       0.000E+00  OP 
- SoL radiation fraction = total radiation in SoL / total power accross se (rad_fraction_sol)        8.000E-01  IP 
- Radiation fraction = total radiation / total power deposited in plasma   (rad_fraction)            9.123E-01  OP 
+ Total radiation power from inside LCFS (MW)                              (pradmw)                  5.428E+02  OP 
+ LCFS radiation fraction = total radiation in LCFS / total power deposite (rad_fraction_LCFS)       0.000E+00  OP 
  Nominal mean radiation load on inside surface of reactor (MW/m2)         (photon_wall)             2.561E-01  OP 
  Peaking factor for radiation wall load                                   (peakfactrad)             3.330E+00  IP 
  Maximum permitted radiation wall load (MW/m^2)                           (maxradwallload)          1.000E+00  IP 
@@ -914,7 +896,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Only energy deposited in the plasma is included here.
  Total power loss is scaling power plus core radiation only (iradloss = 1)
  Transport power from scaling law (MW)                                    (pscalingmw)                463.247  OP 
- Radiation power from inside "coreradius" (MW)                            (pcoreradmw.)               131.692  OP 
+ Radiation power from inside "coreradius" (MW)                            (pinnerzoneradmw.)          131.692  OP 
  Total (MW)                                                                                           594.939  OP 
  
  Alpha power deposited in plasma (MW)                                     (falpha*palpmw)             592.724  OP 
