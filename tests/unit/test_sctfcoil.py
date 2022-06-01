@@ -12383,7 +12383,7 @@ def test_extended_plane_strain(extendedplanestrainparam, monkeypatch, sctfcoil):
         str_t,
         str_z,
         r_deflect,
-    ) = sctfcoil_module.extended_plane_strain(
+    ) = sctfcoil.extended_plane_strain(
         n_radial_array=extendedplanestrainparam.n_radial_array,
         nlayers=extendedplanestrainparam.nlayers,
         i_tf_bucking=extendedplanestrainparam.i_tf_bucking,
@@ -12396,34 +12396,113 @@ def test_extended_plane_strain(extendedplanestrainparam, monkeypatch, sctfcoil):
         v_force=extendedplanestrainparam.v_force,
     )
 
-    numpy.testing.assert_array_equal(
+    numpy.testing.assert_array_almost_equal(
         sigr, numpy.array(extendedplanestrainparam.expected_sigr)
     )
 
-    # numpy.testing.assert_array_almost_equal(
-    #     sigt, numpy.array(extendedplanestrainparam.expected_sigt)
-    # )
+    numpy.testing.assert_array_almost_equal(
+        sigt, numpy.array(extendedplanestrainparam.expected_sigt), decimal=5
+    )
 
-    # numpy.testing.assert_array_almost_equal(
-    #     sigz, numpy.array(extendedplanestrainparam.expected_sigz)
-    # )
+    numpy.testing.assert_array_almost_equal(
+        sigz, numpy.array(extendedplanestrainparam.expected_sigz), decimal=5
+    )
 
-    numpy.testing.assert_array_equal(
+    numpy.testing.assert_array_almost_equal(
         str_r, numpy.array(extendedplanestrainparam.expected_str_r)
     )
 
-    numpy.testing.assert_array_equal(
+    numpy.testing.assert_array_almost_equal(
         str_t, numpy.array(extendedplanestrainparam.expected_str_t)
     )
 
-    numpy.testing.assert_array_equal(
+    numpy.testing.assert_array_almost_equal(
         str_z, numpy.array(extendedplanestrainparam.expected_str_z)
     )
 
-    numpy.testing.assert_array_equal(
+    numpy.testing.assert_array_almost_equal(
         r_deflect, numpy.array(extendedplanestrainparam.expected_r_deflect)
     )
 
-    numpy.testing.assert_array_equal(
+    numpy.testing.assert_array_almost_equal(
         rradius, numpy.array(extendedplanestrainparam.expected_rradius)
+    )
+
+
+class EyoungParallelParam(NamedTuple):
+
+    eyoung_j_1: Any = None
+
+    eyoung_j_2: Any = None
+
+    a_1: Any = None
+
+    a_2: Any = None
+
+    poisson_j_perp_1: Any = None
+
+    poisson_j_perp_2: Any = None
+
+    expected_eyoung_j_3: Any = None
+
+    expected_a_3: Any = None
+
+    expected_poisson_j_perp_3: Any = None
+
+
+@pytest.mark.parametrize(
+    "eyoungparallelparam",
+    (
+        EyoungParallelParam(
+            eyoung_j_1=0,
+            eyoung_j_2=0,
+            a_1=0.010000000000000002,
+            a_2=0,
+            poisson_j_perp_1=0.30000001192092896,
+            poisson_j_perp_2=0,
+            expected_eyoung_j_3=0,
+            expected_a_3=0.010000000000000002,
+            expected_poisson_j_perp_3=0.30000001192092896,
+        ),
+        EyoungParallelParam(
+            eyoung_j_1=0,
+            eyoung_j_2=0,
+            a_1=0.020661087836601012,
+            a_2=0.010000000000000002,
+            poisson_j_perp_1=0.30000001192092896,
+            poisson_j_perp_2=0.30000001192092896,
+            expected_eyoung_j_3=0,
+            expected_a_3=0.030661087836601014,
+            expected_poisson_j_perp_3=0.30000001192092896,
+        ),
+    ),
+)
+def test_eyoung_parallel(eyoungparallelparam, monkeypatch):
+    """
+    Automatically generated Regression Unit Test for eyoung_parallel.
+
+    This test was generated using data from tracking/baseline_2018/baseline_2018_IN.DAT.
+
+    :param eyoungparallelparam: the data used to mock and assert in this test.
+    :type eyoungparallelparam: eyoungparallelparam
+
+    :param monkeypatch: pytest fixture used to mock module/class variables
+    :type monkeypatch: _pytest.monkeypatch.monkeypatch
+    """
+
+    eyoung_j_3, a_3, poisson_j_perp_3 = sctfcoil_module.eyoung_parallel(
+        eyoung_j_1=eyoungparallelparam.eyoung_j_1,
+        eyoung_j_2=eyoungparallelparam.eyoung_j_2,
+        a_1=eyoungparallelparam.a_1,
+        a_2=eyoungparallelparam.a_2,
+        poisson_j_perp_1=eyoungparallelparam.poisson_j_perp_1,
+        poisson_j_perp_2=eyoungparallelparam.poisson_j_perp_2,
+    )
+
+    assert eyoung_j_3 == pytest.approx(eyoungparallelparam.expected_eyoung_j_3)
+
+    assert a_3 == pytest.approx(eyoungparallelparam.expected_a_3)
+
+    assert poisson_j_perp_3 == pytest.approx(
+        eyoungparallelparam.expected_poisson_j_perp_3
     )
