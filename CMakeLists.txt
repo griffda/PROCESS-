@@ -24,11 +24,11 @@ INCLUDE(${CMAKE_SOURCE_DIR}/cmake/gfortranlibs.cmake)
 # Retrieve and set information for preprocessor
 FindPreprocessingVars()
 
-SET(CMAKE_Fortran_FLAGS "-cpp -ffree-line-length-none -fPIC -ftest-coverage -fprofile-arcs -fcheck=all,no-array-temps -finit-local-zero")
+SET(CMAKE_Fortran_FLAGS "-cpp -ffree-line-length-none -fPIC -ftest-coverage -fprofile-arcs -finit-local-zero")
 
 IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
     # space before -g is very necessary
-    STRING(CONCAT CMAKE_Fortran_FLAGS ${CMAKE_Fortran_FLAGS} " -g -O0")
+    STRING(CONCAT CMAKE_Fortran_FLAGS ${CMAKE_Fortran_FLAGS} " -g -O0 -fcheck=all,no-bounds,no-array-temps")
 ENDIF()
 
 # Get System information, log as much information as we can
