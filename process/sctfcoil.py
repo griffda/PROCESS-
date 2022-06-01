@@ -4152,6 +4152,7 @@ class Sctfcoil:
                     svmxz = sctfcoil_module.sigvm(
                         0.0e0, sig_tf_t[ii], sig_tf_z[ii], 0.0e0, 0.0e0, 0.0e0
                     )
+
                     svmyz = sctfcoil_module.sigvm(
                         sig_tf_r[ii], 0.0e0, sig_tf_z[ii], 0.0e0, 0.0e0, 0.0e0
                     )
@@ -6855,3 +6856,34 @@ class Sctfcoil:
             )
 
         return eyoung_j_out, l_out, poisson_j_perp_out, eyoung_stiffest
+
+    def sigvm(
+        self, sx: float, sy: float, sz: float, txy: float, txz: float, tyz: float
+    ) -> float:
+
+        """Calculates Von Mises stress in a TF coil
+        author: P J Knight, CCFE, Culham Science Centre
+        author: B Reimer, FEDC
+        This routine calculates the Von Mises combination of
+        stresses (Pa) in a TF coil.
+        AEA FUS 251: A User's Guide to the PROCESS Systems Code
+
+        :param sx: In-plane stress in X direction [Pa]
+        :param sy: In-plane stress in Y direction [Pa]
+        :param sz: In-plane stress in Z direction [Pa]
+        :param txy: Out-of-plane stress in X-Y plane [Pa]
+        :param txz: Out-of-plane stress in X-Z plane [Pa]
+        :param tyz: Out-of-plane stress in Y-Z plane [Pa]
+
+        :returns: Von Mises combination of stresses (Pa) in a TF coil.
+        """
+
+        return numpy.sqrt(
+            0.5
+            * (
+                (sx - sy) ** 2
+                + (sx - sz) ** 2
+                + (sz - sy) ** 2
+                + 6 * (txy**2 + txz**2 + tyz**2)
+            )
+        )

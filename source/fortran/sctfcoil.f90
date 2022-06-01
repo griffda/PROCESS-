@@ -727,51 +727,6 @@ contains
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-   function sigvm(sx,sy,sz,txy,txz,tyz)
-
-      !! Calculates Von Mises stress in a TF coil
-      !! author: P J Knight, CCFE, Culham Science Centre
-      !! author: B Reimer, FEDC
-      !! This routine calculates the Von Mises combination of
-      !! stresses (Pa) in a TF coil.
-      !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
-      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-      implicit none
-
-      ! OUTPUT
-      real(dp) :: sigvm
-
-      !  Arguments
-      real(dp), intent(in) :: sx
-      !! In-plane stress in X direction [Pa]
-
-      real(dp), intent(in) :: sy
-      !! In-plane stress in Y direction [Pa]
-
-      real(dp), intent(in) :: sz
-      !! In-plane stress in Z direction [Pa]
-
-      real(dp), intent(in) :: txy
-      !! Out of plane stress in X-Y plane [Pa]
-
-      real(dp), intent(in) :: txz
-      !! Out of plane stress in X-Z plane [Pa]
-
-      real(dp), intent(in) :: tyz
-      !! Out of plane stress in Y-Z plane [Pa]
-
-      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-      sigvm = sqrt( 0.5D0 * ( (sx-sy)**2 + (sx-sz)**2 + (sz-sy)**2 &
-         + 6.0D0*(txy**2 + txz**2 + tyz**2) ) )
-
-      !-! end break
-
-   end function sigvm
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
    subroutine tf_averaged_turn_geom( jwptf, thwcndut, thicndut, i_tf_sc_mat,    &
       acstf, acndttf, insulation_area, n_tf_turn )
 

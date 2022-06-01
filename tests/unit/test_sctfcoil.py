@@ -12397,7 +12397,7 @@ def test_extended_plane_strain(extendedplanestrainparam, monkeypatch, sctfcoil):
     )
 
     numpy.testing.assert_array_almost_equal(
-        sigr, numpy.array(extendedplanestrainparam.expected_sigr)
+        sigr, numpy.array(extendedplanestrainparam.expected_sigr), decimal=5
     )
 
     numpy.testing.assert_array_almost_equal(
@@ -12844,3 +12844,18 @@ def test_eyoung_parallel_array(eyoungparallelarrayparam, monkeypatch, sctfcoil):
     assert poisson_j_perp_out == pytest.approx(
         eyoungparallelarrayparam.expected_poisson_j_perp_out
     )
+
+
+@pytest.mark.parametrize(
+    "sx, sy, sz, expected",
+    (
+        (0, -3.2e8, 2.4e8, 486621002.42385757),
+        (-2.8e8, 0, 2.4e8, 450777106.7833858),
+    ),
+)
+def test_sigvm(sx, sy, sz, expected, sctfcoil):
+    # could not find an example of a use in PROCESS where
+    # tx, ty, or tz were anything other than 0
+    ret = sctfcoil.sigvm(sx, sy, sz, 0, 0, 0)
+
+    assert ret == pytest.approx(expected)
