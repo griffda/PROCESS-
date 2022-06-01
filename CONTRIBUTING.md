@@ -47,7 +47,7 @@ ci --> ciunitint
 ciunitint --> |Pass|review
 ciunitint --> |Fail|furtherchanges
 merge --> overwrite
-overwrite --> createbranch
+overwrite --> |Repeat:\nnext issue|createbranch
 ```
 
 ### Explanation
