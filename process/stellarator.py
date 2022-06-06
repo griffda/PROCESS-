@@ -1,7 +1,5 @@
-from numpy import power
 from process.fortran import constants
 from process.fortran import physics_module as ph
-from process.fortran import power_module as pw
 from process.fortran import stellarator_module as st
 
 
