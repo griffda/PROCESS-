@@ -168,7 +168,14 @@ make-py38:
 unit-py38:
     extends: .test_template
     script:
-        - pytest tests/unit/ -vs | tee tests/unit/pytest.log
+        # pytest tests against installed process package, but pytest-cov
+        # installs coverage hooks in source package
+        # Get installed package path and set pytest-cov to use it
+        - cd tests
+        - INSTALLED_PATH=$(python -c "import process, os; print(os.path.dirname(os.path.abspath(process.__file__)))")
+        - echo $INSTALLED_PATH
+        - cd -
+        - pytest --cov=$INSTALLED_PATH tests/unit -vs | tee tests/unit/pytest.log
     artifacts:
         when: on_failure
         paths:
