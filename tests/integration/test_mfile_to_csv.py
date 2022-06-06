@@ -12,8 +12,8 @@ def test_mfile_to_csv(temp_data, mfile_name):
     :type mfile_name: str
     """
     mfile = temp_data / mfile_name
-    varlist = temp_data / "mfile_to_csv_varlist.txt"
-    mfile_to_csv.main(args=["-m", str(mfile), "-v", str(varlist)])
+    varlist = temp_data / "mfile_to_csv_varlist.json"
+    mfile_to_csv.main(args=["-f", str(mfile), "-v", str(varlist)])
 
     # Assert a .csv has been produced
     assert len(list(temp_data.glob("*.csv")))
