@@ -145,6 +145,7 @@ LIST(APPEND PROCESS_SRCS
     read_and_get_atomic_data.f90
     plot_radiation.f90
     rebco_variables.f90
+    read_radiation.f90
 )
 
 PREPROCESS()

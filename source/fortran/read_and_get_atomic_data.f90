@@ -217,9 +217,9 @@ contains
     ! Subroutine declarations !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    real(dp), dimension(ine) :: density
-    real(dp), dimension(ite):: temperature
-    real(dp), dimension(ine,ite) :: rates
+    real(dp), dimension(ine), intent(out) :: density
+    real(dp), dimension(ite), intent(out) :: temperature
+    real(dp), dimension(ine,ite), intent(out) :: rates
     character(len=200), intent(in) :: filename
     logical, intent(in), optional::verbose
     integer, intent(in)::ine,ite
