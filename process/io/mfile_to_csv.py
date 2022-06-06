@@ -4,7 +4,7 @@ Code to read from a PROCESS MFILE and write values into a csv
 
 Author: R Chapman (rhian.chapman@ukaea.uk)
 Date: 26/05/2021
-Updated: 14/02/2022
+Updated: 06/06/2022
 
 Input files:
 mfile (default MFILE.DAT) as output from PROCESS
@@ -32,7 +32,7 @@ from process.io.mfile import MFile
 # == define functions ==
 
 
-def get_user_inputs():
+def get_user_inputs(args):
     parser = argparse.ArgumentParser(
         description="Read from a PROCESS MFILE and write values into a csv."
     )
@@ -40,6 +40,7 @@ def get_user_inputs():
     parser.add_argument(
         "-f",
         "--mfile",
+        type=str,
         default="MFILE.DAT",
         help="Specify input mfile name, default = MFILE.DAT",
     )
@@ -47,13 +48,12 @@ def get_user_inputs():
     parser.add_argument(
         "-v",
         "--varfile",
+        type=str,
         default="mfile_to_csv_vars.json",
         help="Specify file holding variable names, default = mfile_to_csv_vars.json",
     )
 
-    args = parser.parse_args()
-
-    return args
+    return parser.parse_args(args)
 
 
 def get_vars(vfile="mfile_to_csv_vars.json"):
@@ -141,7 +141,7 @@ def write_to_csv(csv_outfile, output_data=[]):
             writer.writerow(vardesc)
 
 
-def main():
+def main(args=None):
     """Extract certain variables from an MFILE.DAT and output to CSV.
 
     :param args: optional command-line args for testing, defaults to None
@@ -149,7 +149,7 @@ def main():
     """
 
     # read from command line inputs
-    args = get_user_inputs()
+    args = get_user_inputs(args)
 
     # read list of required variables from input json file
     jvars = get_vars(args.varfile)
