@@ -1670,7 +1670,7 @@
         "dnprot": 0.0,
         "dntau": 0.0,
         "dnz": 0.0,
-        "double": "selected_real_kind(15, 300)",
+        "double": 8.0,
         "dp_": 8.0,
         "dp_bb_ib": 0.0,
         "dp_bb_ib_max": 2.0,
@@ -3491,7 +3491,6 @@
         "pchargemw": 0.0,
         "pchargepv": 0.0,
         "pcoef": 0.0,
-        "pinnerzoneradmw": 0.0,
         "pcoreradpv": 0.0,
         "pcoresystems": 0.0,
         "pdd": 0.0,
@@ -3510,7 +3509,6 @@
         "peakpoloidalpower": 0.0,
         "peakradwallload": 0.0,
         "ped": null,
-        "pouterzoneradmw": 0.0,
         "pedgeradpv": 0.0,
         "pfbldgm3": 20000.0,
         "pfcaseth": 0.0,
@@ -3547,6 +3545,7 @@
         "pinjmw": 0.0,
         "pinjwp": 0.0,
         "pinjwpfix": 0.0,
+        "pinnerzoneradmw": 0.0,
         "pitch": 0.02,
         "plascur": 0.0,
         "plasipf": 0.0,
@@ -3688,6 +3687,7 @@
             0.0
         ],
         "porbitlossmw": 0.0,
+        "pouterzoneradmw": 0.0,
         "powerht": 0.0,
         "powfmax": 1500.0,
         "powfmw": 0.0,
@@ -3840,9 +3840,9 @@
         "r_wp_outer": 0.0,
         "ra": 0.0,
         "rad": "pi/180.0_wp_",
-        "rad_fraction_total": 0.0,
         "rad_fraction_LCFS": 0.0,
         "rad_fraction_sol": 0.8,
+        "rad_fraction_total": 0.0,
         "rad_ib": 0.0,
         "rad_ob": 0.0,
         "radctf": [
@@ -4076,11 +4076,8 @@
             0.0,
             0.0,
             0.0,
-<<<<<<< HEAD
             0.0,
             0.0,
-=======
->>>>>>> 6c31fe83... pre-test fix power.py
             0.0,
             0.0,
             0.0,
@@ -4238,12 +4235,6 @@
             0.0,
             0.0,
             0.0,
-            0.0,
-            0.0,
-            0.0
-        ],
-        "residual_sig_hoop": 240000000.0,
-        "rfxf": [
             0.0,
             0.0,
             0.0
@@ -10551,7 +10542,6 @@
         "pchargemw": "non-alpha charged particle fusion power (MW)",
         "pchargepv": "non-alpha charged particle fusion power per volume (MW/m3)",
         "pcoef": "profile factor (= n-weighted T / average T)",
-        "pinnerzoneradmw": "radiation power from inner zone (MW)",
         "pcoreradpv": "total core radiation power per volume (MW/m3)",
         "pcoresystems": "",
         "pdd": "deuterium-deuterium fusion power (MW)",
@@ -10570,7 +10560,6 @@
         "peakpoloidalpower": "Peak absolute rate of change of stored energy in poloidal field (MW)",
         "peakradwallload": "Peak radiation wall load (MW/m^2) (`constraint equation 67`)",
         "ped": "Derived type containing all pedestal information for PLASMOD",
-        "pouterzoneradmw": "radiation power from outer zone (MW)",
         "pedgeradpv": "edge radiation power per volume (MW/m3)",
         "pfbldgm3": "volume of PF coil power supply building (m3)",
         "pfcaseth": "steel case thickness for PF coil i (m)",
@@ -10607,6 +10596,7 @@
         "pinjmw": "total auxiliary injected power (MW)",
         "pinjwp": "injector wall plug power (MW)",
         "pinjwpfix": "secondary injector wall plug power (MW)",
+        "pinnerzoneradmw": "radiation power from inner zone (MW)",
         "pitch": "pitch of first wall cooling channels (m)",
         "plascur": "plasma current (A)",
         "plasipf": "plasma driven current fraction (Bootstrap + Diamagnetic + PS)",
@@ -10708,6 +10698,7 @@
         "poisson_steel": "Steel Poisson's ratio",
         "poloidalpower": "Poloidal power usage at time t (MW)",
         "porbitlossmw": "neutral beam power lost after ionisation but before thermalisation (orbit loss power) (MW)",
+        "pouterzoneradmw": "radiation power from outer zone (MW)",
         "powerht": "heating power (= transport loss power) (MW) used in confinement time calculation",
         "powfmax": "maximum fusion power (MW) (`constraint equation 9`)",
         "powfmw": "fusion power (MW)",
@@ -10838,9 +10829,9 @@
         "r_wp_outer": "Radial position of outer edge and centre of winding pack [m]",
         "ra": "inner radius of coil i (m)",
         "rad": "",
-        "rad_fraction_total": "Radiation fraction total = SoL + LCFS radiation / total power deposited in plasma",
         "rad_fraction_LCFS": "",
-        "rad_fraction_sol": "SoL radiation fraction ",
+        "rad_fraction_sol": "SoL radiation fraction",
+        "rad_fraction_total": "Radiation fraction total = SoL + LCFS radiation / total power deposited in plasma",
         "rad_ib": "",
         "rad_ob": "",
         "radctf": "radius of arc i (m)",
@@ -18540,7 +18531,6 @@
             "annual_electric_output",
             "maintenance"
         ],
-        "costs_module": [],
         "costs_step": [
             "fwblkcost",
             "pth",
@@ -19167,7 +19157,6 @@
             "toolow"
         ],
         "init_module": [],
-        "kallenbach_module": [],
         "kit_blanket_model": [
             "np",
             "x_BZ_IB",
@@ -20124,6 +20113,7 @@
             "num",
             "i_flag"
         ],
+        "plot_radiation": [],
         "power_module": [
             "double",
             "htpmwe_shld",
