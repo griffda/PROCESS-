@@ -100,7 +100,6 @@ LIST(APPEND PROCESS_SRCS
     plasma_geometry.f90
     stellarator_fwbs.f90
     stellarator_variables.f90
-    plant_power.f90
     final_module.f90
     cost_variables.f90
     divertor_variables.f90

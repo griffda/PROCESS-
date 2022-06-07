@@ -20114,8 +20114,7 @@
             "i_flag"
         ],
         "plot_radiation": [],
-        "power_module": [
-            "double",
+        "power": [
             "htpmwe_shld",
             "htpmwe_div",
             "htpmw_mech",
