@@ -620,7 +620,7 @@ contains
     denomo = (kap**2 - n**2)/(2.0D0*n)
     thetao = atan(kap/denomo)
     xo = a * (denomo + 1.0D0 + tri )
-
+    !!! end break
   end subroutine xparam
 
 
