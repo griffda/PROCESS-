@@ -3,7 +3,6 @@ import pytest
 import numpy
 
 
-from process.fortran import power_module
 from process.fortran import fwbs_variables
 from process.fortran import heat_transport_variables
 from process.fortran import pfcoil_variables
@@ -136,13 +135,13 @@ def test_cryo(cryoparam, monkeypatch, power):
 
     monkeypatch.setattr(fwbs_variables, "inuclear", cryoparam.inuclear)
 
-    monkeypatch.setattr(power_module, "qss", cryoparam.qss)
+    monkeypatch.setattr(power, "qss", cryoparam.qss)
 
-    monkeypatch.setattr(power_module, "qac", cryoparam.qac)
+    monkeypatch.setattr(power, "qac", cryoparam.qac)
 
-    monkeypatch.setattr(power_module, "qcl", cryoparam.qcl)
+    monkeypatch.setattr(power, "qcl", cryoparam.qcl)
 
-    monkeypatch.setattr(power_module, "qmisc", cryoparam.qmisc)
+    monkeypatch.setattr(power, "qmisc", cryoparam.qmisc)
 
     helpow = power.cryo(
         i_tf_sup=cryoparam.i_tf_sup,
@@ -155,13 +154,13 @@ def test_cryo(cryoparam, monkeypatch, power):
         tpulse=cryoparam.tpulse,
     )
 
-    assert power_module.qss == pytest.approx(cryoparam.expected_qss)
+    assert power.qss == pytest.approx(cryoparam.expected_qss)
 
-    assert power_module.qac == pytest.approx(cryoparam.expected_qac)
+    assert power.qac == pytest.approx(cryoparam.expected_qac)
 
-    assert power_module.qcl == pytest.approx(cryoparam.expected_qcl)
+    assert power.qcl == pytest.approx(cryoparam.expected_qcl)
 
-    assert power_module.qmisc == pytest.approx(cryoparam.expected_qmisc)
+    assert power.qmisc == pytest.approx(cryoparam.expected_qmisc)
 
     assert helpow == pytest.approx(cryoparam.expected_helpow)
 
@@ -2583,35 +2582,35 @@ def test_power2(power2param, monkeypatch, power):
 
     monkeypatch.setattr(ppv, "htpmw_fw_blkt", power2param.htpmw_fw_blkt)
 
-    monkeypatch.setattr(power_module, "htpmwe_shld", power2param.htpmwe_shld)
+    monkeypatch.setattr(power, "htpmwe_shld", power2param.htpmwe_shld)
 
-    monkeypatch.setattr(power_module, "htpmwe_div", power2param.htpmwe_div)
+    monkeypatch.setattr(power, "htpmwe_div", power2param.htpmwe_div)
 
-    monkeypatch.setattr(power_module, "htpmw_mech", power2param.htpmw_mech)
+    monkeypatch.setattr(power, "htpmw_mech", power2param.htpmw_mech)
 
-    monkeypatch.setattr(power_module, "pthermfw_blkt", power2param.pthermfw_blkt)
+    monkeypatch.setattr(power, "pthermfw_blkt", power2param.pthermfw_blkt)
 
-    monkeypatch.setattr(power_module, "htpmwe_fw_blkt", power2param.htpmwe_fw_blkt)
+    monkeypatch.setattr(power, "htpmwe_fw_blkt", power2param.htpmwe_fw_blkt)
 
-    monkeypatch.setattr(power_module, "pthermdiv", power2param.pthermdiv)
+    monkeypatch.setattr(power, "pthermdiv", power2param.pthermdiv)
 
-    monkeypatch.setattr(power_module, "pthermfw", power2param.pthermfw)
+    monkeypatch.setattr(power, "pthermfw", power2param.pthermfw)
 
-    monkeypatch.setattr(power_module, "pthermshld", power2param.pthermshld)
+    monkeypatch.setattr(power, "pthermshld", power2param.pthermshld)
 
-    monkeypatch.setattr(power_module, "ppumpmw", power2param.ppumpmw)
+    monkeypatch.setattr(power, "ppumpmw", power2param.ppumpmw)
 
-    monkeypatch.setattr(power_module, "pcoresystems", power2param.pcoresystems)
+    monkeypatch.setattr(power, "pcoresystems", power2param.pcoresystems)
 
-    monkeypatch.setattr(power_module, "pdivfraction", power2param.pdivfraction)
+    monkeypatch.setattr(power, "pdivfraction", power2param.pdivfraction)
 
-    monkeypatch.setattr(power_module, "qss", power2param.qss)
+    monkeypatch.setattr(power, "qss", power2param.qss)
 
-    monkeypatch.setattr(power_module, "qac", power2param.qac)
+    monkeypatch.setattr(power, "qac", power2param.qac)
 
-    monkeypatch.setattr(power_module, "qcl", power2param.qcl)
+    monkeypatch.setattr(power, "qcl", power2param.qcl)
 
-    monkeypatch.setattr(power_module, "qmisc", power2param.qmisc)
+    monkeypatch.setattr(power, "qmisc", power2param.qmisc)
 
     power.power2(output=False)
 
@@ -2635,7 +2634,7 @@ def test_power2(power2param, monkeypatch, power):
         power2param.expected_psechtmw
     )
 
-    assert power_module.pcoresystems == pytest.approx(power2param.expected_pcoresystems)
+    assert power.pcoresystems == pytest.approx(power2param.expected_pcoresystems)
 
 
 class Power3Param(NamedTuple):
