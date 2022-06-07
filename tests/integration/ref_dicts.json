@@ -1611,7 +1611,7 @@
         "degrad": 0.01745329251,
         "degree": "pi/180.0D0",
         "delld": 1.0,
-        "delta": 0.0001,
+        "delta": null,
         "delta_eta": 0.0,
         "delta_var": null,
         "dendiv": 0.0,
@@ -8883,7 +8883,7 @@
         "zeffai": 0.0,
         "zeffdiv": 1.0,
         "zeffmax": 3.6,
-        "zero": "0.0_wp_",
+        "zero": 0.0,
         "zfxf": [
             "0.0D0",
             "0.0D0",

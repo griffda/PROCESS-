@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.4.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "31/05/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "15:54"
- User____________________________________________________________________ (username)____________________     "ym1906"  
+ Date_of_run_____________________________________________________________ (date)________________________     "07/06/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "10:37"
+ User____________________________________________________________________ (username)____________________     "graeme"  
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "Run Title (change this line using input variable 'runtitle')                                       
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1801-g405f668e"                                                                               
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1807-g2ab55164"                                                                               
  PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1499-update-cs-coil-geometry-model-python"                                                         
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merged\ develop\ into\ CS\ coil\ fatigue\ model"                                                   
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-ym1906/pytest-1/test_scenario_HARE_0/IN.DAT                                                                                                                                              "
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Updated\ ref_dicts\ to\ reflect\ changes\ in\ definition"                                          
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-graeme/pytest-1/popen-gw2/test_scenario_HARE_0/IN.DAT                                                                                                                                    "
  Binomial_coefficients_C(5,0):_1_________________________________________ (binomial(5,0))_______________      1.0000E+00    
  Binomial_coefficients_C(5,1):_5_________________________________________ (binomial(5,1))_______________      5.0000E+00    
  Binomial_coefficients_C(5,2):_10________________________________________ (binomial(5,2))_______________      1.0000E+01    
@@ -649,7 +649,7 @@
  CS_temperature_margin_(K)_______________________________________________ (tmargoh)_____________________      3.3331E+00 OP 
  Minimum_permitted_temperature_margin_(K)________________________________ (tfv.tmargmin_cs)_____________      1.7000E+00    
  Residual_hoop_stress_in_CS_Steel_(Pa)___________________________________ (csfv.residual_sig_hoop)______      2.4000E+08    
- Minimum_burn_time_(s)___________________________________________________ (ctv.tbrnmn___________________      7.2000E+03    
+ Minimum_burn_time_(s)___________________________________________________ (ctv.tbrnmn)__________________      7.2000E+03    
  Initial_vertical_crack_size_(m)_________________________________________ (csfv.t_crack_vertical)_______      8.9000E-04    
  Initial_radial_crack_size_(m)___________________________________________ (csfv.t_crack_radial)_________      2.6700E-03    
  CS_turn_area_(m)________________________________________________________ (pfv.a_oh_turn)_______________      2.7034E-03    
@@ -1646,7 +1646,7 @@
  CS_temperature_margin_(K)_______________________________________________ (tmargoh)_____________________      3.3241E+00 OP 
  Minimum_permitted_temperature_margin_(K)________________________________ (tfv.tmargmin_cs)_____________      1.7000E+00    
  Residual_hoop_stress_in_CS_Steel_(Pa)___________________________________ (csfv.residual_sig_hoop)______      2.4000E+08    
- Minimum_burn_time_(s)___________________________________________________ (ctv.tbrnmn___________________      7.2000E+03    
+ Minimum_burn_time_(s)___________________________________________________ (ctv.tbrnmn)__________________      7.2000E+03    
  Initial_vertical_crack_size_(m)_________________________________________ (csfv.t_crack_vertical)_______      8.9000E-04    
  Initial_radial_crack_size_(m)___________________________________________ (csfv.t_crack_radial)_________      2.6700E-03    
  CS_turn_area_(m)________________________________________________________ (pfv.a_oh_turn)_______________      2.7218E-03    
@@ -2643,7 +2643,7 @@
  CS_temperature_margin_(K)_______________________________________________ (tmargoh)_____________________      3.3162E+00 OP 
  Minimum_permitted_temperature_margin_(K)________________________________ (tfv.tmargmin_cs)_____________      1.7000E+00    
  Residual_hoop_stress_in_CS_Steel_(Pa)___________________________________ (csfv.residual_sig_hoop)______      2.4000E+08    
- Minimum_burn_time_(s)___________________________________________________ (ctv.tbrnmn___________________      7.2000E+03    
+ Minimum_burn_time_(s)___________________________________________________ (ctv.tbrnmn)__________________      7.2000E+03    
  Initial_vertical_crack_size_(m)_________________________________________ (csfv.t_crack_vertical)_______      8.9000E-04    
  Initial_radial_crack_size_(m)___________________________________________ (csfv.t_crack_radial)_________      2.6700E-03    
  CS_turn_area_(m)________________________________________________________ (pfv.a_oh_turn)_______________      2.7380E-03    
@@ -3640,7 +3640,7 @@
  CS_temperature_margin_(K)_______________________________________________ (tmargoh)_____________________      3.3056E+00 OP 
  Minimum_permitted_temperature_margin_(K)________________________________ (tfv.tmargmin_cs)_____________      1.7000E+00    
  Residual_hoop_stress_in_CS_Steel_(Pa)___________________________________ (csfv.residual_sig_hoop)______      2.4000E+08    
- Minimum_burn_time_(s)___________________________________________________ (ctv.tbrnmn___________________      7.2000E+03    
+ Minimum_burn_time_(s)___________________________________________________ (ctv.tbrnmn)__________________      7.2000E+03    
  Initial_vertical_crack_size_(m)_________________________________________ (csfv.t_crack_vertical)_______      8.9000E-04    
  Initial_radial_crack_size_(m)___________________________________________ (csfv.t_crack_radial)_________      2.6700E-03    
  CS_turn_area_(m)________________________________________________________ (pfv.a_oh_turn)_______________      2.7599E-03    
@@ -4637,7 +4637,7 @@
  CS_temperature_margin_(K)_______________________________________________ (tmargoh)_____________________      3.3019E+00 OP 
  Minimum_permitted_temperature_margin_(K)________________________________ (tfv.tmargmin_cs)_____________      1.7000E+00    
  Residual_hoop_stress_in_CS_Steel_(Pa)___________________________________ (csfv.residual_sig_hoop)______      2.4000E+08    
- Minimum_burn_time_(s)___________________________________________________ (ctv.tbrnmn___________________      7.2000E+03    
+ Minimum_burn_time_(s)___________________________________________________ (ctv.tbrnmn)__________________      7.2000E+03    
  Initial_vertical_crack_size_(m)_________________________________________ (csfv.t_crack_vertical)_______      8.9000E-04    
  Initial_radial_crack_size_(m)___________________________________________ (csfv.t_crack_radial)_________      2.6700E-03    
  CS_turn_area_(m)________________________________________________________ (pfv.a_oh_turn)_______________      2.7676E-03    
@@ -5634,7 +5634,7 @@
  CS_temperature_margin_(K)_______________________________________________ (tmargoh)_____________________      3.2983E+00 OP 
  Minimum_permitted_temperature_margin_(K)________________________________ (tfv.tmargmin_cs)_____________      1.7000E+00    
  Residual_hoop_stress_in_CS_Steel_(Pa)___________________________________ (csfv.residual_sig_hoop)______      2.4000E+08    
- Minimum_burn_time_(s)___________________________________________________ (ctv.tbrnmn___________________      7.2000E+03    
+ Minimum_burn_time_(s)___________________________________________________ (ctv.tbrnmn)__________________      7.2000E+03    
  Initial_vertical_crack_size_(m)_________________________________________ (csfv.t_crack_vertical)_______      8.9000E-04    
  Initial_radial_crack_size_(m)___________________________________________ (csfv.t_crack_radial)_________      2.6700E-03    
  CS_turn_area_(m)________________________________________________________ (pfv.a_oh_turn)_______________      2.7753E-03    
@@ -6631,7 +6631,7 @@
  CS_temperature_margin_(K)_______________________________________________ (tmargoh)_____________________      3.2945E+00 OP 
  Minimum_permitted_temperature_margin_(K)________________________________ (tfv.tmargmin_cs)_____________      1.7000E+00    
  Residual_hoop_stress_in_CS_Steel_(Pa)___________________________________ (csfv.residual_sig_hoop)______      2.4000E+08    
- Minimum_burn_time_(s)___________________________________________________ (ctv.tbrnmn___________________      7.2000E+03    
+ Minimum_burn_time_(s)___________________________________________________ (ctv.tbrnmn)__________________      7.2000E+03    
  Initial_vertical_crack_size_(m)_________________________________________ (csfv.t_crack_vertical)_______      8.9000E-04    
  Initial_radial_crack_size_(m)___________________________________________ (csfv.t_crack_radial)_________      2.6700E-03    
  CS_turn_area_(m)________________________________________________________ (pfv.a_oh_turn)_______________      2.7834E-03    
