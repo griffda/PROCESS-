@@ -180,6 +180,7 @@ unit-py38:
         when: on_failure
         paths:
             - tests/unit/pytest.log
+            - .coverage
         expire_in: 1 week
 
 integration-py38:
@@ -371,9 +372,24 @@ pages:
 
     # Setup badges
         - git clone https://github.com/jmorris-uk/anybadge.git
+        # TODO Use installed anybadge in all cases
+        - pip install anybadge
     # checks for the tag on the most up-to-date branch (master)
         - MASTER_VERSION=$(git describe $(git rev-list --tags --max-count=1))
         - DEVELOP_VERSION=$(git describe)
+
+        # Test coverage: extract total percentage from report
+        # coverage uses .coverage report file from unit test job
+        - coverage_str=$(coverage report --precision=1)
+        - re="TOTAL.+\s([0-9]*\.[0-9]*)%"
+        - if [[ "$coverage_str" =~ $re ]]; then
+        - coverage=${BASH_REMATCH[1]}
+        - else
+        - echo "Couldn't extract coverage percentage."
+        - fi
+        - anybadge --value=$coverage --file=coverage.svg coverage
+        - cp coverage.svg public/
+
         - declare -i CONTRIBUTORS=$(git shortlog -s -n --all | wc -l)
         - echo $CONTRIBUTORS
         - bash scripts/coverage_badge.sh source/fortran/ anybadge/
