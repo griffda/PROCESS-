@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.4.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "07/06/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "10:35"
+ Date_of_run_____________________________________________________________ (date)________________________     "08/06/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "11:14"
  User____________________________________________________________________ (username)____________________     "graeme"  
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "demo 1 model for cost paper                                                                        
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1807-g2ab55164"                                                                               
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1816-g95abec22"                                                                               
  PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1499-update-cs-coil-geometry-model-python"                                                         
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Updated\ ref_dicts\ to\ reflect\ changes\ in\ definition"                                          
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-graeme/pytest-1/popen-gw2/test_scenario_costs_paper_0/IN.DAT                                                                                                                             "
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "merge develop - accept current changes"                                                            
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-graeme/pytest-3/popen-gw4/test_scenario_costs_paper_0/IN.DAT                                                                                                                             "
  
  Scan_point_number_______________________________________________________ (iscan)_______________________              1    
  # Numerics #
@@ -58,7 +58,7 @@
  ohcth_(range_normalised)________________________________________________ (nitvar011)___________________      2.2423E-01    
  q_______________________________________________________________________ (itvar012)____________________      3.0000E+00    
  q_(final_value/initial_value)___________________________________________ (xcm012)______________________      9.2974E-01    
- q_(range_normalised)____________________________________________________ (nitvar012)___________________      3.6932E-18    
+ q_(range_normalised)____________________________________________________ (nitvar012)___________________      7.3863E-18    
  ftburn__________________________________________________________________ (itvar013)____________________      1.0000E+00    
  ftburn_(final_value/initial_value)______________________________________ (xcm013)______________________      1.0000E+00    
  ftburn_(range_normalised)_______________________________________________ (nitvar013)___________________      1.0000E+00    
@@ -112,7 +112,7 @@
  thkcas_(range_normalised)_______________________________________________ (nitvar029)___________________      4.9421E-01    
  thwcndut________________________________________________________________ (itvar030)____________________      4.0000E-03    
  thwcndut_(final_value/initial_value)____________________________________ (xcm030)______________________      1.0000E+00    
- thwcndut_(range_normalised)_____________________________________________ (nitvar030)___________________      1.7835E-18    
+ thwcndut_(range_normalised)_____________________________________________ (nitvar030)___________________      8.9175E-19    
  fcutfsu_________________________________________________________________ (itvar031)____________________      8.0541E-01    
  fcutfsu_(final_value/initial_value)_____________________________________ (xcm031)______________________      1.2081E+00    
  fcutfsu_(range_normalised)______________________________________________ (nitvar031)___________________      8.0522E-01    
@@ -137,17 +137,17 @@
  breeder_f_______________________________________________________________ (itvar038)____________________      4.5453E-01    
  breeder_f_(final_value/initial_value)___________________________________ (xcm038)______________________      8.9045E-01    
  breeder_f_(range_normalised)____________________________________________ (nitvar038)___________________      4.5399E-01    
- Beta_consistency__________________normalised_residue____________________ (normres001)__________________     -1.5571E-10    
- Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________      4.6984E-11    
- Density_upper_limit_______________normalised_residue____________________ (normres003)__________________      9.8197E-11    
+ Beta_consistency__________________normalised_residue____________________ (normres001)__________________     -1.5570E-10    
+ Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________      4.6985E-11    
+ Density_upper_limit_______________normalised_residue____________________ (normres003)__________________      9.8195E-11    
  Beam_ion_density_consistency______normalised_residue____________________ (normres004)__________________      2.5903E-10    
  Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres005)__________________      7.3381E-10    
  Radial_build_consistency__________normalised_residue____________________ (normres006)__________________      3.6510E-11    
  Burn_time_lower_limit_____________normalised_residue____________________ (normres007)__________________      1.6719E-06    
- L-H_power_threshold_limit_________normalised_residue____________________ (normres008)__________________     -6.4219E-10    
+ L-H_power_threshold_limit_________normalised_residue____________________ (normres008)__________________     -6.4218E-10    
  Net_electric_power_lower_limit____normalised_residue____________________ (normres009)__________________      2.0704E-06    
- Radiation_fraction_upper_limit____normalised_residue____________________ (normres010)__________________      1.4942E-10    
- Beta_upper_limit__________________normalised_residue____________________ (normres011)__________________     -9.1274E-11    
+ Radiation_fraction_upper_limit____normalised_residue____________________ (normres010)__________________      1.4943E-10    
+ Beta_upper_limit__________________normalised_residue____________________ (normres011)__________________     -9.1273E-11    
  CS_coil_EOF_current_density_limit_normalised_residue____________________ (normres012)__________________      1.2650E-06    
  CS_coil_BOP_current_density_limit_normalised_residue____________________ (normres013)__________________      1.1965E-06    
  Injection_power_upper_limit_______normalised_residue____________________ (normres014)__________________      2.2938E-10    
@@ -156,7 +156,7 @@
  I_op_/_I_critical_(TF_coil)_______normalised_residue____________________ (normres017)__________________      2.9096E-06    
  Dump_voltage_upper_limit__________normalised_residue____________________ (normres018)__________________      9.4290E-06    
  J_winding_pack/J_protection_limit_normalised_residue____________________ (normres019)__________________      2.9480E-06    
- Tritium_breeding_ratio_lower_lim__normalised_residue____________________ (normres020)__________________     -3.8907E-11    
+ Tritium_breeding_ratio_lower_lim__normalised_residue____________________ (normres020)__________________     -3.8906E-11    
  Psep_/_R_upper_limit______________normalised_residue____________________ (normres021)__________________      6.0421E-10    
  # Final Feasible Point #
  # Estimate of "overnight" capital cost for a first of kind power plant (2014 M$) #

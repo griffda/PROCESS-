@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-1807-g2ab55164
+   Tag No. : v2.1-1816-g95abec22
     Branch : 1499-update-cs-coil-geometry-model-python
-   Git log : Updated\ ref_dicts\ to\ reflect\ changes\ in\ definition
- Date/time :  7 Jun 2022 10:40:40 +01:00(hh:mm) UTC
+   Git log : merge develop - accept current changes
+ Date/time :  8 Jun 2022 11:16:55 +01:00(hh:mm) UTC
       User : graeme
   Computer : ym1906
- Directory : /home/graeme/process
-     Input : /tmp/pytest-of-graeme/pytest-1/popen-gw2/test_scenario_vacuum_model_0/IN.DAT
+ Directory : /tmp/pytest-of-graeme/pytest-3/popen-gw5/test_vary_run0
+     Input : /tmp/pytest-of-graeme/pytest-3/popen-gw5/test_scenario_vacuum_model_0/IN.DAT
  Run title : demo 1 vacuum model test
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -131,20 +131,20 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  3.4730E-02              3.8575E-12                -1.1107E-10
-    2  Global power balance consistency      =  1.7976E-01 MW/m3       -1.0475E-11 MW/m3           5.8272E-11
-    3  Density upper limit                   <  9.0300E+19 /m3          3.0073E+09 /m3             3.3303E-11
-    4  Beam ion density consistency          =  1.2776E+17 /m3         -1.4598E+05 /m3             1.1426E-12
-    5  Neutron wall load upper limit         <  1.0415E+00 MW/m2        7.1829E-10 MW/m2           6.8967E-10
+    1  Beta consistency                      =  3.4730E-02              3.8574E-12                -1.1107E-10
+    2  Global power balance consistency      =  1.7976E-01 MW/m3       -1.0475E-11 MW/m3           5.8274E-11
+    3  Density upper limit                   <  9.0300E+19 /m3          3.0075E+09 /m3             3.3306E-11
+    4  Beam ion density consistency          =  1.2776E+17 /m3         -1.4547E+05 /m3             1.1386E-12
+    5  Neutron wall load upper limit         <  1.0415E+00 MW/m2        7.1830E-10 MW/m2           6.8967E-10
     6  Radial build consistency              =  8.8513E+00 m           -4.2251E-09 m               4.7735E-10
     7  Burn time lower limit                 >  7.2000E+03 sec          5.1558E-02 sec            -7.1608E-06
-    8  L-H power threshold limit             >  1.1225E+02 MW           8.2447E-08 MW             -7.3447E-10
+    8  L-H power threshold limit             >  1.1225E+02 MW           8.2474E-08 MW             -7.3471E-10
     9  Net electric power lower limit        >  5.0000E+02 MW           1.8324E-03 MW              3.6648E-06
-   10  Radiation fraction upper limit        <  1.7976E-01 MW/m3       -6.9435E-12 MW/m3           6.0381E-11
-   11  Beta upper limit                      <  5.6067E-02             -5.1755E-12                -9.2309E-11
+   10  Radiation fraction upper limit        <  1.7976E-01 MW/m3       -6.9434E-12 MW/m3           6.0380E-11
+   11  Beta upper limit                      <  5.6067E-02             -5.1754E-12                -9.2308E-11
    12  CS coil EOF current density limit     <  6.6972E+07 A/m2         9.9244E+02 A/m2            1.4819E-05
    13  CS coil BOP current density limit     <  6.2482E+07 A/m2         8.8212E+02 A/m2            1.4118E-05
-   14  Injection power upper limit           <  5.0000E+01 MW          -4.8364E-09 MW              9.6728E-11
+   14  Injection power upper limit           <  5.0000E+01 MW          -4.8363E-09 MW              9.6726E-11
    15  TF coil case stress upper limit       <  5.5000E+08 Pa          -2.9667E+01 Pa             -5.3941E-08
    16  TF coil conduit stress upper lim      <  5.5000E+08 Pa          -1.9516E+02 Pa             -3.5483E-07
    17  I_op / I_critical (TF coil)           <  5.8235E+07 A/m2        -5.6472E+01 A/m2            1.9395E-06
@@ -628,7 +628,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Plasma geometric centre, vertical (m)                                    (0.0)                         0.000  OP 
  Plasma lower physics_variables.triangularity                             (tril)                        0.500  OP 
  Plasma elongation                                                        (physics_variables.k          1.781  OP 
- TF coil vertical offset (m)                                              (tfoffset)                   -0.617  OP 
+ TF coil vertical offset (m)                                              (tfoffset)                   -0.616  OP 
  Plasma outer arc radius of curvature (m)                                 (rco)                         5.159  OP 
  Plasma inner arc radius of curvature (m)                                 (rci)                         9.767  OP 
  Plasma lower X-pt, radial (m)                                            (rxpt)                        7.424  OP 
@@ -666,7 +666,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Materal stress of the point of maximum shear stress (Tresca criterion) for each layer
  Please use utilities/plot_stress_tf.py for radial plots plots summary
  Layers                             Steel case            WP    Outer case
- Radial stress               (MPa)      -0.000      -215.917         3.519
+ Radial stress               (MPa)       0.000      -215.917         3.519
  toroidal stress             (MPa)    -355.670      -227.738      -277.143
  Vertical stress             (MPa)     194.330       194.330       106.384
  Von-Mises stress            (MPa)     483.097       365.903       342.942

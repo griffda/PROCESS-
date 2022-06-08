@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.4.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "07/06/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "10:37"
+ Date_of_run_____________________________________________________________ (date)________________________     "08/06/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "11:18"
  User____________________________________________________________________ (username)____________________     "graeme"  
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "FNSF (Menard et al. 2016)                                                                          
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1807-g2ab55164"                                                                               
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1816-g95abec22"                                                                               
  PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1499-update-cs-coil-geometry-model-python"                                                         
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Updated\ ref_dicts\ to\ reflect\ changes\ in\ definition"                                          
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-graeme/pytest-1/popen-gw2/test_scenario_FNSF_0/IN.DAT                                                                                                                                    "
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "merge develop - accept current changes"                                                            
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-graeme/pytest-3/popen-gw4/test_scenario_FNSF_0/IN.DAT                                                                                                                                    "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #

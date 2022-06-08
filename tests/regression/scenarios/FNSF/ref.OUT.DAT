@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-1807-g2ab55164
+   Tag No. : v2.1-1816-g95abec22
     Branch : 1499-update-cs-coil-geometry-model-python
-   Git log : Updated\ ref_dicts\ to\ reflect\ changes\ in\ definition
- Date/time :  7 Jun 2022 10:37:34 +01:00(hh:mm) UTC
+   Git log : merge develop - accept current changes
+ Date/time :  8 Jun 2022 11:18:35 +01:00(hh:mm) UTC
       User : graeme
   Computer : ym1906
  Directory : /home/graeme/process
-     Input : /tmp/pytest-of-graeme/pytest-1/popen-gw2/test_scenario_FNSF_0/IN.DAT
+     Input : /tmp/pytest-of-graeme/pytest-3/popen-gw4/test_scenario_FNSF_0/IN.DAT
  Run title : FNSF (Menard et al. 2016)
   Run type : Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
  
