@@ -353,7 +353,7 @@ pages:
         - coverage_str=$(coverage report --precision=1)
         - re="TOTAL.+\s([0-9]*\.[0-9]*)%"
         - if [[ "$coverage_str" =~ $re ]]; then
-        - coverage=${BASH_REMATCH[1]}
+        - python_coverage=${BASH_REMATCH[1]}
         - else
         - echo "Couldn't extract coverage percentage."
         - fi
@@ -398,8 +398,8 @@ pages:
         - bash scripts/code_quality.sh source/fortran/ anybadge/
         - cp quality.svg public/
         - cp -r code_quality public/
-        - anybadge --value=$coverage --file=coverage.svg coverage
-        - cp coverage.svg public/
+        - anybadge --value=$python_coverage --file=python_coverage.svg coverage
+        - cp python_coverage.svg public/
         - cd anybadge
         - python3 anybadge.py -v $MASTER_VERSION -l master -c blue -f mversion.svg
         - python3 anybadge.py -v $DEVELOP_VERSION -l develop -c blue -f dversion.svg
