@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 Code to create plots from the output of the Morris method
 of elementary elements to investiage the sensistivity of
@@ -15,28 +16,34 @@ morris_output.pdf     -  scatter plot of mean and variance of
                         morris method output
 
 """
-
 import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.backends.backend_pdf as bpdf
 
-if __name__ == "__main__":
 
-    # set up command line arguments
-    PARSER = argparse.ArgumentParser(
+def parse_args(args):
+    """Parse supplied arguments.
+
+    :param args: arguments to parse
+    :type args: list, None
+    :return: parsed arguments
+    :rtype: Namespace
+    """
+    parser = argparse.ArgumentParser(
         description="Program to plot the output of the\
         the sensistivity analysis by elementary element method at a given PROCESS design point."
     )
 
-    PARSER.add_argument(
+    parser.add_argument(
         "-f",
         "--datafile",
         default="morris_method_output.txt",
         type=str,
         help="datafile for plotting, default = morris_method_output.txt",
     )
-    PARSER.add_argument(
+
+    parser.add_argument(
         "-o",
         "--outputfile",
         default="morris_output.pdf",
@@ -44,18 +51,23 @@ if __name__ == "__main__":
         help="filename of outputed pdf file, default = morris_output.pdf",
     )
 
-    ARGS = PARSER.parse_args()
+    return parser.parse_args(args)
+
+
+def main(args=None):
+    """Read Morris data and create pdf plot"""
+    args = parse_args(args)
 
     # setput files
-    INPUTFILE = ARGS.datafile
-    OUTPUTFILE = ARGS.outputfile
-    pdf = bpdf.PdfPages(OUTPUTFILE)
+    input = args.datafile
+    output = args.outputfile
+    pdf = bpdf.PdfPages(output)
     page = plt.figure(figsize=(12, 9), dpi=80)
 
     # read in data
-    n = np.loadtxt(INPUTFILE, dtype=str, usecols=[0], skiprows=1)
-    z = np.loadtxt(INPUTFILE, usecols=[2], skiprows=1)
-    y = np.loadtxt(INPUTFILE, usecols=[3], skiprows=1)
+    n = np.loadtxt(input, dtype=str, usecols=[0], skiprows=1)
+    z = np.loadtxt(input, usecols=[2], skiprows=1)
+    y = np.loadtxt(input, usecols=[3], skiprows=1)
 
     plt.scatter(z, y)
 
@@ -69,3 +81,7 @@ if __name__ == "__main__":
     pdf.savefig(page)
     plt.clf()
     pdf.close()
+
+
+if __name__ == "__main__":
+    main()

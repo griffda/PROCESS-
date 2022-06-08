@@ -72,8 +72,8 @@ boundl(58) = 8.0d-3
 ixc = 61 * gapds
 boundl(61) = 0.02
 ixc = 102 * fimpvar
-ixc = 103 * flhthresh
-boundu(103) = 10.0
+* ixc = 103 * flhthresh
+* boundu(103) = 10.0
 ixc = 117 *fpsepbqar
 ixc = 113 *ftaucq
 

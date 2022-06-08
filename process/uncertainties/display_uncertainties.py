@@ -101,7 +101,7 @@ uncertainties.nc",
     ############################################################
     # main program
 
-    from process_io_lib.process_netcdf import NetCDFReader
+    from process.io.process_netcdf import NetCDFReader
 
     if ARGS.variables == "all":
         with NetCDFReader(FILENAME) as ncdf_reader:
