@@ -345,6 +345,19 @@ pages:
     variables:
         PY_VERSION: py38
     script:
+        # Test coverage: extract total percentage from report
+        # coverage uses .coverage report file from unit test job
+        # coverage requires process package to be installed in same location
+        # as when report created; hence run coverage before process is
+        # re-installed as editable, below
+        - coverage_str=$(coverage report --precision=1)
+        - re="TOTAL.+\s([0-9]*\.[0-9]*)%"
+        - if [[ "$coverage_str" =~ $re ]]; then
+        - coverage=${BASH_REMATCH[1]}
+        - else
+        - echo "Couldn't extract coverage percentage."
+        - fi
+
     # FORD documentation
         - ford documentation/ford/index.md
 
@@ -378,19 +391,6 @@ pages:
     # checks for the tag on the most up-to-date branch (master)
         - MASTER_VERSION=$(git describe $(git rev-list --tags --max-count=1))
         - DEVELOP_VERSION=$(git describe)
-
-        # Test coverage: extract total percentage from report
-        # coverage uses .coverage report file from unit test job
-        - coverage_str=$(coverage report --precision=1)
-        - re="TOTAL.+\s([0-9]*\.[0-9]*)%"
-        - if [[ "$coverage_str" =~ $re ]]; then
-        - coverage=${BASH_REMATCH[1]}
-        - else
-        - echo "Couldn't extract coverage percentage."
-        - fi
-        - anybadge --value=$coverage --file=coverage.svg coverage
-        - cp coverage.svg public/
-
         - declare -i CONTRIBUTORS=$(git shortlog -s -n --all | wc -l)
         - echo $CONTRIBUTORS
         - bash scripts/coverage_badge.sh source/fortran/ anybadge/
@@ -398,6 +398,8 @@ pages:
         - bash scripts/code_quality.sh source/fortran/ anybadge/
         - cp quality.svg public/
         - cp -r code_quality public/
+        - anybadge --value=$coverage --file=coverage.svg coverage
+        - cp coverage.svg public/
         - cd anybadge
         - python3 anybadge.py -v $MASTER_VERSION -l master -c blue -f mversion.svg
         - python3 anybadge.py -v $DEVELOP_VERSION -l develop -c blue -f dversion.svg
