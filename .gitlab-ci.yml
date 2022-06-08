@@ -385,31 +385,32 @@ pages:
         - apt-get install bc -y
 
     # Setup badges
+        # TODO Use installed anybadge in all cases: coverage and quality scripts
+        # require modification first
         - git clone https://github.com/jmorris-uk/anybadge.git
-        # TODO Use installed anybadge in all cases
         - pip install anybadge
     # checks for the tag on the most up-to-date branch (master)
         - MASTER_VERSION=$(git describe $(git rev-list --tags --max-count=1))
         - DEVELOP_VERSION=$(git describe)
         - declare -i CONTRIBUTORS=$(git shortlog -s -n --all | wc -l)
         - echo $CONTRIBUTORS
+        # TODO Is Fortran coverage and quality working/meaningful?
         - bash scripts/coverage_badge.sh source/fortran/ anybadge/
         - cp coverage.svg public/
         - bash scripts/code_quality.sh source/fortran/ anybadge/
         - cp quality.svg public/
         - cp -r code_quality public/
-        - anybadge --value=$python_coverage --file=python_coverage.svg coverage
+        - anybadge --value $MASTER_VERSION --label master --color blue --file mversion.svg
+        - anybadge --value $DEVELOP_VERSION --label develop --color blue --file dversion.svg
+        - anybadge --value $CONTRIBUTORS --label contributors --color blue --file contributors.svg --value-format "%d"
+        - anybadge --value $python_coverage --file python_coverage.svg coverage
+        - cp mversion.svg public/
+        - cp dversion.svg public/
+        - cp contributors.svg public/
         - cp python_coverage.svg public/
-        - cd anybadge
-        - python3 anybadge.py -v $MASTER_VERSION -l master -c blue -f mversion.svg
-        - python3 anybadge.py -v $DEVELOP_VERSION -l develop -c blue -f dversion.svg
-        - python3 anybadge.py -v $CONTRIBUTORS -l contributors -c blue -f contributors.svg -m "%d"
-        - cp mversion.svg ../public
-        - cp dversion.svg ../public
-        - cp contributors.svg ../public
-        - ls ../public
-        - du -shc ../public/*
-        - du -shc ../public/ford_site/*
+        - ls public
+        - du -shc public/*
+        - du -shc public/ford_site/*
     artifacts:
         expire_in: 1 week
         paths:
