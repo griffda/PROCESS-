@@ -232,6 +232,9 @@ contains
    end subroutine initialise_cables
 ! --------------------------------------------------------------------------
    subroutine tf_averaged_turn_geom_wrapper
+      !! The tf_averaged_turn_geom appears to cause slight numerical differences
+      !! when called "bare" from Python. This can be mitigated by calling
+      !! the subroutine via this wrapper.
       use tfcoil_variables, only: jwptf, thwcndut, thicndut, i_tf_sc_mat, &
          acstf, acndttf, insulation_area, n_tf_turn
 
@@ -247,7 +250,8 @@ contains
       nlayers, n_radial_array, i_tf_bucking,          &
       rradius, sigr, sigt, sigz,              &
       str_r, str_t, str_z, r_deflect )
-
+      !! TN: This subroutine won't be wrapped and will likely be replaced pending
+      !! discussion in #1670
       !! Author : S. Kahn, CCFE
       !! Jan 2020
       !! This subroutine estimates the normal stresses/strains and radial displacement
@@ -721,15 +725,15 @@ contains
       end do ! Layer loop
       ! ------
 
-      !-! end break
-
    end subroutine generalized_plane_strain
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
    subroutine tf_averaged_turn_geom( jwptf, thwcndut, thicndut, i_tf_sc_mat,    &
       acstf, acndttf, insulation_area, n_tf_turn )
-
+      !! TN: This subroutine has not yet been converted into Python
+      !! due to numerical funny business observed even when calling thus
+      !! subroutine straight from Python, see comments in tf_averaged_turn_geom_wrapper
       !! Authors : J. Morris, CCFE
       !! Authors : S. Kahn, CCFE
       !! Setting the TF WP turn geometry for SC magnets from the number
