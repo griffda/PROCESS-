@@ -13,13 +13,13 @@
  **************************************************************************************************************
  
    Program :
-   Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1614-ge10d543cf
+   Version : 2.4.0   Release Date :: 2022-05-18
+   Tag No. : v2.1-1788-g76737c201
     Branch : HEAD
-   Git log : Set\ remote\ push\ URL\ explicitly
- Date/time :  1 Jun 2022  8:28:48 +00:00(hh:mm) UTC
+   Git log : Merge branch |1646-modify-ci-system-and-contributing-workflow-to-avoid-merge-queue| into |develop|
+ Date/time :  8 Jun 2022 16:50:17 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-8r7le1vq-project-20-concurrent-0
+  Computer : runner-7084ce6e-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_FNSF_0/IN.DAT
  Run title : FNSF (Menard et al. 2016)
@@ -105,18 +105,18 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
     1  Beta consistency                      =  1.4470E-01             -3.2618E-07                 2.2541E-06
     2  Global power balance consistency      =  1.5068E+00 MW/m3        8.0468E-06 MW/m3          -5.3404E-06
-    3  Density upper limit                   <  2.4404E+20 /m3          1.2203E+08 /m3             5.0004E-13
+    3  Density upper limit                   <  2.4404E+20 /m3          1.2177E+08 /m3             4.9893E-13
     4  Beam ion density consistency          =  1.5292E+18 /m3         -3.4171E+13 /m3             2.2346E-05
     5  Neutron wall load upper limit         <  1.0180E+00 MW/m2       -4.0227E-06 MW/m2          -3.9515E-06
     6  Fusion power upper limit              <  1.6200E+02 MW           6.3981E-04 MW             -3.9494E-06
     7  Radial build consistency              =  1.7000E+00 m            0.0000E+00 m              -0.0000E+00
-    8  L-H power threshold limit             >  1.7084E+01 MW          -1.9097E-03 MW              1.1177E-04
+    8  L-H power threshold limit             <  1.7084E+01 MW          -1.9097E-03 MW              1.1177E-04
     9  Radiation fraction upper limit        <  1.5068E+00 MW/m3       -2.1957E-05 MW/m3           1.7227E-05
-   10  Beta upper limit                      <  1.9308E-01              2.4455E-13                 1.2668E-12
+   10  Beta upper limit                      <  1.9308E-01              2.4461E-13                 1.2670E-12
    11  Injection power upper limit           <  8.0000E+01 MW          -1.7881E-03 MW              2.2351E-05
    12  Average centrepost temperature        =  7.3443E+01 deg C        6.6437E-06 deg C          -9.0460E-08
    13  Peak centrepost temp. upper limit     <  2.0000E+02 deg C        1.1919E-05 deg C          -1.1919E-07
-   14  Ip/Irod upper limit                   <  7.6151E-01              8.1661E-17                -2.2204E-16
+   14  Ip/Irod upper limit                   <  7.6151E-01              1.6332E-16                -4.4409E-16
    15  Psep / R upper limit                  <  1.9998E+01 MW/m         1.1234E-03 MW/m           -1.1178E-04
  
  ******************************************** Final Feasible Point ********************************************
@@ -1447,6 +1447,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
 150     2   CHECK: Lower limit of volume averaged electron temperature (te) has been raised 
 155     2   CHECK: dene used as iteration variable without constraint 81 (neped<ne0)        
 272     2   Double-null: Upper vertical build forced to match lower                         
+ 39     1   CHECK: Operating with a single null in a double null machine                    
  62     1   RADIALB: Ripple result may be inaccurate, as the fit has been extrapolated      
 143     1   RADIALB: (TF coil ripple calculation) (R+a)/rtot out of fitted range            
  Final error identifier                                                   (error_id)                      143     

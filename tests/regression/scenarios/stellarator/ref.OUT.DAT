@@ -13,13 +13,13 @@
  **************************************************************************************************************
  
    Program :
-   Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1614-ge10d543cf
+   Version : 2.4.0   Release Date :: 2022-05-18
+   Tag No. : v2.1-1788-g76737c201
     Branch : HEAD
-   Git log : Set\ remote\ push\ URL\ explicitly
- Date/time :  1 Jun 2022  8:30:40 +00:00(hh:mm) UTC
+   Git log : Merge branch |1646-modify-ci-system-and-contributing-workflow-to-avoid-merge-queue| into |develop|
+ Date/time :  8 Jun 2022 16:56:44 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-8r7le1vq-project-20-concurrent-0
+  Computer : runner-7084ce6e-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_stellarator_0/IN.DAT
  Run title : HELIAS-5B
