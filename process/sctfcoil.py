@@ -802,7 +802,7 @@ class Sctfcoil:
             for lap in range(100):
                 if ttest <= 0.0e0:
                     error_handling.idiags[0] = lap
-                    error_handling.fdiags[1] = ttest
+                    error_handling.fdiags[0] = ttest
                     error_handling.report_error(157)
                     break
 
@@ -811,7 +811,7 @@ class Sctfcoil:
                 ttestp = ttest + delt
 
                 # Issue #483 to be on the safe side, check the fractional as well as the absolute error
-                if isumat in (1, 2, 3, 4):
+                if isumat in (1, 4):
                     jcrit0, b, t = superconductors.itersc(
                         ttest, bmax, strain, bc20m, tc0m
                     )
@@ -897,7 +897,7 @@ class Sctfcoil:
                 ttest = ttest - 2.0e0 * delt * (jcrit0 - jsc) / (jcritp - jcritm)
             else:
                 error_handling.idiags[0] = lap
-                error_handling.fdiags[1] = ttest
+                error_handling.fdiags[0] = ttest
                 error_handling.report_error(157)
 
             tmarg = ttest - thelium
