@@ -177,9 +177,10 @@ unit-py38:
         - cd -
         - pytest --cov=$INSTALLED_PATH tests/unit -vs | tee tests/unit/pytest.log
     artifacts:
-        when: on_failure
+        when: always
         paths:
             - tests/unit/pytest.log
+            # .coverage required for coverage badge
             - .coverage
         expire_in: 1 week
 
@@ -419,6 +420,7 @@ pages:
     dependencies:
         - make-py38
         - tracking_rtv # needed to ensure tracking.html is present in this job
+        - unit-py38 # .coverage artefact required for coverage badge
 
 
 
