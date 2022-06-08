@@ -4149,11 +4149,11 @@ class Sctfcoil:
 
                 # Addaped Von-mises stress calculation to WP strucure [Pa]
                 if output:
-                    svmxz = sctfcoil_module.sigvm(
+                    svmxz = self.sigvm(
                         0.0e0, sig_tf_t[ii], sig_tf_z[ii], 0.0e0, 0.0e0, 0.0e0
                     )
 
-                    svmyz = sctfcoil_module.sigvm(
+                    svmyz = self.sigvm(
                         sig_tf_r[ii], 0.0e0, sig_tf_z[ii], 0.0e0, 0.0e0, 0.0e0
                     )
                     sig_tf_vmises[ii] = max(svmxz, svmyz)
