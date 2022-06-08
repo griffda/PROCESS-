@@ -2,7 +2,19 @@
 
 import pytest
 from typing import NamedTuple, Any
-from process.fortran import plasma_geometry_module
+from process.plasma_geometry import PlasmaGeom
+
+
+@pytest.fixture
+def plasma():
+    """Fixture to create a PFCoil object.
+
+    :return: an instance of PFCoil
+    :rtype: process.pfcoil.PFCoil
+    """
+    plasma = PlasmaGeom()
+
+    return plasma
 
 
 class XparamParam(NamedTuple):
@@ -45,7 +57,7 @@ class XparamParam(NamedTuple):
         ),
     ),
 )
-def test_xparam(xparamparam, monkeypatch):
+def test_xparam(xparamparam, monkeypatch, plasma):
     """
     Automatically generated Regression Unit Test for xparam.
 
@@ -58,7 +70,7 @@ def test_xparam(xparamparam, monkeypatch):
     :type monkeypatch: _pytest.monkeypatch.monkeypatch
     """
 
-    xi, thetai, xo, thetao = plasma_geometry_module.xparam(
+    xi, thetai, xo, thetao = plasma.xparam(
         a=xparamparam.a, kap=xparamparam.kap, tri=xparamparam.tri
     )
 
@@ -73,9 +85,16 @@ def test_xparam(xparamparam, monkeypatch):
 
 @pytest.mark.parametrize(
     "a, kap, tri, expected_perim",
-    [(2.8677741935483869, 1.8480000000000001, 0.5, 25.8787324576261)],
+    [
+        (
+            2.8677741935483869,
+            1.8480000000000001,
+            0.5,
+            25.8787324576261,
+        )
+    ],
 )
-def test_perim(a, kap, tri, expected_perim):
+def test_perim(a, kap, tri, expected_perim, plasma):
     """Tests `perim` function.
 
     :param a: test asset passed to the routine representing the plasma minor radius, in meters.
@@ -90,7 +109,7 @@ def test_perim(a, kap, tri, expected_perim):
     :param expected_perim: expected result of the function.
     :type expected_perim: float
     """
-    perim = plasma_geometry_module.perim(a, kap, tri)
+    perim = plasma.perim(a, kap, tri)
 
     assert pytest.approx(perim) == expected_perim
 
@@ -109,7 +128,7 @@ def test_perim(a, kap, tri, expected_perim):
         )
     ],
 )
-def test_xvol(rmajor, rminor, xi, thetai, xo, thetao, expected_xvol):
+def test_xvol(rmajor, rminor, xi, thetai, xo, thetao, expected_xvol, plasma):
     """Tests `xvol` function.
     :param rmajor: test asset passed to the routine representing the plasma major radius (m).
     :type rmajor: float
@@ -132,7 +151,7 @@ def test_xvol(rmajor, rminor, xi, thetai, xo, thetao, expected_xvol):
     :param expected_xvol: expected result of the function.
     :type expected_xvol: float
     """
-    xvol = plasma_geometry_module.xvol(rmajor, rminor, xi, thetai, xo, thetao)
+    xvol = plasma.xvol(rmajor, rminor, xi, thetai, xo, thetao)
 
     assert pytest.approx(xvol) == expected_xvol
 
@@ -149,7 +168,7 @@ def test_xvol(rmajor, rminor, xi, thetai, xo, thetao, expected_xvol):
         )
     ],
 )
-def test_xsecta(xi, thetai, xo, thetao, expected_xsecta):
+def test_xsecta(xi, thetai, xo, thetao, expected_xsecta, plasma):
     """Tests `xsecta` function.
     :param xi: test asset passed to the routine representing the radius of arc describing inboard surface (m).
     :type xi: float
@@ -166,7 +185,7 @@ def test_xsecta(xi, thetai, xo, thetao, expected_xsecta):
     :param expected_xsecta: expected result of the function.
     :type expected_xsecta: float
     """
-    xsecta = plasma_geometry_module.xsecta(xi, thetai, xo, thetao)
+    xsecta = plasma.xsecta(xi, thetai, xo, thetao)
 
     assert pytest.approx(xsecta) == expected_xsecta
 
@@ -183,7 +202,7 @@ def test_xsecta(xi, thetai, xo, thetao, expected_xsecta):
         )
     ],
 )
-def test_fvol(r, a, kap, tri, expected_fvol):
+def test_fvol(r, a, kap, tri, expected_fvol, plasma):
     """Tests `fvol` function.
     :param r: test asset passed to the routine representing the plasma major radius, in meters.
     :type r: float
@@ -201,7 +220,7 @@ def test_fvol(r, a, kap, tri, expected_fvol):
     :type expected_fvol: float
 
     """
-    fvol = plasma_geometry_module.fvol(r, a, kap, tri)
+    fvol = plasma.fvol(r, a, kap, tri)
 
     assert pytest.approx(fvol) == expected_fvol
 
@@ -217,7 +236,7 @@ def test_fvol(r, a, kap, tri, expected_fvol):
         )
     ],
 )
-def test_xsect0(a, kap, tri, expected_xsect0):
+def test_xsect0(a, kap, tri, expected_xsect0, plasma):
     """Tests `xsect0` function.
 
     :param a: test asset passed to the routine representing the plasma minor radius, in meters.
@@ -233,7 +252,7 @@ def test_xsect0(a, kap, tri, expected_xsect0):
     :type expected_xsect0: float
 
     """
-    xsect0 = plasma_geometry_module.xsect0(a, kap, tri)
+    xsect0 = plasma.xsect0(a, kap, tri)
 
     assert pytest.approx(xsect0) == expected_xsect0
 
@@ -282,7 +301,7 @@ class XsurfParam(NamedTuple):
         ),
     ),
 )
-def test_xsurf(xsurfparam, monkeypatch):
+def test_xsurf(xsurfparam, monkeypatch, plasma):
     """
     Automatically generated Regression Unit Test for xsurf.
 
@@ -295,7 +314,7 @@ def test_xsurf(xsurfparam, monkeypatch):
     :type monkeypatch: _pytest.monkeypatch.monkeypatch
     """
 
-    xsi, xso = plasma_geometry_module.xsurf(
+    xsi, xso = plasma.xsurf(
         rmajor=xsurfparam.rmajor,
         rminor=xsurfparam.rminor,
         xi=xsurfparam.xi,
@@ -345,7 +364,7 @@ class SurfaParam(NamedTuple):
         ),
     ),
 )
-def test_surfa(surfaparam, monkeypatch):
+def test_surfa(surfaparam, monkeypatch, plasma):
     """
     Automatically generated Regression Unit Test for surfa.
 
@@ -358,7 +377,7 @@ def test_surfa(surfaparam, monkeypatch):
     :type monkeypatch: _pytest.monkeypatch.monkeypatch
     """
 
-    sa, so = plasma_geometry_module.surfa(
+    sa, so = plasma.surfa(
         a=surfaparam.a, r=surfaparam.r, k=surfaparam.k, d=surfaparam.d
     )
 

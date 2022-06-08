@@ -43,7 +43,7 @@ class Caller:
 
         # Tokamak calls
         # Plasma geometry model
-        ft.plasma_geometry_module.geomty()
+        self.models.plasma_geom.geomty()
 
         # Machine Build Model
         # Radial build

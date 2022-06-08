@@ -97,7 +97,6 @@ LIST(APPEND PROCESS_SRCS
     sctfcoil.f90
     plasma_profiles.f90
     superconductors.f90
-    plasma_geometry.f90
     stellarator_fwbs.f90
     stellarator_variables.f90
     plant_power.f90

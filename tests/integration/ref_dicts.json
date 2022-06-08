@@ -20073,7 +20073,7 @@
             "zeff",
             "zeffai"
         ],
-        "plasma_geometry_module": [],
+        "plasma_geometry": [],
         "plasmod_module": [],
         "plasmod_variables": [
             "plasmod_tol",
