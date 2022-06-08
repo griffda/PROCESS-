@@ -383,7 +383,7 @@ pages:
         - ford documentation/ford/index.md
 
     # python docs documentation
-        - python3 -m pip install mkdocstrings
+        - python3 -m pip install mkdocstrings==0.18.0
         - python3 ${CI_PROJECT_DIR}/scripts/document_fortran_interface.py
         - python3 ${CI_PROJECT_DIR}/scripts/vardes.py
     # mkdocstrings imports process to write its documentation,
