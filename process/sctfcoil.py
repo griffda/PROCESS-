@@ -512,6 +512,7 @@ class Sctfcoil:
                 "(tmargmin_tf)",
                 tfcoil_variables.tmargmin_tf,
             )
+
             po.ovarre(
                 self.outfile,
                 "Actual temperature margin in superconductor (K)",
@@ -4279,10 +4280,10 @@ class Sctfcoil:
         )
         # Matrix encoding the integration constant cc coeficients
 
-        bb = numpy.zeros((2 * nlayers,))
+        bb = numpy.zeros((2 * nlayers,), order="F")
         # Vector encoding the alpha/beta (lorentz forces) contribution
 
-        cc = numpy.zeros((2 * nlayers,))
+        cc = numpy.zeros((2 * nlayers,), order="F")
         c1 = numpy.zeros((nlayers,))
         c2 = numpy.zeros((nlayers,))
         # Integration constants vector (solution)
@@ -4328,29 +4329,29 @@ class Sctfcoil:
 
         # Inter-layer boundary conditions
         if nlayers != 1:
-            for ii in range(1, nlayers):
+            for ii in range(nlayers - 1):
 
-                # Continuous radial normal stress at R[ii+1]
-                aa[(2 * ii) - 1, (2 * ii) - 2] = kk[ii - 1] * (1.0e0 + nu[ii - 1])
-                aa[(2 * ii) - 1, (2 * ii) - 1] = (
-                    -kk[ii - 1] * (1.0e0 - nu[ii - 1]) / rad[ii] ** 2
+                # Continuous radial normal stress at R(ii+1)
+                aa[2 * ii + 1, 2 * ii] = kk[ii] * (1.0e0 + nu[ii])
+                aa[2 * ii + 1, 2 * ii + 1] = (
+                    -kk[ii] * (1.0e0 - nu[ii]) / rad[ii + 1] ** 2
                 )
-                aa[(2 * ii - 1), 2 * ii] = -kk[ii] * (1.0e0 + nu[ii])
-                aa[(2 * ii) - 1, (2 * ii) + 1] = (
-                    kk[ii] * (1.0e0 - nu[ii]) / rad[ii] ** 2
+                aa[2 * ii + 1, 2 * ii + 2] = -kk[ii + 1] * (1.0e0 + nu[ii + 1])
+                aa[2 * ii + 1, 2 * ii + 3] = (
+                    kk[ii + 1] * (1.0e0 - nu[ii + 1]) / rad[ii + 1] ** 2
                 )
 
-                # Continuous displacement at R[ii+1]
-                aa[2 * ii, (2 * ii) - 2] = rad[ii]
-                aa[2 * ii, (2 * ii) - 1] = 1.0e0 / rad[ii]
-                aa[2 * ii, 2 * ii] = -rad[ii]
-                aa[2 * ii, (2 * ii) + 1] = -1.0e0 / rad[ii]
+                # Continuous displacement at R(ii+1)
+                aa[2 * ii + 2, 2 * ii] = rad[ii + 1]
+                aa[2 * ii + 2, 2 * ii + 1] = 1.0e0 / rad[ii + 1]
+                aa[2 * ii + 2, 2 * ii + 2] = -rad[ii + 1]
+                aa[2 * ii + 2, 2 * ii + 3] = -1.0e0 / rad[ii + 1]
 
         # Radial stress = 0
-        aa[(2 * nlayers) - 1, (2 * nlayers) - 2] = kk[nlayers - 1] * (
+        aa[2 * (nlayers - 1) + 1, 2 * (nlayers - 1)] = kk[nlayers - 1] * (
             1.0e0 + nu[nlayers - 1]
         )
-        aa[(2 * nlayers) - 1, (2 * nlayers) - 1] = (
+        aa[2 * (nlayers - 1) + 1, 2 * (nlayers - 1) + 1] = (
             -kk[nlayers - 1] * (1.0e0 - nu[nlayers - 1]) / rad[nlayers] ** 2
         )
         # ***
@@ -4365,29 +4366,31 @@ class Sctfcoil:
 
         # Inter-layer boundary conditions
         if nlayers != 1:
-            for ii in range(1, nlayers):
+            for ii in range(nlayers - 1):
 
                 # Continuous radial normal stress at R[ii+1]
-                bb[(2 * ii) - 1] = -kk[ii - 1] * (
-                    0.125e0 * alpha[ii - 1] * (3.0e0 + nu[ii - 1]) * rad[ii] ** 2
+                bb[2 * ii + 1] = -kk[ii] * (
+                    0.125e0 * alpha[ii] * (3.0e0 + nu[ii]) * rad[ii + 1] ** 2
                     + 0.5e0
-                    * beta[ii - 1]
-                    * (1.0e0 + (1.0e0 + nu[ii - 1]) * numpy.log(rad[ii]))
-                ) + kk[ii] * (
-                    0.125e0 * alpha[ii] * (3.0e0 + nu[ii]) * rad[ii] ** 2
-                    + 0.5e0 * beta[ii] * (1.0e0 + (1.0e0 + nu[ii]) * numpy.log(rad[ii]))
+                    * beta[ii]
+                    * (1.0e0 + (1.0e0 + nu[ii]) * numpy.log(rad[ii + 1]))
+                ) + kk[ii + 1] * (
+                    0.125e0 * alpha[ii + 1] * (3.0e0 + nu[ii + 1]) * rad[ii + 1] ** 2
+                    + 0.5e0
+                    * beta[ii + 1]
+                    * (1.0e0 + (1.0e0 + nu[ii + 1]) * numpy.log(rad[ii + 1]))
                 )
 
-                # Continuous displacement at R[ii+1]
-                bb[2 * ii] = (
-                    -0.125e0 * alpha[ii - 1] * rad[ii] ** 3
-                    - 0.5e0 * beta[ii - 1] * rad[ii] * numpy.log(rad[ii])
-                    + 0.125e0 * alpha[ii] * rad[ii] ** 3
-                    + 0.5e0 * beta[ii] * rad[ii] * numpy.log(rad[ii])
+                # Continuous displacement at R(ii+1)
+                bb[2 * ii + 2] = (
+                    -0.125e0 * alpha[ii] * rad[ii + 1] ** 3
+                    - 0.5e0 * beta[ii] * rad[ii + 1] * numpy.log(rad[ii + 1])
+                    + 0.125e0 * alpha[ii + 1] * rad[ii + 1] ** 3
+                    + 0.5e0 * beta[ii + 1] * rad[ii + 1] * numpy.log(rad[ii + 1])
                 )
 
         # Null radial stress at R(nlayers+1)
-        bb[(2 * nlayers) - 1] = -kk[nlayers - 1] * (
+        bb[2 * (nlayers - 1) + 1] = -kk[nlayers - 1] * (
             0.125e0 * alpha[nlayers - 1] * (3.0e0 + nu[nlayers - 1]) * rad[nlayers] ** 2
             + 0.5e0
             * beta[nlayers - 1]
@@ -4401,9 +4404,9 @@ class Sctfcoil:
         maths_library.linesolv(aa, bb, cc)
 
         #  Multiply c by (-1) (John Last, internal CCFE memorandum, 21/05/2013)
-        for ii in range(1, nlayers + 1):
-            c1[ii - 1] = cc[(2 * ii) - 2]
-            c2[ii - 1] = cc[(2 * ii) - 1]
+        for ii in range(nlayers):
+            c1[ii] = cc[2 * ii]
+            c2[ii] = cc[2 * ii + 1]
         # ***
         # ------
 
