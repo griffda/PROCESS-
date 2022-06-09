@@ -1668,7 +1668,7 @@ def plot_pf_coils(axis, mfile_data, scan):
     # Number of coils (1 is OH coil)
     number_of_coils = 0
     for item in mfile_data.data.keys():
-        if "rpf(" in item:
+        if "rpf[" in item:
             number_of_coils += 1
 
     bore = mfile_data.data["bore"].get_scan(scan)
@@ -1688,11 +1688,11 @@ def plot_pf_coils(axis, mfile_data, scan):
     else:
         noc = number_of_coils
 
-    for coil in range(1, noc):
-        coils_r.append(mfile_data.data["rpf({:02})".format(coil)].get_scan(scan))
-        coils_z.append(mfile_data.data["zpf({:02})".format(coil)].get_scan(scan))
-        coils_dr.append(mfile_data.data["pfdr{:02}".format(coil)].get_scan(scan))
-        coils_dz.append(mfile_data.data["pfdz{:02}".format(coil)].get_scan(scan))
+    for coil in range(0, noc):
+        coils_r.append(mfile_data.data["rpf[{:01}]".format(coil)].get_scan(scan))
+        coils_z.append(mfile_data.data["zpf[{:01}]".format(coil)].get_scan(scan))
+        coils_dr.append(mfile_data.data["pfdr({:01})".format(coil)].get_scan(scan))
+        coils_dz.append(mfile_data.data["pfdz({:01})".format(coil)].get_scan(scan))
         coil_text.append(str(coil))
 
     for i in range(len(coils_r)):
@@ -2067,7 +2067,7 @@ def plot_magnetics_info(axis, mfile_data, scan):
     # Number of coils (1 is OH coil)
     number_of_coils = 0
     for item in mfile_data.data.keys():
-        if "rpf(" in item:
+        if "rpf[" in item:
             number_of_coils += 1
 
     pf_info = []
@@ -2075,7 +2075,7 @@ def plot_magnetics_info(axis, mfile_data, scan):
         if i % 2 != 0:
             pf_info.append(
                 (
-                    mfile_data.data["ric({:02})".format(i)].get_scan(scan),
+                    mfile_data.data["ric[{:01}]".format(i)].get_scan(scan),
                     "PF {}".format(i),
                 )
             )
@@ -2234,8 +2234,8 @@ def plot_power_info(axis, mfile_data, scan):
         ped_height,
         ped_pos,
         ("ralpne", "Helium fraction", ""),
-        ("pcoreradmw", "Core radiation", "MW"),
-        ("pradmw", "Total radiation", "MW"),
+        ("pinnerzoneradmw", "inner zone radiation", "MW"),
+        ("pradmw", "Total radiation in LCFS", "MW"),
         ("pnucblkt", "Nuclear heating in blanket", "MW"),
         ("pnucshld", "Nuclear heating in shield", "MW"),
         (crypmw, "TF cryogenic power", "MW"),
@@ -2320,7 +2320,7 @@ def plot_current_drive_info(axis, mfile_data, scan):
 
     powerht = mfile_data.data["powerht"].get_scan(scan)
     psync = mfile_data.data["psyncpv*vol"].get_scan(scan)
-    pbrem = mfile_data.data["pcoreradmw"].get_scan(scan)
+    pbrem = mfile_data.data["pinnerzoneradmw"].get_scan(scan)
     hfact = mfile_data.data["hfact"].get_scan(scan)
     hstar = hfact * (powerht / (powerht + psync + pbrem)) ** 0.31
 

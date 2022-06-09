@@ -3506,16 +3506,16 @@ contains
   end subroutine init_itv_154
 
   real(kind(1.d0)) function itv_154()
-    use physics_variables, only: fpdivlim
+    use physics_variables, only: fne0
     implicit none
-    itv_154 = fpdivlim
+    itv_154 = fne0
   end function itv_154
 
   subroutine set_itv_154(ratio)
-    use physics_variables, only: fpdivlim
+    use physics_variables, only: fne0
     implicit none
     real(kind(1.d0)) :: ratio
-    fpdivlim = ratio
+    fne0 = ratio
   end subroutine set_itv_154
 
   !---------------------------------

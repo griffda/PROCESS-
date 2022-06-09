@@ -259,7 +259,7 @@ contains
       step_ucsc, step_ucfnc, step_ucfwa, step_ucfws, step_ucfwps, step91_per, &
       step92_per, step93_per, step_uc_cryo_al, step_mc_cryo_al_per, sitecost, &
       wfbuilding, whole_site_area, site_imp_uc, step_ucoam, step_ucwst, &
-      startupratio
+      startupratio, isitetype, isiteaccomm, igridconn, irailaccess
     use current_drive_variables, only: pinjfixmw, etaech, pinjalw, etanbi, &
       ftritbm, gamma_ecrh, pheat, rho_ecrh, beamwd, enbeam, pheatfix, bscfmax, &
       forbitloss, nbshield, tbeamin, feffcd, iefrf, iefrffix, irfcd, cboot, &
@@ -273,7 +273,8 @@ contains
     use divertor_variables, only: fdfs, anginc, divdens, divclfr, c4div, &
       c5div, ksic, fififi, divplt, delld, c2div, betao, divdum, tdiv, c6div, &
       omegan, prn1, fgamp, frrp, xpertin, c1div, betai, bpsout, xparain, fdiva, &
-      zeffdiv, hldivlim, rlenmax, divfix, c3div
+      zeffdiv, hldivlim, rlenmax, divfix, c3div, divleg_profile_inner, &
+      divleg_profile_outer
     use fwbs_variables, only: fblhebpo, vfblkt, fdiv, fvolso, fwcoolant, &
       pitch, iblanket, blktmodel, afwi, fblli2o, nphcdin, breeder_multiplier, &
       fw_armour_thickness, roughness, fwclfr, breedmat, fblli, fblvd, &
@@ -1525,6 +1526,12 @@ contains
        case ('divfix')
           call parse_real_variable('divfix', divfix, 0.1D0, 5.0D0, &
                'Divertor structure vertical extent (m)')
+       case('divleg_profile_inner')
+         call parse_real_variable('divleg_profile_inner', divleg_profile_inner, 0.0D0, 10.0D0, &
+               'Divertor inner leg surface, 2D profile (m)')
+       case('divleg_profile_outer')
+          call parse_real_variable('divleg_profile_outer', divleg_profile_outer, 0.0D0, 50.0D0, &
+               'Divertor outer leg surface, 2D profile (m)')
        case ('divplt')
           call parse_real_variable('divplt', divplt, 0.01D0, 1.0D0, &
                'Divertor plate thickness (m)')
@@ -2155,7 +2162,7 @@ contains
           call parse_real_variable('thkcas', thkcas, 0.0D0, 1.0D0, &
                'External supercond. case thickness (m)')
        case ('thwcndut')
-          call parse_real_variable('thwcndut', thwcndut, 0.001D0, 0.1D0, &
+          call parse_real_variable('thwcndut', thwcndut, 0.0D0, 0.1D0, &
                'TF coil conduit case thickness (m)')
        case ('tinstf')
           call parse_real_variable('tinstf', tinstf, 0.0D0, 0.1D0, &
@@ -2833,6 +2840,18 @@ contains
        case ('startupratio')
           call parse_real_variable('startupratio', startupratio, 0.0D0, 10.0D0, &
                'Ratio (additional HCD power for start-up) / (flat-top operational requirements)')
+       case ('isitetype')
+          call parse_int_variable('isitetype', isitetype, 0, 2, &
+                'Switch for type of site (river/sea/lakeside)')
+       case ('isiteaccomm')
+          call parse_int_variable('isiteaccomm', isiteaccomm, 0, 1, &
+                'Switch for including Campus Accommodation')
+       case ('igridconn')
+          call parse_int_variable('igridconn', igridconn, 0, 1, &
+                'Switch for site connection (outgoing) to electricity grid')
+       case ('irailaccess')
+          call parse_int_variable('irailaccess', irailaccess, 0, 1, &
+                'Switch for rail access to site')
 
           !  Unit cost settings
 

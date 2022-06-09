@@ -11,7 +11,7 @@ Please see the [installation guide](http://process.gitpages.ccfe.ac.uk/process/i
 To read about how the code works and the modules in it see the [documentation](http://process.gitpages.ccfe.ac.uk/process), which is hosted on Gitlab Pages.
 
 ## Tracking and Testing
-Process uses a mixture of tracking and testing to ensure code reliability. Tests are run on each branch and ensure the output of keys functions are correct. Tracking, on the other hand, shows graphs of a variables changes over time, and what commit caused the change. 
+Process uses a mixture of tracking and testing to ensure code reliability. Tests are run on each branch and ensure the output of keys functions are correct. Tracking, on the other hand, shows graphs of a variables changes over time, and what commit caused the change.
 
 Our tracker can be found here: http://process.gitpages.ccfe.ac.uk/process/tracking.html
 Documentation on testing can be found here: http://process.gitpages.ccfe.ac.uk/process/development/testing/

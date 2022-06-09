@@ -104,7 +104,7 @@ def test_he_visco(temperature, expected_visco, tfcoil):
         (54.4, 0.065706872),
     ],
 )
-def test_he_th_cond(temperature, expected_th_cond, initialise_error_module, tfcoil):
+def test_he_th_cond(temperature, expected_th_cond, reinitialise_error_module, tfcoil):
     """Tests `he_th_cond` subroutine.
 
     :param temperature: test asset passed to the routine representing the temperature, in Kelvin.
@@ -113,8 +113,8 @@ def test_he_th_cond(temperature, expected_th_cond, initialise_error_module, tfco
     :param expected_th_cond: expected result of the routine.
     :type expected_th_cond: float
 
-    :param initialise_error_module: does some default setup for the error handling
-    :type initialise_error_module: tests.integration.conftest.initialise_error_module
+    :param reinitialise_error_module: teardown any error side-effects
+    :type reinitialise_error_module: None
 
     :param tfcoil: fixture containing an initialised `TFcoil` object
     :type tfcoil: tests.unit.test_tfcoil.tfcoil (functional fixture)
@@ -188,7 +188,7 @@ class CntrpstTestAsset(NamedTuple):
         ),
     ],
 )
-def test_cntrpst(cntrpst_asset, monkeypatch, initialise_error_module, tfcoil):
+def test_cntrpst(cntrpst_asset, monkeypatch, reinitialise_error_module, tfcoil):
     """Integration test for cntrpst
 
     Testing tfcoil module variables being set:
@@ -203,8 +203,8 @@ def test_cntrpst(cntrpst_asset, monkeypatch, initialise_error_module, tfcoil):
     :param monkeypatch: Mock fixture
     :type monkeypatch: object
 
-    :param initialise_error_module: Fixture to setup error handling module
-    :type initialise_error_module: tests.integration.conftest.initialise_error_module
+    :param reinitialise_error_module: teardown any error side-effects
+    :type reinitialise_error_module: None
 
     :param tfcoil: fixture containing an initialised `TFcoil` object
     :type tfcoil: tests.unit.test_tfcoil.tfcoil (functional fixture)

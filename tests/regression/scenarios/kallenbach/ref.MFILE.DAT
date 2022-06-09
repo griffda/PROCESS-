@@ -2,15 +2,15 @@
  # Power Reactor Optimisation Code #
  # PROCESS #
  # Power Reactor Optimisation Code #
- PROCESS_version_number__________________________________________________ (procver)_____________________     "2.3.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "30/03/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "10:50"
- User____________________________________________________________________ (username)____________________     "jg6173"  
+ PROCESS_version_number__________________________________________________ (procver)_____________________     "2.4.0   R"
+ Date_of_run_____________________________________________________________ (date)________________________     "08/06/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "16:54"
+ User____________________________________________________________________ (username)____________________     "root"    
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "kallenbach divertor model                                                                          
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1456-ge3dc2ccc"                                                                               
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1336-update-cryoplant-cost-22-03-for-cost-model-2"                                                 
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge\ branch\ |develop|\ into\ 1336-update-cryoplant-"                                            
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-jg6173/pytest-57/test_scenario_kallenbach_0/IN.DAT                                                                                                                                       "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1788-g76737c201"                                                                              
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "HEAD"                                                                                              
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch |1646-modify-ci-system-and-contributing-workflow-to-avoid-merge-queue| into |develop|"
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-root/pytest-0/test_scenario_kallenbach_0/IN.DAT                                                                                                                                          "
  
  Scan_point_number_______________________________________________________ (iscan)_______________________              1    
  # Numerics #
@@ -20,9 +20,9 @@
  Number_of_constraints_(total)___________________________________________ (neqns+nineqns)_______________             23    
  Optimisation_switch_____________________________________________________ (ioptimz)_____________________              1    
  Figure_of_merit_switch__________________________________________________ (minmax)______________________              1    
- Square_root_of_the_sum_of_squares_of_the_constraint_residuals___________ (sqsumsq)_____________________      8.3308E-07 OP 
- VMCON_convergence_parameter_____________________________________________ (convergence_parameter)_______      7.2464E-08 OP 
- Number_of_VMCON_iterations______________________________________________ (nviter)______________________             28 OP 
+ Square_root_of_the_sum_of_squares_of_the_constraint_residuals___________ (sqsumsq)_____________________      4.2302E-06 OP 
+ VMCON_convergence_parameter_____________________________________________ (convergence_parameter)_______      2.9051E-07 OP 
+ Number_of_VMCON_iterations______________________________________________ (nviter)______________________             23 OP 
  bt______________________________________________________________________ (itvar001)____________________      5.1022E+00    
  bt_(final_value/initial_value)__________________________________________ (xcm001)______________________      1.0280E+00    
  bt_(range_normalised)___________________________________________________ (nitvar001)___________________      5.0973E-01    
@@ -55,7 +55,7 @@
  ohcth_(range_normalised)________________________________________________ (nitvar010)___________________      0.0000E+00    
  q_______________________________________________________________________ (itvar011)____________________      3.0000E+00    
  q_(final_value/initial_value)___________________________________________ (xcm011)______________________      1.0000E+00    
- q_(range_normalised)____________________________________________________ (nitvar011)___________________      0.0000E+00    
+ q_(range_normalised)____________________________________________________ (nitvar011)___________________      1.4173E-17    
  ftburn__________________________________________________________________ (itvar012)____________________      1.0020E+00    
  ftburn_(final_value/initial_value)______________________________________ (xcm012)______________________      1.0000E+00    
  ftburn_(range_normalised)_______________________________________________ (nitvar012)___________________      1.0000E+00    
@@ -135,7 +135,7 @@
  tesep_(final_value/initial_value)_______________________________________ (xcm037)______________________      9.8780E-01    
  tesep_(range_normalised)________________________________________________ (nitvar037)___________________      1.4734E-02    
  oh_steel_frac___________________________________________________________ (itvar038)____________________      5.3589E-01    
- oh_steel_frac_(final_value/initial_value)_______________________________ (xcm038)______________________      1.0581E+00    
+ oh_steel_frac_(final_value/initial_value)_______________________________ (xcm038)______________________      1.0580E+00    
  oh_steel_frac_(range_normalised)________________________________________ (nitvar038)___________________      5.6364E-01    
  foh_stress______________________________________________________________ (itvar039)____________________      1.0000E+00    
  foh_stress_(final_value/initial_value)__________________________________ (xcm039)______________________      1.0000E+00    
@@ -146,29 +146,29 @@
  fimp(13)________________________________________________________________ (itvar041)____________________      4.5794E-04    
  fimp(13)_(final_value/initial_value)____________________________________ (xcm041)______________________      1.3654E+00    
  fimp(13)_(range_normalised)_____________________________________________ (nitvar041)___________________      4.5793E-02    
- Beta_consistency__________________normalised_residue____________________ (normres001)__________________     -1.5726E-11    
- Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________     -1.5526E-12    
- Density_upper_limit_______________normalised_residue____________________ (normres003)__________________     -1.2801E-13    
- Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres004)__________________      4.6413E-11    
- Radial_build_consistency__________normalised_residue____________________ (normres005)__________________      8.7930E-14    
- Burn_time_lower_limit_____________normalised_residue____________________ (normres006)__________________      3.8392E-08    
- L-H_power_threshold_limit_________normalised_residue____________________ (normres007)__________________     -4.9958E-11    
- Net_electric_power_lower_limit____normalised_residue____________________ (normres008)__________________      4.2526E-06    
- Beta_upper_limit__________________normalised_residue____________________ (normres009)__________________     -8.8332E-12    
- Injection_power_upper_limit_______normalised_residue____________________ (normres010)__________________      1.9899E-10    
- TF_coil_case_stress_upper_limit___normalised_residue____________________ (normres011)__________________      3.0553E-13    
- TF_coil_conduit_stress_upper_lim__normalised_residue____________________ (normres012)__________________      2.5580E-13    
- Dump_voltage_upper_limit__________normalised_residue____________________ (normres013)__________________      2.2073E-12    
- J_winding_pack/J_protection_limit_normalised_residue____________________ (normres014)__________________     -6.2950E-14    
- TF_coil_temp._margin_lower_limit__normalised_residue____________________ (normres015)__________________      8.0179E-11    
- CS_temperature_margin_lower_limit_normalised_residue____________________ (normres016)__________________      8.3030E-07    
- taup/taueff_______________________normalised_residue____________________ (normres017)__________________      3.2882E-11    
- Dump_time_set_by_VV_stress________normalised_residue____________________ (normres018)__________________      9.5901E-13    
- Rate_of_change_of_energy_in_field_normalised_residue____________________ (normres019)__________________      1.2416E-10    
- pdivt_<_psep_kallenbach_divertor__normalised_residue____________________ (normres020)__________________     -5.4168E-08    
- Separatrix_temp_consistency_______normalised_residue____________________ (normres021)__________________     -9.9921E-09    
- Separatrix_density_consistency____normalised_residue____________________ (normres022)__________________      9.9989E-09    
- CS_Tresca_yield_criterion_________normalised_residue____________________ (normres023)__________________     -6.4215E-13    
+ Beta_consistency__________________normalised_residue____________________ (normres001)__________________     -4.2067E-11    
+ Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________      1.0492E-11    
+ Density_upper_limit_______________normalised_residue____________________ (normres003)__________________      2.4536E-13    
+ Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres004)__________________      1.6719E-10    
+ Radial_build_consistency__________normalised_residue____________________ (normres005)__________________     -2.0983E-13    
+ Burn_time_lower_limit_____________normalised_residue____________________ (normres006)__________________     -9.0073E-08    
+ L-H_power_threshold_limit_________normalised_residue____________________ (normres007)__________________     -2.7917E-10    
+ Net_electric_power_lower_limit____normalised_residue____________________ (normres008)__________________      4.2947E-06    
+ Beta_upper_limit__________________normalised_residue____________________ (normres009)__________________     -2.7625E-11    
+ Injection_power_upper_limit_______normalised_residue____________________ (normres010)__________________      4.6722E-10    
+ TF_coil_case_stress_upper_limit___normalised_residue____________________ (normres011)__________________     -1.4764E-12    
+ TF_coil_conduit_stress_upper_lim__normalised_residue____________________ (normres012)__________________     -1.3897E-12    
+ Dump_voltage_upper_limit__________normalised_residue____________________ (normres013)__________________     -5.5264E-12    
+ J_winding_pack/J_protection_limit_normalised_residue____________________ (normres014)__________________     -7.2264E-13    
+ TF_coil_temp._margin_lower_limit__normalised_residue____________________ (normres015)__________________     -1.3559E-10    
+ CS_temperature_margin_lower_limit_normalised_residue____________________ (normres016)__________________      4.2261E-06    
+ taup/taueff_______________________normalised_residue____________________ (normres017)__________________      8.5427E-11    
+ Dump_time_set_by_VV_stress________normalised_residue____________________ (normres018)__________________     -2.9176E-12    
+ Rate_of_change_of_energy_in_field_normalised_residue____________________ (normres019)__________________     -2.7865E-10    
+ pdivt_<_psep_kallenbach_divertor__normalised_residue____________________ (normres020)__________________     -1.4949E-07    
+ Separatrix_temp_consistency_______normalised_residue____________________ (normres021)__________________     -2.6978E-08    
+ Separatrix_density_consistency____normalised_residue____________________ (normres022)__________________      2.6931E-08    
+ CS_Tresca_yield_criterion_________normalised_residue____________________ (normres023)__________________      2.1372E-12    
  # Final Feasible Point #
  # Plant Availability #
  Allowable_blanket_neutron_fluence_(MW-yr/m2)____________________________ (abktflnc)____________________      5.0000E+00    
@@ -294,12 +294,10 @@
  Synchrotron_wall_reflectivity_factor____________________________________ (ssync)_______________________      6.0000E-01    
  Normalised_minor_radius_defining_'core'_________________________________ (coreradius)__________________      7.5000E-01    
  Fraction_of_core_radiation_subtracted_from_P_L__________________________ (coreradiationfraction)_______      6.0000E-01    
- Total_core_radiation_power_(MW)_________________________________________ (pcoreradmw)__________________      1.1371E+02 OP 
- Edge_radiation_power_(MW)_______________________________________________ (pedgeradmw)__________________      1.7768E+02 OP 
- Total_radiation_power_(MW)______________________________________________ (pradmw)______________________      2.9139E+02 OP 
- Core_radiation_fraction_=_total_radiation_in_core_/_total_power_deposite (rad_fraction_core)___________      6.8324E-01 OP 
- SoL_radiation_fraction_=_total_radiation_in_SoL_/_total_power_accross_se (rad_fraction_sol)____________      8.0000E-01 IP 
- Radiation_fraction_=_total_radiation_/_total_power_deposited_in_plasma__ (rad_fraction)________________      9.3665E-01 OP 
+ Radiation_power_from_inner_zone_(MW)____________________________________ (pinnerzoneradmw)_____________      1.1371E+02 OP 
+ Radiation_power_from_outer_zone_(MW)____________________________________ (pouterzoneradmw)_____________      1.7768E+02 OP 
+ Total_radiation_power_from_inside_LCFS_(MW)_____________________________ (pradmw)______________________      2.9139E+02 OP 
+ LCFS_radiation_fraction_=_total_radiation_in_LCFS_/_total_power_deposite (rad_fraction_LCFS)___________      6.8324E-01 OP 
  Nominal_mean_radiation_load_on_inside_surface_of_reactor_(MW/m2)________ (photon_wall)_________________      2.0367E-01 OP 
  Peaking_factor_for_radiation_wall_load__________________________________ (peakfactrad)_________________      3.3300E+00 IP 
  Maximum_permitted_radiation_wall_load_(MW/m^2)__________________________ (maxradwallload)______________      1.0000E+00 IP 
@@ -473,9 +471,9 @@
  Power_on_target_due_to_conduction_[W]___________________________________ (ptarget_cond)________________      1.1774E+06 OP 
  Power_on_target_due_to_surface_recombination_[W]________________________ (ptarget_recomb)______________      4.9789E+06 OP 
  Power_on_target_due_to_isotropic_losses_[W]_____________________________ (ptarget_isotropic)___________      4.6319E+06 OP 
- "Wetted_area"_of_target_[m2]____________________________________________ (WettedArea)__________________      3.5178E+00 OP 
+ "Wetted_area"_of_target_[m2]____________________________________________ (WettedArea)__________________      3.5179E+00 OP 
  "Wetted_length"_of_target_measured_in_poloidal_plane_[m]________________ (WettedLength)________________      6.9238E-02 OP 
- "Wetted_area"_of_target_[m2]____________________________________________ (WettedAreaComparison)________      3.5178E+00 OP 
+ "Wetted_area"_of_target_[m2]____________________________________________ (WettedAreaComparison)________      3.5179E+00 OP 
  "Wetted_length"_of_target_measured_in_poloidal_plane_[m]________________ (WettedLengthComparison)______      6.9238E-02 OP 
  Total_power_density_on_target_[W/m2]____________________________________ (qtargetcomplete)_____________      5.7363E+06    
  Power_density_on_target_due_to_conduction_and_convection_[W/m2]_________ (qtarget)_____________________      3.0043E+06 OP 
@@ -488,7 +486,7 @@
  Power_lost_due_to_charge_exchange__[W]__________________________________ (exchangepowerlost)___________      3.7318E+06 OP 
  Power_lost_due_to_electron_impact_ionisation_[W]________________________ (ionisationpowerlost)_________      4.6980E+06 OP 
  Total_power_lost_due_to_radiation,_ionisation_and_recombination_[W]_____ (totalpowerlost)______________      4.8166E+07 OP 
- Power_balance_error_[W]_________________________________________________ (balance)_____________________      1.8626E-08 OP 
+ Power_balance_error_[W]_________________________________________________ (balance)_____________________     -9.3132E-09 OP 
  # Radial Build #
  Machine_build_variables.bore_(m)________________________________________ (bore)________________________      2.1861E+00 ITV
  CS_radial_thickness_(m)_________________________________________________ (ohcth)_______________________      8.0000E-01 ITV
@@ -682,7 +680,7 @@
  Total_helium_fraction_inside_cable_space________________________________ (fhetot)______________________      3.4450E-01 OP 
  Copper_fraction_of_conductor____________________________________________ (fcutfsu)_____________________      8.9114E-01 ITV
  Residual_manufacturing_strain_on_superconductor_________________________ (str_tf_con_res)______________     -5.0000E-03    
- Self-consistent_strain_on_superconductor________________________________ (str_wp)______________________      1.7381E-03    
+ Self-consistent_strain_on_superconductor________________________________ (str_wp)______________________      1.7380E-03    
  Critical_current_density_in_superconductor_(A/m2)_______________________ (jcritsc)_____________________      9.6475E+08 OP 
  Critical_current_density_in_strand_(A/m2)_______________________________ (jcritstr)____________________      1.0502E+08 OP 
  Critical_current_density_in_winding_pack_(A/m2)_________________________ (jwdgcrt)_____________________      3.2253E+07 OP 
@@ -697,16 +695,16 @@
  Maximum_field_at_Beginning_Of_Pulse_(T)_________________________________ (bmaxoh0)_____________________      1.4559E+01 OP 
  Critical_superconductor_current_density_at_BOP_(A/m2)___________________ (jscoh_bop)___________________      3.0432E+08 OP 
  Critical_strand_current_density_at_BOP_(A/m2)___________________________ (jstrandoh_bop)_______________      9.1295E+07 OP 
- Allowable_overall_current_density_at_BOP_(A/m2)_________________________ (rjohc0)______________________      2.9659E+07 OP 
+ Allowable_overall_current_density_at_BOP_(A/m2)_________________________ (rjohc0)______________________      2.9660E+07 OP 
  Actual_overall_current_density_at_BOP_(A/m2)____________________________ (cohbop)______________________      1.4433E+07 OP 
  Maximum_field_at_End_Of_Flattop_(T)_____________________________________ (bmaxoh)______________________      1.4563E+01 OP 
  Critical_superconductor_current_density_at_EOF_(A/m2)___________________ (jscoh_eof)___________________      3.0404E+08 OP 
  Critical_strand_current_density_at_EOF_(A/m2)___________________________ (jstrandoh_eof)_______________      9.1212E+07 OP 
  Allowable_overall_current_density_at_EOF_(A/m2)_________________________ (rjohc)_______________________      2.9633E+07 OP 
  Actual_overall_current_density_at_EOF_(A/m2)____________________________ (coheof)______________________      1.5544E+07 ITV
- CS_inside_radius_(m)____________________________________________________ (bore.)_______________________      2.1861E+00    
- CS_thickness_(m)________________________________________________________ (ohcth.)______________________      8.0000E-01    
- Gap_between_central_solenoid_and_TF_coil_(m)____________________________ (gapoh)_______________________      5.0000E-02 ITV
+ CS_inside_radius_(m)____________________________________________________ (bv.bore.)____________________      2.1861E+00    
+ CS_thickness_(m)________________________________________________________ (bv.ohcth.)___________________      8.0000E-01    
+ Gap_between_central_solenoid_and_TF_coil_(m)____________________________ (bv.gapoh)____________________      5.0000E-02 ITV
  CS_overall_cross-sectional_area_(m2)____________________________________ (areaoh)______________________      1.1582E+01 OP 
  CS_conductor+void_cross-sectional_area_(m2)_____________________________ (awpoh)_______________________      5.3755E+00 OP 
  ___CS_conductor_cross-sectional_area_(m2)_______________________________ (awpoh*(1-vfohc))_____________      3.7629E+00 OP 
@@ -719,128 +717,128 @@
  Axial_stress_in_CS_steel_(Pa)___________________________________________ (sig_axial)___________________     -6.8943E+08 OP 
  Maximum_shear_stress_in_CS_steel_for_the_Tresca_criterion_(Pa)__________ (s_tresca_oh)_________________      6.0000E+08 OP 
  Axial_force_in_CS_(N)___________________________________________________ (axial_force)_________________     -2.4013E+09 OP 
- Residual_manufacturing_strain_in_CS_superconductor_material_____________ (str_cs_con_res)______________     -5.0000E-03    
+ Residual_manufacturing_strain_in_CS_superconductor_material_____________ (tfcoil_variables.str_cs_con_r     -5.0000E-03    
  Copper_fraction_in_strand_______________________________________________ (fcuohsu)_____________________      7.0000E-01    
  Void_(coolant)_fraction_in_conductor____________________________________ (vfohc)_______________________      3.0000E-01    
- Helium_coolant_temperature_(K)__________________________________________ (tftmp)_______________________      4.7500E+00    
+ Helium_coolant_temperature_(K)__________________________________________ (tfv.tftmp)___________________      4.7500E+00    
  CS_temperature_margin_(K)_______________________________________________ (tmargoh)_____________________      1.5000E+00 OP 
- Minimum_permitted_temperature_margin_(K)________________________________ (tmargmin_cs)_________________      1.5000E+00    
- residual_hoop_stress_in_CS_Steel_(Pa)___________________________________ (residual_sig_hoop)___________      2.4000E+08    
- Initial_vertical_crack_size_(m)_________________________________________ (t_crack_vertical)____________      2.0000E-03    
- Initial_radial_crack_size_(m)___________________________________________ (t_crack_radial)______________      6.0000E-03    
- CS_structural_vertical_thickness_(m)____________________________________ (t_structural_vertical)_______      2.2000E-02    
- CS_structural_radial_thickness_(m)______________________________________ (t_structural_radial)_________      7.0000E-02    
- Allowable_number_of_cycles_till_CS_fracture_____________________________ (N_cycle)_____________________      3.3036E+04 OP 
+ Minimum_permitted_temperature_margin_(K)________________________________ (tfv.tmargmin_cs)_____________      1.5000E+00    
+ residual_hoop_stress_in_CS_Steel_(Pa)___________________________________ (csfv.residual_sig_hoop)______      2.4000E+08    
+ Initial_vertical_crack_size_(m)_________________________________________ (csfv.t_crack_vertical)_______      2.0000E-03    
+ Initial_radial_crack_size_(m)___________________________________________ (csfv.t_crack_radial)_________      6.0000E-03    
+ CS_structural_vertical_thickness_(m)____________________________________ (csfv.t_structural_vertical)__      2.2000E-02    
+ CS_structural_radial_thickness_(m)______________________________________ (csfv.t_structural_radial)____      7.0000E-02    
+ Allowable_number_of_cycles_till_CS_fracture_____________________________ (csfv.n_cycle)________________      3.3036E+04 OP 
  PF_coil_superconductor_material_________________________________________ (isumatpf)____________________              3    
  Copper_fraction_in_conductor____________________________________________ (fcupfsu)_____________________      6.9000E-01    
  Maximum_permissible_tensile_stress_(MPa)________________________________ (sigpfcalw)___________________      5.0000E+02    
  JxB_hoop_force_fraction_supported_by_case_______________________________ (sigpfcf)_____________________      6.6600E-01    
- PF_coil_01_radius_(m)___________________________________________________ (rpf(01))_____________________      6.1465E+00    
- PF_coil_01_vertical_position_(m)________________________________________ (zpf(01))_____________________      9.4031E+00    
- PF_coil_01_radial_thickness_(m)_________________________________________ (pfdr01)______________________      1.3582E+00    
- PF_coil_01_vertical_thickness_(m)_______________________________________ (pfdz01)______________________      1.3582E+00    
- PF_coil_01_turns________________________________________________________ (turns(01))___________________      4.8083E+02    
- PF_coil_01_current_(MA)_________________________________________________ (ric(01))_____________________      2.0291E+01    
- PF_coil_01_field_(T)____________________________________________________ (bpf(01))_____________________      6.6131E+00    
- PF_coil_02_radius_(m)___________________________________________________ (rpf(02))_____________________      6.1465E+00    
- PF_coil_02_vertical_position_(m)________________________________________ (zpf(02))_____________________     -9.9201E+00    
- PF_coil_02_radial_thickness_(m)_________________________________________ (pfdr02)______________________      1.4033E+00    
- PF_coil_02_vertical_thickness_(m)_______________________________________ (pfdz02)______________________     -1.4033E+00    
- PF_coil_02_turns________________________________________________________ (turns(02))___________________      5.1332E+02    
- PF_coil_02_current_(MA)_________________________________________________ (ric(02))_____________________      2.1662E+01    
- PF_coil_02_field_(T)____________________________________________________ (bpf(02))_____________________      6.8333E+00    
- PF_coil_03_radius_(m)___________________________________________________ (rpf(03))_____________________      1.7965E+01    
- PF_coil_03_vertical_position_(m)________________________________________ (zpf(03))_____________________      2.8098E+00    
- PF_coil_03_radial_thickness_(m)_________________________________________ (pfdr03)______________________      1.2085E+00    
- PF_coil_03_vertical_thickness_(m)_______________________________________ (pfdz03)______________________      1.2085E+00    
- PF_coil_03_turns________________________________________________________ (turns(03))___________________      2.0765E+02    
- PF_coil_03_current_(MA)_________________________________________________ (ric(03))_____________________     -8.7628E+00    
- PF_coil_03_field_(T)____________________________________________________ (bpf(03))_____________________      2.7882E+00    
- PF_coil_04_radius_(m)___________________________________________________ (rpf(04))_____________________      1.7965E+01    
- PF_coil_04_vertical_position_(m)________________________________________ (zpf(04))_____________________     -2.8098E+00    
- PF_coil_04_radial_thickness_(m)_________________________________________ (pfdr04)______________________      1.2085E+00    
- PF_coil_04_vertical_thickness_(m)_______________________________________ (pfdz04)______________________     -1.2085E+00    
- PF_coil_04_turns________________________________________________________ (turns(04))___________________      2.0765E+02    
- PF_coil_04_current_(MA)_________________________________________________ (ric(04))_____________________     -8.7628E+00    
- PF_coil_04_field_(T)____________________________________________________ (bpf(04))_____________________      2.7882E+00    
- PF_coil_05_radius_(m)___________________________________________________ (rpf(05))_____________________      1.6393E+01    
- PF_coil_05_vertical_position_(m)________________________________________ (zpf(05))_____________________      7.8675E+00    
- PF_coil_05_radial_thickness_(m)_________________________________________ (pfdr05)______________________      8.0547E-01    
- PF_coil_05_vertical_thickness_(m)_______________________________________ (pfdz05)______________________      8.0547E-01    
- PF_coil_05_turns________________________________________________________ (turns(05))___________________      1.2070E+02    
- PF_coil_05_current_(MA)_________________________________________________ (ric(05))_____________________     -5.1902E+00    
- PF_coil_05_field_(T)____________________________________________________ (bpf(05))_____________________      2.6237E+00    
- PF_coil_06_radius_(m)___________________________________________________ (rpf(06))_____________________      1.6393E+01    
- PF_coil_06_vertical_position_(m)________________________________________ (zpf(06))_____________________     -7.8675E+00    
- PF_coil_06_radial_thickness_(m)_________________________________________ (pfdr06)______________________      8.0547E-01    
- PF_coil_06_vertical_thickness_(m)_______________________________________ (pfdz06)______________________     -8.0547E-01    
- PF_coil_06_turns________________________________________________________ (turns(06))___________________      1.2070E+02    
- PF_coil_06_current_(MA)_________________________________________________ (ric(06))_____________________     -5.1902E+00    
- PF_coil_06_field_(T)____________________________________________________ (bpf(06))_____________________      2.6237E+00    
- Central_solenoid_radius_(m)_____________________________________________ (rpf(nohc))___________________      2.5861E+00    
- Central_solenoid_vertical_position_(m)__________________________________ (zpf(nohc))___________________      0.0000E+00    
+ PF_coil_0_radius_(m)____________________________________________________ (rpf[0]_______________________      6.1465E+00    
+ PF_coil_0_vertical_position_(m)_________________________________________ (zpf[0])______________________      9.4031E+00    
+ PF_coil_0_radial_thickness_(m)__________________________________________ (pfdr(0))_____________________      1.3582E+00    
+ PF_coil_0_vertical_thickness_(m)________________________________________ (pfdz(0))_____________________      1.3582E+00    
+ PF_coil_0_turns_________________________________________________________ (turns[0])____________________      4.8082E+02    
+ PF_coil_0_current_(MA)__________________________________________________ (ric[0])______________________      2.0291E+01    
+ PF_coil_0_field_(T)_____________________________________________________ (bpf[0])______________________      6.6131E+00    
+ PF_coil_1_radius_(m)____________________________________________________ (rpf[1]_______________________      6.1465E+00    
+ PF_coil_1_vertical_position_(m)_________________________________________ (zpf[1])______________________     -9.9201E+00    
+ PF_coil_1_radial_thickness_(m)__________________________________________ (pfdr(1))_____________________      1.4033E+00    
+ PF_coil_1_vertical_thickness_(m)________________________________________ (pfdz(1))_____________________     -1.4033E+00    
+ PF_coil_1_turns_________________________________________________________ (turns[1])____________________      5.1332E+02    
+ PF_coil_1_current_(MA)__________________________________________________ (ric[1])______________________      2.1662E+01    
+ PF_coil_1_field_(T)_____________________________________________________ (bpf[1])______________________      6.8333E+00    
+ PF_coil_2_radius_(m)____________________________________________________ (rpf[2]_______________________      1.7965E+01    
+ PF_coil_2_vertical_position_(m)_________________________________________ (zpf[2])______________________      2.8098E+00    
+ PF_coil_2_radial_thickness_(m)__________________________________________ (pfdr(2))_____________________      1.2085E+00    
+ PF_coil_2_vertical_thickness_(m)________________________________________ (pfdz(2))_____________________      1.2085E+00    
+ PF_coil_2_turns_________________________________________________________ (turns[2])____________________      2.0765E+02    
+ PF_coil_2_current_(MA)__________________________________________________ (ric[2])______________________     -8.7628E+00    
+ PF_coil_2_field_(T)_____________________________________________________ (bpf[2])______________________      2.7882E+00    
+ PF_coil_3_radius_(m)____________________________________________________ (rpf[3]_______________________      1.7965E+01    
+ PF_coil_3_vertical_position_(m)_________________________________________ (zpf[3])______________________     -2.8098E+00    
+ PF_coil_3_radial_thickness_(m)__________________________________________ (pfdr(3))_____________________      1.2085E+00    
+ PF_coil_3_vertical_thickness_(m)________________________________________ (pfdz(3))_____________________     -1.2085E+00    
+ PF_coil_3_turns_________________________________________________________ (turns[3])____________________      2.0765E+02    
+ PF_coil_3_current_(MA)__________________________________________________ (ric[3])______________________     -8.7628E+00    
+ PF_coil_3_field_(T)_____________________________________________________ (bpf[3])______________________      2.7882E+00    
+ PF_coil_4_radius_(m)____________________________________________________ (rpf[4]_______________________      1.6393E+01    
+ PF_coil_4_vertical_position_(m)_________________________________________ (zpf[4])______________________      7.8675E+00    
+ PF_coil_4_radial_thickness_(m)__________________________________________ (pfdr(4))_____________________      8.0547E-01    
+ PF_coil_4_vertical_thickness_(m)________________________________________ (pfdz(4))_____________________      8.0547E-01    
+ PF_coil_4_turns_________________________________________________________ (turns[4])____________________      1.2070E+02    
+ PF_coil_4_current_(MA)__________________________________________________ (ric[4])______________________     -5.1902E+00    
+ PF_coil_4_field_(T)_____________________________________________________ (bpf[4])______________________      2.6237E+00    
+ PF_coil_5_radius_(m)____________________________________________________ (rpf[5]_______________________      1.6393E+01    
+ PF_coil_5_vertical_position_(m)_________________________________________ (zpf[5])______________________     -7.8675E+00    
+ PF_coil_5_radial_thickness_(m)__________________________________________ (pfdr(5))_____________________      8.0547E-01    
+ PF_coil_5_vertical_thickness_(m)________________________________________ (pfdz(5))_____________________     -8.0547E-01    
+ PF_coil_5_turns_________________________________________________________ (turns[5])____________________      1.2070E+02    
+ PF_coil_5_current_(MA)__________________________________________________ (ric[5])______________________     -5.1902E+00    
+ PF_coil_5_field_(T)_____________________________________________________ (bpf[5])______________________      2.6237E+00    
+ Central_solenoid_radius_(m)_____________________________________________ (rpf[nohc-1])_________________      2.5861E+00    
+ Central_solenoid_vertical_position_(m)__________________________________ (zpf[nohc-1])_________________      0.0000E+00    
  Central_solenoid_radial_thickness_(m)___________________________________ (ohdr)________________________      8.0000E-01    
  Central_solenoid_vertical_thickness_(m)_________________________________ (ohdz)________________________      1.4478E+01    
- Central_solenoid_turns__________________________________________________ (turns(nohc))_________________      4.1868E+03    
- Central_solenoid_current_(MA)___________________________________________ (ric(nohc))___________________     -1.8003E+02    
- Central_solenoid_field_(T)______________________________________________ (bpf(nohc))___________________      1.4563E+01    
- Sum_of_squares_of_residuals_____________________________________________ (ssq0)________________________      2.4979E-04 OP 
+ Central_solenoid_turns__________________________________________________ (turns[nohc-1])_______________      4.1868E+03    
+ Central_solenoid_current_(MA)___________________________________________ (ric[nohc-1])_________________     -1.8003E+02    
+ Central_solenoid_field_(T)______________________________________________ (bpf[nohc-1])_________________      1.4563E+01    
+ Sum_of_squares_of_residuals_____________________________________________ (pf.ssq0)_____________________      2.4979E-04 OP 
  Smoothing_parameter_____________________________________________________ (alfapf)______________________      5.0000E-10    
  # Volt Second Consumption #
- Total_volt-second_consumption_by_coils_(Wb)_____________________________ (vstot)_______________________     -7.4435E+02 OP 
+ Total_volt-second_consumption_by_coils_(Wb)_____________________________ (vstot)_______________________     -7.4000E+02 OP 
  # Waveforms #
  Ratio_of_central_solenoid_current_at_beginning_of_Pulse_/_end_of_flat-to (fcohbop)_____________________      9.2857E-01 ITV
  Ratio_of_central_solenoid_current_at_beginning_of_Flat-top_/_end_of_flat (fcohbof)_____________________     -1.5096E-01 OP 
  # PF Circuit Waveform Data #
  Number_of_PF_circuits_including_CS_and_plasma___________________________ (ncirt)_______________________              8    
- PF_Circuit_01_-_Time_point_01_(A)_______________________________________ (pfc01t01)____________________      0.0000E+00    
- PF_Circuit_01_-_Time_point_02_(A)_______________________________________ (pfc01t02)____________________      1.9261E+07    
- PF_Circuit_01_-_Time_point_03_(A)_______________________________________ (pfc01t03)____________________      2.0291E+07    
- PF_Circuit_01_-_Time_point_04_(A)_______________________________________ (pfc01t04)____________________      2.0291E+07    
- PF_Circuit_01_-_Time_point_05_(A)_______________________________________ (pfc01t05)____________________     -3.5836E+06    
- PF_Circuit_01_-_Time_point_06_(A)_______________________________________ (pfc01t06)____________________      0.0000E+00    
- PF_Circuit_02_-_Time_point_01_(A)_______________________________________ (pfc02t01)____________________      0.0000E+00    
- PF_Circuit_02_-_Time_point_02_(A)_______________________________________ (pfc02t02)____________________      2.1441E+07    
- PF_Circuit_02_-_Time_point_03_(A)_______________________________________ (pfc02t03)____________________      2.1662E+07    
- PF_Circuit_02_-_Time_point_04_(A)_______________________________________ (pfc02t04)____________________      2.1662E+07    
- PF_Circuit_02_-_Time_point_05_(A)_______________________________________ (pfc02t05)____________________     -4.9141E+06    
- PF_Circuit_02_-_Time_point_06_(A)_______________________________________ (pfc02t06)____________________      0.0000E+00    
- PF_Circuit_03_-_Time_point_01_(A)_______________________________________ (pfc03t01)____________________     -0.0000E+00    
- PF_Circuit_03_-_Time_point_02_(A)_______________________________________ (pfc03t02)____________________      1.2243E+06    
- PF_Circuit_03_-_Time_point_03_(A)_______________________________________ (pfc03t03)____________________     -7.2453E+06    
- PF_Circuit_03_-_Time_point_04_(A)_______________________________________ (pfc03t04)____________________     -7.2453E+06    
- PF_Circuit_03_-_Time_point_05_(A)_______________________________________ (pfc03t05)____________________     -8.7628E+06    
- PF_Circuit_03_-_Time_point_06_(A)_______________________________________ (pfc03t06)____________________     -0.0000E+00    
- PF_Circuit_04_-_Time_point_01_(A)_______________________________________ (pfc04t01)____________________     -0.0000E+00    
- PF_Circuit_04_-_Time_point_02_(A)_______________________________________ (pfc04t02)____________________      1.2243E+06    
- PF_Circuit_04_-_Time_point_03_(A)_______________________________________ (pfc04t03)____________________     -7.2453E+06    
- PF_Circuit_04_-_Time_point_04_(A)_______________________________________ (pfc04t04)____________________     -7.2453E+06    
- PF_Circuit_04_-_Time_point_05_(A)_______________________________________ (pfc04t05)____________________     -8.7628E+06    
- PF_Circuit_04_-_Time_point_06_(A)_______________________________________ (pfc04t06)____________________     -0.0000E+00    
- PF_Circuit_05_-_Time_point_01_(A)_______________________________________ (pfc05t01)____________________     -0.0000E+00    
- PF_Circuit_05_-_Time_point_02_(A)_______________________________________ (pfc05t02)____________________     -6.4665E+05    
- PF_Circuit_05_-_Time_point_03_(A)_______________________________________ (pfc05t03)____________________     -5.1902E+06    
- PF_Circuit_05_-_Time_point_04_(A)_______________________________________ (pfc05t04)____________________     -5.1902E+06    
- PF_Circuit_05_-_Time_point_05_(A)_______________________________________ (pfc05t05)____________________     -4.3887E+06    
- PF_Circuit_05_-_Time_point_06_(A)_______________________________________ (pfc05t06)____________________     -0.0000E+00    
- PF_Circuit_06_-_Time_point_01_(A)_______________________________________ (pfc06t01)____________________     -0.0000E+00    
- PF_Circuit_06_-_Time_point_02_(A)_______________________________________ (pfc06t02)____________________     -6.4665E+05    
- PF_Circuit_06_-_Time_point_03_(A)_______________________________________ (pfc06t03)____________________     -5.1902E+06    
- PF_Circuit_06_-_Time_point_04_(A)_______________________________________ (pfc06t04)____________________     -5.1902E+06    
- PF_Circuit_06_-_Time_point_05_(A)_______________________________________ (pfc06t05)____________________     -4.3887E+06    
- PF_Circuit_06_-_Time_point_06_(A)_______________________________________ (pfc06t06)____________________     -0.0000E+00    
- CS_Circuit__-_Time_point_01_(A)_________________________________________ (cst01)_______________________     -0.0000E+00    
- CS_Circuit__-_Time_point_02_(A)_________________________________________ (cst02)_______________________      1.6717E+08    
- CS_Circuit__-_Time_point_03_(A)_________________________________________ (cst03)_______________________      2.7178E+07    
- CS_Circuit__-_Time_point_04_(A)_________________________________________ (cst04)_______________________      2.7178E+07    
- CS_Circuit__-_Time_point_05_(A)_________________________________________ (cst05)_______________________     -1.8003E+08    
- CS_Circuit__-_Time_point_06_(A)_________________________________________ (cst06)_______________________     -0.0000E+00    
- Plasma__-_Time_point_01_(A)_____________________________________________ (plasmat01)___________________      0.0000E+00    
- Plasma__-_Time_point_02_(A)_____________________________________________ (plasmat02)___________________      0.0000E+00    
- Plasma__-_Time_point_03_(A)_____________________________________________ (plasmat03)___________________      1.8337E+07    
- Plasma__-_Time_point_04_(A)_____________________________________________ (plasmat04)___________________      1.8337E+07    
- Plasma__-_Time_point_05_(A)_____________________________________________ (plasmat05)___________________      1.8337E+07    
- Plasma__-_Time_point_06_(A)_____________________________________________ (plasmat06)___________________      0.0000E+00    
+ PF_Circuit_0_Time_point_0_(A)___________________________________________ (pfc0t0)______________________      0.0000E+00    
+ PF_Circuit_0_Time_point_1_(A)___________________________________________ (pfc0t1)______________________      1.9261E+07    
+ PF_Circuit_0_Time_point_2_(A)___________________________________________ (pfc0t2)______________________      2.0291E+07    
+ PF_Circuit_0_Time_point_3_(A)___________________________________________ (pfc0t3)______________________      2.0291E+07    
+ PF_Circuit_0_Time_point_4_(A)___________________________________________ (pfc0t4)______________________     -3.5836E+06    
+ PF_Circuit_0_Time_point_5_(A)___________________________________________ (pfc0t5)______________________      0.0000E+00    
+ PF_Circuit_1_Time_point_0_(A)___________________________________________ (pfc1t0)______________________      0.0000E+00    
+ PF_Circuit_1_Time_point_1_(A)___________________________________________ (pfc1t1)______________________      2.1441E+07    
+ PF_Circuit_1_Time_point_2_(A)___________________________________________ (pfc1t2)______________________      2.1662E+07    
+ PF_Circuit_1_Time_point_3_(A)___________________________________________ (pfc1t3)______________________      2.1662E+07    
+ PF_Circuit_1_Time_point_4_(A)___________________________________________ (pfc1t4)______________________     -4.9141E+06    
+ PF_Circuit_1_Time_point_5_(A)___________________________________________ (pfc1t5)______________________      0.0000E+00    
+ PF_Circuit_2_Time_point_0_(A)___________________________________________ (pfc2t0)______________________     -0.0000E+00    
+ PF_Circuit_2_Time_point_1_(A)___________________________________________ (pfc2t1)______________________      1.2243E+06    
+ PF_Circuit_2_Time_point_2_(A)___________________________________________ (pfc2t2)______________________     -7.2453E+06    
+ PF_Circuit_2_Time_point_3_(A)___________________________________________ (pfc2t3)______________________     -7.2453E+06    
+ PF_Circuit_2_Time_point_4_(A)___________________________________________ (pfc2t4)______________________     -8.7628E+06    
+ PF_Circuit_2_Time_point_5_(A)___________________________________________ (pfc2t5)______________________     -0.0000E+00    
+ PF_Circuit_3_Time_point_0_(A)___________________________________________ (pfc3t0)______________________     -0.0000E+00    
+ PF_Circuit_3_Time_point_1_(A)___________________________________________ (pfc3t1)______________________      1.2243E+06    
+ PF_Circuit_3_Time_point_2_(A)___________________________________________ (pfc3t2)______________________     -7.2453E+06    
+ PF_Circuit_3_Time_point_3_(A)___________________________________________ (pfc3t3)______________________     -7.2453E+06    
+ PF_Circuit_3_Time_point_4_(A)___________________________________________ (pfc3t4)______________________     -8.7628E+06    
+ PF_Circuit_3_Time_point_5_(A)___________________________________________ (pfc3t5)______________________     -0.0000E+00    
+ PF_Circuit_4_Time_point_0_(A)___________________________________________ (pfc4t0)______________________     -0.0000E+00    
+ PF_Circuit_4_Time_point_1_(A)___________________________________________ (pfc4t1)______________________     -6.4665E+05    
+ PF_Circuit_4_Time_point_2_(A)___________________________________________ (pfc4t2)______________________     -5.1902E+06    
+ PF_Circuit_4_Time_point_3_(A)___________________________________________ (pfc4t3)______________________     -5.1902E+06    
+ PF_Circuit_4_Time_point_4_(A)___________________________________________ (pfc4t4)______________________     -4.3887E+06    
+ PF_Circuit_4_Time_point_5_(A)___________________________________________ (pfc4t5)______________________     -0.0000E+00    
+ PF_Circuit_5_Time_point_0_(A)___________________________________________ (pfc5t0)______________________     -0.0000E+00    
+ PF_Circuit_5_Time_point_1_(A)___________________________________________ (pfc5t1)______________________     -6.4665E+05    
+ PF_Circuit_5_Time_point_2_(A)___________________________________________ (pfc5t2)______________________     -5.1902E+06    
+ PF_Circuit_5_Time_point_3_(A)___________________________________________ (pfc5t3)______________________     -5.1902E+06    
+ PF_Circuit_5_Time_point_4_(A)___________________________________________ (pfc5t4)______________________     -4.3887E+06    
+ PF_Circuit_5_Time_point_5_(A)___________________________________________ (pfc5t5)______________________     -0.0000E+00    
+ CS_Circuit_Time_point_0_(A)_____________________________________________ (cs_t0)_______________________     -0.0000E+00    
+ CS_Circuit_Time_point_1_(A)_____________________________________________ (cs_t1)_______________________      1.6717E+08    
+ CS_Circuit_Time_point_2_(A)_____________________________________________ (cs_t2)_______________________      2.7178E+07    
+ CS_Circuit_Time_point_3_(A)_____________________________________________ (cs_t3)_______________________      2.7178E+07    
+ CS_Circuit_Time_point_4_(A)_____________________________________________ (cs_t4)_______________________     -1.8003E+08    
+ CS_Circuit_Time_point_5_(A)_____________________________________________ (cs_t5)_______________________     -0.0000E+00    
+ Plasma_Time_point_0_(A)_________________________________________________ (plasmat0)____________________      0.0000E+00    
+ Plasma_Time_point_1_(A)_________________________________________________ (plasmat1)____________________      0.0000E+00    
+ Plasma_Time_point_2_(A)_________________________________________________ (plasmat2)____________________      1.8337E+07    
+ Plasma_Time_point_3_(A)_________________________________________________ (plasmat3)____________________      1.8337E+07    
+ Plasma_Time_point_4_(A)_________________________________________________ (plasmat4)____________________      1.8337E+07    
+ Plasma_Time_point_5_(A)_________________________________________________ (plasmat5)____________________      0.0000E+00    
  # Support Structure #
  Outer_PF_coil_fence_mass_(kg)___________________________________________ (fncmass)_____________________      3.0772E+05 OP 
  Intercoil_support_structure_mass_(kg)___________________________________ (aintmass)____________________      5.2361E+06 OP 
@@ -943,7 +941,7 @@
  Max_permitted_abs_rate_of_change_of_stored_energy_in_poloidal_field_(MW) maxpoloidalpower______________      3.0000E+02    
  # Vacuum System #
  First_wall_outgassing_rate_(Pa_m/s)_____________________________________ (rat)_________________________      1.3000E-08    
- Total_outgassing_load_(Pa_m3/s)_________________________________________ (ogas)________________________      1.8481E-04 OP 
+ Total_outgassing_load_(Pa_m3/s)_________________________________________ (ogas)________________________      1.8482E-04 OP 
  Base_pressure_required_(Pa)_____________________________________________ (pbase)_______________________      5.0000E-04    
  Required_N2_pump_speed_(m3/s)___________________________________________ (s(1))________________________      3.6963E-01 OP 
  N2_pump_speed_provided_(m3/s)___________________________________________ (snet(1))_____________________      3.5413E+01 OP 
@@ -1039,7 +1037,7 @@
  Total_High-grade_thermal_power_(MW)_____________________________________ (pthermmw)____________________      2.2020E+03    
  Number_of_primary_heat_exchangers_______________________________________ (nphx)________________________              3 OP 
  Transport_power_from_scaling_law_(MW)___________________________________ (pscalingmw)__________________      3.1277E+02    
- Radiation_power_from_inside_"coreradius"_(MW)___________________________ (pcoreradmw.)_________________      1.1371E+02    
+ Radiation_power_from_inside_"coreradius"_(MW)___________________________ (pinnerzoneradmw.)____________      1.1371E+02    
  Total_(MW)______________________________________________________________ ______________________________      4.2648E+02    
  Alpha_power_deposited_in_plasma_(MW)____________________________________ (falpha*palpmw)_______________      3.7400E+02    
  Power_from_charged_products_of_DD_and/or_D-He3_fusion_(MW)______________ (pchargemw.)__________________      1.5278E+00    

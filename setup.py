@@ -11,7 +11,7 @@ if platform.system() == "Darwin":
 
 setup_kwargs = {
     "name": MODULE_NAME,
-    "version": "2.3.0",
+    "version": "2.4.0",
     "description": (
         "Power Reactor Optimisation Code for Environmental and Safety Studies"
     ),
@@ -31,11 +31,15 @@ setup_kwargs = {
         ],
         "process.io": ["python_fortran_dicts.json"],
         "process.data.impuritydata": ["*"],
+        "process.uncertainties": ["*.json"],
     },
     "test_suite": "pytest",
     "install_requires": [
         "numpy>=1.19.0,<1.22.1",
         "importlib-resources ; python_version<'3.7'",
+        "pandas",
+        "tables",
+        "SALib",
     ],
     "extras_require": {"test": ["pytest", "scipy"]},
     "entry_points": {

@@ -43,7 +43,9 @@ Box file T&amp;M/PKNIGHT/PROCESS (from 24/01/12)
 """
 from process import fortran
 from process.buildings import Buildings
+from process.costs import Costs
 from process.io import plot_proc
+from process.kallenbach import kallenbach_scan
 from process.pulse import Pulse
 from process.scan import Scan
 from process import final
@@ -53,11 +55,14 @@ from process.build import Build
 from process.utilities.f2py_string_patch import string_to_f2py_compatible
 import argparse
 from process.costs_step import CostsStep
+from process.pfcoil import PFCoil
 from process.tfcoil import TFcoil
 from process.divertor import Divertor
 from process.availability import Availability
 from process.ife import IFE
+from process.costs_2015 import Costs2015
 from process.caller import Caller
+
 
 from pathlib import Path
 import sys
@@ -316,7 +321,6 @@ class SingleRun:
         self.set_filenames()
         self.initialise()
         self.run_hare_tests()
-        self.kallenbach_tests()
         self.kallenbach_scan()
         self.call_solver()
         self.run_scan()
@@ -324,7 +328,8 @@ class SingleRun:
         self.finish()
         self.append_input()
 
-    def init_module_vars(self):
+    @staticmethod
+    def init_module_vars():
         """Initialise all module variables in the Fortran.
 
         This "resets" all module variables to their initialised values, so each
@@ -379,7 +384,8 @@ class SingleRun:
         """Set the mfile filename."""
         self.mfile_path = Path(self.filename_prefix + "MFILE.DAT")
 
-    def initialise(self):
+    @staticmethod
+    def initialise():
         """Run the init module to call all initialisation routines."""
         fortran.init_module.init()
 
@@ -389,18 +395,10 @@ class SingleRun:
         if fortran.global_variables.run_tests == 1:
             fortran.main_module.runtests()
 
-    def kallenbach_tests(self):
-        """Run Kallenbach tests if required."""
-        if fortran.div_kal_vars.kallenbach_tests == 1:
-            fortran.kallenbach_module.kallenbach_testing()
-            # Exit if just running the Kallenbach tests
-            sys.exit()
-
     def kallenbach_scan(self):
         """Run Kallenbach scan if required."""
         if fortran.div_kal_vars.kallenbach_scan_switch == 1:
-            fortran.kallenbach_module.kallenbach_scan()
-            # Exit if just running the scan
+            kallenbach_scan()
             sys.exit()
 
     def call_solver(self):
@@ -471,6 +469,7 @@ class Models:
         This also initialises module variables in the Fortran for that module.
         """
         self.costs_step = CostsStep()
+        self.pfcoil = PFCoil()
         self.build = Build()
         self.sctfcoil = Sctfcoil()
         self.tfcoil = TFcoil(build=self.build, sctfcoil=self.sctfcoil)
@@ -481,10 +480,15 @@ class Models:
         self.vacuum = Vacuum()
         self.water_use = WaterUse()
         self.pulse = Pulse()
-        self.ife = IFE(availability=self.availability)
+        self.costs = Costs()
+        self.ife = IFE(availability=self.availability, costs=self.costs)
         self.stellarator = Stellarator(
-            availability=self.availability, buildings=self.buildings, vacuum=self.vacuum
+            availability=self.availability,
+            buildings=self.buildings,
+            vacuum=self.vacuum,
+            costs=self.costs,
         )
+        self.costs_2015 = Costs2015()
 
 
 def main(args=None):
