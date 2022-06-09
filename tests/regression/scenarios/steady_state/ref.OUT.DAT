@@ -6,12 +6,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-1791-g3ef14907c
+   Tag No. : v2.1-1799-g2552fe968
     Branch : HEAD
-   Git log : Merge branch |1673-convert-safety-f90-to-python| into |develop|
- Date/time :  9 Jun 2022 11:31:53 +00:00(hh:mm) UTC
+   Git log : Merge branch |1578-convert-plasma_geometry-f90-into-python| into |develop|
+ Date/time :  9 Jun 2022 13:49:26 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-8a63d9a8-project-20-concurrent-0
+  Computer : runner-7084ce6e-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_steady_state_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
@@ -131,30 +131,30 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  6.8017E-02              2.6092E-13                -3.8360E-12
-    2  Global power balance consistency      =  2.0722E-01 MW/m3       -1.1915E-12 MW/m3           5.7496E-12
+    1  Beta consistency                      =  6.8017E-02              2.6093E-13                -3.8363E-12
+    2  Global power balance consistency      =  2.0722E-01 MW/m3       -1.1912E-12 MW/m3           5.7485E-12
     3  Density upper limit                   <  7.0874E+19 /m3         -2.2118E+05 /m3            -3.1086E-15
-    4  Neutron wall load upper limit         <  1.2835E+00 MW/m2        3.2952E-11 MW/m2           2.5674E-11
+    4  Neutron wall load upper limit         <  1.2835E+00 MW/m2        3.2953E-11 MW/m2           2.5675E-11
     5  Radial build consistency              =  8.7499E+00 m           -7.1886E-14 m               8.2157E-15
-    6  Volt second lower limit               >  3.9935E+02 V.sec        1.2193E-10 V.sec          -3.0531E-13
-    7  L-H power threshold limit             >  9.3614E+01 MW           9.0703E-09 MW             -9.6891E-11
-    8  Net electric power lower limit        >  5.0000E+02 MW          -2.9598E-08 MW             -5.9196E-11
-    9  Beta upper limit                      <  7.5986E-02             -3.4267E-13                -4.5097E-12
-   10  Peak toroidal field upper limit       <  1.1200E+01 T           -2.6361E-13 T               2.3537E-14
-   11  CS coil EOF current density limit     <  5.5990E+07 A/m2         1.1750E-04 A/m2            2.0983E-12
-   12  CS coil BOP current density limit     <  4.1669E+07 A/m2        -9.0573E-04 A/m2           -2.1736E-11
-   13  Injection power upper limit           <  2.2500E+02 MW           5.5707E-12 MW             -2.4758E-14
-   14  TF coil case stress upper limit       <  5.8000E+08 Pa           1.5855E-05 Pa              2.7311E-14
-   15  TF coil conduit stress upper lim      <  5.8000E+08 Pa           1.6570E-05 Pa              2.8422E-14
-   16  I_op / I_critical (TF coil)           <  2.0704E+07 A/m2        -1.2245E-06 A/m2            7.9492E-14
-   17  Dump voltage upper limit              <  1.0000E+01 V            8.7041E-14 V               8.6597E-15
-   18  J_winding pack/J_protection limit     <  1.5404E+07 A/m2         0.0000E+00 A/m2            9.8366E-14
-   19  TF coil temp. margin lower limit      >  1.5000E+00 K            1.3186E-11 K              -8.7907E-12
+    6  Volt second lower limit               >  3.9935E+02 V.sec        1.2153E-10 V.sec          -3.0431E-13
+    7  L-H power threshold limit             >  9.3614E+01 MW           9.0700E-09 MW             -9.6888E-11
+    8  Net electric power lower limit        >  5.0000E+02 MW          -2.9597E-08 MW             -5.9194E-11
+    9  Beta upper limit                      <  7.5986E-02             -3.4264E-13                -4.5094E-12
+   10  Peak toroidal field upper limit       <  1.1200E+01 T           -2.5366E-13 T               2.2649E-14
+   11  CS coil EOF current density limit     <  5.5990E+07 A/m2         1.1756E-04 A/m2            2.0999E-12
+   12  CS coil BOP current density limit     <  4.1669E+07 A/m2        -9.0566E-04 A/m2           -2.1735E-11
+   13  Injection power upper limit           <  2.2500E+02 MW           5.7980E-12 MW             -2.5757E-14
+   14  TF coil case stress upper limit       <  5.8000E+08 Pa           1.4067E-05 Pa              2.4203E-14
+   15  TF coil conduit stress upper lim      <  5.8000E+08 Pa           1.5259E-05 Pa              2.6423E-14
+   16  I_op / I_critical (TF coil)           <  2.0704E+07 A/m2        -1.2108E-06 A/m2            7.8604E-14
+   17  Dump voltage upper limit              <  1.0000E+01 V            8.1712E-14 V               8.2157E-15
+   18  J_winding pack/J_protection limit     <  1.5404E+07 A/m2         0.0000E+00 A/m2            9.7033E-14
+   19  TF coil temp. margin lower limit      >  1.5000E+00 K            1.3183E-11 K              -8.7884E-12
    20  CS temperature margin lower limit     >  1.5000E+00 K           -1.7358E-01 K              -1.4727E-10
-   21  taup/taueff                           >  5.0000E+00             -3.4247E-11                 6.8494E-12
-   22  Dump time set by VV stress            >  2.8309E+01 s           -8.8926E-02 s               2.6645E-14
-   23  Upper Lim. on Psep * Bt / q A R       <  9.2000E+00 MWT/m       -8.3719E-10 MWT/m           9.0999E-11
-   24  CS Tresca yield criterion             <  6.6000E+08 Pa           9.0628E+07 Pa             -4.6132E-12
+   21  taup/taueff                           >  5.0000E+00             -3.4255E-11                 6.8510E-12
+   22  Dump time set by VV stress            >  2.8309E+01 s           -8.8926E-02 s               2.7089E-14
+   23  Upper Lim. on Psep * Bt / q A R       <  9.2000E+00 MWT/m       -8.3717E-10 MWT/m           9.0996E-11
+   24  CS Tresca yield criterion             <  6.6000E+08 Pa           9.0628E+07 Pa             -4.6134E-12
  
  ******************************************** Final Feasible Point ********************************************
  

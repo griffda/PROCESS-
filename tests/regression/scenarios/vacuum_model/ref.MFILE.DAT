@@ -4,12 +4,12 @@
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.4.0   R"
  Date_of_run_____________________________________________________________ (date)________________________     "09/06/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "11:32"
+ Time_of_run_____________________________________________________________ (time)________________________     "13:49"
  User____________________________________________________________________ (username)____________________     "root"    
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "demo 1 vacuum model test                                                                           
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1791-g3ef14907c"                                                                              
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1799-g2552fe968"                                                                              
  PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "HEAD"                                                                                              
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch |1673-convert-safety-f90-to-python| into |develop|"                                   
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch |1578-convert-plasma_geometry-f90-into-python| into |develop|"                        
  Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-root/pytest-0/test_scenario_vacuum_model_0/IN.DAT                                                                                                                                        "
  
  Scan_point_number_______________________________________________________ (iscan)_______________________              1    
@@ -142,18 +142,18 @@
  fniterpump_(range_normalised)___________________________________________ (nitvar039)___________________      7.8215E-01    
  Beta_consistency__________________normalised_residue____________________ (normres001)__________________     -1.1107E-10    
  Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________      5.8274E-11    
- Density_upper_limit_______________normalised_residue____________________ (normres003)__________________      3.3306E-11    
- Beam_ion_density_consistency______normalised_residue____________________ (normres004)__________________      1.1386E-12    
+ Density_upper_limit_______________normalised_residue____________________ (normres003)__________________      3.3304E-11    
+ Beam_ion_density_consistency______normalised_residue____________________ (normres004)__________________      1.1353E-12    
  Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres005)__________________      6.8967E-10    
  Radial_build_consistency__________normalised_residue____________________ (normres006)__________________      4.7735E-10    
  Burn_time_lower_limit_____________normalised_residue____________________ (normres007)__________________     -7.1608E-06    
- L-H_power_threshold_limit_________normalised_residue____________________ (normres008)__________________     -7.3471E-10    
+ L-H_power_threshold_limit_________normalised_residue____________________ (normres008)__________________     -7.3469E-10    
  Net_electric_power_lower_limit____normalised_residue____________________ (normres009)__________________      3.6648E-06    
  Radiation_fraction_upper_limit____normalised_residue____________________ (normres010)__________________      6.0380E-11    
- Beta_upper_limit__________________normalised_residue____________________ (normres011)__________________     -9.2308E-11    
+ Beta_upper_limit__________________normalised_residue____________________ (normres011)__________________     -9.2309E-11    
  CS_coil_EOF_current_density_limit_normalised_residue____________________ (normres012)__________________      1.4819E-05    
  CS_coil_BOP_current_density_limit_normalised_residue____________________ (normres013)__________________      1.4118E-05    
- Injection_power_upper_limit_______normalised_residue____________________ (normres014)__________________      9.6726E-11    
+ Injection_power_upper_limit_______normalised_residue____________________ (normres014)__________________      9.6724E-11    
  TF_coil_case_stress_upper_limit___normalised_residue____________________ (normres015)__________________     -5.3941E-08    
  TF_coil_conduit_stress_upper_lim__normalised_residue____________________ (normres016)__________________     -3.5483E-07    
  I_op_/_I_critical_(TF_coil)_______normalised_residue____________________ (normres017)__________________      1.9395E-06    
@@ -161,7 +161,7 @@
  J_winding_pack/J_protection_limit_normalised_residue____________________ (normres019)__________________      1.9625E-06    
  Tritium_breeding_ratio_lower_lim__normalised_residue____________________ (normres020)__________________     -2.4105E-07    
  Psep_/_R_upper_limit______________normalised_residue____________________ (normres021)__________________      6.1821E-10    
- number_of_ITER-like_vacuum_pumps__normalised_residue____________________ (normres022)__________________     -1.1102E-16    
+ number_of_ITER-like_vacuum_pumps__normalised_residue____________________ (normres022)__________________     -0.0000E+00    
  # Final Feasible Point #
  # Estimate of "overnight" capital cost for a first of kind power plant (2014 M$) #
  # Buildings (M$) #
@@ -585,7 +585,7 @@
  WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_axial*1.0D-9)______      8.3947E+01 OP 
  WP_transverse_Poisson's_ratio___________________________________________ (poisson_wp_trans)____________      3.0694E-01 OP 
  WP_vertical-transverse_Pois._rat._______________________________________ (poisson_wp_axial)____________      3.2123E-01 OP 
- Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________      2.4424E-08    
+ Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________      0.0000E+00    
  toroidal__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_t_max(1))_____________     -3.5567E+08    
  Vertical__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_z_max(1))_____________      1.9433E+08    
  Von-Mises_stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_vmises_max(1))________      4.8310E+08    

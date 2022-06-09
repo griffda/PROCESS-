@@ -7,12 +7,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-1791-g3ef14907c
+   Tag No. : v2.1-1799-g2552fe968
     Branch : HEAD
-   Git log : Merge branch |1673-convert-safety-f90-to-python| into |develop|
- Date/time :  9 Jun 2022 11:32:15 +00:00(hh:mm) UTC
+   Git log : Merge branch |1578-convert-plasma_geometry-f90-into-python| into |develop|
+ Date/time :  9 Jun 2022 13:49:53 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-8a63d9a8-project-20-concurrent-0
+  Computer : runner-7084ce6e-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_vacuum_model_0/IN.DAT
  Run title : demo 1 vacuum model test
@@ -133,18 +133,18 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
     1  Beta consistency                      =  3.4730E-02              3.8574E-12                -1.1107E-10
     2  Global power balance consistency      =  1.7976E-01 MW/m3       -1.0475E-11 MW/m3           5.8274E-11
-    3  Density upper limit                   <  9.0300E+19 /m3          3.0075E+09 /m3             3.3306E-11
-    4  Beam ion density consistency          =  1.2776E+17 /m3         -1.4547E+05 /m3             1.1386E-12
-    5  Neutron wall load upper limit         <  1.0415E+00 MW/m2        7.1830E-10 MW/m2           6.8967E-10
+    3  Density upper limit                   <  9.0300E+19 /m3          3.0074E+09 /m3             3.3304E-11
+    4  Beam ion density consistency          =  1.2776E+17 /m3         -1.4505E+05 /m3             1.1353E-12
+    5  Neutron wall load upper limit         <  1.0415E+00 MW/m2        7.1829E-10 MW/m2           6.8967E-10
     6  Radial build consistency              =  8.8513E+00 m           -4.2251E-09 m               4.7735E-10
     7  Burn time lower limit                 >  7.2000E+03 sec          5.1558E-02 sec            -7.1608E-06
-    8  L-H power threshold limit             >  1.1225E+02 MW           8.2474E-08 MW             -7.3471E-10
+    8  L-H power threshold limit             >  1.1225E+02 MW           8.2471E-08 MW             -7.3469E-10
     9  Net electric power lower limit        >  5.0000E+02 MW           1.8324E-03 MW              3.6648E-06
    10  Radiation fraction upper limit        <  1.7976E-01 MW/m3       -6.9434E-12 MW/m3           6.0380E-11
-   11  Beta upper limit                      <  5.6067E-02             -5.1754E-12                -9.2308E-11
+   11  Beta upper limit                      <  5.6067E-02             -5.1754E-12                -9.2309E-11
    12  CS coil EOF current density limit     <  6.6972E+07 A/m2         9.9244E+02 A/m2            1.4819E-05
    13  CS coil BOP current density limit     <  6.2482E+07 A/m2         8.8212E+02 A/m2            1.4118E-05
-   14  Injection power upper limit           <  5.0000E+01 MW          -4.8363E-09 MW              9.6726E-11
+   14  Injection power upper limit           <  5.0000E+01 MW          -4.8362E-09 MW              9.6724E-11
    15  TF coil case stress upper limit       <  5.5000E+08 Pa          -2.9667E+01 Pa             -5.3941E-08
    16  TF coil conduit stress upper lim      <  5.5000E+08 Pa          -1.9516E+02 Pa             -3.5483E-07
    17  I_op / I_critical (TF coil)           <  5.8235E+07 A/m2        -5.6472E+01 A/m2            1.9395E-06
@@ -152,7 +152,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    19  J_winding pack/J_protection limit     <  2.9117E+07 A/m2         0.0000E+00 A/m2            1.9625E-06
    20  Tritium breeding ratio lower lim      >  1.1500E+00              2.7721E-07                -2.4105E-07
    21  Psep / R upper limit                  <  1.7000E+01 MW/m        -1.0510E-08 MW/m            6.1821E-10
-   22  number of ITER-like vacuum pumps      <  1.8000E+01              1.9984E-15                -1.1102E-16
+   22  number of ITER-like vacuum pumps      <  1.8000E+01              0.0000E+00                -0.0000E+00
  
  ******************************************** Final Feasible Point ********************************************
  
