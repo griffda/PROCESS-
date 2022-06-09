@@ -6,12 +6,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-1802-g6778ab547
+   Tag No. : v2.1-1819-g818b9d17a
     Branch : HEAD
-   Git log : Merge branch |1678-don-t-skip-the-regression-overwrite-pipeline| into |develop|
- Date/time :  9 Jun 2022 15:17:14 +00:00(hh:mm) UTC
+   Git log : Merge branch |1539-convert-plant_power-f90-to-python| into |develop|
+ Date/time :  9 Jun 2022 16:10:49 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-8r7le1vq-project-20-concurrent-0
+  Computer : runner-c55928e9-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_secondary_CD_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
@@ -1180,15 +1180,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Peak absolute rate of change of stored energy in poloidal field (MW)     peakpoloidalpower         2.087E+02  OP 
  Energy stored in poloidal magnetic field :
  
-                                            time (sec)
-
-                     0.00     500.00     694.65     704.65    7904.65    8099.30
- Time point         Start      BOP        EOR        BOF        EOF        EOP        
- Energy (MJ)      0.000E+00  3.117E+04  1.894E+04  1.894E+04  4.062E+04  0.000E+00
- 
- Interval                tramp      tohs       theat      tburn      tqnch      
- dE/dt (MW)            6.234E+01 -6.283E+01  0.000E+00  3.011E+00 -2.087E+02
- 
  
  *********************************************** Vacuum System ************************************************
  
@@ -1271,13 +1262,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  ************************************************* Cryogenics *************************************************
  
- Conduction and radiation heat loads on cryogenic components (MW)         (qss/1.0D6)               2.157E-02  OP 
- Nuclear heating of cryogenic components (MW)                             (qnuc/1.0D6)              1.292E-02  OP 
+ Conduction and radiation heat loads on cryogenic components (MW)         (qss/1.0d6)               2.157E-02  OP 
+ Nuclear heating of cryogenic components (MW)                             (qnuc/1.0d6)              1.292E-02  OP 
  Nuclear heating of cryogenic components is a user input.
- AC losses in cryogenic components (MW)                                   (qac/1.0D6)               5.345E-03  OP 
- Resistive losses in current leads (MW)                                   (qcl/1.0D6)               1.536E-02  OP 
- 45% allowance for heat loads in transfer lines, storage tanks etc (MW)   (qmisc/1.0D6)             2.484E-02  OP 
- Sum = Total heat removal at cryogenic temperatures (tmpcry & tcoolin) (M (helpow + helpow_cryal/1. 8.002E-02  OP 
+ AC losses in cryogenic components (MW)                                   (qac/1.0d6)               5.345E-03  OP 
+ Resistive losses in current leads (MW)                                   (qcl/1.0d6)               1.536E-02  OP 
+ 45% allowance for heat loads in transfer lines, storage tanks etc (MW)   (qmisc/1.0d6)             2.484E-02  OP 
+ Sum = Total heat removal at cryogenic temperatures (tfcoil_variables.tmp (helpow + helpow_cryal/1. 8.002E-02  OP 
  Temperature of cryogenic superconducting components (K)                  (tmpcry)                  4.500E+00     
  Temperature of cryogenic aluminium components (K)                        (tcoolin)                 3.131E+02     
  Efficiency (figure of merit) of cryogenic plant is 13% of ideal Carnot v                           2.028E-03  OP 
@@ -1311,8 +1302,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Plant thermodynamics: options :
  
- Divertor thermal power is collected at only 150 C and is used to preheat the coolant in the power cycle
- Shield thermal power is collected at only 150 C and is used to preheat the coolant in the power cycle
+ Divertor thermal power is collected at only 150 C and is used to          &preheat the coolant in the power cycle
+ Shield thermal power is collected at only 150 C and is used to          &preheat the coolant in the power cycle
  Power conversion cycle efficiency model: user-defined efficiency
  Thermal to electric conversion efficiency of the power conversion cycle  (etath)                       0.375     
  Fraction of total high-grade thermal power to divertor                   (pdivfraction)                0.135  OP 
@@ -1320,46 +1311,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Power Balance for Reactor (across vacuum vessel boundary) - Detail
  ------------------------------------------------------------------
  
-                                            High-grade             Low-grade              Total
-                                             thermal power (MW)     thermal power (MW)      (MW)
-         First wall:
-                               neutrons            264.78                0.00              264.78
-             charged particle transport             22.50                0.00               22.50
-                              radiation            311.17                0.00              311.17
-                        coolant pumping              0.00                0.00                0.00
  
-         Blanket:
-                               neutrons           1755.80                0.00             1755.80
-             charged particle transport              0.00                0.00                0.00
-                              radiation              0.00                0.00                0.00
-                        coolant pumping              0.00                0.00                0.00
  
-         Shield:
-                               neutrons              1.61                0.00                1.61
-             charged particle transport              0.00                0.00                0.00
-                              radiation              0.00                0.00                0.00
-                        coolant pumping              0.01                0.00                0.01
  
-         Divertor:
-                               neutrons            207.22                0.00              207.22
-             charged particle transport            153.61                0.00              153.61
-                              radiation             40.43                0.00               40.43
-                        coolant pumping              2.01                0.00                2.01
  
-         TF coil:
-                               neutrons              0.00                0.05                0.05
-             charged particle transport              0.00                0.00                0.00
-                              radiation              0.00                0.00                0.00
-                        coolant pumping              0.00                0.00                0.00
  
-         Losses to H/CD apparatus + diagnostics:
-                               neutrons              0.00                0.00                0.00
-             charged particle transport              0.00                0.00                0.00
-                              radiation              0.00                0.00                0.00
-                        coolant pumping              0.00                0.00                0.00
  
-         ----------------------------------------------------------------------------------------
-                                 Totals           2759.14                0.05             2759.20
  
  Total power leaving reactor (across vacuum vessel boundary) (MW)                                    2759.249  OP 
  
@@ -1382,9 +1339,9 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Power Balance across separatrix :
  -------------------------------
  Only energy deposited in the plasma is included here.
- Total power loss is scaling power plus core radiation only (iradloss = 1)
+ Total power loss is scaling power plus core radiation only (physics_variables.iradloss = 1)
  Transport power from scaling law (MW)                                    (pscalingmw)                360.440  OP 
- Radiation power from inside "coreradius" (MW)                            (pinnerzoneradmw.)          144.781  OP 
+ Radiation power from inside "coreradius" (MW)                            (pcoreradmw.)               144.781  OP 
  Total (MW)                                                                                           505.222  OP 
  
  Alpha power deposited in plasma (MW)                                     (falpha*palpmw)             427.410  OP 
@@ -1449,44 +1406,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Time-dependent power usage
  
-         Pulse timings [s]:
  
-                                          tramp      tohs     theat     tburn     tqnch    tdwell
-                                          -----      ----     -----     -----     -----    ------
-                               Duration  500.00    194.65     10.00   7200.00    194.65      0.00
-                                 ------   -----      ----     -----     -----     -----    ------
  
-         Continous power usage [MWe]:
  
-                                 System   tramp      tohs     theat     tburn     tqnch    tdwell
-                                 ------   -----      ----     -----     -----     -----    ------
-                        Primary cooling  268.19    268.19    268.19    268.19    268.19    268.19
-                              Cyroplant   39.47     39.47     39.47     39.47     39.47     39.47
-                                 Vacuum    0.50      0.50      0.50      0.50      0.50      0.50
-                                Tritium   15.00     15.00     15.00     15.00     15.00     15.00
-                                     TF    8.76      8.76      8.76      8.76      8.76      8.76
-                             Facilities   62.76     62.76     62.76     62.76     62.76     62.76
-                                 ------   -----      ----     -----     -----     -----    ------
-                                  Total  394.67    394.67    394.67    394.67    394.67    394.67
-                                 ------   -----      ----     -----     -----     -----    ------
  
-         Intermittent power usage [MWe]:
  
-                                 System   tramp      tohs     theat     tburn     tqnch    tdwell
-                                 ------   -----      ----     -----     -----     -----    ------
-                                 H & CD    0.00    400.00    400.00    225.01    400.00      0.00
-                                     PF   62.34    -62.83      0.00      3.01   -208.67      0.00
-                                 ------   -----      ----     -----     -----     -----    ------
-                                  Total   62.34    337.17    400.00    228.02    191.33      0.00
-                                 ------   -----      ----     -----     -----     -----    ------
  
-         Power production [MWe]:
  
-                                          tramp      tohs     theat     tburn     tqnch    tdwell       avg
-                                          -----      ----     -----     -----     -----    ------       ---
-                            Gross power    0.00      0.00      0.00   1121.42      0.00      0.00
-                              Net power -457.01   -731.85   -794.67    498.72   -586.00   -394.67    382.48
-                                 ------   -----      ----     -----     -----     -----    ------
  
  
  *************************** Water usage during plant operation (secondary cooling) ***************************
