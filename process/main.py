@@ -46,6 +46,7 @@ from process.buildings import Buildings
 from process.costs import Costs
 from process.io import plot_proc
 from process.kallenbach import kallenbach_scan
+from process.plasma_geometry import PlasmaGeom
 from process.pulse import Pulse
 from process.scan import Scan
 from process import final
@@ -62,6 +63,7 @@ from process.availability import Availability
 from process.ife import IFE
 from process.costs_2015 import Costs2015
 from process.caller import Caller
+from process.power import Power
 
 
 from pathlib import Path
@@ -398,7 +400,7 @@ class SingleRun:
     def kallenbach_scan(self):
         """Run Kallenbach scan if required."""
         if fortran.div_kal_vars.kallenbach_scan_switch == 1:
-            kallenbach_scan()
+            kallenbach_scan(plasma_geom=self.models.plasma_geom)
             sys.exit()
 
     def call_solver(self):
@@ -470,11 +472,13 @@ class Models:
         """
         self.costs_step = CostsStep()
         self.pfcoil = PFCoil()
+        self.power = Power()
         self.build = Build()
         self.sctfcoil = Sctfcoil()
         self.tfcoil = TFcoil(build=self.build, sctfcoil=self.sctfcoil)
         self.divertor = Divertor()
         self.structure = Structure()
+        self.plasma_geom = PlasmaGeom()
         self.availability = Availability()
         self.buildings = Buildings()
         self.vacuum = Vacuum()
@@ -487,6 +491,7 @@ class Models:
             buildings=self.buildings,
             vacuum=self.vacuum,
             costs=self.costs,
+            power=self.power,
         )
         self.costs_2015 = Costs2015()
 

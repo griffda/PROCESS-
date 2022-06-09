@@ -1,6 +1,6 @@
 """Unit tests for the main.py module."""
 from process import main
-from process.main import Process
+from process.main import Models, Process
 from process.main import SingleRun
 from process.main import VaryRun
 from process import fortran
@@ -230,6 +230,7 @@ def test_kallenbach_scan(single_run, monkeypatch):
     :type monkeypatch: object
     """
     monkeypatch.setattr(fortran.div_kal_vars, "kallenbach_scan_switch", 1)
+    monkeypatch.setattr(single_run, "models", Models())
     # Catch a SystemExit after running the scan
     with pytest.raises(SystemExit):
         single_run.kallenbach_scan()

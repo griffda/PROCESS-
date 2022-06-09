@@ -3,13 +3,13 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.4.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "08/06/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "16:49"
+ Date_of_run_____________________________________________________________ (date)________________________     "09/06/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "15:09"
  User____________________________________________________________________ (username)____________________     "root"    
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     ""CFETR small (5.7m) reference file"                                                                
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1788-g76737c201"                                                                              
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1802-g6778ab547"                                                                              
  PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "HEAD"                                                                                              
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch |1646-modify-ci-system-and-contributing-workflow-to-avoid-merge-queue| into |develop|"
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch |1678-don-t-skip-the-regression-overwrite-pipeline| into |develop|"                   
  Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-root/pytest-0/test_scenario_CFETR_small_0/IN.DAT                                                                                                                                         "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
@@ -80,7 +80,7 @@
  fjprot_(range_normalised)_______________________________________________ (nitvar019)___________________      5.8057E-01    
  q_______________________________________________________________________ (itvar020)____________________      2.9000E+00    
  q_(final_value/initial_value)___________________________________________ (xcm020)______________________      9.6667E-01    
- q_(range_normalised)____________________________________________________ (nitvar020)___________________      1.3500E-10    
+ q_(range_normalised)____________________________________________________ (nitvar020)___________________      1.3497E-10    
  fimpvar_________________________________________________________________ (itvar021)____________________      5.8034E-03    
  fimpvar_(final_value/initial_value)_____________________________________ (xcm021)______________________      3.6271E+00    
  fimpvar_(range_normalised)______________________________________________ (nitvar021)___________________      5.2311E-01    
@@ -144,21 +144,21 @@
  Beta_consistency__________________normalised_residue____________________ (normres001)__________________     -3.3260E-07    
  Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________      8.2367E-07    
  TF_coil_temp._margin_lower_limit__normalised_residue____________________ (normres003)__________________     -2.8560E-10    
- Density_upper_limit_______________normalised_residue____________________ (normres004)__________________      4.4409E-16    
- Radial_build_consistency__________normalised_residue____________________ (normres005)__________________      2.2204E-16    
+ Density_upper_limit_______________normalised_residue____________________ (normres004)__________________     -3.3307E-16    
+ Radial_build_consistency__________normalised_residue____________________ (normres005)__________________     -0.0000E+00    
  Psep_/_R_upper_limit______________normalised_residue____________________ (normres006)__________________      4.2060E-06    
  Injection_power_upper_limit_______normalised_residue____________________ (normres007)__________________     -3.5076E-06    
  Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres008)__________________      9.0593E-07    
- TF_coil_case_stress_upper_limit___normalised_residue____________________ (normres009)__________________     -4.7181E-12    
- TF_coil_conduit_stress_upper_lim__normalised_residue____________________ (normres010)__________________      1.1043E-11    
+ TF_coil_case_stress_upper_limit___normalised_residue____________________ (normres009)__________________     -4.7276E-12    
+ TF_coil_conduit_stress_upper_lim__normalised_residue____________________ (normres010)__________________      1.1032E-11    
  J_winding_pack/J_protection_limit_normalised_residue____________________ (normres011)__________________     -1.8542E-10    
  I_op_/_I_critical_(TF_coil)_______normalised_residue____________________ (normres012)__________________     -1.8791E-10    
  Radiation_fraction_upper_limit____normalised_residue____________________ (normres013)__________________     -2.6570E-06    
- Dump_voltage_upper_limit__________normalised_residue____________________ (normres014)__________________     -1.5543E-15    
+ Dump_voltage_upper_limit__________normalised_residue____________________ (normres014)__________________     -9.9920E-16    
  Burn_time_lower_limit_____________normalised_residue____________________ (normres015)__________________     -0.0000E+00    
  L-H_power_threshold_limit_________normalised_residue____________________ (normres016)__________________     -4.2062E-06    
- CS_coil_EOF_current_density_limit_normalised_residue____________________ (normres017)__________________     -5.9952E-15    
- CS_coil_BOP_current_density_limit_normalised_residue____________________ (normres018)__________________     -4.8850E-15    
+ CS_coil_EOF_current_density_limit_normalised_residue____________________ (normres017)__________________     -0.0000E+00    
+ CS_coil_BOP_current_density_limit_normalised_residue____________________ (normres018)__________________     -5.5511E-16    
  taup/taueff_______________________normalised_residue____________________ (normres019)__________________     -1.2102E-06    
  Peak_toroidal_field_upper_limit___normalised_residue____________________ (normres020)__________________     -0.0000E+00    
  Beam_ion_density_consistency______normalised_residue____________________ (normres021)__________________     -3.5080E-06    
@@ -514,7 +514,7 @@
  WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_axial*1.0D-9)______      1.2533E+02 OP 
  WP_transverse_Poisson's_ratio___________________________________________ (poisson_wp_trans)____________      3.0461E-01 OP 
  WP_vertical-transverse_Pois._rat._______________________________________ (poisson_wp_axial)____________      3.1204E-01 OP 
- Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________      4.8849E-08    
+ Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________      0.0000E+00    
  toroidal__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_t_max(1))_____________     -2.2295E+08    
  Vertical__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_z_max(1))_____________      1.1645E+08    
  Von-Mises_stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_vmises_max(1))________      2.9872E+08    
