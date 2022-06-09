@@ -57,7 +57,6 @@ contains
       use stellarator_variables, only: init_stellarator_variables
       use pulse_variables, only: init_pulse_variables
       use startup_variables, only: init_startup_variables
-      use fispact_variables, only: init_fispact_variables
       use rebco_variables, only: init_rebco_variables
       use reinke_variables, only: init_reinke_variables
       use divertor_ode_var, only: init_divertor_ode_var
@@ -112,7 +111,6 @@ contains
       call init_stellarator_variables
       call init_pulse_variables
       call init_startup_variables
-      call init_fispact_variables
       call init_rebco_variables
       call init_reinke_variables
       call init_divertor_ode_var
