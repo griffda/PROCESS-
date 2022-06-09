@@ -6,14 +6,14 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-1773-ge0da4f90 code contains untracked changes
-    Branch : 1578-convert-plasma_geometry-f90-into-python
-   Git log : Unit tests for plasma_geometry.f90 written
- Date/time :  8 Jun 2022 13:13:19 +01:00(hh:mm) UTC
-      User : sgubbins
-  Computer : K1396
- Directory : /home/sgubbins/process
-     Input : /tmp/pytest-of-sgubbins/pytest-532/test_scenario_QH_mode_0/IN.DAT
+   Tag No. : v2.1-1788-g76737c201
+    Branch : HEAD
+   Git log : Merge branch |1646-modify-ci-system-and-contributing-workflow-to-avoid-merge-queue| into |develop|
+ Date/time :  8 Jun 2022 16:55:31 +00:00(hh:mm) UTC
+      User : root
+  Computer : runner-7084ce6e-project-20-concurrent-0
+ Directory : /builds/process/process
+     Input : /tmp/pytest-of-root/pytest-0/test_scenario_QH_mode_0/IN.DAT
  Run title : Example QH-mode plasma scenario
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  

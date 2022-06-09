@@ -4,13 +4,13 @@
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.4.0   R"
  Date_of_run_____________________________________________________________ (date)________________________     "08/06/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "13:14"
- User____________________________________________________________________ (username)____________________     "sgubbins"
+ Time_of_run_____________________________________________________________ (time)________________________     "16:51"
+ User____________________________________________________________________ (username)____________________     "root"    
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "hts model using "croco" conductor based on kit design                                              
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1773-ge0da4f90"                                                                               
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1578-convert-plasma_geometry-f90-into-python"                                                      
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Unit tests for plasma_geometry.f90 written"                                                        
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-sgubbins/pytest-533/test_scenario_hts_REBCO_0/IN.DAT                                                                                                                                     "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1788-g76737c201"                                                                              
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "HEAD"                                                                                              
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch |1646-modify-ci-system-and-contributing-workflow-to-avoid-merge-queue| into |develop|"
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-root/pytest-0/test_scenario_hts_REBCO_0/IN.DAT                                                                                                                                           "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #

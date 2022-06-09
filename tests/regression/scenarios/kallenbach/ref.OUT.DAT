@@ -6,14 +6,14 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-1765-g7c7338fde
-    Branch : 1665-libprocess-is-statically-linked-to-the-fortran-extension
-   Git log : Disable fcheck in production, enable fcheck in debug but not bounds checking
- Date/time :  1 Jun 2022 10:24:00 +00:00(hh:mm) UTC
+   Tag No. : v2.1-1788-g76737c201
+    Branch : HEAD
+   Git log : Merge branch |1646-modify-ci-system-and-contributing-workflow-to-avoid-merge-queue| into |develop|
+ Date/time :  8 Jun 2022 16:54:22 +00:00(hh:mm) UTC
       User : root
-  Computer : f876e13a661b
- Directory : /root/process
-     Input : /tmp/pytest-of-root/pytest-1/test_scenario_kallenbach_0/IN.DAT
+  Computer : runner-7084ce6e-project-20-concurrent-0
+ Directory : /builds/process/process
+     Input : /tmp/pytest-of-root/pytest-0/test_scenario_kallenbach_0/IN.DAT
  Run title : kallenbach divertor model
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
