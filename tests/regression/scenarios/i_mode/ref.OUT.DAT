@@ -25,14 +25,14 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-1732-g6406e21f code contains untracked changes
-    Branch : 1663-pfcoil-variables-in-mfile-start-pfv
-   Git log : Merge\ branch\ |1651-convert-costs_2015-f90-to-pytho
- Date/time : 19 May 2022 14:49:34 +00:00(hh:mm) UTC
+   Tag No. : v2.1-1788-g76737c201
+    Branch : HEAD
+   Git log : Merge branch |1646-modify-ci-system-and-contributing-workflow-to-avoid-merge-queue| into |develop|
+ Date/time :  8 Jun 2022 16:53:07 +00:00(hh:mm) UTC
       User : root
-  Computer : 3ad262c2e59e
- Directory : /root/process
-     Input : /tmp/pytest-of-root/pytest-0/popen-gw0/test_scenario_i_mode_0/IN.DAT
+  Computer : runner-7084ce6e-project-20-concurrent-0
+ Directory : /builds/process/process
+     Input : /tmp/pytest-of-root/pytest-0/test_scenario_i_mode_0/IN.DAT
  Run title : I-mode 2019 PMU
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -69,8 +69,8 @@
  Number of constraints (total)                                            (neqns+nineqns)                  27     
  Optimisation switch                                                      (ioptimz)                         1     
  Figure of merit switch                                                   (minmax)                          1     
- Square root of the sum of squares of the constraint residuals            (sqsumsq)                 1.655E-09  OP 
- VMCON convergence parameter                                              (convergence_parameter)   1.537E-10  OP 
+ Square root of the sum of squares of the constraint residuals            (sqsumsq)                 1.649E-09  OP 
+ VMCON convergence parameter                                              (convergence_parameter)   1.531E-10  OP 
  Number of VMCON iterations                                               (nviter)                         45  OP 
  
 PROCESS has successfully optimised the iteration variables to minimise the figure of merit          MAJOR RADIUS.
@@ -156,33 +156,33 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  1.4284E-02              1.0373E-12                -7.2625E-11
-    2  Global power balance consistency      =  1.0215E-01 MW/m3       -1.4375E-11 MW/m3           1.4072E-10
-    3  Radial build consistency              =  9.4624E+00 m            0.0000E+00 m              -0.0000E+00
-    4  Density upper limit                   <  6.3314E+19 /m3          0.0000E+00 /m3            -0.0000E+00
+    1  Beta consistency                      =  1.4284E-02              1.0373E-12                -7.2624E-11
+    2  Global power balance consistency      =  1.0215E-01 MW/m3       -1.4375E-11 MW/m3           1.4073E-10
+    3  Radial build consistency              =  9.4624E+00 m            3.1516E-15 m              -3.3307E-16
+    4  Density upper limit                   <  6.3314E+19 /m3         -5.7344E+04 /m3            -8.8818E-16
     5  Neutron wall load upper limit         <  5.8943E-01 MW/m2        3.2940E-10 MW/m2           5.5884E-10
     6  Fusion power upper limit              <  1.3000E+03 MW          -7.1197E-07 MW              5.5884E-10
-    7  Burn time lower limit                 >  7.2000E+03 sec          1.6163E-06 sec            -2.2448E-10
-    8  L-H power threshold limit             >  1.2475E+02 MW           8.9681E-08 MW             -7.1887E-10
-    9  Injection power upper limit           <  1.5000E+02 MW           1.2951E+02 MW             -7.7716E-16
+    7  Burn time lower limit                 >  7.2000E+03 sec          1.6117E-06 sec            -2.2384E-10
+    8  L-H power threshold limit             >  1.2475E+02 MW           8.9681E-08 MW             -7.1886E-10
+    9  Injection power upper limit           <  1.5000E+02 MW           1.2951E+02 MW             -3.3307E-16
    10  pdivt lower limit                     >  2.4000E+02 MW           1.3566E-07 MW             -5.6525E-10
-   11  Net electric power lower limit        >  2.2000E+02 MW           1.9067E-04 MW              8.6667E-07
+   11  Net electric power lower limit        >  2.2000E+02 MW           1.9067E-04 MW              8.6668E-07
    12  Beta upper limit                      <  5.4206E-02             -4.5247E-12                -8.3473E-11
-   13  Peak toroidal field upper limit       <  1.3500E+01 T            1.1990E-14 T              -8.8818E-16
-   14  CS coil EOF current density limit     <  5.2698E+07 A/m2        -4.3958E-07 A/m2           -8.3267E-15
-   15  CS coil BOP current density limit     <  3.9496E+07 A/m2        -3.7253E-07 A/m2           -9.4369E-15
-   16  I_op / I_critical (TF coil)           <  4.1800E+07 A/m2         2.6339E-06 A/m2           -1.5887E-13
-   17  Dump voltage upper limit              <  1.0000E+01 V           -7.4607E-14 V              -7.3275E-15
-   18  J_winding pack/J_protection limit     <  1.6579E+07 A/m2         0.0000E+00 A/m2           -3.7748E-15
-   19  TF coil temp. margin lower limit      >  1.5000E+00 K           -1.3575E+00 K              -2.1572E-13
-   20  CS temperature margin lower limit     >  1.5000E+00 K           -4.8868E-01 K              -1.2101E-14
-   21  taup/taueff                           >  5.0000E+00             -1.0382E-09                 1.9660E-10
-   22  Dump time set by VV stress            >  3.8440E+01 s           -1.1621E+01 s              -5.8842E-15
-   23  CS Tresca yield criterion             <  6.6000E+08 Pa          -1.4305E-06 Pa             -2.2204E-15
-   24  Peak CS field upper limit             <  1.3500E+01 A/turn       2.8477E-14 A/turn         -2.1094E-15
+   13  Peak toroidal field upper limit       <  1.3500E+01 T            2.9976E-15 T              -2.2204E-16
+   14  CS coil EOF current density limit     <  5.2698E+07 A/m2        -2.9057E-07 A/m2           -5.6621E-15
+   15  CS coil BOP current density limit     <  3.9496E+07 A/m2        -2.2352E-07 A/m2           -5.6621E-15
+   16  I_op / I_critical (TF coil)           <  4.1800E+07 A/m2         2.8805E-06 A/m2           -1.7375E-13
+   17  Dump voltage upper limit              <  1.0000E+01 V            1.7764E-15 V               4.4409E-16
+   18  J_winding pack/J_protection limit     <  1.6579E+07 A/m2         0.0000E+00 A/m2           -2.2204E-15
+   19  TF coil temp. margin lower limit      >  1.5000E+00 K           -1.3575E+00 K              -2.3481E-13
+   20  CS temperature margin lower limit     >  1.5000E+00 K           -4.8868E-01 K              -5.8842E-15
+   21  taup/taueff                           >  5.0000E+00             -1.0383E-09                 1.9660E-10
+   22  Dump time set by VV stress            >  3.8440E+01 s           -1.1621E+01 s              -4.1078E-15
+   23  CS Tresca yield criterion             <  6.6000E+08 Pa           3.5763E-07 Pa              4.4409E-16
+   24  Peak CS field upper limit             <  1.3500E+01 A/turn       1.1990E-14 A/turn         -8.8818E-16
    25  Upper Lim. on Psep * Bt / q A R       <  1.3600E+01 MWT/m       -7.6874E-09 MWT/m           5.6525E-10
-   26  TF coil case stress upper limit       <  6.6000E+08 Pa           1.3113E-05 Pa              1.9762E-14
-   27  TF coil conduit stress upper lim      <  6.6000E+08 Pa           1.3709E-05 Pa              2.0872E-14
+   26  TF coil case stress upper limit       <  6.6000E+08 Pa          -8.2254E-06 Pa             -1.2434E-14
+   27  TF coil conduit stress upper lim      <  6.6000E+08 Pa          -8.9407E-06 Pa             -1.3545E-14
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -646,7 +646,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Materal stress of the point of maximum shear stress (Tresca criterion) for each layer
  Please use utilities/plot_stress_tf.py for radial plots plots summary
  Layers                             Steel case            WP    Outer case
- Radial stress               (MPa)      -0.000      -250.784         3.794
+ Radial stress               (MPa)       0.000      -250.784         3.794
  toroidal stress             (MPa)    -427.345      -346.567      -289.757
  Vertical stress             (MPa)     232.655       232.655       115.227
  Von-Mises stress            (MPa)     579.807       504.844       361.419

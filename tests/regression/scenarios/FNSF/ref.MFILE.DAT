@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.4.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "19/05/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "14:48"
+ Date_of_run_____________________________________________________________ (date)________________________     "08/06/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "16:50"
  User____________________________________________________________________ (username)____________________     "root"    
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "FNSF (Menard et al. 2016)                                                                          
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1732-g6406e21f"                                                                               
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1663-pfcoil-variables-in-mfile-start-pfv"                                                          
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge\ branch\ |1651-convert-costs_2015-f90-to-pytho"                                              
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-root/pytest-0/popen-gw0/test_scenario_FNSF_0/IN.DAT                                                                                                                                      "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1788-g76737c201"                                                                              
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "HEAD"                                                                                              
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch |1646-modify-ci-system-and-contributing-workflow-to-avoid-merge-queue| into |develop|"
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-root/pytest-0/test_scenario_FNSF_0/IN.DAT                                                                                                                                                "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -74,24 +74,24 @@
  fpsepr_(range_normalised)_______________________________________________ (nitvar017)___________________      5.0197E-01    
  flhthresh_______________________________________________________________ (itvar018)____________________      1.0000E+00    
  flhthresh_(final_value/initial_value)___________________________________ (xcm018)______________________      1.0000E+00    
- flhthresh_(range_normalised)____________________________________________ (nitvar018)___________________      2.2204E-22    
+ flhthresh_(range_normalised)____________________________________________ (nitvar018)___________________      0.0000E+00    
  fimp(13)________________________________________________________________ (itvar019)____________________      3.8910E-04    
  fimp(13)_(final_value/initial_value)____________________________________ (xcm019)______________________      8.8432E-01    
  fimp(13)_(range_normalised)_____________________________________________ (nitvar019)___________________      0.0000E+00    
  Beta_consistency__________________normalised_residue____________________ (normres001)__________________      2.2541E-06    
  Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________     -5.3404E-06    
- Density_upper_limit_______________normalised_residue____________________ (normres003)__________________      5.0004E-13    
+ Density_upper_limit_______________normalised_residue____________________ (normres003)__________________      4.9893E-13    
  Beam_ion_density_consistency______normalised_residue____________________ (normres004)__________________      2.2346E-05    
  Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres005)__________________     -3.9515E-06    
  Fusion_power_upper_limit__________normalised_residue____________________ (normres006)__________________     -3.9494E-06    
  Radial_build_consistency__________normalised_residue____________________ (normres007)__________________     -0.0000E+00    
  L-H_power_threshold_limit_________normalised_residue____________________ (normres008)__________________      1.1177E-04    
  Radiation_fraction_upper_limit____normalised_residue____________________ (normres009)__________________      1.7227E-05    
- Beta_upper_limit__________________normalised_residue____________________ (normres010)__________________      1.2668E-12    
+ Beta_upper_limit__________________normalised_residue____________________ (normres010)__________________      1.2670E-12    
  Injection_power_upper_limit_______normalised_residue____________________ (normres011)__________________      2.2351E-05    
  Average_centrepost_temperature____normalised_residue____________________ (normres012)__________________     -9.0460E-08    
  Peak_centrepost_temp._upper_limit_normalised_residue____________________ (normres013)__________________     -1.1919E-07    
- Ip/Irod_upper_limit_______________normalised_residue____________________ (normres014)__________________     -2.2204E-16    
+ Ip/Irod_upper_limit_______________normalised_residue____________________ (normres014)__________________     -4.4409E-16    
  Psep_/_R_upper_limit______________normalised_residue____________________ (normres015)__________________     -1.1178E-04    
  # Final Feasible Point #
  # Plant Availability #
