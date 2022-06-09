@@ -99,7 +99,6 @@ LIST(APPEND PROCESS_SRCS
     superconductors.f90
     stellarator_fwbs.f90
     stellarator_variables.f90
-    plant_power.f90
     final_module.f90
     cost_variables.f90
     divertor_variables.f90
@@ -144,6 +143,7 @@ LIST(APPEND PROCESS_SRCS
     read_and_get_atomic_data.f90
     plot_radiation.f90
     rebco_variables.f90
+    primary_pumping_variables.f90
 )
 
 PREPROCESS()
