@@ -452,6 +452,9 @@ def get_from_indat_or_default(in_dat, varname):
     if varname in in_dat.data.keys():
         return in_dat.data[varname].get_value
     else:
+        # Load dicts from dicts JSON file
+        dicts = get_dicts()
+
         return dicts["DICT_DEFAULT"][varname]
 
 

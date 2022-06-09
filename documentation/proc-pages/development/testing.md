@@ -38,16 +38,13 @@ will run all 5 benchmarks containing `mode` in their name:
 
 The Continuous Integration (CI) system also runs the `pytest` test suite in the `testing` stage of the pipeline. Unit, integration and regression tests are run as separate jobs to make it easier to see where failures lie.
 
-### Updating test references
-If code changes affect the result of a test so that the observed output no longer equals the expected output stored in the test suite, the test will fail and the test reference will need to be updated. In Process, this is typical in the regression scenario tests (`tests/regression/test_scenario.py`) and the Python-Fortran dictionary tests (`tests/integration/test_dicts.py`).
+### Test failures
 
-To run the regression tests with a 5% tolerance run `pytest tests/regression --reg-tolerance=5`; this will show you only the values in each regression scenario that have changed by >5% and hence still fail the test. This is useful for seeing the values that have changed by a significant amount.
+Unit and integration tests must pass. Any that fail require source or test modification. Regression tests may fail, however; their purpose is to make you aware of significant changes to results as a result of your source changes. A 5% tolerance is applied by default to the regression tests: if any values differ by >5% from the reference, the regression test will fail for that scenario. This new value may be the desired result of the changes, however. Optionally, a 0% tolerance regression test can be run using `pytest --reg-tolerance=0`.
 
-To overwrite the references, run `pytest --overwrite` which will re-run the test suite, overwriting both the Python-Fortran dictionaries and the regression scenario reference files. Running the test suite again with `pytest` should then pass.
+It is incumbent on the author to check the test results created by their code changes, and modify source or tests if required. Are the regression changes expected and acceptable?
 
-Please see below (pytest failures on older OS's) for caveats on this process. 
-
-For the correct way to contribute code to Process (including how to update the test references), see CONTRIBUTING.md.
+For a guide on contributing code to PROCESS, see `CONTRIBUTING.md`.
 
 ## pytest failures on older OS's
 As discussed in the Installation guide, PROCESS is dependant on a number of dynamically linked libraries. The versions of these libraries are different on different versions of OS's. This introduces floating-point differences in the code which can propogate and show tests failing by ~0.70%. The cause of such issues has been isolated and will be highlighted by a warning message when running pytest:
@@ -69,34 +66,30 @@ Test overwriting is NOT allowed on outdated systems.
 
 In this case, the `pytest --overwrite` command must be run within an Ubuntu 20 container/ subsystem.
 
-
 ## Reasoning behind the CONTRIBUTING.md method
-When reviewing code in a merge request, it is important to understand the effect those changes will have on the output for various regression scenarios. This particularly applies to detecting large unintended changes to the output in certain scenarios.
 
-Typically the solver will arrive at a very slightly different solution, and so there are large numbers of very small changes with a few more significant changes amongst them. It is therefore useful for the reviewer to be able to filter out those more significant changes, say >5%, in order to understand the effect of the code changes. This is why a %5 tolerance regression test job is used in the CI system; it will fail and report if any values in any scenario differ from the reference values by >5%.
+The method in the CONTRIBUTING.md is standard apart from how regression tests are handled; this is explained below.
 
-In a branch with code changes that affect the output, it is helpful to commit the corresponding regression test reference changes too. This means that the code changes are accountable for the regression reference changes in the same branch; it is possible to see the effect of the branch on the output.
+When changing or reviewing code, it is important to understand the effect those changes will have on the results of various reference input files, called regression scenarios. A regression test compares the current observed results with previous ones called references; in this case the references are the results when the branch was first created. Comparing the observed and reference results is important when assessing the magnitude of intended changes to the output in certain scenarios, as well as detecting large unintended changes or failures to solve. The impact of the code changes on the regression results needs to be visible to the author and reviewer of the merge request.
 
-Specific aspects of the CONTRIBUTING.md procedure are reasoned below.
+In order to see the effect a branch's code changes have on the regression results, the regression references must be kept up-to-date on the develop branch. This means that the regression references need to be overwritten on the develop branch only; if the references were overwritten on each branch, there would be merge conflicts in the references when merging the branches into develop.
 
-### Step 5: Merging develop into the issue branch
-This ensures that the code and test references are up to date with develop, which may have changed whilst the issue branch was being worked on. This ensures that when the test references are overwritten, the reference changes are only as a result of the branch code changes and the reference changes are relative to the latest references on develop. 
+Typically the solver will arrive at a very slightly different solution when any change is made, and so there are typically large numbers of very small changes with a few more significant changes amongst them. It is therefore useful for the reviewer to be able to filter out those more significant changes, say >5%, in order to understand the more signficant effects of the code changes. This is why a 5% tolerance regression test job is used in the CI system; it will fail and report if any values in any scenario differ from the reference values by >5%.
 
-If the issue branch was merged to develop without merging develop into the branch first, there would be problems. The tests would pass on the branch after overwriting, but on merging to develop there could be merge conflicts in the references (they would have been changed on both branches). After resolving the conflicts, or even if there weren't any, it is highly likely that the resulting references on develop would result in a failure of the test suite. This is because the references would then be a product of two branches overwriting different parts of them, and hence they wouldn't correspond to a single output of a regression scenario any more.
+### Running tests locally
 
-The regression references will always need to be overwritten completely, and different versions of them shoudn't be merged together. Merging develop into the issue branch first avoids this.
+When running `pytest` locally, by default the 5% tolerance regression tests are run. These will fail if the code changes on that branch cause a regression scenario result value to change by >5%. If this is intended, this is fine; a regression test failure is not wrong, it informs you that something has changed, in this case by >5%.
 
-### Step 6: Re-building with changes from `develop`
-`process` now needs to be re-built to build and install the changes that have just been merged from `develop`. This means that when `pytest` is run, the latest `process` is used, rather than an out-of-date installed version.
+### Running the CI on a branch
 
-### Step 7: Running the test suite locally
-It is useful to see which tests fail before pushing to the remote, not least because it is faster to run them locally. If tests other than the Python-Fortran dictionary tests or the regression tests fail, then further work is needed to get those tests to pass, as updating the test references will not fix them.
+When those local changes are committed and pushed, the CI system for the branch runs. This runs 5% and 0% tolerance regression jobs, which are allowed to fail. This shows the author and reviewer what the changes to the regression results are as a result of the code changes on that branch.
 
-### Step 8: Pushing despite failing Python-Fortran dictionary and/or regression tests
-The purpose of this is to run the regression test job with 0 and 5% tolerances. The 0% job will fail, but the 5% job will only fail if there are any changes above 5%. This allows the reviewer to see only the significant changes in the 5% job trace. If there are any failures in the Python-Fortran dictionaries, these will also be clear.
+### Running the CI on the develop branch
 
-### Step 9: Overwriting the test references and committing them
-This allows the code changes and corresponding complete reference changes to be on the same branch and hence easily accountable. After the overwrite, the test suite should pass.
+When merging into the develop branch, the CI system builds and tests the code as before, but doesn't run any regression tests; it only overwrites the references with the results. The keeps the regression references up-to-date on the develop branch, so that any branch created from develop will pass a 0% tolerance regression run before any code changes are made. The CI will commit the reference changes to the develop branch after running the overwrite job. There's little point in performing regression tests on develop, as the regression tests will have already been run on the branch and accepted by the reviewer before the merge to develop.
 
-### Step 10: Passing pipeline and merge request review
-The pipeline should now pass, and the significant reference changes should be clear to the reviewer by looking at the (possibly failed) 5% tolerance regression job.
+# Drawbacks to this approach
+
+- A problem can arise if a branch is created immediately after another has been merged, before the overwrite commit has been pushed to develop by the CI. This new branch will therefore not have the updated regression references on it, and can therefore fail or provide misleading regression test results. In this unlikely case, a manual regression regression test overwrite could be performed (`pytest --overwrite`) and committed, or a new branch created once the regression overwrite has been committed on develop.
+- In time, it may be better to use a data repository for the regression references, removing the need for the CI to commit to develop when updating the references.
+- It's possible that two regression-acceptable branches can be merged to make a regression-unacceptable develop branch, but as regression tests aren't run on develop, only overwritten, this wouldn't produce a failure. Perhaps checking for regression failures to solve or significant changes in certain key variables on develop would help catch these cases. Monitoring of the [tracker](http://process.gitpages.ccfe.ac.uk/process/tracking.html) will help detect these in the meantime. Otherwise it is felt that this vulnerability could only be addressed by being unnecessarily cautious when merging, and is outweighed by the ease of using a regular git flow as outlined in the `CONTRIBUTING.md`.
