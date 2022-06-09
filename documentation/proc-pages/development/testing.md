@@ -49,6 +49,18 @@ Please see below (pytest failures on older OS's) for caveats on this process.
 
 For the correct way to contribute code to Process (including how to update the test references), see CONTRIBUTING.md.
 
+## Test coverage
+
+Test coverage (in Python only) is provided in a badge on the repository homepage. A report can also be generated locally. First, ensure a development install is being used:
+```
+pip install -e .
+```
+This ensures that `pytest` and `pytest-cov` will use the same installed location of Process. Then:
+```
+pytest --cov=process tests/unit/
+```
+runs the unit tests and produces a coverage report for them.
+
 ## pytest failures on older OS's
 As discussed in the Installation guide, PROCESS is dependant on a number of dynamically linked libraries. The versions of these libraries are different on different versions of OS's. This introduces floating-point differences in the code which can propogate and show tests failing by ~0.70%. The cause of such issues has been isolated and will be highlighted by a warning message when running pytest:
 
