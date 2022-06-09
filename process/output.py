@@ -156,13 +156,7 @@ def write(models, outfile):
         # KIT HCLL model
         ft.kit_hcll_module.kit_hcll(ft.constants.nout, 1)
 
-    # FISPACT and LOCA model (not used)
-    # if (ifispact == 1) then
-    #   call fispac(0)
-    #   call fispac(1)
-    #   call loca(outfile,0)
-    #   call loca(outfile,1)
-    # end if
+    # FISPACT and LOCA model (not used)- removed
 
     # Toroidal field coil power model
     ft.power_module.tfpwr(outfile, 1)

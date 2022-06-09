@@ -191,7 +191,4 @@ class Caller:
         elif ft.cost_variables.cost_model == 2:
             self.models.costs_step.run()
 
-        # FISPACT and LOCA model (not used)
-        # if ft.physics_variables.ifispact == 1:
-        #     ft.fispac(0)
-        #     ft.loca(ft.constants.nout,0)
+        # FISPACT and LOCA model (not used)- removed
