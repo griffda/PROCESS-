@@ -1135,9 +1135,6 @@ class PFCoil:
         # Turn vertical cross-sectionnal area
         pfv.a_oh_turn = pfv.areaoh / pfv.turns[pfv.nohc - 1]
 
-        # CS coil turn geometry calculation - stadium shape
-        # Literature: https://doi.org/10.1016/j.fusengdes.2017.04.052
-
         # Depth/width of cs turn conduit
         pfv.d_cond_cst = (pfv.a_oh_turn / pfv.ld_ratio_cst) ** 0.5
         # length of cs turn conduit
@@ -1151,6 +1148,8 @@ class PFCoil:
             - (4 - constants.pi) * (pfv.r_out_cst**2)
             - (pfv.a_oh_turn * pfv.oh_steel_frac)
         ) / constants.pi
+        # CS coil turn geometry calculation - stadium shape
+        # Literature: https://doi.org/10.1016/j.fusengdes.2017.04.052
         pfv.r_in_cst = -((pfv.l_cond_cst - pfv.d_cond_cst) / constants.pi) + math.sqrt(
             p1_cst + p2_cst
         )
@@ -2274,8 +2273,8 @@ class PFCoil:
                     )
                     op.ovarre(
                         self.outfile,
-                        "CS r_in (m)",
-                        "(r_in_cst)",
+                        "CS turn internal cable space radius (m)",
+                        "(pfv.r_in_cst)",
                         pfv.r_in_cst,
                     )
                     op.ovarre(
