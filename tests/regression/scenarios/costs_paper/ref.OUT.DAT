@@ -8,12 +8,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-1826-g8e3343c58
+   Tag No. : v2.1-1829-g86f295e18
     Branch : HEAD
-   Git log : Merge branch |1624-reduce-expense-of-2d-scan-regression-test| into |develop|
- Date/time : 10 Jun 2022  9:10:15 +00:00(hh:mm) UTC
+   Git log : Merge branch |1680-prevent-regression-reference-overwrite-commits-from-triggering-pipelines-recursively| into |develop|
+ Date/time : 10 Jun 2022  9:53:10 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-7084ce6e-project-20-concurrent-0
+  Computer : runner-8a63d9a8-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_costs_paper_0/IN.DAT
  Run title : demo 1 model for cost paper
