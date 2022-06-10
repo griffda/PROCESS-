@@ -3806,7 +3806,7 @@ contains
   !---------------------------------
 
   subroutine init_itv_167 
-    !! <LI> (165) fncycle : f-value for minimum CS coil stress load cycles
+    !! <LI> (167) fncycle : f-value for minimum CS coil stress load cycles
     use numerics, only: lablxc, boundl, boundu
     implicit none
     lablxc(167) = 'fncycle       '
