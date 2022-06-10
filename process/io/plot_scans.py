@@ -204,15 +204,15 @@ def main(args=None):
         "fcuohsu"
     ] = r"$f_{\mathrm{Cu}}^{\mathrm{CS}}$"  # copper fraction of strand in central solenoid
     labels["coheof"] = r"$J [A M^{-2}]$"
-    labels["bv.ohcth."] = r"$ ohcth [m]$"
-    labels["bv.ohhghf"] = r"$ ohghf [m]$"
+    labels["bv.ohcth."] = r"$ cs_coil_thickness [m]$"
+    labels["bv.ohhghf"] = r"$ cs_coil_height [m]$"
     labels["csfv.n_cycle_min"] = r"n_cycle_min_CS"
     labels["csfv.n_cycle"] = r"n_cycle"
     labels["pfv.a_oh_turn"] = r"cs_turn_area"
     labels["cnstv.tbrnmn"] = r"tbrnmn"
     labels["pfv.oh_steel_frac"] = r"oh_steel_frac"
-    labels["csfv.t_structural_radial"] = r"t_structural_radial"
-    labels["csfv.t_crack_vertical"] = r"csfv.t_crack_vertical"
+    labels["csfv.t_structural_radial"] = r"cs_turn_structural_radial"
+    labels["csfv.t_crack_vertical"] = r"cs_turn_crack_vertical"
 
     # ------------
 
