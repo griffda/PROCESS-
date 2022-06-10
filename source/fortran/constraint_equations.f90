@@ -3362,7 +3362,7 @@ contains
    end subroutine constraint_eqn_089
 
    subroutine constraint_eqn_090(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
-      !! author: A. Pearce, CCFE, Culham Science Centre
+      !! author: A. Pearce, G Turkington CCFE, Culham Science Centre
       !! args : output structure : residual error; constraint value; 
       !! residual error in physical units; output string; units string
       !! Equation for minimum CS coil stress load cycles
@@ -3379,7 +3379,8 @@ contains
       real(dp), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
       character(len=10), intent(out) :: tmp_units
-      
+      !! Switch to relay the calculated fw/blanket lifetime cycles as the minimum required CS stress cycles.
+      !! bkt_life_cycle = 1 turns on the relay. Otherwise the models run independently.
       if (ibkt_life == 1 .and. bkt_life_csf == 1 ) then
          n_cycle_min = bktcycles
       end if
