@@ -175,27 +175,32 @@ class PlasmaGeom:
             # physics_variables.kappa95 found from physics_variables.aspect ratio and stabilty margin
             # Based on fit to CREATE data. ref Issue #1399
             # valid for EU-DEMO like machine - physics_variables.aspect ratio 2.6 - 3.6
-            a = 8.39148185e0
-            b = -0.17713049e0
-            c = 1.9031585e0
-            d = -37.17364535e0
-            e = -2.54598909e0
-            f = 38.75101822e0
+            # Model updated see Issue #1648
+            a = 3.68436807e0
+            b = -0.27706527e0
+            c = 0.87040251e0
+            d = -18.83740952e0
+            e = -0.27267618e0
+            f = 20.5141261e0
 
             physics_variables.kappa95 = (
-                (
-                    -d
-                    - c * physics_variables.aspect
-                    - numpy.sqrt(
-                        (c**2.0e0 - 4.0e0 * a * b) * physics_variables.aspect**2.0e0
-                        + (2.0e0 * d * c - 4.0e0 * a * e) * physics_variables.aspect
-                        + d**2.0e0
-                        - 4.0e0 * a * f
-                        + 4.0e0 * a * physics_variables.m_s_limit
-                    )
+                -d
+                - c * physics_variables.aspect
+                - numpy.sqrt(
+                    (c**2.0e0 - 4.0e0 * a * b) * physics_variables.aspect**2.0e0
+                    + (2.0e0 * d * c - 4.0e0 * a * e) * physics_variables.aspect
+                    + d**2.0e0
+                    - 4.0e0 * a * f
+                    + 4.0e0 * a * physics_variables.m_s_limit
                 )
-                / (2.0e0 * a)
-            ) ** 0.98e0
+            ) / (2.0e0 * a)
+
+            if physics_variables.kappa95 > 1.77:
+                ratio = 1.77 / physics_variables.kappa95
+                corner_fudge = 0.3 * (physics_variables.kappa95 - 1.77) / ratio
+                physics_variables.kappa95 = (
+                    physics_variables.kappa95 ** (ratio) + corner_fudge
+                )
 
             physics_variables.kappa = 1.12e0 * physics_variables.kappa95
             physics_variables.triang95 = physics_variables.triang / 1.50e0
