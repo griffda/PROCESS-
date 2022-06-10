@@ -14,10 +14,10 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-1823-gecd8f2cec
+   Tag No. : v2.1-1826-g8e3343c58
     Branch : HEAD
-   Git log : Overwrite regression references for |Merge branch |1679-last-commit-message-can-cause-build-failure| into |develop||
- Date/time : 10 Jun 2022  8:34:41 +00:00(hh:mm) UTC
+   Git log : Merge branch |1624-reduce-expense-of-2d-scan-regression-test| into |develop|
+ Date/time : 10 Jun 2022  9:19:11 +00:00(hh:mm) UTC
       User : root
   Computer : runner-7084ce6e-project-20-concurrent-0
  Directory : /builds/process/process
