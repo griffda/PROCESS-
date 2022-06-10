@@ -245,7 +245,8 @@ regression-py38-overwrite:
         - git commit -m "$OVERWRITE_COMMIT_MSG \"$CI_COMMIT_TITLE\""
         # Runner runs on a detached HEAD, so git push needs to specifically
         # target the commit's branch
-        - git push origin HEAD:$CI_COMMIT_BRANCH
+        # Skip prevents subsequent pipeline being triggered
+        - git push origin HEAD:$CI_COMMIT_BRANCH -o ci.skip
     artifacts:
         when: on_failure
         paths:
