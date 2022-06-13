@@ -146,6 +146,7 @@ LIST(APPEND PROCESS_SRCS
     plot_radiation.f90
     rebco_variables.f90
     read_radiation.f90
+    divertor_ode_var.f90
 )
 
 PREPROCESS()
