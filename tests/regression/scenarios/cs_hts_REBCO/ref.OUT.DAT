@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-1816-g95abec22
+   Tag No. : v2.1-1823-gd31c3e0e code contains untracked changes
     Branch : 1499-update-cs-coil-geometry-model-python
-   Git log : merge develop - accept current changes
- Date/time :  8 Jun 2022 11:18:01 +01:00(hh:mm) UTC
+   Git log : Updated labels for CS coil thickness, height, turn radial, and crack vertical
+ Date/time : 13 Jun 2022 11:50:26 +01:00(hh:mm) UTC
       User : graeme
   Computer : ym1906
- Directory : /home/graeme/process
-     Input : /tmp/pytest-of-graeme/pytest-3/popen-gw4/test_scenario_cs_hts_REBCO_0/IN.DAT
+ Directory :
+     Input : /tmp/pytest-of-graeme/pytest-1/popen-gw4/test_scenario_cs_hts_REBCO_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -127,31 +127,31 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  3.0697E-02             -2.3447E-15                 7.6383E-14
-    2  Global power balance consistency      =  1.6273E-01 MW/m3        2.7569E-14 MW/m3          -1.6942E-13
-    3  Density upper limit                   <  7.8627E+19 /m3          4.9152E+04 /m3             6.6613E-16
-    4  Neutron wall load upper limit         <  9.9251E-01 MW/m2       -5.8098E-13 MW/m2          -5.8542E-13
-    5  Radial build consistency              =  9.2084E+00 m            3.0670E-15 m              -3.3307E-16
-    6  Burn time lower limit                 >  7.2000E+03 sec          1.6162E-05 sec            -2.2447E-09
-    7  L-H power threshold limit             >  1.1413E+02 MW          -1.8477E-10 MW              1.6188E-12
-    8  Net electric power lower limit        >  5.0000E+02 MW           7.0522E-07 MW              1.4104E-09
-    9  Beta upper limit                      <  5.6264E-02              5.1764E-15                 9.1926E-14
-   10  CS coil EOF current density limit     <  1.2121E+09 A/m2         9.1076E-05 A/m2            7.5051E-14
-   11  CS coil BOP current density limit     <  2.9047E+09 A/m2        -3.2425E-05 A/m2           -1.1102E-14
-   12  Injection power upper limit           <  5.1000E+01 MW          -5.6843E-14 MW              1.1102E-15
-   13  TF coil case stress upper limit       <  5.8000E+08 Pa          -1.3471E-05 Pa             -2.3315E-14
-   14  TF coil conduit stress upper lim      <  5.8000E+08 Pa          -1.6689E-05 Pa             -2.8755E-14
-   15  I_op / I_critical (TF coil)           <  2.0496E+07 A/m2         1.2100E-07 A/m2           -7.9936E-15
-   16  Dump voltage upper limit              <  1.0000E+01 V           -3.5136E-12 V              -3.5139E-13
-   17  J_winding pack/J_protection limit     <  1.5137E+07 A/m2         0.0000E+00 A/m2           -8.8818E-16
-   18  TF coil temp. margin lower limit      >  1.5000E+00 K            4.5208E-13 K              -3.0143E-13
-   19  Upper Lim. on Psep * Bt / q A R       <  9.2000E+00 MWT/m        1.3600E-11 MWT/m          -1.4778E-12
-   20  Dump time set by VV stress            >  2.4688E+01 s           -2.4557E+00 s              -1.5210E-14
+    1  Beta consistency                      =  3.0697E-02             -2.3379E-15                 7.6161E-14
+    2  Global power balance consistency      =  1.6273E-01 MW/m3        2.8003E-14 MW/m3          -1.7208E-13
+    3  Density upper limit                   <  7.8627E+19 /m3         -8.1920E+04 /m3            -9.9920E-16
+    4  Neutron wall load upper limit         <  9.9251E-01 MW/m2       -5.8364E-13 MW/m2          -5.8809E-13
+    5  Radial build consistency              =  9.2084E+00 m            5.1117E-15 m              -5.5511E-16
+    6  Burn time lower limit                 >  7.2000E+03 sec          1.6164E-05 sec            -2.2450E-09
+    7  L-H power threshold limit             >  1.1413E+02 MW          -1.8572E-10 MW              1.6273E-12
+    8  Net electric power lower limit        >  5.0000E+02 MW           7.0537E-07 MW              1.4107E-09
+    9  Beta upper limit                      <  5.6264E-02              5.1140E-15                 9.0816E-14
+   10  CS coil EOF current density limit     <  1.2121E+09 A/m2         1.4138E-04 A/m2            1.1657E-13
+   11  CS coil BOP current density limit     <  2.9047E+09 A/m2        -3.6240E-05 A/m2           -1.2546E-14
+   12  Injection power upper limit           <  5.1000E+01 MW          -5.4712E-13 MW              1.0658E-14
+   13  TF coil case stress upper limit       <  5.8000E+08 Pa          -9.5367E-07 Pa             -1.5543E-15
+   14  TF coil conduit stress upper lim      <  5.8000E+08 Pa          -2.5034E-06 Pa             -4.4409E-15
+   15  I_op / I_critical (TF coil)           <  2.0496E+07 A/m2         9.0748E-08 A/m2           -5.9952E-15
+   16  Dump voltage upper limit              <  1.0000E+01 V           -3.5492E-12 V              -3.5461E-13
+   17  J_winding pack/J_protection limit     <  1.5137E+07 A/m2         0.0000E+00 A/m2           -3.3307E-15
+   18  TF coil temp. margin lower limit      >  1.5000E+00 K            4.5297E-13 K              -3.0198E-13
+   19  Upper Lim. on Psep * Bt / q A R       <  9.2000E+00 MWT/m        1.3637E-11 MWT/m          -1.4827E-12
+   20  Dump time set by VV stress            >  2.4688E+01 s           -2.4557E+00 s              -1.7319E-14
    21  CS temperature margin lower limit     >  1.5000E+00 K           -3.2573E+01 K               6.6613E-16
-   22  CS Tresca yield criterion             <  6.6000E+08 Pa          -1.8001E-05 Pa             -2.7311E-14
-   23  Peak toroidal field upper limit       <  1.1200E+01 T            2.3626E-14 T              -2.1094E-15
-   24  taup/taueff                           >  5.0000E+00              4.3965E-13                -8.7930E-14
-   25  CS current/copper area < Max          <  1.3190E+07 A/m2        -2.5773E-07 A/m2            1.9540E-14
+   22  CS Tresca yield criterion             <  6.6000E+08 Pa          -1.8358E-05 Pa             -2.7867E-14
+   23  Peak toroidal field upper limit       <  1.1200E+01 T            2.1139E-14 T              -1.8874E-15
+   24  taup/taueff                           >  5.0000E+00              4.6074E-13                -9.2149E-14
+   25  CS current/copper area < Max          <  1.3190E+07 A/m2        -2.7823E-07 A/m2            2.1094E-14
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -855,7 +855,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Initial radial crack size (m)                                            (csfv.t_crack_radial)     2.670E-03     
  CS turn area (m)                                                         (pfv.a_oh_turn)           3.008E-03     
  CS turn length (m)                                                       (pfv.l_cond_cst)          9.499E-02     
- CS r_in (m)                                                              (r_in_cst)                1.005E-02     
+ CS turn internal cable space radius (m)                                  (pfv.r_in_cst)            1.005E-02     
  CS turn width (m)                                                        (pfv.d_cond_cst)          3.166E-02     
  CS structural vertical thickness (m)                                     (csfv.t_structural_vertic 5.783E-03     
  CS structural radial thickness (m)                                       (csfv.t_structural_radial 5.783E-03     
@@ -1165,15 +1165,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Peak absolute rate of change of stored energy in poloidal field (MW)     peakpoloidalpower         4.754E+02  OP 
  Energy stored in poloidal magnetic field :
  
-                                            time (sec)
-
-                     0.00     500.00     681.63     691.63    7891.63    8073.25
- Time point         Start      BOP        EOR        BOF        EOF        EOP        
- Energy (MJ)      0.000E+00  1.803E+04  2.833E+04  2.833E+04  8.634E+04  0.000E+00
- 
- Interval                tramp      tohs       theat      tburn      tqnch      
- dE/dt (MW)            3.606E+01  5.668E+01  0.000E+00  8.057E+00 -4.754E+02
- 
  
  *********************************************** Vacuum System ************************************************
  
@@ -1256,13 +1247,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  ************************************************* Cryogenics *************************************************
  
- Conduction and radiation heat loads on cryogenic components (MW)         (qss/1.0D6)               2.367E-02  OP 
- Nuclear heating of cryogenic components (MW)                             (qnuc/1.0D6)              1.292E-02  OP 
+ Conduction and radiation heat loads on cryogenic components (MW)         (qss/1.0d6)               2.367E-02  OP 
+ Nuclear heating of cryogenic components (MW)                             (qnuc/1.0d6)              1.292E-02  OP 
  Nuclear heating of cryogenic components is a user input.
- AC losses in cryogenic components (MW)                                   (qac/1.0D6)               1.140E-02  OP 
- Resistive losses in current leads (MW)                                   (qcl/1.0D6)               1.651E-02  OP 
- 45% allowance for heat loads in transfer lines, storage tanks etc (MW)   (qmisc/1.0D6)             2.903E-02  OP 
- Sum = Total heat removal at cryogenic temperatures (tmpcry & tcoolin) (M (helpow + helpow_cryal/1. 9.353E-02  OP 
+ AC losses in cryogenic components (MW)                                   (qac/1.0d6)               1.140E-02  OP 
+ Resistive losses in current leads (MW)                                   (qcl/1.0d6)               1.651E-02  OP 
+ 45% allowance for heat loads in transfer lines, storage tanks etc (MW)   (qmisc/1.0d6)             2.903E-02  OP 
+ Sum = Total heat removal at cryogenic temperatures (tfcoil_variables.tmp (helpow + helpow_cryal/1. 9.353E-02  OP 
  Temperature of cryogenic superconducting components (K)                  (tmpcry)                  4.500E+00     
  Temperature of cryogenic aluminium components (K)                        (tcoolin)                 3.131E+02     
  Efficiency (figure of merit) of cryogenic plant is 13% of ideal Carnot v                           2.028E-03  OP 
@@ -1296,8 +1287,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Plant thermodynamics: options :
  
- Divertor thermal power is collected at only 150 C and is used to preheat the coolant in the power cycle
- Shield thermal power is collected at only 150 C and is used to preheat the coolant in the power cycle
+ Divertor thermal power is collected at only 150 C and is used to          &preheat the coolant in the power cycle
+ Shield thermal power is collected at only 150 C and is used to          &preheat the coolant in the power cycle
  Power conversion cycle efficiency model: user-defined efficiency
  Thermal to electric conversion efficiency of the power conversion cycle  (etath)                       0.375     
  Fraction of total high-grade thermal power to divertor                   (pdivfraction)                0.147  OP 
@@ -1305,46 +1296,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Power Balance for Reactor (across vacuum vessel boundary) - Detail
  ------------------------------------------------------------------
  
-                                            High-grade             Low-grade              Total
-                                             thermal power (MW)     thermal power (MW)      (MW)
-         First wall:
-                               neutrons            249.83                0.00              249.83
-             charged particle transport             20.29                0.00               20.29
-                              radiation            234.03                0.00              234.03
-                        coolant pumping              0.00                0.00                0.00
  
-         Blanket:
-                               neutrons           1572.68                0.00             1572.68
-             charged particle transport              0.00                0.00                0.00
-                              radiation              0.00                0.00                0.00
-                        coolant pumping              0.00                0.00                0.00
  
-         Shield:
-                               neutrons              1.51                0.00                1.51
-             charged particle transport              0.00                0.00                0.00
-                              radiation              0.00                0.00                0.00
-                        coolant pumping              0.01                0.00                0.01
  
-         Divertor:
-                               neutrons            186.91                0.00              186.91
-             charged particle transport            174.31                0.00              174.31
-                              radiation             30.41                0.00               30.41
-                        coolant pumping              1.96                0.00                1.96
  
-         TF coil:
-                               neutrons              0.00                0.05                0.05
-             charged particle transport              0.00                0.00                0.00
-                              radiation              0.00                0.00                0.00
-                        coolant pumping              0.00                0.00                0.00
  
-         Losses to H/CD apparatus + diagnostics:
-                               neutrons              0.00                0.00                0.00
-             charged particle transport              0.00                0.00                0.00
-                              radiation              0.00                0.00                0.00
-                        coolant pumping              0.00                0.00                0.00
  
-         ----------------------------------------------------------------------------------------
-                                 Totals           2471.95                0.05             2472.01
  
  Total power leaving reactor (across vacuum vessel boundary) (MW)                                    2472.062  OP 
  
@@ -1367,9 +1324,9 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Power Balance across separatrix :
  -------------------------------
  Only energy deposited in the plasma is included here.
- Total power loss is scaling power plus core radiation only (iradloss = 1)
+ Total power loss is scaling power plus core radiation only (physics_variables.iradloss = 1)
  Transport power from scaling law (MW)                                    (pscalingmw)                332.240  OP 
- Radiation power from inside "coreradius" (MW)                            (pinnerzoneradmw.)          106.519  OP 
+ Radiation power from inside "coreradius" (MW)                            (pcoreradmw.)               106.519  OP 
  Total (MW)                                                                                           438.759  OP 
  
  Alpha power deposited in plasma (MW)                                     (falpha*palpmw)             385.535  OP 
@@ -1434,44 +1391,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Time-dependent power usage
  
-         Pulse timings [s]:
  
-                                          tramp      tohs     theat     tburn     tqnch    tdwell
-                                          -----      ----     -----     -----     -----    ------
-                               Duration  500.00    181.63     10.00   7200.00    181.63      0.00
-                                 ------   -----      ----     -----     -----     -----    ------
  
-         Continous power usage [MWe]:
  
-                                 System   tramp      tohs     theat     tburn     tqnch    tdwell
-                                 ------   -----      ----     -----     -----     -----    ------
-                        Primary cooling  236.81    236.81    236.81    236.81    236.81    236.81
-                              Cyroplant   46.12     46.12     46.12     46.12     46.12     46.12
-                                 Vacuum    0.50      0.50      0.50      0.50      0.50      0.50
-                                Tritium   15.00     15.00     15.00     15.00     15.00     15.00
-                                     TF    9.58      9.58      9.58      9.58      9.58      9.58
-                             Facilities   65.26     65.26     65.26     65.26     65.26     65.26
-                                 ------   -----      ----     -----     -----     -----    ------
-                                  Total  373.27    373.27    373.27    373.27    373.27    373.27
-                                 ------   -----      ----     -----     -----     -----    ------
  
-         Intermittent power usage [MWe]:
  
-                                 System   tramp      tohs     theat     tburn     tqnch    tdwell
-                                 ------   -----      ----     -----     -----     -----    ------
-                                 H & CD    0.00    300.00    300.00    127.50    300.00      0.00
-                                     PF   36.06     56.68      0.00      8.06   -475.35      0.00
-                                 ------   -----      ----     -----     -----     -----    ------
-                                  Total   36.06    356.68    300.00    135.56   -175.35      0.00
-                                 ------   -----      ----     -----     -----     -----    ------
  
-         Power production [MWe]:
  
-                                          tramp      tohs     theat     tburn     tqnch    tdwell       avg
-                                          -----      ----     -----     -----     -----    ------       ---
-                            Gross power    0.00      0.00      0.00   1003.50      0.00      0.00
-                              Net power -409.34   -729.95   -673.27    494.67   -197.92   -373.27    394.11
-                                 ------   -----      ----     -----     -----     -----    ------
  
  
  *************************** Water usage during plant operation (secondary cooling) ***************************

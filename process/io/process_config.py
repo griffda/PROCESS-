@@ -707,12 +707,17 @@ class UncertaintiesConfig(ProcessConfig, Config):
     no_allowed_unfeasible = 2
     no_scans = 5
     no_samples = 1000
+    output_mean = 8056.98
     uncertainties = []
+    morris_uncertainties = []
+    sobol_uncertainties = []
     output_vars = []
     dict_results = {}
     ncdf_writer = None
+    figure_of_merit = "rmajor"
+    latin_hypercube_level = 4
 
-    def __init__(self, configfilename="evaluate_uncertainties.json"):
+    def __init__(self, configfilename="config_evaluate_uncertainties.json"):
 
         """
         creates and instance of the UncertaintiesConfig class
@@ -730,7 +735,6 @@ class UncertaintiesConfig(ProcessConfig, Config):
         self.or_in_dat = os.path.abspath(
             self.get("config", "IN.DAT_path", default=self.or_in_dat)
         )
-        self.process = self.get("config", "process_bin", default=self.process)
         self.niter = self.get("config", "no_iter", default=self.niter)
         self.u_seed = self.get("config", "pseudorandom_seed", default=self.u_seed)
         self.factor = self.get("config", "factor", default=self.factor)
@@ -740,8 +744,20 @@ class UncertaintiesConfig(ProcessConfig, Config):
         self.no_scans = self.get("no_scans", default=self.no_scans)
         self.no_samples = self.get("no_samples", default=self.no_samples)
         self.uncertainties = self.get("uncertainties", default=self.uncertainties)
+        self.morris_uncertainties = self.get(
+            "morris_uncertainties", default=self.morris_uncertainties
+        )
+        self.sobol_uncertainties = self.get(
+            "sobol_uncertainties", default=self.sobol_uncertainties
+        )
         self.output_vars = self.get("output_vars", default=self.output_vars)
-        # add uncertain variables to output
+        self.output_mean = self.get("output_mean", default=self.output_mean)
+        self.figure_of_merit = self.get("figure_of_merit", default=self.figure_of_merit)
+        self.latin_hypercube_level = self.get(
+            "latin_hypercube_level", default=self.latin_hypercube_level
+        )
+
+        # setup the output_vars
         for u_dict in self.uncertainties:
             if not u_dict["varname"] in self.output_vars:
                 self.output_vars += [u_dict["varname"]]

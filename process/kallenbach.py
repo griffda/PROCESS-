@@ -9,7 +9,6 @@ import logging
 import numpy
 from process.fortran import (
     physics_variables,
-    plasma_geometry_module,
     constants,
     physics_module,
     process_output as po,
@@ -24,7 +23,7 @@ s_handler.setLevel(logging.INFO)
 logger.addHandler(s_handler)
 
 
-def kallenbach_scan():
+def kallenbach_scan(plasma_geom):
     """Perform a scan over the divertor_kallenbach routine.
 
     Below is an example input file, using values from the kallenbach paper:
@@ -53,7 +52,7 @@ def kallenbach_scan():
     """
     physics_variables.rminor = physics_variables.rmajor / physics_variables.aspect
 
-    xi, thetai, xo, thetao = plasma_geometry_module.xparam(
+    xi, thetai, xo, thetao = plasma_geom.xparam(
         physics_variables.rminor, physics_variables.kappa, physics_variables.triang
     )
 

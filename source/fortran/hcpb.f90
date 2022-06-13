@@ -1571,7 +1571,7 @@ contains
     ! Mass of He coolant = volume * density at typical coolant temperatures and pressures (kg)
     coolmass = coolvol*1.517D0
 
-    ! Average first wall coolant fraction, only used by old routines in fispact.f90, safety.f90
+    ! Average first wall coolant fraction, only used by old routines in fispact.f90, safety.f90- safety.f90 removed on 08/06/2022
     fwclfr = (fwareaib*fwith*vffwi + fwareaob*fwoth*vffwo) / (fwarea*0.5D0*(fwith+fwoth))
 
     ! Component masses
