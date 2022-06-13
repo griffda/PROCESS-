@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-1832-g88bcae3e1
-    Branch : HEAD
-   Git log : Merge branch |issue-1648-update-ishape-10| into |develop|
- Date/time : 10 Jun 2022 17:16:33 +00:00(hh:mm) UTC
-      User : root
-  Computer : runner-8a63d9a8-project-20-concurrent-0
- Directory : /builds/process/process
-     Input : /tmp/pytest-of-root/pytest-0/test_scenario_Bucked_and_wedge0/IN.DAT
+   Tag No. : v2.1-1823-gd31c3e0e code contains untracked changes
+    Branch : 1499-update-cs-coil-geometry-model-python
+   Git log : Updated labels for CS coil thickness, height, turn radial, and crack vertical
+ Date/time : 13 Jun 2022 11:47:50 +01:00(hh:mm) UTC
+      User : graeme
+  Computer : ym1906
+ Directory :
+     Input : /tmp/pytest-of-graeme/pytest-1/popen-gw4/test_scenario_Bucked_and_wedge0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  
@@ -51,9 +51,9 @@
  Number of constraints (total)                                            (neqns+nineqns)                  25     
  Optimisation switch                                                      (ioptimz)                         1     
  Figure of merit switch                                                   (minmax)                          1     
- Square root of the sum of squares of the constraint residuals            (sqsumsq)                 3.215E-09  OP 
- VMCON convergence parameter                                              (convergence_parameter)   1.254E-10  OP 
- Number of VMCON iterations                                               (nviter)                         41  OP 
+ Square root of the sum of squares of the constraint residuals            (sqsumsq)                 7.391E-10  OP 
+ VMCON convergence parameter                                              (convergence_parameter)   4.201E-10  OP 
+ Number of VMCON iterations                                               (nviter)                         38  OP 
  
 PROCESS has successfully optimised the iteration variables to minimise the figure of merit          MAJOR RADIUS.
  
@@ -96,13 +96,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    12                  bore             2.1005E+00     0.9007
    13                  fbetatry         5.0390E-01     1.0443
    14                  coheof           2.2401E+07     1.0808
-   15                  fjohc            5.8309E-01     1.0063
+   15                  fjohc            5.8308E-01     1.0063
    16                  fjohc0           5.3637E-01     0.9947
    17                  fcohbop          9.2036E-01     0.9878
    18                  gapoh            1.0000E-02     0.2000
    19                  fvsbrnni         3.7678E-01     0.9523
-   20                  fstrcase         8.1294E-01     0.8129
-   21                  fstrcond         7.6001E-01     0.8260
+   20                  fstrcase         8.1312E-01     0.8131
+   21                  fstrcond         7.6014E-01     0.8262
    22                  fiooic           7.3501E-01     1.1586
    23                  fvdump           9.9830E-01     0.9983
    24                  vdalw            9.9830E+00     0.9983
@@ -130,31 +130,31 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  3.9616E-02             -5.6298E-16                 1.4211E-14
-    2  Global power balance consistency      =  1.4295E-01 MW/m3        3.9359E-15 MW/m3          -2.7534E-14
-    3  Density upper limit                   <  7.5516E+19 /m3         -1.4746E+05 /m3            -1.9984E-15
-    4  Neutron wall load upper limit         <  9.5777E-01 MW/m2       -9.5368E-14 MW/m2          -9.9587E-14
+    1  Beta consistency                      =  3.9616E-02              6.8174E-16                -1.7208E-14
+    2  Global power balance consistency      =  1.4295E-01 MW/m3       -3.9677E-15 MW/m3           2.7756E-14
+    3  Density upper limit                   <  7.5516E+19 /m3         -4.4237E+05 /m3            -5.8842E-15
+    4  Neutron wall load upper limit         <  9.5777E-01 MW/m2        9.9032E-14 MW/m2           1.0347E-13
     5  Radial build consistency              =  8.5348E+00 m            3.7902E-15 m              -4.4409E-16
-    6  Burn time lower limit                 >  7.2000E+03 sec          1.8170E-06 sec            -2.5236E-10
-    7  L-H power threshold limit             >  9.7889E+01 MW          -2.9530E-11 MW              3.0165E-13
-    8  Net electric power lower limit        >  5.0000E+02 MW          -4.5564E-08 MW             -9.1128E-11
-    9  Beta upper limit                      <  6.8096E-02              1.0686E-15                 1.5543E-14
-   10  CS coil EOF current density limit     <  3.8419E+07 A/m2        -5.2452E-06 A/m2           -1.3656E-13
-   11  CS coil BOP current density limit     <  3.8439E+07 A/m2        -5.2378E-06 A/m2           -1.3622E-13
-   12  Injection power upper limit           <  5.1000E+01 MW           6.2528E-13 MW             -1.2212E-14
-   13  TF coil case stress upper limit       <  5.8000E+08 Pa          -9.6560E-06 Pa             -1.6542E-14
-   14  TF coil conduit stress upper lim      <  5.8000E+08 Pa          -8.1062E-06 Pa             -1.3878E-14
-   15  I_op / I_critical (TF coil)           <  2.5038E+07 A/m2         1.3689E-07 A/m2           -7.4385E-15
-   16  Dump voltage upper limit              <  9.9830E+00 V            1.7015E-02 V              -3.8858E-15
-   17  J_winding pack/J_protection limit     <  1.8403E+07 A/m2         0.0000E+00 A/m2           -7.7716E-16
-   18  Upper Lim. on Psep * Bt / q A R       <  9.2000E+00 MWT/m        2.5739E-12 MWT/m          -2.7955E-13
-   19  Dump time set by VV stress            >  2.4453E+01 s            6.0396E-14 s              -2.7756E-15
-   20  TF coil temp. margin lower limit      >  1.5000E+00 K           -2.3004E-13 K               1.5343E-13
-   21  CS temperature margin lower limit     >  1.5000E+00 K            4.8055E-09 K              -3.2036E-09
-   22  CS Tresca yield criterion             <  6.6000E+08 Pa          -2.8849E-05 Pa             -4.3743E-14
-   23  Peak toroidal field upper limit       <  1.1200E+01 T            1.2434E-15 T              -1.1102E-16
-   24  taup/taueff                           >  5.0000E+00              1.0547E-13                -2.1094E-14
-   25  TF coil strain absolute value         <  7.0000E-03             -6.4185E-17                -9.2149E-15
+    6  Burn time lower limit                 >  7.2000E+03 sec          6.5245E-07 sec            -9.0618E-11
+    7  L-H power threshold limit             >  9.7889E+01 MW           7.3811E-11 MW             -7.5406E-13
+    8  Net electric power lower limit        >  5.0000E+02 MW           3.6638E-07 MW              7.3277E-10
+    9  Beta upper limit                      <  6.8096E-02             -1.1935E-15                -1.7542E-14
+   10  CS coil EOF current density limit     <  3.8419E+07 A/m2         2.8558E-05 A/m2            7.4341E-13
+   11  CS coil BOP current density limit     <  3.8439E+07 A/m2         2.5973E-05 A/m2            6.7568E-13
+   12  Injection power upper limit           <  5.1000E+01 MW           7.2475E-13 MW             -1.4211E-14
+   13  TF coil case stress upper limit       <  5.8000E+08 Pa           2.3842E-06 Pa              4.2188E-15
+   14  TF coil conduit stress upper lim      <  5.8000E+08 Pa          -1.5497E-06 Pa             -2.6645E-15
+   15  I_op / I_critical (TF coil)           <  2.5038E+07 A/m2        -9.8073E-08 A/m2            5.3291E-15
+   16  Dump voltage upper limit              <  9.9830E+00 V            1.7015E-02 V              -1.5654E-14
+   17  J_winding pack/J_protection limit     <  1.8403E+07 A/m2         0.0000E+00 A/m2           -5.5511E-16
+   18  Upper Lim. on Psep * Bt / q A R       <  9.2000E+00 MWT/m       -6.6347E-12 MWT/m           7.2120E-13
+   19  Dump time set by VV stress            >  2.4453E+01 s            1.2790E-13 s              -5.6621E-15
+   20  TF coil temp. margin lower limit      >  1.5000E+00 K            1.1111E-12 K              -7.4074E-13
+   21  CS temperature margin lower limit     >  1.5000E+00 K            2.7315E-11 K              -1.8210E-11
+   22  CS Tresca yield criterion             <  6.6000E+08 Pa           1.4555E-04 Pa              2.2049E-13
+   23  Peak toroidal field upper limit       <  1.1200E+01 T            1.3678E-14 T              -1.2212E-15
+   24  taup/taueff                           >  5.0000E+00             -9.4369E-14                 1.8874E-14
+   25  TF coil strain absolute value         <  7.0000E-03             -1.5179E-16                -2.1649E-14
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -620,14 +620,14 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Materal stress of the point of maximum shear stress (Tresca criterion) for each layer
  Please use utilities/plot_stress_tf.py for radial plots plots summary
  Layers                                     CS     interface    Steel case            WP    Outer case
- Radial stress               (MPa)       0.000       -41.463       -41.398      -164.930         3.710
- toroidal stress             (MPa)    -422.110       -24.286      -291.395      -213.580      -213.573
- Vertical stress             (MPa)       0.978       -18.281       180.112       227.226       244.444
- Von-Mises stress            (MPa)     422.600        20.839       408.585       381.810       396.954
- Shear (Tresca) stress       (MPa)     423.088        23.183       471.507       440.806       458.016
+ Radial stress               (MPa)       0.000       -41.454       -41.388      -164.908         3.711
+ toroidal stress             (MPa)    -422.019       -23.988      -291.524      -213.650      -213.657
+ Vertical stress             (MPa)       0.892       -17.413       180.087       227.230       244.440
+ Von-Mises stress            (MPa)     422.466        21.521       408.678       381.873       397.023
+ Shear (Tresca) stress       (MPa)     422.911        24.041       471.611       440.880       458.097
  
  Toroidal modulus            (GPa)     114.094         2.500       205.000        38.026       205.000
- Vertical modulus            (GPa)      45.157         2.500       205.000       133.085       363.502
+ Vertical modulus            (GPa)      38.458         2.500       205.000       133.085       363.502
  
  WP transverse modulus (GPa)                                              (eyoung_wp_trans*1.0D-9)  3.149E+01  OP 
  WP vertical modulus (GPa)                                                (eyoung_wp_axial*1.0D-9)  1.148E+02  OP 
@@ -801,7 +801,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Copper fraction of conductor                                             (fcutfsu)                 8.910E-01  ITV
  Residual manufacturing strain on superconductor                          (str_tf_con_res)         -5.000E-03     
  Self-consistent strain on superconductor                                 (str_wp)                  1.366E-03     
- Critical current density in superconductor (A/m2)                        (jcritsc)                 9.107E+08  OP 
+ Critical current density in superconductor (A/m2)                        (jcritsc)                 9.106E+08  OP 
  Critical current density in strand (A/m2)                                (jcritstr)                9.930E+07  OP 
  Critical current density in winding pack (A/m2)                          (jwdgcrt)                 2.504E+07  OP 
  Actual current density in winding pack (A/m2)                            (jwdgop)                  1.840E+07  OP 
@@ -836,7 +836,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Gap between central solenoid and TF coil (m)                             (bv.gapoh)                1.000E-02  ITV
  CS overall cross-sectional area (m2)                                     (areaoh)                  9.022E+00  OP 
  CS conductor+void cross-sectional area (m2)                              (awpoh)                   4.001E+00  OP 
-    CS conductor cross-sectional area (m2)                                (awpoh*(1-vfohc))         2.800E+00  OP 
+    CS conductor cross-sectional area (m2)                                (awpoh*(1-vfohc))         2.801E+00  OP 
     CS void cross-sectional area (m2)                                     (awpoh*vfohc)             1.200E+00  OP 
  CS steel cross-sectional area (m2)                                       (areaoh-awpoh)            5.021E+00  OP 
  CS steel area fraction                                                   (oh_steel_frac)           5.566E-01  ITV
@@ -853,12 +853,18 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Helium coolant temperature (K)                                           (tfv.tftmp)               4.750E+00     
  CS temperature margin (K)                                                (tmargoh)                 1.500E+00  OP 
  Minimum permitted temperature margin (K)                                 (tfv.tmargmin_cs)         1.500E+00     
- residual hoop stress in CS Steel (Pa)                                    (csfv.residual_sig_hoop)  2.400E+08     
- Initial vertical crack size (m)                                          (csfv.t_crack_vertical)   2.000E-03     
- Initial radial crack size (m)                                            (csfv.t_crack_radial)     6.000E-03     
- CS structural vertical thickness (m)                                     (csfv.t_structural_vertic 2.200E-02     
- CS structural radial thickness (m)                                       (csfv.t_structural_radial 7.000E-02     
- Allowable number of cycles till CS fracture                              (csfv.n_cycle)            1.868E+04  OP 
+ Residual hoop stress in CS Steel (Pa)                                    (csfv.residual_sig_hoop)  2.400E+08     
+ Minimum burn time (s)                                                    (ctv.tbrnmn)              7.200E+03     
+ Initial vertical crack size (m)                                          (csfv.t_crack_vertical)   8.900E-04     
+ Initial radial crack size (m)                                            (csfv.t_crack_radial)     2.670E-03     
+ CS turn area (m)                                                         (pfv.a_oh_turn)           1.920E-03     
+ CS turn length (m)                                                       (pfv.l_cond_cst)          7.589E-02     
+ CS turn internal cable space radius (m)                                  (pfv.r_in_cst)            6.871E-03     
+ CS turn width (m)                                                        (pfv.d_cond_cst)          2.530E-02     
+ CS structural vertical thickness (m)                                     (csfv.t_structural_vertic 5.777E-03     
+ CS structural radial thickness (m)                                       (csfv.t_structural_radial 5.777E-03     
+ Allowable number of cycles till CS fracture                              (csfv.n_cycle)            1.117E+03  OP 
+ Minimum number of cycles required till CS fracture                       (csfv.n_cycle_min)        2.000E+04  OP 
  
  Superconducting PF coils
  PF coil superconductor material                                          (isumatpf)                        3     
@@ -962,7 +968,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  6			0.000e+00	0.000e+00	-7.685e+05	-7.685e+05	2.021e+08	0.0e0
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.204E-01  ITV
- Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -3.804E-03  OP 
+ Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -3.803E-03  OP 
  
  *************************** PF Circuit Waveform Data ***************************
  

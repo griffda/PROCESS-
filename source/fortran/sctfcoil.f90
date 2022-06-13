@@ -1755,7 +1755,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
         eyoung_cond_trans, poisson_cond_axial, poisson_cond_trans, dhecoil, fcutfsu, &
         str_wp, n_tf_wp_layers
     use pfcoil_variables, only : ipfres, oh_steel_frac, ohhghf, coheof, &
-        cohbop, ncls, cptdin
+        cohbop, ncls, cptdin, ld_ratio_cst, r_out_cst
     use constants, only: pi, sig_file
     use error_handling, only: report_error
     implicit none
@@ -1938,6 +1938,21 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
     real(dp) :: t_turn_oh
     !! Central Solenoid (OH) turn dimension [m]
+  
+    real(dp) :: l_cond_cst
+    !! Length of CS of CS coil turn conduit
+  
+    real(dp) :: d_cond_cst
+    !! Depth/width of CS of CS coil turn conduit
+    
+    real(dp) :: r_in_cst
+    !! Length of CS of CS coil turn conduit length 
+
+    real(dp) :: p1
+    !! CS coil conduit calculation part 1 
+
+    real(dp) :: p2
+    !! CS coil conduit calculation part 2
 
     real(dp) :: t_cable_eyng
     !! Cable area radial dimension, as passed into YM calculation [m]
@@ -2093,18 +2108,24 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
             ! CS Turn vertical cross-sectionnal area
             a_oh_turn = a_oh / n_oh_turns
-
-            ! Central Solenoid (OH) turn dimension [m]
-            t_turn_oh = sqrt( a_oh_turn )
+            	     
+            ! CS coil turn geometry calculation - stadium shape
+            ! Literature: https://doi.org/10.1016/j.fusengdes.2017.04.052
+            d_cond_cst = (a_oh_turn/ld_ratio_cst)**0.5  ! width of cs turn conduit
+            l_cond_cst = ld_ratio_cst*d_cond_cst            ! length of cs turn conduit
+            ! Radius of turn space = r_in_cst
+            ! Radius of curved outer corrner r_out_cst = 3mm from literature
+            ! ld_ratio_cst = 70 / 22 from literature
+            p1 = ( ( l_cond_cst - d_cond_cst ) / pi )**2
+            p2 = ((( l_cond_cst * d_cond_cst ) - ( 4-pi )*( r_out_cst**2 ) -  ( a_oh_turn * oh_steel_frac ) ) / pi)
+            r_in_cst = - ( ( l_cond_cst-d_cond_cst )/pi ) + sqrt(p1+p2)
+            t_cond_oh = (d_cond_cst/2) - r_in_cst ! thickness of steel conduit in cs turn
 
             ! OH/CS conduit thickness calculated assuming square conduit [m]
             ! The CS insulation layer is assumed to the same as the TF one
-            t_cond_oh = 0.5D0*(t_turn_oh - 2.0D0*thicndut - &
-                               sqrt( (2.0D0*thicndut - t_turn_oh)**2 - &
-                               oh_steel_frac * t_turn_oh**2) )
 
             ! CS turn cable space thickness
-            t_cable_oh = t_turn_oh - 2.0D0 * ( t_cond_oh + thicndut )
+            t_cable_oh = r_in_cst *2
             !-!
 
             ! Smeared elastic properties of the CS

@@ -3804,29 +3804,31 @@ contains
   end subroutine  set_itv_166
 
   !---------------------------------
-  ! DUMMY variables below here
-  !---------------------------------
 
-  subroutine init_itv_167
-    !! <LI> (167) DUMMY : Description
+  subroutine init_itv_167 
+    !! <LI> (167) fncycle : f-value for minimum CS coil stress load cycles
     use numerics, only: lablxc, boundl, boundu
     implicit none
-    lablxc(167) = 'DUMMY         '
-    boundl(167) = 1.0d-99
-    boundu(167) = 1.0d99
+    lablxc(167) = 'fncycle       '
+    boundl(167) = 1.0d-8
+    boundu(167) = 1.0d0
   end subroutine init_itv_167
 
   real(kind(1.d0)) function itv_167()
+    use constraint_variables, only: fncycle
     implicit none
-    itv_167 = DUMMY
+    itv_167 = fncycle 
   end function itv_167
 
   subroutine set_itv_167(ratio)
+    use constraint_variables, only: fncycle
     implicit none
     real(kind(1.d0)) :: ratio
-    DUMMY = ratio
-  end subroutine set_itv_167
+    fncycle = ratio
+  end subroutine  set_itv_167
 
+  !---------------------------------
+  ! DUMMY VARIABLES
   !---------------------------------
 
   subroutine init_itv_168

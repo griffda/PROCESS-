@@ -220,7 +220,7 @@ def main(args=None):
         "fcuohsu"
     ] = r"$f_{\mathrm{Cu}}^{\mathrm{CS}}$"  # copper fraction of strand in central solenoid
     labels["coheof"] = r"$J [A M^{-2}]$"
-    labels["ohhghf"] = r"$ ohghf [m]$"
+    labels["ohhghf"] = r"$Thickness_{\mathrm{CS}}[m]$"
     labels["pheat"] = r"$ P_{\mathrm{heat}}$ [$MW$]"
     labels["effcd"] = r"$\eta_{\mathrm{CD}}$[$A/W$]"
     labels["bigq"] = r"$Q$"
@@ -240,7 +240,13 @@ def main(args=None):
     labels["tburn"] = r"$t_{\mathrm{burn}}$[$s$]"
     labels["vburn"] = r"$V_{\mathrm{loop}}$ [$V$]"
     labels["rli"] = r"$l_i$"
-
+    labels["n_cycle_min"] = r"$MinCycles_{\mathrm{Stress.min}}^{\mathrm{CS}}$"
+    labels["n_cycle"] = r"$Cycles_{\mathrm{Stress}}^{\mathrm{CS}}$"
+    labels["a_oh_turn"] = r"$Turn_{\mathrm{area}}^{\mathrm{CS}}[$m$^{2}]$"
+    labels["tbrnmn"] = r"$t_{\mathrm{burn.min}}$[$s$]"
+    labels["pfv.oh_steel_frac"] = r"$f_{\mathrm{Steel}}^{\mathrm{CS}}$"
+    labels["csfv.t_structural_radial"] = r"$Turn_{\mathrm{radial}}^{\mathrm{CS}}[$m$]$"
+    labels["csfv.t_crack_vertical"] = r"$Crack_{\mathrm{vertical}}^{\mathrm{CS}}[$m$]$"
     # ------------
 
     # nsweep varible dict
@@ -272,7 +278,7 @@ def main(args=None):
     ] = "bmaxtf"  # bmxlim the maximum T field upper limit is the scan variable
     nsweep_dict[18] = "gammax"
     nsweep_dict[19] = "boundl(16)"
-    nsweep_dict[20] = "tbrnmn"
+    nsweep_dict[20] = "cnstv.tbrnmn"
     nsweep_dict[21] = ""
     nsweep_dict[22] = "cfactr"
     nsweep_dict[23] = "boundu(72)"
@@ -316,6 +322,9 @@ def main(args=None):
     nsweep_dict[62] = "coheof"
     nsweep_dict[63] = "ohcth"
     nsweep_dict[64] = "ohhghf"
+    nsweep_dict[65] = "csfv.n_cycle_min"
+    nsweep_dict[66] = "pfv.oh_steel_frac"
+    nsweep_dict[67] = "csfv.t_crack_vertical"
     # -------------------
 
     # Getting the scanned variable name
