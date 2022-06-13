@@ -4,13 +4,13 @@
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.4.0   R"
  Date_of_run_____________________________________________________________ (date)________________________     "13/06/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "11:47"
- User____________________________________________________________________ (username)____________________     "graeme"  
+ Time_of_run_____________________________________________________________ (time)________________________     "15:49"
+ User____________________________________________________________________ (username)____________________     "root"    
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "Run Title (change this line using input variable 'runtitle')                                       
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1823-gd31c3e0e"                                                                               
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1499-update-cs-coil-geometry-model-python"                                                         
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Updated labels for CS coil thickness, height, turn radial, and crack vertical"                     
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-graeme/pytest-1/popen-gw4/test_scenario_baseline_jan_2010/IN.DAT                                                                                                                         "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1889-g9269e8345"                                                                              
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "HEAD"                                                                                              
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch |1499-update-cs-coil-geometry-model-python| into |develop|"                           
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-root/pytest-0/test_scenario_baseline_jan_2010/IN.DAT                                                                                                                                     "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -18,8 +18,8 @@
  Number_of_constraints_(total)___________________________________________ (neqns+nineqns)_______________             18    
  Optimisation_switch_____________________________________________________ (ioptimz)_____________________              1    
  Figure_of_merit_switch__________________________________________________ (minmax)______________________              1    
- Square_root_of_the_sum_of_squares_of_the_constraint_residuals___________ (sqsumsq)_____________________      1.9198E-10 OP 
- VMCON_convergence_parameter_____________________________________________ (convergence_parameter)_______      6.3601E-11 OP 
+ Square_root_of_the_sum_of_squares_of_the_constraint_residuals___________ (sqsumsq)_____________________      1.9220E-10 OP 
+ VMCON_convergence_parameter_____________________________________________ (convergence_parameter)_______      6.3608E-11 OP 
  Number_of_VMCON_iterations______________________________________________ (nviter)______________________             18 OP 
  bt______________________________________________________________________ (itvar001)____________________      5.2899E+00    
  bt_(final_value/initial_value)__________________________________________ (xcm001)______________________      9.3345E-01    
@@ -53,7 +53,7 @@
  ohcth_(range_normalised)________________________________________________ (nitvar010)___________________      6.3792E-02    
  q_______________________________________________________________________ (itvar011)____________________      3.0000E+00    
  q_(final_value/initial_value)___________________________________________ (xcm011)______________________      9.2393E-01    
- q_(range_normalised)____________________________________________________ (nitvar011)___________________      1.5340E-17    
+ q_(range_normalised)____________________________________________________ (nitvar011)___________________      7.6700E-18    
  bore____________________________________________________________________ (itvar012)____________________      2.6698E+00    
  bore_(final_value/initial_value)________________________________________ (xcm012)______________________      1.0752E+00    
  bore_(range_normalised)_________________________________________________ (nitvar012)___________________      2.5958E-01    
@@ -117,24 +117,24 @@
  fpsepbqar_______________________________________________________________ (itvar032)____________________      1.0000E+00    
  fpsepbqar_(final_value/initial_value)___________________________________ (xcm032)______________________      1.0000E+00    
  fpsepbqar_(range_normalised)____________________________________________ (nitvar032)___________________      1.0000E+00    
- Beta_consistency__________________normalised_residue____________________ (normres001)__________________      1.7319E-14    
- Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________     -4.4409E-14    
- Density_upper_limit_______________normalised_residue____________________ (normres003)__________________      6.6613E-16    
- Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres004)__________________     -1.6664E-13    
- Radial_build_consistency__________normalised_residue____________________ (normres005)__________________     -2.2204E-16    
+ Beta_consistency__________________normalised_residue____________________ (normres001)__________________      1.8874E-14    
+ Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________     -4.4742E-14    
+ Density_upper_limit_______________normalised_residue____________________ (normres003)__________________     -3.3307E-16    
+ Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres004)__________________     -1.6653E-13    
+ Radial_build_consistency__________normalised_residue____________________ (normres005)__________________     -3.3307E-16    
  Burn_time_lower_limit_____________normalised_residue____________________ (normres006)__________________     -8.8960E-11    
- L-H_power_threshold_limit_________normalised_residue____________________ (normres007)__________________      4.3687E-13    
- Net_electric_power_lower_limit____normalised_residue____________________ (normres008)__________________     -1.3666E-11    
- Beta_upper_limit__________________normalised_residue____________________ (normres009)__________________      2.0206E-14    
- CS_coil_EOF_current_density_limit_normalised_residue____________________ (normres010)__________________     -1.2285E-10    
- CS_coil_BOP_current_density_limit_normalised_residue____________________ (normres011)__________________     -1.1693E-10    
- Injection_power_upper_limit_______normalised_residue____________________ (normres012)__________________     -8.8818E-16    
- TF_coil_case_stress_upper_limit___normalised_residue____________________ (normres013)__________________     -6.1728E-14    
- TF_coil_conduit_stress_upper_lim__normalised_residue____________________ (normres014)__________________     -6.6946E-14    
- I_op_/_I_critical_(TF_coil)_______normalised_residue____________________ (normres015)__________________     -2.4425E-14    
- Dump_voltage_upper_limit__________normalised_residue____________________ (normres016)__________________     -5.6621E-15    
- J_winding_pack/J_protection_limit_normalised_residue____________________ (normres017)__________________      8.8818E-16    
- Upper_Lim._on_Psep_*_Bt_/_q_A_R___normalised_residue____________________ (normres018)__________________     -4.0012E-13    
+ L-H_power_threshold_limit_________normalised_residue____________________ (normres007)__________________      4.3920E-13    
+ Net_electric_power_lower_limit____normalised_residue____________________ (normres008)__________________     -1.3645E-11    
+ Beta_upper_limit__________________normalised_residue____________________ (normres009)__________________      2.0428E-14    
+ CS_coil_EOF_current_density_limit_normalised_residue____________________ (normres010)__________________     -1.2303E-10    
+ CS_coil_BOP_current_density_limit_normalised_residue____________________ (normres011)__________________     -1.1710E-10    
+ Injection_power_upper_limit_______normalised_residue____________________ (normres012)__________________      1.5543E-15    
+ TF_coil_case_stress_upper_limit___normalised_residue____________________ (normres013)__________________     -8.1046E-15    
+ TF_coil_conduit_stress_upper_lim__normalised_residue____________________ (normres014)__________________      1.5543E-15    
+ I_op_/_I_critical_(TF_coil)_______normalised_residue____________________ (normres015)__________________     -1.4433E-15    
+ Dump_voltage_upper_limit__________normalised_residue____________________ (normres016)__________________     -5.9952E-15    
+ J_winding_pack/J_protection_limit_normalised_residue____________________ (normres017)__________________     -5.4401E-15    
+ Upper_Lim._on_Psep_*_Bt_/_q_A_R___normalised_residue____________________ (normres018)__________________     -4.0234E-13    
  # Final Feasible Point #
  # Plant Availability #
  Allowable_blanket_neutron_fluence_(MW-yr/m2)____________________________ (abktflnc)____________________      1.5000E+01    
@@ -472,7 +472,7 @@
  WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_axial*1.0D-9)______      8.2087E+01 OP 
  WP_transverse_Poisson's_ratio___________________________________________ (poisson_wp_trans)____________      3.0478E-01 OP 
  WP_vertical-transverse_Pois._rat._______________________________________ (poisson_wp_axial)____________      3.1843E-01 OP 
- Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________      4.8849E-08    
+ Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________      2.4424E-08    
  toroidal__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_t_max(1))_____________     -4.2134E+08    
  Vertical__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_z_max(1))_____________      2.3866E+08    
  Von-Mises_stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_vmises_max(1))________      5.7883E+08    

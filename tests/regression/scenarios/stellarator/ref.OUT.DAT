@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-1823-gd31c3e0e code contains untracked changes
-    Branch : 1499-update-cs-coil-geometry-model-python
-   Git log : Updated labels for CS coil thickness, height, turn radial, and crack vertical
- Date/time : 13 Jun 2022 11:48:25 +01:00(hh:mm) UTC
-      User : graeme
-  Computer : ym1906
- Directory : /home/graeme/process
-     Input : /tmp/pytest-of-graeme/pytest-1/popen-gw2/test_scenario_stellarator_0/IN.DAT
+   Tag No. : v2.1-1889-g9269e8345
+    Branch : HEAD
+   Git log : Merge branch |1499-update-cs-coil-geometry-model-python| into |develop|
+ Date/time : 13 Jun 2022 16:03:43 +00:00(hh:mm) UTC
+      User : root
+  Computer : runner-8r7le1vq-project-20-concurrent-0
+ Directory : /builds/process/process
+     Input : /tmp/pytest-of-root/pytest-0/test_scenario_stellarator_0/IN.DAT
  Run title : HELIAS-5B
   Run type : Reactor concept design: Stellarator model, (c) CCFE
  

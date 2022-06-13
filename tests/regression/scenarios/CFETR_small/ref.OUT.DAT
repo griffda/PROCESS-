@@ -15,14 +15,14 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-1823-gd31c3e0e code contains untracked changes
-    Branch : 1499-update-cs-coil-geometry-model-python
-   Git log : Updated labels for CS coil thickness, height, turn radial, and crack vertical
- Date/time : 13 Jun 2022 11:48:12 +01:00(hh:mm) UTC
-      User : graeme
-  Computer : ym1906
- Directory :
-     Input : /tmp/pytest-of-graeme/pytest-1/popen-gw4/test_scenario_CFETR_small_0/IN.DAT
+   Tag No. : v2.1-1889-g9269e8345
+    Branch : HEAD
+   Git log : Merge branch |1499-update-cs-coil-geometry-model-python| into |develop|
+ Date/time : 13 Jun 2022 15:50:16 +00:00(hh:mm) UTC
+      User : root
+  Computer : runner-8r7le1vq-project-20-concurrent-0
+ Directory : /builds/process/process
+     Input : /tmp/pytest-of-root/pytest-0/test_scenario_CFETR_small_0/IN.DAT
  Run title : "CFETR small (5.7m) reference file"
   Run type : Reactor concept design: Steady-state tokamak model, (c) CCFE
  
@@ -60,7 +60,7 @@
  Optimisation switch                                                      (ioptimz)                         1     
  Figure of merit switch                                                   (minmax)                         10     
  Square root of the sum of squares of the constraint residuals            (sqsumsq)                 5.722E-10  OP 
- VMCON convergence parameter                                              (convergence_parameter)   5.999E-22  OP 
+ VMCON convergence parameter                                              (convergence_parameter)   1.124E-15  OP 
  Number of VMCON iterations                                               (nviter)                         12  OP 
  
 PROCESS has successfully optimised the iteration variables to minimise the figure of merit        TOROIDAL FIELD.
