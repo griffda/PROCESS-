@@ -47,7 +47,7 @@ module impurity_radiation_module
   !!        (iteration variable 102 is fimp(impvar))
   real(dp), public, dimension(nimp) :: fimp
 
-  character(len=2), public, dimension(nimp) :: imp_label
+  character*2, public, dimension(nimp) :: imp_label
   !! imp_label(nimp) : impurity ion species names:<UL>
   !! <LI> ( 1)  Hydrogen  (fraction calculated by code)
   !! <LI> ( 2)  Helium

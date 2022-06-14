@@ -2,11 +2,23 @@
 import pytest
 from process.fortran import impurity_radiation_module
 
+from process.impurity_radiation import Impurity
+
+
+@pytest.fixture
+def impurity():
+    """Provides Pulse object for testing.
+
+    :returns: initialised Pulse object
+    :rtype: process.pulse.Pulse
+    """
+    return Impurity()
+
 
 @pytest.fixture(autouse=True)
-def initialise_impurity_radiation():
+def initialise_impurity_radiation(impurity):
     impurity_radiation_module.init_impurity_radiation_module()
-    impurity_radiation_module.initialise_imprad()
+    impurity.initialise_imprad()
 
 
 @pytest.mark.parametrize(
