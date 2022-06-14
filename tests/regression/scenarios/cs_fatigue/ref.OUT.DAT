@@ -7,12 +7,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-1889-g9269e8345
+   Tag No. : v2.1-1892-g45d00e4c3
     Branch : HEAD
-   Git log : Merge branch |1499-update-cs-coil-geometry-model-python| into |develop|
- Date/time : 13 Jun 2022 15:50:38 +00:00(hh:mm) UTC
+   Git log : Merge branch |1683-mfiles-in-tracking-baseline_2018-merged-unnecessarily| into |develop|
+ Date/time : 14 Jun 2022 10:26:51 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-8r7le1vq-project-20-concurrent-0
+  Computer : runner-c55928e9-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_cs_fatigue_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
