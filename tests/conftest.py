@@ -19,7 +19,7 @@ def pytest_addoption(parser):
     """
     parser.addoption(
         "--reg-tolerance",
-        default=0.0,
+        default=5.0,
         type=float,
         help="Percentage tolerance for regression tests",
     )

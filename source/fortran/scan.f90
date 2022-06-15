@@ -21,7 +21,7 @@ module scan_module
   integer, parameter :: ipnscns = 1000
   !! Maximum number of scan points
 
-  integer, parameter :: ipnscnv = 64
+  integer, parameter :: ipnscnv = 67
   !! Number of available scan variables
 
   integer, parameter :: noutvars = 84
@@ -100,7 +100,10 @@ module scan_module
   !!         <LI> 61 copperaoh_m2_max : CS coil current / copper area
   !!         <LI> 62 coheof : CS coil current density at EOF
   !!         <LI> 63 ohcth : CS thickness (m)
-  !!         <LI> 64 ohhghf : CS height (m) </UL>
+  !!         <LI> 64 ohhghf : CS height (m)
+  !!         <LI> 65 n_cycle_min : Minimum cycles for CS stress model constraint 90
+  !!         <LI> 66 oh_steel_frac: Steel fraction in CS coil
+  !!         <LI> 67 t_crack_vertical: Initial crack vertical dimension (m) </UL>
   integer :: nsweep_2
   !! nsweep_2 /3/ : switch denoting quantity to scan for 2D scan:
 
@@ -628,7 +631,8 @@ contains
       target_spread, lambda_q_omp, qtargettotal, ttarget
     use heat_transport_variables, only: crypmw_max
     use rebco_variables, only: copperaoh_m2_max
-    use pfcoil_variables, only: coheof, ohhghf
+    use pfcoil_variables, only: coheof, ohhghf, oh_steel_frac
+    use CS_fatigue_variables, only: n_cycle_min, t_crack_vertical
     implicit none
 
     ! Arguments
@@ -837,6 +841,15 @@ contains
         case (64)
             ohhghf = swp(iscn)
             vlab = 'ohhghf' ; xlab = 'CS height (m)'
+        case (65)
+            n_cycle_min = swp(iscn)
+            vlab = 'n_cycle_min' ; xlab = 'CS stress cycles min'
+        case (66)
+           oh_steel_frac = swp(iscn)
+            vlab = 'oh_steel_frac' ; xlab = 'CS steel fraction'
+        case (67)
+          t_crack_vertical = swp(iscn)
+            vlab = 't_crack_vertical' ; xlab = 'Initial crack vertical size (m)'
         case default
             idiags(1) = nwp ; call report_error(96)
 

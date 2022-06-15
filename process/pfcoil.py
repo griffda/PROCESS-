@@ -14,6 +14,7 @@ from process.fortran import process_output as op
 from process.fortran import numerics
 from process.fortran import superconductors as sc
 from process.fortran import rebco_variables as rcv
+from process.fortran import constraint_variables as ctv
 from process import maths_library as pml
 from process.utilities.f2py_string_patch import f2py_compatible_to_string
 from process import fortran as ft
@@ -1134,6 +1135,32 @@ class PFCoil:
         # Turn vertical cross-sectionnal area
         pfv.a_oh_turn = pfv.areaoh / pfv.turns[pfv.nohc - 1]
 
+        # Depth/width of cs turn conduit
+        pfv.d_cond_cst = (pfv.a_oh_turn / pfv.ld_ratio_cst) ** 0.5
+        # length of cs turn conduit
+        pfv.l_cond_cst = pfv.ld_ratio_cst * pfv.d_cond_cst
+        # Radius of turn space = pfv.r_in_cst
+        # Radius of curved outer corrner pfv.r_out_cst = 3mm from literature
+        # pfv.ld_ratio_cst = 70 / 22 from literature
+        p1_cst = ((pfv.l_cond_cst - pfv.d_cond_cst) / constants.pi) ** 2
+        p2_cst = (
+            (pfv.l_cond_cst * pfv.d_cond_cst)
+            - (4 - constants.pi) * (pfv.r_out_cst**2)
+            - (pfv.a_oh_turn * pfv.oh_steel_frac)
+        ) / constants.pi
+        # CS coil turn geometry calculation - stadium shape
+        # Literature: https://doi.org/10.1016/j.fusengdes.2017.04.052
+        pfv.r_in_cst = -((pfv.l_cond_cst - pfv.d_cond_cst) / constants.pi) + math.sqrt(
+            p1_cst + p2_cst
+        )
+        # Thickness of steel conduit in cs turn
+        csfv.t_structural_radial = (pfv.d_cond_cst / 2) - pfv.r_in_cst
+        # In this model the vertical and radial have the same thickness
+        csfv.t_structural_vertical = csfv.t_structural_radial
+        # add a check for negative conduit thickness
+        if csfv.t_structural_radial < 1.0e-3:
+            csfv.t_structural_radial = 1.0e-3
+
         # Non-steel area void fraction for coolant
         pfv.vf[pfv.nohc - 1] = pfv.vfohc
 
@@ -2210,9 +2237,15 @@ class PFCoil:
                 if pv.facoh > 0.0e-4:
                     op.ovarre(
                         self.outfile,
-                        "residual hoop stress in CS Steel (Pa)",
+                        "Residual hoop stress in CS Steel (Pa)",
                         "(csfv.residual_sig_hoop)",
                         csfv.residual_sig_hoop,
+                    )
+                    op.ovarre(
+                        self.outfile,
+                        "Minimum burn time (s)",
+                        "(ctv.tbrnmn)",
+                        ctv.tbrnmn,
                     )
                     op.ovarre(
                         self.outfile,
@@ -2225,6 +2258,30 @@ class PFCoil:
                         "Initial radial crack size (m)",
                         "(csfv.t_crack_radial)",
                         csfv.t_crack_radial,
+                    )
+                    op.ovarre(
+                        self.outfile,
+                        "CS turn area (m)",
+                        "(pfv.a_oh_turn)",
+                        pfv.a_oh_turn,
+                    )
+                    op.ovarre(
+                        self.outfile,
+                        "CS turn length (m)",
+                        "(pfv.l_cond_cst)",
+                        pfv.l_cond_cst,
+                    )
+                    op.ovarre(
+                        self.outfile,
+                        "CS turn internal cable space radius (m)",
+                        "(pfv.r_in_cst)",
+                        pfv.r_in_cst,
+                    )
+                    op.ovarre(
+                        self.outfile,
+                        "CS turn width (m)",
+                        "(pfv.d_cond_cst)",
+                        pfv.d_cond_cst,
                     )
                     op.ovarre(
                         self.outfile,
@@ -2245,7 +2302,13 @@ class PFCoil:
                         csfv.n_cycle,
                         "OP ",
                     )
-
+                    op.ovarre(
+                        self.outfile,
+                        "Minimum number of cycles required till CS fracture",
+                        "(csfv.n_cycle_min)",
+                        csfv.n_cycle_min,
+                        "OP ",
+                    )
                 # Check whether CS coil is hitting any limits
                 # iteration variable (39) fjohc0
                 # iteration variable(38) fjohc
