@@ -57,6 +57,13 @@ class Stellarator:
             st.stheat(self.outfile, 1)
             st.stphys(self.outfile, 1)
             st.stopt(self.outfile, 1)
+
+            # As stopt changes dene, te and bt, stphys needs two calls
+            # to correct for larger changes (it is only consistent after
+            # two or three fix point iterations) call stphys here again, just to be sure.
+            # This can be removed once the bad practice in stopt is removed!
+            st.stphys(self.outfile, 0)
+
             st.stdiv(self.outfile, 1)
             st.stbild(self.outfile, 1)
             st.stcoil(self.outfile, 1)

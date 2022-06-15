@@ -499,10 +499,10 @@ contains
     integer, intent(in) :: outfile,iprint
     real(dp) :: ne0_max_ECRH, bt_ecrh, powerht_local,pscalingmw_local
 
-    !  Calculate sudo density limit if density constraint is active
-    if( any(icc == 5)) then
-      call stdlim(bt,powerht,rmajor,rminor,dnelimt)
-    end if
+    ! Calculate sudo density (this limit should be modelled by PROCESS'
+    ! radiation module already and this limit should only be used if no 
+    ! realistic radiation model is imposed)
+    call stdlim(bt,powerht,rmajor,rminor,dnelimt)
 
     ! Calculates the ECRH parameters
     call stdlim_ecrh(max_gyrotron_frequency,bt,ne0_max_ECRH,bt_ecrh)
@@ -1959,7 +1959,7 @@ contains
    ! Volume averaged te from te0_achievable
    te = te0_available/(1.0D0+alphat)
    call stdlim_ecrh(gyro_frequency_max, bt,ne0_max,bt_ecrh_max)
-   ! Now go to Ignition point where ECRH is still available
+   ! Now go to point where ECRH is still available
    ! In density..
    dene_old = dene
    dene = min(dene_old, ne0_max/(1.0d0+alphan))
@@ -1970,7 +1970,9 @@ contains
 
    if(istell/=0) then
       call stphys(nout,0)
+      call stphys(nout,0) ! The second call seems to be necessary for all values to "converge" (and is sufficient)
    else
+      call physics()
       call physics()
    end if
 
@@ -1985,7 +1987,9 @@ contains
 
    if(istell/=0) then
       call stphys(nout,0)
+      call stphys(nout,0)
    else
+      call physics()
       call physics()
    end if
 

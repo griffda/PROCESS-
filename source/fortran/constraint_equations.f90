@@ -3363,7 +3363,7 @@ contains
 
    subroutine constraint_eqn_090(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for checking if the design point is ECRH ignitable 
-      !! at lower values for n and B
+      !! at lower values for n and B. Or if the design point is ECRH heatable (if ignite==0)
       !! author: J Lion, IPP Greifswald
       !! args : output structure : residual error; constraint value; 
       !! residual error in physical units; output string; units string
@@ -3379,6 +3379,8 @@ contains
       use constraint_variables, only: fecrh_ignition
       use stellarator_module, only: power_at_ignition_point
       use stellarator_variables, only: max_gyrotron_frequency, te0_ecrh_achievable
+      use physics_variables, only: ignite
+      use current_drive_variables, only: pheat
       implicit none
             real(dp), intent(out) :: tmp_cc
       real(dp), intent(out) :: tmp_con
@@ -3390,7 +3392,12 @@ contains
       call power_at_ignition_point(max_gyrotron_frequency,te0_ecrh_achievable,powerht_local,powerscaling)
 
       ! Achievable ECRH te needs to be larger than needed te for igntion
-      tmp_cc = 1.0D0 - fecrh_ignition* powerht_local/powerscaling
+      if(ignite==0) then
+         tmp_cc = 1.0D0 - fecrh_ignition* (powerht_local+pheat)/powerscaling
+      else
+         tmp_cc = 1.0D0 - fecrh_ignition* powerht_local/powerscaling
+      endif
+
       tmp_con = powerscaling * (1.0D0 - tmp_cc)
       tmp_err = powerht_local * tmp_cc
       tmp_symbol = '<'
