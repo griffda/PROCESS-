@@ -168,14 +168,12 @@ make-py38:
 unit-py38:
     extends: .test_template
     script:
-        # pytest tests against installed process package, but pytest-cov
-        # installs coverage hooks in source package
-        # Get installed package path and set pytest-cov to use it
-        - cd tests
-        - installed_path=$(python -c "import process, os; print(os.path.dirname(os.path.abspath(process.__file__)))")
-        - echo $installed_path
-        - cd -
-        - pytest --cov=$installed_path tests/unit -vs | tee tests/unit/pytest.log
+        # Perform editable install to ensure pytest tests against the same
+        # installed process package location as where pytest-cov installs its
+        # coverage hooks by default
+        # TODO Remove editable install once editable becomes cmake default
+        - pip install -e .
+        - pytest --cov=process tests/unit -vs | tee tests/unit/pytest.log
     artifacts:
         when: always
         paths:
@@ -345,18 +343,6 @@ pages:
     variables:
         PY_VERSION: py38
     script:
-        # Test coverage: extract total percentage from report
-        # coverage uses .coverage report file from unit test job
-        # coverage requires process package to be installed in same location
-        # as when report created; hence run coverage before process is
-        # re-installed as editable, below
-        - coverage_str=$(coverage report --precision=1)
-        - re="TOTAL.+\s([0-9]*\.[0-9]*)%"
-        - if [[ "$coverage_str" =~ $re ]]; then
-        - python_coverage=${BASH_REMATCH[1]}
-        - else
-        - echo "Couldn't extract coverage percentage."
-        - fi
 
     # FORD documentation
         - ford documentation/ford/index.md
@@ -403,7 +389,19 @@ pages:
         - anybadge --value $MASTER_VERSION --label master --color blue --file mversion.svg
         - anybadge --value $DEVELOP_VERSION --label develop --color blue --file dversion.svg
         - anybadge --value $CONTRIBUTORS --label contributors --color blue --file contributors.svg --value-format "%d"
+
+        # Test coverage: extract total percentage from report
+        # coverage uses .coverage report file from unit test job
+        - coverage_str=$(coverage report --precision=1)
+        - re="TOTAL.+\s([0-9]*\.[0-9]*)%"
+        - if [[ "$coverage_str" =~ $re ]]; then
+        - python_coverage=${BASH_REMATCH[1]}
+        - echo "Python test coverage = ${python_coverage}%"
+        - else
+        - echo "Couldn't extract coverage percentage."
+        - fi
         - anybadge --value $python_coverage --file python_coverage.svg coverage
+
         - cp mversion.svg public/
         - cp dversion.svg public/
         - cp contributors.svg public/
