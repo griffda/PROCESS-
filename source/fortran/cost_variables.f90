@@ -710,8 +710,8 @@ module cost_variables
   integer :: isiteaccomm
   !! switch for including Campus Accommodation:
   !!
-  !! - =0 no campus accommodation required in costing
-  !! - =1 campus accommodation costed
+  !! - =0 campus accommodation has to be costed
+  !! - =1 no campus accommodation required in costing
 
   integer :: igridconn
   !! switch for site connection (outgoing) to electricity grid:

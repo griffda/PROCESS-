@@ -576,7 +576,7 @@ class CostsStep:
         step210104 += step21010403
 
         # 21.01.04.04 Campus Accommodation
-        if cv.isiteaccomm == 1:
+        if cv.isiteaccomm == 0:
             # 21.01.04.04.01 Residential
             # Campus accommodation including canteen, shops, laundry,
             # internal recreation facilities, medical centre and sports pitches.

@@ -187,12 +187,12 @@ def test_costs_step(monkeypatch, costs_step):
     assert costs_step.rminor_star == 7.0 / 3.6
 
     # Total plant direct cost with remote handling
-    exp = 6935.8739399
+    exp = 7566.3614399
     obs = cv.cdirt
     assert pytest.approx(obs) == exp
 
     # Constructed cost
-    exp_concost = 12311.1762433
+    exp_concost = 13430.2915558
     obs_concost = cv.concost
     assert pytest.approx(obs_concost) == exp_concost
 
@@ -220,7 +220,7 @@ def test_step_a20(monkeypatch, costs_step):
 
 @pytest.mark.parametrize(
     "isitetype, isiteaccomm, igridconn, irailaccess, exp",
-    ((0, 0, 0, 0, 5.0877341e3), (1, 1, 1, 1, 6.1786241e3), (2, 0, 0, 0, 4.9938941e3)),
+    ((0, 0, 0, 0, 5.6742341e3), (1, 1, 1, 1, 5.5921241e3), (2, 0, 0, 0, 5.5803941e3)),
 )
 def test_step_a21(
     monkeypatch, costs_step, isitetype, isiteaccomm, igridconn, irailaccess, exp
