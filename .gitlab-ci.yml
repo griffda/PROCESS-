@@ -225,12 +225,10 @@ regression-py38-5-percent:
 regression-py38-overwrite:
     # Overwrite regression references with up-to-date versions on develop branch
     # This only occurs when a branch is merged to develop
-    variables:
-        OVERWRITE_COMMIT_MSG: Overwrite regression references for
     rules:
         # Prevent overwrite commits from recursively triggering pipelines
-        - if: $CI_COMMIT_BRANCH == "develop" && $CI_COMMIT_TITLE !~ /$OVERWRITE_COMMIT_MSG.*/
-        # CI variable for testing overwrites
+        - if: $CI_COMMIT_BRANCH == "develop" && $CI_COMMIT_TITLE !~ /^Overwrite regression references for/
+        # CI variable to test triggering overwrites
         - if: $CI_TEST_OVERWRITE_REG_REFS
     extends: .test_template
     script:
@@ -242,11 +240,10 @@ regression-py38-overwrite:
         # Commit the overwritten regression references to develop (or other branch if testing)
         - git add .
         # $CI_COMMIT_TITLE will normally be the merge commit on develop
-        - git commit -m "$OVERWRITE_COMMIT_MSG \"$CI_COMMIT_TITLE\""
+        - git commit -m "Overwrite regression references for \"$CI_COMMIT_TITLE\""
         # Runner runs on a detached HEAD, so git push needs to specifically
         # target the commit's branch
-        # Skip prevents subsequent pipeline being triggered
-        - git push origin HEAD:$CI_COMMIT_BRANCH -o ci.skip
+        - git push origin HEAD:$CI_COMMIT_BRANCH
     artifacts:
         when: on_failure
         paths:
