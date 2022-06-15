@@ -8,7 +8,7 @@
   "comment2": [
     "Increment n_errortypes if an error is added to this list"
   ],
-  "n_errortypes": 276,
+  "n_errortypes": 277,
   "errors": [
     {
       "no": 1,
@@ -1389,6 +1389,11 @@
       "no": 276,
       "level": 2,
       "message": "CHECK: One of the areas or fractions is negative in the internal SC TF coil geometry"
+    },
+    {
+      "no": 277,
+      "level": 2,
+      "message": "CHECK: One or more collision between TF and PF coils. Check PF placement."
     }
   ]
 }
