@@ -25,7 +25,7 @@ def initialise_impurity_radiation(impurity):
     "imp_element_index, ne, te, expected_pbremden",
     [(1, 9.7756695233913373e19, 28.089474310325262, 27122.16187576588)],
 )
-def test_pbremden(imp_element_index, ne, te, expected_pbremden):
+def test_pbremden(imp_element_index, ne, te, expected_pbremden, impurity):
     """Tests `pbremden` function.
 
     :param imp_element_index: impurity element
@@ -40,7 +40,7 @@ def test_pbremden(imp_element_index, ne, te, expected_pbremden):
     :param expected_pbremden: Bremsstrahlung radiation density (W/m3)
     :type expected_pbremden: float
     """
-    pbremden = impurity_radiation_module.pbremden(imp_element_index, ne, te)
+    pbremden = impurity.pbremden(imp_element_index, ne, te)
 
     assert pytest.approx(pbremden) == expected_pbremden
 
@@ -80,7 +80,7 @@ def test_pimpden(imp_element_index, ne, te, expected_pimpden):
         )
     ],
 )
-def test_fradcore(rho, coreradius, coreradiationfraction, expected_fradcore):
+def test_fradcore(rho, coreradius, coreradiationfraction, expected_fradcore, impurity):
     """Tests `fradcore` function.
 
     :param rho: normalised minor radius
@@ -94,9 +94,7 @@ def test_fradcore(rho, coreradius, coreradiationfraction, expected_fradcore):
     :param expected_fradcore: Function to calculate core radiation fraction
     :type expected_fradcore: float
     """
-    fradcore = impurity_radiation_module.fradcore(
-        rho, coreradius, coreradiationfraction
-    )
+    fradcore = impurity.fradcore(rho, coreradius, coreradiationfraction)
 
     assert pytest.approx(fradcore) == expected_fradcore
 
@@ -111,7 +109,7 @@ def test_fradcore(rho, coreradius, coreradiationfraction, expected_fradcore):
         )
     ],
 )
-def test_Zav_of_te(imp_element_index, te, expected_zav_of_te):
+def test_Zav_of_te(imp_element_index, te, expected_zav_of_te, impurity):
     """Tests `Zav_of_te` function.
 
     :param imp_element_index: impurity element
@@ -123,7 +121,7 @@ def test_Zav_of_te(imp_element_index, te, expected_zav_of_te):
     :param expected_zav_of_te: Electron temperature dependent average atomic number
     :type expected_zav_of_te: float
     """
-    zav_of_te = impurity_radiation_module.zav_of_te(imp_element_index, te)
+    zav_of_te = impurity.zav_of_te(imp_element_index, te)
 
     assert pytest.approx(zav_of_te) == expected_zav_of_te
 

@@ -1,4 +1,6 @@
 from genericpath import exists
+
+import numpy
 from process.fortran import impurity_radiation_module
 from process.fortran import error_handling
 
@@ -299,3 +301,299 @@ class Impurity:
             impurity_radiation_module.impurity_arr_Lz_Wm3[no, i] = (
                 impurity_radiation_module.impurity_arr_Lz_Wm3[no, i] * LzinWm3
             )  # W/m3
+
+    # def import_impdata(self, filename, nlines, col1, col2, col3, skiprows, fmt):
+    #     """
+    #     Reads two columns of data from file
+    #     author: H Lux, CCFE, Culham Science Centre
+    #     filename : input char(len=256)     : input filename
+    #     nlines   : input integer           : no. of lines to be read
+    #     col1(nlines) : output real array   : data in column1
+    #     col2(nlines) : output real array   : data in column2
+    #     col3(nlines) : output real array   : data in column3
+    #     skiprows : optional input integer  : no. of initial rows to skip
+    #     fmt      : optional input char(len=256) : data format
+    #     This routine reads in the data of a two column file and
+    #     returns it. The first two rows are skipped by default.
+    #     N/A
+    #     """
+
+    #     #  Local variables
+
+    #     unit = 18
+    #     i = 0
+    #     iostat = 0
+    #     in1 = 0
+    #     in2 = 0
+    #     in3 = 0
+    #     # ###############################################
+
+    #     #  Optional variables
+
+    #     if (skiprows) in locals():
+    #         local_skip = skiprows
+    #     else:
+    #         local_skip = 2
+
+    #     if (fmt) in locals() :
+    #         local_fmt = fmt
+    #     else:
+    #         local_fmt = '(3F10.2)'
+
+    #     open(unit=unit, file=(filename).strip(), status='old', action='read', iostat=iostat)
+
+    #     if (iostat != 0) :
+    #         error_handling.idiags[0] = iostat
+    #         error_handling.report_error(30)
+
+    #     #  Skip first lines (comments)
+
+    #     for i in range(0, local_skip):
+    #         read(unit,*,iostat=iostat) buffer
+    #     if (iostat > 0) :
+    #         error_handling.idiags[0] = iostat
+    #         error_handling.report_error(31)
+
+    #     for i in range(0, nlines):
+    #         read(unit=unit, fmt=local_fmt, iostat=iostat) in1, in2, in3
+    #     if (iostat > 0) :
+    #         error_handling.idiags[0] = iostat ;
+    #         error_handling.idiags[1] = i
+    #         error_handling.report_error(32)
+    #     elif  (iostat < 0) :
+    #         exit  #  EOF
+    #     else:
+    #         col1[i-1] = in1
+    #         col2[i-1] = in2
+    #         col3[i-1] = in3
+
+    #     close(unit)
+
+    def z2index(self, zimp):
+
+        for i in range(0, len(impurity_radiation_module.impurity_arr_label)):
+            if zimp == impurity_radiation_module.impurity_arr_Z[i]:
+                z2index = i
+                return z2index
+
+        # Should only get here if there is a problem
+
+        error_handling.idiags[0] = zimp
+        error_handling.report_error(33)
+
+    def element2index(self, element_label):
+        i = 0
+        for i in range(0, len(impurity_radiation_module.impurity_arr_label)):
+
+            if element_label == impurity_radiation_module.impurity_arr_label[i]:
+                element2index = i
+                return element2index
+
+            # Should only get here if there is a problem
+
+        error_handling.report_error(34)
+
+    def impradprofile(self, imp_element_index, ne, te, pimp, pbrem, pline):
+        """
+        Implementation of Bremsstrahlung and loss-function curves
+        author: R Kemp, CCFE, Culham Science Centre
+        author: H Lux, CCFE, Culham Science Centre
+        author: P J Knight, CCFE, Culham Science Centre
+        imp_element : input imp_dat : impurity element
+        ne    : input real  : electron density (/m3)
+        te    : input real  : electron temperature (keV)
+        pimp  : output real : total impurity radiation density (W/m3)
+        pbrem : output real : Bremsstrahlung radiation density (W/m3)
+        pline : output real : other radiation density (W/m3)
+        This routine calculates the impurity radiation losses
+        for a given temperature and density. Bremsstrahlung equation
+        from Johner, L(z) data (coronal equilibrium) from Marco
+        Sertoli, Asdex-U, ref. Kallenbach et al.
+        Johner, Fusion Science and Technology 59 (2011), pp 308-349
+        Sertoli, private communication
+        Kallenbach et al., Plasma Phys. Control. Fus. 55(2013) 124041
+        """
+        pbrem = impurity_radiation_module.pbremden(imp_element_index, ne, te)
+
+        #  Total impurity radiation
+
+        pimp = impurity_radiation_module.pimpden(imp_element_index, ne, te)
+
+        if pimp >= pbrem:
+            pline = pimp - pbrem
+            return pline
+        else:  # shouldn't do this... model inconsistency has occurred; okay at high T#
+            pline = 0.0e0
+            pimp = pbrem
+
+    def pbremden(self, imp_element_index, ne, te):
+
+        pbremden = (
+            impurity_radiation_module.impurity_arr_frac[imp_element_index - 1]
+            * ne
+            * ne
+            * (impurity_radiation_module.zav_of_te(imp_element_index, te) ** 2)
+            * 5.355e-37
+            * numpy.sqrt(te)
+        )
+
+        return pbremden
+
+    # def pimpden(self, imp_element_index, ne, te):
+
+    #     if te <= impurity_radiation_module.impurity_arr_temp_kev[imp_element_index, 1]:
+    #         lz = impurity_radiation_module.impurity_arr_lz_wm3[imp_element_index, 1]
+
+    #         if not toolow:
+    #             # !  Only print warning once during a run
+    #             toolow = True
+    #             error_handling.fdiags[0] = te
+    #             error_handling.report_error(35)
+
+    #     print(imp_element_index)
+    #     print(impurity_radiation_module.impurity_arr_len_tab[imp_element_index])
+
+    #     print(
+    #         impurity_radiation_module.impurity_arr_temp_kev[
+    #             imp_element_index,
+    #             impurity_radiation_module.impurity_arr_len_tab[imp_element_index],
+    #         ]
+    #     )
+
+    # elif (
+    #     te
+    #     >= impurity_radiation_module.impurity_arr_temp_kev[
+    #         imp_element_index,
+    #         impurity_radiation_module.impurity_arr_len_tab[imp_element_index],
+    #     ]
+    # ):
+    #     # !  This is okay because Bremsstrahlung will dominate at higher temp.
+    #     lz = impurity_radiation_module.impurity_arr_lz_wm3(
+    #         imp_element_index,
+    #         impurity_radiation_module.impurity_arr_len_tab(imp_element_index),
+    #     )
+
+    # else:
+
+    #     for i in range(
+    #         0, impurity_radiation_module.impurity_arr_len_tab(imp_element_index) - 1
+    #     ):
+
+    #         # !  Linear interpolation in log-log space
+
+    #         if (
+    #             te
+    #             > impurity_radiation_module.impurity_arr_temp_kev(
+    #                 imp_element_index, i
+    #             )
+    #         ) and (
+    #             te
+    #             <= impurity_radiation_module.impurity_arr_temp_kev(
+    #                 imp_element_index, i + 1
+    #             )
+    #         ):
+
+    #             yi = numpy.log(
+    #                 impurity_radiation_module.impurity_arr_lz_wm3(
+    #                     imp_element_index, i
+    #                 )
+    #             )
+    #             xi = numpy.log(
+    #                 impurity_radiation_module.impurity_arr_temp_kev(
+    #                     imp_element_index, i
+    #                 )
+    #             )
+    #             c = (
+    #                 numpy.log(
+    #                     impurity_radiation_module.impurity_arr_lz_wm3(
+    #                         imp_element_index, i + 1
+    #                     )
+    #                 )
+    #                 - yi
+    #             ) / (
+    #                 numpy.log(
+    #                     impurity_radiation_module.impurity_arr_temp_kev(
+    #                         imp_element_index, i + 1
+    #                     )
+    #                 )
+    #                 - xi
+    #             )
+    #             lz = numpy.exp(yi + c * (numpy.log(te) - xi))
+    #             exit
+
+    # pimpden = (
+    #     impurity_radiation_module.impurity_arr_frac(imp_element_index)
+    #     * ne
+    #     * ne
+    #     * lz
+    # )
+    # return pimpden
+
+    def fradcore(self, rho, coreradius, coreradiationfraction):
+        if rho < coreradius:
+            fradcore = coreradiationfraction
+
+        else:
+            fradcore = 0.0e0
+
+        return fradcore
+
+    def zav_of_te(self, imp_element_index, te):
+        if te <= impurity_radiation_module.impurity_arr_temp_kev[imp_element_index, 0]:
+            zav_of_te = impurity_radiation_module.impurity_arr_zav[imp_element_index, 0]
+
+        elif (
+            te
+            >= impurity_radiation_module.impurity_arr_temp_kev[
+                imp_element_index,
+                (impurity_radiation_module.impurity_arr_len_tab[imp_element_index]) - 1,
+            ]
+        ):
+            zav_of_te = impurity_radiation_module.impurity_arr_zav[
+                imp_element_index,
+                impurity_radiation_module.impurity_arr_len_tab[imp_element_index] - 1,
+            ]
+        else:
+
+            for i in range(
+                0, impurity_radiation_module.impurity_arr_len_tab[imp_element_index] - 1
+            ):
+
+                if (
+                    te
+                    > impurity_radiation_module.impurity_arr_temp_kev[
+                        imp_element_index, i
+                    ]
+                ) and (
+                    te
+                    <= impurity_radiation_module.impurity_arr_temp_kev[
+                        imp_element_index, i + 1
+                    ]
+                ):
+
+                    yi = impurity_radiation_module.impurity_arr_zav[
+                        imp_element_index, i
+                    ]
+                    xi = numpy.log(
+                        impurity_radiation_module.impurity_arr_temp_kev[
+                            imp_element_index, i
+                        ]
+                    )
+                    c = (
+                        impurity_radiation_module.impurity_arr_zav[
+                            imp_element_index, i + 1
+                        ]
+                        - yi
+                    ) / (
+                        numpy.log(
+                            impurity_radiation_module.impurity_arr_temp_kev[
+                                imp_element_index, i + 1
+                            ]
+                        )
+                        - xi
+                    )
+                    zav_of_te = yi + c * numpy.log((te) - xi)
+                    print(te)
+                    print(imp_element_index)
+
+        return zav_of_te
