@@ -104,6 +104,17 @@ def parse_args(args):
         type=int,
     )
 
+    parser.add_argument(
+        "-ln",
+        "--label_name",
+        default="",
+        help=(
+            "Label names for plot legend. If multiple input files used then \n"
+            "list the same number of label names eg: -nl 'leg1 leg2'\n"
+            "(default = MFile file name) "
+        ),
+    )
+
     return parser.parse_args(args)
 
 
@@ -121,6 +132,7 @@ def main(args=None):
     output_names = str(args.y_vars)
     save_format = str(args.save_format)
     term_output = args.term_output
+    label_name = str(args.label_name)
     # ---------------------------------------
 
     # Input checks
@@ -133,6 +145,10 @@ def main(args=None):
     input_files = input_files.split(" ")
     while "" in input_files:
         input_files.remove("")
+
+    label_name = label_name.split(" ")
+    while "" in label_name:
+        label_name.remove("")
 
     # If the input file is a directory, add MFILE.DAT
     for ii in range(len(input_files)):
@@ -190,7 +206,7 @@ def main(args=None):
     labels["triang"] = r"$\delta_\mathrm{sep}$"
     labels["f_tf_steel"] = r"f_\mathrm{steel}^\mathrm{TF}"
     labels["plascur/1d6"] = r"$I_{\mathrm{p}}$[$MA$]"
-    labels["n_cycle"] = r"$N_{\mathrm{cycle}}$"
+    labels["n_cycle"] = r"$N_{\mathrm{CS},\mathrm{cycle}}$"
     labels["alstroh"] = r"$\sigma_{\mathrm{oh}}^{\mathrm{max}}$[$Pa$]"
     labels["ohcth"] = r"$\Delta R_{\mathrm{CS}}$[$m$]"
     labels["bore"] = r"$\Delta R_{\mathrm{bore}}$[$m$]"
@@ -204,9 +220,33 @@ def main(args=None):
         "fcuohsu"
     ] = r"$f_{\mathrm{Cu}}^{\mathrm{CS}}$"  # copper fraction of strand in central solenoid
     labels["coheof"] = r"$J [A M^{-2}]$"
-    labels["ohcth"] = r"$ ohcth [m]$"
-    labels["ohhghf"] = r"$ ohghf [m]$"
-
+    labels["ohhghf"] = r"$Thickness_{\mathrm{CS}}[m]$"
+    labels["pheat"] = r"$ P_{\mathrm{heat}}$ [$MW$]"
+    labels["effcd"] = r"$\eta_{\mathrm{CD}}$[$A/W$]"
+    labels["bigq"] = r"$Q$"
+    labels["faccd"] = r"$f_{\mathrm{CD}}$"
+    labels["facoh"] = r"$f_{\mathrm{CD,ind}}$"
+    labels["bootipf"] = r"$f_{\mathrm{BS}}$"
+    labels["itvar035"] = r"$f_{\mathrm{LH}}$"
+    labels["pdivt"] = r"$P_{\mathrm{sep}}$ [$MW$]"
+    labels["pradmw"] = r"$P_{\mathrm{rad}}$ [$MW$]"
+    labels[
+        "pdivtbt/qar"
+    ] = r"$\frac{P_{\mathrm{sep}}B_T}{q_{95}AR_{\mathrm{maj}}}$ [$MWTm^{-1}$]"
+    labels["iooic"] = r"$I_{\mathrm{TF}}/I_{\mathrm{TF},\mathrm{crit}}$"
+    labels["bktlife"] = r"$T_{\mathrm{blk}}$"
+    labels["bktcycles"] = r"$N_{\mathrm{blk},\mathrm{cycle}}$"
+    labels["zeff"] = r"$Z_{\mathrm{eff}}$"
+    labels["tburn"] = r"$t_{\mathrm{burn}}$[$s$]"
+    labels["vburn"] = r"$V_{\mathrm{loop}}$ [$V$]"
+    labels["rli"] = r"$l_i$"
+    labels["n_cycle_min"] = r"$MinCycles_{\mathrm{Stress.min}}^{\mathrm{CS}}$"
+    labels["n_cycle"] = r"$Cycles_{\mathrm{Stress}}^{\mathrm{CS}}$"
+    labels["a_oh_turn"] = r"$Turn_{\mathrm{area}}^{\mathrm{CS}}[$m$^{2}]$"
+    labels["tbrnmn"] = r"$t_{\mathrm{burn.min}}$[$s$]"
+    labels["pfv.oh_steel_frac"] = r"$f_{\mathrm{Steel}}^{\mathrm{CS}}$"
+    labels["csfv.t_structural_radial"] = r"$Turn_{\mathrm{radial}}^{\mathrm{CS}}[$m$]$"
+    labels["csfv.t_crack_vertical"] = r"$Crack_{\mathrm{vertical}}^{\mathrm{CS}}[$m$]$"
     # ------------
 
     # nsweep varible dict
@@ -238,7 +278,7 @@ def main(args=None):
     ] = "bmaxtf"  # bmxlim the maximum T field upper limit is the scan variable
     nsweep_dict[18] = "gammax"
     nsweep_dict[19] = "boundl(16)"
-    nsweep_dict[20] = "tbrnmn"
+    nsweep_dict[20] = "cnstv.tbrnmn"
     nsweep_dict[21] = ""
     nsweep_dict[22] = "cfactr"
     nsweep_dict[23] = "boundu(72)"
@@ -282,6 +322,9 @@ def main(args=None):
     nsweep_dict[62] = "coheof"
     nsweep_dict[63] = "ohcth"
     nsweep_dict[64] = "ohhghf"
+    nsweep_dict[65] = "csfv.n_cycle_min"
+    nsweep_dict[66] = "pfv.oh_steel_frac"
+    nsweep_dict[67] = "csfv.t_crack_vertical"
     # -------------------
 
     # Getting the scanned variable name
@@ -464,6 +507,9 @@ def main(args=None):
         # ------------
         for output_name in output_names:
 
+            # reset counter for label_name
+            kk = 0
+
             # Check if the output variable exists in the MFILE
             if output_name not in m_file.data.keys():
                 continue
@@ -472,12 +518,16 @@ def main(args=None):
             for input_file in input_files:
 
                 # Legend label formating
-                labl = input_file
-                if "/MFILE.DAT" in input_file:
-                    labl = input_file[:-10]
-                elif "MFILE.DAT" in input_file:
-                    labl = input_file[:-9]
-                labl = labl.replace("_", " ")
+                if label_name == []:
+                    labl = input_file
+                    if "/MFILE.DAT" in input_file:
+                        labl = input_file[:-10]
+                    elif "MFILE.DAT" in input_file:
+                        labl = input_file[:-9]
+                    labl = labl.replace("_", " ")
+                else:
+                    labl = label_name[kk]
+                    kk = kk + 1
 
                 # Plot the graph
                 plt.plot(
@@ -499,6 +549,12 @@ def main(args=None):
                 plt.savefig(
                     "{}/scan_{}_vs_{}.{}".format(
                         args.outputdir, scan_var_name, "plascur", save_format
+                    )
+                )
+            elif output_name == "pdivtbt/qar":
+                plt.savefig(
+                    "{}/scan_{}_vs_{}.{}".format(
+                        args.outputdir, scan_var_name, "pdivtbtqar", save_format
                     )
                 )
             else:

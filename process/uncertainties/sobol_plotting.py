@@ -1,6 +1,7 @@
+#!/usr/bin/env python
 """
 Code to create plots from the output of the Sobols
-sensistivity analysis to investiagethe input
+sensistivity analysis to investigate the input
 parameters in PROCESS
 
 Author: A. Pearce (alexander.pearce@ukaea.uk)
@@ -20,22 +21,29 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.backends.backend_pdf as bpdf
 
-if __name__ == "__main__":
 
-    # set up command line arguments
-    PARSER = argparse.ArgumentParser(
+def parse_args(args):
+    """Parse supplied arguments.
+
+    :param args: arguments to parse
+    :type args: list, None
+    :return: parsed arguments
+    :rtype: Namespace
+    """
+    parser = argparse.ArgumentParser(
         description="Program to plot the output of the\
         the Sobols sensistivity analysis at a given PROCESS design point."
     )
 
-    PARSER.add_argument(
+    parser.add_argument(
         "-f",
         "--datafile",
         default="sobol.txt",
         type=str,
         help="datafile for plotting, default = sobol.txt",
     )
-    PARSER.add_argument(
+
+    parser.add_argument(
         "-o",
         "--outputfile",
         default="sobol_output.pdf",
@@ -43,20 +51,26 @@ if __name__ == "__main__":
         help="filename of outputed pdf file, default = sobol_output.pdf",
     )
 
-    ARGS = PARSER.parse_args()
+    return parser.parse_args(args)
+
+
+def main(args=None):
+    """Read Sobol data and create pdf plot"""
+
+    args = parse_args(args)
 
     # setput files
-    INPUTFILE = ARGS.datafile
-    OUTPUTFILE = ARGS.outputfile
-    pdf = bpdf.PdfPages(OUTPUTFILE)
+    input = args.datafile
+    output = args.outputfile
+    pdf = bpdf.PdfPages(output)
     page = plt.figure(figsize=(12, 9), dpi=80)
 
     # read in data
-    names = np.loadtxt(INPUTFILE, dtype=str, usecols=[0], skiprows=1)
-    S1 = np.loadtxt(INPUTFILE, usecols=[1], skiprows=1)
-    S1_conf = np.loadtxt(INPUTFILE, usecols=[2], skiprows=1)
-    ST = np.loadtxt(INPUTFILE, usecols=[3], skiprows=1)
-    ST_conf = np.loadtxt(INPUTFILE, usecols=[4], skiprows=1)
+    names = np.loadtxt(input, dtype=str, usecols=[0], skiprows=1)
+    S1 = np.loadtxt(input, usecols=[1], skiprows=1)
+    S1_conf = np.loadtxt(input, usecols=[2], skiprows=1)
+    ST = np.loadtxt(input, usecols=[3], skiprows=1)
+    ST_conf = np.loadtxt(input, usecols=[4], skiprows=1)
 
     x = np.arange(len(names))
     width = 0.35
@@ -72,3 +86,7 @@ if __name__ == "__main__":
     pdf.savefig(page)
     plt.clf()
     pdf.close()
+
+
+if __name__ == "__main__":
+    main()

@@ -237,7 +237,7 @@ contains
       fcqt, fzeffmax, fstrcase, fhldiv, foh_stress, fwalld, gammax, fjprot, &
       ftohs, tcycmn, auxmin, zeffmax, peakfactrad, fdtmp, fpoloidalpower, &
       fnbshinef, freinke, fvvhe, fqval, fq, ftaucq, fbetap, fbeta, fjohc, &
-      fflutf, bmxlim, tbrnmn, fbetatry_lower, fstr_wp
+      fflutf, bmxlim, tbrnmn, fbetatry_lower, fstr_wp, fncycle
     use cost_variables, only: ucich, uctfsw, dintrt, ucblbe, uubop, dtlife, &
       cost_factor_vv, cfind, uccry, fcap0cp, uccase, uuves, cconshtf, conf_mag, &
       ucbllipb, ucfuel, uumag, ucpfbs, ireactor, uucd, div_umain_time, div_nu, &
@@ -274,7 +274,7 @@ contains
       c5div, ksic, fififi, divplt, delld, c2div, betao, divdum, tdiv, c6div, &
       omegan, prn1, fgamp, frrp, xpertin, c1div, betai, bpsout, xparain, fdiva, &
       zeffdiv, hldivlim, rlenmax, divfix, c3div, divleg_profile_inner, &
-      divleg_profile_outer
+      divleg_profile_outer 
     use fwbs_variables, only: fblhebpo, vfblkt, fdiv, fvolso, fwcoolant, &
       pitch, iblanket, blktmodel, afwi, fblli2o, nphcdin, breeder_multiplier, &
       fw_armour_thickness, roughness, fwclfr, breedmat, fblli, fblvd, &
@@ -308,7 +308,7 @@ contains
       fbmaxcs, ngc, rpf2, fcohbop, ohhghf, vfohc, isumatoh, ngrpmx, ngc2, rpf1, &
       ngrp, isumatpf, nfxfh, alfapf, routr, sigpfcf, pfclres, bmaxcs_lim, &
       ncls, nfixmx, cptdin, ipfloc, i_sup_pf_shape, rref, i_pf_current, &
-      ccl0_ma, ccls_ma
+      ccl0_ma, ccls_ma, ld_ratio_cst
     use physics_variables, only: ipedestal, taumax, i_single_null, fvsbrnni, &
       rhopedt, cvol, fdeut, ffwal, eped_sf, iculbl, itartpf, ilhthresh, &
       fpdivlim, epbetmax, isc, kappa95, aspect, cwrmax, nesep, csawth, dene, &
@@ -376,7 +376,7 @@ contains
     use reinke_variables, only: reinke_mode, fzactual, impvardiv, lhat
     use water_usage_variables, only: airtemp, watertemp, windspeed
     use CS_fatigue_variables, only: residual_sig_hoop, t_crack_radial, t_crack_vertical, &
-      t_structural_vertical, t_structural_radial
+      t_structural_vertical, t_structural_radial, n_cycle_min, bkt_life_csf
     implicit none
 
     !  Arguments
@@ -952,6 +952,9 @@ contains
        case ('fnbshinef')
           call parse_real_variable('fnbshinef', fnbshinef, 0.001D0, 10.0D0, &
                'F-value for maximum NBI shine-through fraction')
+       case ('fncycle')
+          call parse_real_variable('fncycle', fncycle, 1.0D-8, 1.0D0, &
+               'F-value for minimum CS coil stress load cycles')
        case ('fpeakb')
           call parse_real_variable('fpeakb', fpeakb, 0.001D0, 10.0D0, &
                'F-value for max toroidal field')
@@ -3921,11 +3924,14 @@ contains
        case('residual_sig_hoop')
           call parse_real_variable('residual_sig_hoop',residual_sig_hoop, 0.0D0, 1.0D9, &
                'residual hoop stress in strucutal material (Pa) ')
-       case('t_crack_radial')
-          call parse_real_variable('t_crack_radial',t_crack_radial, 1.0D-3, 1.0D0, &
+       case('n_cycle_min')
+         call parse_real_variable('n_cycle_min',n_cycle_min, 0.0D0, 1.0D8, &
+               'Minimum required cycles for CS')
+      case('t_crack_radial')
+          call parse_real_variable('t_crack_radial',t_crack_radial, 1.0D-5, 1.0D0, &
                'Inital radial crack size (m)')
        case('t_crack_vertical')
-          call parse_real_variable('t_crack_vertical',t_crack_vertical, 1.0D-3, 1.0D0, &
+          call parse_real_variable('t_crack_vertical',t_crack_vertical, 1.0D-5, 1.0D0, &
                'Inital vertical crack size (m)')
        case('t_structural_radial')
          call parse_real_variable('t_structural_radial',t_structural_radial, 1.0D-3, 1.0D0, &
@@ -3933,6 +3939,12 @@ contains
        case('t_structural_vertical')
          call parse_real_variable('t_structural_vertical',t_structural_vertical, 1.0D-3, 1.0D0, &
             'CS structural vertical thickness (m)')
+       case('ld_ratio_cst')
+            call parse_real_variable('ld_ratio_cst',ld_ratio_cst, 0.0D0, 5.0D0, &
+               'CS coil turn conduit length to depth ratio')
+       case('bkt_life_csf')
+            call parse_real_variable('bkt_life_csf',bkt_life_csf, 0.0D0, 1.0D0, &
+               'Switch for bkt_life -> n_cycle_min')
 
        case default
           error_message = 'Unknown variable in input file: '//varnam(1:varlen)

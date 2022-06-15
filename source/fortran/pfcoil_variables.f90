@@ -143,6 +143,8 @@ module pfcoil_variables
   !! - =4 ITER Nb3Sn model with user-specified parameters
   !! - =5 WST Nb3Sn parameterisation
   !! - =6 REBCO HTS parameterisation
+  !! - =7 Durham Ginzbug-Landau Nb-Ti parameterisation
+  !! - =8 Branch YCBO model fit to Tallahassee data
 
   integer :: isumatpf
   !! switch for superconductor material in PF coils:
@@ -154,7 +156,10 @@ module pfcoil_variables
   !! - =3 NbTi
   !! - =4 ITER Nb3Sn model with user-specified parameters
   !! - =5 WST Nb3Sn parameterisation
-
+  !! - =6 REBCO HTS parameterisation
+  !! - =7 Durham Ginzbug-Landau Nb-Ti parameterisation
+  !! - =8 Branch YCBO model fit to Tallahassee data
+  
   integer :: i_pf_current
   !! Switch for controlling the current of the PF coils:
   !!
@@ -371,6 +376,21 @@ module pfcoil_variables
   real(dp) :: fbmaxcs
   !! F-value for CS mmax field (`cons. 79`, `itvar 149`)
 
+  real(dp) :: ld_ratio_cst
+  !! Ratio of CS coil turn conduit length to depth
+
+  real(dp) :: l_cond_cst
+  !! Length of CS of CS coil turn conduit
+
+  real(dp) :: d_cond_cst
+  !! Depth/width of CS of CS coil turn conduit
+
+  real(dp) :: r_out_cst
+  !! Length of CS of CS coil turn conduit length
+  
+  real(dp) :: r_in_cst
+  !! Length of CS of CS coil turn conduit length
+
   contains
 
   subroutine init_pfcoil_variables
@@ -471,5 +491,10 @@ module pfcoil_variables
       1.0D0, 1.0D0, 1.0D0, 1.0D0, 1.0D0, 1.0D0, 1.0D0/)
     bmaxcs_lim = 13.0
     fbmaxcs = 13.0
+    ld_ratio_cst = 70/22
+    l_cond_cst = 0.0D0
+    d_cond_cst = 0.0D0
+    r_in_cst = 0.0D0
+    r_out_cst = 3.0D-3
   end subroutine init_pfcoil_variables
 end module pfcoil_variables

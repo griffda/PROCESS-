@@ -20,6 +20,7 @@ MACRO(FindPreprocessingVars)
     )
     STRING(STRIP ${GIT_DIFF} GIT_DIFF)
     STRING(REPLACE "'" "|" COMMIT_MSG ${COMMIT_MSG})
+    STRING(REPLACE "\"" "|" COMMIT_MSG ${COMMIT_MSG})
 
     EXECUTE_PROCESS (
         COMMAND bash -c "echo \"$(git -C ${CMAKE_SOURCE_DIR} describe --tags)\"|tr '\n' ' '"

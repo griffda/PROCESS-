@@ -34,7 +34,6 @@ contains
       use pfcoil_module, only: init_pfcoil_module
       use physics_module, only: init_physics_module
       use physics_variables, only: init_physics_variables
-      use power_module, only: init_power_module
       use read_and_get_atomic_data, only: init_read_and_get_atomic_data
       use read_radiation, only: init_read_radiation
       use scan_module, only: init_scan_module
@@ -57,7 +56,6 @@ contains
       use stellarator_variables, only: init_stellarator_variables
       use pulse_variables, only: init_pulse_variables
       use startup_variables, only: init_startup_variables
-      use fispact_variables, only: init_fispact_variables
       use rebco_variables, only: init_rebco_variables
       use reinke_variables, only: init_reinke_variables
       use divertor_ode_var, only: init_divertor_ode_var
@@ -89,7 +87,6 @@ contains
       call init_pfcoil_module
       call init_physics_module
       call init_physics_variables
-      call init_power_module
       call init_read_and_get_atomic_data
       call init_read_radiation
       call init_scan_module
@@ -112,7 +109,6 @@ contains
       call init_stellarator_variables
       call init_pulse_variables
       call init_startup_variables
-      call init_fispact_variables
       call init_rebco_variables
       call init_reinke_variables
       call init_divertor_ode_var
