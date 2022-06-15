@@ -46,6 +46,26 @@ It is incumbent on the author to check the test results created by their code ch
 
 For a guide on contributing code to PROCESS, see `CONTRIBUTING.md`.
 
+### Speeding up tests
+
+Running the entire test suite can be time consuming, as by default it runs on a single core. `pytest-xdist` allows `pytest` tests to be distributed across multiple cores to speed up testing.
+
+`pytest-xdist` should be installed already (included in `requirements.txt`), but if not it can be installed manually with:
+```
+pip install pytest-xdist
+```
+
+To run tests on as many processes as your computer has CPU cores, use:
+```
+pytest -n auto
+```
+
+This can result in considerable speedups when running tests. Normal `pytest` commands can also be combined, e.g.
+```
+pytest -n auto -k regression
+```
+runs just the regression tests on all available cores.
+
 ## pytest failures on older OS's
 As discussed in the Installation guide, PROCESS is dependant on a number of dynamically linked libraries. The versions of these libraries are different on different versions of OS's. This introduces floating-point differences in the code which can propogate and show tests failing by ~0.70%. The cause of such issues has been isolated and will be highlighted by a warning message when running pytest:
 
