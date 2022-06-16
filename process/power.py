@@ -1155,7 +1155,7 @@ class Power:
         if self.iprimdiv == 1:
             po.ocmmnt(
                 self.outfile,
-                "Divertor thermal power is collected at only 150 C and is used to          &preheat the coolant in the power cycle",
+                "Divertor thermal power is collected at only 150 C and is used to preheat the coolant in the power cycle",
             )
         elif self.iprimdiv == 0:
             po.ocmmnt(
@@ -1166,7 +1166,7 @@ class Power:
         if heat_transport_variables.iprimshld == 1:
             po.ocmmnt(
                 self.outfile,
-                "Shield thermal power is collected at only 150 C and is used to          &preheat the coolant in the power cycle",
+                "Shield thermal power is collected at only 150 C and is used to preheat the coolant in the power cycle",
             )
         elif heat_transport_variables.iprimshld == 0:
             po.ocmmnt(
