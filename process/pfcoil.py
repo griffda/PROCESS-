@@ -936,6 +936,44 @@ class PFCoil:
 
         return bfix
 
+    def tf_pf_collision_detector(self):
+        #  Collision test between TF and PF coils for picture frame TF
+        #  See issue 1612
+        #  https://git.ccfe.ac.uk/process/process/-/issues/1612
+
+        if tfv.i_tf_shape == 2:
+            pf_tf_collision = 0
+
+            for i in range(pfv.ngrp):
+                for ii in range(pfv.ngrp):
+                    for ij in range(pfv.ncls[ii]):
+                        if pf.rcls[ii, ij] <= (  # Outboard TF coil collision
+                            pf.rclsnorm - pfv.routr + pfv.rpf[i]
+                        ) and pf.rcls[ii, ij] >= (
+                            bv.r_tf_outboard_mid - (0.5 * bv.tfthko) - pfv.rpf[i]
+                        ):
+                            pf_tf_collision += 1
+                        if pf.rcls[ii, ij] <= (  # Inboard TF coil collision
+                            bv.bore
+                            + bv.ohcth
+                            + bv.precomp
+                            + bv.gapoh
+                            + bv.tfcth
+                            + pfv.rpf[i]
+                        ) and pf.rcls[ii, ij] >= (
+                            bv.bore + bv.ohcth + bv.precomp + bv.gapoh - pfv.rpf[i]
+                        ):
+                            pf_tf_collision += 1
+                        if (  # Vertical TF coil collision
+                            abs(pf.zcls[ii, ij]) <= bv.hpfu + pfv.rpf[i]
+                            and abs(pf.zcls[ii, ij])
+                            >= bv.hpfu - (0.5 * bv.tfthko) - pfv.rpf[i]
+                        ):
+                            pf_tf_collision += 1
+
+                        if pf_tf_collision >= 1:
+                            eh.report_error(277)
+
     def mtrx(
         self,
         lrow1,
@@ -2483,6 +2521,7 @@ class PFCoil:
                 f"(bpf[{k}])",
                 pfv.bpf[k],
             )
+        self.tf_pf_collision_detector()
 
         # Central Solenoid, if present
         if bv.iohcl != 0:
