@@ -1,6 +1,7 @@
-from genericpath import exists
-
+import pathlib
+import math
 import numpy
+import pandas
 from process.fortran import impurity_radiation_module
 from process.fortran import error_handling
 
@@ -37,7 +38,7 @@ class Impurity:
 
         #  Hydrogen
 
-        impurity_radiation_module.init_imp_element(
+        self.init_imp_element(
             no=1,
             label=impurity_radiation_module.imp_label[0],
             z=1,
@@ -52,7 +53,7 @@ class Impurity:
         frac = 0.0e0
 
         #  Helium
-        impurity_radiation_module.init_imp_element(
+        self.init_imp_element(
             2,
             impurity_radiation_module.imp_label[1],
             2,
@@ -65,7 +66,7 @@ class Impurity:
         )
 
         #  Beryllium
-        impurity_radiation_module.init_imp_element(
+        self.init_imp_element(
             3,
             impurity_radiation_module.imp_label[2],
             4,
@@ -78,7 +79,7 @@ class Impurity:
         )
 
         #  Carbon
-        impurity_radiation_module.init_imp_element(
+        self.init_imp_element(
             4,
             impurity_radiation_module.imp_label[3],
             6,
@@ -91,7 +92,7 @@ class Impurity:
         )
 
         #  Nitrogen
-        impurity_radiation_module.init_imp_element(
+        self.init_imp_element(
             5,
             impurity_radiation_module.imp_label[4],
             7,
@@ -104,7 +105,7 @@ class Impurity:
         )
 
         #  Oxygen
-        impurity_radiation_module.init_imp_element(
+        self.init_imp_element(
             6,
             impurity_radiation_module.imp_label[5],
             8,
@@ -117,7 +118,7 @@ class Impurity:
         )
 
         #  Neon
-        impurity_radiation_module.init_imp_element(
+        self.init_imp_element(
             7,
             impurity_radiation_module.imp_label[6],
             10,
@@ -130,7 +131,7 @@ class Impurity:
         )
 
         #  Silicon
-        impurity_radiation_module.init_imp_element(
+        self.init_imp_element(
             8,
             impurity_radiation_module.imp_label[7],
             14,
@@ -143,7 +144,7 @@ class Impurity:
         )
 
         #  Argon
-        impurity_radiation_module.init_imp_element(
+        self.init_imp_element(
             9,
             impurity_radiation_module.imp_label[8],
             18,
@@ -156,7 +157,7 @@ class Impurity:
         )
 
         #  Iron
-        impurity_radiation_module.init_imp_element(
+        self.init_imp_element(
             10,
             impurity_radiation_module.imp_label[9],
             26,
@@ -169,7 +170,7 @@ class Impurity:
         )
 
         #  Nickel
-        impurity_radiation_module.init_imp_element(
+        self.init_imp_element(
             11,
             impurity_radiation_module.imp_label[10],
             28,
@@ -182,7 +183,7 @@ class Impurity:
         )
 
         #  Krypton
-        impurity_radiation_module.init_imp_element(
+        self.init_imp_element(
             12,
             impurity_radiation_module.imp_label[11],
             36,
@@ -195,7 +196,7 @@ class Impurity:
         )
 
         #  Xenon
-        impurity_radiation_module.init_imp_element(
+        self.init_imp_element(
             13,
             impurity_radiation_module.imp_label[12],
             54,
@@ -208,7 +209,7 @@ class Impurity:
         )
 
         #  Tungsten
-        impurity_radiation_module.init_imp_element(
+        self.init_imp_element(
             14,
             impurity_radiation_module.imp_label[13],
             74,
@@ -221,7 +222,7 @@ class Impurity:
         )
 
     def init_imp_element(
-        self, no, label, Z, amass, frac, len_tab, TinkeV, LzinWm3, error
+        self, no, label, z, amass, frac, len_tab, tinkev, lzinwm3, error
     ):
         """
         Initialises the impurity radiation data for a species
@@ -247,18 +248,18 @@ class Impurity:
         if error == 1:
             return
 
-        if no > len(impurity_radiation_module.impurity_arr_Label):
+        if no > len(impurity_radiation_module.impurity_arr_label):
             error_handling.idiags[0] = no
-            error_handling.idiags[1] = len(impurity_radiation_module.impurity_arr_Label)
+            error_handling.idiags[1] = len(impurity_radiation_module.impurity_arr_label)
             error_handling.report_error(27)
 
-        impurity_radiation_module.impurity_arr_Label[no] = label
-        impurity_radiation_module.impurity_arr_Z[no] = Z
-        impurity_radiation_module.impurity_arr_amass[no] = amass
-        impurity_radiation_module.impurity_arr_frac[no] = frac
-        impurity_radiation_module.impurity_arr_len_tab[no] = len_tab
+        impurity_radiation_module.impurity_arr_label[no - 1] = label
+        impurity_radiation_module.impurity_arr_z[no - 1] = z
+        impurity_radiation_module.impurity_arr_amass[no - 1] = amass
+        impurity_radiation_module.impurity_arr_frac[no - 1] = frac
+        impurity_radiation_module.impurity_arr_len_tab[no - 1] = len_tab
 
-        if len_tab > (impurity_radiation_module.all_array_hotfix_len):
+        if len_tab > 100:
             print(
                 f"ERROR: len_tab is {len_tab} but has a maximum value of {impurity_radiation_module.all_array_hotfix_len}"
             )
@@ -266,27 +267,37 @@ class Impurity:
         #  Read tabulated data in from file, assuming it exists
         #  Add trailing / to impdir if necessary
 
-        filename = label + "Lzdata.dat"
+        filename = label.decode("utf-8") + "Lzdata.dat"
 
-        if str.index(impurity_radiation_module.impdir(), "/") == len(
+        if str.index((impurity_radiation_module.impdir()).decode("utf-8"), "/") == len(
             impurity_radiation_module.impdir().strip()
         ):
             fullpath = (impurity_radiation_module.impdir().strip()) + (filename).strip()
         else:
             fullpath = (
-                (impurity_radiation_module.impdir().strip()) + "/" + (filename).strip()
+                ((impurity_radiation_module.impdir().strip().decode("utf-8")))
+                + "/"
+                + (filename).strip()
             )
 
-        exists(file=(fullpath).strip(), exist=impurity_radiation_module.iexist)
+        my_file = pathlib.Path((fullpath).strip())
+        print(my_file)
 
-        if impurity_radiation_module.iexist:
-            impurity_radiation_module.import_impdata(
-                fullpath,
-                len_tab,
-                impurity_radiation_module.impurity_arr_Temp_keV[no, :],
-                impurity_radiation_module.impurity_arr_Lz_Wm3[no, :],
-                impurity_radiation_module.impurity_arr_Zav[no, :],
-            )
+        if my_file.exists():
+            with open(fullpath.strip(), "r") as f:
+                impurity_df = pandas.read_csv(
+                    f,
+                    delimiter="  ",
+                    header=1,
+                    names=["T", "Lz", "Z_av"],
+                    engine="python",
+                )
+
+            impurity_radiation_module.impurity_arr_temp_kev[no - 1, :] = impurity_df[
+                "T"
+            ]
+            impurity_radiation_module.impurity_arr_lz_wm3[no - 1, :] = impurity_df["Lz"]
+            impurity_radiation_module.impurity_arr_zav[no - 1, :] = impurity_df["Z_av"]
         else:
             raise FileNotFoundError(
                 "Warning :  Cannot find impurity data please check path."
@@ -295,84 +306,17 @@ class Impurity:
         #  Convert tabulated units if necessary
 
         for i in range(0, len_tab):
-            impurity_radiation_module.impurity_arr_Temp_keV[no, i] = (
-                impurity_radiation_module.impurity_arr_Temp_keV[no, i] * TinkeV
+            impurity_radiation_module.impurity_arr_temp_kev[no - 1, i] = (
+                impurity_radiation_module.impurity_arr_temp_kev[no - 1, i] * tinkev
             )  # keV
-            impurity_radiation_module.impurity_arr_Lz_Wm3[no, i] = (
-                impurity_radiation_module.impurity_arr_Lz_Wm3[no, i] * LzinWm3
+            impurity_radiation_module.impurity_arr_lz_wm3[no - 1, i] = (
+                impurity_radiation_module.impurity_arr_lz_wm3[no - 1, i] * lzinwm3
             )  # W/m3
-
-    # def import_impdata(self, filename, nlines, col1, col2, col3, skiprows, fmt):
-    #     """
-    #     Reads two columns of data from file
-    #     author: H Lux, CCFE, Culham Science Centre
-    #     filename : input char(len=256)     : input filename
-    #     nlines   : input integer           : no. of lines to be read
-    #     col1(nlines) : output real array   : data in column1
-    #     col2(nlines) : output real array   : data in column2
-    #     col3(nlines) : output real array   : data in column3
-    #     skiprows : optional input integer  : no. of initial rows to skip
-    #     fmt      : optional input char(len=256) : data format
-    #     This routine reads in the data of a two column file and
-    #     returns it. The first two rows are skipped by default.
-    #     N/A
-    #     """
-
-    #     #  Local variables
-
-    #     unit = 18
-    #     i = 0
-    #     iostat = 0
-    #     in1 = 0
-    #     in2 = 0
-    #     in3 = 0
-    #     # ###############################################
-
-    #     #  Optional variables
-
-    #     if (skiprows) in locals():
-    #         local_skip = skiprows
-    #     else:
-    #         local_skip = 2
-
-    #     if (fmt) in locals() :
-    #         local_fmt = fmt
-    #     else:
-    #         local_fmt = '(3F10.2)'
-
-    #     open(unit=unit, file=(filename).strip(), status='old', action='read', iostat=iostat)
-
-    #     if (iostat != 0) :
-    #         error_handling.idiags[0] = iostat
-    #         error_handling.report_error(30)
-
-    #     #  Skip first lines (comments)
-
-    #     for i in range(0, local_skip):
-    #         read(unit,*,iostat=iostat) buffer
-    #     if (iostat > 0) :
-    #         error_handling.idiags[0] = iostat
-    #         error_handling.report_error(31)
-
-    #     for i in range(0, nlines):
-    #         read(unit=unit, fmt=local_fmt, iostat=iostat) in1, in2, in3
-    #     if (iostat > 0) :
-    #         error_handling.idiags[0] = iostat ;
-    #         error_handling.idiags[1] = i
-    #         error_handling.report_error(32)
-    #     elif  (iostat < 0) :
-    #         exit  #  EOF
-    #     else:
-    #         col1[i-1] = in1
-    #         col2[i-1] = in2
-    #         col3[i-1] = in3
-
-    #     close(unit)
 
     def z2index(self, zimp):
 
         for i in range(0, len(impurity_radiation_module.impurity_arr_label)):
-            if zimp == impurity_radiation_module.impurity_arr_Z[i]:
+            if zimp == impurity_radiation_module.impurity_arr_z[i]:
                 z2index = i
                 return z2index
 
@@ -381,17 +325,17 @@ class Impurity:
         error_handling.idiags[0] = zimp
         error_handling.report_error(33)
 
-    def element2index(self, element_label):
-        i = 0
-        for i in range(0, len(impurity_radiation_module.impurity_arr_label)):
+    def element2index(self, element_label: str):
 
-            if element_label == impurity_radiation_module.impurity_arr_label[i]:
-                element2index = i
-                return element2index
-
-            # Should only get here if there is a problem
-
-        error_handling.report_error(34)
+        try:
+            return (
+                list(impurity_radiation_module.impurity_arr_label).index(
+                    element_label.encode("utf-8")
+                )
+                + 1
+            )
+        except ValueError:
+            error_handling.report_error(34)
 
     def impradprofile(self, imp_element_index, ne, te, pimp, pbrem, pline):
         """
@@ -413,18 +357,19 @@ class Impurity:
         Sertoli, private communication
         Kallenbach et al., Plasma Phys. Control. Fus. 55(2013) 124041
         """
-        pbrem = impurity_radiation_module.pbremden(imp_element_index, ne, te)
+        pbrem = self.pbremden(imp_element_index, ne, te)
 
         #  Total impurity radiation
 
-        pimp = impurity_radiation_module.pimpden(imp_element_index, ne, te)
+        pimp = self.pimpden(imp_element_index, ne, te)
 
         if pimp >= pbrem:
             pline = pimp - pbrem
-            return pline
+
         else:  # shouldn't do this... model inconsistency has occurred; okay at high T#
             pline = 0.0e0
             pimp = pbrem
+        return pline
 
     def pbremden(self, imp_element_index, ne, te):
 
@@ -432,102 +377,12 @@ class Impurity:
             impurity_radiation_module.impurity_arr_frac[imp_element_index - 1]
             * ne
             * ne
-            * (impurity_radiation_module.zav_of_te(imp_element_index, te) ** 2)
+            * (self.zav_of_te(imp_element_index, te) ** 2)
             * 5.355e-37
             * numpy.sqrt(te)
         )
 
         return pbremden
-
-    # def pimpden(self, imp_element_index, ne, te):
-
-    #     if te <= impurity_radiation_module.impurity_arr_temp_kev[imp_element_index, 1]:
-    #         lz = impurity_radiation_module.impurity_arr_lz_wm3[imp_element_index, 1]
-
-    #         if not toolow:
-    #             # !  Only print warning once during a run
-    #             toolow = True
-    #             error_handling.fdiags[0] = te
-    #             error_handling.report_error(35)
-
-    #     print(imp_element_index)
-    #     print(impurity_radiation_module.impurity_arr_len_tab[imp_element_index])
-
-    #     print(
-    #         impurity_radiation_module.impurity_arr_temp_kev[
-    #             imp_element_index,
-    #             impurity_radiation_module.impurity_arr_len_tab[imp_element_index],
-    #         ]
-    #     )
-
-    # elif (
-    #     te
-    #     >= impurity_radiation_module.impurity_arr_temp_kev[
-    #         imp_element_index,
-    #         impurity_radiation_module.impurity_arr_len_tab[imp_element_index],
-    #     ]
-    # ):
-    #     # !  This is okay because Bremsstrahlung will dominate at higher temp.
-    #     lz = impurity_radiation_module.impurity_arr_lz_wm3(
-    #         imp_element_index,
-    #         impurity_radiation_module.impurity_arr_len_tab(imp_element_index),
-    #     )
-
-    # else:
-
-    #     for i in range(
-    #         0, impurity_radiation_module.impurity_arr_len_tab(imp_element_index) - 1
-    #     ):
-
-    #         # !  Linear interpolation in log-log space
-
-    #         if (
-    #             te
-    #             > impurity_radiation_module.impurity_arr_temp_kev(
-    #                 imp_element_index, i
-    #             )
-    #         ) and (
-    #             te
-    #             <= impurity_radiation_module.impurity_arr_temp_kev(
-    #                 imp_element_index, i + 1
-    #             )
-    #         ):
-
-    #             yi = numpy.log(
-    #                 impurity_radiation_module.impurity_arr_lz_wm3(
-    #                     imp_element_index, i
-    #                 )
-    #             )
-    #             xi = numpy.log(
-    #                 impurity_radiation_module.impurity_arr_temp_kev(
-    #                     imp_element_index, i
-    #                 )
-    #             )
-    #             c = (
-    #                 numpy.log(
-    #                     impurity_radiation_module.impurity_arr_lz_wm3(
-    #                         imp_element_index, i + 1
-    #                     )
-    #                 )
-    #                 - yi
-    #             ) / (
-    #                 numpy.log(
-    #                     impurity_radiation_module.impurity_arr_temp_kev(
-    #                         imp_element_index, i + 1
-    #                     )
-    #                 )
-    #                 - xi
-    #             )
-    #             lz = numpy.exp(yi + c * (numpy.log(te) - xi))
-    #             exit
-
-    # pimpden = (
-    #     impurity_radiation_module.impurity_arr_frac(imp_element_index)
-    #     * ne
-    #     * ne
-    #     * lz
-    # )
-    # return pimpden
 
     def fradcore(self, rho, coreradius, coreradiationfraction):
         if rho < coreradius:
@@ -562,6 +417,82 @@ class Impurity:
                 if (
                     te
                     > impurity_radiation_module.impurity_arr_temp_kev[
+                        imp_element_index - 1, i
+                    ]
+                ) and (
+                    te
+                    <= impurity_radiation_module.impurity_arr_temp_kev[
+                        imp_element_index - 1, i + 1
+                    ]
+                ):
+
+                    yi = impurity_radiation_module.impurity_arr_zav[
+                        imp_element_index - 1, i
+                    ]
+                    xi = numpy.log(
+                        impurity_radiation_module.impurity_arr_temp_kev[
+                            imp_element_index - 1, i
+                        ]
+                    )
+                    c = (
+                        impurity_radiation_module.impurity_arr_zav[
+                            imp_element_index - 1, i + 1
+                        ]
+                        - yi
+                    ) / (
+                        numpy.log(
+                            impurity_radiation_module.impurity_arr_temp_kev[
+                                imp_element_index - 1, i + 1
+                            ]
+                        )
+                        - xi
+                    )
+
+                    zav_of_te = yi + c * numpy.log((te) - xi)
+
+        return zav_of_te
+
+    def pimpden(self, imp_element_index, ne, te):
+
+        if (
+            te
+            <= impurity_radiation_module.impurity_arr_temp_kev[imp_element_index - 1, 0]
+        ):
+
+            lz = impurity_radiation_module.impurity_arr_lz_wm3[imp_element_index - 1, 0]
+
+            if (
+                not impurity_radiation_module.toolow
+            ):  # Only print warning once during a run
+                impurity_radiation_module.toolow = True
+                error_handling.fdiags[0] = te
+                error_handling.report_error(35)
+
+        elif (
+            te
+            >= impurity_radiation_module.impurity_arr_temp_kev[
+                imp_element_index - 1,
+                impurity_radiation_module.impurity_arr_len_tab[imp_element_index] - 1,
+            ]
+        ):
+            #  This is okay because Bremsstrahlung will dominate at higher temp.
+            lz = impurity_radiation_module.impurity_arr_lz_wm3[
+                imp_element_index - 1,
+                impurity_radiation_module.impurity_arr_len_tab[imp_element_index] - 1,
+            ]
+
+        else:
+
+            for i in range(
+                0,
+                impurity_radiation_module.impurity_arr_len_tab[imp_element_index] - 1,
+            ):
+
+                #  Linear interpolation in log-log space
+
+                if (
+                    te
+                    > impurity_radiation_module.impurity_arr_temp_kev[
                         imp_element_index, i
                     ]
                 ) and (
@@ -570,19 +501,27 @@ class Impurity:
                         imp_element_index, i + 1
                     ]
                 ):
-
-                    yi = impurity_radiation_module.impurity_arr_zav[
-                        imp_element_index, i
-                    ]
+                    print(
+                        impurity_radiation_module.impurity_arr_lz_wm3[
+                            imp_element_index - 1, i
+                        ]
+                    )
+                    yi = numpy.log(
+                        impurity_radiation_module.impurity_arr_lz_wm3[
+                            imp_element_index - 1, i
+                        ]
+                    )
                     xi = numpy.log(
                         impurity_radiation_module.impurity_arr_temp_kev[
                             imp_element_index, i
                         ]
                     )
                     c = (
-                        impurity_radiation_module.impurity_arr_zav[
-                            imp_element_index, i + 1
-                        ]
+                        numpy.log(
+                            impurity_radiation_module.impurity_arr_lz_wm3[
+                                imp_element_index - 1, i + 1
+                            ]
+                        )
                         - yi
                     ) / (
                         numpy.log(
@@ -592,8 +531,15 @@ class Impurity:
                         )
                         - xi
                     )
-                    zav_of_te = yi + c * numpy.log((te) - xi)
-                    print(te)
-                    print(imp_element_index)
+                    lz = math.exp(yi + c * (numpy.log(te) - xi))
 
-        return zav_of_te
+                    print(f"numpy.log(te)=  {numpy.log(te)}")
+
+        pimpden = (
+            impurity_radiation_module.impurity_arr_frac[imp_element_index - 1]
+            * ne
+            * ne
+            * lz
+        )
+
+        return pimpden

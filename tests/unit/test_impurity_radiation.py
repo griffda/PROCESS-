@@ -49,7 +49,7 @@ def test_pbremden(imp_element_index, ne, te, expected_pbremden, impurity):
     "imp_element_index, ne, te, expected_pimpden",
     [(1, 9.7756695233913373e19, 28.089474310325262, 27565.006789581912)],
 )
-def test_pimpden(imp_element_index, ne, te, expected_pimpden):
+def test_pimpden(imp_element_index, ne, te, expected_pimpden, impurity):
     """Tests `pimpden` function.
 
     :param imp_element_index: impurity element
@@ -64,7 +64,7 @@ def test_pimpden(imp_element_index, ne, te, expected_pimpden):
     :param expected_pimpden: Total impurity radiation density (W/m3)
     :type expected_pimpden: float
     """
-    pimpden = impurity_radiation_module.pimpden(imp_element_index, ne, te)
+    pimpden = impurity.pimpden(imp_element_index, ne, te)
 
     assert pytest.approx(pimpden) == expected_pimpden
 
@@ -135,7 +135,7 @@ def test_Zav_of_te(imp_element_index, te, expected_zav_of_te, impurity):
         )
     ],
 )
-def test_element2index(element_label, expected_element2index):
+def test_element2index(element_label, expected_element2index, impurity):
     """Tests `element2index` function.
 
     :param element_label: impurity name
@@ -144,6 +144,6 @@ def test_element2index(element_label, expected_element2index):
     :param expected_element2index: Returns the index of the element in the impurity array with a given name
     :type expected_element2index: int
     """
-    element2index = impurity_radiation_module.element2index(element_label)
+    element2index = impurity.element2index(element_label)
 
     assert pytest.approx(element2index) == expected_element2index
