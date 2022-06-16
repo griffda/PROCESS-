@@ -6,12 +6,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-1904-g7ad48c0f1
+   Tag No. : v2.1-1920-gc96965be3
     Branch : HEAD
-   Git log : Merge branch |1684-running-power-py-causes-warnings-in-output| into |develop|
- Date/time : 16 Jun 2022 10:38:28 +00:00(hh:mm) UTC
+   Git log : Merge branch |1320-add-output-to-csv-functionality| into |develop|
+ Date/time : 16 Jun 2022 15:58:46 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-91be33e7-project-20-concurrent-0
+  Computer : runner-nkpubsxk-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_steady_state_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
