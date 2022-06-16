@@ -931,7 +931,7 @@ module cost_variables
     wfbuilding = 1.0D8
     whole_site_area = 1.0D6
     isitetype = 0
-    isiteaccomm = 0
+    isiteaccomm = 1
     igridconn = 0
     irailaccess = 0
 
