@@ -6963,6 +6963,12 @@ class Sctfcoil:
         # Area of inter-turn insulation: single turn [m2]
         insulation_area = a_turn - tfcoil_variables.t_conductor**2
 
+        # NOTE: Fortran has acstf as an intent(out) variable that was outputting
+        # into tfcoil_variables.acstf. The local variable, however, appears to
+        # initially hold the value of tfcoil_variables.acstf despite not being
+        # intent(in). I have replicated this behaviour in Python for now.
+        acstf = copy.copy(tfcoil_variables.acstf)
+
         # ITER like turn structure
         if i_tf_sc_mat != 6:
             # Radius of rounded corners of cable space inside conduit [m]
@@ -6996,6 +7002,6 @@ class Sctfcoil:
             sctfcoil_module.t_cable = tfcoil_variables.t_conductor - 2.0e0 * thwcndut
 
             # Cross-sectional area of conduit jacket per turn [m2]
-            acndttf = tfcoil_variables.t_conductor**2 - tfcoil_variables.acstfx
+            acndttf = tfcoil_variables.t_conductor**2 - acstf
 
         return acstf, acndttf, insulation_area, n_tf_turn
