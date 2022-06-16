@@ -14,12 +14,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-1901-g5d80627b3
+   Tag No. : v2.1-1904-g7ad48c0f1
     Branch : HEAD
-   Git log : Merge branch |1612-pf-and-tf-coil-collision-warning-2| into |develop|
- Date/time : 16 Jun 2022  9:46:23 +00:00(hh:mm) UTC
+   Git log : Merge branch |1684-running-power-py-causes-warnings-in-output| into |develop|
+ Date/time : 16 Jun 2022 10:30:12 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-9dc50af2-project-20-concurrent-0
+  Computer : runner-91be33e7-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_FNSF_0/IN.DAT
  Run title : FNSF (Menard et al. 2016)
@@ -1239,7 +1239,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Plant thermodynamics: options :
  
  Divertor thermal power is not used, but rejected directly to the environment.
- Shield thermal power is collected at only 150 C and is used to          &preheat the coolant in the power cycle
+ Shield thermal power is collected at only 150 C and is used to preheat the coolant in the power cycle
  Power conversion cycle efficiency model: efficiency set according to blanket type (div power to secondary)
  Fraction of total high-grade thermal power to divertor                   (pdivfraction)                0.362  OP 
  
