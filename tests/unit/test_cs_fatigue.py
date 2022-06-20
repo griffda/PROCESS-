@@ -1,9 +1,19 @@
 import pytest
-import numpy
 from typing import NamedTuple, Any
-
-
 from process.fortran import cs_fatigue
+from process.cs_fatigue import CsFatigue
+
+
+@pytest.fixture
+def cs_fatigue_python():
+    """Fixture to create a PFCoil object.
+
+    :return: an instance of PFCoil
+    :rtype: process.pfcoil.PFCoil
+    """
+    cs_fatigue_python = CsFatigue()
+
+    return cs_fatigue_python
 
 
 class NcycleParam(NamedTuple):
@@ -54,7 +64,7 @@ class NcycleParam(NamedTuple):
         ),
     ),
 )
-def test_ncycle(ncycleparam, monkeypatch):
+def test_ncycle(ncycleparam, monkeypatch, cs_fatigue_python):
     """
     Automatically generated Regression Unit Test for ncycle.
 
@@ -67,17 +77,12 @@ def test_ncycle(ncycleparam, monkeypatch):
     :type monkeypatch: _pytest.monkeypatch.monkeypatch
     """
 
-    t_crack_radial = numpy.array(ncycleparam.t_crack_radial)
-    n_cycle = numpy.array(ncycleparam.n_cycle)
-
-    cs_fatigue.ncycle(
+    n_cycle, t_crack_radial = cs_fatigue_python.ncycle(
         max_hoop_stress=ncycleparam.max_hoop_stress,
         residual_stress=ncycleparam.residual_stress,
         t_crack_vertical=ncycleparam.t_crack_vertical,
         t_structural_vertical=ncycleparam.t_structural_vertical,
         t_structural_radial=ncycleparam.t_structural_radial,
-        n_cycle=n_cycle,
-        t_crack_radial=t_crack_radial,
     )
 
     assert n_cycle == pytest.approx(ncycleparam.expected_n_cycle)
