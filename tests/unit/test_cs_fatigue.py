@@ -1,6 +1,5 @@
 import pytest
 from typing import NamedTuple, Any
-from process.fortran import cs_fatigue
 from process.cs_fatigue import CsFatigue
 
 
@@ -104,7 +103,9 @@ def test_ncycle(ncycleparam, monkeypatch, cs_fatigue_python):
         )
     ],
 )
-def test_embedded_stress_intensity_factor(hoop_stress, t, w, a, c, phi, expected_k):
+def test_embedded_stress_intensity_factor(
+    hoop_stress, t, w, a, c, phi, expected_k, cs_fatigue_python
+):
     """Tests `he_density` subroutine.
 
     :param temperature: test asset passed to the routine representing the temperature, in Kelvin.
@@ -116,7 +117,7 @@ def test_embedded_stress_intensity_factor(hoop_stress, t, w, a, c, phi, expected
     :param tfcoil: fixture containing an initialised `TFcoil` object
     :type tfcoil: tests.unit.test_tfcoil.tfcoil (functional fixture)
     """
-    k = cs_fatigue.embedded_stress_intensity_factor(hoop_stress, t, w, a, c, phi)
+    k = cs_fatigue_python.embedded_stress_intensity_factor(hoop_stress, t, w, a, c, phi)
 
     assert pytest.approx(k) == expected_k
 
@@ -135,7 +136,9 @@ def test_embedded_stress_intensity_factor(hoop_stress, t, w, a, c, phi, expected
         )
     ],
 )
-def test_surface_stress_intensity_factor(hoop_stress, t, w, a, c, phi, expected_k):
+def test_surface_stress_intensity_factor(
+    hoop_stress, t, w, a, c, phi, expected_k, cs_fatigue_python
+):
     """Tests `he_density` subroutine.
 
     :param temperature: test asset passed to the routine representing the temperature, in Kelvin.
@@ -147,6 +150,6 @@ def test_surface_stress_intensity_factor(hoop_stress, t, w, a, c, phi, expected_
     :param tfcoil: fixture containing an initialised `TFcoil` object
     :type tfcoil: tests.unit.test_tfcoil.tfcoil (functional fixture)
     """
-    k = cs_fatigue.surface_stress_intensity_factor(hoop_stress, t, w, a, c, phi)
+    k = cs_fatigue_python.surface_stress_intensity_factor(hoop_stress, t, w, a, c, phi)
 
     assert pytest.approx(k) == expected_k
