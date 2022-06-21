@@ -171,8 +171,8 @@ class CoolingWaterBodyParam(NamedTuple):
             expected_evapvol=23306.140640523186,
             expected_energypervol=6071017075.9073286,
             expected_volperenergy=0.00016471704617146833,
-            expected_wateruserecirc=23306.140640523186,
-            expected_wateruseonethru=2284001.7827712721,
+            expected_wateruserecirc=23360.25002895,
+            expected_wateruseonethru=2289304.50283738,
         ),
         CoolingWaterBodyParam(
             watertemp=5,
@@ -193,8 +193,8 @@ class CoolingWaterBodyParam(NamedTuple):
             expected_evapvol=23299.029973813402,
             expected_energypervol=6071017075.9073286,
             expected_volperenergy=0.00016471704617146833,
-            expected_wateruserecirc=23299.029973813402,
-            expected_wateruseonethru=2283304.9374337136,
+            expected_wateruserecirc=23353.12285355,
+            expected_wateruseonethru=2288606.0396483,
         ),
     ),
 )
