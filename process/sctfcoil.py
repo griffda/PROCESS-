@@ -3928,13 +3928,14 @@ class Sctfcoil:
         # ---
         if tfcoil_variables.i_tf_stress_model == 1:
             # Plane stress calculation (SC) [Pa]
-            sig_tf_r, sig_tf_t, deflect, radial_array = self.plane_stress(
-                poisson_trans,
-                radtf,
-                eyoung_trans,
-                jeff,
-                n_tf_layer,
-                n_radial_array,
+
+            (sig_tf_r, sig_tf_t, deflect, radial_array,) = self.plane_stress(
+                nu=poisson_trans,
+                rad=radtf,
+                ey=eyoung_trans,
+                j=jeff,
+                nlayers=n_tf_layer,
+                n_radial_array=n_radial_array,
             )
 
             # Vertical stress [Pa]
@@ -4286,14 +4287,14 @@ class Sctfcoil:
                 2 * nlayers,
                 2 * nlayers,
             ),
-            order="F",  # needed for 2d array passed through f2py interface
+            order="F",
         )
         # Matrix encoding the integration constant cc coeficients
 
-        bb = numpy.zeros((2 * nlayers,), order="F")
+        bb = numpy.zeros((2 * nlayers,))
         # Vector encoding the alpha/beta (lorentz forces) contribution
 
-        cc = numpy.zeros((2 * nlayers,), order="F")
+        cc = numpy.zeros((2 * nlayers,))
         c1 = numpy.zeros((nlayers,))
         c2 = numpy.zeros((nlayers,))
         # Integration constants vector (solution)
@@ -4310,7 +4311,7 @@ class Sctfcoil:
         r_deflect = numpy.zeros((nlayers * n_radial_array,))
         # Radial deflection (displacement) radial distribution [m]
 
-        kk = ey / (1.0e0 - nu**2)
+        kk = ey / (1 - nu**2)
 
         # Lorentz forces parametrisation coeficients (array equation)
         alpha = 0.5e0 * constants.rmu0 * j**2 / kk
@@ -4411,6 +4412,8 @@ class Sctfcoil:
         #  Find solution vector cc
         # ***
 
+        # cc = numpy.linalg.solve(aa, bb)
+
         maths_library.linesolv(aa, bb, cc)
 
         #  Multiply c by (-1) (John Last, internal CCFE memorandum, 21/05/2013)
@@ -4428,7 +4431,7 @@ class Sctfcoil:
             dradius = (rad[ii + 1] - rad[ii]) / n_radial_array
             for jj in range(ii * n_radial_array, (ii + 1) * n_radial_array):
 
-                rad_c = rad[ii] + dradius * (jj - (n_radial_array * ii))
+                rad_c = rad[ii] + dradius * (jj - n_radial_array * ii)
                 rradius[jj] = rad_c
 
                 # Radial stress radial distribution [Pa]
