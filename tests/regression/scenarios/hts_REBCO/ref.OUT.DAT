@@ -13,12 +13,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-1938-g58bc3e07c
+   Tag No. : v2.1-1941-gb6aee64b0
     Branch : HEAD
-   Git log : Merge branch |1671-add-test-coverage-reporting| into |develop|
- Date/time : 22 Jun 2022  8:50:57 +00:00(hh:mm) UTC
+   Git log : Merge branch |1697-output-variable-names-need-correcting| into |develop|
+ Date/time : 22 Jun 2022  9:34:03 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-8r7le1vq-project-20-concurrent-0
+  Computer : runner-91be33e7-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_hts_REBCO_0/IN.DAT
  Run title : hts model using "croco" conductor based on kit design
@@ -925,7 +925,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  PF coil current scaling information :
  
- Sum of squares of residuals                                              (pf.ssq0)                 8.385E-05  OP 
+ Sum of squares of residuals                                              (ssq0)                    8.385E-05  OP 
  Smoothing parameter                                                      (alfapf)                  5.000E-10     
  
  ****************************************** Volt Second Consumption *******************************************
@@ -1178,7 +1178,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Efficiency of transfer of PF stored energy into or out of storage        (etapsu)                  9.000E-01     
  (Energy is dissipated in PFC power supplies only when total PF energy increases or decreases.)
  Maximum stored energy in poloidal field (MJ)                             (ensxpfm)                 3.813E+04  OP 
- Peak absolute rate of change of stored energy in poloidal field (MW)     peakpoloidalpower         1.904E+02  OP 
+ Peak absolute rate of change of stored energy in poloidal field (MW)     (peakpoloidalpower)       1.904E+02  OP 
  Energy stored in poloidal magnetic field :
  
  
@@ -1281,9 +1281,9 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Assumptions :
  
  Neutron power multiplication in blanket                                  (emult)                   1.269E+00     
- Double Null Divertor area fraction of whole toroid surface               (2*fwbs_variables.fdiv)   2.300E-01     
+ Double Null Divertor area fraction of whole toroid surface               (2*fdiv)                  2.300E-01     
  H/CD apparatus + diagnostics area fraction                               (fhcd)                    0.000E+00     
- First wall area fraction                                                 (1-2*fwbs_variables.fdiv- 7.700E-01     
+ First wall area fraction                                                 (1-2fdiv-fhcd)            7.700E-01     
  Switch for pumping of primary coolant                                    (primary_pumping)                 0     
  User sets mechanical pumping power directly
  Mechanical pumping power for FW cooling loop including heat exchanger (M (htpmw_fw)                1.550E+02  OP 

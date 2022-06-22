@@ -4,12 +4,12 @@
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.4.0   R"
  Date_of_run_____________________________________________________________ (date)________________________     "22/06/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "08:52"
+ Time_of_run_____________________________________________________________ (time)________________________     "09:35"
  User____________________________________________________________________ (username)____________________     "root"    
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "Run Title (change this line using input variable 'runtitle')                                       
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1938-g58bc3e07c"                                                                              
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1941-gb6aee64b0"                                                                              
  PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "HEAD"                                                                                              
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch |1671-add-test-coverage-reporting| into |develop|"                                    
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch |1697-output-variable-names-need-correcting| into |develop|"                          
  Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-root/pytest-0/test_scenario_Hybrid_mode_0/IN.DAT                                                                                                                                         "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
@@ -744,7 +744,7 @@
  Central_solenoid_turns__________________________________________________ (turns[nohc-1])_______________      2.5350E+03    
  Central_solenoid_current_(MA)___________________________________________ (ric[nohc-1])_________________     -1.0901E+02    
  Central_solenoid_field_(T)______________________________________________ (bpf[nohc-1])_________________      7.8887E+00    
- Sum_of_squares_of_residuals_____________________________________________ (pf.ssq0)_____________________      1.9307E-04 OP 
+ Sum_of_squares_of_residuals_____________________________________________ (ssq0)________________________      1.9307E-04 OP 
  Smoothing_parameter_____________________________________________________ (alfapf)______________________      5.0000E-10    
  # Volt Second Consumption #
  Total_volt-second_consumption_by_coils_(Wb)_____________________________ (vstot)_______________________     -5.7000E+02 OP 
@@ -904,7 +904,7 @@
  Maximum_PF_coil_voltage_(kV)____________________________________________ (vpfskv)______________________      2.0000E+01    
  Efficiency_of_transfer_of_PF_stored_energy_into_or_out_of_storage_______ (etapsu)______________________      9.0000E-01    
  Maximum_stored_energy_in_poloidal_field_(MJ)____________________________ (ensxpfm)_____________________      2.4142E+04 OP 
- Peak_absolute_rate_of_change_of_stored_energy_in_poloidal_field_(MW)____ peakpoloidalpower_____________      1.3704E+02 OP 
+ Peak_absolute_rate_of_change_of_stored_energy_in_poloidal_field_(MW)____ (peakpoloidalpower)___________      1.3704E+02 OP 
  # Vacuum System #
  First_wall_outgassing_rate_(Pa_m/s)_____________________________________ (rat)_________________________      1.3000E-08    
  Total_outgassing_load_(Pa_m3/s)_________________________________________ (ogas)________________________      2.5138E-04 OP 

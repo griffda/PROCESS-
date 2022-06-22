@@ -7,12 +7,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-1938-g58bc3e07c
+   Tag No. : v2.1-1941-gb6aee64b0
     Branch : HEAD
-   Git log : Merge branch |1671-add-test-coverage-reporting| into |develop|
- Date/time : 22 Jun 2022  8:49:18 +00:00(hh:mm) UTC
+   Git log : Merge branch |1697-output-variable-names-need-correcting| into |develop|
+ Date/time : 22 Jun 2022  9:32:17 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-8r7le1vq-project-20-concurrent-0
+  Computer : runner-91be33e7-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_G_L_Nb_Ti_0/IN.DAT
  Run title : TF coil testing
@@ -1088,7 +1088,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  PF coil current scaling information :
  
- Sum of squares of residuals                                              (pf.ssq0)                 6.764E-05  OP 
+ Sum of squares of residuals                                              (ssq0)                    6.764E-05  OP 
  Smoothing parameter                                                      (alfapf)                  5.000E-10     
  
  ****************************************** Volt Second Consumption *******************************************
@@ -1351,7 +1351,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Efficiency of transfer of PF stored energy into or out of storage        (etapsu)                  9.000E-01     
  (Energy is dissipated in PFC power supplies only when total PF energy increases or decreases.)
  Maximum stored energy in poloidal field (MJ)                             (ensxpfm)                 3.358E+04  OP 
- Peak absolute rate of change of stored energy in poloidal field (MW)     peakpoloidalpower         1.119E+03  OP 
+ Peak absolute rate of change of stored energy in poloidal field (MW)     (peakpoloidalpower)       1.119E+03  OP 
  Energy stored in poloidal magnetic field :
  
  
@@ -2642,7 +2642,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  PF coil current scaling information :
  
- Sum of squares of residuals                                              (pf.ssq0)                 7.282E-05  OP 
+ Sum of squares of residuals                                              (ssq0)                    7.282E-05  OP 
  Smoothing parameter                                                      (alfapf)                  5.000E-10     
  
  ****************************************** Volt Second Consumption *******************************************
@@ -2905,7 +2905,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Efficiency of transfer of PF stored energy into or out of storage        (etapsu)                  9.000E-01     
  (Energy is dissipated in PFC power supplies only when total PF energy increases or decreases.)
  Maximum stored energy in poloidal field (MJ)                             (ensxpfm)                 3.343E+04  OP 
- Peak absolute rate of change of stored energy in poloidal field (MW)     peakpoloidalpower         1.114E+03  OP 
+ Peak absolute rate of change of stored energy in poloidal field (MW)     (peakpoloidalpower)       1.114E+03  OP 
  Energy stored in poloidal magnetic field :
  
  
@@ -4196,7 +4196,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  PF coil current scaling information :
  
- Sum of squares of residuals                                              (pf.ssq0)                 7.829E-05  OP 
+ Sum of squares of residuals                                              (ssq0)                    7.829E-05  OP 
  Smoothing parameter                                                      (alfapf)                  5.000E-10     
  
  ****************************************** Volt Second Consumption *******************************************
@@ -4459,7 +4459,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Efficiency of transfer of PF stored energy into or out of storage        (etapsu)                  9.000E-01     
  (Energy is dissipated in PFC power supplies only when total PF energy increases or decreases.)
  Maximum stored energy in poloidal field (MJ)                             (ensxpfm)                 3.329E+04  OP 
- Peak absolute rate of change of stored energy in poloidal field (MW)     peakpoloidalpower         1.110E+03  OP 
+ Peak absolute rate of change of stored energy in poloidal field (MW)     (peakpoloidalpower)       1.110E+03  OP 
  Energy stored in poloidal magnetic field :
  
  
@@ -5750,7 +5750,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  PF coil current scaling information :
  
- Sum of squares of residuals                                              (pf.ssq0)                 8.405E-05  OP 
+ Sum of squares of residuals                                              (ssq0)                    8.405E-05  OP 
  Smoothing parameter                                                      (alfapf)                  5.000E-10     
  
  ****************************************** Volt Second Consumption *******************************************
@@ -6013,7 +6013,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Efficiency of transfer of PF stored energy into or out of storage        (etapsu)                  9.000E-01     
  (Energy is dissipated in PFC power supplies only when total PF energy increases or decreases.)
  Maximum stored energy in poloidal field (MJ)                             (ensxpfm)                 3.314E+04  OP 
- Peak absolute rate of change of stored energy in poloidal field (MW)     peakpoloidalpower         1.105E+03  OP 
+ Peak absolute rate of change of stored energy in poloidal field (MW)     (peakpoloidalpower)       1.105E+03  OP 
  Energy stored in poloidal magnetic field :
  
  

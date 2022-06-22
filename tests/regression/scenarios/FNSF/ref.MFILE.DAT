@@ -4,12 +4,12 @@
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.4.0   R"
  Date_of_run_____________________________________________________________ (date)________________________     "22/06/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "08:49"
+ Time_of_run_____________________________________________________________ (time)________________________     "09:32"
  User____________________________________________________________________ (username)____________________     "root"    
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "FNSF (Menard et al. 2016)                                                                          
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1938-g58bc3e07c"                                                                              
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1941-gb6aee64b0"                                                                              
  PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "HEAD"                                                                                              
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch |1671-add-test-coverage-reporting| into |develop|"                                    
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch |1697-output-variable-names-need-correcting| into |develop|"                          
  Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-root/pytest-0/test_scenario_FNSF_0/IN.DAT                                                                                                                                                "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
@@ -550,7 +550,7 @@
  PF_coil_3_turns_________________________________________________________ (turns[3])____________________      8.9315E+01    
  PF_coil_3_current_(MA)__________________________________________________ (ric[3])______________________     -3.7512E+00    
  PF_coil_3_field_(T)_____________________________________________________ (bpf[3])______________________      3.9604E+00    
- Sum_of_squares_of_residuals_____________________________________________ (pf.ssq0)_____________________      0.0000E+00 OP 
+ Sum_of_squares_of_residuals_____________________________________________ (ssq0)________________________      0.0000E+00 OP 
  Smoothing_parameter_____________________________________________________ (alfapf)______________________      5.0000E-10    
  # Volt Second Consumption #
  Total_volt-second_consumption_by_coils_(Wb)_____________________________ (vstot)_______________________     -7.0000E+00 OP 
@@ -772,7 +772,7 @@
  Maximum_PF_coil_voltage_(kV)____________________________________________ (vpfskv)______________________      2.0000E+01    
  Efficiency_of_transfer_of_PF_stored_energy_into_or_out_of_storage_______ (etapsu)______________________      9.0000E-01    
  Maximum_stored_energy_in_poloidal_field_(MJ)____________________________ (ensxpfm)_____________________      4.4671E+02 OP 
- Peak_absolute_rate_of_change_of_stored_energy_in_poloidal_field_(MW)____ peakpoloidalpower_____________      2.3817E+01 OP 
+ Peak_absolute_rate_of_change_of_stored_energy_in_poloidal_field_(MW)____ (peakpoloidalpower)___________      2.3817E+01 OP 
  # Vacuum System #
  First_wall_outgassing_rate_(Pa_m/s)_____________________________________ (rat)_________________________      1.3000E-08    
  Total_outgassing_load_(Pa_m3/s)_________________________________________ (ogas)________________________      1.7098E-05 OP 
@@ -842,9 +842,9 @@
  Electric_power_for_cryogenic_plant_(MW)_________________________________ (crypmw)______________________      0.0000E+00 OP 
  # Plant Power / Heat Transport Balance #
  Neutron_power_multiplication_in_blanket_________________________________ (emult)_______________________      1.2690E+00    
- Double_Null_Divertor_area_fraction_of_whole_toroid_surface______________ (2*fwbs_variables.fdiv)_______      2.3000E-01    
+ Double_Null_Divertor_area_fraction_of_whole_toroid_surface______________ (2*fdiv)______________________      2.3000E-01    
  H/CD_apparatus_+_diagnostics_area_fraction______________________________ (fhcd)________________________      0.0000E+00    
- First_wall_area_fraction________________________________________________ (1-2*fwbs_variables.fdiv-fwbs_      7.7000E-01    
+ First_wall_area_fraction________________________________________________ (1-2fdiv-fhcd)________________      7.7000E-01    
  Switch_for_pumping_of_primary_coolant___________________________________ (primary_pumping)_____________              2    
  Mechanical_pumping_power_for_FW_cooling_loop_including_heat_exchanger_(M (htpmw_fw)____________________      2.4695E-01 OP 
  Mechanical_pumping_power_for_blanket_cooling_loop_including_heat_exchang (htpmw_blkt)__________________      1.5236E-03 OP 

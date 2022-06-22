@@ -4,12 +4,12 @@
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.4.0   R"
  Date_of_run_____________________________________________________________ (date)________________________     "22/06/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "08:49"
+ Time_of_run_____________________________________________________________ (time)________________________     "09:32"
  User____________________________________________________________________ (username)____________________     "root"    
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "TF coil testing                                                                                    
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1938-g58bc3e07c"                                                                              
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1941-gb6aee64b0"                                                                              
  PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "HEAD"                                                                                              
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch |1671-add-test-coverage-reporting| into |develop|"                                    
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch |1697-output-variable-names-need-correcting| into |develop|"                          
  Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-root/pytest-0/test_scenario_G_L_Nb_Ti_0/IN.DAT                                                                                                                                           "
  
  Scan_point_number_______________________________________________________ (iscan)_______________________              1    
@@ -842,7 +842,7 @@
  Central_solenoid_turns__________________________________________________ (turns[nohc-1])_______________      3.9141E+03    
  Central_solenoid_current_(MA)___________________________________________ (ric[nohc-1])_________________     -1.6831E+02    
  Central_solenoid_field_(T)______________________________________________ (bpf[nohc-1])_________________      9.3397E+00    
- Sum_of_squares_of_residuals_____________________________________________ (pf.ssq0)_____________________      6.7639E-05 OP 
+ Sum_of_squares_of_residuals_____________________________________________ (ssq0)________________________      6.7639E-05 OP 
  Smoothing_parameter_____________________________________________________ (alfapf)______________________      5.0000E-10    
  # Volt Second Consumption #
  Total_volt-second_consumption_by_coils_(Wb)_____________________________ (vstot)_______________________     -5.4000E+02 OP 
@@ -1005,7 +1005,7 @@
  Maximum_PF_coil_voltage_(kV)____________________________________________ (vpfskv)______________________      2.0000E+01    
  Efficiency_of_transfer_of_PF_stored_energy_into_or_out_of_storage_______ (etapsu)______________________      9.0000E-01    
  Maximum_stored_energy_in_poloidal_field_(MJ)____________________________ (ensxpfm)_____________________      3.3581E+04 OP 
- Peak_absolute_rate_of_change_of_stored_energy_in_poloidal_field_(MW)____ peakpoloidalpower_____________      1.1194E+03 OP 
+ Peak_absolute_rate_of_change_of_stored_energy_in_poloidal_field_(MW)____ (peakpoloidalpower)___________      1.1194E+03 OP 
  # Vacuum System #
  First_wall_outgassing_rate_(Pa_m/s)_____________________________________ (rat)_________________________      1.3000E-08    
  Total_outgassing_load_(Pa_m3/s)_________________________________________ (ogas)________________________      2.5479E-04 OP 
@@ -1982,7 +1982,7 @@
  Central_solenoid_turns__________________________________________________ (turns[nohc-1])_______________      3.8998E+03    
  Central_solenoid_current_(MA)___________________________________________ (ric[nohc-1])_________________     -1.6769E+02    
  Central_solenoid_field_(T)______________________________________________ (bpf[nohc-1])_________________      9.4143E+00    
- Sum_of_squares_of_residuals_____________________________________________ (pf.ssq0)_____________________      7.2822E-05 OP 
+ Sum_of_squares_of_residuals_____________________________________________ (ssq0)________________________      7.2822E-05 OP 
  Smoothing_parameter_____________________________________________________ (alfapf)______________________      5.0000E-10    
  # Volt Second Consumption #
  Total_volt-second_consumption_by_coils_(Wb)_____________________________ (vstot)_______________________     -5.4000E+02 OP 
@@ -2145,7 +2145,7 @@
  Maximum_PF_coil_voltage_(kV)____________________________________________ (vpfskv)______________________      2.0000E+01    
  Efficiency_of_transfer_of_PF_stored_energy_into_or_out_of_storage_______ (etapsu)______________________      9.0000E-01    
  Maximum_stored_energy_in_poloidal_field_(MJ)____________________________ (ensxpfm)_____________________      3.3432E+04 OP 
- Peak_absolute_rate_of_change_of_stored_energy_in_poloidal_field_(MW)____ peakpoloidalpower_____________      1.1144E+03 OP 
+ Peak_absolute_rate_of_change_of_stored_energy_in_poloidal_field_(MW)____ (peakpoloidalpower)___________      1.1144E+03 OP 
  # Vacuum System #
  First_wall_outgassing_rate_(Pa_m/s)_____________________________________ (rat)_________________________      1.3000E-08    
  Total_outgassing_load_(Pa_m3/s)_________________________________________ (ogas)________________________      2.5054E-04 OP 
@@ -3122,7 +3122,7 @@
  Central_solenoid_turns__________________________________________________ (turns[nohc-1])_______________      3.8855E+03    
  Central_solenoid_current_(MA)___________________________________________ (ric[nohc-1])_________________     -1.6708E+02    
  Central_solenoid_field_(T)______________________________________________ (bpf[nohc-1])_________________      9.4873E+00    
- Sum_of_squares_of_residuals_____________________________________________ (pf.ssq0)_____________________      7.8294E-05 OP 
+ Sum_of_squares_of_residuals_____________________________________________ (ssq0)________________________      7.8294E-05 OP 
  Smoothing_parameter_____________________________________________________ (alfapf)______________________      5.0000E-10    
  # Volt Second Consumption #
  Total_volt-second_consumption_by_coils_(Wb)_____________________________ (vstot)_______________________     -5.4000E+02 OP 
@@ -3285,7 +3285,7 @@
  Maximum_PF_coil_voltage_(kV)____________________________________________ (vpfskv)______________________      2.0000E+01    
  Efficiency_of_transfer_of_PF_stored_energy_into_or_out_of_storage_______ (etapsu)______________________      9.0000E-01    
  Maximum_stored_energy_in_poloidal_field_(MJ)____________________________ (ensxpfm)_____________________      3.3285E+04 OP 
- Peak_absolute_rate_of_change_of_stored_energy_in_poloidal_field_(MW)____ peakpoloidalpower_____________      1.1095E+03 OP 
+ Peak_absolute_rate_of_change_of_stored_energy_in_poloidal_field_(MW)____ (peakpoloidalpower)___________      1.1095E+03 OP 
  # Vacuum System #
  First_wall_outgassing_rate_(Pa_m/s)_____________________________________ (rat)_________________________      1.3000E-08    
  Total_outgassing_load_(Pa_m3/s)_________________________________________ (ogas)________________________      2.4642E-04 OP 
@@ -4262,7 +4262,7 @@
  Central_solenoid_turns__________________________________________________ (turns[nohc-1])_______________      3.8711E+03    
  Central_solenoid_current_(MA)___________________________________________ (ric[nohc-1])_________________     -1.6646E+02    
  Central_solenoid_field_(T)______________________________________________ (bpf[nohc-1])_________________      9.5586E+00    
- Sum_of_squares_of_residuals_____________________________________________ (pf.ssq0)_____________________      8.4053E-05 OP 
+ Sum_of_squares_of_residuals_____________________________________________ (ssq0)________________________      8.4053E-05 OP 
  Smoothing_parameter_____________________________________________________ (alfapf)______________________      5.0000E-10    
  # Volt Second Consumption #
  Total_volt-second_consumption_by_coils_(Wb)_____________________________ (vstot)_______________________     -5.4000E+02 OP 
@@ -4425,7 +4425,7 @@
  Maximum_PF_coil_voltage_(kV)____________________________________________ (vpfskv)______________________      2.0000E+01    
  Efficiency_of_transfer_of_PF_stored_energy_into_or_out_of_storage_______ (etapsu)______________________      9.0000E-01    
  Maximum_stored_energy_in_poloidal_field_(MJ)____________________________ (ensxpfm)_____________________      3.3141E+04 OP 
- Peak_absolute_rate_of_change_of_stored_energy_in_poloidal_field_(MW)____ peakpoloidalpower_____________      1.1047E+03 OP 
+ Peak_absolute_rate_of_change_of_stored_energy_in_poloidal_field_(MW)____ (peakpoloidalpower)___________      1.1047E+03 OP 
  # Vacuum System #
  First_wall_outgassing_rate_(Pa_m/s)_____________________________________ (rat)_________________________      1.3000E-08    
  Total_outgassing_load_(Pa_m3/s)_________________________________________ (ogas)________________________      2.4242E-04 OP 
