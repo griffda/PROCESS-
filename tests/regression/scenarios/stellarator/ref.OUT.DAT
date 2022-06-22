@@ -14,10 +14,10 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-1923-g7e4ea0c44
+   Tag No. : v2.1-1938-g58bc3e07c
     Branch : HEAD
-   Git log : Merge branch |1693-raise-pseprmax-maximum-value| into |develop|
- Date/time : 20 Jun 2022 12:24:40 +00:00(hh:mm) UTC
+   Git log : Merge branch |1671-add-test-coverage-reporting| into |develop|
+ Date/time : 22 Jun 2022  8:57:08 +00:00(hh:mm) UTC
       User : root
   Computer : runner-8r7le1vq-project-20-concurrent-0
  Directory : /builds/process/process

@@ -7,10 +7,10 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-1923-g7e4ea0c44
+   Tag No. : v2.1-1938-g58bc3e07c
     Branch : HEAD
-   Git log : Merge branch |1693-raise-pseprmax-maximum-value| into |develop|
- Date/time : 20 Jun 2022 12:17:09 +00:00(hh:mm) UTC
+   Git log : Merge branch |1671-add-test-coverage-reporting| into |develop|
+ Date/time : 22 Jun 2022  8:50:00 +00:00(hh:mm) UTC
       User : root
   Computer : runner-8r7le1vq-project-20-concurrent-0
  Directory : /builds/process/process
@@ -1403,8 +1403,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  1. Cooling towers
  2. Water bodies (pond, lake, river): recirculating or once-through
  Volume used in cooling tower (m3/day)                                    (waterusetower)           5.554E+04  OP 
- Volume used in recirculating water system (m3/day)                       (wateruserecirc)          1.859E+04  OP 
- Volume used in once-through water system (m3/day)                        (wateruseonethru)         1.822E+06  OP 
+ Volume used in recirculating water system (m3/day)                       (wateruserecirc)          1.863E+04  OP 
+ Volume used in once-through water system (m3/day)                        (wateruseonethru)         1.826E+06  OP 
  
  **************************************************************************************************************
  ***** Scan point  2 of  7: rho at which ECCD is max, rho_ecrh =  5.000E-02 *****
@@ -2761,8 +2761,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  1. Cooling towers
  2. Water bodies (pond, lake, river): recirculating or once-through
  Volume used in cooling tower (m3/day)                                    (waterusetower)           5.555E+04  OP 
- Volume used in recirculating water system (m3/day)                       (wateruserecirc)          1.859E+04  OP 
- Volume used in once-through water system (m3/day)                        (wateruseonethru)         1.822E+06  OP 
+ Volume used in recirculating water system (m3/day)                       (wateruserecirc)          1.864E+04  OP 
+ Volume used in once-through water system (m3/day)                        (wateruseonethru)         1.826E+06  OP 
  
  **************************************************************************************************************
  ***** Scan point  3 of  7: rho at which ECCD is max, rho_ecrh =  1.000E-01 *****
@@ -4119,8 +4119,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  1. Cooling towers
  2. Water bodies (pond, lake, river): recirculating or once-through
  Volume used in cooling tower (m3/day)                                    (waterusetower)           5.556E+04  OP 
- Volume used in recirculating water system (m3/day)                       (wateruserecirc)          1.860E+04  OP 
- Volume used in once-through water system (m3/day)                        (wateruseonethru)         1.822E+06  OP 
+ Volume used in recirculating water system (m3/day)                       (wateruserecirc)          1.864E+04  OP 
+ Volume used in once-through water system (m3/day)                        (wateruseonethru)         1.827E+06  OP 
  
  **************************************************************************************************************
  ***** Scan point  4 of  7: rho at which ECCD is max, rho_ecrh =  2.000E-01 *****
@@ -5477,8 +5477,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  1. Cooling towers
  2. Water bodies (pond, lake, river): recirculating or once-through
  Volume used in cooling tower (m3/day)                                    (waterusetower)           5.557E+04  OP 
- Volume used in recirculating water system (m3/day)                       (wateruserecirc)          1.860E+04  OP 
- Volume used in once-through water system (m3/day)                        (wateruseonethru)         1.823E+06  OP 
+ Volume used in recirculating water system (m3/day)                       (wateruserecirc)          1.865E+04  OP 
+ Volume used in once-through water system (m3/day)                        (wateruseonethru)         1.827E+06  OP 
  
  **************************************************************************************************************
  ***** Scan point  5 of  7: rho at which ECCD is max, rho_ecrh =  3.000E-01 *****
@@ -6835,8 +6835,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  1. Cooling towers
  2. Water bodies (pond, lake, river): recirculating or once-through
  Volume used in cooling tower (m3/day)                                    (waterusetower)           5.559E+04  OP 
- Volume used in recirculating water system (m3/day)                       (wateruserecirc)          1.861E+04  OP 
- Volume used in once-through water system (m3/day)                        (wateruseonethru)         1.823E+06  OP 
+ Volume used in recirculating water system (m3/day)                       (wateruserecirc)          1.865E+04  OP 
+ Volume used in once-through water system (m3/day)                        (wateruseonethru)         1.828E+06  OP 
  
  **************************************************************************************************************
  ***** Scan point  6 of  7: rho at which ECCD is max, rho_ecrh =  4.000E-01 *****
@@ -8193,8 +8193,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  1. Cooling towers
  2. Water bodies (pond, lake, river): recirculating or once-through
  Volume used in cooling tower (m3/day)                                    (waterusetower)           5.560E+04  OP 
- Volume used in recirculating water system (m3/day)                       (wateruserecirc)          1.861E+04  OP 
- Volume used in once-through water system (m3/day)                        (wateruseonethru)         1.824E+06  OP 
+ Volume used in recirculating water system (m3/day)                       (wateruserecirc)          1.866E+04  OP 
+ Volume used in once-through water system (m3/day)                        (wateruseonethru)         1.828E+06  OP 
  
  **************************************************************************************************************
  ***** Scan point  7 of  7: rho at which ECCD is max, rho_ecrh =  5.000E-01 *****
@@ -9551,8 +9551,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  1. Cooling towers
  2. Water bodies (pond, lake, river): recirculating or once-through
  Volume used in cooling tower (m3/day)                                    (waterusetower)           5.562E+04  OP 
- Volume used in recirculating water system (m3/day)                       (wateruserecirc)          1.862E+04  OP 
- Volume used in once-through water system (m3/day)                        (wateruseonethru)         1.824E+06  OP 
+ Volume used in recirculating water system (m3/day)                       (wateruserecirc)          1.866E+04  OP 
+ Volume used in once-through water system (m3/day)                        (wateruseonethru)         1.829E+06  OP 
  
  ******************************************** Errors and Warnings *********************************************
  

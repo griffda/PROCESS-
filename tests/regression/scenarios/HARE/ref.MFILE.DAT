@@ -3,13 +3,13 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.4.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "20/06/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "12:17"
+ Date_of_run_____________________________________________________________ (date)________________________     "22/06/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "08:50"
  User____________________________________________________________________ (username)____________________     "root"    
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "Run Title (change this line using input variable 'runtitle')                                       
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1923-g7e4ea0c44"                                                                              
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1938-g58bc3e07c"                                                                              
  PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "HEAD"                                                                                              
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch |1693-raise-pseprmax-maximum-value| into |develop|"                                   
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch |1671-add-test-coverage-reporting| into |develop|"                                    
  Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-root/pytest-0/test_scenario_HARE_0/IN.DAT                                                                                                                                                "
  Binomial_coefficients_C(5,0):_1_________________________________________ (binomial(5,0))_______________      1.0000E+00    
  Binomial_coefficients_C(5,1):_5_________________________________________ (binomial(5,1))_______________      5.0000E+00    
@@ -1012,8 +1012,8 @@
  Recirculating_power_fraction____________________________________________ (cirpowfr)____________________      4.5147E-01    
  # Water usage during plant operation (secondary cooling) #
  Volume_used_in_cooling_tower_(m3/day)___________________________________ (waterusetower)_______________      5.5537E+04 OP 
- Volume_used_in_recirculating_water_system_(m3/day)______________________ (wateruserecirc)______________      1.8591E+04 OP 
- Volume_used_in_once-through_water_system_(m3/day)_______________________ (wateruseonethru)_____________      1.8219E+06 OP 
+ Volume_used_in_recirculating_water_system_(m3/day)______________________ (wateruserecirc)______________      1.8634E+04 OP 
+ Volume_used_in_once-through_water_system_(m3/day)_______________________ (wateruseonethru)_____________      1.8261E+06 OP 
  
  Scan_point_number_______________________________________________________ (iscan)_______________________              2    
  # Numerics #
@@ -2009,8 +2009,8 @@
  Recirculating_power_fraction____________________________________________ (cirpowfr)____________________      4.5157E-01    
  # Water usage during plant operation (secondary cooling) #
  Volume_used_in_cooling_tower_(m3/day)___________________________________ (waterusetower)_______________      5.5547E+04 OP 
- Volume_used_in_recirculating_water_system_(m3/day)______________________ (wateruserecirc)______________      1.8594E+04 OP 
- Volume_used_in_once-through_water_system_(m3/day)_______________________ (wateruseonethru)_____________      1.8222E+06 OP 
+ Volume_used_in_recirculating_water_system_(m3/day)______________________ (wateruserecirc)______________      1.8637E+04 OP 
+ Volume_used_in_once-through_water_system_(m3/day)_______________________ (wateruseonethru)_____________      1.8264E+06 OP 
  
  Scan_point_number_______________________________________________________ (iscan)_______________________              3    
  # Numerics #
@@ -3006,8 +3006,8 @@
  Recirculating_power_fraction____________________________________________ (cirpowfr)____________________      4.5165E-01    
  # Water usage during plant operation (secondary cooling) #
  Volume_used_in_cooling_tower_(m3/day)___________________________________ (waterusetower)_______________      5.5556E+04 OP 
- Volume_used_in_recirculating_water_system_(m3/day)______________________ (wateruserecirc)______________      1.8597E+04 OP 
- Volume_used_in_once-through_water_system_(m3/day)_______________________ (wateruseonethru)_____________      1.8225E+06 OP 
+ Volume_used_in_recirculating_water_system_(m3/day)______________________ (wateruserecirc)______________      1.8640E+04 OP 
+ Volume_used_in_once-through_water_system_(m3/day)_______________________ (wateruseonethru)_____________      1.8267E+06 OP 
  
  Scan_point_number_______________________________________________________ (iscan)_______________________              4    
  # Numerics #
@@ -4003,8 +4003,8 @@
  Recirculating_power_fraction____________________________________________ (cirpowfr)____________________      4.5180E-01    
  # Water usage during plant operation (secondary cooling) #
  Volume_used_in_cooling_tower_(m3/day)___________________________________ (waterusetower)_______________      5.5571E+04 OP 
- Volume_used_in_recirculating_water_system_(m3/day)______________________ (wateruserecirc)______________      1.8602E+04 OP 
- Volume_used_in_once-through_water_system_(m3/day)_______________________ (wateruseonethru)_____________      1.8230E+06 OP 
+ Volume_used_in_recirculating_water_system_(m3/day)______________________ (wateruserecirc)______________      1.8645E+04 OP 
+ Volume_used_in_once-through_water_system_(m3/day)_______________________ (wateruseonethru)_____________      1.8272E+06 OP 
  
  Scan_point_number_______________________________________________________ (iscan)_______________________              5    
  # Numerics #
@@ -5000,8 +5000,8 @@
  Recirculating_power_fraction____________________________________________ (cirpowfr)____________________      4.5195E-01    
  # Water usage during plant operation (secondary cooling) #
  Volume_used_in_cooling_tower_(m3/day)___________________________________ (waterusetower)_______________      5.5585E+04 OP 
- Volume_used_in_recirculating_water_system_(m3/day)______________________ (wateruserecirc)______________      1.8607E+04 OP 
- Volume_used_in_once-through_water_system_(m3/day)_______________________ (wateruseonethru)_____________      1.8235E+06 OP 
+ Volume_used_in_recirculating_water_system_(m3/day)______________________ (wateruserecirc)______________      1.8650E+04 OP 
+ Volume_used_in_once-through_water_system_(m3/day)_______________________ (wateruseonethru)_____________      1.8277E+06 OP 
  
  Scan_point_number_______________________________________________________ (iscan)_______________________              6    
  # Numerics #
@@ -5997,8 +5997,8 @@
  Recirculating_power_fraction____________________________________________ (cirpowfr)____________________      4.5209E-01    
  # Water usage during plant operation (secondary cooling) #
  Volume_used_in_cooling_tower_(m3/day)___________________________________ (waterusetower)_______________      5.5600E+04 OP 
- Volume_used_in_recirculating_water_system_(m3/day)______________________ (wateruserecirc)______________      1.8612E+04 OP 
- Volume_used_in_once-through_water_system_(m3/day)_______________________ (wateruseonethru)_____________      1.8240E+06 OP 
+ Volume_used_in_recirculating_water_system_(m3/day)______________________ (wateruserecirc)______________      1.8655E+04 OP 
+ Volume_used_in_once-through_water_system_(m3/day)_______________________ (wateruseonethru)_____________      1.8282E+06 OP 
  
  Scan_point_number_______________________________________________________ (iscan)_______________________              7    
  # Numerics #
@@ -6994,8 +6994,8 @@
  Recirculating_power_fraction____________________________________________ (cirpowfr)____________________      4.5225E-01    
  # Water usage during plant operation (secondary cooling) #
  Volume_used_in_cooling_tower_(m3/day)___________________________________ (waterusetower)_______________      5.5616E+04 OP 
- Volume_used_in_recirculating_water_system_(m3/day)______________________ (wateruserecirc)______________      1.8617E+04 OP 
- Volume_used_in_once-through_water_system_(m3/day)_______________________ (wateruseonethru)_____________      1.8245E+06 OP 
+ Volume_used_in_recirculating_water_system_(m3/day)______________________ (wateruserecirc)______________      1.8660E+04 OP 
+ Volume_used_in_once-through_water_system_(m3/day)_______________________ (wateruseonethru)_____________      1.8287E+06 OP 
  Number_of_scan_points___________________________________________________ (isweep)______________________              7    
  Scanning_variable_number________________________________________________ (nsweep)______________________             43    
  # Errors and Warnings #

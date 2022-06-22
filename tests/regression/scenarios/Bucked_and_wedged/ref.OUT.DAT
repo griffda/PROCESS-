@@ -7,10 +7,10 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-1923-g7e4ea0c44
+   Tag No. : v2.1-1938-g58bc3e07c
     Branch : HEAD
-   Git log : Merge branch |1693-raise-pseprmax-maximum-value| into |develop|
- Date/time : 20 Jun 2022 12:10:25 +00:00(hh:mm) UTC
+   Git log : Merge branch |1671-add-test-coverage-reporting| into |develop|
+ Date/time : 22 Jun 2022  8:43:28 +00:00(hh:mm) UTC
       User : root
   Computer : runner-8r7le1vq-project-20-concurrent-0
  Directory : /builds/process/process
@@ -1410,8 +1410,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  1. Cooling towers
  2. Water bodies (pond, lake, river): recirculating or once-through
  Volume used in cooling tower (m3/day)                                    (waterusetower)           6.961E+04  OP 
- Volume used in recirculating water system (m3/day)                       (wateruserecirc)          2.330E+04  OP 
- Volume used in once-through water system (m3/day)                        (wateruseonethru)         2.284E+06  OP 
+ Volume used in recirculating water system (m3/day)                       (wateruserecirc)          2.336E+04  OP 
+ Volume used in once-through water system (m3/day)                        (wateruseonethru)         2.289E+06  OP 
  
  ******************************************** Errors and Warnings *********************************************
  
