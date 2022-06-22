@@ -21,6 +21,7 @@ from process.fortran import tfcoil_variables as tfv
 from process.fortran import times_variables as tv
 from process.fortran import constants
 from process.pfcoil import PFCoil
+from process.cs_fatigue import CsFatigue
 
 
 @pytest.fixture
@@ -30,7 +31,7 @@ def pfcoil():
     :return: a PFCoil instance
     :rtype: process.pfcoil.PFCoil
     """
-    return PFCoil()
+    return PFCoil(cs_fatigue=CsFatigue())
 
 
 def test_pfcoil(monkeypatch, pfcoil):

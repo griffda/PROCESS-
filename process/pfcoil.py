@@ -7,7 +7,6 @@ from process.fortran import physics_variables as pv
 from process.fortran import tfcoil_variables as tfv
 from process.fortran import fwbs_variables as fwbsv
 from process.fortran import constants
-from process.fortran import cs_fatigue as csf
 from process.fortran import cs_fatigue_variables as csfv
 from process.fortran import maths_library as ml
 from process.fortran import process_output as op
@@ -25,11 +24,12 @@ import numpy as np
 class PFCoil:
     """Calculate poloidal field coil system parameters."""
 
-    def __init__(self):
+    def __init__(self, cs_fatigue) -> None:
         """Initialise Fortran module variables."""
         self.outfile = ft.constants.nout  # output file unit
         self.mfile = ft.constants.mfile  # mfile file unit
         pf.init_pfcoil_module()
+        self.cs_fatigue = cs_fatigue
 
     def run(self):
         """Run the PF coil model."""
@@ -1258,12 +1258,10 @@ class PFCoil:
             # Calculation of CS fatigue
             # this is only valid for pulsed reactor design
             if pv.facoh > 0.0e-4:
-                csf.ncycle(
-                    csfv.n_cycle,
+                csfv.n_cycle, csfv.t_crack_radial = self.cs_fatigue.ncycle(
                     pf.sig_hoop,
                     csfv.residual_sig_hoop,
                     csfv.t_crack_vertical,
-                    csfv.t_crack_radial,
                     csfv.t_structural_vertical,
                     csfv.t_structural_radial,
                 )
