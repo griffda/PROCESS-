@@ -2634,7 +2634,7 @@ class PFCoil:
 
         op.osubhd(self.outfile, "PF coil current scaling information :")
         op.ovarre(
-            self.outfile, "Sum of squares of residuals ", "(pf.ssq0)", pf.ssq0, "OP "
+            self.outfile, "Sum of squares of residuals ", "(ssq0)", pf.ssq0, "OP "
         )
         op.ovarre(self.outfile, "Smoothing parameter ", "(alfapf)", pfv.alfapf)
 
