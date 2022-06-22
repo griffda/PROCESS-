@@ -369,7 +369,7 @@ class Power:
         po.ovarre(
             self.outfile,
             "Peak absolute rate of change of stored energy in poloidal field (MW)",
-            "peakpoloidalpower",
+            "(peakpoloidalpower)",
             pf_power_variables.peakpoloidalpower,
             "OP ",
         )
@@ -972,7 +972,7 @@ class Power:
             po.ovarre(
                 self.outfile,
                 "Double Null Divertor area fraction of whole toroid surface",
-                "(2*fwbs_variables.fdiv)",
+                "(2*fdiv)",
                 2.0e0 * fwbs_variables.fdiv,
             )
         else:
@@ -996,7 +996,7 @@ class Power:
             po.ovarre(
                 self.outfile,
                 "First wall area fraction ",
-                "(1-2*fwbs_variables.fdiv-fwbs_variables.fhcd)",
+                "(1-2fdiv-fhcd)",
                 1.0e0 - 2.0e0 * fwbs_variables.fdiv - fwbs_variables.fhcd,
             )
         else:
