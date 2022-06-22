@@ -7797,12 +7797,10 @@ def test_plane_stress(planestressparam, monkeypatch, sctfcoil):
         j=planestressparam.j,
     )
 
-    numpy.testing.assert_array_almost_equal(sigr, planestressparam.expected_sigr)
-    numpy.testing.assert_array_almost_equal(sigt, planestressparam.expected_sigt)
-    numpy.testing.assert_array_almost_equal(
-        r_deflect, planestressparam.expected_r_deflect
-    )
-    numpy.testing.assert_array_almost_equal(rradius, planestressparam.expected_rradius)
+    assert sigr == pytest.approx(planestressparam.expected_sigr)
+    assert sigt == pytest.approx(planestressparam.expected_sigt)
+    assert r_deflect == pytest.approx(planestressparam.expected_r_deflect)
+    assert rradius == pytest.approx(planestressparam.expected_rradius)
 
 
 class ExtendedPlaneStrainParam(NamedTuple):
