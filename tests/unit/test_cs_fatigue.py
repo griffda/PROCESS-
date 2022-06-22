@@ -5,10 +5,10 @@ from process.cs_fatigue import CsFatigue
 
 @pytest.fixture
 def cs_fatigue_python():
-    """Fixture to create a PFCoil object.
+    """Fixture to create a CsFatigue object.
 
-    :return: an instance of PFCoil
-    :rtype: process.pfcoil.PFCoil
+    :return: an instance of CsFatigue
+    :rtype: process.cs_fatigue.CsFatigue
     """
     cs_fatigue_python = CsFatigue()
 
@@ -106,16 +106,23 @@ def test_ncycle(ncycleparam, monkeypatch, cs_fatigue_python):
 def test_embedded_stress_intensity_factor(
     hoop_stress, t, w, a, c, phi, expected_k, cs_fatigue_python
 ):
-    """Tests `he_density` subroutine.
+    """Tests `embedded_stress_intensity_factor` function.
 
-    :param temperature: test asset passed to the routine representing the temperature, in Kelvin.
-    :type temperature: float
+    :param hoop_stress: change in hoop stress over cycle.
+    :type hoop_stress: float
 
-    :param expected_density: expected result of the routine.
-    :type expected_density: float
+    :param t: plate thickness.
+    :type t: float
 
-    :param tfcoil: fixture containing an initialised `TFcoil` object
-    :type tfcoil: tests.unit.test_tfcoil.tfcoil (functional fixture)
+    :param w: plate width.
+    :type w: float
+
+    :param a: crack depth (t -direction).
+    :type a: float
+
+    :param c: crack length (w - direction).
+    :type c: float
+
     """
     k = cs_fatigue_python.embedded_stress_intensity_factor(hoop_stress, t, w, a, c, phi)
 
@@ -139,16 +146,23 @@ def test_embedded_stress_intensity_factor(
 def test_surface_stress_intensity_factor(
     hoop_stress, t, w, a, c, phi, expected_k, cs_fatigue_python
 ):
-    """Tests `he_density` subroutine.
+    """Tests `surface_stress_intensity_factor` function.
 
-    :param temperature: test asset passed to the routine representing the temperature, in Kelvin.
-    :type temperature: float
+    :param hoop_stress: change in hoop stress over cycle.
+    :type hoop_stress: float
 
-    :param expected_density: expected result of the routine.
-    :type expected_density: float
+    :param t: plate thickness.
+    :type t: float
 
-    :param tfcoil: fixture containing an initialised `TFcoil` object
-    :type tfcoil: tests.unit.test_tfcoil.tfcoil (functional fixture)
+    :param w: plate width.
+    :type w: float
+
+    :param a: crack depth (t -direction).
+    :type a: float
+
+    :param c: crack length (w - direction).
+    :type c: float
+
     """
     k = cs_fatigue_python.surface_stress_intensity_factor(hoop_stress, t, w, a, c, phi)
 
