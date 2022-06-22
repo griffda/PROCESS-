@@ -8,12 +8,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-1941-gb6aee64b0
+   Tag No. : v2.1-1947-g2fccb3ae4
     Branch : HEAD
-   Git log : Merge branch |1697-output-variable-names-need-correcting| into |develop|
- Date/time : 22 Jun 2022  9:26:40 +00:00(hh:mm) UTC
+   Git log : Merge branch |1689-convert-cs_fatigue-f90-to-python| into |develop|
+ Date/time : 22 Jun 2022 16:01:50 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-91be33e7-project-20-concurrent-0
+  Computer : runner-nkpubsxk-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_costs_paper_0/IN.DAT
  Run title : demo 1 model for cost paper
