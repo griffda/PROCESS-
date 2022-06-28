@@ -292,18 +292,10 @@ def cumulative_radial_build(section, mfile_data, scan):
             cumulative_build += mfile_data.data["rminor"].get_scan(scan)
         elif item == "vvblgapi" or item == "vvblgapo":
             cumulative_build += mfile_data.data["vvblgap"].get_scan(scan)
-        # elif item == "thshieldi":
-        #     cumulative_build += mfile_data.data["thshield_ib"].get_scan(scan)
-        # elif item == "thshieldo":
-        #     cumulative_build += mfile_data.data["thshield_ob"].get_scan(scan)
         elif "d_vv_in" in item:
             cumulative_build += mfile_data.data["d_vv_in"].get_scan(scan)
         elif "d_vv_out" in item:
             cumulative_build += mfile_data.data["d_vv_out"].get_scan(scan)
-        # elif "d_vv_top" in item:
-        #    cumulative_build += mfile_data.data["d_vv_top"].get_scan(scan)
-        # elif "d_vv_bot" in item:
-        #    cumulative_build += mfile_data.data["d_vv_bot"].get_scan(scan)
         else:
             cumulative_build += mfile_data.data[item].get_scan(scan)
         if item == section:
@@ -337,10 +329,6 @@ def cumulative_radial_build2(section, mfile_data, scan):
             build = mfile_data.data["rminor"].get_scan(scan)
         elif item == "vvblgapi" or item == "vvblgapo":
             build = mfile_data.data["vvblgap"].get_scan(scan)
-        # elif item == "thshieldi":
-        #     build = mfile_data.data["thshield_ib"].get_scan(scan)
-        # elif item == "thshieldo":
-        #     build = mfile_data.data["thshield_ob"].get_scan(scan)
         elif "d_vv_in" in item:
             build = mfile_data.data["d_vv_in"].get_scan(scan)
         elif "d_vv_out" in item:
@@ -2681,10 +2669,6 @@ def test(f):
                 build = m_file.data["rminor"].get_scan(scan)
             elif item == "vvblgapi" or item == "vvblgapo":
                 build = m_file.data["vvblgap"].get_scan(scan)
-            # elif item == "thshieldi":
-            #     build = m_file.data["thshield_ib"].get_scan(scan)
-            # elif item == "thshieldo":
-            #     build = m_file.data["thshield_ob"].get_scan(scan)
             elif "d_vv_in" in item:
                 build = m_file.data["d_vv_in"].get_scan(scan)
             elif "d_vv_out" in item:
@@ -3011,10 +2995,6 @@ def main(args=None):
             build = m_file.data["rminor"].get_scan(scan)
         elif item == "vvblgapi" or item == "vvblgapo":
             build = m_file.data["vvblgap"].get_scan(scan)
-        # elif item == "thshieldi":
-        #     build = m_file.data["thshield_ib"].get_scan(scan)
-        # elif item == "thshieldo":
-        #     build = m_file.data["thshield_ob"].get_scan(scan)
         elif "d_vv_in" in item:
             build = m_file.data["d_vv_in"].get_scan(scan)
         elif "d_vv_out" in item:
