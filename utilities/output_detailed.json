@@ -1288,8 +1288,8 @@
                 "combination": false
             },
             "7": {
-                "name": "thshield",
-                "des": "Thermal shield",
+                "name": "thshield_ib",
+                "des": "Inboard thermal shield",
                 "combination": false
             },
             "8": {
@@ -1365,7 +1365,7 @@
                 "combination": false
             },
             "22": {
-                "name": "thshield",
+                "name": "thshield_ob",
                 "des": "Outboard thermal shield",
                 "combination": false
             },
@@ -1393,8 +1393,8 @@
                     "combination": false
                 },
                 "3": {
-                    "name": "thshield",
-                    "des": "Thermal shield",
+                    "name": "thshield_vb",
+                    "des": "Upper thermal shield",
                     "combination": false
                 },
                 "4": {
@@ -1462,7 +1462,7 @@
                     "combination": false
                 },
                 "16": {
-                    "name": "thshield",
+                    "name": "thshield_vb",
                     "des": "Lower thermal shield",
                     "combination": false
                 },

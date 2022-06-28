@@ -59,7 +59,7 @@ RADIAL_BUILD = [
     "gapoh",
     "tfcth",
     "tftsgap",
-    "thshieldi",
+    "thshield_ib",
     "gapds",
     "d_vv_in",
     "shldith",
@@ -76,7 +76,7 @@ RADIAL_BUILD = [
     "shldoth",
     "d_vv_out",
     "gapsto",
-    "thshieldo",
+    "thshield_ob",
     "tftsgap",
     "tfthko",
 ]
@@ -90,7 +90,7 @@ vertical_upper = [
     "shldtth",
     "d_vv_top",
     "vgap2",
-    "thshield",
+    "thshield_vb",
     "tftsgap",
     "tfcth",
 ]
@@ -102,7 +102,7 @@ vertical_lower = [
     "shldlth",
     "d_vv_bot",
     "vgap2",
-    "thshield",
+    "thshield_vb",
     "tftsgap",
     "tfcth",
 ]
@@ -292,8 +292,10 @@ def cumulative_radial_build(section, mfile_data, scan):
             cumulative_build += mfile_data.data["rminor"].get_scan(scan)
         elif item == "vvblgapi" or item == "vvblgapo":
             cumulative_build += mfile_data.data["vvblgap"].get_scan(scan)
-        elif item == "thshieldi" or item == "thshieldo":
-            cumulative_build += mfile_data.data["thshield"].get_scan(scan)
+        # elif item == "thshieldi":
+        #     cumulative_build += mfile_data.data["thshield_ib"].get_scan(scan)
+        # elif item == "thshieldo":
+        #     cumulative_build += mfile_data.data["thshield_ob"].get_scan(scan)
         elif "d_vv_in" in item:
             cumulative_build += mfile_data.data["d_vv_in"].get_scan(scan)
         elif "d_vv_out" in item:
@@ -335,8 +337,10 @@ def cumulative_radial_build2(section, mfile_data, scan):
             build = mfile_data.data["rminor"].get_scan(scan)
         elif item == "vvblgapi" or item == "vvblgapo":
             build = mfile_data.data["vvblgap"].get_scan(scan)
-        elif item == "thshieldi" or item == "thshieldo":
-            build = mfile_data.data["thshield"].get_scan(scan)
+        # elif item == "thshieldi":
+        #     build = mfile_data.data["thshield_ib"].get_scan(scan)
+        # elif item == "thshieldo":
+        #     build = mfile_data.data["thshield_ob"].get_scan(scan)
         elif "d_vv_in" in item:
             build = mfile_data.data["d_vv_in"].get_scan(scan)
         elif "d_vv_out" in item:
@@ -492,7 +496,7 @@ def toroidal_cross_section(axis, mfile_data, scan, demo_ranges):
     r2, r1 = cumulative_radial_build2("tfcth", mfile_data, scan)
     arc_fill(axis, r1, r2, color=tfc)
 
-    r2, r1 = cumulative_radial_build2("thshieldi", mfile_data, scan)
+    r2, r1 = cumulative_radial_build2("thshield_ib", mfile_data, scan)
     arc_fill(axis, r1, r2, color=thermal_shield)
 
     r2, r1 = cumulative_radial_build2("d_vv_in", mfile_data, scan)
@@ -521,7 +525,7 @@ def toroidal_cross_section(axis, mfile_data, scan, demo_ranges):
     r2, r1 = cumulative_radial_build2("d_vv_out", mfile_data, scan)
     arc_fill(axis, r1, r2, color=vessel)
 
-    r2, r1 = cumulative_radial_build2("thshieldo", mfile_data, scan)
+    r2, r1 = cumulative_radial_build2("thshield_ob", mfile_data, scan)
     arc_fill(axis, r1, r2, color=thermal_shield)
 
     arc_fill(axis, rdewex, rdewex + ddwex, color=cryostat)
@@ -2677,8 +2681,10 @@ def test(f):
                 build = m_file.data["rminor"].get_scan(scan)
             elif item == "vvblgapi" or item == "vvblgapo":
                 build = m_file.data["vvblgap"].get_scan(scan)
-            elif item == "thshieldi" or item == "thshieldo":
-                build = m_file.data["thshield"].get_scan(scan)
+            # elif item == "thshieldi":
+            #     build = m_file.data["thshield_ib"].get_scan(scan)
+            # elif item == "thshieldo":
+            #     build = m_file.data["thshield_ob"].get_scan(scan)
             elif "d_vv_in" in item:
                 build = m_file.data["d_vv_in"].get_scan(scan)
             elif "d_vv_out" in item:
@@ -2713,7 +2719,9 @@ def test(f):
         colour_dict = {}
         colour_dict["ohcth"] = solenoid
         colour_dict["tfcth"] = tfc
-        colour_dict["thshield"] = thermal_shield
+        colour_dict["thshield_ib"] = thermal_shield
+        colour_dict["thshield_ob"] = thermal_shield
+        colour_dict["thshield_vb"] = thermal_shield
         colour_dict["d_vv_in"] = vessel
         colour_dict["d_vv_out"] = vessel
         colour_dict["d_vv_top"] = vessel
@@ -3003,8 +3011,10 @@ def main(args=None):
             build = m_file.data["rminor"].get_scan(scan)
         elif item == "vvblgapi" or item == "vvblgapo":
             build = m_file.data["vvblgap"].get_scan(scan)
-        elif item == "thshieldi" or item == "thshieldo":
-            build = m_file.data["thshield"].get_scan(scan)
+        # elif item == "thshieldi":
+        #     build = m_file.data["thshield_ib"].get_scan(scan)
+        # elif item == "thshieldo":
+        #     build = m_file.data["thshield_ob"].get_scan(scan)
         elif "d_vv_in" in item:
             build = m_file.data["d_vv_in"].get_scan(scan)
         elif "d_vv_out" in item:
@@ -3039,7 +3049,9 @@ def main(args=None):
     colour_dict = {}
     colour_dict["ohcth"] = solenoid
     colour_dict["tfcth"] = tfc
-    colour_dict["thshield"] = thermal_shield
+    colour_dict["thshield_ib"] = thermal_shield
+    colour_dict["thshield_ob"] = thermal_shield
+    colour_dict["thshield_vb"] = thermal_shield
     colour_dict["d_vv_in"] = vessel
     colour_dict["d_vv_out"] = vessel
     colour_dict["d_vv_top"] = vessel

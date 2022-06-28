@@ -523,7 +523,7 @@ class Buildings:
                 - (
                     build_variables.tfcth
                     + build_variables.tftsgap
-                    + build_variables.thshield
+                    + build_variables.thshield_vb
                     + build_variables.vgap2
                 )
             )
@@ -567,7 +567,7 @@ class Buildings:
                 - (
                     build_variables.tfcth
                     + build_variables.tftsgap
-                    + build_variables.thshield
+                    + build_variables.thshield_vb
                     + build_variables.vgap2
                 )
             )

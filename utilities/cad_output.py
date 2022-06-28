@@ -83,8 +83,14 @@ class BuildDataContainer(object):
         # Radial gap between inboard TF coil leg and thermal shield
         self.deltf = data.data["deltf"].get_scan(-1)
 
-        # TF-VV thermal shield thickness
-        self.thshield = data.data["thshield"].get_scan(-1)
+        # TF-VV thermal shield thickness, inboard
+        self.thshield_ib = data.data["thshield_ib"].get_scan(-1)
+
+        # # TF-VV thermal shield thickness, outboard
+        # self.thshield_ob = data.data["thshield_ob"].get_scan(-1)
+
+        # TF-VV thermal shield thickness, inboard
+        self.thshield_vb = data.data["thshield_vb"].get_scan(-1)
 
         # Radial gap between inboard thermal shield and vacuum vessel
         self.gapds = data.data["gapds"].get_scan(-1)
@@ -493,7 +499,7 @@ def write_vacuum_vessel(data, output_file):
         - data.gapoh
         - data.tfcth
         - data.deltf
-        - data.thshield
+        - data.thshield_ib
         - data.gapds
     )
     output_file.write(
@@ -560,7 +566,7 @@ def write_vacuum_vessel(data, output_file):
         - data.gapoh
         - data.tfcth
         - data.deltf
-        - data.thshield
+        - data.thshield_ib
         - data.gapds
         - data.d_vv_in
     )
@@ -755,7 +761,7 @@ def write_shield(data, output_file):
         - data.gapoh
         - data.tfcth
         - data.deltf
-        - data.thshield
+        - data.thshield_ib
         - data.gapds
         - data.d_vv_in
     )
@@ -817,7 +823,7 @@ def write_shield(data, output_file):
         - data.gapoh
         - data.tfcth
         - data.deltf
-        - data.thshield
+        - data.thshield_ib
         - data.gapds
         - data.d_vv_in
         - data.shldith
@@ -1011,7 +1017,7 @@ def write_blanket(data, output_file):
         - data.gapoh
         - data.tfcth
         - data.deltf
-        - data.thshield
+        - data.thshield_ib
         - data.gapds
         - data.d_vv_in
         - data.shldith
@@ -1064,7 +1070,7 @@ def write_blanket(data, output_file):
         - data.gapoh
         - data.tfcth
         - data.deltf
-        - data.thshield
+        - data.thshield_ib
         - data.gapds
         - data.d_vv_in
         - data.shldith
@@ -1275,7 +1281,7 @@ def write_first_wall(data, output_file):
         - data.gapoh
         - data.tfcth
         - data.deltf
-        - data.thshield
+        - data.thshield_ib
         - data.gapds
         - data.d_vv_in
         - data.shldith
@@ -1342,7 +1348,7 @@ def write_first_wall(data, output_file):
         - data.gapoh
         - data.tfcth
         - data.deltf
-        - data.thshield
+        - data.thshield_ib
         - data.gapds
         - data.d_vv_in
         - data.shldith
@@ -1558,7 +1564,7 @@ def write_tungsten_armour(data, output_file):
         - data.gapoh
         - data.tfcth
         - data.deltf
-        - data.thshield
+        - data.thshield_ib
         - data.gapds
         - data.d_vv_in
         - data.shldith
@@ -1628,7 +1634,7 @@ def write_tungsten_armour(data, output_file):
         - data.gapoh
         - data.tfcth
         - data.deltf
-        - data.thshield
+        - data.thshield_ib
         - data.gapds
         - data.d_vv_in
         - data.shldith
@@ -2002,7 +2008,7 @@ def write_tf_coils(data, output_file):
         + data.shldtth
         + data.d_vv_top
         + data.vgap2
-        + data.thshield
+        + data.thshield_vb
         + data.tftsgap
         + data.tfcth
     )
@@ -2014,7 +2020,7 @@ def write_tf_coils(data, output_file):
         - data.shldlth
         - data.d_vv_bot
         - data.vgap2
-        - data.thshield
+        - data.thshield_vb
         - data.tftsgap
         - data.tfcth
     )
