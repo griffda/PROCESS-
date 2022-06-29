@@ -1139,7 +1139,6 @@ contains
     !  Total radiation power/volume
 
     pradpv = pimptot + psyncpv ! pcoreradpv + pedgeradpv !
-
   end subroutine radpwr
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1206,7 +1205,7 @@ contains
     !  psyncpv should be per unit volume; Albajar gives it as total
 
     psyncpv = psync/vol
-
+    !!! end break
   end subroutine psync_albajar_fidone
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1269,6 +1268,7 @@ contains
       trho = tprofile(rho, rhopedt, te0, teped, tesep, alphat, tbeta)
       nrho = nprofile(rho, rhopedn, ne0, neped, nesep, alphan)
 
+
       do imp = 1, size(impurity_arr_frac)
 
         if (impurity_arr_frac(imp) > 1.0D-30) then
@@ -1289,7 +1289,6 @@ contains
     radcore = 2.0D-6 * drho * radcore
     radb    = 2.0D-6 * drho * radb
     radl    = 2.0D-6 * drho * radl
-
   end subroutine imprad
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
