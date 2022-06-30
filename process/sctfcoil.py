@@ -1,6 +1,7 @@
 import numpy
 import logging
 import copy
+import numba
 
 from process.fortran import rebco_variables
 from process.fortran import global_variables
@@ -25,6 +26,9 @@ logger = logging.getLogger(__name__)
 s_handler = logging.StreamHandler()
 s_handler.setLevel(logging.INFO)
 logger.addHandler(s_handler)
+
+
+RMU0 = constants.rmu0
 
 
 class Sctfcoil:
@@ -1207,11 +1211,13 @@ class Sctfcoil:
         # TF coil inductance
         # ---
         if physics_variables.itart == 0 and tfcoil_variables.i_tf_shape == 1:
-            self.tfcind(build_variables.tfcth)
+            tfcoil_variables.tfind = self.tfcind(
+                build_variables.tfcth, tfcoil_variables.xarc, tfcoil_variables.yarc
+            )
         else:
             tfcoil_variables.tfind = (
                 (build_variables.hmax + build_variables.tfthko)
-                * constants.rmu0
+                * RMU0
                 / constants.pi
                 * numpy.log(
                     build_variables.r_tf_outboard_mid / build_variables.r_tf_inboard_mid
@@ -2265,7 +2271,9 @@ class Sctfcoil:
             tfcoil_variables.vforce * tfcoil_variables.n_tf
         )
 
-    def tfcind(self, tfthk):
+    @staticmethod
+    @numba.njit(cache=True)
+    def tfcind(tfthk, xarc, yarc):
         """Calculates the self inductance of a TF coil
         This routine calculates the self inductance of a TF coil
         approximated by a straight inboard section and two elliptical arcs.
@@ -2281,19 +2289,16 @@ class Sctfcoil:
         """
         NINTERVALS = 100
 
-        tfcoil_variables.tfind = 0.0e0
         # Integrate over the whole TF area, including the coil thickness.
-        x0 = tfcoil_variables.xarc[1]
-        y0 = tfcoil_variables.yarc[1]
+        x0 = xarc[1]
+        y0 = yarc[1]
 
         # Minor and major radii of the inside and outside perimeters of the the
         # Inboard leg and arc.
         # Average the upper and lower halves, which are different in the
         # single null case
-        ai = tfcoil_variables.xarc[1] - tfcoil_variables.xarc[0]
-        bi = (
-            tfcoil_variables.yarc[1] - tfcoil_variables.yarc[3]
-        ) / 2.0e0 - tfcoil_variables.yarc[0]
+        ai = xarc[1] - xarc[0]
+        bi = (yarc[1] - yarc[3]) / 2.0e0 - yarc[0]
         ao = ai + tfthk
         bo = bi + tfthk
         # Interval used for integration
@@ -2302,9 +2307,11 @@ class Sctfcoil:
         # Initialise major radius
         r = x0 - dr / 2.0e0
 
-        for i in range(NINTERVALS):
+        tfind = 0
+
+        for _ in range(NINTERVALS):
             # Field in the bore for unit current
-            b = constants.rmu0 / (2.0e0 * numpy.pi * r)
+            b = RMU0 / (2.0e0 * numpy.pi * r)
             # Find out if there is a bore
             if x0 - r < ai:
                 h_bore = y0 + bi * numpy.sqrt(1 - ((r - x0) / ai) ** 2)
@@ -2312,29 +2319,25 @@ class Sctfcoil:
             else:
                 h_bore = 0.0e0
                 # Include the contribution from the straight section
-                h_thick = (
-                    bo * numpy.sqrt(1 - ((r - x0) / ao) ** 2) + tfcoil_variables.yarc[0]
-                )
+                h_thick = bo * numpy.sqrt(1 - ((r - x0) / ao) ** 2) + yarc[0]
 
             # Assume B in TF coil = 1/2  B in bore
             # Multiply by 2 for upper and lower halves of coil
-            tfcoil_variables.tfind = tfcoil_variables.tfind + b * dr * (
-                2.0e0 * h_bore + h_thick
-            )
+            tfind += b * dr * (2.0e0 * h_bore + h_thick)
             r = r - dr
 
         # Outboard arc
-        ai = tfcoil_variables.xarc[2] - tfcoil_variables.xarc[1]
-        bi = (tfcoil_variables.yarc[1] - tfcoil_variables.yarc[3]) / 2.0e0
+        ai = xarc[2] - xarc[1]
+        bi = (yarc[1] - yarc[3]) / 2.0e0
         ao = ai + tfthk
         bo = bi + tfthk
         dr = ao / NINTERVALS
         # Initialise major radius
         r = x0 + dr / 2.0e0
 
-        for i in range(NINTERVALS):
+        for _ in range(NINTERVALS):
             # Field in the bore for unit current
-            b = constants.rmu0 / (2.0e0 * numpy.pi * r)
+            b = RMU0 / (2.0e0 * numpy.pi * r)
             # Find out if there is a bore
             if r - x0 < ai:
                 h_bore = y0 + bi * numpy.sqrt(1 - ((r - x0) / ai) ** 2)
@@ -2345,10 +2348,10 @@ class Sctfcoil:
 
             # Assume B in TF coil = 1/2  B in bore
             # Multiply by 2 for upper and lower halves of coil
-            tfcoil_variables.tfind = tfcoil_variables.tfind + b * dr * (
-                2.0e0 * h_bore + h_thick
-            )
+            tfind += b * dr * (2.0e0 * h_bore + h_thick)
             r = r + dr
+
+        return tfind
 
     def tf_coil_area_and_masses(self):
         """Subroutine to calculate the TF coil areas and masses"""
@@ -3934,8 +3937,8 @@ class Sctfcoil:
                 rad=radtf,
                 ey=eyoung_trans,
                 j=jeff,
-                nlayers=n_tf_layer,
-                n_radial_array=n_radial_array,
+                nlayers=int(n_tf_layer),
+                n_radial_array=int(n_radial_array),
             )
 
             # Vertical stress [Pa]
@@ -4262,7 +4265,9 @@ class Sctfcoil:
                 n_tf_bucking,
             )
 
-    def plane_stress(self, nu, rad, ey, j, nlayers, n_radial_array):
+    @staticmethod
+    @numba.njit(cache=True)
+    def plane_stress(nu, rad, ey, j, nlayers, n_radial_array):
         """Calculates the stresses in a superconductor TF coil
         inboard leg at the midplane using the plain stress approximation
         author: P J Knight, CCFE, Culham Science Centre
@@ -4286,8 +4291,7 @@ class Sctfcoil:
             (
                 2 * nlayers,
                 2 * nlayers,
-            ),
-            order="F",
+            )
         )
         # Matrix encoding the integration constant cc coeficients
 
@@ -4314,14 +4318,14 @@ class Sctfcoil:
         kk = ey / (1 - nu**2)
 
         # Lorentz forces parametrisation coeficients (array equation)
-        alpha = 0.5e0 * constants.rmu0 * j**2 / kk
+        alpha = 0.5e0 * RMU0 * j**2 / kk
 
         inner_layer_curr = 0.0e0
         for ii in range(nlayers):
 
             beta[ii] = (
                 0.5e0
-                * constants.rmu0
+                * RMU0
                 * j[ii]
                 * (inner_layer_curr - numpy.pi * j[ii] * rad[ii] ** 2)
                 / (numpy.pi * kk[ii])
@@ -4412,9 +4416,9 @@ class Sctfcoil:
         #  Find solution vector cc
         # ***
 
-        # cc = numpy.linalg.solve(aa, bb)
+        cc = numpy.linalg.solve(aa, bb)
 
-        maths_library.linesolv(aa, bb, cc)
+        # maths_library.linesolv(aa, bb, cc)
 
         #  Multiply c by (-1) (John Last, internal CCFE memorandum, 21/05/2013)
         for ii in range(nlayers):
@@ -6365,10 +6369,10 @@ class Sctfcoil:
         for ii in range(1, nlayers):
             currents_enclosed[ii] = currents_enclosed[ii - 1] + currents[ii - 1]
         # Factor that multiplies r linearly in the force density
-        f_lin_fac[:] = constants.rmu0 / 2.0e0 * d_curr**2
+        f_lin_fac[:] = RMU0 / 2.0e0 * d_curr**2
         # Factor that multiplies r reciprocally in the force density
         f_rec_fac[:] = (
-            constants.rmu0
+            RMU0
             / 2.0e0
             * (d_curr * currents_enclosed / numpy.pi - d_curr**2 * rad[:nlayers] ** 2)
         )
