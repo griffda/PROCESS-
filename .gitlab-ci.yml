@@ -26,8 +26,16 @@
 # When set in conjunction with CI_TEST_BUILD=true, setting CI_TEST_EXTERNAL as "true" will cause the STEP trigger to run
 # The Docker image used by all the jobs can be set using DOCKER_CI_IMAGE where it defaults to "ci-image"; this corresponds to git.ccfe.ac.uk:4567/process/process/ci-image
 # The Docker image tag used by all the jobs can be set using DOCKER_CI_IMAGE_VERSION where it defaults to "latest".
-  # This means that when neither DOCKER_CI_IMAGE or DOCKER_CI_IMAGE_VERSION are set the default image used will be "ci-image:latest"
+# This means that when neither DOCKER_CI_IMAGE or DOCKER_CI_IMAGE_VERSION are set the default image used will be "ci-image:latest"
+# Setting CI_TEST_OVERWRITE_REG_REFS to "true" will cause the regression
+# references to be overwritten
 
+workflow:
+    rules:
+        # Prevent merge request event pipelines running alongside branch ones
+        - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+          when: never
+        - when: always
 
 stages:
     - containers
@@ -186,9 +194,12 @@ integration-py38:
         expire_in: 1 week
 
 regression-py38:
+    rules:
+        - if: $CI_COMMIT_BRANCH != "develop"
     extends: .test_template
+    allow_failure: true
     script:
-        - pytest tests/regression -vs | tee tests/regression/pytest.log
+        - pytest tests/regression -vs --reg-tolerance=0 | tee tests/regression/pytest.log
         - lcov --gcov-tool gcov --capture --directory build/CMakeFiles/process.dir/source/fortran/ --output-file lcov_results/coverage.info
         - genhtml --output-directory lcov_results/html lcov_results/coverage.info
     artifacts:
@@ -196,19 +207,51 @@ regression-py38:
         paths:
             - lcov_results
             - tests/regression/pytest.log
-        expire_in: 1 week
-
+        expire_in: 2 weeks
 
 regression-py38-5-percent:
+    rules:
+        - if: $CI_COMMIT_BRANCH != "develop"
     extends: .test_template
+    allow_failure: true
     script:
-        - pytest tests/regression -vs --reg-tolerance=5 | tee tests/regression/pytest.log
+        - pytest tests/regression -vs | tee tests/regression/pytest.log
     artifacts:
         when: on_failure
         paths:
             - tests/regression/pytest.log
-        expire_in: 1 week
+        expire_in: 2 weeks
 
+regression-py38-overwrite:
+    # Overwrite regression references with up-to-date versions on develop branch
+    # This only occurs when a branch is merged to develop
+    variables:
+        OVERWRITE_COMMIT_MSG: Overwrite regression references for
+    rules:
+        # Prevent overwrite commits from recursively triggering pipelines
+        - if: $CI_COMMIT_BRANCH == "develop" && $CI_COMMIT_TITLE !~ /$OVERWRITE_COMMIT_MSG.*/
+        # CI variable for testing overwrites
+        - if: $CI_TEST_OVERWRITE_REG_REFS
+    extends: .test_template
+    script:
+        # Set up ssh to allow overwrite commit to be pushed
+        - *setup-ssh
+        - pytest tests/regression -vs --reg-tolerance=0 --overwrite | tee tests/regression/pytest.log
+        # Remote URL is sandboxed inside job, so need to set original SSH push URL
+        - git remote set-url --push origin "git@$CI_SERVER_HOST:$CI_PROJECT_PATH.git"
+        # Commit the overwritten regression references to develop (or other branch if testing)
+        - git add .
+        # $CI_COMMIT_TITLE will normally be the merge commit on develop
+        - git commit -m "$OVERWRITE_COMMIT_MSG \"$CI_COMMIT_TITLE\""
+        # Runner runs on a detached HEAD, so git push needs to specifically
+        # target the commit's branch
+        # Skip prevents subsequent pipeline being triggered
+        - git push origin HEAD:$CI_COMMIT_BRANCH -o ci.skip
+    artifacts:
+        when: on_failure
+        paths:
+            - tests/regression/pytest.log
+        expire_in: 2 weeks
 
 baseline_2019-py38:
     extends: .test_template
@@ -340,7 +383,7 @@ pages:
         - ford documentation/ford/index.md
 
     # python docs documentation
-        - python3 -m pip install mkdocstrings
+        - python3 -m pip install mkdocstrings==0.18.0
         - python3 ${CI_PROJECT_DIR}/scripts/document_fortran_interface.py
         - python3 ${CI_PROJECT_DIR}/scripts/vardes.py
     # mkdocstrings imports process to write its documentation,

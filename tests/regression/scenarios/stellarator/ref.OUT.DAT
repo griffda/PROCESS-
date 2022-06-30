@@ -13,15 +13,15 @@
  **************************************************************************************************************
  
    Program :
-   Version : 2.3.0   Release Date :: 2022-01-20
-   Tag No. : v2.1-1685-ge95ccee3
-    Branch : stellarator_develop
-   Git log : Line\ wrapping\ and\ removed\ a\ prad\ overwriting
- Date/time : 10 May 2022 17:09:47 +01:00(hh:mm) UTC
-      User : jon
-  Computer : jon-Precision-3560
- Directory : /home/jon/code/process
-     Input : /tmp/pytest-of-jon/pytest-7/test_scenario_stellarator_0/IN.DAT
+   Version : 2.4.0   Release Date :: 2022-05-18
+   Tag No. : v2.1-1892-g45d00e4c3
+    Branch : HEAD
+   Git log : Merge branch |1683-mfiles-in-tracking-baseline_2018-merged-unnecessarily| into |develop|
+ Date/time : 14 Jun 2022 10:39:04 +00:00(hh:mm) UTC
+      User : root
+  Computer : runner-c55928e9-project-20-concurrent-0
+ Directory : /builds/process/process
+     Input : /tmp/pytest-of-root/pytest-0/test_scenario_stellarator_0/IN.DAT
  Run title : HELIAS-5B
   Run type : Reactor concept design: Stellarator model, (c) CCFE
  
@@ -106,6 +106,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Power Generation Costs :
  
+<<<<<<< HEAD
                                                                            Annual Costs, M$       COE, m$/kWh
 
  Capital Investment                                                                546.32               83.10
@@ -122,6 +123,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Total Fuel Cost                                                                     6.47                0.98
 
  Total Cost                                                                        620.22               94.34
+=======
+>>>>>>> develop
  
  **************************************** Detailed Costings (1990 US$) ****************************************
  
@@ -416,12 +419,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Synchrotron wall reflectivity factor                                     (ssync)                       0.600     
  Normalised minor radius defining 'core'                                  (coreradius)              6.000E-01     
  Fraction of core radiation subtracted from P_L                           (coreradiationfraction)   1.000E+00     
- Radiation power from inner zone (MW)                                     (pinnerzoneradmw)         1.295E+02  OP 
- Radiation power from outer zone (MW)                                     (pouterzoneradmw)         1.135E+02  OP 
- SOL radiation power as imposed by f_rad (MW)                             (psolradmw)               2.899E+02  OP 
- Total radiation power from inside LCFS (MW)                              (pradmw)                  5.328E+02  OP 
+ Radiation power from inner zone (MW)                                     (pinnerzoneradmw)         1.317E+02  OP 
+ Radiation power from outer zone (MW)                                     (pouterzoneradmw)         1.154E+02  OP 
+ SOL radiation power (MW)                                                 (psolradmw)               2.956E+02  OP 
+ Total radiation power from inside LCFS (MW)                              (pradmw)                  5.428E+02  OP 
  LCFS radiation fraction = total radiation in LCFS / total power deposite (rad_fraction_LCFS)       0.000E+00  OP 
- Nominal mean radiation load on inside surface of reactor (MW/m2)         (photon_wall)             2.546E-01  OP 
+ Nominal mean radiation load on inside surface of reactor (MW/m2)         (photon_wall)             2.561E-01  OP 
  Peaking factor for radiation wall load                                   (peakfactrad)             3.330E+00  IP 
  Maximum permitted radiation wall load (MW/m^2)                           (maxradwallload)          1.000E+00  IP 
  Peak radiation wall load (MW/m^2)                                        (peakradwallload)         8.478E-01  OP 
@@ -850,12 +853,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  ************************************************* Cryogenics *************************************************
  
- Conduction and radiation heat loads on cryogenic components (MW)         (qss/1.0D6)               1.510E-02  OP 
- Nuclear heating of cryogenic components (MW)                             (qnuc/1.0D6)              4.053E-04  OP 
- AC losses in cryogenic components (MW)                                   (qac/1.0D6)               0.000E+00  OP 
- Resistive losses in current leads (MW)                                   (qcl/1.0D6)               8.338E-02  OP 
- 45% allowance for heat loads in transfer lines, storage tanks etc (MW)   (qmisc/1.0D6)             4.450E-02  OP 
- Sum = Total heat removal at cryogenic temperatures (tmpcry & tcoolin) (M (helpow + helpow_cryal/1. 1.434E-01  OP 
+ Conduction and radiation heat loads on cryogenic components (MW)         (qss/1.0d6)               1.503E-02  OP 
+ Nuclear heating of cryogenic components (MW)                             (qnuc/1.0d6)              3.728E-04  OP 
+ AC losses in cryogenic components (MW)                                   (qac/1.0d6)               0.000E+00  OP 
+ Resistive losses in current leads (MW)                                   (qcl/1.0d6)               9.031E-02  OP 
+ 45% allowance for heat loads in transfer lines, storage tanks etc (MW)   (qmisc/1.0d6)             4.757E-02  OP 
+ Sum = Total heat removal at cryogenic temperatures (tfcoil_variables.tmp (helpow + helpow_cryal/1. 1.533E-01  OP 
  Temperature of cryogenic superconducting components (K)                  (tmpcry)                  4.200E+00     
  Temperature of cryogenic aluminium components (K)                        (tcoolin)                 3.131E+02     
  Efficiency (figure of merit) of cryogenic plant is 13% of ideal Carnot v                           1.891E-03  OP 
@@ -888,8 +891,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Plant thermodynamics: options :
  
- Divertor thermal power is collected at only 150 C and is used to preheat the coolant in the power cycle
- Shield thermal power is collected at only 150 C and is used to preheat the coolant in the power cycle
+ Divertor thermal power is collected at only 150 C and is used to          &preheat the coolant in the power cycle
+ Shield thermal power is collected at only 150 C and is used to          &preheat the coolant in the power cycle
  Power conversion cycle efficiency model: user-defined efficiency
  Thermal to electric conversion efficiency of the power conversion cycle  (etath)                       0.400     
  Fraction of total high-grade thermal power to divertor                   (pdivfraction)                0.037  OP 
@@ -897,46 +900,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Power Balance for Reactor (across vacuum vessel boundary) - Detail
  ------------------------------------------------------------------
  
-                                            High-grade             Low-grade              Total
-                                             thermal power (MW)     thermal power (MW)      (MW)
-         First wall:
-                               neutrons            512.89                0.00              512.89
-             charged particle transport             30.64                0.00               30.64
-                              radiation            522.56                0.00              522.56
-                        coolant pumping             56.00                0.00               56.00
  
-         Blanket:
-                               neutrons           2231.09                0.00             2231.09
-             charged particle transport              0.00                0.00                0.00
-                              radiation              0.00                0.00                0.00
-                        coolant pumping            120.00                0.00              120.00
  
-         Shield:
-                               neutrons              0.11                0.00                0.11
-             charged particle transport              0.00                0.00                0.00
-                              radiation              0.00                0.00                0.00
-                        coolant pumping              0.00                0.00                0.00
  
-         Divertor:
-                               neutrons             48.54                0.00               48.54
-             charged particle transport             51.21                0.00               51.21
-                              radiation             10.55                0.00               10.55
-                        coolant pumping             24.00                0.00               24.00
  
-         TF coil:
-                               neutrons              0.00                0.00                0.00
-             charged particle transport              0.00                0.00                0.00
-                              radiation              0.00                0.00                0.00
-                        coolant pumping              0.00                0.00                0.00
  
-         Losses to H/CD apparatus + diagnostics:
-                               neutrons              0.00                0.00                0.00
-             charged particle transport              0.00                0.00                0.00
-                              radiation              0.00                0.00                0.00
-                        coolant pumping              0.00                0.00                0.00
  
-         ----------------------------------------------------------------------------------------
-                                 Totals           3607.60                0.00             3607.60
  
  Total power leaving reactor (across vacuum vessel boundary) (MW)                                    3607.601  OP 
  
@@ -959,10 +928,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Power Balance across separatrix :
  -------------------------------
  Only energy deposited in the plasma is included here.
- Total power loss is scaling power plus core radiation only (iradloss = 1)
- Transport power from scaling law (MW)                                    (pscalingmw)                454.726  OP 
- Radiation power from inside "coreradius" (MW)                            (pinnerzoneradmw.)          129.453  OP 
- Total (MW)                                                                                           584.179  OP 
+ Total power loss is scaling power plus core radiation only (physics_variables.iradloss = 1)
+ Transport power from scaling law (MW)                                    (pscalingmw)                463.247  OP 
+ Radiation power from inside "coreradius" (MW)                            (pcoreradmw.)               131.692  OP 
+ Total (MW)                                                                                           594.939  OP 
  
  Alpha power deposited in plasma (MW)                                     (falpha*palpmw)             582.149  OP 
  Power from charged products of DD and/or D-He3 fusion (MW)               (pchargemw.)                  2.175  OP 

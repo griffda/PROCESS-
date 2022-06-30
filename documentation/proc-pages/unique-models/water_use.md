@@ -17,7 +17,7 @@ Precise estimates of water usage require detailed site information and a decisio
 <p style='text-align: justify;'>
 The water used by a power plant is defined as that withdrawn from the environment, and includes the water evaporated ('consumed') by any introduced heat: 'withdrawal' is defined as the amount of water removed from the ground or diverted from a water source for use, while 'consumption' refers to the amount of water that is evaporated... or otherwise removed from the immediate water environment.
 
-[^1]
+[^1] 
 </p>
 
 <p style='text-align: justify;'>

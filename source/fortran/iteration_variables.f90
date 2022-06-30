@@ -3506,16 +3506,16 @@ contains
   end subroutine init_itv_154
 
   real(kind(1.d0)) function itv_154()
-    use physics_variables, only: fpdivlim
+    use physics_variables, only: fne0
     implicit none
-    itv_154 = fpdivlim
+    itv_154 = fne0
   end function itv_154
 
   subroutine set_itv_154(ratio)
-    use physics_variables, only: fpdivlim
+    use physics_variables, only: fne0
     implicit none
     real(kind(1.d0)) :: ratio
-    fpdivlim = ratio
+    fne0 = ratio
   end subroutine set_itv_154
 
   !---------------------------------
@@ -3804,47 +3804,51 @@ contains
     f_copperaoh_m2 = ratio
   end subroutine  set_itv_166
 
-  subroutine init_itv_167
-    !! <LI> (165) fecrh_ignition (f-value for equation 88)
+  !---------------------------------
+
+  subroutine init_itv_167 
+    !! <LI> (167) fncycle : f-value for minimum CS coil stress load cycles
     use numerics, only: lablxc, boundl, boundu
     implicit none
-    lablxc(167) = 'fecrh_ignition     '
-    boundl(167) = 0.010D0
-    boundu(167) = 2.000D0
+    lablxc(167) = 'fncycle       '
+    boundl(167) = 1.0d-8
+    boundu(167) = 1.0d0
   end subroutine init_itv_167
 
   real(kind(1.d0)) function itv_167()
-    use constraint_variables, only: fecrh_ignition
+    use constraint_variables, only: fncycle
     implicit none
-    itv_167 = fecrh_ignition 
+    itv_167 = fncycle 
   end function itv_167
 
   subroutine set_itv_167(ratio)
-    use constraint_variables, only: fecrh_ignition
+    use constraint_variables, only: fncycle
+    implicit none
     real(kind(1.d0)) :: ratio
-    fecrh_ignition = ratio
-  end subroutine set_itv_167
+    fncycle = ratio
+  end subroutine  set_itv_167
+
+  !---------------------------------
 
   subroutine init_itv_168
-    !! <LI> (168) te0_ecrh_achievable
+    !! <LI> (168) fecrh_ignition (f-value for equation 88)
     use numerics, only: lablxc, boundl, boundu
     implicit none
-    lablxc(168) = 'te0_ecrh_achievable'
-    boundl(168) = 5.0d0
-    boundu(168) = 40.0d0
+    lablxc(168) = 'fecrh_ignition     '
+    boundl(168) = 0.010D0
+    boundu(168) = 2.000D0
   end subroutine init_itv_168
 
   real(kind(1.d0)) function itv_168()
-  use stellarator_variables, only: te0_ecrh_achievable
+    use constraint_variables, only: fecrh_ignition
     implicit none
-    itv_168 = te0_ecrh_achievable 
+    itv_168 = fecrh_ignition 
   end function itv_168
 
   subroutine set_itv_168(ratio)
-    use stellarator_variables, only: te0_ecrh_achievable
-    implicit none
+    use constraint_variables, only: fecrh_ignition
     real(kind(1.d0)) :: ratio
-    te0_ecrh_achievable = ratio
+    fecrh_ignition = ratio
   end subroutine set_itv_168
 
   !---------------------------------
@@ -4195,10 +4199,10 @@ contains
            case (163);  xcm(i) = itv_163()
            case (164);  xcm(i) = itv_164()
            case (165);  xcm(i) = itv_165()
-            ! DUMMY Cases
            case (166);  xcm(i) = itv_166()
            case (167);  xcm(i) = itv_167()
            case (168);  xcm(i) = itv_168()
+            ! DUMMY Cases
            case (169);  xcm(i) = itv_169()
            case (170);  xcm(i) = itv_170()
            case (171);  xcm(i) = itv_171()
@@ -4462,10 +4466,10 @@ contains
            case (163);  call set_itv_163(ratio)
            case (164);  call set_itv_164(ratio)
            case (165);  call set_itv_165(ratio)
-            ! DUMMY Cases
            case (166);  call set_itv_166(ratio)
            case (167);  call set_itv_167(ratio)
            case (168);  call set_itv_168(ratio)
+            ! DUMMY Cases
            case (169);  call set_itv_169(ratio)
            case (170);  call set_itv_170(ratio)
            case (171);  call set_itv_171(ratio)

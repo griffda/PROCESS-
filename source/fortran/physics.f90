@@ -602,12 +602,26 @@ module physics_module
     ! Parameters taken from double null machine
     ! D. Brunner et al
     lambdaio = 1.57d-3
-    drsep = - 2.0d0 * 1.5d-3 * atanh(2.0d0 *(ftar - 0.5d0)) ! this needs updating
+
+    ! Issue #1559 Infinities in drsep when running single null in a double null machine
+    ! C W Ashe
+    if (ftar < 4.5d-5) then
+      drsep = 1.5d-2
+    else if (ftar > (1.0d0 - 4.5d-5)) then
+      drsep = -1.5d-2
+    else
+      drsep = - 2.0d0 * 1.5d-3 * atanh(2.0d0 *(ftar - 0.5d0))
+    ! Model Taken from D3-D paper for conventional divertor
+    ! Journal of Nuclear Materials
+    ! Volumes 290–293, March 2001, Pages 935-939
     ! Find the innner and outer lower target imbalance
+    end if
+
     fio = 0.16d0 + (0.16d0 - 0.41d0) * (1.0d0 - ( 2.0d0 / (1.0d0 + exp(-(drsep/lambdaio)**2))))
     if (idivrt == 2) then
       ! Double Null configuration
       ! Find all the power fractions accross the targets
+      ! Taken from D3-D conventional divertor design
       fLI = ftar * fio
       fLO = ftar * ( 1.0d0 - fio )
       fUI = (1.0d0 - ftar ) * fio

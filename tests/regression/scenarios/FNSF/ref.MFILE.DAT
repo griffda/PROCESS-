@@ -2,15 +2,15 @@
  # Power Reactor Optimisation Code #
  # PROCESS #
  # Power Reactor Optimisation Code #
- PROCESS_version_number__________________________________________________ (procver)_____________________     "2.3.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "29/04/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "10:59"
- User____________________________________________________________________ (username)____________________     "jon"     
+ PROCESS_version_number__________________________________________________ (procver)_____________________     "2.4.0   R"
+ Date_of_run_____________________________________________________________ (date)________________________     "14/06/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "10:31"
+ User____________________________________________________________________ (username)____________________     "root"    
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "FNSF (Menard et al. 2016)                                                                          
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1403-gecefea14"                                                                               
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1456-convert-pfcoil-f90-to-python"                                                                 
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Convert\ superconpf()\ to\ Python"                                                                 
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-jon/pytest-77/popen-gw7/test_scenario_FNSF_0/IN.DAT                                                                                                                                      "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1892-g45d00e4c3"                                                                              
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "HEAD"                                                                                              
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch |1683-mfiles-in-tracking-baseline_2018-merged-unnecessarily| into |develop|"          
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-root/pytest-0/test_scenario_FNSF_0/IN.DAT                                                                                                                                                "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -74,24 +74,24 @@
  fpsepr_(range_normalised)_______________________________________________ (nitvar017)___________________      5.0197E-01    
  flhthresh_______________________________________________________________ (itvar018)____________________      1.0000E+00    
  flhthresh_(final_value/initial_value)___________________________________ (xcm018)______________________      1.0000E+00    
- flhthresh_(range_normalised)____________________________________________ (nitvar018)___________________      2.2204E-22    
+ flhthresh_(range_normalised)____________________________________________ (nitvar018)___________________      0.0000E+00    
  fimp(13)________________________________________________________________ (itvar019)____________________      3.8910E-04    
  fimp(13)_(final_value/initial_value)____________________________________ (xcm019)______________________      8.8432E-01    
  fimp(13)_(range_normalised)_____________________________________________ (nitvar019)___________________      0.0000E+00    
  Beta_consistency__________________normalised_residue____________________ (normres001)__________________      2.2541E-06    
  Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________     -5.3404E-06    
- Density_upper_limit_______________normalised_residue____________________ (normres003)__________________      5.0004E-13    
+ Density_upper_limit_______________normalised_residue____________________ (normres003)__________________      4.9893E-13    
  Beam_ion_density_consistency______normalised_residue____________________ (normres004)__________________      2.2346E-05    
  Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres005)__________________     -3.9515E-06    
  Fusion_power_upper_limit__________normalised_residue____________________ (normres006)__________________     -3.9494E-06    
  Radial_build_consistency__________normalised_residue____________________ (normres007)__________________     -0.0000E+00    
  L-H_power_threshold_limit_________normalised_residue____________________ (normres008)__________________      1.1177E-04    
  Radiation_fraction_upper_limit____normalised_residue____________________ (normres009)__________________      1.7227E-05    
- Beta_upper_limit__________________normalised_residue____________________ (normres010)__________________      1.2668E-12    
+ Beta_upper_limit__________________normalised_residue____________________ (normres010)__________________      1.2670E-12    
  Injection_power_upper_limit_______normalised_residue____________________ (normres011)__________________      2.2351E-05    
  Average_centrepost_temperature____normalised_residue____________________ (normres012)__________________     -9.0460E-08    
  Peak_centrepost_temp._upper_limit_normalised_residue____________________ (normres013)__________________     -1.1919E-07    
- Ip/Irod_upper_limit_______________normalised_residue____________________ (normres014)__________________     -2.2204E-16    
+ Ip/Irod_upper_limit_______________normalised_residue____________________ (normres014)__________________     -4.4409E-16    
  Psep_/_R_upper_limit______________normalised_residue____________________ (normres015)__________________     -1.1178E-04    
  # Final Feasible Point #
  # Plant Availability #
@@ -218,21 +218,22 @@
  Synchrotron_wall_reflectivity_factor____________________________________ (ssync)_______________________      7.0000E-01    
  Normalised_minor_radius_defining_'core'_________________________________ (coreradius)__________________      7.5000E-01    
  Fraction_of_core_radiation_subtracted_from_P_L__________________________ (coreradiationfraction)_______      6.0000E-01    
- Total_core_radiation_power_(MW)_________________________________________ (pcoreradmw)__________________      3.6355E+01 OP 
- Edge_radiation_power_(MW)_______________________________________________ (pedgeradmw)__________________      5.7411E+01 OP 
- Total_radiation_power_(MW)______________________________________________ (pradmw)______________________      9.3766E+01 OP 
- Core_radiation_fraction_=_total_radiation_in_core_/_total_power_deposite (rad_fraction_core)___________      8.4587E-01 OP 
- SoL_radiation_fraction_=_total_radiation_in_SoL_/_total_power_accross_se (rad_fraction_sol)____________      8.0000E-01 IP 
- Radiation_fraction_=_total_radiation_/_total_power_deposited_in_plasma__ (rad_fraction)________________      9.6917E-01 OP 
+ Radiation_power_from_inner_zone_(MW)____________________________________ (pinnerzoneradmw)_____________      3.6355E+01 OP 
+ Radiation_power_from_outer_zone_(MW)____________________________________ (pouterzoneradmw)_____________      5.7411E+01 OP 
+ Total_radiation_power_from_inside_LCFS_(MW)_____________________________ (pradmw)______________________      9.3766E+01 OP 
+ LCFS_radiation_fraction_=_total_radiation_in_LCFS_/_total_power_deposite (rad_fraction_LCFS)___________      8.4587E-01 OP 
  Nominal_mean_radiation_load_on_inside_surface_of_reactor_(MW/m2)________ (photon_wall)_________________      7.3691E-01 OP 
  Peaking_factor_for_radiation_wall_load__________________________________ (peakfactrad)_________________      3.3300E+00 IP 
  Maximum_permitted_radiation_wall_load_(MW/m^2)__________________________ (maxradwallload)______________      1.0000E+00 IP 
  Peak_radiation_wall_load_(MW/m^2)_______________________________________ (peakradwallload)_____________      2.4539E+00 OP 
  Nominal_mean_neutron_load_on_inside_surface_of_reactor_(MW/m2)__________ (wallmw)______________________      1.0180E+00 OP 
+ Radiation_power_from_SoL_(MW)___________________________________________ (pradsolmw)___________________      1.3669E+01 OP 
+ SoL_radiation_fraction_=_total_radiation_in_SoL_/_total_power_accross_se (rad_fraction_sol)____________      8.0000E-01 IP 
+ Radiation_fraction_total_=_SoL_+_LCFS_radiation_/_total_power_deposited_ (rad_fraction_total)__________      9.6917E-01 OP 
  Power_incident_on_the_divertor_targets_(MW)_____________________________ (ptarmw)______________________      3.4172E+00 OP 
  Fraction_of_power_to_the_lower_divertor_________________________________ (ftar)________________________      1.0000E+00 IP 
  Outboard_side_heat_flux_decay_length_(m)________________________________ (lambdaio)____________________      1.5700E-03 OP 
- Midplane_seperation_of_the_two_magnetic_closed_flux_surfaces_(m)________ (drsep)_______________________       -Infinity OP 
+ Midplane_seperation_of_the_two_magnetic_closed_flux_surfaces_(m)________ (drsep)_______________________     -1.5000E-02 OP 
  Fraction_of_power_on_the_inner_targets__________________________________ (fio)_________________________      4.1000E-01 OP 
  Fraction_of_power_incident_on_the_lower_inner_target____________________ (fLI)_________________________      4.1000E-01 OP 
  Fraction_of_power_incident_on_the_lower_outer_target____________________ (fLO)_________________________      5.9000E-01 OP 
@@ -520,44 +521,44 @@
  Pump_power_(W)__________________________________________________________ (ppump)_______________________      5.3342E+05    
  # Central Solenoid and PF Coils #
  Existence_of_central_solenoid___________________________________________ (bv.iohcl)____________________              0    
- PF_coil_resistive_power_(W)_____________________________________________ (pfv.powpfres)________________      3.4434E+08 OP 
- PF_coil_0_radius_(m)____________________________________________________ (pfv.rpf[0]___________________      9.0829E-01    
- PF_coil_0_vertical_position_(m)_________________________________________ (pfv.zpf[0])__________________      3.6214E+00    
+ PF_coil_resistive_power_(W)_____________________________________________ (powpfres)____________________      3.4434E+08 OP 
+ PF_coil_0_radius_(m)____________________________________________________ (rpf[0]_______________________      9.0829E-01    
+ PF_coil_0_vertical_position_(m)_________________________________________ (zpf[0])______________________      3.6214E+00    
  PF_coil_0_radial_thickness_(m)__________________________________________ (pfdr(0))_____________________      4.7917E-01    
  PF_coil_0_vertical_thickness_(m)________________________________________ (pfdz(0))_____________________      4.7917E-01    
- PF_coil_0_turns_________________________________________________________ (pfv.turns[0])________________      1.6400E+02    
- PF_coil_0_current_(MA)__________________________________________________ (pfv.ric[0])__________________      6.8881E+00    
- PF_coil_0_field_(T)_____________________________________________________ (pfv.bpf[0])__________________      7.0149E+00    
- PF_coil_1_radius_(m)____________________________________________________ (pfv.rpf[1]___________________      9.0829E-01    
- PF_coil_1_vertical_position_(m)_________________________________________ (pfv.zpf[1])__________________     -3.6214E+00    
+ PF_coil_0_turns_________________________________________________________ (turns[0])____________________      1.6400E+02    
+ PF_coil_0_current_(MA)__________________________________________________ (ric[0])______________________      6.8881E+00    
+ PF_coil_0_field_(T)_____________________________________________________ (bpf[0])______________________      7.0149E+00    
+ PF_coil_1_radius_(m)____________________________________________________ (rpf[1]_______________________      9.0829E-01    
+ PF_coil_1_vertical_position_(m)_________________________________________ (zpf[1])______________________     -3.6214E+00    
  PF_coil_1_radial_thickness_(m)__________________________________________ (pfdr(1))_____________________      4.7917E-01    
  PF_coil_1_vertical_thickness_(m)________________________________________ (pfdz(1))_____________________     -4.7917E-01    
- PF_coil_1_turns_________________________________________________________ (pfv.turns[1])________________      1.6400E+02    
- PF_coil_1_current_(MA)__________________________________________________ (pfv.ric[1])__________________      6.8881E+00    
- PF_coil_1_field_(T)_____________________________________________________ (pfv.bpf[1])__________________      7.0149E+00    
- PF_coil_2_radius_(m)____________________________________________________ (pfv.rpf[2]___________________      5.1500E+00    
- PF_coil_2_vertical_position_(m)_________________________________________ (pfv.zpf[2])__________________      1.1657E+00    
+ PF_coil_1_turns_________________________________________________________ (turns[1])____________________      1.6400E+02    
+ PF_coil_1_current_(MA)__________________________________________________ (ric[1])______________________      6.8881E+00    
+ PF_coil_1_field_(T)_____________________________________________________ (bpf[1])______________________      7.0149E+00    
+ PF_coil_2_radius_(m)____________________________________________________ (rpf[2]_______________________      5.1500E+00    
+ PF_coil_2_vertical_position_(m)_________________________________________ (zpf[2])______________________      1.1657E+00    
  PF_coil_2_radial_thickness_(m)__________________________________________ (pfdr(2))_____________________      3.5361E-01    
  PF_coil_2_vertical_thickness_(m)________________________________________ (pfdz(2))_____________________      3.5361E-01    
- PF_coil_2_turns_________________________________________________________ (pfv.turns[2])________________      8.9315E+01    
- PF_coil_2_current_(MA)__________________________________________________ (pfv.ric[2])__________________     -3.7512E+00    
- PF_coil_2_field_(T)_____________________________________________________ (pfv.bpf[2])__________________      3.9604E+00    
- PF_coil_3_radius_(m)____________________________________________________ (pfv.rpf[3]___________________      5.1500E+00    
- PF_coil_3_vertical_position_(m)_________________________________________ (pfv.zpf[3])__________________     -1.1657E+00    
+ PF_coil_2_turns_________________________________________________________ (turns[2])____________________      8.9315E+01    
+ PF_coil_2_current_(MA)__________________________________________________ (ric[2])______________________     -3.7512E+00    
+ PF_coil_2_field_(T)_____________________________________________________ (bpf[2])______________________      3.9604E+00    
+ PF_coil_3_radius_(m)____________________________________________________ (rpf[3]_______________________      5.1500E+00    
+ PF_coil_3_vertical_position_(m)_________________________________________ (zpf[3])______________________     -1.1657E+00    
  PF_coil_3_radial_thickness_(m)__________________________________________ (pfdr(3))_____________________      3.5361E-01    
  PF_coil_3_vertical_thickness_(m)________________________________________ (pfdz(3))_____________________     -3.5361E-01    
- PF_coil_3_turns_________________________________________________________ (pfv.turns[3])________________      8.9315E+01    
- PF_coil_3_current_(MA)__________________________________________________ (pfv.ric[3])__________________     -3.7512E+00    
- PF_coil_3_field_(T)_____________________________________________________ (pfv.bpf[3])__________________      3.9604E+00    
+ PF_coil_3_turns_________________________________________________________ (turns[3])____________________      8.9315E+01    
+ PF_coil_3_current_(MA)__________________________________________________ (ric[3])______________________     -3.7512E+00    
+ PF_coil_3_field_(T)_____________________________________________________ (bpf[3])______________________      3.9604E+00    
  Sum_of_squares_of_residuals_____________________________________________ (pf.ssq0)_____________________      0.0000E+00 OP 
- Smoothing_parameter_____________________________________________________ (pfv.alfapf)__________________      5.0000E-10    
+ Smoothing_parameter_____________________________________________________ (alfapf)______________________      5.0000E-10    
  # Volt Second Consumption #
- Total_volt-second_consumption_by_coils_(Wb)_____________________________ (pfv.vstot)___________________     -7.0000E+00 OP 
+ Total_volt-second_consumption_by_coils_(Wb)_____________________________ (vstot)_______________________     -7.0000E+00 OP 
  # Waveforms #
- Ratio_of_central_solenoid_current_at_beginning_of_Pulse_/_end_of_flat-to (pfv.fcohbop)_________________      9.0000E-01    
- Ratio_of_central_solenoid_current_at_beginning_of_Flat-top_/_end_of_flat (pfv.fcohbof)_________________      1.0000E+00 OP 
+ Ratio_of_central_solenoid_current_at_beginning_of_Pulse_/_end_of_flat-to (fcohbop)_____________________      9.0000E-01    
+ Ratio_of_central_solenoid_current_at_beginning_of_Flat-top_/_end_of_flat (fcohbof)_____________________      1.0000E+00 OP 
  # PF Circuit Waveform Data #
- Number_of_PF_circuits_including_CS_and_plasma___________________________ (pfv.ncirt)___________________              5    
+ Number_of_PF_circuits_including_CS_and_plasma___________________________ (ncirt)_______________________              5    
  PF_Circuit_0_Time_point_0_(A)___________________________________________ (pfc0t0)______________________      0.0000E+00    
  PF_Circuit_0_Time_point_1_(A)___________________________________________ (pfc0t1)______________________      0.0000E+00    
  PF_Circuit_0_Time_point_2_(A)___________________________________________ (pfc0t2)______________________      6.8881E+06    
@@ -828,12 +829,12 @@
  Total_pulsed_power_(MW)_________________________________________________ (pacpmw)______________________      9.7643E+02 OP 
  Total_base_power_required_at_all_times_(MW)_____________________________ (fcsht)_______________________      2.3472E+01 OP 
  # Cryogenics #
- Conduction_and_radiation_heat_loads_on_cryogenic_components_(MW)________ (qss/1.0D6)___________________      0.0000E+00 OP 
- Nuclear_heating_of_cryogenic_components_(MW)____________________________ (qnuc/1.0D6)__________________      0.0000E+00 OP 
- AC_losses_in_cryogenic_components_(MW)__________________________________ (qac/1.0D6)___________________      0.0000E+00 OP 
- Resistive_losses_in_current_leads_(MW)__________________________________ (qcl/1.0D6)___________________      0.0000E+00 OP 
- 45%_allowance_for_heat_loads_in_transfer_lines,_storage_tanks_etc_(MW)__ (qmisc/1.0D6)_________________      0.0000E+00 OP 
- Sum_=_Total_heat_removal_at_cryogenic_temperatures_(tmpcry_&_tcoolin)_(M (helpow_+_helpow_cryal/1.0D6)_      0.0000E+00 OP 
+ Conduction_and_radiation_heat_loads_on_cryogenic_components_(MW)________ (qss/1.0d6)___________________      0.0000E+00 OP 
+ Nuclear_heating_of_cryogenic_components_(MW)____________________________ (qnuc/1.0d6)__________________      0.0000E+00 OP 
+ AC_losses_in_cryogenic_components_(MW)__________________________________ (qac/1.0d6)___________________      0.0000E+00 OP 
+ Resistive_losses_in_current_leads_(MW)__________________________________ (qcl/1.0d6)___________________      0.0000E+00 OP 
+ 45%_allowance_for_heat_loads_in_transfer_lines,_storage_tanks_etc_(MW)__ (qmisc/1.0d6)_________________      0.0000E+00 OP 
+ Sum_=_Total_heat_removal_at_cryogenic_temperatures_(tfcoil_variables.tmp (helpow_+_helpow_cryal/1.0d6)_      0.0000E+00 OP 
  Temperature_of_cryogenic_superconducting_components_(K)_________________ (tmpcry)______________________      4.5000E+00    
  Temperature_of_cryogenic_aluminium_components_(K)_______________________ (tcoolin)_____________________      3.1315E+02    
  Efficiency_(figure_of_merit)_of_cryogenic_plant_is_13%_of_ideal_Carnot_v ______________________________     -1.5598E-02 OP 
@@ -841,9 +842,9 @@
  Electric_power_for_cryogenic_plant_(MW)_________________________________ (crypmw)______________________      0.0000E+00 OP 
  # Plant Power / Heat Transport Balance #
  Neutron_power_multiplication_in_blanket_________________________________ (emult)_______________________      1.2690E+00    
- Double_Null_Divertor_area_fraction_of_whole_toroid_surface______________ (2*fdiv)______________________      2.3000E-01    
+ Double_Null_Divertor_area_fraction_of_whole_toroid_surface______________ (2*fwbs_variables.fdiv)_______      2.3000E-01    
  H/CD_apparatus_+_diagnostics_area_fraction______________________________ (fhcd)________________________      0.0000E+00    
- First_wall_area_fraction________________________________________________ (1-2*fdiv-fhcd)_______________      7.7000E-01    
+ First_wall_area_fraction________________________________________________ (1-2*fwbs_variables.fdiv-fwbs_      7.7000E-01    
  Switch_for_pumping_of_primary_coolant___________________________________ (primary_pumping)_____________              2    
  Mechanical_pumping_power_for_FW_cooling_loop_including_heat_exchanger_(M (htpmw_fw)____________________      2.4695E-01 OP 
  Mechanical_pumping_power_for_blanket_cooling_loop_including_heat_exchang (htpmw_blkt)__________________      1.5236E-03 OP 

@@ -284,8 +284,10 @@ contains
         case (88); call constraint_eqn_088(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
          ! ensure that OH coil current / copper area < Maximum value ONLY used for croco HTS coil
         case (89); call constraint_eqn_089(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
-         ! Constraint for indication of ECRH ignitability
+         ! Constraint for minimum CS stress load cycles
         case (90); call constraint_eqn_090(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
+         ! Constraint for indication of ECRH ignitability
+        case (91); call constraint_eqn_091(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
        case default
 
         idiags(1) = icc(i)
@@ -3362,6 +3364,37 @@ contains
    end subroutine constraint_eqn_089
 
    subroutine constraint_eqn_090(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
+      !! author: A. Pearce, G Turkington CCFE, Culham Science Centre
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !! Equation for minimum CS coil stress load cycles
+      !! fncycle : input real : f-value for constraint n_cycle > n_cycle_min
+      !! n_cycle : input real : Allowable number of cycles for CS
+      !! n_cycle_min : input real :  Minimum required cycles for CS
+      use CS_fatigue_variables, only: n_cycle, n_cycle_min, bkt_life_csf
+      use constraint_variables, only: fncycle
+      use cost_variables, only: ibkt_life, bktcycles
+      implicit none
+            real(dp), intent(out) :: tmp_cc
+      real(dp), intent(out) :: tmp_con
+      real(dp), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
+      !! Switch to relay the calculated fw/blanket lifetime cycles as the minimum required CS stress cycles.
+      !! bkt_life_cycle = 1 turns on the relay. Otherwise the models run independently.
+      if (ibkt_life == 1 .and. bkt_life_csf == 1 ) then
+         n_cycle_min = bktcycles
+      end if
+
+      tmp_cc =  1.0D0 - fncycle * n_cycle / n_cycle_min
+      tmp_con = n_cycle_min * (1.0D0 - tmp_cc)
+      tmp_err = n_cycle * tmp_cc
+      tmp_symbol = '>'
+      tmp_units = ''
+
+   end subroutine constraint_eqn_090
+
+   subroutine constraint_eqn_091(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for checking if the design point is ECRH ignitable 
       !! at lower values for n and B. Or if the design point is ECRH heatable (if ignite==0)
       !! author: J Lion, IPP Greifswald
@@ -3370,19 +3403,16 @@ contains
       !!  powerht_local > powerscaling
       !! #=# physics
       !! #=#=# fecrh_ignition, powerht_local, powerscaling
-      !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
       !! fecrh_ignition : input real : f-value for constraint powerht_local > powerscaling
-      !! bt : input real :  Lower limit for beta
       !! max_gyrotron_frequency : input real :  Max. av. gyrotron frequency
       !! te0_ecrh_achievable : input real : Alpha particle beta
-
       use constraint_variables, only: fecrh_ignition
       use stellarator_module, only: power_at_ignition_point
       use stellarator_variables, only: max_gyrotron_frequency, te0_ecrh_achievable
       use physics_variables, only: ignite
       use current_drive_variables, only: pheat
       implicit none
-            real(dp), intent(out) :: tmp_cc
+      real(dp), intent(out) :: tmp_cc
       real(dp), intent(out) :: tmp_con
       real(dp), intent(out) :: tmp_err
       character(len=1), intent(out) :: tmp_symbol
@@ -3403,7 +3433,8 @@ contains
       tmp_symbol = '<'
       tmp_units = 'MW'
 
-   end subroutine constraint_eqn_090
+   end subroutine constraint_eqn_091
+
 
 
 end module constraints

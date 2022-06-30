@@ -700,6 +700,31 @@ module cost_variables
   real(dp) :: whole_site_area
   !! area of entire plant site (m2); default 1.0E6 m2 (i.e. 1 km2)
 
+  integer :: isitetype
+  !! switch for type of site:
+  !!
+  !! - =0 Site with river infrastructure
+  !! - =1 Site with sea infrastructure
+  !! - =2 Land-locked site (uses lake/artificial waterfront)
+
+  integer :: isiteaccomm
+  !! switch for including Campus Accommodation:
+  !!
+  !! - =0 no campus accommodation required in costing
+  !! - =1 campus accommodation costed
+
+  integer :: igridconn
+  !! switch for site connection (outgoing) to electricity grid:
+  !!
+  !! - =0 site has no connection to grid and has to be costed
+  !! - =1 site already has connection to grid
+
+  integer :: irailaccess
+  !! switch for rail access to site:
+  !!
+  !! - =0 site has no rail access and has to be costed
+  !! - =1 site already has rail access
+
   contains
 
   subroutine init_cost_variables
@@ -905,6 +930,10 @@ module cost_variables
     sitecost = 1.0D8
     wfbuilding = 1.0D8
     whole_site_area = 1.0D6
+    isitetype = 0
+    isiteaccomm = 0
+    igridconn = 0
+    irailaccess = 0
 
   end subroutine init_cost_variables
 end module cost_variables

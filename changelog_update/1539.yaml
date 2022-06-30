@@ -1,7 +1,7 @@
 Added:  
 - 
 Changed: 
-- Convert `pulse.f90` from Fortran to Python
+- Converted plant_python.f90 to Python
 Deprecated:  
 - 
 Fixed:  

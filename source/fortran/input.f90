@@ -237,7 +237,7 @@ contains
       fcqt, fzeffmax, fstrcase, fstr_wp, fhldiv, foh_stress, fwalld, gammax, fjprot, &
       ftohs, tcycmn, auxmin, zeffmax, peakfactrad, fdtmp, fpoloidalpower, &
       fnbshinef, freinke, fvvhe, fqval, fq, ftaucq, fbetap, fbeta, fjohc, &
-      fflutf, bmxlim, tbrnmn, fbetatry_lower, fecrh_ignition
+      fflutf, bmxlim, tbrnmn, fbetatry_lower, fecrh_ignition, fstr_wp, fncycle
     use cost_variables, only: ucich, uctfsw, dintrt, ucblbe, uubop, dtlife, &
       cost_factor_vv, cfind, uccry, fcap0cp, uccase, uuves, cconshtf, conf_mag, &
       ucbllipb, ucfuel, uumag, ucpfbs, ireactor, uucd, div_umain_time, div_nu, &
@@ -259,7 +259,7 @@ contains
       step_ucsc, step_ucfnc, step_ucfwa, step_ucfws, step_ucfwps, step91_per, &
       step92_per, step93_per, step_uc_cryo_al, step_mc_cryo_al_per, sitecost, &
       wfbuilding, whole_site_area, site_imp_uc, step_ucoam, step_ucwst, &
-      startupratio
+      startupratio, isitetype, isiteaccomm, igridconn, irailaccess
     use current_drive_variables, only: pinjfixmw, etaech, pinjalw, etanbi, &
       ftritbm, gamma_ecrh, pheat, rho_ecrh, beamwd, enbeam, pheatfix, bscfmax, &
       forbitloss, nbshield, tbeamin, feffcd, iefrf, iefrffix, irfcd, cboot, &
@@ -274,7 +274,7 @@ contains
       c5div, ksic, fififi, divplt, delld, c2div, betao, divdum, tdiv, c6div, &
       omegan, prn1, fgamp, frrp, xpertin, c1div, betai, bpsout, xparain, fdiva, &
       zeffdiv, hldivlim, rlenmax, divfix, c3div, divleg_profile_inner, &
-      divleg_profile_outer
+      divleg_profile_outer 
     use fwbs_variables, only: fblhebpo, vfblkt, fdiv, fvolso, fwcoolant, &
       pitch, iblanket, blktmodel, afwi, fblli2o, nphcdin, breeder_multiplier, &
       fw_armour_thickness, roughness, fwclfr, breedmat, fblli, fblvd, &
@@ -308,7 +308,7 @@ contains
       fbmaxcs, ngc, rpf2, fcohbop, ohhghf, vfohc, isumatoh, ngrpmx, ngc2, rpf1, &
       ngrp, isumatpf, nfxfh, alfapf, routr, sigpfcf, pfclres, bmaxcs_lim, &
       ncls, nfixmx, cptdin, ipfloc, i_sup_pf_shape, rref, i_pf_current, &
-      ccl0_ma, ccls_ma
+      ccl0_ma, ccls_ma, ld_ratio_cst
     use physics_variables, only: ipedestal, taumax, i_single_null, fvsbrnni, &
       rhopedt, cvol, fdeut, ffwal, eped_sf, iculbl, itartpf, ilhthresh, &
       fpdivlim, epbetmax, isc, kappa95, aspect, cwrmax, nesep, csawth, dene, &
@@ -377,7 +377,7 @@ contains
     use reinke_variables, only: reinke_mode, fzactual, impvardiv, lhat
     use water_usage_variables, only: airtemp, watertemp, windspeed
     use CS_fatigue_variables, only: residual_sig_hoop, t_crack_radial, t_crack_vertical, &
-      t_structural_vertical, t_structural_radial
+      t_structural_vertical, t_structural_radial, n_cycle_min, bkt_life_csf
     implicit none
 
     !  Arguments
@@ -956,6 +956,9 @@ contains
        case ('fnbshinef')
           call parse_real_variable('fnbshinef', fnbshinef, 0.001D0, 10.0D0, &
                'F-value for maximum NBI shine-through fraction')
+       case ('fncycle')
+          call parse_real_variable('fncycle', fncycle, 1.0D-8, 1.0D0, &
+               'F-value for minimum CS coil stress load cycles')
        case ('fpeakb')
           call parse_real_variable('fpeakb', fpeakb, 0.001D0, 10.0D0, &
                'F-value for max toroidal field')
@@ -2844,6 +2847,18 @@ contains
        case ('startupratio')
           call parse_real_variable('startupratio', startupratio, 0.0D0, 10.0D0, &
                'Ratio (additional HCD power for start-up) / (flat-top operational requirements)')
+       case ('isitetype')
+          call parse_int_variable('isitetype', isitetype, 0, 2, &
+                'Switch for type of site (river/sea/lakeside)')
+       case ('isiteaccomm')
+          call parse_int_variable('isiteaccomm', isiteaccomm, 0, 1, &
+                'Switch for including Campus Accommodation')
+       case ('igridconn')
+          call parse_int_variable('igridconn', igridconn, 0, 1, &
+                'Switch for site connection (outgoing) to electricity grid')
+       case ('irailaccess')
+          call parse_int_variable('irailaccess', irailaccess, 0, 1, &
+                'Switch for rail access to site')
 
           !  Unit cost settings
 
@@ -3919,11 +3934,14 @@ contains
        case('residual_sig_hoop')
           call parse_real_variable('residual_sig_hoop',residual_sig_hoop, 0.0D0, 1.0D9, &
                'residual hoop stress in strucutal material (Pa) ')
-       case('t_crack_radial')
-          call parse_real_variable('t_crack_radial',t_crack_radial, 1.0D-3, 1.0D0, &
+       case('n_cycle_min')
+         call parse_real_variable('n_cycle_min',n_cycle_min, 0.0D0, 1.0D8, &
+               'Minimum required cycles for CS')
+      case('t_crack_radial')
+          call parse_real_variable('t_crack_radial',t_crack_radial, 1.0D-5, 1.0D0, &
                'Inital radial crack size (m)')
        case('t_crack_vertical')
-          call parse_real_variable('t_crack_vertical',t_crack_vertical, 1.0D-3, 1.0D0, &
+          call parse_real_variable('t_crack_vertical',t_crack_vertical, 1.0D-5, 1.0D0, &
                'Inital vertical crack size (m)')
        case('t_structural_radial')
          call parse_real_variable('t_structural_radial',t_structural_radial, 1.0D-3, 1.0D0, &
@@ -3931,6 +3949,12 @@ contains
        case('t_structural_vertical')
          call parse_real_variable('t_structural_vertical',t_structural_vertical, 1.0D-3, 1.0D0, &
             'CS structural vertical thickness (m)')
+       case('ld_ratio_cst')
+            call parse_real_variable('ld_ratio_cst',ld_ratio_cst, 0.0D0, 5.0D0, &
+               'CS coil turn conduit length to depth ratio')
+       case('bkt_life_csf')
+            call parse_real_variable('bkt_life_csf',bkt_life_csf, 0.0D0, 1.0D0, &
+               'Switch for bkt_life -> n_cycle_min')
 
        case default
           error_message = 'Unknown variable in input file: '//varnam(1:varlen)

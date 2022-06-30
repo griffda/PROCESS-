@@ -14,6 +14,7 @@ from process.fortran import process_output as op
 from process.fortran import numerics
 from process.fortran import superconductors as sc
 from process.fortran import rebco_variables as rcv
+from process.fortran import constraint_variables as ctv
 from process import maths_library as pml
 from process.utilities.f2py_string_patch import f2py_compatible_to_string
 from process import fortran as ft
@@ -86,11 +87,11 @@ class PFCoil:
         signn = np.zeros(2)
         aturn = np.zeros(pfv.ngc2)
 
-        # Toggle switch for pfv.ipfloc()=2 coils above/below midplane
+        # Toggle switch for ipfloc()=2 coils above/below midplane
         top_bottom = 1
 
-        # Set up the number of PF coils including the Central Solenoid (pfv.nohc),
-        # and the number of PF circuits including the plasma (pfv.ncirt)
+        # Set up the number of PF coils including the Central Solenoid (nohc),
+        # and the number of PF circuits including the plasma (ncirt)
         if pfv.ngrp > pfv.ngrpmx:
             eh.idiags[0] = pfv.ngrp
             eh.idiags[1] = pfv.ngrpmx
@@ -166,7 +167,7 @@ class PFCoil:
 
         # Place the PF coils:
 
-        # N.B. Problems here if k=pfv.ncls(group) is greater than 2.
+        # N.B. Problems here if k=ncls(group) is greater than 2.
         for j in range(pfv.ngrp):
 
             if pfv.ipfloc[j] == 1:
@@ -214,7 +215,7 @@ class PFCoil:
                 # PF coil is in general location
                 # See issue 1418
                 # https://git.ccfe.ac.uk/process/process/-/issues/1418
-                for k in pfv.ncls[j]:
+                for k in range(pfv.ncls[j]):
                     pf.zcls[j, k] = pv.rminor * pfv.zref[j] * signn[k]
                     pf.rcls[j, k] = pv.rminor * pfv.rref[j] + pv.rmajor
 
@@ -436,7 +437,7 @@ class PFCoil:
         # Flux swing from vertical field
 
         # If this is the first visit to the routine the inductance matrix
-        # pfv.sxlg and the pfv.turns array have not yet been calculated, so we set
+        # sxlg and the turns array have not yet been calculated, so we set
         # them to (very) approximate values to avoid strange behaviour...
         if pf.first_call:
             pfv.sxlg[:, :] = 1.0e0
@@ -461,8 +462,8 @@ class PFCoil:
             # Required current change in CS coil
 
             # Proposed new calculation...
-            # dics = csflux / pfv.sxlg(pfv.nohc,pfv.ncirt)
-            # BUT... pfv.sxlg(pfv.nohc,pfv.ncirt) is around 2000 times ddics below...
+            # dics = csflux / sxlg(nohc,ncirt)
+            # BUT... sxlg(nohc,ncirt) is around 2000 times ddics below...
 
             ddics = (
                 4.0e-7
@@ -478,7 +479,7 @@ class PFCoil:
             dics = csflux / ddics
 
             pfv.fcohbof = ((-ioheof * pfv.fcohbop) + dics) / ioheof
-            pfv.fcohbof = min(pfv.fcohbof, 1.0e0)  # constrains abs(pfv.fcohbof) <= 1.0;
+            pfv.fcohbof = min(pfv.fcohbof, 1.0e0)  # constrains abs(fcohbof) <= 1.0;
             pfv.fcohbof = max(pfv.fcohbof, -1.0e0)  # probably un-necessary
 
         else:
@@ -495,15 +496,15 @@ class PFCoil:
 
                 # Currents at different times:
 
-                # If PF coil currents are computed, not input via pfv.pf.ccl0_ma, pfv.pf.ccls_ma:
-                # Then set pfv.pf.ccl0_ma,pfv.pf.ccls_ma from the computed pf.ccl0,pf.ccls
+                # If PF coil currents are computed, not input via ccl0_ma, ccls_ma:
+                # Then set ccl0_ma,ccls_ma from the computed pf.ccl0,pf.ccls
                 if pfv.i_pf_current != 0:
                     pfv.ccl0_ma[nng] = 1.0e-6 * pf.ccl0[nng]
                     pfv.ccls_ma[nng] = 1.0e-6 * pf.ccls[nng]
                 else:
-                    # Otherwise set pf.ccl0,pf.ccls via the input pfv.pf.ccl0_ma and pfv.pf.ccls_ma
-                    pf.ccl0[nng] = 1.0e6 * pfv.pf.ccl0_ma[nng]
-                    pf.ccls[nng] = 1.0e6 * pfv.pf.ccls_ma[nng]
+                    # Otherwise set pf.ccl0,pf.ccls via the input ccl0_ma and ccls_ma
+                    pf.ccl0[nng] = 1.0e6 * pfv.ccl0_ma[nng]
+                    pf.ccls[nng] = 1.0e6 * pfv.ccls_ma[nng]
 
                 # Beginning of pulse: t = tv.tramp
                 pfv.curpfs[ncl] = 1.0e-6 * pf.ccl0[nng]
@@ -528,9 +529,9 @@ class PFCoil:
 
         # Set up coil current waveforms, normalised to the peak current in
         # each coil
-        self.waveform()  # sets pfv.ric(), pfv.waves()
+        self.waveform()  # sets ric(), waves()
 
-        # Calculate PF coil geometry, current and number of pfv.turns
+        # Calculate PF coil geometry, current and number of turns
         # Dimensions are those of the winding pack, and exclude
         # the steel supporting case
         i = 0
@@ -549,7 +550,7 @@ class PFCoil:
                     )  # ???
                     area = 4.0e0 * dx * dz
 
-                    # Number of pfv.turns
+                    # Number of turns
                     # CPTDIN[i] is the current per turn (input)
                     pfv.turns[i] = abs((pfv.ric[i] * 1.0e6) / pfv.cptdin[i])
                     aturn[i] = area / pfv.turns[i]
@@ -558,9 +559,9 @@ class PFCoil:
                     pfv.rjconpf[i] = 1.0e6 * abs(pfv.ric[i]) / area
 
                     # Location of edges of each coil:
-                    # pfv.ra = inner radius, pfv.rb = outer radius
-                    # pfv.zl = 'lower' edge z (i.e. edge nearer to midplane)
-                    # pfv.zh = 'upper' edge z (i.e. edge further from midplane)
+                    # ra = inner radius, rb = outer radius
+                    # zl = 'lower' edge z (i.e. edge nearer to midplane)
+                    # zh = 'upper' edge z (i.e. edge further from midplane)
                     pfv.ra[i] = pfv.rpf[i] - dx
                     pfv.rb[i] = pfv.rpf[i] + dx
 
@@ -617,7 +618,7 @@ class PFCoil:
                     # Index args +1ed
                     bri, bro, bzi, bzo = self.peakb(
                         i + 1, iii + 1, it
-                    )  # returns pfv.bpf, bpf2
+                    )  # returns bpf, bpf2
 
                 # Allowable current density (for superconducting coils)
 
@@ -643,7 +644,7 @@ class PFCoil:
                 # Resistive coils
 
                 if pfv.ipfres == 1:
-                    # Coil resistance (pfv.vf is the void fraction)
+                    # Coil resistance (vf is the void fraction)
 
                     respf = pfv.pfclres * rll / (aturn[i] * (1.0e0 - pfv.vf[i]))
 
@@ -658,7 +659,7 @@ class PFCoil:
 
                 volpf = aturn[i] * rll
 
-                # Conductor weight (pfv.vf is the void fraction)
+                # Conductor weight (vf is the void fraction)
 
                 if pfv.ipfres == 0:
                     pfv.wtc[i] = (
@@ -679,7 +680,7 @@ class PFCoil:
                     # Superconducting coil
                     # Previous assumptions: 500 MPa stress limit with 2/3 of the force
                     # supported in the outer (steel) case.
-                    # Now, 500 MPa replaced by pfv.sigpfcalw, 2/3 factor replaced by pfv.sigpfcf
+                    # Now, 500 MPa replaced by sigpfcalw, 2/3 factor replaced by sigpfcf
 
                     areaspf = pfv.sigpfcf * forcepf / (pfv.sigpfcalw * 1.0e6)
 
@@ -703,10 +704,13 @@ class PFCoil:
 
                 # Mass of heaviest PF coil (tonnes)
 
-                pfv.pfmmax = max(pfv.pfmmax, (1.0e-3 * (pfv.wtc[i] + pfv.wts[i])))
+                pfv.pfmmax = max(
+                    pfv.pfmmax,
+                    (1.0e-3 * (pfv.wtc[i] + pfv.wts[i])),
+                )
                 i = i + 1
 
-        # Find sum of current x pfv.turns x radius for all coils for 2015 costs model
+        # Find sum of current x turns x radius for all coils for 2015 costs model
         c = 0
         pfv.itr_sum = 0.0e0
         for m in range(pfv.ngrp):
@@ -742,7 +746,7 @@ class PFCoil:
         pfv.turns[pfv.nohc] = 1.0e0
 
         # Generate coil currents as a function of time using
-        # user-provided waveforms etc. (pfv.cptdin, pfv.fcohbop, pfv.fcohbof)
+        # user-provided waveforms etc. (cptdin, fcohbop, fcohbof)
         for k in range(6):  # time points
             for i in range(pfv.ncirt - 1):
                 pfv.cpt[i, k] = pfv.waves[i, k] * math.copysign(
@@ -1115,7 +1119,7 @@ class PFCoil:
         # Total cross-sectional area
         pfv.areaoh = 2.0e0 * hohc * bv.ohcth
 
-        # Maximum current (MA-pfv.turns) in central Solenoid, at either BOP or EOF
+        # Maximum current (MA-turns) in central Solenoid, at either BOP or EOF
         if pfv.cohbop > pfv.coheof:
             sgn = 1.0e0
             pfv.ric[pfv.nohc - 1] = sgn * 1.0e-6 * pfv.cohbop * pfv.areaoh
@@ -1123,13 +1127,39 @@ class PFCoil:
             sgn = -1.0e0
             pfv.ric[pfv.nohc - 1] = sgn * 1.0e-6 * pfv.coheof * pfv.areaoh
 
-        # Number of pfv.turns
+        # Number of turns
         pfv.turns[pfv.nohc - 1] = (
             1.0e6 * abs(pfv.ric[pfv.nohc - 1]) / pfv.cptdin[pfv.nohc - 1]
         )
 
         # Turn vertical cross-sectionnal area
         pfv.a_oh_turn = pfv.areaoh / pfv.turns[pfv.nohc - 1]
+
+        # Depth/width of cs turn conduit
+        pfv.d_cond_cst = (pfv.a_oh_turn / pfv.ld_ratio_cst) ** 0.5
+        # length of cs turn conduit
+        pfv.l_cond_cst = pfv.ld_ratio_cst * pfv.d_cond_cst
+        # Radius of turn space = pfv.r_in_cst
+        # Radius of curved outer corrner pfv.r_out_cst = 3mm from literature
+        # pfv.ld_ratio_cst = 70 / 22 from literature
+        p1_cst = ((pfv.l_cond_cst - pfv.d_cond_cst) / constants.pi) ** 2
+        p2_cst = (
+            (pfv.l_cond_cst * pfv.d_cond_cst)
+            - (4 - constants.pi) * (pfv.r_out_cst**2)
+            - (pfv.a_oh_turn * pfv.oh_steel_frac)
+        ) / constants.pi
+        # CS coil turn geometry calculation - stadium shape
+        # Literature: https://doi.org/10.1016/j.fusengdes.2017.04.052
+        pfv.r_in_cst = -((pfv.l_cond_cst - pfv.d_cond_cst) / constants.pi) + math.sqrt(
+            p1_cst + p2_cst
+        )
+        # Thickness of steel conduit in cs turn
+        csfv.t_structural_radial = (pfv.d_cond_cst / 2) - pfv.r_in_cst
+        # In this model the vertical and radial have the same thickness
+        csfv.t_structural_vertical = csfv.t_structural_radial
+        # add a check for negative conduit thickness
+        if csfv.t_structural_radial < 1.0e-3:
+            csfv.t_structural_radial = 1.0e-3
 
         # Non-steel area void fraction for coolant
         pfv.vf[pfv.nohc - 1] = pfv.vfohc
@@ -1139,7 +1169,10 @@ class PFCoil:
 
         # Peak field due to central Solenoid itself
         bmaxoh2 = self.bfmax(
-            pfv.coheof, pfv.ra[pfv.nohc - 1], pfv.rb[pfv.nohc - 1], hohc
+            pfv.coheof,
+            pfv.ra[pfv.nohc - 1],
+            pfv.rb[pfv.nohc - 1],
+            hohc,
         )
 
         # Peak field due to other PF coils plus plasma
@@ -1153,9 +1186,12 @@ class PFCoil:
         bohco = abs(bzo)
 
         # Peak field at the Beginning-Of-Pulse (BOP)
-        # Occurs at inner edge of coil; pfv.bmaxoh0 and bzi are of same sign at BOP
+        # Occurs at inner edge of coil; bmaxoh0 and bzi are of same sign at BOP
         pfv.bmaxoh0 = self.bfmax(
-            pfv.cohbop, pfv.ra[pfv.nohc - 1], pfv.rb[pfv.nohc - 1], hohc
+            pfv.cohbop,
+            pfv.ra[pfv.nohc - 1],
+            pfv.rb[pfv.nohc - 1],
+            hohc,
         )
         timepoint = 2
         bri, bro, bzi, bzo = self.peakb(pfv.nohc, 99, timepoint)
@@ -1230,7 +1266,7 @@ class PFCoil:
         # Non-steel cross-sectional area
         pfv.awpoh = pfv.areaoh - areaspf
 
-        # Issue #97. Fudge to ensure pfv.awpoh is positive; result is continuous, smooth and
+        # Issue #97. Fudge to ensure awpoh is positive; result is continuous, smooth and
         # monotonically decreases
 
         da = 0.0001e0  # 1 cm^2
@@ -1262,7 +1298,7 @@ class PFCoil:
             # Allowable coil overall current density at EOF
             # (superconducting coils only)
 
-            jcritwp, pfv.jstrandoh_eof, pfv.jscoh_eof, tmarg1 = self.superconpf(
+            (jcritwp, pfv.jstrandoh_eof, pfv.jscoh_eof, tmarg1,) = self.superconpf(
                 pfv.bmaxoh,
                 pfv.vfohc,
                 pfv.fcuohsu,
@@ -1279,7 +1315,7 @@ class PFCoil:
 
             # Allowable coil overall current density at BOP
 
-            jcritwp, pfv.jstrandoh_bop, pfv.jscoh_bop, tmarg2 = self.superconpf(
+            (jcritwp, pfv.jstrandoh_bop, pfv.jscoh_bop, tmarg2,) = self.superconpf(
                 pfv.bmaxoh0,
                 pfv.vfohc,
                 pfv.fcuohsu,
@@ -1423,10 +1459,20 @@ class PFCoil:
         # Calculate the field at the inner and outer edges
         # of the coil of interest
         pf.xind[:kk], bri, bzi, psi = pf.bfield(
-            pf.rfxf[:kk], pf.zfxf[:kk], pf.cfxf[:kk], pfv.ra[i - 1], pfv.zpf[i - 1], kk
+            pf.rfxf[:kk],
+            pf.zfxf[:kk],
+            pf.cfxf[:kk],
+            pfv.ra[i - 1],
+            pfv.zpf[i - 1],
+            kk,
         )
         pf.xind[:kk], bro, bzo, psi = pf.bfield(
-            pf.rfxf[:kk], pf.zfxf[:kk], pf.cfxf[:kk], pfv.rb[i - 1], pfv.zpf[i - 1], kk
+            pf.rfxf[:kk],
+            pf.zfxf[:kk],
+            pf.cfxf[:kk],
+            pfv.rb[i - 1],
+            pfv.zpf[i - 1],
+            kk,
         )
 
         # bpf and bpf2 for the Central Solenoid are calculated in OHCALC
@@ -1650,11 +1696,11 @@ class PFCoil:
         # Central Solenoid current [A]
         ni = pfv.ric[pfv.nohc - 1] * 1.0e6
 
-        # kb term for elliptical integpfv.rals
+        # kb term for elliptical integrals
         # kb2 = SQRT((4.0e0*b**2)/(4.0e0*b**2 + hl**2))
         kb2 = (4.0e0 * b**2) / (4.0e0 * b**2 + hl**2)
 
-        # k2b term for elliptical integpfv.rals
+        # k2b term for elliptical integrals
         # k2b2 = SQRT((4.0e0*b**2)/(4.0e0*b**2 + 4.0e0*hl**2))
         k2b2 = (4.0e0 * b**2) / (4.0e0 * b**2 + 4.0e0 * hl**2)
 
@@ -1749,7 +1795,7 @@ class PFCoil:
 
             delzoh = (
                 2.0e0 * pfv.zh[pfv.nohc - 1] / noh
-            )  # pfv.zh(pfv.nohc) is the half-height of the coil
+            )  # zh(nohc) is the half-height of the coil
             for i in range(noh):
                 zoh[i] = pfv.zh[pfv.nohc - 1] - delzoh * (0.5e0 + i)
 
@@ -1900,12 +1946,21 @@ class PFCoil:
 
         with np.printoptions(precision=1):
             for ig in range(pf.nef):
-                op.write(self.outfile, f"{ig}\t\t\t{pfv.sxlg[:pfv.ncirt,ig]}")
+                op.write(
+                    self.outfile,
+                    f"{ig}\t\t\t{pfv.sxlg[:pfv.ncirt,ig]}",
+                )
 
             if bv.iohcl != 0:
-                op.write(self.outfile, f"CS\t\t\t{pfv.sxlg[:pfv.ncirt,pfv.ncirt-2]}")
+                op.write(
+                    self.outfile,
+                    f"CS\t\t\t{pfv.sxlg[:pfv.ncirt,pfv.ncirt-2]}",
+                )
 
-            op.write(self.outfile, f"Plasma\t{pfv.sxlg[:pfv.ncirt,pfv.ncirt-1]}")
+            op.write(
+                self.outfile,
+                f"Plasma\t{pfv.sxlg[:pfv.ncirt,pfv.ncirt-1]}",
+            )
 
     def outpf(self):
         """Routine to write output from PF coil module to file.
@@ -1929,7 +1984,7 @@ class PFCoil:
                 op.ovarin(
                     self.outfile,
                     "Central solenoid superconductor material",
-                    "(pfv.isumatoh)",
+                    "(isumatoh)",
                     pfv.isumatoh,
                 )
 
@@ -1963,35 +2018,35 @@ class PFCoil:
                 op.ovarre(
                     self.outfile,
                     "Maximum field at Beginning Of Pulse (T)",
-                    "(pfv.bmaxoh0)",
+                    "(bmaxoh0)",
                     pfv.bmaxoh0,
                     "OP ",
                 )
                 op.ovarre(
                     self.outfile,
                     "Critical superconductor current density at BOP (A/m2)",
-                    "(pfv.jscoh_bop)",
+                    "(jscoh_bop)",
                     pfv.jscoh_bop,
                     "OP ",
                 )
                 op.ovarre(
                     self.outfile,
                     "Critical strand current density at BOP (A/m2)",
-                    "(pfv.jstrandoh_bop)",
+                    "(jstrandoh_bop)",
                     pfv.jstrandoh_bop,
                     "OP ",
                 )
                 op.ovarre(
                     self.outfile,
                     "Allowable overall current density at BOP (A/m2)",
-                    "(pfv.rjohc0)",
+                    "(rjohc0)",
                     pfv.rjohc0,
                     "OP ",
                 )
                 op.ovarre(
                     self.outfile,
                     "Actual overall current density at BOP (A/m2)",
-                    "(pfv.cohbop)",
+                    "(cohbop)",
                     pfv.cohbop,
                     "OP ",
                 )
@@ -1999,39 +2054,39 @@ class PFCoil:
                 op.ovarre(
                     self.outfile,
                     "Maximum field at End Of Flattop (T)",
-                    "(pfv.bmaxoh)",
+                    "(bmaxoh)",
                     pfv.bmaxoh,
                     "OP ",
                 )
                 op.ovarre(
                     self.outfile,
                     "Critical superconductor current density at EOF (A/m2)",
-                    "(pfv.jscoh_eof)",
+                    "(jscoh_eof)",
                     pfv.jscoh_eof,
                     "OP ",
                 )
                 op.ovarre(
                     self.outfile,
                     "Critical strand current density at EOF (A/m2)",
-                    "(pfv.jstrandoh_eof)",
+                    "(jstrandoh_eof)",
                     pfv.jstrandoh_eof,
                     "OP ",
                 )
                 op.ovarre(
                     self.outfile,
                     "Allowable overall current density at EOF (A/m2)",
-                    "(pfv.rjohc)",
+                    "(rjohc)",
                     pfv.rjohc,
                     "OP ",
                 )
                 op.ovarre(
                     self.outfile,
                     "Actual overall current density at EOF (A/m2)",
-                    "(pfv.coheof)",
+                    "(coheof)",
                     pfv.coheof,
                 )
                 op.oblnkl(self.outfile)
-                # MDK add bv.ohcth, bv.bore and bv.gapoh as they can be itepfv.ration variables
+                # MDK add bv.ohcth, bv.bore and bv.gapoh as they can be iteration variables
                 op.ovarre(self.outfile, "CS inside radius (m)", "(bv.bore.)", bv.bore)
                 op.ovarre(self.outfile, "CS thickness (m)", "(bv.ohcth.)", bv.ohcth)
                 op.ovarre(
@@ -2043,42 +2098,42 @@ class PFCoil:
                 op.ovarre(
                     self.outfile,
                     "CS overall cross-sectional area (m2)",
-                    "(pfv.areaoh)",
+                    "(areaoh)",
                     pfv.areaoh,
                     "OP ",
                 )
                 op.ovarre(
                     self.outfile,
                     "CS conductor+void cross-sectional area (m2)",
-                    "(pfv.awpoh)",
+                    "(awpoh)",
                     pfv.awpoh,
                     "OP ",
                 )
                 op.ovarre(
                     self.outfile,
                     "   CS conductor cross-sectional area (m2)",
-                    "(pfv.awpoh*(1-pfv.vfohc))",
+                    "(awpoh*(1-vfohc))",
                     pfv.awpoh * (1.0e0 - pfv.vfohc),
                     "OP ",
                 )
                 op.ovarre(
                     self.outfile,
                     "   CS void cross-sectional area (m2)",
-                    "(pfv.awpoh*pfv.vfohc)",
+                    "(awpoh*vfohc)",
                     pfv.awpoh * pfv.vfohc,
                     "OP ",
                 )
                 op.ovarre(
                     self.outfile,
                     "CS steel cross-sectional area (m2)",
-                    "(pfv.areaoh-pfv.awpoh)",
+                    "(areaoh-awpoh)",
                     pfv.areaoh - pfv.awpoh,
                     "OP ",
                 )
                 op.ovarre(
                     self.outfile,
                     "CS steel area fraction",
-                    "(pfv.oh_steel_frac)",
+                    "(oh_steel_frac)",
                     pfv.oh_steel_frac,
                 )
                 if pfv.i_cs_stress == 1:
@@ -2089,13 +2144,13 @@ class PFCoil:
                 op.ovarin(
                     self.outfile,
                     "Switch for CS stress calculation",
-                    "(pfv.i_cs_stress)",
+                    "(i_cs_stress)",
                     pfv.i_cs_stress,
                 )
                 op.ovarre(
                     self.outfile,
                     "Allowable stress in CS steel (Pa)",
-                    "(pfv.alstroh)",
+                    "(alstroh)",
                     pfv.alstroh,
                 )
                 op.ovarre(
@@ -2115,7 +2170,7 @@ class PFCoil:
                 op.ovarre(
                     self.outfile,
                     "Maximum shear stress in CS steel for the Tresca criterion (Pa)",
-                    "(pfv.s_tresca_oh)",
+                    "(s_tresca_oh)",
                     pfv.s_tresca_oh,
                     "OP ",
                 )
@@ -2135,7 +2190,7 @@ class PFCoil:
                 op.ovarre(
                     self.outfile,
                     "Copper fraction in strand",
-                    "(pfv.fcuohsu)",
+                    "(fcuohsu)",
                     pfv.fcuohsu,
                 )
                 # If REBCO material is used, print copperaoh_m2
@@ -2156,7 +2211,7 @@ class PFCoil:
                 op.ovarre(
                     self.outfile,
                     "Void (coolant) fraction in conductor",
-                    "(pfv.vfohc)",
+                    "(vfohc)",
                     pfv.vfohc,
                 )
                 op.ovarre(
@@ -2168,7 +2223,7 @@ class PFCoil:
                 op.ovarre(
                     self.outfile,
                     "CS temperature margin (K)",
-                    "(pfv.tmargoh)",
+                    "(tmargoh)",
                     pfv.tmargoh,
                     "OP ",
                 )
@@ -2182,9 +2237,15 @@ class PFCoil:
                 if pv.facoh > 0.0e-4:
                     op.ovarre(
                         self.outfile,
-                        "residual hoop stress in CS Steel (Pa)",
+                        "Residual hoop stress in CS Steel (Pa)",
                         "(csfv.residual_sig_hoop)",
                         csfv.residual_sig_hoop,
+                    )
+                    op.ovarre(
+                        self.outfile,
+                        "Minimum burn time (s)",
+                        "(ctv.tbrnmn)",
+                        ctv.tbrnmn,
                     )
                     op.ovarre(
                         self.outfile,
@@ -2200,6 +2261,30 @@ class PFCoil:
                     )
                     op.ovarre(
                         self.outfile,
+                        "CS turn area (m)",
+                        "(pfv.a_oh_turn)",
+                        pfv.a_oh_turn,
+                    )
+                    op.ovarre(
+                        self.outfile,
+                        "CS turn length (m)",
+                        "(pfv.l_cond_cst)",
+                        pfv.l_cond_cst,
+                    )
+                    op.ovarre(
+                        self.outfile,
+                        "CS turn internal cable space radius (m)",
+                        "(pfv.r_in_cst)",
+                        pfv.r_in_cst,
+                    )
+                    op.ovarre(
+                        self.outfile,
+                        "CS turn width (m)",
+                        "(pfv.d_cond_cst)",
+                        pfv.d_cond_cst,
+                    )
+                    op.ovarre(
+                        self.outfile,
                         "CS structural vertical thickness (m)",
                         "(csfv.t_structural_vertical)",
                         csfv.t_structural_vertical,
@@ -2212,12 +2297,18 @@ class PFCoil:
                     )
                     op.ovarre(
                         self.outfile,
-                        "Allowable number of cycles till CS fpfv.racture",
+                        "Allowable number of cycles till CS fracture",
                         "(csfv.n_cycle)",
                         csfv.n_cycle,
                         "OP ",
                     )
-
+                    op.ovarre(
+                        self.outfile,
+                        "Minimum number of cycles required till CS fracture",
+                        "(csfv.n_cycle_min)",
+                        csfv.n_cycle_min,
+                        "OP ",
+                    )
                 # Check whether CS coil is hitting any limits
                 # iteration variable (39) fjohc0
                 # iteration variable(38) fjohc
@@ -2255,7 +2346,7 @@ class PFCoil:
             op.ovarin(
                 self.outfile,
                 "PF coil superconductor material",
-                "(pfv.isumatpf)",
+                "(isumatpf)",
                 pfv.isumatpf,
             )
 
@@ -2268,7 +2359,7 @@ class PFCoil:
             elif pfv.isumatpf == 4:
                 op.ocmmnt(
                     self.outfile,
-                    "  (ITER Nb3Sn critical surface model, user-defined papfv.rameters)",
+                    "  (ITER Nb3Sn critical surface model, user-defined parameters)",
                 )
             elif pfv.isumatpf == 5:
                 op.ocmmnt(self.outfile, " (WST Nb3Sn critical surface model)")
@@ -2291,7 +2382,7 @@ class PFCoil:
             op.ovarre(
                 self.outfile,
                 "Copper fraction in conductor",
-                "(pfv.fcupfsu)",
+                "(fcupfsu)",
                 pfv.fcupfsu,
             )
 
@@ -2299,13 +2390,13 @@ class PFCoil:
             op.ovarre(
                 self.outfile,
                 "Maximum permissible tensile stress (MPa)",
-                "(pfv.sigpfcalw)",
+                "(sigpfcalw)",
                 pfv.sigpfcalw,
             )
             op.ovarre(
                 self.outfile,
                 "JxB hoop force fraction supported by case",
-                "(pfv.sigpfcf)",
+                "(sigpfcf)",
                 pfv.sigpfcf,
             )
 
@@ -2317,7 +2408,7 @@ class PFCoil:
             op.ovarre(
                 self.outfile,
                 "PF coil resistive power (W)",
-                "(pfv.powpfres)",
+                "(powpfres)",
                 pfv.powpfres,
                 "OP ",
             )
@@ -2325,7 +2416,7 @@ class PFCoil:
                 op.ovarre(
                     self.outfile,
                     "Central solenoid resistive power (W)",
-                    "(pfv.powohres)",
+                    "(powohres)",
                     pfv.powohres,
                     "OP ",
                 )
@@ -2338,7 +2429,7 @@ class PFCoil:
         op.osubhd(self.outfile, "Geometry of PF coils, central solenoid and plasma:")
         op.write(
             self.outfile,
-            "coil\t\t\tR(m)\t\t\tZ(m)\t\t\tdR(m)\t\t\tdZ(m)\t\t\tpfv.turns\t\tsteel thickness(m)",
+            "coil\t\t\tR(m)\t\t\tZ(m)\t\t\tdR(m)\t\t\tdZ(m)\t\t\tturns\t\tsteel thickness(m)",
         )
         op.oblnkl(self.outfile)
 
@@ -2353,13 +2444,13 @@ class PFCoil:
             op.ovarre(
                 self.mfile,
                 f"PF coil {k} radius (m)",
-                f"(pfv.rpf[{k}]",
+                f"(rpf[{k}]",
                 pfv.rpf[k],
             )
             op.ovarre(
                 self.mfile,
                 f"PF coil {k} vertical position (m)",
-                f"(pfv.zpf[{k}])",
+                f"(zpf[{k}])",
                 pfv.zpf[k],
             )
             op.ovarre(
@@ -2377,17 +2468,20 @@ class PFCoil:
             op.ovarre(
                 self.mfile,
                 f"PF coil {k} turns",
-                f"(pfv.turns[{k}])",
+                f"(turns[{k}])",
                 pfv.turns[k],
             )
             op.ovarre(
                 self.mfile,
                 f"PF coil {k} current (MA)",
-                f"(pfv.ric[{k}])",
+                f"(ric[{k}])",
                 pfv.ric[k],
             )
             op.ovarre(
-                self.mfile, f"PF coil {k} field (T)", f"(pfv.bpf[{k}])", pfv.bpf[k]
+                self.mfile,
+                f"PF coil {k} field (T)",
+                f"(bpf[{k}])",
+                pfv.bpf[k],
             )
 
         # Central Solenoid, if present
@@ -2399,13 +2493,13 @@ class PFCoil:
             op.ovarre(
                 self.mfile,
                 "Central solenoid radius (m)",
-                "(pfv.rpf[pfv.nohc-1])",
+                "(rpf[nohc-1])",
                 pfv.rpf[pfv.nohc - 1],
             )
             op.ovarre(
                 self.mfile,
                 "Central solenoid vertical position (m)",
-                "(pfv.zpf[pfv.nohc-1])",
+                "(zpf[nohc-1])",
                 pfv.zpf[pfv.nohc - 1],
             )
             op.ovarre(
@@ -2422,20 +2516,20 @@ class PFCoil:
             )
             op.ovarre(
                 self.mfile,
-                "Central solenoid pfv.turns",
-                "(pfv.turns[pfv.nohc-1])",
+                "Central solenoid turns",
+                "(turns[nohc-1])",
                 pfv.turns[pfv.nohc - 1],
             )
             op.ovarre(
                 self.mfile,
                 "Central solenoid current (MA)",
-                "(pfv.ric[pfv.nohc-1])",
+                "(ric[nohc-1])",
                 pfv.ric[pfv.nohc - 1],
             )
             op.ovarre(
                 self.mfile,
                 "Central solenoid field (T)",
-                "(pfv.bpf[pfv.nohc-1])",
+                "(bpf[nohc-1])",
                 pfv.bpf[pfv.nohc - 1],
             )
 
@@ -2503,7 +2597,7 @@ class PFCoil:
         op.ovarre(
             self.outfile, "Sum of squares of residuals ", "(pf.ssq0)", pf.ssq0, "OP "
         )
-        op.ovarre(self.outfile, "Smoothing parameter ", "(pfv.alfapf)", pfv.alfapf)
+        op.ovarre(self.outfile, "Smoothing parameter ", "(alfapf)", pfv.alfapf)
 
     def outvolt(self):
         """Writes volt-second information to output file.
@@ -2537,7 +2631,7 @@ class PFCoil:
         op.ovarre(
             self.outfile,
             "Total volt-second consumption by coils (Wb)",
-            "(pfv.vstot)",
+            "(vstot)",
             f"{pfv.vstot:.2}",
             "OP",
         )
@@ -2621,13 +2715,13 @@ class PFCoil:
         op.ovarre(
             self.outfile,
             "Ratio of central solenoid current at beginning of Pulse / end of flat-top",
-            "(pfv.fcohbop)",
+            "(fcohbop)",
             pfv.fcohbop,
         )
         op.ovarre(
             self.outfile,
             "Ratio of central solenoid current at beginning of Flat-top / end of flat-top",
-            "(pfv.fcohbof)",
+            "(fcohbof)",
             pfv.fcohbof,
             "OP ",
         )
@@ -2636,7 +2730,7 @@ class PFCoil:
         op.ovarin(
             self.outfile,
             "Number of PF circuits including CS and plasma",
-            "(pfv.ncirt)",
+            "(ncirt)",
             pfv.ncirt,
         )
         for k in range(pfv.ncirt):
