@@ -3,13 +3,13 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.4.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "14/06/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "10:38"
+ Date_of_run_____________________________________________________________ (date)________________________     "29/06/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "08:48"
  User____________________________________________________________________ (username)____________________     "root"    
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "Run Title (change this line using input variable 'runtitle')                                       
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1892-g45d00e4c3"                                                                              
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1951-gce23f5d8b"                                                                              
  PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "HEAD"                                                                                              
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch |1683-mfiles-in-tracking-baseline_2018-merged-unnecessarily| into |develop|"          
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch |1686-make-site-switch-options-consistent| into |develop|"                            
  Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-root/pytest-0/test_scenario_steady_state_0/IN.DAT                                                                                                                                        "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
@@ -730,7 +730,7 @@
  Central_solenoid_turns__________________________________________________ (turns[nohc-1])_______________      4.7968E+03    
  Central_solenoid_current_(MA)___________________________________________ (ric[nohc-1])_________________     -2.0626E+02    
  Central_solenoid_field_(T)______________________________________________ (bpf[nohc-1])_________________      1.3764E+01    
- Sum_of_squares_of_residuals_____________________________________________ (pf.ssq0)_____________________      6.2704E-05 OP 
+ Sum_of_squares_of_residuals_____________________________________________ (ssq0)________________________      6.2704E-05 OP 
  Smoothing_parameter_____________________________________________________ (alfapf)______________________      5.0000E-10    
  # Volt Second Consumption #
  Total_volt-second_consumption_by_coils_(Wb)_____________________________ (vstot)_______________________     -4.0000E+02 OP 
@@ -890,7 +890,7 @@
  Maximum_PF_coil_voltage_(kV)____________________________________________ (vpfskv)______________________      2.0000E+01    
  Efficiency_of_transfer_of_PF_stored_energy_into_or_out_of_storage_______ (etapsu)______________________      9.0000E-01    
  Maximum_stored_energy_in_poloidal_field_(MJ)____________________________ (ensxpfm)_____________________      3.1885E+04 OP 
- Peak_absolute_rate_of_change_of_stored_energy_in_poloidal_field_(MW)____ peakpoloidalpower_____________      6.3441E+02 OP 
+ Peak_absolute_rate_of_change_of_stored_energy_in_poloidal_field_(MW)____ (peakpoloidalpower)___________      6.3441E+02 OP 
  # Vacuum System #
  First_wall_outgassing_rate_(Pa_m/s)_____________________________________ (rat)_________________________      1.3000E-08    
  Total_outgassing_load_(Pa_m3/s)_________________________________________ (ogas)________________________      2.4226E-04 OP 
@@ -1035,8 +1035,8 @@
  Recirculating_power_fraction____________________________________________ (cirpowfr)____________________      6.8296E-01    
  # Water usage during plant operation (secondary cooling) #
  Volume_used_in_cooling_tower_(m3/day)___________________________________ (waterusetower)_______________      1.1175E+05 OP 
- Volume_used_in_recirculating_water_system_(m3/day)______________________ (wateruserecirc)______________      3.7407E+04 OP 
- Volume_used_in_once-through_water_system_(m3/day)_______________________ (wateruseonethru)_____________      3.6659E+06 OP 
+ Volume_used_in_recirculating_water_system_(m3/day)______________________ (wateruserecirc)______________      3.7494E+04 OP 
+ Volume_used_in_once-through_water_system_(m3/day)_______________________ (wateruseonethru)_____________      3.6744E+06 OP 
  # Errors and Warnings #
  # Errors and Warnings #
  PROCESS_error_status_flag_______________________________________________ (error_status)________________              2    

@@ -7,7 +7,6 @@ from process.fortran import physics_variables as pv
 from process.fortran import tfcoil_variables as tfv
 from process.fortran import fwbs_variables as fwbsv
 from process.fortran import constants
-from process.fortran import cs_fatigue as csf
 from process.fortran import cs_fatigue_variables as csfv
 from process.fortran import maths_library as ml
 from process.fortran import process_output as op
@@ -25,11 +24,12 @@ import numpy as np
 class PFCoil:
     """Calculate poloidal field coil system parameters."""
 
-    def __init__(self):
+    def __init__(self, cs_fatigue) -> None:
         """Initialise Fortran module variables."""
         self.outfile = ft.constants.nout  # output file unit
         self.mfile = ft.constants.mfile  # mfile file unit
         pf.init_pfcoil_module()
+        self.cs_fatigue = cs_fatigue
 
     def run(self):
         """Run the PF coil model."""
@@ -936,6 +936,44 @@ class PFCoil:
 
         return bfix
 
+    def tf_pf_collision_detector(self):
+        #  Collision test between TF and PF coils for picture frame TF
+        #  See issue 1612
+        #  https://git.ccfe.ac.uk/process/process/-/issues/1612
+
+        if tfv.i_tf_shape == 2:
+            pf_tf_collision = 0
+
+            for i in range(pfv.ngrp):
+                for ii in range(pfv.ngrp):
+                    for ij in range(pfv.ncls[ii]):
+                        if pf.rcls[ii, ij] <= (  # Outboard TF coil collision
+                            pf.rclsnorm - pfv.routr + pfv.rpf[i]
+                        ) and pf.rcls[ii, ij] >= (
+                            bv.r_tf_outboard_mid - (0.5 * bv.tfthko) - pfv.rpf[i]
+                        ):
+                            pf_tf_collision += 1
+                        if pf.rcls[ii, ij] <= (  # Inboard TF coil collision
+                            bv.bore
+                            + bv.ohcth
+                            + bv.precomp
+                            + bv.gapoh
+                            + bv.tfcth
+                            + pfv.rpf[i]
+                        ) and pf.rcls[ii, ij] >= (
+                            bv.bore + bv.ohcth + bv.precomp + bv.gapoh - pfv.rpf[i]
+                        ):
+                            pf_tf_collision += 1
+                        if (  # Vertical TF coil collision
+                            abs(pf.zcls[ii, ij]) <= bv.hpfu + pfv.rpf[i]
+                            and abs(pf.zcls[ii, ij])
+                            >= bv.hpfu - (0.5 * bv.tfthko) - pfv.rpf[i]
+                        ):
+                            pf_tf_collision += 1
+
+                        if pf_tf_collision >= 1:
+                            eh.report_error(277)
+
     def mtrx(
         self,
         lrow1,
@@ -1220,12 +1258,10 @@ class PFCoil:
             # Calculation of CS fatigue
             # this is only valid for pulsed reactor design
             if pv.facoh > 0.0e-4:
-                csf.ncycle(
-                    csfv.n_cycle,
+                csfv.n_cycle, csfv.t_crack_radial = self.cs_fatigue.ncycle(
                     pf.sig_hoop,
                     csfv.residual_sig_hoop,
                     csfv.t_crack_vertical,
-                    csfv.t_crack_radial,
                     csfv.t_structural_vertical,
                     csfv.t_structural_radial,
                 )
@@ -2483,6 +2519,7 @@ class PFCoil:
                 f"(bpf[{k}])",
                 pfv.bpf[k],
             )
+        self.tf_pf_collision_detector()
 
         # Central Solenoid, if present
         if bv.iohcl != 0:
@@ -2595,7 +2632,7 @@ class PFCoil:
 
         op.osubhd(self.outfile, "PF coil current scaling information :")
         op.ovarre(
-            self.outfile, "Sum of squares of residuals ", "(pf.ssq0)", pf.ssq0, "OP "
+            self.outfile, "Sum of squares of residuals ", "(ssq0)", pf.ssq0, "OP "
         )
         op.ovarre(self.outfile, "Smoothing parameter ", "(alfapf)", pfv.alfapf)
 

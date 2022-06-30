@@ -258,15 +258,17 @@ class WaterUse:
             #   the average will be taken and used in the next stage of calculation
             evapsum = evapsum + water_usage_variables.evapvol
 
+        evapsum = evapsum / icool
+
         # water volume withdrawn from external source depends on recirculation or 'once-through' system choice
         #   Estimated as a ratio to evaporated water (averaged across obervered dataset)
         #   as per Diehl et al. USGS Report 2014–5184, http://dx.doi.org/10.3133/sir20145184
 
         # recirculating water system:
-        water_usage_variables.wateruserecirc = 1.0e0 * water_usage_variables.evapvol
+        water_usage_variables.wateruserecirc = 1.0e0 * evapsum
 
         # once-through water system:
-        water_usage_variables.wateruseonethru = 98.0e0 * water_usage_variables.evapvol
+        water_usage_variables.wateruseonethru = 98.0e0 * evapsum
 
         # end break
 

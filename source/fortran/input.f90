@@ -274,7 +274,7 @@ contains
       c5div, ksic, fififi, divplt, delld, c2div, betao, divdum, tdiv, c6div, &
       omegan, prn1, fgamp, frrp, xpertin, c1div, betai, bpsout, xparain, fdiva, &
       zeffdiv, hldivlim, rlenmax, divfix, c3div, divleg_profile_inner, &
-      divleg_profile_outer 
+      divleg_profile_outer
     use fwbs_variables, only: fblhebpo, vfblkt, fdiv, fvolso, fwcoolant, &
       pitch, iblanket, blktmodel, afwi, fblli2o, nphcdin, breeder_multiplier, &
       fw_armour_thickness, roughness, fwclfr, breedmat, fblli, fblvd, &
@@ -1108,7 +1108,7 @@ contains
           call parse_real_variable('psepbqarmax', psepbqarmax, 1.0D0, 50.0D0, &
                'Maximum Psep*Bt/q*A*R ratio (MW.T/m)')
        case ('pseprmax')
-          call parse_real_variable('pseprmax', pseprmax, 1.0D0, 50.0D0, &
+          call parse_real_variable('pseprmax', pseprmax, 1.0D0, 60.0D0, &
                'Maximum Psep/R ratio (MW/m)')
        case ('ptfnucmax')
           call parse_real_variable('ptfnucmax', ptfnucmax, 1.0D-6, 1.0D0, &

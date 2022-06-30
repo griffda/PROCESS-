@@ -8,12 +8,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-1892-g45d00e4c3
+   Tag No. : v2.1-1951-gce23f5d8b
     Branch : HEAD
-   Git log : Merge branch |1683-mfiles-in-tracking-baseline_2018-merged-unnecessarily| into |develop|
- Date/time : 14 Jun 2022 10:26:40 +00:00(hh:mm) UTC
+   Git log : Merge branch |1686-make-site-switch-options-consistent| into |develop|
+ Date/time : 29 Jun 2022  8:34:38 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-c55928e9-project-20-concurrent-0
+  Computer : runner-8r7le1vq-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_costs_paper_0/IN.DAT
  Run title : demo 1 model for cost paper
@@ -950,7 +950,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  PF coil current scaling information :
  
- Sum of squares of residuals                                              (pf.ssq0)                 6.332E-04  OP 
+ Sum of squares of residuals                                              (ssq0)                    6.332E-04  OP 
  Smoothing parameter                                                      (alfapf)                  5.000E-10     
  
  ****************************************** Volt Second Consumption *******************************************
@@ -1351,7 +1351,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Efficiency of transfer of PF stored energy into or out of storage        (etapsu)                  9.000E-01     
  (Energy is dissipated in PFC power supplies only when total PF energy increases or decreases.)
  Maximum stored energy in poloidal field (MJ)                             (ensxpfm)                 3.258E+04  OP 
- Peak absolute rate of change of stored energy in poloidal field (MW)     peakpoloidalpower         1.086E+03  OP 
+ Peak absolute rate of change of stored energy in poloidal field (MW)     (peakpoloidalpower)       1.086E+03  OP 
  Energy stored in poloidal magnetic field :
  
  
@@ -1476,8 +1476,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Plant thermodynamics: options :
  
- Divertor thermal power is collected at only 150 C and is used to          &preheat the coolant in the power cycle
- Shield thermal power is collected at only 150 C and is used to          &preheat the coolant in the power cycle
+ Divertor thermal power is collected at only 150 C and is used to preheat the coolant in the power cycle
+ Shield thermal power is collected at only 150 C and is used to preheat the coolant in the power cycle
  Power conversion cycle efficiency model: steam Rankine cycle
  Coolant temperature at turbine inlet (K)                                 (tturb)                     803.000     
  Fraction of total high-grade thermal power to divertor                   (pdivfraction)                0.158  OP 
@@ -1595,8 +1595,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  1. Cooling towers
  2. Water bodies (pond, lake, river): recirculating or once-through
  Volume used in cooling tower (m3/day)                                    (waterusetower)           6.322E+04  OP 
- Volume used in recirculating water system (m3/day)                       (wateruserecirc)          2.116E+04  OP 
- Volume used in once-through water system (m3/day)                        (wateruseonethru)         2.074E+06  OP 
+ Volume used in recirculating water system (m3/day)                       (wateruserecirc)          2.121E+04  OP 
+ Volume used in once-through water system (m3/day)                        (wateruseonethru)         2.079E+06  OP 
  
  ******************************************** Errors and Warnings *********************************************
  

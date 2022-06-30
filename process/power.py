@@ -369,7 +369,7 @@ class Power:
         po.ovarre(
             self.outfile,
             "Peak absolute rate of change of stored energy in poloidal field (MW)",
-            "peakpoloidalpower",
+            "(peakpoloidalpower)",
             pf_power_variables.peakpoloidalpower,
             "OP ",
         )
@@ -972,7 +972,7 @@ class Power:
             po.ovarre(
                 self.outfile,
                 "Double Null Divertor area fraction of whole toroid surface",
-                "(2*fwbs_variables.fdiv)",
+                "(2*fdiv)",
                 2.0e0 * fwbs_variables.fdiv,
             )
         else:
@@ -996,7 +996,7 @@ class Power:
             po.ovarre(
                 self.outfile,
                 "First wall area fraction ",
-                "(1-2*fwbs_variables.fdiv-fwbs_variables.fhcd)",
+                "(1-2fdiv-fhcd)",
                 1.0e0 - 2.0e0 * fwbs_variables.fdiv - fwbs_variables.fhcd,
             )
         else:
@@ -1155,7 +1155,7 @@ class Power:
         if self.iprimdiv == 1:
             po.ocmmnt(
                 self.outfile,
-                "Divertor thermal power is collected at only 150 C and is used to          &preheat the coolant in the power cycle",
+                "Divertor thermal power is collected at only 150 C and is used to preheat the coolant in the power cycle",
             )
         elif self.iprimdiv == 0:
             po.ocmmnt(
@@ -1166,7 +1166,7 @@ class Power:
         if heat_transport_variables.iprimshld == 1:
             po.ocmmnt(
                 self.outfile,
-                "Shield thermal power is collected at only 150 C and is used to          &preheat the coolant in the power cycle",
+                "Shield thermal power is collected at only 150 C and is used to preheat the coolant in the power cycle",
             )
         elif heat_transport_variables.iprimshld == 0:
             po.ocmmnt(

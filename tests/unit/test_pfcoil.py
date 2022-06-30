@@ -8,6 +8,7 @@ from process.fortran import build_variables as bv
 import numpy as np
 from numpy.testing import assert_array_almost_equal
 from typing import NamedTuple
+from process.cs_fatigue import CsFatigue
 
 
 @pytest.fixture
@@ -17,7 +18,7 @@ def pfcoil():
     :return: an instance of PFCoil
     :rtype: process.pfcoil.PFCoil
     """
-    pfcoil = PFCoil()
+    pfcoil = PFCoil(cs_fatigue=CsFatigue())
 
     return pfcoil
 
