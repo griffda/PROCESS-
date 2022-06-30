@@ -23,6 +23,8 @@ import numba
 
 rmu0 = ft.constants.rmu0
 twopi = ft.constants.twopi
+# numba requires this for type inference in mtrx()
+NCLSMX = int(pfv.nclsmx)
 
 
 class PFCoil:
@@ -874,7 +876,7 @@ class PFCoil:
             zpts,
             brin,
             bzin,
-            ngrp,
+            int(ngrp),
             ncls,
             rcls,
             zcls,
@@ -978,8 +980,9 @@ class PFCoil:
                         if pf_tf_collision >= 1:
                             eh.report_error(277)
 
+    @staticmethod
+    @numba.njit
     def mtrx(
-        self,
         lrow1,
         lcol1,
         npts,
@@ -1040,10 +1043,10 @@ class PFCoil:
         numpy.ndarray, numpy.ndarray, numpy.ndarray]
         """
         bvec = np.zeros(lrow1)
-        gmat = np.zeros((lrow1, lcol1), order="F")
-        rc = np.zeros(pfv.nclsmx)
-        zc = np.zeros(pfv.nclsmx)
-        cc = np.zeros(pfv.nclsmx)
+        gmat = np.zeros((lrow1, lcol1))
+        rc = np.zeros(NCLSMX)
+        zc = np.zeros(NCLSMX)
+        cc = np.zeros(NCLSMX)
 
         for i in range(npts):
             bvec[i] = brin[i] - bfix[i]
@@ -1059,11 +1062,11 @@ class PFCoil:
                 # nc can equal 0, however!
                 # f2py can't handle passing zero-length arrays
                 if nc > 0:
-                    xc, brw, bzw, psw = self.bfield(
+                    xc, brw, bzw, psw = bfield(
                         rc[:nc], zc[:nc], cc[:nc], rpts[i], zpts[i]
                     )
                 else:
-                    xc, brw, bzw, psw = self.bfield(
+                    xc, brw, bzw, psw = bfield(
                         rc[:1], zc[:1], cc[:1], rpts[i], zpts[i], nciszero=True
                     )
 
@@ -1115,7 +1118,9 @@ class PFCoil:
         eps = 1.0e-10
         ccls = np.zeros(ngrpmx)
 
-        sigma, umat, vmat, ierr, work2 = ml.svd(nrws, gmat, truth, truth)
+        sigma, umat, vmat, ierr, work2 = ml.svd(
+            nrws, np.asfortranarray(gmat), truth, truth
+        )
 
         for i in range(ngrp):
             work2[i] = 0.0e0
@@ -3332,3 +3337,8 @@ class PFCoil:
             psi = psi + xc[i] * cc[i]
 
         return xc, br, bz, psi
+
+
+# Nasty trick for numba'd mtrx() to access another staticmethod (bfield())
+# TODO Move both static methods to functions
+bfield = PFCoil.bfield
