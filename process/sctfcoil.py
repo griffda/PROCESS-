@@ -3518,22 +3518,33 @@ class Sctfcoil:
                 # CS Turn vertical cross-sectionnal area
                 a_oh_turn = a_oh / n_oh_turns
 
-                # Central Solenoid (OH) turn dimension [m]
-                t_turn_oh = numpy.sqrt(a_oh_turn)
+                # CS coil turn geometry calculation - stadium shape
+                # Literature: https://doi.org/10.1016/j.fusengdes.2017.04.052
+                d_cond_cst = (
+                    a_oh_turn / pfcoil_variables.ld_ratio_cst
+                ) ** 0.5  # width of cs turn conduit
+                l_cond_cst = (
+                    pfcoil_variables.ld_ratio_cst * d_cond_cst
+                )  # length of cs turn conduit
+                # Radius of turn space = r_in_cst
+                # Radius of curved outer corrner r_out_cst = 3mm from literature
+                # ld_ratio_cst = 70 / 22 from literature
+                p1 = ((l_cond_cst - d_cond_cst) / numpy.pi) ** 2
+                p2 = (
+                    (l_cond_cst * d_cond_cst)
+                    - (4 - numpy.pi) * (pfcoil_variables.r_out_cst**2)
+                    - (a_oh_turn * pfcoil_variables.oh_steel_frac)
+                ) / numpy.pi
+                r_in_cst = -((l_cond_cst - d_cond_cst) / numpy.pi) + numpy.sqrt(p1 + p2)
+                t_cond_oh = (
+                    d_cond_cst / 2
+                ) - r_in_cst  # thickness of steel conduit in cs turn
 
                 # OH/CS conduit thickness calculated assuming square conduit [m]
                 # The CS insulation layer is assumed to the same as the TF one
-                t_cond_oh = 0.5e0 * (
-                    t_turn_oh
-                    - 2.0e0 * tfcoil_variables.thicndut
-                    - numpy.sqrt(
-                        (2.0e0 * tfcoil_variables.thicndut - t_turn_oh) ** 2
-                        - pfcoil_variables.oh_steel_frac * t_turn_oh**2
-                    )
-                )
 
                 # CS turn cable space thickness
-                t_cable_oh = t_turn_oh - 2.0e0 * (t_cond_oh + tfcoil_variables.thicndut)
+                t_cable_oh = r_in_cst * 2
                 # -#
 
                 # Smeared elastic properties of the CS

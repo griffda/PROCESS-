@@ -3,13 +3,13 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.4.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "09/06/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "15:17"
+ Date_of_run_____________________________________________________________ (date)________________________     "22/06/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "16:14"
  User____________________________________________________________________ (username)____________________     "root"    
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "starfire                                                                                           
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1802-g6778ab547"                                                                              
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1947-g2fccb3ae4"                                                                              
  PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "HEAD"                                                                                              
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch |1678-don-t-skip-the-regression-overwrite-pipeline| into |develop|"                   
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch |1689-convert-cs_fatigue-f90-to-python| into |develop|"                               
  Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-root/pytest-0/test_scenario_starfire_0/IN.DAT                                                                                                                                            "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
@@ -702,12 +702,18 @@
  Helium_coolant_temperature_(K)__________________________________________ (tfv.tftmp)___________________      4.7500E+00    
  CS_temperature_margin_(K)_______________________________________________ (tmargoh)_____________________      4.3069E+00 OP 
  Minimum_permitted_temperature_margin_(K)________________________________ (tfv.tmargmin_cs)_____________      1.5000E+00    
- residual_hoop_stress_in_CS_Steel_(Pa)___________________________________ (csfv.residual_sig_hoop)______      2.4000E+08    
- Initial_vertical_crack_size_(m)_________________________________________ (csfv.t_crack_vertical)_______      2.0000E-03    
- Initial_radial_crack_size_(m)___________________________________________ (csfv.t_crack_radial)_________      6.0000E-03    
- CS_structural_vertical_thickness_(m)____________________________________ (csfv.t_structural_vertical)__      2.2000E-02    
- CS_structural_radial_thickness_(m)______________________________________ (csfv.t_structural_radial)____      7.0000E-02    
- Allowable_number_of_cycles_till_CS_fracture_____________________________ (csfv.n_cycle)________________             NaN OP 
+ Residual_hoop_stress_in_CS_Steel_(Pa)___________________________________ (csfv.residual_sig_hoop)______      2.4000E+08    
+ Minimum_burn_time_(s)___________________________________________________ (ctv.tbrnmn)__________________      7.2000E+03    
+ Initial_vertical_crack_size_(m)_________________________________________ (csfv.t_crack_vertical)_______      8.9000E-04    
+ Initial_radial_crack_size_(m)___________________________________________ (csfv.t_crack_radial)_________      2.6700E-03    
+ CS_turn_area_(m)________________________________________________________ (pfv.a_oh_turn)_______________      3.1758E-03    
+ CS_turn_length_(m)______________________________________________________ (pfv.l_cond_cst)______________      9.7608E-02    
+ CS_turn_internal_cable_space_radius_(m)_________________________________ (pfv.r_in_cst)________________      6.4053E-03    
+ CS_turn_width_(m)_______________________________________________________ (pfv.d_cond_cst)______________      3.2536E-02    
+ CS_structural_vertical_thickness_(m)____________________________________ (csfv.t_structural_vertical)__      9.8627E-03    
+ CS_structural_radial_thickness_(m)______________________________________ (csfv.t_structural_radial)____      9.8627E-03    
+ Allowable_number_of_cycles_till_CS_fracture_____________________________ (csfv.n_cycle)________________      6.2251E+05 OP 
+ Minimum_number_of_cycles_required_till_CS_fracture______________________ (csfv.n_cycle_min)____________      2.0000E+04 OP 
  PF_coil_superconductor_material_________________________________________ (isumatpf)____________________              3    
  Copper_fraction_in_conductor____________________________________________ (fcupfsu)_____________________      6.9000E-01    
  Maximum_permissible_tensile_stress_(MPa)________________________________ (sigpfcalw)___________________      5.0000E+02    
@@ -761,7 +767,7 @@
  Central_solenoid_turns__________________________________________________ (turns[nohc-1])_______________      2.0004E+03    
  Central_solenoid_current_(MA)___________________________________________ (ric[nohc-1])_________________     -8.6015E+01    
  Central_solenoid_field_(T)______________________________________________ (bpf[nohc-1])_________________      9.5774E+00    
- Sum_of_squares_of_residuals_____________________________________________ (pf.ssq0)_____________________      6.9512E-07 OP 
+ Sum_of_squares_of_residuals_____________________________________________ (ssq0)________________________      6.9512E-07 OP 
  Smoothing_parameter_____________________________________________________ (alfapf)______________________      5.0000E-10    
  # Volt Second Consumption #
  Total_volt-second_consumption_by_coils_(Wb)_____________________________ (vstot)_______________________     -9.6000E+01 OP 
@@ -921,7 +927,7 @@
  Maximum_PF_coil_voltage_(kV)____________________________________________ (vpfskv)______________________      2.0000E+01    
  Efficiency_of_transfer_of_PF_stored_energy_into_or_out_of_storage_______ (etapsu)______________________      9.0000E-01    
  Maximum_stored_energy_in_poloidal_field_(MJ)____________________________ (ensxpfm)_____________________      1.0892E+04 OP 
- Peak_absolute_rate_of_change_of_stored_energy_in_poloidal_field_(MW)____ peakpoloidalpower_____________      3.6289E+02 OP 
+ Peak_absolute_rate_of_change_of_stored_energy_in_poloidal_field_(MW)____ (peakpoloidalpower)___________      3.6289E+02 OP 
  # Vacuum System #
  First_wall_outgassing_rate_(Pa_m/s)_____________________________________ (rat)_________________________      1.3000E-08    
  Total_outgassing_load_(Pa_m3/s)_________________________________________ (ogas)________________________      9.8878E-05 OP 
@@ -978,12 +984,12 @@
  Total_pulsed_power_(MW)_________________________________________________ (pacpmw)______________________      1.2611E+03 OP 
  Total_base_power_required_at_all_times_(MW)_____________________________ (fcsht)_______________________      4.3282E+01 OP 
  # Cryogenics #
- Conduction_and_radiation_heat_loads_on_cryogenic_components_(MW)________ (qss/1.0D6)___________________      1.2485E-02 OP 
- Nuclear_heating_of_cryogenic_components_(MW)____________________________ (qnuc/1.0D6)__________________      1.2920E-02 OP 
- AC_losses_in_cryogenic_components_(MW)__________________________________ (qac/1.0D6)___________________      1.0817E-03 OP 
- Resistive_losses_in_current_leads_(MW)__________________________________ (qcl/1.0D6)___________________      1.4688E-02 OP 
- 45%_allowance_for_heat_loads_in_transfer_lines,_storage_tanks_etc_(MW)__ (qmisc/1.0D6)_________________      1.8529E-02 OP 
- Sum_=_Total_heat_removal_at_cryogenic_temperatures_(tmpcry_&_tcoolin)_(M (helpow_+_helpow_cryal/1.0D6)_      5.9703E-02 OP 
+ Conduction_and_radiation_heat_loads_on_cryogenic_components_(MW)________ (qss/1.0d6)___________________      1.2485E-02 OP 
+ Nuclear_heating_of_cryogenic_components_(MW)____________________________ (qnuc/1.0d6)__________________      1.2920E-02 OP 
+ AC_losses_in_cryogenic_components_(MW)__________________________________ (qac/1.0d6)___________________      1.0817E-03 OP 
+ Resistive_losses_in_current_leads_(MW)__________________________________ (qcl/1.0d6)___________________      1.4688E-02 OP 
+ 45%_allowance_for_heat_loads_in_transfer_lines,_storage_tanks_etc_(MW)__ (qmisc/1.0d6)_________________      1.8529E-02 OP 
+ Sum_=_Total_heat_removal_at_cryogenic_temperatures_(tfcoil_variables.tmp (helpow_+_helpow_cryal/1.0d6)_      5.9703E-02 OP 
  Temperature_of_cryogenic_superconducting_components_(K)_________________ (tmpcry)______________________      4.5000E+00    
  Temperature_of_cryogenic_aluminium_components_(K)_______________________ (tcoolin)_____________________      3.1315E+02    
  Efficiency_(figure_of_merit)_of_cryogenic_plant_is_13%_of_ideal_Carnot_v ______________________________      2.0277E-03 OP 
@@ -1065,8 +1071,8 @@
  Recirculating_power_fraction____________________________________________ (cirpowfr)____________________      3.1161E-01    
  # Water usage during plant operation (secondary cooling) #
  Volume_used_in_cooling_tower_(m3/day)___________________________________ (waterusetower)_______________      1.2082E+05 OP 
- Volume_used_in_recirculating_water_system_(m3/day)______________________ (wateruserecirc)______________      4.0445E+04 OP 
- Volume_used_in_once-through_water_system_(m3/day)_______________________ (wateruseonethru)_____________      3.9636E+06 OP 
+ Volume_used_in_recirculating_water_system_(m3/day)______________________ (wateruserecirc)______________      4.0539E+04 OP 
+ Volume_used_in_once-through_water_system_(m3/day)_______________________ (wateruseonethru)_____________      3.9728E+06 OP 
  # Errors and Warnings #
  # Errors and Warnings #
  PROCESS_error_status_flag_______________________________________________ (error_status)________________              2    

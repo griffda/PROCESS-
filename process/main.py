@@ -64,6 +64,7 @@ from process.ife import IFE
 from process.costs_2015 import Costs2015
 from process.caller import Caller
 from process.power import Power
+from process.cs_fatigue import CsFatigue
 
 
 from pathlib import Path
@@ -471,7 +472,8 @@ class Models:
         This also initialises module variables in the Fortran for that module.
         """
         self.costs_step = CostsStep()
-        self.pfcoil = PFCoil()
+        self.cs_fatigue = CsFatigue()
+        self.pfcoil = PFCoil(cs_fatigue=self.cs_fatigue)
         self.power = Power()
         self.build = Build()
         self.sctfcoil = Sctfcoil()
