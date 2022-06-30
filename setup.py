@@ -40,6 +40,7 @@ setup_kwargs = {
         "pandas",
         "tables",
         "SALib",
+        "numba>=0.55.2",
     ],
     "extras_require": {"test": ["pytest", "scipy"]},
     "entry_points": {
