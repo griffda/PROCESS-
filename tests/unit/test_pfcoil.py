@@ -913,12 +913,15 @@ def test_rsid(pfcoil):
     assert ssq == pytest.approx(ssq_exp)
 
 
-def test_bfield():
+def test_bfield(pfcoil):
     """Test bfield subroutine.
 
     bfield() requires specific arguments in order to work; these were discovered
     using gdb to break on the first subroutine call when running the baseline
     2018 IN.DAT.
+
+    :param pfcoil: PFCoil object
+    :type pfcoil: process.pfcoil.PFCoil
     """
     rc = np.array(
         [
@@ -999,7 +1002,7 @@ def test_bfield():
     bz_exp = -0.3537283013510894
     psi_exp = 232.7112153010189
 
-    xc, br, bz, psi = pf.bfield(rc, zc, cc, rp, zp)
+    xc, br, bz, psi = pfcoil.bfield(rc, zc, cc, rp, zp)
 
     assert_array_almost_equal(xc, xc_exp)
     assert pytest.approx(br) == br_exp

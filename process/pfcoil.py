@@ -19,6 +19,10 @@ from process.utilities.f2py_string_patch import f2py_compatible_to_string
 from process import fortran as ft
 import math
 import numpy as np
+import numba
+
+rmu0 = ft.constants.rmu0
+twopi = ft.constants.twopi
 
 
 class PFCoil:
@@ -928,8 +932,8 @@ class PFCoil:
         for i in range(npts):
             # bfield() only operates correctly on nfix slices of array
             # arguments, not entire arrays
-            work1, brw, bzw, psw = pf.bfield(
-                rfix[:nfix], zfix[:nfix], cfix[:nfix], rpts[i], zpts[i], nfix
+            work1, brw, bzw, psw = self.bfield(
+                rfix[:nfix], zfix[:nfix], cfix[:nfix], rpts[i], zpts[i]
             )
             bfix[i] = brw
             bfix[npts + i] = bzw
@@ -1055,12 +1059,12 @@ class PFCoil:
                 # nc can equal 0, however!
                 # f2py can't handle passing zero-length arrays
                 if nc > 0:
-                    xc, brw, bzw, psw = pf.bfield(
+                    xc, brw, bzw, psw = self.bfield(
                         rc[:nc], zc[:nc], cc[:nc], rpts[i], zpts[i]
                     )
                 else:
-                    xc, brw, bzw, psw = pf.bfield(
-                        rc[:1], zc[:1], cc[:1], rpts[i], zpts[i], 1, nciszero=True
+                    xc, brw, bzw, psw = self.bfield(
+                        rc[:1], zc[:1], cc[:1], rpts[i], zpts[i], nciszero=True
                     )
 
                 gmat[i, j] = brw
@@ -1494,7 +1498,7 @@ class PFCoil:
 
         # Calculate the field at the inner and outer edges
         # of the coil of interest
-        pf.xind[:kk], bri, bzi, psi = pf.bfield(
+        pf.xind[:kk], bri, bzi, psi = self.bfield(
             pf.rfxf[:kk],
             pf.zfxf[:kk],
             pf.cfxf[:kk],
@@ -1502,7 +1506,7 @@ class PFCoil:
             pfv.zpf[i - 1],
             kk,
         )
-        pf.xind[:kk], bro, bzo, psi = pf.bfield(
+        pf.xind[:kk], bro, bzo, psi = self.bfield(
             pf.rfxf[:kk],
             pf.zfxf[:kk],
             pf.cfxf[:kk],
@@ -1867,8 +1871,8 @@ class PFCoil:
 
                 reqv = rp * (1.0e0 + delzoh**2 / (24.0e0 * rp**2))
 
-                xcin, br, bz, psi = pf.bfield(rc, zc, cc, reqv - deltar, zp)
-                xcout, br, bz, psi = pf.bfield(rc, zc, cc, reqv + deltar, zp)
+                xcin, br, bz, psi = self.bfield(rc, zc, cc, reqv - deltar, zp)
+                xcout, br, bz, psi = self.bfield(rc, zc, cc, reqv + deltar, zp)
 
                 for ii in range(nplas):
                     xc[ii] = 0.5e0 * (xcin[ii] + xcout[ii])
@@ -1892,7 +1896,7 @@ class PFCoil:
             ncoils = ncoils + pfv.ncls[i]
             rp = pfv.rpf[ncoils - 1]
             zp = pfv.zpf[ncoils - 1]
-            xc, br, bz, psi = pf.bfield(rc, zc, cc, rp, zp)
+            xc, br, bz, psi = self.bfield(rc, zc, cc, rp, zp)
             for ii in range(nplas):
                 xpfpl = xpfpl + xc[ii]
 
@@ -1926,7 +1930,7 @@ class PFCoil:
                 ncoils = ncoils + pfv.ncls[i]
                 rp = pfv.rpf[ncoils - 1]
                 zp = pfv.zpf[ncoils - 1]
-                xc, br, bz, psi = pf.bfield(rc, zc, cc, rp, zp)
+                xc, br, bz, psi = self.bfield(rc, zc, cc, rp, zp)
                 for ii in range(noh):
                     xohpf = xohpf + xc[ii]
 
@@ -1957,7 +1961,7 @@ class PFCoil:
 
             rp = pfv.rpf[i]
             zp = pfv.zpf[i]
-            xc, br, bz, psi = pf.bfield(rc, zc, cc, rp, zp)
+            xc, br, bz, psi = self.bfield(rc, zc, cc, rp, zp)
             for k in range(pf.nef):
                 if k < i:
                     pfv.sxlg[i, k] = xc[k] * pfv.turns[k] * pfv.turns[i]
@@ -3247,3 +3251,84 @@ class PFCoil:
                 )
 
         return jcritwp, jcritstr, jcritsc, tmarg
+
+    @staticmethod
+    @numba.njit
+    def bfield(rc, zc, cc, rp, zp, nciszero=False):
+        # Elliptic integral coefficients
+        a0 = 1.38629436112
+        a1 = 0.09666344259
+        a2 = 0.03590092383
+        a3 = 0.03742563713
+        a4 = 0.01451196212
+        b0 = 0.5
+        b1 = 0.12498593597
+        b2 = 0.06880248576
+        b3 = 0.03328355346
+        b4 = 0.00441787012
+        c1 = 0.44325141463
+        c2 = 0.06260601220
+        c3 = 0.04757383546
+        c4 = 0.01736506451
+        d1 = 0.24998368310
+        d2 = 0.09200180037
+        d3 = 0.04069697526
+        d4 = 0.00526449639
+
+        br = 0.0
+        bz = 0.0
+        psi = 0.0
+
+        xc = np.empty_like(rc)
+
+        if nciszero is True:
+            return xc, br, bz, psi
+
+        for i in range(len(rc)):
+            d = (rp + rc[i]) ** 2 + (zp - zc[i]) ** 2
+            s = 4.0 * rp * rc[i] / d
+
+            t = 1.0 - s
+            a = np.log(1.0 / t)
+
+            dz = zp - zc[i]
+            zs = dz**2
+            dr = rp - rc[i]
+            sd = np.sqrt(d)
+
+            # Evaluation of elliptic integrals
+            xk = (
+                a0
+                + t * (a1 + t * (a2 + t * (a3 + a4 * t)))
+                + a * (b0 + t * (b1 + t * (b2 + t * (b3 + b4 * t))))
+            )
+            xe = (
+                1.0
+                + t * (c1 + t * (c2 + t * (c3 + c4 * t)))
+                + a * t * (d1 + t * (d2 + t * (d3 + d4 * t)))
+            )
+
+            # Mutual inductances
+            xc[i] = 0.5 * rmu0 * sd * ((2.0 - s) * xk - 2.0 * xe)
+
+            # Radial, vertical fields
+            brx = (
+                rmu0
+                * cc[i]
+                * dz
+                / (twopi * rp * sd)
+                * (-xk + (rc[i] ** 2 + rp**2 + zs) / (dr**2 + zs) * xe)
+            )
+            bzx = (
+                rmu0
+                * cc[i]
+                / (twopi * sd)
+                * (xk + (rc[i] ** 2 - rp**2 - zs) / (dr**2 + zs) * xe)
+            )
+
+            # Sum fields, flux
+            br = br + brx
+            bz = bz + bzx
+            psi = psi + xc[i] * cc[i]
+
+        return xc, br, bz, psi
