@@ -25,12 +25,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-1951-gce23f5d8b
+   Tag No. : v2.1-1954-g66034420d
     Branch : HEAD
-   Git log : Merge branch |1686-make-site-switch-options-consistent| into |develop|
- Date/time : 29 Jun 2022  8:43:58 +00:00(hh:mm) UTC
+   Git log : Merge branch |1623-error-message-and-error-trigger-are-conflicting| into |develop|
+ Date/time :  1 Jul 2022  8:41:49 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-8r7le1vq-project-20-concurrent-0
+  Computer : runner-c55928e9-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_i_mode_0/IN.DAT
  Run title : I-mode 2019 PMU
