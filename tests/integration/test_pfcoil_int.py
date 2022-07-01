@@ -645,9 +645,7 @@ def test_mtrx(pfcoil):
         ]
     )
 
-    # Final 4 returns are temporary working arrays
-    # which offer no useful information to test
-    nrws, gmat, bvec, _, _, _, _ = mtrx(
+    nrws, gmat, bvec = mtrx(
         lrow1,
         lcol1,
         npts,

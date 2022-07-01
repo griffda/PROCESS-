@@ -865,7 +865,7 @@ class PFCoil:
         bfix = fixb(lrow1, npts, rpts, zpts, int(nfix), rfix, zfix, cfix)
 
         # Set up matrix equation
-        nrws, gmat, bvec, _, _, _, _ = mtrx(
+        nrws, gmat, bvec = mtrx(
             lrow1,
             lcol1,
             npts,
@@ -3338,4 +3338,4 @@ def mtrx(
     # around to that missing signature
     gmat = np.asfortranarray(gmat)
 
-    return nrws, gmat, bvec, None, None, None, None
+    return nrws, gmat, bvec
