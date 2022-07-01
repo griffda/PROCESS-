@@ -1,6 +1,6 @@
 """Unit tests for pfcoil.f90."""
 import pytest
-from process.pfcoil import PFCoil, bfield
+from process.pfcoil import PFCoil, bfield, rsid
 from process.fortran import pfcoil_module as pf
 from process.fortran import pfcoil_variables as pfv
 from process.fortran import tfcoil_variables as tfv
@@ -902,7 +902,7 @@ def test_rsid(pfcoil):
     bznrm_exp = 0.0
     ssq_exp = 0.0006400910095285954
 
-    brssq, brnrm, bzssq, bznrm, ssq = pfcoil.rsid(
+    brssq, brnrm, bzssq, bznrm, ssq = rsid(
         npts, brin, bzin, nfix, ngrp, ccls, bfix, gmat
     )
 

@@ -20,7 +20,7 @@ from process.fortran import fwbs_variables as fwbsv
 from process.fortran import tfcoil_variables as tfv
 from process.fortran import times_variables as tv
 from process.fortran import constants
-from process.pfcoil import PFCoil
+from process.pfcoil import PFCoil, mtrx, fixb
 from process.cs_fatigue import CsFatigue
 
 
@@ -647,7 +647,7 @@ def test_mtrx(pfcoil):
 
     # Final 4 returns are temporary working arrays
     # which offer no useful information to test
-    nrws, gmat, bvec, _, _, _, _ = pfcoil.mtrx(
+    nrws, gmat, bvec, _, _, _, _ = mtrx(
         lrow1,
         lcol1,
         npts,
@@ -2022,7 +2022,7 @@ def test_fixb(pfcoil):
         ]
     )
 
-    bfix = pfcoil.fixb(lrow1, npts, rpts, zpts, nfix, rfix, zfix, cfix)
+    bfix = fixb(lrow1, npts, rpts, zpts, nfix, rfix, zfix, cfix)
 
     assert_array_almost_equal(bfix, bfix_exp)
 
