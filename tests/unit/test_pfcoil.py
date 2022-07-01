@@ -1,6 +1,6 @@
 """Unit tests for pfcoil.f90."""
 import pytest
-from process.pfcoil import PFCoil
+from process.pfcoil import PFCoil, bfield
 from process.fortran import pfcoil_module as pf
 from process.fortran import pfcoil_variables as pfv
 from process.fortran import tfcoil_variables as tfv
@@ -913,8 +913,8 @@ def test_rsid(pfcoil):
     assert ssq == pytest.approx(ssq_exp)
 
 
-def test_bfield(pfcoil):
-    """Test bfield subroutine.
+def test_bfield():
+    """Test bfield function.
 
     bfield() requires specific arguments in order to work; these were discovered
     using gdb to break on the first subroutine call when running the baseline
@@ -1002,7 +1002,7 @@ def test_bfield(pfcoil):
     bz_exp = -0.3537283013510894
     psi_exp = 232.7112153010189
 
-    xc, br, bz, psi = pfcoil.bfield(rc, zc, cc, rp, zp)
+    xc, br, bz, psi = bfield(rc, zc, cc, rp, zp)
 
     assert_array_almost_equal(xc, xc_exp)
     assert pytest.approx(br) == br_exp
