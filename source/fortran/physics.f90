@@ -4337,8 +4337,8 @@ module physics_module
 
     if (idivrt == 2) then
       ! Double null divertor configuration
-      call ovarre(outfile,'Psep / R ratio (MW/m)','(pdivmax/rmajor)',pdivmax/rmajor, 'OP ')
-      call ovarre(outfile,'Psep Bt / qAR ratio (MWT/m)','(pdivmaxbt/qar)', ((pdivmax*bt)/(q95*aspect*rmajor)), 'OP ')
+      call ovarre(outfile,'Pdivt / R ratio (MW/m) (On peak divertor)','(pdivmax/rmajor)',pdivmax/rmajor, 'OP ')
+      call ovarre(outfile,'Pdivt Bt / qAR ratio (MWT/m) (On peak divertor)','(pdivmaxbt/qar)', ((pdivmax*bt)/(q95*aspect*rmajor)), 'OP ')
     else
       ! Single null divertor configuration
       call ovarre(outfile,'Psep / R ratio (MW/m)','(pdivt/rmajor)',pdivt/rmajor, 'OP ')
