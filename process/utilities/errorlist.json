@@ -1183,7 +1183,7 @@
     {
       "no": 235,
       "level": 3,
-      "message": "CHECK: Coolant temperature (tcoolin) should be > 40 K for the cryo-al resistivity to be defined."
+      "message": "CHECK: Coolant temperature (tcoolin) should be < 40 K for the cryo-al resistivity to be defined."
     },
     {
       "no": 236,
