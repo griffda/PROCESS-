@@ -139,7 +139,6 @@ def plot_pulse_timings(
     # Plotting
 
     # Axis 1
-
     axis_1.axhline(y=0, color="k")
     axis_1.set_ylabel("Current [MA]")
     axis_1.legend(loc="upper left", bbox_to_anchor=(1, 1.05))
@@ -153,7 +152,6 @@ def plot_pulse_timings(
         axis_1.axvline(x=time[ti], color="k", linestyle="--", linewidth=0.5, alpha=0.5)
 
     # Axis 2
-
     axis_2.axhline(y=0, color="k")
     axis_2.set_ylabel("Current [MA]")
     axis_2.set_ylim([0, 25])
