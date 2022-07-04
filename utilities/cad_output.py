@@ -86,9 +86,6 @@ class BuildDataContainer(object):
         # TF-VV thermal shield thickness, inboard
         self.thshield_ib = data.data["thshield_ib"].get_scan(-1)
 
-        # # TF-VV thermal shield thickness, outboard
-        # self.thshield_ob = data.data["thshield_ob"].get_scan(-1)
-
         # TF-VV thermal shield thickness, inboard
         self.thshield_vb = data.data["thshield_vb"].get_scan(-1)
 
