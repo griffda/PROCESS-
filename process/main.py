@@ -65,6 +65,7 @@ from process.costs_2015 import Costs2015
 from process.caller import Caller
 from process.power import Power
 from process.cs_fatigue import CsFatigue
+from process.physics import Physics
 
 
 from pathlib import Path
@@ -494,6 +495,7 @@ class Models:
             power=self.power,
         )
         self.costs_2015 = Costs2015()
+        self.physics = Physics()
 
 
 def main(args=None):

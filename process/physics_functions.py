@@ -31,31 +31,23 @@ class PhysicsFuncs:
         relevant routines.
         None
         """
-        physics_functions_module.imprad(
-            physics_functions_module.pbrempv,
-            physics_functions_module.plinepv,
-            physics_functions_module.pimpcore,
-            physics_functions_module.pimptot,
-        )
-        pedgeradpv = (
-            physics_functions_module.pimptot - physics_functions_module.pimpcore
-        )
+
+        pimpcore = 0.0e0
+        pimptot = 0.0e0
+        physics_functions_module.imprad()
+        pedgeradpv = pimptot - pimpcore
 
         #  Synchrotron radiation power/volume; assumed to be from core only
 
-        physics_functions_module.psync_albajar_fidone(physics_functions_module.psyncpv)
+        psyncpv = physics_functions_module.psync_albajar_fidone()
 
         #  Total core radiation power/volume
 
-        pcoreradpv = (
-            physics_functions_module.pimpcore + physics_functions_module.psyncpv
-        )
+        pcoreradpv = pimpcore + psyncpv
 
         #  Total radiation power/volume
 
-        pradpv = (
-            physics_functions_module.pimptot + physics_functions_module.psyncpv
-        )  # pcoreradpv + pedgeradpv #
+        pradpv = pimptot + psyncpv  # pcoreradpv + pedgeradpv #
 
         return pedgeradpv, pcoreradpv, pradpv
 
