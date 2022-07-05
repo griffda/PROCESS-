@@ -18,7 +18,7 @@ evaluate_uncertainties.json
 
 from matplotlib import rc
 import argparse
-import matplotlib.mlab as mlab
+from scipy.stats import norm
 from numpy import linspace, argwhere, logical_or, zeros, mean
 from matplotlib.ticker import NullFormatter
 from pylab import figure, hist, show, savefig, gca, plot, xlabel
@@ -51,7 +51,7 @@ def plot_distribution(xarr, labelx, unc_dict):
         u_mean = unc_dict["mean"]
         u_std = unc_dict["std"]
         xvalues = linspace(min(xarr), max(xarr), 500)
-        yvalues = mlab.normpdf(xvalues, u_mean, u_std)
+        yvalues = norm.pdf(xvalues, u_mean, u_std)
         # assures values are inside input bounds!
         if varname in DICT_INPUT_BOUNDS:
             args = argwhere(
@@ -83,7 +83,7 @@ def plot_distribution(xarr, labelx, unc_dict):
         u_mean = unc_dict["mean"]
         u_std = unc_dict["std"]
         xvalues = linspace(min(xarr), max(xarr), 500)
-        yvalues = mlab.normpdf(xvalues, u_mean, u_std)
+        yvalues = norm.pdf(xvalues, u_mean, u_std)
         # to correct normalisation for half Gaussian
         yvalues = yvalues * 2.0
         if varname in DICT_INPUT_BOUNDS:
@@ -100,7 +100,7 @@ def plot_distribution(xarr, labelx, unc_dict):
         u_mean = unc_dict["mean"]
         u_std = unc_dict["std"]
         xvalues = linspace(min(xarr), max(xarr), 500)
-        yvalues = mlab.normpdf(xvalues, u_mean, u_std)
+        yvalues = norm.pdf(xvalues, u_mean, u_std)
         # to correct normalisation for half Gaussian
         yvalues = yvalues * 2.0
         if varname in DICT_INPUT_BOUNDS:
