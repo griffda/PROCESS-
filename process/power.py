@@ -1362,7 +1362,7 @@ class Power:
             po.dblcol(self.outfile, "pnuc_cp", 0.0e0, fwbs_variables.pnuc_cp)
             po.write(self.outfile, "0.0e0 0.0e0 0.0e0")
             po.write(self.outfile, "0.0e0 0.0e0 0.0e0")
-            po.write(self.outfile, "ppumpmw", 0.0e0, self.ppumpmw)  # check
+            po.dblcol(self.outfile, "ppumpmw", 0.0e0, self.ppumpmw)  # check
 
         primsum = primsum
         secsum = secsum + fwbs_variables.pnuc_cp + self.ppumpmw
