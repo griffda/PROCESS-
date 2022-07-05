@@ -90,3 +90,5 @@ REBCO_JC.DAT
 *.whl
 python_modules.txt
 quench_data.DAT
+examples/*.png
+examples/plot_proc_1.png
