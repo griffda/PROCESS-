@@ -30,7 +30,7 @@ arXiv:2205.04441
 
 [Designing a fusion power plant with superconducting training magnets](http://etheses.dur.ac.uk/14404/)   
 S.B.L. Chislett-McDonald   
-Duham University PhD Thesis   
+Durham University PhD Thesis   
 
 [EU-DEMO design space exploration and design drivers](https://www.sciencedirect.com/science/article/pii/S0920379622000801?via%3Dihub)   
 R. Kembleton, J. Morris, M. Siccinio, F. Maviglia, the PROCESS team   
