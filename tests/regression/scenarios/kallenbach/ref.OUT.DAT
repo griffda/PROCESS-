@@ -6,12 +6,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-1968-gb85826841
+   Tag No. : v2.1-1972-g677f840e2
     Branch : HEAD
-   Git log : Merge branch |1696-add-psep-to-output| into |develop|
- Date/time :  1 Jul 2022 14:10:14 +00:00(hh:mm) UTC
+   Git log : Merge branch |1704-fix-outpu-from-writes-in-power-py| into |develop|
+ Date/time :  6 Jul 2022  7:56:56 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-sn2siqxv-project-20-concurrent-0
+  Computer : runner-9dc50af2-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_kallenbach_0/IN.DAT
  Run title : kallenbach divertor model
@@ -1374,12 +1374,45 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Power Balance for Reactor (across vacuum vessel boundary) - Detail
  ------------------------------------------------------------------
  
+ High-grade             Low-grade              Total
+ thermal power (MW)     thermal power (MW)      (MW)
+ First wall:
+ pnucfw                                                                         0.00                   201.22
+ palpfwmw                                                                       0.00                    19.68
+ pradfw                                                                         0.00                   257.88
+ htpmw_fw                                                                       0.00                   155.00
  
+ Blanket:
+ pnucblkt                                                                       0.00                  1567.74
+ 0.0e0 0.0e0 0.0e0
+ 0.0e0 0.0e0 0.0e0
+ htpmw_blkt                                                                     0.00                     0.00
  
+ Shield:
+ 0.48719267353552625 0.0 0.48719267353552625
+ 0.0e0 0.0e0 0.0e0
+ 0.0e0 0.0e0 0.0e0
+ 0.0 0.0 0.0
  
+ Divertor:
+ 0.0 181.3113816753588 181.3113816753588
+ 0.0 135.08987480707003 135.08987480707003
+ 0.0 33.50961777109816 33.50961777109816
+ 0.0 0.0 0.0
  
+ TF coil:
+ ptfnuc                                                                         0.00                     0.01
+ 0.0e0 0.0e0 0.0e0
+ 0.0e0 0.0e0 0.0e0
+ 0.0e0 0.0e0 0.0e0
  
+ Losses to H/CD apparatus + diagnostics:
+ pnuchcd                                                                        0.00                     0.00
+ 0.0e0 0.0e0 0.0e0
+ pradhcd                                                                        0.00                     0.00
+ 0.0e0 0.0e0 0.0e0
  
+ 2202.011214069416 349.9223045123624 2551.933518581778
  
  Total power leaving reactor (across vacuum vessel boundary) (MW)                                    2551.945  OP 
  
@@ -1469,13 +1502,44 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Time-dependent power usage
  
+ Pulse timings [s]:
  
+ tramp tohs theat tburn tqnch tdwell
+ ----- ---- ----- ----- ----- ------
+ Duration 300.0 300.0 10.0 7185.628096894698 300.0 0.0
+ ------ ----- ---- ----- ----- ----- ------
  
+ Continous power usage [MWe]:
  
+ System tramp tohs theat tburn tqnch tdwell
+ ------ ----- ---- ----- ----- ----- ------
+ Primary cooling 155.0 155.0 155.0 155.0 155.0 155.0
+ Cryoplant 38.53566833169229 38.53566833169229 38.53566833169229 38.53566833169229 38.53566833169229 38.53566833169229
+ Vacuum 0.5 0.5 0.5 0.5 0.5 0.5
+ Tritium 15.0 15.0 15.0 15.0 15.0 15.0
+ TF 10.990383383511974 10.990383383511974 10.990383383511974 10.990383383511974 10.990383383511974 10.990383383511974
+ Facilities 58.30968068442403 58.30968068442403 58.30968068442403 58.30968068442403 58.30968068442403 58.30968068442403
+ ------ ----- ---- ----- ----- ----- ------
+ Total 278.33573239962834 278.33573239962834 278.33573239962834 278.33573239962834 278.33573239962834 278.33573239962834
+ ------ ----- ---- ----- ----- ----- ------
  
+ Intermittent power usage [MWe]:
  
+ System tramp tohs theat tburn tqnch tdwell
+ ------ ----- ---- ----- ----- ----- ------
+ H & CD 0.0 300.0 300.0 125.00000005853363 300.0 0.0
+ PF 103.64108098751846 -47.971350742073106 0.0 2.7994758875964205 -122.75327520517752 0.0
+ ------ ----- ---- ----- ----- ----- ------
+ Total 103.64108098751846 252.0286492579269 300.0 127.79947594613004 177.24672479482248 0.0
+ ------ ----- ---- ----- ----- ----- ------
  
+ Power production [MWe]:
  
+  tramp tohs theat tburn tqnch tdwell avg
+  ----- ---- ----- ----- ----- ------ ---
+ Gross power 0.0 0.0 0.0 905.0266089825299 0.0 0.0
+ Net power -381.97681338714676 -530.3643816575552 -578.3357323996283 498.89140063677155 -455.58245719445074 -278.3357323996283
+ ------ ----- ---- ----- ----- ----- ------
  
  
  *************************** Water usage during plant operation (secondary cooling) ***************************
