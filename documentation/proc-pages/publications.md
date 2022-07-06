@@ -26,7 +26,7 @@ The Innovation 3(4) (2022) 100269
 
 [Training and upgrading tokamak power plants with remountable superconducting magnets](https://arxiv.org/abs/2205.04441)   
 S.B.L. Chislett-McDonald, E. Surrey, J. Naish, A. Turner, D.P. Hampshire   
-arXiv:2205.04441   
+arXiv:2205.04441 (2022)   
 
 [Designing a fusion power plant with superconducting training magnets](http://etheses.dur.ac.uk/14404/)   
 S.B.L. Chislett-McDonald   
