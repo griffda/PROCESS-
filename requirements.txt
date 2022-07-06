@@ -17,3 +17,4 @@ pre-commit>=2.16.0
 black>=22.1.0
 pytest-cov>=3.0.0
 pytest-xdist>=2.5.0
+numba>=0.55.2

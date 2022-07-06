@@ -1250,14 +1250,14 @@ class Power:
         secsum = 0.0e0
 
         po.oblnkl(self.outfile)
-        # write(self.outfile,'(t45,a)') 'High-grade             Low-grade              Total'
-        # write(self.outfile,'(t46,a)') 'thermal power (MW)     thermal power (MW)      (MW)'
+        po.write(self.outfile, "High-grade             Low-grade              Total")
+        po.write(self.outfile, "thermal power (MW)     thermal power (MW)      (MW)")
 
-        # write(self.outfile,'(t10,a)') 'First wall:'
-        # write(self.outfile,10) pnucfw, 0.0e0, fwbs_variables.pnucfw
-        # write(self.outfile,20) palpfwmw, 0.0e0, physics_variables.palpfwmw
-        # write(self.outfile,30) pradfw, 0.0e0, fwbs_variables.pradfw
-        # write(self.outfile,40) htpmw_fw, 0.0e0, heat_transport_variables.htpmw_fw
+        po.write(self.outfile, "First wall:")
+        po.dblcol(self.outfile, "pnucfw", 0.0e0, fwbs_variables.pnucfw)
+        po.dblcol(self.outfile, "palpfwmw", 0.0e0, physics_variables.palpfwmw)
+        po.dblcol(self.outfile, "pradfw", 0.0e0, fwbs_variables.pradfw)
+        po.dblcol(self.outfile, "htpmw_fw", 0.0e0, heat_transport_variables.htpmw_fw)
 
         primsum = (
             primsum
@@ -1270,11 +1270,13 @@ class Power:
 
         po.oblnkl(self.outfile)
 
-        # write(self.outfile,'(t10,a)') 'Blanket:'
-        # write(self.outfile,10) pnucblkt, 0.0e0, fwbs_variables.pnucblkt
-        # write(self.outfile,20) 0.0e0, 0.0e0, 0.0e0
-        # write(self.outfile,30) 0.0e0, 0.0e0, 0.0e0
-        # write(self.outfile,40) htpmw_blkt, 0.0e0, heat_transport_variables.htpmw_blkt
+        po.write(self.outfile, "Blanket:")
+        po.dblcol(self.outfile, "pnucblkt", 0.0e0, fwbs_variables.pnucblkt)
+        po.write(self.outfile, "0.0e0 0.0e0 0.0e0")
+        po.write(self.outfile, "0.0e0 0.0e0 0.0e0")
+        po.dblcol(
+            self.outfile, "htpmw_blkt", 0.0e0, heat_transport_variables.htpmw_blkt
+        )
 
         primsum = (
             primsum + fwbs_variables.pnucblkt + heat_transport_variables.htpmw_blkt
@@ -1283,11 +1285,21 @@ class Power:
 
         po.oblnkl(self.outfile)
 
-        # write(self.outfile,'(t10,a)') 'Shield:'
-        # write(self.outfile,10) fwbs_variables.pnucshld*iprimshld, fwbs_variables.pnucshld*(1-heat_transport_variables.iprimshld), fwbs_variables.pnucshld
-        # write(self.outfile,20) 0.0e0, 0.0e0, 0.0e0
-        # write(self.outfile,30) 0.0e0, 0.0e0, 0.0e0
-        # write(self.outfile,40) heat_transport_variables.htpmw_shld*iprimshld, heat_transport_variables.htpmw_shld*(1-heat_transport_variables.iprimshld), heat_transport_variables.htpmw_shld
+        po.write(self.outfile, "Shield:")
+        po.write(
+            self.outfile,
+            (
+                f"{fwbs_variables.pnucshld*heat_transport_variables.iprimshld} {fwbs_variables.pnucshld*(1-heat_transport_variables.iprimshld)} {fwbs_variables.pnucshld}"
+            ),
+        )
+        po.write(self.outfile, "0.0e0 0.0e0 0.0e0")
+        po.write(self.outfile, "0.0e0 0.0e0 0.0e0")
+        po.write(
+            self.outfile,
+            (
+                f"{heat_transport_variables.htpmw_shld*heat_transport_variables.iprimshld} {heat_transport_variables.htpmw_shld*(1-heat_transport_variables.iprimshld)} {heat_transport_variables.htpmw_shld}"
+            ),
+        )
 
         primsum = (
             primsum
@@ -1303,11 +1315,31 @@ class Power:
 
         po.oblnkl(self.outfile)
 
-        # write(self.outfile,'(t10,a)') 'Divertor:'
-        # write(self.outfile,10) fwbs_variables.pnucdiv*iprimdiv, fwbs_variables.pnucdiv*(1-iprimdiv), fwbs_variables.pnucdiv
-        # write(self.outfile,20) physics_variables.pdivt*iprimdiv, physics_variables.pdivt*(1-iprimdiv), physics_variables.pdivt
-        # write(self.outfile,30) fwbs_variables.praddiv*iprimdiv, fwbs_variables.praddiv*(1-iprimdiv), fwbs_variables.praddiv
-        # write(self.outfile,40) heat_transport_variables.htpmw_div*iprimdiv, heat_transport_variables.htpmw_div*(1-iprimdiv), heat_transport_variables.htpmw_div
+        po.write(self.outfile, "Divertor:")
+        po.write(
+            self.outfile,
+            (
+                f"{fwbs_variables.pnucdiv*self.iprimdiv} {fwbs_variables.pnucdiv*(1-self.iprimdiv)} {fwbs_variables.pnucdiv}"
+            ),
+        )
+        po.write(
+            self.outfile,
+            (
+                f"{physics_variables.pdivt*self.iprimdiv} {physics_variables.pdivt*(1-self.iprimdiv)} {physics_variables.pdivt}"
+            ),
+        )
+        po.write(
+            self.outfile,
+            (
+                f"{fwbs_variables.praddiv*self.iprimdiv} {fwbs_variables.praddiv*(1-self.iprimdiv)} {fwbs_variables.praddiv}"
+            ),
+        )
+        po.write(
+            self.outfile,
+            (
+                f"{heat_transport_variables.htpmw_div*self.iprimdiv} {heat_transport_variables.htpmw_div*(1-self.iprimdiv)} {heat_transport_variables.htpmw_div}"
+            ),
+        )
 
         primsum = (
             primsum
@@ -1326,38 +1358,38 @@ class Power:
 
         if physics_variables.itart == 1:
             po.oblnkl(self.outfile)
-            # write(self.outfile,'(t10,a)') 'TART centrepost:'
-            # write(self.outfile,10) 0.0e0, pnuc_cp, fwbs_variables.pnuc_cp
-            # write(self.outfile,20) 0.0e0, 0.0e0, 0.0e0
-            # write(self.outfile,30) 0.0e0, 0.0e0, 0.0e0
-            # write(self.outfile,40) 0.0e0, ppumpmw, self.ppumpmw  #  check
+            po.write(self.outfile, "TART centrepost:")
+            po.dblcol(self.outfile, "pnuc_cp", 0.0e0, fwbs_variables.pnuc_cp)
+            po.write(self.outfile, "0.0e0 0.0e0 0.0e0")
+            po.write(self.outfile, "0.0e0 0.0e0 0.0e0")
+            po.dblcol(self.outfile, "ppumpmw", 0.0e0, self.ppumpmw)  # check
 
         primsum = primsum
         secsum = secsum + fwbs_variables.pnuc_cp + self.ppumpmw
 
         po.oblnkl(self.outfile)
-        # write(self.outfile,'(t10,a)') 'TF coil:'
-        # write(self.outfile,10) 0.0e0, ptfnuc, fwbs_variables.ptfnuc
-        # write(self.outfile,20) 0.0e0, 0.0e0, 0.0e0
-        # write(self.outfile,30) 0.0e0, 0.0e0, 0.0e0
-        # write(self.outfile,40) 0.0e0, 0.0e0, 0.0e0
+        po.write(self.outfile, "TF coil:")
+        po.dblcol(self.outfile, "ptfnuc", 0.0e0, fwbs_variables.ptfnuc)
+        po.write(self.outfile, "0.0e0 0.0e0 0.0e0")
+        po.write(self.outfile, "0.0e0 0.0e0 0.0e0")
+        po.write(self.outfile, "0.0e0 0.0e0 0.0e0")
 
         primsum = primsum
         secsum = secsum + fwbs_variables.ptfnuc
 
         po.oblnkl(self.outfile)
-        # write(self.outfile,'(t10,a)') 'Losses to H/CD apparatus + diagnostics:'
-        # write(self.outfile,10) 0.0e0, pnuchcd, fwbs_variables.pnuchcd
-        # write(self.outfile,20) 0.0e0, 0.0e0, 0.0e0
-        # write(self.outfile,30) 0.0e0, pradhcd, fwbs_variables.pradhcd
-        # write(self.outfile,40) 0.0e0, 0.0e0, 0.0e0
+        po.write(self.outfile, "Losses to H/CD apparatus + diagnostics:")
+        po.dblcol(self.outfile, "pnuchcd", 0.0e0, fwbs_variables.pnuchcd)
+        po.write(self.outfile, "0.0e0 0.0e0 0.0e0")
+        po.dblcol(self.outfile, "pradhcd", 0.0e0, fwbs_variables.pradhcd)
+        po.write(self.outfile, "0.0e0 0.0e0 0.0e0")
 
         primsum = primsum
         secsum = secsum + fwbs_variables.pnuchcd + fwbs_variables.pradhcd
 
         po.oblnkl(self.outfile)
         #     write(self.outfile,'(t10,a)') repeat('-',88)
-        #     write(self.outfile,50) primsum, secsum, primsum+secsum
+        po.write(self.outfile, (f"{primsum} {secsum} {primsum+secsum}"))
         # 10    format(t32,'neutrons',t50,f8.2,t70,f8.2,t90,f8.2)
         # 20    format(t14,'charged particle transport',t50,f8.2,t70,f8.2,t90,f8.2)
         # 30    format(t31,'radiation',t50,f8.2,t70,f8.2,t90,f8.2)
@@ -1982,7 +2014,7 @@ class Power:
         p_tf[0:6] = heat_transport_variables.tfacpd
 
         # Total continuous power [MWe]
-        # p_cont_tot = p_cooling + p_cryo + p_vac + p_tritium + p_fac + p_tf
+        p_cont_tot = p_cooling + p_cryo + p_vac + p_tritium + p_fac + p_tf
 
         # Intermittent power usage
 
@@ -2031,48 +2063,109 @@ class Power:
 
         po.osubhd(self.outfile, "Time-dependent power usage")
 
-        # write(outfile,'(t10,a)') 'Pulse timings [s]:'
+        po.write(self.outfile, "Pulse timings [s]:")
         po.oblnkl(self.outfile)
-        # write(outfile,10) "", "tramp", "tohs", "theat", "tburn", "tqnch", "tdwell"
-        # write(outfile,10) "", "-----", "----", "-----", "-----", "-----", "------"
-        # write(outfile,20) "Duration", t_cs, t_ip_up, t_heat, t_flat_top, t_ip_down, t_extra
-        # write(outfile,10) "------", "-----", "----", "-----", "-----", "-----", "------"
-        po.oblnkl(self.outfile)
-
-        # write(outfile,'(t10,a)') 'Continous power usage [MWe]:'
-        po.oblnkl(self.outfile)
-        # write(outfile,10) "System", "tramp", "tohs", "theat", "tburn", "tqnch", "tdwell"
-        # write(outfile,10) "------", "-----", "----", "-----", "-----", "-----", "------"
-        # write(outfile,20) "Primary cooling", p_cooling(1), p_cooling(2), p_cooling(3), p_cooling(4), p_cooling(5), p_cooling(6)
-        # write(outfile,20) "Cyroplant", p_cryo(1), p_cryo(2), p_cryo(3), p_cryo(4), p_cryo(5), p_cryo(6)
-        # write(outfile,20) "Vacuum", p_vac(1), p_vac(2), p_vac(3), p_vac(4), p_vac(5), p_vac(6)
-        # write(outfile,20) "Tritium", p_tritium(1), p_tritium(2), p_tritium(3), p_tritium(4), p_tritium(5), p_tritium(6)
-        # write(outfile,20) "TF", p_tf(1), p_tf(2), p_tf(3), p_tf(4), p_tf(5), p_tf(6)
-        # write(outfile,20) "Facilities", p_fac(1), p_fac(2), p_fac(3), p_fac(4), p_fac(5), p_fac(6)
-        # write(outfile,10) "------", "-----", "----", "-----", "-----", "-----", "------"
-        # write(outfile,20) "Total", p_cont_tot(1), p_cont_tot(2), p_cont_tot(3), p_cont_tot(4), p_cont_tot(5), p_cont_tot(6)
-        # write(outfile,10) "------", "-----", "----", "-----", "-----", "-----", "------"
+        po.write(self.outfile, "tramp tohs theat tburn tqnch tdwell")
+        po.write(self.outfile, "----- ---- ----- ----- ----- ------")
+        po.write(
+            self.outfile,
+            (f"Duration {t_cs} {t_ip_up} {t_heat} {t_flat_top} {t_ip_down} {t_extra}"),
+        )
+        po.write(self.outfile, "------ ----- ---- ----- ----- ----- ------")
         po.oblnkl(self.outfile)
 
-        # write(outfile,'(t10,a)') 'Intermittent power usage [MWe]:'
+        po.write(self.outfile, "Continous power usage [MWe]:")
         po.oblnkl(self.outfile)
-        # write(outfile,10) "System", "tramp", "tohs", "theat", "tburn", "tqnch", "tdwell"
-        # write(outfile,10) "------", "-----", "----", "-----", "-----", "-----", "------"
-        # write(outfile,20) "H & CD", p_hcd(1), p_hcd(2), p_hcd(3), p_hcd(4), p_hcd(5), p_hcd(6)
-        # write(outfile,20) "PF", p_pf(1), p_pf(2), p_pf(3), p_pf(4), p_pf(5), p_pf(6)
-        # write(outfile,10) "------", "-----", "----", "-----", "-----", "-----", "------"
-        # write(outfile,20) "Total", p_int_tot(1), p_int_tot(2), p_int_tot(3), p_int_tot(4), p_int_tot(5), p_int_tot(6)
-        # write(outfile,10) "------", "-----", "----", "-----", "-----", "-----", "------"
+        po.write(self.outfile, "System tramp tohs theat tburn tqnch tdwell")
+        po.write(self.outfile, "------ ----- ---- ----- ----- ----- ------")
+        po.write(
+            self.outfile,
+            (
+                f"Primary cooling {p_cooling[0]} {p_cooling[1]} {p_cooling[2]} {p_cooling[3]} {p_cooling[4]} {p_cooling[5]}"
+            ),
+        )
+        po.write(
+            self.outfile,
+            (
+                f"Cryoplant {p_cryo[0]} {p_cryo[1]} {p_cryo[2]} {p_cryo[3]} {p_cryo[4]} {p_cryo[5]}"
+            ),
+        )
+        po.write(
+            self.outfile,
+            (
+                f"Vacuum {p_vac[0]} {p_vac[1]} {p_vac[2]} {p_vac[3]} {p_vac[4]} {p_vac[5]}"
+            ),
+        )
+        po.write(
+            self.outfile,
+            (
+                f"Tritium {p_tritium[0]} {p_tritium[1]} {p_tritium[2]} {p_tritium[3]} {p_tritium[4]} {p_tritium[5]}"
+            ),
+        )
+        po.write(
+            self.outfile,
+            (f"TF {p_tf[0]} {p_tf[1]} {p_tf[2]} {p_tf[3]} {p_tf[4]} {p_tf[5]}"),
+        )
+        po.write(
+            self.outfile,
+            (
+                f"Facilities {p_fac[0]} {p_fac[1]} {p_fac[2]} {p_fac[3]} {p_fac[4]} {p_fac[5]}"
+            ),
+        )
+
+        po.write(self.outfile, "------ ----- ---- ----- ----- ----- ------")
+        po.write(
+            self.outfile,
+            (
+                f"Total {p_cont_tot[0]} {p_cont_tot[1]} {p_cont_tot[2]} {p_cont_tot[3]} {p_cont_tot[4]} {p_cont_tot[5]}"
+            ),
+        )
+        po.write(self.outfile, "------ ----- ---- ----- ----- ----- ------")
+        po.oblnkl(self.outfile)
+
+        po.write(self.outfile, "Intermittent power usage [MWe]:")
+        po.oblnkl(self.outfile)
+        po.write(self.outfile, "System tramp tohs theat tburn tqnch tdwell")
+        po.write(self.outfile, "------ ----- ---- ----- ----- ----- ------")
+        po.write(
+            self.outfile,
+            (
+                f"H & CD {p_hcd[0]} {p_hcd[1]} {p_hcd[2]} {p_hcd[3]} {p_hcd[4]} {p_hcd[5]}"
+            ),
+        )
+        po.write(
+            self.outfile,
+            (f"PF {p_pf[0]} {p_pf[1]} {p_pf[2]} {p_pf[3]} {p_pf[4]} {p_pf[5]}"),
+        )
+
+        po.write(self.outfile, "------ ----- ---- ----- ----- ----- ------")
+        po.write(
+            self.outfile,
+            (
+                f"Total {p_int_tot[0]} {p_int_tot[1]} {p_int_tot[2]} {p_int_tot[3]} {p_int_tot[4]} {p_int_tot[5]}"
+            ),
+        )
+        po.write(self.outfile, "------ ----- ---- ----- ----- ----- ------")
 
         po.oblnkl(self.outfile)
 
-        # write(outfile,'(t10,a)') 'Power production [MWe]:'
+        po.write(self.outfile, "Power production [MWe]:")
         po.oblnkl(self.outfile)
-        # write(outfile,30) "", "tramp", "tohs", "theat", "tburn", "tqnch", "tdwell", "avg"
-        # write(outfile,30) "", "-----", "----", "-----", "-----", "-----", "------", "---"
-        # write(outfile,20) "Gross power", p_gross(1), p_gross(2), p_gross(3), p_gross(4), p_gross(5), p_gross(6)
-        # write(outfile,40) "Net power", p_net(1), p_net(2), p_net(3), p_net(4), p_net(5), p_net(6), p_net_avg
-        # write(outfile,10) "------", "-----", "----", "-----", "-----", "-----", "------"
+        po.write(self.outfile, " tramp tohs theat tburn tqnch tdwell avg")
+        po.write(self.outfile, " ----- ---- ----- ----- ----- ------ ---")
+        po.write(
+            self.outfile,
+            (
+                f"Gross power {p_gross[0]} {p_gross[1]} {p_gross[2]} {p_gross[3]} {p_gross[4]} {p_gross[5]}"
+            ),
+        )
+        po.write(
+            self.outfile,
+            (
+                f"Net power {p_net[0]} {p_net[1]} {p_net[2]} {p_net[3]} {p_net[4]} {p_net[5]}"
+            ),
+        )
+        po.write(self.outfile, "------ ----- ---- ----- ----- ----- ------")
 
         po.oblnkl(self.outfile)
 
