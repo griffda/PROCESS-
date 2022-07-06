@@ -2,7 +2,7 @@
 # Introduction
 [PDF of webpage](../pdf/ci-guide.pdf)
 
-The CI jobs run using the Ubuntu image that has been uploaded to the repository
+The CI jobs run using the Ubuntu image that has been uploaded to the repository 
 called `git.ccfe.ac.uk:4567/process/process/ci-image`.
 
 ## CI Configuration File
@@ -15,8 +15,8 @@ Located in the main directory of the repository.
 
 ## Stages
 
-The GitLab CI pipeline can be separated into user defined stages. The stages
-are executed in order and stages can be conditional on if the previous stage was
+The GitLab CI pipeline can be separated into user defined stages. The stages 
+are executed in order and stages can be conditional on if the previous stage was 
 successful or not.
 
 ```yaml
@@ -31,7 +31,7 @@ stages:
 
 ### Ubuntu
 
-The following part of the config file sets up the environment on the Ubuntu
+The following part of the config file sets up the environment on the Ubuntu 
 image.
 
 ```yaml
@@ -47,7 +47,7 @@ image.
 
 ### Freia
 
-The following part of the config file sets up the environment on the Freia
+The following part of the config file sets up the environment on the Freia 
 image.
 
 ```yaml
@@ -59,7 +59,7 @@ image.
     - module unload python
     - module load python/3.5.1
     - module load texlive/2017
-    - module unload ifort
+    - module unload ifort 
     - module load gfortran
     - export GTEST=/home/PROCESS/testing_frameworks/googletest/googletest
     - echo ld_library_path=$LD_LIBRARY_PATH
@@ -71,29 +71,29 @@ image.
 
 | Job | Description |
 | --- | ----------- |
-| `make` | build source code |
-| `make_developerguide` | build developer guide PDF |
-| `make_dicts` | build python dictionaries for utilies |
-| `nake_optsolverdoc` | build optimisation solver guide PDF |
-| `make_tfdoc` | build TF coil model PDF documentation |
-| `make_utilitiesdoc` | build utilities guide PDF |
+| `make` | build source code | 
+| `make_developerguide` | build developer guide PDF | 
+| `make_dicts` | build python dictionaries for utilies | 
+| `nake_optsolverdoc` | build optimisation solver guide PDF | 
+| `make_tfdoc` | build TF coil model PDF documentation | 
+| `make_utilitiesdoc` | build utilities guide PDF | 
 
 
 ## Stage: Testing
 
 | Job | Description |
 | --- | ----------- |
-| `baseline_2018` | Run 2018 EU-DEMO baseline and compare to reference output |
-| `baseline_2019` | Run 2019 EU-DEMO baseline and compare to reference output |
-| `unit_tests` | Run PROCESS unit tests |
-| `test_suite` | Run PROCESS test suite |
+| `baseline_2018` | Run 2018 EU-DEMO baseline and compare to reference output | 
+| `baseline_2019` | Run 2019 EU-DEMO baseline and compare to reference output | 
+| `unit_tests` | Run PROCESS unit tests | 
+| `test_suite` | Run PROCESS test suite | 
 
 
 ## Stage: Standards
 
 | Job | Description |
 | --- | ----------- |
-| `line_length` | Check line length compliance |
+| `line_length` | Check line length compliance | 
 
 ## Stage: Freia
 
@@ -103,7 +103,7 @@ There is a Freia stage of jobs that only run on the develop branch. These jobs a
 
 | Job | Description |
 | --- | ----------- |
-| `pages` | Build and publish GitLab Pages website for PROCESS |
+| `pages` | Build and publish GitLab Pages website for PROCESS | 
 
 ## Offline Jobs
 
@@ -127,5 +127,5 @@ In the top level of the repository run:
 ```bash
 gitlab-runner exec docker <job_name>
 ```
-
+  
 Where `<job_name>` is the name of the job from the tables above (excluding Freia jobs).

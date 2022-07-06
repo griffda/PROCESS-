@@ -11,9 +11,10 @@ test_exception_patterns unit test module.
 """
 from process import fortran
 
-
 # Simple functions to be run in different ways by the exception-example
 # functions
+
+
 def one_over(some_int):
     """Calculates one over the input.
 

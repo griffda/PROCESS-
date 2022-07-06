@@ -1,6 +1,6 @@
 """Unit tests for the main.py module."""
 from process import main
-from process.main import Process
+from process.main import Models, Process
 from process.main import SingleRun
 from process.main import VaryRun
 from process import fortran
@@ -221,21 +221,6 @@ def test_run_hare_tests(single_run, monkeypatch):
     single_run.run_hare_tests()
 
 
-def test_kallenbach_tests(single_run, monkeypatch):
-    """Check that the Kallenbach tests can be run if required.
-
-    :param single_run: single_run fixture
-    :type single_run: SingleRun
-    :param monkeypatch: monkeypatch fixture
-    :type monkeypatch: object
-    """
-    # TODO Currently only checking for no exceptions before Fortran mock called
-    monkeypatch.setattr(fortran.div_kal_vars, "kallenbach_tests", 1)
-    # Expect a SystemExit, as the code is exited if the Kallenbach tests are run
-    with pytest.raises(SystemExit):
-        single_run.kallenbach_tests()
-
-
 def test_kallenbach_scan(single_run, monkeypatch):
     """Check the Kallenbach scan can be run.
 
@@ -245,6 +230,7 @@ def test_kallenbach_scan(single_run, monkeypatch):
     :type monkeypatch: object
     """
     monkeypatch.setattr(fortran.div_kal_vars, "kallenbach_scan_switch", 1)
+    monkeypatch.setattr(single_run, "models", Models())
     # Catch a SystemExit after running the scan
     with pytest.raises(SystemExit):
         single_run.kallenbach_scan()

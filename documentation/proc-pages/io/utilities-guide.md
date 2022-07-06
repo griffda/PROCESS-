@@ -449,7 +449,7 @@ A .pdf file is created called `morris_output.pdf`. The name of the produced pdf 
 > `/utilities/plot_proc.py`
 
 A utility to produce a two-page summary of the output, including the major
-parameters, poloidal and toroidal cross-sections, and temperature and density
+parameters, poloidal and toroidal cross-sections, and temperature and density 
 profiles.
 
 ### Usage
@@ -458,7 +458,7 @@ profiles.
 python plot_proc.py [-h] [-f FILENAME] [-s]
 ```
 
-If no `-f` argument is provided it assumes a file named `MFILE.DAT` is in the
+If no `-f` argument is provided it assumes a file named `MFILE.DAT` is in the 
 current directory.
 
 ### Output
@@ -467,7 +467,7 @@ Produces a two-page PDF file called `SUMMARY.pdf`
 
 ### Options
 
-| Argument | Description |
+| Argument | Description | 
 | - | - |
 | `-h --help`   | show help message and exit
 | `-f FILENAME` | specify input/output file prefix
@@ -505,11 +505,11 @@ Produces a two-page PDF file called `SUMMARY.pdf`
 
 > `./utilities/run_process.py`
 
-This program runs PROCESS many times, randomly varying the initial values of
-the iteration variables until a feasible solution is found.  Stops when a
-feasible solution is found.  If in the course of a scan some scan points result
-in feasible solutions and some do not, `run_process.py` will stop if and only
-if the number of unfeasible scan points is less than or equal to the
+This program runs PROCESS many times, randomly varying the initial values of 
+the iteration variables until a feasible solution is found.  Stops when a 
+feasible solution is found.  If in the course of a scan some scan points result 
+in feasible solutions and some do not, `run_process.py` will stop if and only 
+if the number of unfeasible scan points is less than or equal to the 
 parameter `NO_ALLOWED_UNFEASIBLE`.
 
 ### Usage
@@ -518,7 +518,7 @@ parameter `NO_ALLOWED_UNFEASIBLE`.
 python run_process.py [-h] [-f CONFIGFILE]
 ```
 
-If no `-f CONFIGFILE` is provided the utility assumes a configuration file in
+If no `-f CONFIGFILE` is provided the utility assumes a configuration file in 
 the local directory called `run_process.conf`.
 
 ### Configuration File
@@ -564,8 +564,8 @@ DEL_VAR_IITER
 
 ### Output
 
-A directory is created for each run. containing all the standard PROCESS code
-output, a `process.log` log file, and `README.txt` containing comments from
+A directory is created for each run. containing all the standard PROCESS code 
+output, a `process.log` log file, and `README.txt` containing comments from 
 config file
 
 ### Options
@@ -724,9 +724,9 @@ plots in the `SIG_TF_plots/` folder, created if not existing.
 
 In case of a resisitive coil, the stress is calculated from a generalized plane strain model, hence provinding vertical
 stress radial distribution, alongside the radial and the toroidal ones. This is not the case for superconducting magnets
-as a plane stress modelling is used for now. The reason is that a transverse orthotropic formulation of the generalized
+as a plane stress modelling is used for now. The reason is that a transverse orthotropic formulation of the generalized 
 plane strain, is needed to correctly take the difference of the casing in the vertical direction properly. This will be
-done in the near future.
+done in the near future. 
 
 ### Usage
 
@@ -1034,9 +1034,9 @@ plots in the `SIG_TF_plots/` folder, created if not existing.
 
 In case of a resisitive coil, the stress is calculated from a generalized plane strain model, hence provinding vertical
 stress radial distribution, alongside the radial and the toroidal ones. This is not the case for superconducting magnets
-as a plane stress modelling is used for now. The reason is that a transverse orthotropic formulation of the generalized
+as a plane stress modelling is used for now. The reason is that a transverse orthotropic formulation of the generalized 
 plane strain, is needed to correctly take the difference of the casing in the vertical direction properly. This will be
-done in the near future.
+done in the near future. 
 
 ### Usage
 
@@ -1291,7 +1291,7 @@ Macro plotting a set of information about the `VMCON` optimisation from an outpu
 
 |  Variable description  |  PROCESS code name  |  `VMCON` doc def  |
 | ------------- | ------------- | ------------- |
-| Normalized figure of merit | `abs(obj)` | $f(x)$ |
+| Normalized figure of merit | `abs(obj)` | $f(x)$ |			
 | VMCON convergence criteria | `sum` | $\left| \nabla_x f(\vec{x}^{j-1})^T \cdot \vec{\delta}^{j} \right| + \sum^m_{i=1}\left| \lambda^j_i c_i(\vec{x}^{j-1}) \right|$ |
 | Constraints residual quadratic sums | `sqsumsq` | $\sqrt{\sum^{m}_{i=1} c^{2}_i(\vec{x}^{j-1})}$ |
 | Individual residual values | `conf(i)` | $c_i(\vec{x}^{j-1})$ |
@@ -1332,11 +1332,11 @@ optional arguments:
 -h, --help            show this help message and exit
 -p [PLOT_SELEC], --plot_selec [PLOT_SELEC]
 Plot selection string :
-    * If it containts 'FoM'      -> Figure of Merit plot
-    * If it containts 'conv'     -> convergence criteria plot
+    * If it containts 'FoM'      -> Figure of Merit plot 
+    * If it containts 'conv'     -> convergence criteria plot 
     * If it containts 'domconst' -> dominant constraint plot
     * If it containts 'allconst' -> a plot for each constraint stored in All_Const/
-    * If it containts 'domvar'   -> dominant variables plot
+    * If it containts 'domvar'   -> dominant variables plot 
     * If it containts 'allvar'   -> a plot for each variable in All_Var/
     * If it containts 'all'      -> all the mentionned plots (default value)
 -ndc [N_DOM_CONST], --n_dom_const [N_DOM_CONST]
@@ -1350,7 +1350,7 @@ X variable on pair plot selection (PROCESS number defined in vardes, default=-1)
 -iyv [I_Y_VAR], --i_Y_var [I_Y_VAR]
 Y variable on pair plot selection (PROCESS number defined in vardes, default=-1)
 -sf [SAVE_FORMAT], --save_format [SAVE_FORMAT]
-output format (default='eps')
+output format (default='eps') 
 -as [AXIS_FONT_SIZE], --axis_font_size [AXIS_FONT_SIZE]
 Axis label font size selection (default=14)
 ```

@@ -158,9 +158,9 @@ def main(mfile_data, output_file, scan=-1):
 
     power_flows = [
         ("wallmw", "Av. neutron wall load"),
-        ("pcoreradmw", "Core radiation"),
+        ("pinnerzoneradmw", "inner zone radiation"),
         ("psyncpv*vol", "Synchrotron radiation"),
-        ("pedgeradmw", "Edge radiation"),
+        ("pouterzoneradmw", "outer zone radiation"),
         ("pnucblkt", "Nuclear heating in blanket"),
         ("pnucshld", "Nuclear heating in shield"),
         ("pdivt", "Psep / Pdiv"),
@@ -193,7 +193,7 @@ def main(mfile_data, output_file, scan=-1):
     flh = pdivt / pthresh
     powerht = mfile_data.data["powerht"].get_scan(scan)
     psync = mfile_data.data["psyncpv*vol"].get_scan(scan)
-    pbrem = mfile_data.data["pcoreradmw"].get_scan(scan)
+    pbrem = mfile_data.data["pinnerzoneradmw"].get_scan(scan)
     hfact = mfile_data.data["hfact"].get_scan(scan)
     hstar = hfact * (powerht / (powerht + psync + pbrem)) ** 0.31
 

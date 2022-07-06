@@ -1,7 +1,5 @@
 from process.fortran import constants
-from process.fortran import costs_module as cs
 from process.fortran import physics_module as ph
-from process.fortran import power_module as pw
 from process.fortran import stellarator_module as st
 
 
@@ -20,19 +18,25 @@ class Stellarator:
     NOTE: currently the IFE module is only partially wrapped to unblock the wrapping of availability
     """
 
-    def __init__(self, availability, vacuum, buildings) -> None:
+    def __init__(self, availability, vacuum, buildings, costs, power) -> None:
         """Initialises the IFE module's variables
 
         :param availability: a pointer to the availability model, allowing use of availability's variables/methods
         :type availability: process.availability.Availability
         :param buildings: a pointer to the buildings model, allowing use of buildings's variables/methods
         :type buildings: process.buildings.Buildings
+        :param Vacuum: a pointer to the vacuum model, allowing use of vacuum's variables/methods
+        :type Vacuum: process.vacuum.Vacuum
+        :param Costs: a pointer to the costs model, allowing use of costs' variables/methods
+        :type Costs: process.costs.Costs
         """
 
         self.outfile: int = constants.nout
         self.availability = availability
         self.buildings = buildings
         self.vacuum = vacuum
+        self.costs = costs
+        self.power = power
 
     def run(self, output: bool):
         """Routine to call the physics and engineering modules
@@ -57,7 +61,7 @@ class Stellarator:
             # print *,"major radius",rmajor/config%rmajor_ref
             # print *,"n_tf (should be 1)", n_tf/(config%coilspermodule*config%symmetry)
 
-            cs.costs(self.outfile, 1)
+            self.costs.costs(output=True)
             # TODO: should availability.run be called
             # rather than availability.avail?
             self.availability.avail(output=True)
@@ -70,11 +74,11 @@ class Stellarator:
             st.ststrc(self.outfile, 1)
             st.stfwbs(self.outfile, 1)
 
-            pw.tfpwr(self.outfile, 1)
+            self.power.tfpwr(output=True)
             self.buildings.run(output=True)
             self.vacuum.run(output=True)
-            pw.acpow(self.outfile, 1)
-            pw.power2(self.outfile, 1)
+            self.power.acpow(output=True)
+            self.power.power2(output=True)
 
             return
 
@@ -87,15 +91,15 @@ class Stellarator:
         st.stfwbs(self.outfile, 0)
         st.stdiv(self.outfile, 0)
 
-        pw.tfpwr(self.outfile, 0)
-        pw.power1()
+        self.power.tfpwr(output=False)
+        self.power.power1()
         self.buildings.run(output=False)
         self.vacuum.run(output=False)
-        pw.acpow(self.outfile, 0)
-        pw.power2(self.outfile, 0)
+        self.power.acpow(output=False)
+        self.power.power2(output=False)
         # TODO: should availability.run be called
         # rather than availability.avail?
         self.availability.avail(output=False)
-        cs.costs(self.outfile, 0)
+        self.costs.costs(output=False)
 
         st.first_call = False

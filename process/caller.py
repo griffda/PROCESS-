@@ -43,7 +43,7 @@ class Caller:
 
         # Tokamak calls
         # Plasma geometry model
-        ft.plasma_geometry_module.geomty()
+        self.models.plasma_geom.geomty()
 
         # Machine Build Model
         # Radial build
@@ -73,14 +73,8 @@ class Caller:
         if ft.tfcoil_variables.i_tf_sup == 1:
             ft.sctfcoil_module.tfspcall(ft.constants.nout, 0)
 
-        # Poloidal field and Central Solenoid model
-        ft.pfcoil_module.pfcoil()
-
-        # Poloidal field coil inductance calculation
-        ft.pfcoil_module.induct(ft.constants.nout, 0)
-
-        # Volt-second capability of PF coil set
-        ft.pfcoil_module.vsec()
+        # Poloidal field and central solenoid model
+        self.models.pfcoil.run()
 
         # Pulsed reactor model
         self.models.pulse.run(output=False)
@@ -154,13 +148,13 @@ class Caller:
             self.models.tfcoil.cntrpst()
 
         # Toroidal field coil power model
-        ft.power_module.tfpwr(ft.constants.nout, 0)
+        self.models.power.tfpwr(output=False)
 
         # Poloidal field coil power model
-        ft.power_module.pfpwr(ft.constants.nout, 0)
+        self.models.power.pfpwr(output=False)
 
         # Plant heat transport part 1
-        ft.power_module.power1()
+        self.models.power.power1()
 
         # Vacuum model
         self.models.vacuum.run(output=False)
@@ -169,12 +163,12 @@ class Caller:
         self.models.buildings.run(output=False)
 
         # Plant AC power requirements
-        ft.power_module.acpow(ft.constants.nout, 0)
+        self.models.power.acpow(output=False)
 
         # Plant heat transport pt 2 & 3
-        ft.power_module.power2(ft.constants.nout, 0)
+        self.models.power.power2(output=False)
 
-        ft.power_module.power3(ft.constants.nout, 0)
+        self.models.power.power3(output=False)
 
         # Availability model
         self.models.availability.run(output=False)
@@ -191,13 +185,10 @@ class Caller:
         2    |  2019 STEP model
         """
         if ft.cost_variables.cost_model == 0:
-            ft.costs_module.costs(ft.constants.nout, 0)
+            self.models.costs.run(output=False)
         elif ft.cost_variables.cost_model == 1:
-            ft.costs_2015_module.costs_2015(0, 0)
+            self.models.costs_2015.run(output=False)
         elif ft.cost_variables.cost_model == 2:
             self.models.costs_step.run()
 
-        # FISPACT and LOCA model (not used)
-        # if ft.physics_variables.ifispact == 1:
-        #     ft.fispac(0)
-        #     ft.loca(ft.constants.nout,0)
+        # FISPACT and LOCA model (not used)- removed

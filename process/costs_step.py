@@ -464,11 +464,12 @@ class CostsStep:
         step21010111 = cv.site_imp_uc[17] * cv.whole_site_area
         step210101 += step21010111
 
-        # 21.01.01.12 Connection to Electricity grid (outgoing)
-        # Includes transformers, busbars, cabling installation, fire protection, earthing.
-        # Based upon a circa 3GW power production plant.
-        step21010112 = cv.site_imp_uc[18]
-        step210101 += step21010112
+        if cv.igridconn == 0:
+            # 21.01.01.12 Connection to Electricity grid (outgoing)
+            # Includes transformers, busbars, cabling installation, fire protection, earthing.
+            # Based upon a circa 3GW power production plant.
+            step21010112 = cv.site_imp_uc[18]
+            step210101 += step21010112
 
         # 21.01.01.13 Retaining Walls
         # Site specific; retaining walls varying height from 1.2m to 3m high.
@@ -575,14 +576,16 @@ class CostsStep:
         step210104 += step21010403
 
         # 21.01.04.04 Campus Accommodation
-        # 21.01.04.04.01 Residential
-        # Campus accommodation including canteen, shops, laundry,
-        # internal recreation facilities, medical centre and sports pitches.
-        step2101040401 = cv.site_imp_uc[34]
+        if cv.isiteaccomm == 0:
+            # 21.01.04.04.01 Residential
+            # Campus accommodation including canteen, shops, laundry,
+            # internal recreation facilities, medical centre and sports pitches.
+            step2101040401 = cv.site_imp_uc[34]
+            step210104 += step2101040401
         # 21.01.04.04.02 Bus service
         # Bus station building and site maintenance and services.
         step2101040402 = cv.site_imp_uc[35]
-        step210104 += step2101040401 + step2101040402
+        step210104 += step2101040402
 
         # 21.01.04.05 Multi-storey Car parks
         step21010405 = cv.site_imp_uc[36]
@@ -652,24 +655,30 @@ class CostsStep:
         step2101 = step2101 + (step210104 / 1.0e6)
 
         # 21.01.05 Waterfront Improvements
-        # 21.01.05.01 Marine
-        # 21.01.05.01.01 Cooling installations - offshore intake, discharge, fish return, heat sink.
-        # (Scaling used relates to thermal power of Hinckley C)
-        step2101050101 = cv.site_imp_uc[54] * htv.pthermmw * (0.5e0 / 4524)
-        # 21.01.05.01.02 Breakwater - harbour breakwater construction
-        step2101050102 = cv.site_imp_uc[55]
-        step21010501 = step2101050101 + step2101050102
-        # 21.01.05.02 Material Offloading Facility
-        # Marine transportation - jetty complete with conveyor (inc. dismantling at project end)
-        step21010502 = cv.site_imp_uc[56]
-        # 21.01.05.03 Sea Defence
-        # Armour and mass fill to increase height of existing defences in line with flood analysis.
-        step21010503 = cv.site_imp_uc[57]
-        # 21.01.05.04 Other Waterfront Improvements
-        # Excluded (no benchmark cost data available)
-        step21010504 = 0.0e0
-
-        step210105 = step21010501 + step21010502 + step21010503 + step21010504
+        step210105 = 0.0e0
+        if cv.isitetype == 1:
+            # 21.01.05.01 Marine
+            # 21.01.05.01.01 Cooling installations - offshore intake, discharge, fish return, heat sink.
+            # (Scaling used relates to thermal power of Hinckley C)
+            step2101050101 = cv.site_imp_uc[54] * htv.pthermmw * (0.5e0 / 4524)
+            # 21.01.05.01.02 Breakwater - harbour breakwater construction
+            step2101050102 = cv.site_imp_uc[55]
+            step21010501 = step2101050101 + step2101050102
+            step210105 += step21010501
+            # 21.01.05.02 Material Offloading Facility
+            # Marine transportation - jetty complete with conveyor (inc. dismantling at project end)
+            step21010502 = cv.site_imp_uc[56]
+            step210105 += step21010502
+        if cv.isitetype != 2:
+            # 21.01.05.03 Sea/Flood Defence
+            # Armour and mass fill to increase height of existing defences in line with flood analysis.
+            step21010503 = cv.site_imp_uc[57]
+            step210105 += step21010503
+        if cv.isitetype == 1:
+            # 21.01.05.04 Other Waterfront Improvements
+            # Excluded (no benchmark cost data available)
+            step21010504 = 0.0e0
+            step210105 += step21010504
 
         # Running total (M$)
         step2101 += step210105 / 1.0e6
@@ -685,16 +694,20 @@ class CostsStep:
         step2101 += step210106 / 1.0e6
 
         # 21.01.07 Transport access
+        step210107 = 0.0e0
         # 21.01.07.01 Highway Access - offsite highway improvements
         # Includes new roads & junctions, widening, upgrade, etc.
         step21010701 = cv.site_imp_uc[60]
-        # 21.01.07.02 Rail Access
-        # Includes new track and associated provisions, interface with existing rail
-        step21010702 = cv.site_imp_uc[61]
+        step210107 += step21010701
+        if cv.irailaccess == 0:
+            # 21.01.07.02 Rail Access
+            # Includes new track and associated provisions, interface with existing rail
+            step21010702 = cv.site_imp_uc[61]
+            step210107 += step21010702
         # 21.01.07.03 Air Access
         # Excluded (no benchmark cost data available)
         step21010703 = 0.0e0
-        step210107 = step21010701 + step21010702 + step21010703
+        step210107 += step21010703
 
         # Running total (M$)
         step2101 += step210107 / 1.0e6
@@ -959,6 +972,7 @@ class CostsStep:
         # 27.01 Remote Handling
         # From report by T. Hender CD-STEP-01030, scales with direct capital costs
         step2701 = cv.step_rh_costfrac * cv.cdirt
+        step2701 = cv.fkind * step2701
 
         self.step27 = step2701
 
@@ -1346,6 +1360,7 @@ class CostsStep:
         # 22.01.03.03 Central Solenoid
         # Original STARFIRE value, scaling with fusion island volume
         step22010303 = cv.step_ref[23] * (self.vfi / self.vfi_star)
+        step22010303 = cv.fkind * step22010303
         step2201 += step22010303
         # STARFIRE percentage for spares
         spares += 6.124e-1 * step22010303
@@ -1353,6 +1368,7 @@ class CostsStep:
         # 22.01.03.04 Control Coils
         # Original STARFIRE value, scaling with fusion island volume
         step22010304 = cv.step_ref[24] * (self.vfi / self.vfi_star)
+        step22010304 = cv.fkind * step22010304
         step2201 += step22010304
         # STARFIRE percentage for spares
         spares += 1.075e-1 * step22010304
@@ -1366,6 +1382,7 @@ class CostsStep:
         # 22.01.05 Primary Structure and Support
         # Original STARFIRE value, scaling with fusion island volume
         step220105 = cv.step_ref[26] * (self.vfi / self.vfi_star)
+        step220105 = cv.fkind * step220105
         step2201 += step220105
         # STARFIRE percentage for spares
         spares += 6.824e-2 * step220105
@@ -1373,6 +1390,7 @@ class CostsStep:
         # 22.01.06 Reactor Vacuum System
         # Original STARFIRE value, scaling with fusion island volume
         step220106 = cv.step_ref[27] * (self.vfi / self.vfi_star) ** (2.0e0 / 3.0e0)
+        step220106 = cv.fkind * step220106
         step2201 += step220106
         # STARFIRE percentage for spares
         spares += 1.893e-1 * step220106
@@ -1389,18 +1407,32 @@ class CostsStep:
         # Superseded and deleted
 
         # 22.01.10 Divertor
-        # Cost Model 0 cost for STARFIRE sized device
-        # 58.62% increase between 1980 and 1990
-        # http://www.in2013dollars.com/1980-dollars-in-1990
-        # Scaling with product of rmajor and rminor
-        step220110 = cv.step_ref[31] * (
-            (pv.rmajor * pv.rminor) / (self.rmajor_star * self.rminor_star)
-        )
+        # Caveat: rough estimate, using rmajor (rather than e.g. rnull) and
+        # treating the divertor limbs as vertically oriented cylinders.
+        # Greater precision in geometry would provide more accurate results,
+        # but (at the time of writing) the divertor design is not yet
+        # advanced enough to warrant such precision.
+        # Reference cost and area values are for ITER.
+
+        # Use 2D profile of divertor legs to estimate surface area (m2)
+        div_profile_length = dv.divleg_profile_inner + dv.divleg_profile_outer
+        if pv.idivrt == 2:
+            # double-null = double divertor length
+            div_profile_length = div_profile_length * 2.0e0
+        div_sarea = 2.0e0 * constants.pi * pv.rmajor * div_profile_length
+
+        # divertor cost = ref * (div area / ref area)**0.8
+        step220110 = cv.step_ref[31] * (div_sarea / 60.0e0) ** 0.8e0
+        # adjust to 2017$ (from 2014$) using CPI index
+        step220110 = step220110 * (229.0e0 / 228.0e0)
+
         if cv.ifueltyp == 1:
             cv.divcst = step220110
             step220110 = 0.0e0
         else:
             cv.divcst = 0.0e0
+
+        step220110 = cv.fkind * step220110
 
         step2201 += step220110
 
@@ -1523,6 +1555,8 @@ class CostsStep:
             fwbsv.fw_armour_mass * cv.step_ucfwa + fwbsv.fwmass * cv.step_ucfws
         )
 
+        step22010101 = cv.fkind * step22010101
+
         if cv.ifueltyp == 1:
             cv.fwallcst = step22010101
             step22010101 = 0.0e0
@@ -1557,20 +1591,28 @@ class CostsStep:
                 # Account 22.01.01.02.02 : Blanket Breeder Material
                 step2201010202 = 1.0e-6 * fwbsv.wtblli2o * cv.step_ucblbreed
 
+        step2201010201 = cv.fkind * step2201010201
+        step2201010202 = cv.fkind * step2201010202
+
         # Account 22.01.01.02.03 : Blanket Steel Costs
         step2201010203 = 1.0e-6 * fwbsv.whtblss * cv.step_ucblss
+        step2201010203 = cv.fkind * step2201010203
 
         # Account 22.01.01.02.04 : Blanket Vanadium Costs
         step2201010204 = 1.0e-6 * fwbsv.whtblvd * cv.step_ucblvd
+        step2201010204 = cv.fkind * step2201010204
 
         # Account 22.01.01.02.05 : Blanket Carbon Cloth Costs
         step2201010205 = 0.0e0
+        step2201010205 = cv.fkind * step2201010205
 
         # Account 22.01.01.02.06 : Blanket Concrete Costs
         step2201010206 = 0.0e0
+        step2201010206 = cv.fkind * step2201010206
 
         # Account 22.01.01.02.07 : Blanket FLiBe Costs
         step2201010207 = 0.0e0
+        step2201010207 = cv.fkind * step2201010207
 
         step22010102 = (
             step2201010201
@@ -1661,6 +1703,8 @@ class CostsStep:
         # Find inboard shield cost (converted to M$2017)
         step220102 = (inb_sh_m * sh_mtl_c) / 1.0e6 * (229.0e0 / 264.71e0)
 
+        step220102 = cv.fkind * step220102
+
         # Note: outboard shield costs currently set to zero
 
         return step220102
@@ -1700,6 +1744,8 @@ class CostsStep:
             # Total TF coil cost
             step22010301 = c_tf_inboard_legs + c_tf_outboard_legs
 
+            step22010301 = cv.fkind * step22010301
+
         # Superconducting coils
         elif tfv.i_tf_sup == 1:
             # Calculation taken from cost model 0:
@@ -1736,6 +1782,8 @@ class CostsStep:
             # Total superconducting TF coil costs
             step22010301 = ctfcontot + costtfwind + costtfcas + costtfint + costtfgss
 
+            step22010301 = cv.fkind * step22010301
+
         # Cryogenic aluminium coils
         elif tfv.i_tf_sup == 2:
             # Cost approximated as the material cost of conducting Al * a
@@ -1749,6 +1797,8 @@ class CostsStep:
                 * 1.0e-6
             )
 
+            step22010301 = cv.fkind * step22010301
+
         # step22010301 = step2201030101 + step2201030102 + step2201030103
 
         # ifueltyp: consider centrepost cost as fuel, capital or both?
@@ -1760,7 +1810,7 @@ class CostsStep:
                 cv.cpstcst = c_tf_inboard_legs
                 if tfv.i_tf_sup == 0:
                     # Subtract from capital cost
-                    step22010301 = step22010301 - c_tf_inboard_legs
+                    step22010301 = step22010301 - (cv.fkind * c_tf_inboard_legs)
             elif cv.ifueltyp == 2:
                 # Treat centrepost cost as capital and fuel cost
                 cv.cpstcst = c_tf_inboard_legs
@@ -1857,14 +1907,19 @@ class CostsStep:
                 1.0e-6 * constants.twopi * pfv.rpf[i] * pfv.turns[i] * cpfconpm
             )
 
+        step2201030201 = cv.fkind * step2201030201
+
         # Account 22.01.03.02.02 : Winding
         step2201030202 = 1.0e-6 * cv.step_ucwindpf * pfwndl
+        step2201030202 = cv.fkind * step2201030202
 
         # Account 22.01.03.02.03 : Steel case - will be zero for resistive coils
         step2201030203 = 1.0e-6 * cv.step_uccase * pfv.whtpfs
+        step2201030203 = cv.fkind * step2201030203
 
         # Account 22.01.03.02.04 : Support structure
         step2201030204 = 1.0e-6 * cv.step_ucfnc * sv.fncmass
+        step2201030204 = cv.fkind * step2201030204
 
         # Total account 22.01.03.02
         step22010302 = step2201030201 + step2201030202 + step2201030203 + step2201030204
@@ -1930,6 +1985,8 @@ class CostsStep:
             step220104 *= 1.0e0 - cv.fcdfuel
             cv.cdcost = step220104
 
+        step220104 = cv.fkind * step220104
+
         return step220104
 
     def step_a2202(self):
@@ -1944,6 +2001,7 @@ class CostsStep:
         """
         # pgrossmw is gross electric power of the plant in MW
         step2202 = 9.2238e4 * htv.pgrossmw * 1.0e-6
+        step2202 = cv.fkind * step2202
 
         # Output costs
         if (self.iprint == 1) and (cv.output_costs == 1):
@@ -1996,16 +2054,19 @@ class CostsStep:
         # 22.04.01 Liquid Waste
         # Original STARFIRE value, scaling with thermal power
         step220401 = cv.step_ref[37] * (self.pth / self.ptherm_star) ** 0.6e0
+        step220401 = cv.fkind * step220401
         step2204 = step220401
 
         # 22.04.02 Gaseous Waste
         # Original STARFIRE value, scaling with thermal power
         step220402 = cv.step_ref[38] * (self.pth / self.ptherm_star) ** 0.6e0
+        step220402 = cv.fkind * step220402
         step2204 += step220402
 
         # 22.04.03 Solid Waste
         # Original STARFIRE value, scaling with thermal power
         step220403 = cv.step_ref[39] * (self.pth / self.ptherm_star) ** 0.6e0
+        step220403 = cv.fkind * step220403
         step2204 += step220403
 
         # Output costs
@@ -2037,6 +2098,7 @@ class CostsStep:
         # 22.05 Fuel Handling and Storage
         # Original STARFIRE value, scaling with thermal power
         step2205 = cv.step_ref[40] * (self.pth / self.ptherm_star) ** 0.6e0
+        step2205 = cv.fkind * step2205
 
         # STARFIRE percentage for spares
         spares = 5.026e-2 * step2205
@@ -2079,31 +2141,37 @@ class CostsStep:
         # 22.06.02 Special Heating Systems
         # Original STARFIRE value, scaling with thermal power
         step220602 = cv.step_ref[42] * (self.pth / self.ptherm_star) ** 0.6e0
+        step220602 = cv.fkind * step220602
         step2206 += step220602
 
         # 22.06.03 Coolant Storage
         # Original STARFIRE value, scaling with thermal power
         step220603 = cv.step_ref[43] * (self.pth / self.ptherm_star) ** 0.6e0
+        step220603 = cv.fkind * step220603
         step2206 += step220603
 
         # 22.06.04 Gas System
         # Original STARFIRE value, scaling with fusion island volume
         step220604 = cv.step_ref[44] * (self.vfi / self.vfi_star) ** (2.0e0 / 3.0e0)
+        step220604 = cv.fkind * step220604
         step2206 += step220604
 
         # 22.06.05 Inert Atmosphere System
         # Original STARFIRE value, scaling with thermal power
         step220605 = cv.step_ref[45] * (self.pth / self.ptherm_star) ** 0.6e0
+        step220605 = cv.fkind * step220605
         step2206 += step220605
 
         # 22.06.06 Fluid Leak Detection
         # Original STARFIRE value, scaling with thermal power
         step220606 = cv.step_ref[46] * (self.pth / self.ptherm_star) ** 0.6e0
+        step220606 = cv.fkind * step220606
         step2206 += step220606
 
         # 22.06.07 Closed Loop Coolant System
         # Original STARFIRE value, scaling with thermal power
         step220607 = cv.step_ref[47] * (self.pth / self.ptherm_star) ** 0.6e0
+        step220607 = cv.fkind * step220607
         step2206 += step220607
         # STARFIRE percentage for spares
         spares += 8.3e-1 * (self.pth / self.ptherm_star) ** 0.6e0
@@ -2111,6 +2179,7 @@ class CostsStep:
         # 22.06.08 Standby Cooling System
         # Original STARFIRE value, scaling with thermal power
         step220608 = cv.step_ref[48] * (self.pth / self.ptherm_star) ** 0.6e0
+        step220608 = cv.fkind * step220608
         step2206 += step220608
 
         # Output costs
@@ -2160,6 +2229,7 @@ class CostsStep:
         # 22.07 Instrumentation and Control
         # Original STARFIRE value, scaling with thermal power
         step2207 = cv.step_ref[49] * (self.pth / self.ptherm_star) ** 0.6e0
+        step2207 = cv.fkind * step2207
 
         # Output costs
         if self.iprint == 1 and cv.output_costs == 1:
