@@ -10,7 +10,7 @@ Below is a list of publications using or citing PROCESS by year:
 
 [Validation and results of an approximate model for the stress of a tokamak toroidal field coil at the inboard midplane](https://arxiv.org/abs/2206.14699)   
 C.P.S. Swanson, S. Kahn, C. Rana, P.H. Titus, A.W. Brooks, W. Guttenfelder, Y. Zhai, T.G. Brown, J.E. Menard   
-arXiv:2206.14699   
+arXiv:2206.14699 (2022) 
 
 [Toward DEMO power plant concept selection under epistemic uncertainty](https://ieeexplore.ieee.org/document/9794814)   
 E. Miralles-Dolz, A. Pearce, J. Morris, E. Patelli   
@@ -22,7 +22,7 @@ IEEE Transactions on Plasma Science (Early Access)
 
 [Recent progress in Chinese fusion research based on superconducting tokamak configuration](https://www.sciencedirect.com/science/article/pii/S2666675822000650)   
 J. Zheng, J. Qin, K. Lu, M. Xu, X. Duan, G. Xu, J. Hu, X. Gong, Q. Zang, Z. Liu, L. Wang, R. Ding, J. Chen, P. Li, L. Xue, L. Cai, Y. Song   
-The Innovation, 3(4), 100269   
+The Innovation 3(4) (2022) 100269   
 
 [Training and upgrading tokamak power plants with remountable superconducting magnets](https://arxiv.org/abs/2205.04441)   
 S.B.L. Chislett-McDonald, E. Surrey, J. Naish, A. Turner, D.P. Hampshire   
@@ -30,7 +30,7 @@ arXiv:2205.04441
 
 [Designing a fusion power plant with superconducting training magnets](http://etheses.dur.ac.uk/14404/)   
 S.B.L. Chislett-McDonald   
-Durham University PhD Thesis   
+Durham University PhD Thesis (2022)   
 
 [EU-DEMO design space exploration and design drivers](https://www.sciencedirect.com/science/article/pii/S0920379622000801?via%3Dihub)   
 R. Kembleton, J. Morris, M. Siccinio, F. Maviglia, the PROCESS team   
