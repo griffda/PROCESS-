@@ -64,7 +64,7 @@ module constraint_variables
 
   real(dp) :: fecrh_ignition
   !! f-value for ecrh ignition constraint
-  !! (`constraint equation 90`, `iteration variable 167`)
+  !! (`constraint equation 91`, `iteration variable 168`)
 
   real(dp) :: fflutf
   !! f-value for neutron fluence on TF coil (`constraint equation 53`, `iteration variable 92`)

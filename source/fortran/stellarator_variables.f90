@@ -5,9 +5,8 @@ module stellarator_variables
   !!
   !!### References
   !!
-  !! - Stellarator Plasma Geometry Model for the Systems Code PROCESS, F. Warmer, 19/06/2013
+  !! - A general stellarator version of the Systems code PROCESS, J. Lion et al, Nucl. Fus. (2021), https://doi.org/10.1088/1741-4326/ac2dbf
   !! - Stellarator Divertor Model for the Systems Code PROCESS, F. Warmer, 21/06/2013
-  !! - Stellarator Coil Model for the Systems Code PROCESS, F. Warmer and F. Schauer, 07/10/2013
 
 #ifndef dp
   use, intrinsic :: iso_fortran_env, only: dp=>real64
@@ -21,9 +20,12 @@ module stellarator_variables
   !! Switch for stellarator option (set via `device.dat`):
   !!
   !! - =0 use tokamak model
-  !! - =1 use stellarator model: Helias5-b
-  !! - =2 use stellarator model: Helias4-b
-  !! - =3 use stellarator model: Helias3-b
+  !! - =1 use stellarator model: Helias5
+  !! - =2 use stellarator model: Helias4
+  !! - =3 use stellarator model: Helias3
+  !! - =4 use stellarator model: Wendelstein 7-X with 50 Coils
+  !! - =5 use stellarator model: Wendelstein 7-X with 30 Coils
+  !! - =6 use stellarator model: Use stella_conf.json file (any modulear stellarator, see documentation)
 
   real(dp) :: bmn
   !! relative radial field perturbation

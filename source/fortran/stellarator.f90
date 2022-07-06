@@ -1822,7 +1822,7 @@ contains
 
   subroutine stdlim(bt,powht,rmajor,rminor,dlimit)
 
-    !! Routine to calculate the sudo density limit in a stellarator
+    !! Routine to calculate the Sudo density limit in a stellarator
     !! author: P J Knight, CCFE, Culham Science Centre
     !! bt     : input real : Toroidal field on axis (T)
     !! powht  : input real : Absorbed heating power (MW)
@@ -1837,7 +1837,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     use error_handling, only: fdiags, report_error
-    use physics_variables, only: dene, dnla
+    use physics_variables, only: dene, dnla, dnelimt
     implicit none
 
     !  Arguments
@@ -1868,6 +1868,10 @@ contains
     !  electron density
 
     dlimit = dnlamx * dene/dnla
+
+    !  Set the required value for icc=5
+
+    dnelimt = dlimit
 
   end subroutine stdlim
 
