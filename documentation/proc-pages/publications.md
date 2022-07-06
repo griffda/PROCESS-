@@ -17,7 +17,7 @@ E. Miralles-Dolz, A. Pearce, J. Morris, E. Patelli
 IEEE Transactions on Plasma Science (Early Access)   
 
 [Boosting the efficiency of future fusion power plants combining energy and heat production](https://ieeexplore.ieee.org/document/9794822)   
-P. Cano-Megias, J. Hidalgo-Salaverri, R. Chacartegui, J. Ayllon-Guerola, J. A. Becerra-Villanueva, E. Viezzer   
+P. Cano-Megias, J. Hidalgo-Salaverri, R. Chacartegui, J. Ayllon-Guerola, J.A. Becerra-Villanueva, E. Viezzer   
 IEEE Transactions on Plasma Science (Early Access)   
 
 [Recent progress in Chinese fusion research based on superconducting tokamak configuration](https://www.sciencedirect.com/science/article/pii/S2666675822000650)   
