@@ -1,19 +1,5 @@
 import numpy
 import math
-from process.fortran import divertor_variables
-from process.fortran import current_drive_variables
-from process.fortran import physics_variables
-from process.fortran import constants
-from process.fortran import build_variables
-from process.fortran import numerics
-from process.fortran import fwbs_variables
-from process.fortran import error_handling
-from process.fortran import process_output as po
-from process.fortran import physics_functions_module
-from process.fortran import physics_module
-from process.fortran import profiles_module
-from process.fortran import pulse_variables
-from process.fortran import times_variables
 from process.fortran import current_drive_module
 from process.fortran import constraint_variables
 from process.fortran import reinke_variables
@@ -21,7 +7,20 @@ from process.fortran import reinke_module
 from process.fortran import div_kal_vars
 from process.fortran import impurity_radiation_module
 from process.fortran import global_variables
-from process.physics_functions import PhysicsFuncs
+from process.fortran import constants
+from process.fortran import physics_functions_module
+from process.fortran import physics_variables
+from process.fortran import physics_module
+from process.fortran import profiles_module
+from process.fortran import pulse_variables
+from process.fortran import times_variables
+from process.fortran import current_drive_variables
+from process.fortran import error_handling
+from process.fortran import fwbs_variables
+from process.fortran import build_variables
+from process.fortran import divertor_variables
+from process.fortran import numerics
+from process.fortran import process_output as po
 
 
 class Physics:
@@ -34,12 +33,16 @@ class Physics:
         author: P J Knight, CCFE, Culham Science Centre
         None
         This routine calculates all the primary plasma physics
-        characteristics for a tokamak device.
-        AEA FUS 251: A User's Guide to the PROCESS Systems Code
-        T. Hartmann and H. Zohm: Towards a 'Physics Design Guidelines for a
         DEMO Tokamak' Document, March 2012, EFDA Report
         """
-        kappaa_IPB = physics_functions_module.plasma_elongation_ipb()  # noqa: F841
+        # kappaa_IPB = physics_variables.vol / (
+        #     2.0e0
+        #     * numpy.pi
+        #     * numpy.pi
+        #     * physics_variables.rminor
+        #     * physics_variables.rminor
+        #     * physics_variables.rmajor
+        # )
 
         if physics_variables.icurr == 2:
             physics_variables.q95 = (
@@ -107,13 +110,13 @@ class Physics:
                 )
 
         # elif  (geom%counter.eq.0.e0) :
-        # #if plasmod_i_equiltype = 2 physics_variables.plascur is an input
-        # #This is not yet consistently implemented though and contradicts
-        # #usual PROCESS workflows where physics_variables.q is an input/interation variable
+        #     #if plasmod_i_equiltype = 2 physics_variables.plascur is an input
+        #     #This is not yet consistently implemented though and contradicts
+        #     #usual PROCESS workflows where physics_variables.q is an input/interation variable
 
-        # #Note that physics_variables.alphap is 0 here#
-        # #alphap is only used for icurr=7 (Connor-Hastie model)
-        # call culcur(alphaj,alphap,bt,eps,icurr,iprofile,kappa,kappa95,p0,             pperim,q0,q,rli,rmajor,rminor,sf,triang,triang95,bp,qstar,plascur)
+        #     #Note that physics_variables.alphap is 0 here#
+        #     #alphap is only used for icurr=7 (Connor-Hastie model)
+        #     call culcur(alphaj,alphap,bt,eps,icurr,iprofile,kappa,kappa95,p0,            pperim,q0,q,rli,rmajor,rminor,sf,triang,triang95,bp,qstar,plascur)
 
         # Issue #413 Dependence of Pedestal Properties on Plasma Parameters
         # physics_variables.ieped : switch for scaling pedestal-top temperature with plasma parameters
@@ -124,8 +127,9 @@ class Physics:
 
             profiles_module.plasma_profiles()
 
-        else:
-            physics_module.physplasmod()
+        else:  # Run PLASMOD
+
+            physics_module.physicsplasmod()
 
         # Calculate total magnetic field [T]
         physics_variables.btot = physics_functions_module.total_mag_field()
@@ -248,24 +252,18 @@ class Physics:
 
             # Hender scaling for diamagnetic current at tight physics_variables.aspect ratio
             current_drive_variables.diacf_hender = (
-                physics_module.diamagnetic_fraction_hender(
-                    physics_variables.beta,
-                )
+                physics_module.diamagnetic_fraction_hender(physics_variables.beta)
             )
 
             # SCENE scaling for diamagnetic current
             current_drive_variables.diacf_scene = (
                 physics_module.diamagnetic_fraction_scene(
-                    physics_variables.beta,
-                    physics_variables.q95,
-                    physics_variables.q0,
+                    physics_variables.beta, physics_variables.q95, physics_variables.q0
                 )
             )
 
             # Pfirsch-Schlüter scaling for diamagnetic current
-            current_drive_variables.pscf = physics_module.ps_fraction_scene(
-                physics_variables.beta,
-            )
+            # pscf = physics_module.ps_fraction_scene(physics_variables.beta)
 
         current_drive_variables.bscf_sauter = (
             current_drive_variables.cboot * physics_module.bootstrap_fraction_sauter()
@@ -345,7 +343,6 @@ class Physics:
             current_drive_module.cudriv(constants.nout, 0)
 
         if physics_variables.ipedestal != 3:  # otherwise replaced by PLASMOD variables
-
             #  Calculate fusion power + components
             (
                 physics_variables.palppv,
@@ -355,9 +352,9 @@ class Physics:
                 physics_variables.fusionrate,
                 physics_variables.alpharate,
                 physics_variables.protonrate,
-                physics_variables.pdtpv,
-                physics_variables.pdhe3pv,
-                physics_variables.pddpv,
+                physics_module.pdtpv,
+                physics_module.pdhe3pv,
+                physics_module.pddpv,
             ) = physics_functions_module.palph(
                 physics_variables.alphan,
                 physics_variables.alphat,
@@ -368,84 +365,86 @@ class Physics:
                 physics_variables.ti,
             )
 
-            physics_variables.pdt = physics_variables.pdtpv * physics_variables.vol
-            physics_variables.pdhe3 = physics_variables.pdhe3pv * physics_variables.vol
-            physics_variables.pdd = physics_variables.pddpv * physics_variables.vol
+            physics_variables.pdt = physics_module.pdtpv * physics_variables.vol
+            physics_variables.pdhe3 = physics_module.pdhe3pv * physics_variables.vol
+            physics_variables.pdd = physics_module.pddpv * physics_variables.vol
 
-        #  Calculate neutral beam slowing down effects
-        #  If ignited, then ignore beam fusion effects
+            #  Calculate neutral beam slowing down effects
+            #  If ignited, then ignore beam fusion effects
 
-        if (current_drive_variables.cnbeam != 0.0e0) and (
-            physics_variables.ignite == 0
-        ):
+            if (current_drive_variables.cnbeam != 0.0e0) and (
+                physics_variables.ignite == 0
+            ):
+                (
+                    physics_variables.betanb,
+                    physics_variables.dnbeam2,
+                    physics_variables.palpnb,
+                ) = physics_functions_module.beamfus(
+                    physics_variables.beamfus0,
+                    physics_variables.betbm0,
+                    physics_variables.bp,
+                    physics_variables.bt,
+                    current_drive_variables.cnbeam,
+                    physics_variables.dene,
+                    physics_variables.deni,
+                    physics_variables.dlamie,
+                    physics_variables.ealphadt,
+                    current_drive_variables.enbeam,
+                    physics_variables.fdeut,
+                    physics_variables.ftrit,
+                    current_drive_variables.ftritbm,
+                    physics_module.sigvdt,
+                    physics_variables.ten,
+                    physics_variables.tin,
+                    physics_variables.vol,
+                    physics_variables.zeffai,
+                )
+                physics_variables.fusionrate = (
+                    physics_variables.fusionrate
+                    + 1.0e6
+                    * physics_variables.palpnb
+                    / (1.0e3 * physics_variables.ealphadt * constants.echarge)
+                    / physics_variables.vol
+                )
+                physics_variables.alpharate = (
+                    physics_variables.alpharate
+                    + 1.0e6
+                    * physics_variables.palpnb
+                    / (1.0e3 * physics_variables.ealphadt * constants.echarge)
+                    / physics_variables.vol
+                )
+
+            physics_variables.pdt = (
+                physics_variables.pdt + 5.0e0 * physics_variables.palpnb
+            )
+
+            # Create some derived values and add beam contribution to fusion power
             (
-                physics_variables.betanb,
-                physics_variables.dnbeam2,
-                physics_variables.palpnb,
-            ) = physics_functions_module.beamfus(
-                physics_variables.beamfus0,
-                physics_variables.betbm0,
-                physics_variables.bp,
+                physics_variables.palpmw,
+                physics_variables.pneutmw,
+                physics_variables.pchargemw,
+                physics_variables.betaft,
+                physics_variables.palpipv,
+                physics_variables.palpepv,
+                physics_variables.pfuscmw,
+                physics_variables.powfmw,
+            ) = physics_functions_module.palph2(
                 physics_variables.bt,
-                current_drive_variables.cnbeam,
+                physics_variables.bp,
                 physics_variables.dene,
                 physics_variables.deni,
-                physics_variables.dlamie,
-                physics_variables.ealphadt,
-                current_drive_variables.enbeam,
-                physics_variables.fdeut,
-                physics_variables.ftrit,
-                current_drive_variables.ftritbm,
-                physics_module.sigvdt,
+                physics_variables.dnitot,
+                physics_variables.falpe,
+                physics_variables.falpi,
+                physics_variables.palpnb,
+                physics_variables.ifalphap,
+                physics_variables.pchargepv,
+                physics_variables.pneutpv,
                 physics_variables.ten,
                 physics_variables.tin,
                 physics_variables.vol,
-                physics_variables.zeffai,
+                physics_variables.palppv,
             )
-            physics_variables.fusionrate = (
-                physics_variables.fusionrate
-                + 1.0e6
-                * physics_variables.palpnb
-                / (1.0e3 * physics_variables.ealphadt * constants.echarge)
-                / physics_variables.vol
-            )
-            physics_variables.alpharate = (
-                physics_variables.alpharate
-                + 1.0e6
-                * physics_variables.palpnb
-                / (1.0e3 * physics_variables.ealphadt * constants.echarge)
-                / physics_variables.vol
-            )
-
-        physics_variables.pdt = physics_variables.pdt + 5.0e0 * physics_variables.palpnb
-
-        # Create some derived values and add beam contribution to fusion power
-        (
-            physics_variables.palpmw,
-            physics_variables.pneutmw,
-            physics_variables.pchargemw,
-            physics_variables.betaft,
-            physics_variables.palpepv,
-            physics_variables.palpipv,
-            physics_variables.pfuscmw,
-            physics_variables.powfmw,
-        ) = physics_functions_module.palph2(
-            physics_variables.bt,
-            physics_variables.bp,
-            physics_variables.dene,
-            physics_variables.deni,
-            physics_variables.dnitot,
-            physics_variables.falpe,
-            physics_variables.falpi,
-            physics_variables.palpnb,
-            physics_variables.ifalphap,
-            physics_variables.pchargepv,
-            physics_variables.pneutpv,
-            physics_variables.ten,
-            physics_variables.tin,
-            physics_variables.vol,
-            physics_variables.palppv,
-        )
 
         #  Nominal mean neutron wall load on entire first wall area including divertor and beam holes
         #  Note that 'fwarea' excludes these, so they have been added back in.
@@ -487,7 +486,14 @@ class Physics:
 
             #  Calculate radiation power
 
-            PhysicsFuncs.radpwr(self)
+            (
+                physics_variables.pbrempv,
+                physics_variables.plinepv,
+                physics_variables.psyncpv,
+                physics_variables.pcoreradpv,
+                physics_variables.pedgeradpv,
+                physics_variables.pradpv,
+            ) = physics_functions_module.radpwr()
 
             physics_variables.pinnerzoneradmw = (
                 physics_variables.pcoreradpv * physics_variables.vol
@@ -531,7 +537,7 @@ class Physics:
             #  Enforced L-H power threshold value (if constraint 15 is turned on)
 
             physics_variables.plhthresh = physics_variables.pthrmw[
-                physics_variables.ilhthresh
+                physics_variables.ilhthresh - 1
             ]
 
             #  Power transported to the divertor by charged particles,
@@ -616,8 +622,8 @@ class Physics:
                 physics_variables.iinvqd,
                 physics_variables.isc,
                 physics_variables.ignite,
-                physics_variables.kappa95,
                 physics_variables.kappa,
+                physics_variables.kappa95,
                 physics_variables.pchargemw,
                 current_drive_variables.pinjmw,
                 physics_variables.plascur,
@@ -667,7 +673,7 @@ class Physics:
                 physics_variables.burnup,
                 physics_variables.dntau,
                 physics_variables.figmer,
-                physics_variables.fusrat,
+                physics_module.fusrat,
                 physics_variables.qfuel,
                 physics_variables.rndfuel,
                 physics_variables.taup,
@@ -696,14 +702,14 @@ class Physics:
         #  Calculate physics_variables.beta limit
         if physics_variables.iprofile == 0:
 
-            if (physics_variables.gtscale) == 1:
+            if physics_variables.gtscale == 1:
 
                 #  Original scaling law
                 physics_variables.dnbeta = 2.7e0 * (
                     1.0e0 + 5.0e0 * physics_variables.eps**3.5e0
                 )
 
-            if (physics_variables.gtscale) == 2:
+            if physics_variables.gtscale == 2:
 
                 # See Issue #1439
                 # physics_variables.dnbeta found from physics_variables.aspect ratio scaling on p32 of Menard:
@@ -818,40 +824,42 @@ class Physics:
             physics_module.pLOmw = physics_module.fLO * physics_module.ptarmw
 
         # Calculate some derived quantities that may not have been defined earlier
-        total_loss_power = 1.0e6 * (
+        total_loss_power = 1e6 * (
             physics_variables.falpha * physics_variables.palpmw
+            + physics_variables.pchargemw
             + physics_variables.pohmmw
             + current_drive_variables.pinjmw
         )
-
-        rad_fraction_LCFS = 1.0e6 * physics_variables.pradmw / total_loss_power
+        physics_module.rad_fraction_LCFS = (
+            1.0e6 * physics_variables.pradmw / total_loss_power
+        )
         physics_variables.rad_fraction_total = (
-            rad_fraction_LCFS
-            + (1.0e0 - rad_fraction_LCFS) * physics_variables.rad_fraction_sol
+            physics_module.rad_fraction_LCFS
+            + (1.0e0 - physics_module.rad_fraction_LCFS)
+            * physics_variables.rad_fraction_sol
         )
         physics_variables.pradsolmw = (
             physics_variables.rad_fraction_sol * physics_variables.pdivt
         )
-        total_plasma_internal_energy = (
-            1.5e0
-            * physics_variables.beta
-            * physics_variables.btot
-            * physics_variables.btot
-            / (2.0e0 * constants.rmu0)
-            * physics_variables.vol
-        )
-        total_energy_conf_time = (  # noqa: F841
-            total_plasma_internal_energy / total_loss_power
-        )
+        # total_plasma_internal_energy = (
+        #     1.5e0
+        #     * physics_variables.beta
+        #     * physics_variables.btot
+        #     * physics_variables.btot
+        #     / (2.0e0 * constants.rmu0)
+        #     * physics_variables.vol
+        # )
+        # total_energy_conf_time = total_plasma_internal_energy / total_loss_power
+
         if any(numerics.icc == 78):
-            po.ovarrf(
-                "reinke t and fz, physics = ",
-                physics_variables.tesep,
-                ", ",
-                reinke_variables.fzmin,
+            po.write(
+                self.outfile,
+                (
+                    f"reinke t and fz, physics = {physics_variables.tesep} , {reinke_variables.fzmin}"
+                ),
             )
-            fsep = physics_variables.nesep / physics_variables.dene  # noqa: F841
-            fgw = physics_variables.dlimit(7) / physics_variables.dene  # noqa: F841
+            fsep = physics_variables.nesep / physics_variables.dene
+            fgw = physics_variables.dlimit(7) / physics_variables.dene
             # calculate separatrix temperature, if Reinke criterion is used
             physics_variables.tesep = reinke_module.reinke_tsep(
                 physics_variables.bt,
@@ -859,7 +867,7 @@ class Physics:
                 physics_variables.q95,
                 physics_variables.rmajor,
                 physics_variables.eps,
-                physics_module.fgw,
+                fgw,
                 physics_variables.kappa,
                 reinke_variables.lhat,
             )
@@ -869,8 +877,8 @@ class Physics:
                 physics_variables.q95,
                 physics_variables.rmajor,
                 physics_variables.eps,
-                physics_module.fsep,
-                physics_module.fgw,
+                fsep,
+                fgw,
                 physics_variables.kappa,
                 reinke_variables.lhat,
                 div_kal_vars.netau_sol,
@@ -883,13 +891,11 @@ class Physics:
             if reinke_variables.fzmin >= 1.0e0:
                 error_handling.report_error(217)
 
-            po.ovarrf(
-                "fzactual, frac, impvardiv = ",
-                reinke_variables.fzactual,
-                ", ",
-                impurity_radiation_module.impurity_arr_frac(reinke_variables.impvardiv),
-                ", ",
-                reinke_variables.impvardiv,
+            po.write(
+                self.outfile,
+                (
+                    f" 'fzactual, frac, reinke_variables.impvardiv = {reinke_variables.fzactual}, {impurity_radiation_module.impurity_arr_frac(reinke_variables.impvardiv)}, {reinke_variables.impvardiv}"
+                ),
             )
 
         if global_variables.verbose == 1:
@@ -991,3 +997,4 @@ class Physics:
                 f.write(
                     f"rpfac {physics_variables.rpfac} rplas {physics_variables.rplas}"
                 )
+                f.close(32)

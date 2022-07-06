@@ -4,20 +4,8 @@ from process.fortran import physics_variables as pv
 from process.fortran import impurity_radiation_module
 from process.fortran import physics_variables
 from process.fortran import physics_functions_module
-from typing import NamedTuple, Any
 import pytest
 from pytest import approx
-from process.physics_functions import PhysicsFuncs
-
-
-@pytest.fixture
-def physics_funcs():
-    """Provides PhysicsFuncs object for testing.
-
-    :returns: initialised PhysicsFuncs object
-    :rtype: process.physics_functions.PhysicsFuncs
-    """
-    return PhysicsFuncs()
 
 
 def t_eped_scaling_param(**kwargs):
@@ -197,91 +185,3 @@ def test_imprad(monkeypatch):
     assert radcore == pytest.approx(0.04593865332065909)
 
     assert radtot == pytest.approx(0.1150276334175252)
-
-
-class PsyncAlbajarFidoneParam(NamedTuple):
-
-    vol: Any = None
-
-    rmajor: Any = None
-
-    rminor: Any = None
-
-    ne0: Any = None
-
-    bt: Any = None
-
-    alphan: Any = None
-
-    alphat: Any = None
-
-    te0: Any = None
-
-    ssync: Any = None
-
-    expected_psyncpv: Any = None
-
-
-@pytest.mark.parametrize(
-    "psyncalbajarfidoneparam",
-    (
-        PsyncAlbajarFidoneParam(
-            vol=2426.253995407923,
-            rmajor=8.8901000000000003,
-            rminor=2.8677741935483869,
-            ne0=9.7756974320342041e19,
-            bt=5.3292000000000002,
-            alphan=1,
-            alphat=1.45,
-            te0=28.089723663920328,
-            ssync=0.60000000000000009,
-            expected_psyncpv=0.0093804577866707772,
-        ),
-        PsyncAlbajarFidoneParam(
-            vol=2426.253995407923,
-            rmajor=8.8901000000000003,
-            rminor=2.8677741935483869,
-            ne0=9.7756974320342041e19,
-            bt=5.3292000000000002,
-            alphan=1,
-            alphat=1.45,
-            te0=28.089723663920328,
-            ssync=0.60000000000000009,
-            expected_psyncpv=0.0093804577866707772,
-        ),
-    ),
-)
-def test_psync_albajar_fidone(psyncalbajarfidoneparam, monkeypatch, physics_funcs):
-    """
-    Automatically generated Regression Unit Test for psync_albajar_fidone.
-
-    This test was generated using data from tracking/baseline_2018/baseline_2018_IN.DAT.
-
-    :param psyncalbajarfidoneparam: the data used to mock and assert in this test.
-    :type psyncalbajarfidoneparam: psyncalbajarfidoneparam
-
-    :param monkeypatch: pytest fixture used to mock module/class variables
-    :type monkeypatch: _pytest.monkeypatch.monkeypatch
-    """
-
-    monkeypatch.setattr(physics_variables, "vol", psyncalbajarfidoneparam.vol)
-
-    monkeypatch.setattr(physics_variables, "rmajor", psyncalbajarfidoneparam.rmajor)
-
-    monkeypatch.setattr(physics_variables, "rminor", psyncalbajarfidoneparam.rminor)
-
-    monkeypatch.setattr(physics_variables, "ne0", psyncalbajarfidoneparam.ne0)
-
-    monkeypatch.setattr(physics_variables, "bt", psyncalbajarfidoneparam.bt)
-
-    monkeypatch.setattr(physics_variables, "alphan", psyncalbajarfidoneparam.alphan)
-
-    monkeypatch.setattr(physics_variables, "alphat", psyncalbajarfidoneparam.alphat)
-
-    monkeypatch.setattr(physics_variables, "te0", psyncalbajarfidoneparam.te0)
-
-    monkeypatch.setattr(physics_variables, "ssync", psyncalbajarfidoneparam.ssync)
-
-    psyncpv = physics_funcs.psync_albajar_fidone()
-
-    assert psyncpv == pytest.approx(psyncalbajarfidoneparam.expected_psyncpv)

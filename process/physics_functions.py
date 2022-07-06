@@ -2,7 +2,6 @@ import logging
 import numpy
 from process.fortran import constants
 from process.fortran import physics_variables
-from process.fortran import physics_functions_module
 from process.fortran import profiles_module
 from process.fortran import impurity_radiation_module
 
@@ -34,12 +33,12 @@ class PhysicsFuncs:
 
         pimpcore = 0.0e0
         pimptot = 0.0e0
-        physics_functions_module.imprad()
+        self.imprad()
         pedgeradpv = pimptot - pimpcore
 
         #  Synchrotron radiation power/volume; assumed to be from core only
 
-        psyncpv = physics_functions_module.psync_albajar_fidone()
+        psyncpv = self.psync_albajar_fidone()
 
         #  Total core radiation power/volume
 

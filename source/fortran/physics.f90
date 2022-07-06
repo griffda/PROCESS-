@@ -77,143 +77,99 @@ module physics_module
 
 
 
-  subroutine physplasmod
 
-       !! Routine to calculate tokamak plasma physics information
-    !! author: P J Knight, CCFE, Culham Science Centre
-    !! None
-    !! This routine calculates all the primary plasma physics
-    !! characteristics for a tokamak device.
-    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !! T. Hartmann and H. Zohm: Towards a 'Physics Design Guidelines for a
-    !! DEMO Tokamak' Document, March 2012, EFDA Report
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   use div_kal_vars, only: impurity_enrichment, netau_sol
+   subroutine plasmodphysics
 
-   use build_variables, only: fwarea
-   use constraint_variables, only: peakradwallload, flhthresh, peakfactrad
-   use current_drive_module, only: cudriv
-   use current_drive_variables, only: irfcd, bscf_nevins, bscfmax, cboot, &
-     cnbeam, ftritbm, bscf_wilson, bscf_sauter, pinjmw, bootipf, pinjimw, &
-     bscf_iter89, pinjemw, enbeam, psipf, pscf_scene, plasipf, diaipf, &
-     diacf_scene, diacf_hender
-   use divertor_variables, only: prn1
-   use error_handling, only: idiags, report_error
-   use fwbs_variables, only: fhcd, fdiv
-   use impurity_radiation_module, only: fimp, impurity_arr_frac
-   use physics_functions_module, only: plasma_elongation_ipb, &
-     total_mag_field, res_diff_time, t_eped_scaling, beta_poloidal, &
-     radpwr, pthresh, beamfus, palph
-   use physics_variables, only: ptremw, idensl, res_time, ignite, vol, dnalp, &
-     teped, beta, dnelimt, taup, pradpv, fgwped, photon_wall, kappaa_ipb, &
-     kappaa, gamma, plhthresh, betap, fvsbrnni, btot, hfact, nesep, palpfwmw, &
-     betanb, pradmw, rad_fraction_total, q95, wallmw, zeffai, dnla, vsstt, &
-     pouterzoneradmw, falpi, tin, ralpne, triang95, ti, tesep, ibss, dene, p0, &
-     psyncpv, pscalingmw, rad_fraction_sol, pradsolmw, pinnerzoneradmw, rplas, zeff, &
-     normalised_total_beta, pdhe3, pdivmax, pdivl, fgwsep, pdt, pdd, xarea, &
-     faccd, iwalld, itart, pdivu, gtscale, idivrt, pneutmw, neped, ipedestal, &
-     icurr, betalim, pdivt, te0, dlamie, dnbeta, ptrimw, facoh, te, &
-     protonrate, powfmw, rndfuel, csawth, q, ealphadt, falpha, &
-     pfuscmw, sarea, fusionrate, ilhthresh, pneutpv, isc, vsres, ftar, &
-     pedgeradpv, betbm0, palpnb, kappa95, rpfac, tauei, plinepv, ieped, &
-     aspect, falpe, piepv, pchargemw, alphat, triang, ne0, ten, aion, betaft, &
-     afuel, vsind, sf, palpipv, taueff, pcoreradpv, eps, &
-     dlimit, qfuel, pchargepv, pbrempv, pohmpv, alpharate, dnbeam2, ffwal, &
-     iinvqd, dnitot, alphan, beamfus0, palpmw, kappa, figmer, tauee, iprofile, &
-     rminor, vsbrn, ifalphap, palppv, palpepv, pohmmw, rlp, rmajor, ptripv, &
-     dntau, ftrit, bt, fhe3, rli, pthrmw, burnup, phiint, ptrepv, alphap, &
-     qstar, powerht, alphaj, fdeut, deni, q0, pperim, plascur, bp, idia, ips
-   use plasmod_module, only: convert_plasmod2process, setupplasmod
-   use profiles_module, only: plasma_profiles
-   use numerics, only: icc
-   use pulse_variables, only: lpulse
-   use reinke_variables, only: lhat, fzactual, impvardiv, fzmin
-   use times_variables, only: tramp, theat, tcycle, tpulse, tohs, tburn0, &
+      use plasmod_variables, only: mhd, radp, loss, num, geom, ped, inp0, &
+      i_flag, comp
+      use plasmod_module, only: convert_plasmod2process, setupplasmod
+      use global_variables, only: verbose
+      use times_variables, only: tramp, theat, tcycle, tpulse, tohs, tburn0, &
      tdwell, pulsetimings, tqnch, tohsin, tburn, tdown
-   use reinke_module, only: reinke_tsep, reinke_fzmin
-     use global_variables, only: verbose
-     use constants, only: rmu0, pi, nout, echarge
-     use plasmod_variables, only: mhd, radp, loss, num, geom, ped, inp0, &
-        i_flag, comp
-   implicit none
+      implicit none
    !  Local variables
 
-   real(dp) :: betat,betpth,fusrat,pddpv,pdtpv,pdhe3pv, &
-        pinj,sbar,sigvdt,zion, fsep, fgw
+      real(dp) :: betat,betpth,fusrat,pddpv,pdtpv,pdhe3pv, &
+         pinj,sbar,sigvdt,zion, fsep, fgw
 
-   call setupPlasmod(i_flag, &
-      geom%k, geom%d, geom%ip, geom%k95, geom%d95, &
-      geom%r, geom%a, geom%q95, geom%bt, geom%counter, &
-      comp%fcoreraditv, comp%qdivt, comp%pradfrac, &
-      comp%pradpos, comp%psep_r, comp%psepb_q95AR, comp%protium, &
-      comp%psepplh_inf, comp%psepplh_sup, comp%c_car, comp%fuelmix, &
-      comp%comparray, comp%globtau, comp%imptype, &
-      inp0%car_qdivt, inp0%chisaw, inp0%chisawpos, inp0%contrpovr, &
-      inp0%contrpovs, inp0%cxe_psepfac, &
-      inp0%eccdeff, inp0%f_gw, inp0%f_gws, &
-      inp0%f_ni, inp0%fcdp, inp0%fpellet, inp0%fpion, inp0%gamcdothers, &
-      inp0%Hfac_inp, inp0%maxpauxor, inp0%nbcdeff, inp0%nbi_energy, &
-      inp0%pech, inp0%pfus, inp0%pheatmax, inp0%PLH, inp0%pnbi, &
-      inp0%q_control, inp0%qcd, inp0%qfus, inp0%qheat, inp0%qnbi_psepfac, &
-      inp0%sawpertau, inp0%spellet, inp0%V_loop, &
-      inp0%x_heat, inp0%x_cd, inp0%x_fus, inp0%x_control, &
-      inp0%dx_heat, inp0%dx_cd, inp0%dx_fus, inp0%dx_control, &
-      num%Ainc, num%capA, num%dgy, num%dt, num%dtinc, num%dtmax, num%dtmaxmax, &
-      num%dtmaxmin, num%dtmin, num%eopt, num%i_equiltype, num%i_impmodel, &
-      num%i_modeltype, num%ipedestal, num%iprocess, num%isawt, num%maxA, &
-      num%nchannels, num%nx, num%nxt, num%test, num%tol, num%tolmin, &
-      ped%tesep, ped%rho_t, ped%rho_n, ped%pedscal, ped%teped &
-      )
-
-   if(verbose == 1) then
-
-      open(32,file='plasmodsolprima.dat')
-      write(32,*) 'num ',num
-      write(32,*) 'geom ',geom
-      write(32,*) 'comp ',comp
-      write(32,*) 'ped ',ped
-      write(32,*) 'inp0 ',inp0
-      write(32,*) 'mhd ',mhd
-      write(32,*) 'loss ',loss
-      close(32)
-
-   endif
-
-   call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
-
-   if (verbose == 1) then
-      open(32,file='plasmodsoldopo.dat')
-      write(32,*) 'num ',num
-      write(32,*) 'geom ',geom
-      write(32,*) 'comp ',comp
-      write(32,*) 'ped ',ped
-      write(32,*) 'inp0 ',inp0
-      write(32,*) 'mhd ',mhd
-      write(32,*) 'loss ',loss
-      close(32)
-   endif
-
-   call convert_Plasmod2PROCESS(theat, tburn, fusrat, &
-      geom%k, geom%d, geom%perim, geom%ip, geom%q95, &
-      comp%comparray, comp%globtau, comp%cxe, comp%che, comp%car, &
-      ped%teped, ped%nped, ped%nsep, ped%tesep, &
-      radp%te, radp%ti, radp%av_te, radp%av_ten, radp%av_ti, radp%av_ne, &
-      radp%ne, radp%av_ni, radp%av_nhe, radp%av_nd, radp%av_nz, radp%zeff, &
-      radp%jcd, radp%jpar, radp%ipol, radp%qprof, radp%Volum, radp%vp, &
-      radp%cc, radp%palph, radp%nions, radp%psi, &
-      loss%alpharate, loss%betaft, loss%dfuelreq, loss%fusionrate, loss%h, &
-      loss%palpe, loss%palpi, loss%pbrehms, loss%pdiv, loss%peaux, loss%pfus, &
-      loss%pfusdd, loss%piaux, loss%piepv, loss%plh, loss%pline, loss%pnbi, &
-      loss%pohm, loss%prad, loss%pradcore, loss%pradedge, loss%psep, &
-      loss%psepe, loss%psepi, loss%psync, loss%qcd, loss%qfus, loss%qheat, &
-      loss%qtot, loss%rplas, loss%tauee, loss%taueff, loss%tauei, loss%wth, &
-      mhd%betan, mhd%bp, mhd%equilcheck, mhd%f_ni, mhd%fbs, mhd%ip_out, &
-      mhd%q, mhd%q_sep, mhd%qstar, mhd%rli, mhd%sp, mhd%torsurf, mhd%vloop, &
-      mhd%vp &
+      call setupPlasmod(i_flag, &
+         geom%k, geom%d, geom%ip, geom%k95, geom%d95, &
+         geom%r, geom%a, geom%q95, geom%bt, geom%counter, &
+         comp%fcoreraditv, comp%qdivt, comp%pradfrac, &
+         comp%pradpos, comp%psep_r, comp%psepb_q95AR, comp%protium, &
+         comp%psepplh_inf, comp%psepplh_sup, comp%c_car, comp%fuelmix, &
+         comp%comparray, comp%globtau, comp%imptype, &
+         inp0%car_qdivt, inp0%chisaw, inp0%chisawpos, inp0%contrpovr, &
+         inp0%contrpovs, inp0%cxe_psepfac, &
+         inp0%eccdeff, inp0%f_gw, inp0%f_gws, &
+         inp0%f_ni, inp0%fcdp, inp0%fpellet, inp0%fpion, inp0%gamcdothers, &
+         inp0%Hfac_inp, inp0%maxpauxor, inp0%nbcdeff, inp0%nbi_energy, &
+         inp0%pech, inp0%pfus, inp0%pheatmax, inp0%PLH, inp0%pnbi, &
+         inp0%q_control, inp0%qcd, inp0%qfus, inp0%qheat, inp0%qnbi_psepfac, &
+         inp0%sawpertau, inp0%spellet, inp0%V_loop, &
+         inp0%x_heat, inp0%x_cd, inp0%x_fus, inp0%x_control, &
+         inp0%dx_heat, inp0%dx_cd, inp0%dx_fus, inp0%dx_control, &
+         num%Ainc, num%capA, num%dgy, num%dt, num%dtinc, num%dtmax, num%dtmaxmax, &
+         num%dtmaxmin, num%dtmin, num%eopt, num%i_equiltype, num%i_impmodel, &
+         num%i_modeltype, num%ipedestal, num%iprocess, num%isawt, num%maxA, &
+         num%nchannels, num%nx, num%nxt, num%test, num%tol, num%tolmin, &
+         ped%tesep, ped%rho_t, ped%rho_n, ped%pedscal, ped%teped &
    )
 
-   end subroutine physplasmod
+      if(verbose == 1) then
+
+         open(32,file='plasmodsolprima.dat')
+         write(32,*) 'num ',num
+         write(32,*) 'geom ',geom
+         write(32,*) 'comp ',comp
+         write(32,*) 'ped ',ped
+         write(32,*) 'inp0 ',inp0
+         write(32,*) 'mhd ',mhd
+         write(32,*) 'loss ',loss
+         close(32)
+
+      endif
+
+      call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
+
+      if (verbose == 1) then
+         open(32,file='plasmodsoldopo.dat')
+         write(32,*) 'num ',num
+         write(32,*) 'geom ',geom
+         write(32,*) 'comp ',comp
+         write(32,*) 'ped ',ped
+         write(32,*) 'inp0 ',inp0
+         write(32,*) 'mhd ',mhd
+         write(32,*) 'loss ',loss
+         close(32)
+      endif
+
+      call convert_Plasmod2PROCESS(theat, tburn, fusrat, &
+         geom%k, geom%d, geom%perim, geom%ip, geom%q95, &
+         comp%comparray, comp%globtau, comp%cxe, comp%che, comp%car, &
+         ped%teped, ped%nped, ped%nsep, ped%tesep, &
+         radp%te, radp%ti, radp%av_te, radp%av_ten, radp%av_ti, radp%av_ne, &
+         radp%ne, radp%av_ni, radp%av_nhe, radp%av_nd, radp%av_nz, radp%zeff, &
+         radp%jcd, radp%jpar, radp%ipol, radp%qprof, radp%Volum, radp%vp, &
+         radp%cc, radp%palph, radp%nions, radp%psi, &
+         loss%alpharate, loss%betaft, loss%dfuelreq, loss%fusionrate, loss%h, &
+         loss%palpe, loss%palpi, loss%pbrehms, loss%pdiv, loss%peaux, loss%pfus, &
+         loss%pfusdd, loss%piaux, loss%piepv, loss%plh, loss%pline, loss%pnbi, &
+         loss%pohm, loss%prad, loss%pradcore, loss%pradedge, loss%psep, &
+         loss%psepe, loss%psepi, loss%psync, loss%qcd, loss%qfus, loss%qheat, &
+         loss%qtot, loss%rplas, loss%tauee, loss%taueff, loss%tauei, loss%wth, &
+         mhd%betan, mhd%bp, mhd%equilcheck, mhd%f_ni, mhd%fbs, mhd%ip_out, &
+         mhd%q, mhd%q_sep, mhd%qstar, mhd%rli, mhd%sp, mhd%torsurf, mhd%vloop, &
+         mhd%vp &
+      )
+
+
+
+
+   end subroutine plasmodphysics
+
+
+
 
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -280,7 +236,7 @@ module physics_module
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use physics_functions_module, only: radpwr
+
     use constants, only: pi, rmu0
     implicit none
 
