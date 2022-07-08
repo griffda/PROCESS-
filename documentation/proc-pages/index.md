@@ -87,6 +87,7 @@ to anyone using PROCESS outputs or models based on them.
 - [Jack Foster](mailto:jack.foster@ukaea.uk)
 - [Graeme Turkington](mailto:graeme.turkington@ukaea.uk)
 - [Sam Gubbins](mailto:sam.gubbins@ukaea.uk)
+- [Jonathan Matthews](mailto:jonathan.matthews@ukaea.uk)
 <br><br>
 
 ## References
