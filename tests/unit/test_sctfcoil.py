@@ -1821,15 +1821,13 @@ def test_tfcind(tfcindparam, monkeypatch, sctfcoil):
     :type monkeypatch: _pytest.monkeypatch.monkeypatch
     """
 
-    monkeypatch.setattr(tfcoil_variables, "yarc", tfcindparam.yarc)
-
-    monkeypatch.setattr(tfcoil_variables, "xarc", tfcindparam.xarc)
-
     monkeypatch.setattr(tfcoil_variables, "tfind", tfcindparam.tfind)
 
-    sctfcoil.tfcind(tfthk=tfcindparam.tfthk)
+    tfind = sctfcoil.tfcind(
+        tfthk=tfcindparam.tfthk, xarc=tfcindparam.xarc, yarc=tfcindparam.yarc
+    )
 
-    assert tfcoil_variables.tfind == pytest.approx(tfcindparam.expected_tfind)
+    assert tfind == pytest.approx(tfcindparam.expected_tfind)
 
 
 class TfCoilAreaAndMassesParam(NamedTuple):
