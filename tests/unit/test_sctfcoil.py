@@ -13615,16 +13615,18 @@ def test_extended_plane_strain(extendedplanestrainparam, monkeypatch, sctfcoil):
         v_force=extendedplanestrainparam.v_force,
     )
 
+    # assert sigr == pytest.approx(extendedplanestrainparam.expected_sigr, rel=0.01)
+
     numpy.testing.assert_array_almost_equal(
-        sigr, numpy.array(extendedplanestrainparam.expected_sigr), decimal=5
+        sigr, numpy.array(extendedplanestrainparam.expected_sigr), decimal=3
     )
 
     numpy.testing.assert_array_almost_equal(
-        sigt, numpy.array(extendedplanestrainparam.expected_sigt), decimal=5
+        sigt, numpy.array(extendedplanestrainparam.expected_sigt), decimal=3
     )
 
     numpy.testing.assert_array_almost_equal(
-        sigz, numpy.array(extendedplanestrainparam.expected_sigz), decimal=5
+        sigz, numpy.array(extendedplanestrainparam.expected_sigz), decimal=3
     )
 
     numpy.testing.assert_array_almost_equal(

@@ -29,6 +29,7 @@ logger.addHandler(s_handler)
 
 
 RMU0 = constants.rmu0
+EPS = numpy.finfo(1.0).eps
 
 
 class Sctfcoil:
@@ -1718,6 +1719,7 @@ class Sctfcoil:
                 tfcoil_variables.ritfc,
                 tfcoil_variables.rhocp,
                 tfcoil_variables.fcoolcp,
+                tfcoil_variables.n_tf,
             )
 
         # Leg cross-section areas
@@ -1812,8 +1814,9 @@ class Sctfcoil:
             # No joints if physics_variables.itart = 0
             tfcoil_variables.pres_joints = 0.0e0
 
+    @staticmethod
+    @numba.njit(cache=True)
     def cpost(
-        self,
         r_tf_inboard_in,
         r_tf_inboard_out,
         r_cp_top,
@@ -1827,6 +1830,7 @@ class Sctfcoil:
         curr,
         rho,
         fcool,
+        n_tf,
     ):
         """
         author: P J Knight, CCFE, Culham Science Centre
@@ -1865,42 +1869,42 @@ class Sctfcoil:
 
         #  Error traps
         # ------------
-        if rtop <= 0.0e0:
-            error_handling.fdiags[0] = rtop
-            error_handling.report_error(115)
+        # if rtop <= 0.0e0:
+        #     error_handling.fdiags[0] = rtop
+        #     error_handling.report_error(115)
 
-        if ztop <= 0.0e0:
-            error_handling.fdiags[0] = ztop
-            error_handling.report_error(116)
+        # if ztop <= 0.0e0:
+        #     error_handling.fdiags[0] = ztop
+        #     error_handling.report_error(116)
 
-        if rmid <= 0.0e0:
-            error_handling.fdiags[0] = rmid
-            error_handling.report_error(117)
+        # if rmid <= 0.0e0:
+        #     error_handling.fdiags[0] = rmid
+        #     error_handling.report_error(117)
 
-        if build_variables.hmax <= 0.0e0:
-            error_handling.fdiags[0] = build_variables.hmax
-            error_handling.report_error(118)
+        # if build_variables.hmax <= 0.0e0:
+        #     error_handling.fdiags[0] = build_variables.hmax
+        #     error_handling.report_error(118)
 
-        if (fcool < 0.0e0) or (fcool > 1.0e0):
-            error_handling.fdiags[0] = fcool
-            error_handling.report_error(119)
+        # if (fcool < 0.0e0) or (fcool > 1.0e0):
+        #     error_handling.fdiags[0] = fcool
+        #     error_handling.report_error(119)
 
-        if rtop < rmid:
-            error_handling.fdiags[0] = rtop
-            error_handling.fdiags[1] = rmid
-            error_handling.report_error(120)
+        # if rtop < rmid:
+        #     error_handling.fdiags[0] = rtop
+        #     error_handling.fdiags[1] = rmid
+        #     error_handling.report_error(120)
 
-        if build_variables.hmax < ztop:
-            error_handling.fdiags[0] = build_variables.hmax
-            error_handling.fdiags[1] = ztop
-            error_handling.report_error(121)
+        # if build_variables.hmax < ztop:
+        #     error_handling.fdiags[0] = build_variables.hmax
+        #     error_handling.fdiags[1] = ztop
+        #     error_handling.report_error(121)
 
         # ------------
 
         # Mid-plane area calculations
         # ---------------------------
         # Total number of CP turns
-        n_turns_tot = tfcoil_variables.n_tf * n_tf_turn
+        n_turns_tot = n_tf * n_tf_turn
 
         # Area of the innner TF central hole [m2]
         a_tfin_hole = numpy.pi * r_tfin_inleg**2
@@ -1913,7 +1917,7 @@ class Sctfcoil:
         # Mid-plane outter ground insulation thickness [m2]
         a_cp_gr_ins = (
             numpy.pi * ((rmid + gr_ins_th) ** 2 - rmid**2)
-            + 2.0e0 * gr_ins_th * (rmid - r_tfin_inleg) * tfcoil_variables.n_tf
+            + 2.0e0 * gr_ins_th * (rmid - r_tfin_inleg) * n_tf
         )
 
         # Mid-plane turn layer cross-section area [m2]
@@ -1926,20 +1930,20 @@ class Sctfcoil:
 
         # Cooling pipes cross-section per coil [m2]
         a_cp_cool = fcool * (
-            (numpy.pi * rmid**2 - a_tfin_hole - a_cp_ins) / tfcoil_variables.n_tf
+            (numpy.pi * rmid**2 - a_tfin_hole - a_cp_ins) / n_tf
             - 2.0e0 * gr_ins_th * (rmid - r_tfin_inleg)
         )  # Wedge ground insulation
         # ---------------------------
 
         #  Trivial solutions
         # ------------------
-        if abs(fcool) < numpy.finfo(float(fcool)).eps:
+        if numpy.abs(fcool) < EPS:
             vol_cond_cp = 0.0e0
             respow = 0.0e0
             vol_case_cp = 0.0e0
             vol_gr_ins_cp = 0.0e0
             vol_ins_cp = 0.0e0
-            error_handling.report_error(122)
+            # error_handling.report_error(122)
             return (
                 a_cp_cool,
                 vol_cond_cp,
@@ -1949,14 +1953,11 @@ class Sctfcoil:
                 vol_gr_ins_cp,
             )
 
-        if abs(rmid - rtop) < numpy.finfo(float(rtop)).eps:
+        if numpy.abs(rmid - rtop) < EPS:
 
             # Exact conductor cross-section
             a_cond_midplane = (
-                numpy.pi * rmid**2
-                - a_tfin_hole
-                - tfcoil_variables.n_tf * a_cp_cool
-                - a_cp_ins
+                numpy.pi * rmid**2 - a_tfin_hole - n_tf * a_cp_cool - a_cp_ins
             )
 
             # Volumes and resisitive losses calculations
@@ -1999,17 +2000,17 @@ class Sctfcoil:
 
         for ii in range(101):
             z = ii * dz
-            z = min(z, ztop)
+            z = numpy.fmin(numpy.array(z), ztop)
 
             r = rc - numpy.sqrt((rc - rmid) ** 2 - z * z)
 
-            if r <= 0.0e0:
-                error_handling.fdiags[0] = r
-                error_handling.fdiags[1] = rc
-                error_handling.fdiags[2] = rmid
-                error_handling.fdiags[3] = z
+            # if r <= 0.0e0:
+            #     error_handling.fdiags[0] = r
+            #     error_handling.fdiags[1] = rc
+            #     error_handling.fdiags[2] = rmid
+            #     error_handling.fdiags[3] = z
 
-                error_handling.report_error(123)
+            #     error_handling.report_error(123)
 
             # Insulation cross-sectional area at z
             yy_ins[ii] = (
@@ -2025,15 +2026,15 @@ class Sctfcoil:
             yy_cond[ii] = (
                 numpy.pi * r**2
                 - a_tfin_hole
-                - tfcoil_variables.n_tf * a_cp_cool
+                - n_tf * a_cp_cool
                 - yy_ins[ii]
-                - 2.0e0 * tfcoil_variables.n_tf * gr_ins_th * (r - r_tfin_inleg)
+                - 2.0e0 * n_tf * gr_ins_th * (r - r_tfin_inleg)
             )  # Wedge ground insulation
 
             #  Outer ground insulation area at z
             yy_gr_ins[ii] = numpy.pi * (
                 (r + gr_ins_th) ** 2 - r**2
-            ) + 2.0e0 * tfcoil_variables.n_tf * gr_ins_th * (r - r_tfin_inleg)
+            ) + 2.0e0 * n_tf * gr_ins_th * (r - r_tfin_inleg)
 
             #  Outer casing Cross-sectional area at z
             yy_casout[ii] = numpy.pi * (
@@ -2072,7 +2073,7 @@ class Sctfcoil:
         # Ground insulation layer cross-section at CP top [m2]
         a_cp_gr_ins = (
             numpy.pi * ((rtop + gr_ins_th) ** 2 - rtop**2)
-            + 2.0e0 * gr_ins_th * (rtop - r_tfin_inleg) * tfcoil_variables.n_tf
+            + 2.0e0 * gr_ins_th * (rtop - r_tfin_inleg) * n_tf
         )
 
         # Outer casing cross-section area at CP top [m2]
@@ -2087,8 +2088,8 @@ class Sctfcoil:
             numpy.pi * rtop**2
             - a_tfin_hole
             - a_cp_ins
-            - tfcoil_variables.n_tf * a_cp_cool
-            - 2.0e0 * tfcoil_variables.n_tf * gr_ins_th * (rtop - r_tfin_inleg)
+            - n_tf * a_cp_cool
+            - 2.0e0 * n_tf * gr_ins_th * (rtop - r_tfin_inleg)
         )  # subtracting ground insulation wedge separation
 
         # Resistive power losses in taped section (variable radius section) [W]
@@ -2126,8 +2127,8 @@ class Sctfcoil:
                     numpy.pi * rtop**2
                     - a_tfin_hole
                     - a_cp_ins
-                    - tfcoil_variables.n_tf * a_cp_cool
-                    - 2.0e0 * tfcoil_variables.n_tf * gr_ins_th * (rtop - r_tfin_inleg)
+                    - n_tf * a_cp_cool
+                    - 2.0e0 * n_tf * gr_ins_th * (rtop - r_tfin_inleg)
                 )
             )
         )  # ground insulation separation
@@ -4028,9 +4029,9 @@ class Sctfcoil:
                 radtf,
                 jeff,
                 sctfcoil_module.vforce_inboard_tot,
-                n_tf_layer,
-                n_radial_array,
-                n_tf_bucking,
+                int(n_tf_layer),
+                int(n_radial_array),
+                int(n_tf_bucking),
             )
 
             # Strain in TF conductor material
@@ -4277,7 +4278,11 @@ class Sctfcoil:
             )
 
     @staticmethod
-    @numba.njit(cache=True)
+    # @numba.njit(cache=True)
+    # this method cannot be currently numba'd
+    # because it uses the maths_library linesolv.
+    # the equivalent numpy solver produces minor differences
+    # that need to be investigated before swapping over to it.
     def plane_stress(nu, rad, ey, j, nlayers, n_radial_array):
         """Calculates the stresses in a superconductor TF coil
         inboard leg at the midplane using the plain stress approximation
@@ -4426,10 +4431,10 @@ class Sctfcoil:
 
         #  Find solution vector cc
         # ***
+        aa = numpy.asfortranarray(aa)
+        # cc = numpy.linalg.solve(aa, bb)
 
-        cc = numpy.linalg.solve(aa, bb)
-
-        # maths_library.linesolv(aa, bb, cc)
+        maths_library.linesolv(aa, bb, cc)
 
         #  Multiply c by (-1) (John Last, internal CCFE memorandum, 21/05/2013)
         for ii in range(nlayers):
@@ -6143,8 +6148,9 @@ class Sctfcoil:
                 "OP ",
             )
 
+    @staticmethod
+    @numba.njit(cache=True, error_model="numpy")
     def extended_plane_strain(
-        self,
         nu_t,
         nu_zt,
         ey_t,
@@ -6245,7 +6251,6 @@ class Sctfcoil:
                 5,
                 nlayers,
             ),
-            order="F",
         )
         # Matrix that transforms the Lame parmeter vector from the
         # outer radius to the inner radius of each layer
@@ -6255,7 +6260,6 @@ class Sctfcoil:
                 5,
                 nlayers,
             ),
-            order="F",
         )
         # Matrix that transforms the Lame parmeter vector from the
         # inner radius of one layer to the outer radius of the
@@ -6266,7 +6270,6 @@ class Sctfcoil:
                 5,
                 nlayers,
             ),
-            order="F",
         )
         # Matrix that transforms the Lame parmeter vector from the
         # outer radius of the outer layer to the inner radius of
@@ -6278,7 +6281,6 @@ class Sctfcoil:
                 1,
                 5,
             ),
-            order="F",
         )
         # Row vector (matrix multiplication is inner product) to
         # obtain the axial force from the force-carrying layers
@@ -6287,7 +6289,6 @@ class Sctfcoil:
                 1,
                 5,
             ),
-            order="F",
         )
         # Row vector (matrix multiplication is inner product) to
         # obtain the axial force inner slip layers (no net force)
@@ -6296,7 +6297,6 @@ class Sctfcoil:
                 1,
                 5,
             ),
-            order="F",
         )
         # A helper variable to store [radius, 1, 0, 0, 0] in row
 
@@ -6306,7 +6306,6 @@ class Sctfcoil:
                 4,
                 5,
             ),
-            order="F",
         )
         # Boundary condition matrix. Multiply this with the
         # outermost solution vector, (A,B,eps_z,1.0,eps_z_slip),
@@ -6316,7 +6315,6 @@ class Sctfcoil:
                 4,
                 4,
             ),
-            order="F",
         )
         # Matrix to invert to get the solution
         RHS_vec = numpy.zeros((4,))
@@ -6594,13 +6592,16 @@ class Sctfcoil:
         # slip layers eps_z and eps_z_slip.
         # Section 10 in the writeup
         # ***
-        M_toinv[:] = M_bc[
+        M_toinv[:, :3] = M_bc[
             :,
-            (0, 1, 2, 4),
+            :3,
         ]
+        M_toinv[:, 3] = M_bc[:, 4]
         RHS_vec[:] = -M_bc[:, 3]
 
-        maths_library.linesolv(M_toinv, RHS_vec, A_vec_solution[:4])
+        A_vec_solution[:4] = numpy.linalg.solve(M_toinv, RHS_vec)
+
+        # maths_library.linesolv(M_toinv, RHS_vec, A_vec_solution[:4])
         A_vec_solution[4] = A_vec_solution[3]
         A_vec_solution[3] = 1
 
