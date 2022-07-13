@@ -862,10 +862,10 @@ class PFCoil:
         """
         lrow1 = bfix.shape[0]
         lcol1 = gmat.shape[1]
-        bfix = self.fixb(lrow1, npts, rpts, zpts, int(nfix), rfix, zfix, cfix)
+        bfix = fixb(lrow1, npts, rpts, zpts, int(nfix), rfix, zfix, cfix)
 
         # Set up matrix equation
-        nrws, gmat, bvec, _, _, _, _ = self.mtrx(
+        nrws, gmat, bvec = mtrx(
             lrow1,
             lcol1,
             npts,
@@ -886,58 +886,11 @@ class PFCoil:
         ccls, umat, vmat, sigma, work2 = self.solv(pfv.ngrpmx, ngrp, nrws, gmat, bvec)
 
         # Calculate the norm of the residual vectors
-        brssq, brnrm, bzssq, bznrm, ssq = self.rsid(
+        brssq, brnrm, bzssq, bznrm, ssq = rsid(
             npts, brin, bzin, nfix, int(ngrp), ccls, bfix, gmat
         )
 
         return ssq, ccls
-
-    @staticmethod
-    @numba.njit(cache=True)
-    def fixb(lrow1, npts, rpts, zpts, nfix, rfix, zfix, cfix):
-        """Calculates the field from the fixed current loops.
-
-        author: P J Knight, CCFE, Culham Science Centre
-        author: D Strickler, ORNL
-        author: J Galambos, ORNL
-        This routine calculates the fields at the points specified by
-        (rpts,zpts) from the set of coils with fixed currents.
-
-        :param lrow1: row length of array bfix; should be >= nptsmx
-        :type lrow1: int
-        :param npts: number of data points at which field is to be fixed;
-        should be <= nptsmx
-        :type npts: int
-        :param rpts: coords of data points (m)
-        :type rpts: numpy.ndarray
-        :param zpts: coords of data points (m)
-        :type zpts: numpy.ndarray
-        :param nfix: number of coils with fixed currents, <= nfixmx
-        :type nfix: int
-        :param rfix: coordinates of coils with fixed currents (m)
-        :type rfix: numpy.ndarray
-        :param zfix: coordinates of coils with fixed currents (m)
-        :type zfix: numpy.ndarray
-        :param cfix: Fixed currents (A)
-        :type cfix: numpy.ndarray
-        :return: Fields at data points (T)
-        :rtype: numpy.ndarray
-        """
-        bfix = np.zeros(lrow1)
-
-        if nfix <= 0:
-            return bfix
-
-        for i in range(npts):
-            # bfield() only operates correctly on nfix slices of array
-            # arguments, not entire arrays
-            _, brw, bzw, _ = bfield(
-                rfix[:nfix], zfix[:nfix], cfix[:nfix], rpts[i], zpts[i]
-            )
-            bfix[i] = brw
-            bfix[npts + i] = bzw
-
-        return bfix
 
     def tf_pf_collision_detector(self):
         #  Collision test between TF and PF coils for picture frame TF
@@ -976,98 +929,6 @@ class PFCoil:
 
                         if pf_tf_collision >= 1:
                             eh.report_error(277)
-
-    @staticmethod
-    @numba.njit(cache=True)
-    def mtrx(
-        lrow1,
-        lcol1,
-        npts,
-        rpts,
-        zpts,
-        brin,
-        bzin,
-        ngrp,
-        ncls,
-        rcls,
-        zcls,
-        alfa,
-        bfix,
-        nclsmx,
-    ):
-        """Calculate the currents in a group of ring coils.
-
-        Set up the matrix equation to calculate the currents in a group of ring
-        coils.
-        author: P J Knight, CCFE, Culham Science Centre
-        author: D Strickler, ORNL
-        author: J Galambos, ORNL
-
-        :param lrow1: row length of arrays bfix, bvec, gmat, umat, vmat; should
-        be >= (2*nptsmx + ngrpmx)
-        :type lrow1: int
-        :param lcol1: column length of arrays gmat, umat, vmat; should be >=
-        ngrpmx
-        :type lcol1: int
-        :param npts: number of data points at which field is to be fixed; should
-        be <= nptsmx
-        :type npts: int
-        :param rpts: coords of data points (m)
-        :type rpts: numpy.ndarray
-        :param zpts: coords of data points (m)
-        :type zpts: numpy.ndarray
-        :param brin: field components at data points (T)
-        :type brin: numpy.ndarray
-        :param bzin: field components at data points (T)
-        :type bzin: numpy.ndarray
-        :param ngrp: number of coil groups, where all coils in a group have the
-        same current, <= ngrpmx
-        :type ngrp: int
-        :param ncls: number of coils in each group, each value <= nclsmx
-        :type ncls: numpy.ndarray
-        :param rcls: coords R(i,j), Z(i,j) of coil j in group i (m)
-        :type rcls: numpy.ndarray
-        :param zcls: coords R(i,j), Z(i,j) of coil j in group i (m)
-        :type zcls: numpy.ndarray
-        :param alfa: smoothing parameter (0 = no smoothing, 1.0D-9 = large
-        smoothing)
-        :type alfa: float
-        :param bfix: Fields at data points (T)
-        :type bfix: numpy.ndarray
-        :return: actual number of rows to use, work array, work array,
-        Coordinates of conductor loops (m), Coordinates of conductor loops (m),
-        Currents in conductor loops (A), Mutual inductances (H)
-        :rtype: tuple[int, numpy.ndarray, numpy.ndarray, numpy.ndarray
-        numpy.ndarray, numpy.ndarray, numpy.ndarray]
-        """
-        bvec = np.zeros(lrow1)
-        gmat = np.zeros((lrow1, lcol1))
-        cc = np.ones(nclsmx)
-
-        for i in range(npts):
-            bvec[i] = brin[i] - bfix[i]
-            bvec[i + npts] = bzin[i] - bfix[i + npts]
-
-            for j in range(ngrp):
-                nc = ncls[j]
-
-                _, gmat[i, j], gmat[i + npts, j], _ = bfield(
-                    rcls[j, :nc], zcls[j, :nc], cc[:nc], rpts[i], zpts[i]
-                )
-
-        # Add constraint equations
-        nrws = 2 * npts
-
-        bvec[nrws : nrws + ngrp] = 0.0
-        np.fill_diagonal(gmat[nrws : nrws + ngrp, :ngrp], ncls[:ngrp] * alfa)
-
-        nrws = 2 * npts + ngrp
-
-        # numba doesnt like np.zeros(..., order="F") so this acts as a work
-        # around to that missing signature
-        gmat = np.asfortranarray(gmat)
-
-        return nrws, gmat, bvec, None, None, None, None
 
     def solv(self, ngrpmx, ngrp, nrws, gmat, bvec):
         """Solve a matrix using singular value decomposition.
@@ -2803,75 +2664,6 @@ class PFCoil:
         )
         return selfinductance
 
-    @staticmethod
-    @numba.njit(cache=True)
-    def rsid(npts, brin, bzin, nfix, ngrp, ccls, bfix, gmat):
-        """Computes the norm of the residual vectors.
-
-        author: P J Knight, CCFE, Culham Science Centre
-        author: D Strickler, ORNL
-        author: J Galambos, ORNL
-        author: P C Shipe, ORNL
-        This routine calculates the residuals from the matrix
-        equation for calculation of the currents in a group of ring coils.
-
-        :param npts: number of data points at which field is  to be fixed;
-        should be <= nptsmx
-        :type npts: int
-        :param brin: field components at data points (T)
-        :type brin: numpy.ndarray
-        :param bzin: field components at data points (T)
-        :type bzin: numpy.ndarray
-        :param nfix: number of coils with fixed currents, <= nfixmx
-        :type nfix: int
-        :param ngrp: number of coil groups, where all coils in a group have the
-        same current, <= ngrpmx
-        :type ngrp: int
-        :param ccls: coil currents in each group (A)
-        :type ccls: numpy.ndarray
-        :param bfix: work array
-        :type bfix: numpy.ndarray
-        :param gmat: work array
-        :type gmat: numpy.ndarray
-        :return: sum of squares of radial field residues (brssq), radial field
-        residue norm (brnrm), sum of squares of vertical field residues (bzssq),
-        vertical field residue norm (bznrm), sum of squares of elements of
-        residual vector (ssq)
-        :rtype: tuple[float, float, float, float, float]
-        """
-        brnrm = 0.0e0
-        brssq = 0.0e0
-
-        for i in range(npts):
-            svec = 0.0e0
-            if nfix > 0:
-                svec = bfix[i]
-
-            for j in range(ngrp):
-                svec = svec + gmat[i, j] * ccls[j]
-
-            rvec = svec - brin[i]
-            brnrm = brnrm + brin[i] ** 2
-            brssq = brssq + rvec**2
-
-        bznrm = 0.0e0
-        bzssq = 0.0e0
-
-        for i in range(npts):
-            svec = 0.0e0
-            if nfix > 0:
-                svec = bfix[i + npts]
-            for j in range(ngrp):
-                svec = svec + gmat[i + npts, j] * ccls[j]
-
-            rvec = svec - bzin[i]
-            bznrm = bznrm + bzin[i] ** 2
-            bzssq = bzssq + rvec**2
-
-        ssq = brssq / (1.0e0 + brnrm) + bzssq / (1.0e0 + bznrm)
-
-        return brssq, brnrm, bzssq, bznrm, ssq
-
     def waveform(self):
         """Sets up the PF coil waveforms.
 
@@ -3341,3 +3133,209 @@ def bfield(rc, zc, cc, rp, zp):
         psi += xc[i] * cc[i]
 
     return xc, br, bz, psi
+
+
+@numba.njit(cache=True)
+def rsid(npts, brin, bzin, nfix, ngrp, ccls, bfix, gmat):
+    """Computes the norm of the residual vectors.
+
+    author: P J Knight, CCFE, Culham Science Centre
+    author: D Strickler, ORNL
+    author: J Galambos, ORNL
+    author: P C Shipe, ORNL
+    This routine calculates the residuals from the matrix
+    equation for calculation of the currents in a group of ring coils.
+
+    :param npts: number of data points at which field is  to be fixed;
+    should be <= nptsmx
+    :type npts: int
+    :param brin: field components at data points (T)
+    :type brin: numpy.ndarray
+    :param bzin: field components at data points (T)
+    :type bzin: numpy.ndarray
+    :param nfix: number of coils with fixed currents, <= nfixmx
+    :type nfix: int
+    :param ngrp: number of coil groups, where all coils in a group have the
+    same current, <= ngrpmx
+    :type ngrp: int
+    :param ccls: coil currents in each group (A)
+    :type ccls: numpy.ndarray
+    :param bfix: work array
+    :type bfix: numpy.ndarray
+    :param gmat: work array
+    :type gmat: numpy.ndarray
+    :return: sum of squares of radial field residues (brssq), radial field
+    residue norm (brnrm), sum of squares of vertical field residues (bzssq),
+    vertical field residue norm (bznrm), sum of squares of elements of
+    residual vector (ssq)
+    :rtype: tuple[float, float, float, float, float]
+    """
+    brnrm = 0.0e0
+    brssq = 0.0e0
+
+    for i in range(npts):
+        svec = 0.0e0
+        if nfix > 0:
+            svec = bfix[i]
+
+        for j in range(ngrp):
+            svec = svec + gmat[i, j] * ccls[j]
+
+        rvec = svec - brin[i]
+        brnrm = brnrm + brin[i] ** 2
+        brssq = brssq + rvec**2
+
+    bznrm = 0.0e0
+    bzssq = 0.0e0
+
+    for i in range(npts):
+        svec = 0.0e0
+        if nfix > 0:
+            svec = bfix[i + npts]
+        for j in range(ngrp):
+            svec = svec + gmat[i + npts, j] * ccls[j]
+
+        rvec = svec - bzin[i]
+        bznrm = bznrm + bzin[i] ** 2
+        bzssq = bzssq + rvec**2
+
+    ssq = brssq / (1.0e0 + brnrm) + bzssq / (1.0e0 + bznrm)
+
+    return brssq, brnrm, bzssq, bznrm, ssq
+
+
+@numba.njit(cache=True)
+def fixb(lrow1, npts, rpts, zpts, nfix, rfix, zfix, cfix):
+    """Calculates the field from the fixed current loops.
+
+    author: P J Knight, CCFE, Culham Science Centre
+    author: D Strickler, ORNL
+    author: J Galambos, ORNL
+    This routine calculates the fields at the points specified by
+    (rpts,zpts) from the set of coils with fixed currents.
+
+    :param lrow1: row length of array bfix; should be >= nptsmx
+    :type lrow1: int
+    :param npts: number of data points at which field is to be fixed;
+    should be <= nptsmx
+    :type npts: int
+    :param rpts: coords of data points (m)
+    :type rpts: numpy.ndarray
+    :param zpts: coords of data points (m)
+    :type zpts: numpy.ndarray
+    :param nfix: number of coils with fixed currents, <= nfixmx
+    :type nfix: int
+    :param rfix: coordinates of coils with fixed currents (m)
+    :type rfix: numpy.ndarray
+    :param zfix: coordinates of coils with fixed currents (m)
+    :type zfix: numpy.ndarray
+    :param cfix: Fixed currents (A)
+    :type cfix: numpy.ndarray
+    :return: Fields at data points (T)
+    :rtype: numpy.ndarray
+    """
+    bfix = np.zeros(lrow1)
+
+    if nfix <= 0:
+        return bfix
+
+    for i in range(npts):
+        # bfield() only operates correctly on nfix slices of array
+        # arguments, not entire arrays
+        _, brw, bzw, _ = bfield(rfix[:nfix], zfix[:nfix], cfix[:nfix], rpts[i], zpts[i])
+        bfix[i] = brw
+        bfix[npts + i] = bzw
+
+    return bfix
+
+
+@numba.njit(cache=True)
+def mtrx(
+    lrow1,
+    lcol1,
+    npts,
+    rpts,
+    zpts,
+    brin,
+    bzin,
+    ngrp,
+    ncls,
+    rcls,
+    zcls,
+    alfa,
+    bfix,
+    nclsmx,
+):
+    """Calculate the currents in a group of ring coils.
+
+    Set up the matrix equation to calculate the currents in a group of ring
+    coils.
+    author: P J Knight, CCFE, Culham Science Centre
+    author: D Strickler, ORNL
+    author: J Galambos, ORNL
+
+    :param lrow1: row length of arrays bfix, bvec, gmat, umat, vmat; should
+    be >= (2*nptsmx + ngrpmx)
+    :type lrow1: int
+    :param lcol1: column length of arrays gmat, umat, vmat; should be >=
+    ngrpmx
+    :type lcol1: int
+    :param npts: number of data points at which field is to be fixed; should
+    be <= nptsmx
+    :type npts: int
+    :param rpts: coords of data points (m)
+    :type rpts: numpy.ndarray
+    :param zpts: coords of data points (m)
+    :type zpts: numpy.ndarray
+    :param brin: field components at data points (T)
+    :type brin: numpy.ndarray
+    :param bzin: field components at data points (T)
+    :type bzin: numpy.ndarray
+    :param ngrp: number of coil groups, where all coils in a group have the
+    same current, <= ngrpmx
+    :type ngrp: int
+    :param ncls: number of coils in each group, each value <= nclsmx
+    :type ncls: numpy.ndarray
+    :param rcls: coords R(i,j), Z(i,j) of coil j in group i (m)
+    :type rcls: numpy.ndarray
+    :param zcls: coords R(i,j), Z(i,j) of coil j in group i (m)
+    :type zcls: numpy.ndarray
+    :param alfa: smoothing parameter (0 = no smoothing, 1.0D-9 = large
+    smoothing)
+    :type alfa: float
+    :param bfix: Fields at data points (T)
+    :type bfix: numpy.ndarray
+    :return: actual number of rows to use, work array, work array,
+    Coordinates of conductor loops (m), Coordinates of conductor loops (m),
+    Currents in conductor loops (A), Mutual inductances (H)
+    :rtype: tuple[int, numpy.ndarray, numpy.ndarray, numpy.ndarray
+    numpy.ndarray, numpy.ndarray, numpy.ndarray]
+    """
+    bvec = np.zeros(lrow1)
+    gmat = np.zeros((lrow1, lcol1))
+    cc = np.ones(nclsmx)
+
+    for i in range(npts):
+        bvec[i] = brin[i] - bfix[i]
+        bvec[i + npts] = bzin[i] - bfix[i + npts]
+
+        for j in range(ngrp):
+            nc = ncls[j]
+
+            _, gmat[i, j], gmat[i + npts, j], _ = bfield(
+                rcls[j, :nc], zcls[j, :nc], cc[:nc], rpts[i], zpts[i]
+            )
+
+    # Add constraint equations
+    nrws = 2 * npts
+
+    bvec[nrws : nrws + ngrp] = 0.0
+    np.fill_diagonal(gmat[nrws : nrws + ngrp, :ngrp], ncls[:ngrp] * alfa)
+
+    nrws = 2 * npts + ngrp
+
+    # numba doesnt like np.zeros(..., order="F") so this acts as a work
+    # around to that missing signature
+    gmat = np.asfortranarray(gmat)
+
+    return nrws, gmat, bvec

@@ -14,12 +14,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-1947-g2fccb3ae4
+   Tag No. : v2.1-1980-gc41b84554
     Branch : HEAD
-   Git log : Merge branch |1689-convert-cs_fatigue-f90-to-python| into |develop|
- Date/time : 22 Jun 2022 16:15:34 +00:00(hh:mm) UTC
+   Git log : Merge branch |1706-update-publication-list| into |develop|
+ Date/time :  8 Jul 2022  8:13:52 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-nkpubsxk-project-20-concurrent-0
+  Computer : runner-sn2siqxv-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_stellarator_0/IN.DAT
  Run title : HELIAS-5B
@@ -832,12 +832,45 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Power Balance for Reactor (across vacuum vessel boundary) - Detail
  ------------------------------------------------------------------
  
+ High-grade             Low-grade              Total
+ thermal power (MW)     thermal power (MW)      (MW)
+ First wall:
+ pnucfw                                                                         0.00                   471.49
+ palpfwmw                                                                       0.00                    31.20
+ pradfw                                                                         0.00                   480.35
+ htpmw_fw                                                                       0.00                    56.00
  
+ Blanket:
+ pnucblkt                                                                       0.00                  2050.98
+ 0.0e0 0.0e0 0.0e0
+ 0.0e0 0.0e0 0.0e0
+ htpmw_blkt                                                                     0.00                   120.00
  
+ Shield:
+ 0.0967381031714187 0.0 0.0967381031714187
+ 0.0e0 0.0e0 0.0e0
+ 0.0e0 0.0e0 0.0e0
+ 0.0 0.0 0.0
  
+ Divertor:
+ 287.1374976150233 0.0 287.1374976150233
+ 52.17230347439573 0.0 52.17230347439573
+ 62.418184506342214 0.0 62.418184506342214
+ 24.0 0.0 24.0
  
+ TF coil:
+ ptfnuc                                                                         0.00                     0.00
+ 0.0e0 0.0e0 0.0e0
+ 0.0e0 0.0e0 0.0e0
+ 0.0e0 0.0e0 0.0e0
  
+ Losses to H/CD apparatus + diagnostics:
+ pnuchcd                                                                        0.00                     0.00
+ 0.0e0 0.0e0 0.0e0
+ pradhcd                                                                        0.00                     0.00
+ 0.0e0 0.0e0 0.0e0
  
+ 3635.8446376560187 0.0003728326826429075 3635.8450104887015
  
  Total power leaving reactor (across vacuum vessel boundary) (MW)                                    3635.845  OP 
  

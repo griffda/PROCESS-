@@ -13,12 +13,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-1947-g2fccb3ae4
+   Tag No. : v2.1-1980-gc41b84554
     Branch : HEAD
-   Git log : Merge branch |1689-convert-cs_fatigue-f90-to-python| into |develop|
- Date/time : 22 Jun 2022 16:09:13 +00:00(hh:mm) UTC
+   Git log : Merge branch |1706-update-publication-list| into |develop|
+ Date/time :  8 Jul 2022  8:08:02 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-nkpubsxk-project-20-concurrent-0
+  Computer : runner-sn2siqxv-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_hts_REBCO_0/IN.DAT
  Run title : hts model using "croco" conductor based on kit design
@@ -351,8 +351,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Ignited plasma switch (0=not ignited, 1=ignited)                         (ignite)                          0     
  
  Power into divertor zone via charged particles (MW)                      (pdivt)                   1.374E+02  OP 
- Psep / R ratio (MW/m)                                                    (pdivmax/rmajor)          1.548E+01  OP 
- Psep Bt / qAR ratio (MWT/m)                                              (pdivmaxbt/qar)           9.100E+00  OP 
+ Pdivt / R ratio (MW/m) (On peak divertor)                                (pdivmax/rmajor)          1.548E+01  OP 
+ Pdivt Bt / qAR ratio (MWT/m) (On peak divertor)                          (pdivmaxbt/qar)           9.100E+00  OP 
  
  H-mode Power Threshold Scalings :
  
@@ -1309,12 +1309,45 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Power Balance for Reactor (across vacuum vessel boundary) - Detail
  ------------------------------------------------------------------
  
+ High-grade             Low-grade              Total
+ thermal power (MW)     thermal power (MW)      (MW)
+ First wall:
+ pnucfw                                                                         0.00                   198.31
+ palpfwmw                                                                       0.00                    22.70
+ pradfw                                                                         0.00                   267.09
+ htpmw_fw                                                                       0.00                   155.00
  
+ Blanket:
+ pnucblkt                                                                       0.00                  1576.63
+ 0.0e0 0.0e0 0.0e0
+ 0.0e0 0.0e0 0.0e0
+ htpmw_blkt                                                                     0.00                     0.00
  
+ Shield:
+ 0.7155421330463763 0.0 0.7155421330463763
+ 0.0e0 0.0e0 0.0e0
+ 0.0e0 0.0e0 0.0e0
+ 0.0 0.0 0.0
  
+ Divertor:
+ 0.0 418.25512705905504 418.25512705905504
+ 0.0 137.37621576857873 137.37621576857873
+ 0.0 79.78017723519375 79.78017723519375
+ 0.0 0.0 0.0
  
+ TF coil:
+ ptfnuc                                                                         0.00                     0.02
+ 0.0e0 0.0e0 0.0e0
+ 0.0e0 0.0e0 0.0e0
+ 0.0e0 0.0e0 0.0e0
  
+ Losses to H/CD apparatus + diagnostics:
+ pnuchcd                                                                        0.00                     0.00
+ 0.0e0 0.0e0 0.0e0
+ pradhcd                                                                        0.00                     0.00
+ 0.0e0 0.0e0 0.0e0
  
+ 2220.443197168829 635.4270580939366 2855.8702552627656
  
  Total power leaving reactor (across vacuum vessel boundary) (MW)                                    2855.886  OP 
  
@@ -1404,13 +1437,44 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Time-dependent power usage
  
+ Pulse timings [s]:
  
+ tramp tohs theat tburn tqnch tdwell
+ ----- ---- ----- ----- ----- ------
+ Duration 500.0 200.23872094443635 10.0 7200.010392089191 200.23872094443635 0.0
+ ------ ----- ---- ----- ----- ----- ------
  
+ Continous power usage [MWe]:
  
+ System tramp tohs theat tburn tqnch tdwell
+ ------ ----- ---- ----- ----- ----- ------
+ Primary cooling 155.0 155.0 155.0 155.0 155.0 155.0
+ Cryoplant 43.50743281064352 43.50743281064352 43.50743281064352 43.50743281064352 43.50743281064352 43.50743281064352
+ Vacuum 0.5 0.5 0.5 0.5 0.5 0.5
+ Tritium 15.0 15.0 15.0 15.0 15.0 15.0
+ TF 11.114464099456194 11.114464099456194 11.114464099456194 11.114464099456194 11.114464099456194 11.114464099456194
+ Facilities 60.83536387521822 60.83536387521822 60.83536387521822 60.83536387521822 60.83536387521822 60.83536387521822
+ ------ ----- ---- ----- ----- ----- ------
+ Total 285.95726078531794 285.95726078531794 285.95726078531794 285.95726078531794 285.95726078531794 285.95726078531794
+ ------ ----- ---- ----- ----- ----- ------
  
+ Intermittent power usage [MWe]:
  
+ System tramp tohs theat tburn tqnch tdwell
+ ------ ----- ---- ----- ----- ----- ------
+ H & CD 0.0 300.0 300.0 125.00000000266179 300.0 0.0
+ PF 63.213736552593716 -56.870110910078665 0.0 2.4878104266174033 -190.43035609216008 0.0
+ ------ ----- ---- ----- ----- ----- ------
+ Total 63.213736552593716 243.12988908992133 300.0 127.4878104292792 109.56964390783992 0.0
+ ------ ----- ---- ----- ----- ----- ------
  
+ Power production [MWe]:
  
+  tramp tohs theat tburn tqnch tdwell avg
+  ----- ---- ----- ----- ----- ------ ---
+ Gross power 0.0 0.0 0.0 912.6021540363887 0.0 0.0
+ Net power -349.1709973379117 -529.0871498752392 -585.9572607853179 499.15708282179156 -395.52690469315786 -285.95726078531794
+ ------ ----- ---- ----- ----- ----- ------
  
  
  *************************** Water usage during plant operation (secondary cooling) ***************************
