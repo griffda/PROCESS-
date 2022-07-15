@@ -263,7 +263,9 @@ class Physics:
             )
 
             # Pfirsch-Schlüter scaling for diamagnetic current
-            # pscf = physics_module.ps_fraction_scene(physics_variables.beta)
+            current_drive_variables.pscf_scene = physics_module.ps_fraction_scene(
+                physics_variables.beta
+            )
 
         current_drive_variables.bscf_sauter = (
             current_drive_variables.cboot * physics_module.bootstrap_fraction_sauter()
@@ -603,12 +605,12 @@ class Physics:
             #  chosen scaling law
             (
                 physics_variables.kappaa,
-                physics_variables.powerht,
                 physics_variables.ptrepv,
                 physics_variables.ptripv,
                 physics_variables.tauee,
                 physics_variables.taueff,
                 physics_variables.tauei,
+                physics_variables.powerht,
             ) = physics_module.pcond(
                 physics_variables.afuel,
                 physics_variables.palpmw,
@@ -804,52 +806,56 @@ class Physics:
             # Double Null configuration
             # Find all the power fractions accross the targets
             # Taken from D3-D conventional divertor design
-            physics_module.fLI = physics_variables.ftar * physics_module.fio
-            physics_module.fLO = physics_variables.ftar * (1.0e0 - physics_module.fio)
-            physics_module.fUI = (1.0e0 - physics_variables.ftar) * physics_module.fio
-            physics_module.fUO = (1.0e0 - physics_variables.ftar) * (
+            physics_module.fli = physics_variables.ftar * physics_module.fio
+            physics_module.flo = physics_variables.ftar * (1.0e0 - physics_module.fio)
+            physics_module.fui = (1.0e0 - physics_variables.ftar) * physics_module.fio
+            physics_module.fuo = (1.0e0 - physics_variables.ftar) * (
                 1.0e0 - physics_module.fio
             )
             # power into each target
-            physics_module.pLImw = physics_module.fLI * physics_module.ptarmw
-            physics_module.pLOmw = physics_module.fLO * physics_module.ptarmw
-            physics_module.pUImw = physics_module.fUI * physics_module.ptarmw
-            physics_module.pUOmw = physics_module.fUO * physics_module.ptarmw
+            physics_module.plimw = physics_module.fli * physics_module.ptarmw
+            physics_module.plomw = physics_module.flo * physics_module.ptarmw
+            physics_module.puimw = physics_module.fui * physics_module.ptarmw
+            physics_module.puomw = physics_module.fuo * physics_module.ptarmw
         else:
             # Single null configuration
-            physics_module.fLI = physics_module.fio
-            physics_module.fLO = 1.0e0 - physics_module.fio
+            physics_module.fli = physics_module.fio
+            physics_module.flo = 1.0e0 - physics_module.fio
             # power into each target
-            physics_module.pLImw = physics_module.fLI * physics_module.ptarmw
-            physics_module.pLOmw = physics_module.fLO * physics_module.ptarmw
+            physics_module.plimw = physics_module.fli * physics_module.ptarmw
+            physics_module.plomw = physics_module.flo * physics_module.ptarmw
 
         # Calculate some derived quantities that may not have been defined earlier
-        total_loss_power = 1e6 * (
+        physics_module.total_loss_power = 1e6 * (
             physics_variables.falpha * physics_variables.palpmw
             + physics_variables.pchargemw
             + physics_variables.pohmmw
             + current_drive_variables.pinjmw
         )
-        physics_module.rad_fraction_LCFS = (
-            1.0e6 * physics_variables.pradmw / total_loss_power
+        physics_module.rad_fraction_lcfs = (
+            1.0e6 * physics_variables.pradmw / physics_module.total_loss_power
         )
         physics_variables.rad_fraction_total = (
-            physics_module.rad_fraction_LCFS
-            + (1.0e0 - physics_module.rad_fraction_LCFS)
+            physics_module.rad_fraction_lcfs
+            + (1.0e0 - physics_module.rad_fraction_lcfs)
             * physics_variables.rad_fraction_sol
         )
         physics_variables.pradsolmw = (
             physics_variables.rad_fraction_sol * physics_variables.pdivt
         )
-        # total_plasma_internal_energy = (
-        #     1.5e0
-        #     * physics_variables.beta
-        #     * physics_variables.btot
-        #     * physics_variables.btot
-        #     / (2.0e0 * constants.rmu0)
-        #     * physics_variables.vol
-        # )
-        # total_energy_conf_time = total_plasma_internal_energy / total_loss_power
+        physics_module.total_plasma_internal_energy = (
+            1.5e0
+            * physics_variables.beta
+            * physics_variables.btot
+            * physics_variables.btot
+            / (2.0e0 * constants.rmu0)
+            * physics_variables.vol
+        )
+
+        physics_module.total_energy_conf_time = (
+            physics_module.total_plasma_internal_energy
+            / physics_module.total_loss_power
+        )
 
         if any(numerics.icc == 78):
             po.write(
@@ -997,4 +1003,4 @@ class Physics:
                 f.write(
                     f"rpfac {physics_variables.rpfac} rplas {physics_variables.rplas}"
                 )
-                f.close(32)
+                f.close()
