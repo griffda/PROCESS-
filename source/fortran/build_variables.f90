@@ -277,8 +277,14 @@ module build_variables
   real(dp) :: tftsgap
   !! Minimum metal-to-metal gap between TF coil and thermal shield (m)
 
-  real(dp) :: thshield
-  !! TF-VV thermal shield thickness (m)
+  real(dp) :: thshield_ib
+  !! TF-VV thermal shield thickness, inboard (m)
+
+  real(dp) :: thshield_ob
+  !! TF-VV thermal shield thickness, outboard (m)
+
+  real(dp) :: thshield_vb
+  !! TF-VV thermal shield thickness, vertical build (m)
 
   real(dp) :: vgap2
   !! vertical gap between vacuum vessel and thermal shields (m)
@@ -393,7 +399,9 @@ module build_variables
     tfootfi = 1.19D0
     tfthko = 0.0D0
     tftsgap = 0.05D0
-    thshield = 0.05D0
+    thshield_ib = 0.05D0
+    thshield_ob = 0.05D0
+    thshield_vb = 0.05D0
     vgap2 = 0.163D0
     vgap= 0.0D0
     vgaptop = 0.60D0

@@ -112,7 +112,7 @@ class Build:
             + build_variables.shldlth
             + build_variables.d_vv_bot
             + build_variables.vgap2
-            + build_variables.thshield
+            + build_variables.thshield_vb
             + build_variables.tftsgap
         )
 
@@ -127,7 +127,7 @@ class Build:
             + build_variables.shldtth
             + build_variables.d_vv_top
             + build_variables.vgap2
-            + build_variables.thshield
+            + build_variables.thshield_vb
             + build_variables.tftsgap
         )
 
@@ -139,7 +139,7 @@ class Build:
             build_variables.hpfu = (
                 build_variables.tfcth
                 + build_variables.tftsgap
-                + build_variables.thshield
+                + build_variables.thshield_vb
                 + build_variables.vgap2
                 + build_variables.d_vv_top
                 + build_variables.shldtth
@@ -1055,7 +1055,7 @@ class Build:
                     - physics_variables.rminor * physics_variables.triang
                     - (
                         build_variables.tftsgap
-                        + build_variables.thshield
+                        + build_variables.thshield_ib
                         + build_variables.shldith
                         + build_variables.vvblgap
                         + build_variables.blnkith
@@ -1111,7 +1111,7 @@ class Build:
             - physics_variables.rminor * physics_variables.triang
             - (
                 build_variables.tftsgap
-                + build_variables.thshield
+                + build_variables.thshield_ib
                 + build_variables.shldith
                 + build_variables.vvblgap
                 + build_variables.blnkith
@@ -1128,7 +1128,7 @@ class Build:
         build_variables.r_vv_inboard_out = (
             build_variables.r_tf_inboard_out
             + build_variables.tftsgap
-            + build_variables.thshield
+            + build_variables.thshield_ib
             + build_variables.gapds
             + build_variables.d_vv_in
         )
@@ -1183,7 +1183,7 @@ class Build:
             + build_variables.vvblgap
             + build_variables.d_vv_out
             + build_variables.gapomin
-            + build_variables.thshield
+            + build_variables.thshield_ob
             + build_variables.tftsgap
             + 0.5e0 * build_variables.tfthko
         )
@@ -1210,7 +1210,7 @@ class Build:
                 - 0.5e0 * build_variables.tfthko
                 - build_variables.d_vv_out
                 - build_variables.rsldo
-                - build_variables.thshield
+                - build_variables.thshield_ob
                 - build_variables.tftsgap
                 - build_variables.vvblgap
             )
@@ -1390,14 +1390,14 @@ class Build:
             radius = radius + build_variables.bore
             po.obuild(
                 self.outfile,
-                "Machine build_variables.bore",
+                "Machine bore",
                 build_variables.bore,
                 radius,
                 "(bore)",
             )
             po.ovarre(
                 self.mfile,
-                "Machine build_variables.bore (m)",
+                "Machine bore (m)",
                 "(bore)",
                 build_variables.bore,
             )
@@ -1477,19 +1477,19 @@ class Build:
                 build_variables.tftsgap,
             )
 
-            radius = radius + build_variables.thshield
+            radius = radius + build_variables.thshield_ib
             po.obuild(
                 self.outfile,
-                "Thermal shield",
-                build_variables.thshield,
+                "Thermal shield, inboard",
+                build_variables.thshield_ib,
                 radius,
-                "(thshield)",
+                "(thshield_ib)",
             )
             po.ovarre(
                 self.mfile,
-                "Thermal shield (m)",
-                "(thshield)",
-                build_variables.thshield,
+                "Thermal shield, inboard (m)",
+                "(thshield_ib)",
+                build_variables.thshield_ib,
             )
 
             radius = radius + build_variables.gapds
@@ -1696,13 +1696,19 @@ class Build:
                 build_variables.gapsto,
             )
 
-            radius = radius + build_variables.thshield
+            radius = radius + build_variables.thshield_ob
             po.obuild(
                 self.outfile,
-                "Thermal shield",
-                build_variables.thshield,
+                "Thermal shield, outboard",
+                build_variables.thshield_ob,
                 radius,
-                "(thshield)",
+                "(thshield_ob)",
+            )
+            po.ovarre(
+                self.mfile,
+                "Thermal shield, outboard (m)",
+                "(thshield_ob)",
+                build_variables.thshield_ob,
             )
 
             radius = radius + build_variables.tftsgap
@@ -1755,7 +1761,7 @@ class Build:
                 vbuild = (
                     build_variables.tfcth
                     + build_variables.tftsgap
-                    + build_variables.thshield
+                    + build_variables.thshield_vb
                     + build_variables.vgap2
                     + build_variables.d_vv_top
                     + build_variables.shldtth
@@ -1787,12 +1793,18 @@ class Build:
 
                 po.obuild(
                     self.outfile,
-                    "Thermal shield",
-                    build_variables.thshield,
+                    "Thermal shield, vertical",
+                    build_variables.thshield_vb,
                     vbuild,
-                    "(thshield)",
+                    "(thshield_vb)",
                 )
-                vbuild = vbuild - build_variables.thshield
+                po.ovarre(
+                    self.mfile,
+                    "Thermal shield, vertical (m)",
+                    "(thshield_vb)",
+                    build_variables.thshield_vb,
+                )
+                vbuild = vbuild - build_variables.thshield_vb
 
                 po.obuild(
                     self.outfile,
@@ -1948,13 +1960,13 @@ class Build:
                     "(vgap2)",
                 )
 
-                vbuild = vbuild - build_variables.thshield
+                vbuild = vbuild - build_variables.thshield_vb
                 po.obuild(
                     self.outfile,
-                    "Thermal shield",
-                    build_variables.thshield,
+                    "Thermal shield, vertical",
+                    build_variables.thshield_vb,
                     vbuild,
-                    "(thshield)",
+                    "(thshield_vb)",
                 )
 
                 vbuild = vbuild - build_variables.tftsgap
@@ -1986,7 +1998,7 @@ class Build:
                 vbuild = (
                     build_variables.tfcth
                     + build_variables.tftsgap
-                    + build_variables.thshield
+                    + build_variables.thshield_vb
                     + build_variables.vgap2
                     + 0.5e0 * (build_variables.d_vv_top + build_variables.d_vv_bot)
                     + build_variables.vvblgap
@@ -2020,12 +2032,12 @@ class Build:
 
                 po.obuild(
                     self.outfile,
-                    "Thermal shield",
-                    build_variables.thshield,
+                    "Thermal shield, vertical",
+                    build_variables.thshield_vb,
                     vbuild,
-                    "(thshield)",
+                    "(thshield_vb)",
                 )
-                vbuild = vbuild - build_variables.thshield
+                vbuild = vbuild - build_variables.thshield_vb
 
                 po.obuild(
                     self.outfile,
@@ -2200,13 +2212,13 @@ class Build:
                     "(vgap2)",
                 )
 
-                vbuild = vbuild - build_variables.thshield
+                vbuild = vbuild - build_variables.thshield_vb
                 po.obuild(
                     self.outfile,
-                    "Thermal shield",
-                    build_variables.thshield,
+                    "Thermal shield, vertical",
+                    build_variables.thshield_vb,
                     vbuild,
-                    "(thshield)",
+                    "(thshield_vb)",
                 )
 
                 vbuild = vbuild - build_variables.tftsgap
