@@ -6,12 +6,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-1986-g9343a853a
+   Tag No. : v2.1-1996-g8134be895
     Branch : HEAD
-   Git log : Merge branch |387-old-costs-model-parameters-that-are-required| into |develop|
- Date/time : 15 Jul 2022 14:34:33 +00:00(hh:mm) UTC
+   Git log : Merge branch |1634-cost-model-account-numbers| into |develop|
+ Date/time : 18 Jul 2022 15:28:45 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-8r7le1vq-project-20-concurrent-0
+  Computer : runner-c55928e9-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_kallenbach_0/IN.DAT
  Run title : kallenbach divertor model
@@ -609,13 +609,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  ************************************************ Radial Build ************************************************
  
  Device centreline                            0.000           0.000                       
- Machine build_variables.bore                 2.186           2.186   (bore)              
+ Machine bore                                 2.186           2.186   (bore)              
  Central solenoid                             0.800           2.986   (ohcth)             
  CS precompression                            0.060           3.046   (precomp)           
  Gap                                          0.050           3.096   (gapoh)             
  TF coil inboard leg                          1.017           4.113   (tfcth)             
  Gap                                          0.050           4.163   (tftsgap)           
- Thermal shield                               0.050           4.213   (thshield)          
+ Thermal shield, inboard                      0.050           4.213   (thshield_ib)       
  Gap                                          0.020           4.233   (gapds)             
  Vacuum vessel (and shielding)                0.620           4.853   (d_vv_in + shldith) 
  Gap                                          0.050           4.903   (vvblgap)           
@@ -630,7 +630,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Gap                                          0.050          13.088   (vvblgap)           
  Vacuum vessel (and shielding)                1.120          14.208   (d_vv_out+shldoth)  
  Gap                                          1.358          15.566   (gapsto)            
- Thermal shield                               0.050          15.616   (thshield)          
+ Thermal shield, outboard                     0.050          15.616   (thshield_ob)       
  Gap                                          0.050          15.666   (tftsgap)           
  TF coil outboard leg                         1.017          16.683   (tfthko)            
  
@@ -638,7 +638,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  TF coil                                      1.017           8.543   (tfcth)             
  Gap                                          0.050           7.526   (tftsgap)           
- Thermal shield                               0.050           7.476   (thshield)          
+ Thermal shield, vertical                     0.050           7.476   (thshield_vb)       
  Gap                                          0.120           7.426   (vgap2)             
  Vacuum vessel (and shielding)                0.620           7.306   (d_vv_top+shldtth)  
  Gap                                          0.050           6.686   (vvblgap)           
@@ -652,7 +652,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Divertor structure                           0.200          -6.803   (divfix)            
  Vacuum vessel (and shielding)                1.020          -7.823   (d_vv_bot+shldlth)  
  Gap                                          0.120          -7.943   (vgap2)             
- Thermal shield                               0.050          -7.993   (thshield)          
+ Thermal shield, vertical                     0.050          -7.993   (thshield_vb)       
  Gap                                          0.050          -8.043   (tftsgap)           
  TF coil                                      1.017          -9.060   (tfcth)             
  
