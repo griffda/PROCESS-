@@ -1446,8 +1446,6 @@ def test_cpost(cpostparam, monkeypatch, sctfcoil):
     :type monkeypatch: _pytest.monkeypatch.monkeypatch
     """
 
-    monkeypatch.setattr(tfcoil_variables, "n_tf", cpostparam.n_tf)
-
     monkeypatch.setattr(build_variables, "hmax", cpostparam.hmax)
 
     (
@@ -1471,6 +1469,7 @@ def test_cpost(cpostparam, monkeypatch, sctfcoil):
         curr=cpostparam.curr,
         rho=cpostparam.rho,
         fcool=cpostparam.fcool,
+        n_tf=cpostparam.n_tf,
     )
 
     assert vol_ins_cp == pytest.approx(cpostparam.expected_vol_ins_cp)
