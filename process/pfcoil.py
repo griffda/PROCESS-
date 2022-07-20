@@ -2590,9 +2590,9 @@ class PFCoil:
                 self.outfile,
                 (
                     f"{k}\t\t\t{0.0:.3e}\t{0.0:.3e}\t"
-                    f"{pfv.cpt[k,2]+pfv.cpt[k,1]*(pfv.fcohbof/pfv.fcohbop)*pfv.turns[k]:.3e}\t"
-                    f"{pfv.cpt[k,3]+pfv.cpt[k,1]*pfv.fcohbof/pfv.fcohbop*pfv.turns[k]:.3e}\t"
-                    f"{pfv.cpt[k,4]+pfv.cpt[k,1]*(1.0e0/pfv.fcohbop)*pfv.turns[k]:.3e}\t"
+                    f"{(pfv.cpt[k,2]+pfv.cpt[k,1]*pfv.fcohbof/pfv.fcohbop)*pfv.turns[k]:.3e}\t"
+                    f"{(pfv.cpt[k,3]+pfv.cpt[k,1]*pfv.fcohbof/pfv.fcohbop)*pfv.turns[k]:.3e}\t"
+                    f"{(pfv.cpt[k,4]+pfv.cpt[k,1]*1.0e0/pfv.fcohbop)*pfv.turns[k]:.3e}\t"
                     "0.0e0"
                 ),
             )
