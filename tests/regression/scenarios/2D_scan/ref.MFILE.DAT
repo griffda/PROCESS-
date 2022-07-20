@@ -3,13 +3,13 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.4.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "18/07/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "15:18"
+ Date_of_run_____________________________________________________________ (date)________________________     "20/07/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "09:17"
  User____________________________________________________________________ (username)____________________     "root"    
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "Run Title (change this line using input variable 'runtitle')                                       
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1996-g8134be895"                                                                              
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-2006-g4a375f66c"                                                                              
  PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "HEAD"                                                                                              
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch |1634-cost-model-account-numbers| into |develop|"                                     
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch |1700-light-wrap-around-physics_functions-to-unblock-impurity| into |develop|"        
  Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-root/pytest-0/test_scenario_2D_scan_0/IN.DAT                                                                                                                                             "
  Number_of_first_variable_scan_points____________________________________ (isweep)______________________              2    
  Number_of_second_variable_scan_points___________________________________ (isweep_2)____________________              2    
@@ -149,30 +149,30 @@
  ftaulimit_______________________________________________________________ (itvar040)____________________      1.0000E+00    
  ftaulimit_(final_value/initial_value)___________________________________ (xcm040)______________________      1.0000E+00    
  ftaulimit_(range_normalised)____________________________________________ (nitvar040)___________________      1.0000E+00    
- Beta_consistency__________________normalised_residue____________________ (normres001)__________________      8.6597E-15    
- Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________     -2.4980E-14    
- Density_upper_limit_______________normalised_residue____________________ (normres003)__________________      6.6613E-16    
- Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres004)__________________     -7.8271E-14    
- Radial_build_consistency__________normalised_residue____________________ (normres005)__________________      4.4409E-16    
+ Beta_consistency__________________normalised_residue____________________ (normres001)__________________      9.7700E-15    
+ Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________     -2.5202E-14    
+ Density_upper_limit_______________normalised_residue____________________ (normres003)__________________     -1.1102E-16    
+ Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres004)__________________     -7.8826E-14    
+ Radial_build_consistency__________normalised_residue____________________ (normres005)__________________      6.6613E-16    
  Burn_time_lower_limit_____________normalised_residue____________________ (normres006)__________________      7.0482E-10    
- L-H_power_threshold_limit_________normalised_residue____________________ (normres007)__________________      2.2260E-13    
+ L-H_power_threshold_limit_________normalised_residue____________________ (normres007)__________________      2.1860E-13    
  Net_electric_power_lower_limit____normalised_residue____________________ (normres008)__________________     -2.3560E-10    
- Beta_upper_limit__________________normalised_residue____________________ (normres009)__________________      9.1038E-15    
- CS_coil_EOF_current_density_limit_normalised_residue____________________ (normres010)__________________     -5.0737E-14    
- CS_coil_BOP_current_density_limit_normalised_residue____________________ (normres011)__________________     -2.0095E-14    
- Injection_power_upper_limit_______normalised_residue____________________ (normres012)__________________      1.5543E-15    
- TF_coil_case_stress_upper_limit___normalised_residue____________________ (normres013)__________________      5.1070E-15    
- TF_coil_conduit_stress_upper_lim__normalised_residue____________________ (normres014)__________________      5.9952E-15    
+ Beta_upper_limit__________________normalised_residue____________________ (normres009)__________________      9.5479E-15    
+ CS_coil_EOF_current_density_limit_normalised_residue____________________ (normres010)__________________     -4.8961E-14    
+ CS_coil_BOP_current_density_limit_normalised_residue____________________ (normres011)__________________     -1.9540E-14    
+ Injection_power_upper_limit_______normalised_residue____________________ (normres012)__________________     -6.6613E-16    
+ TF_coil_case_stress_upper_limit___normalised_residue____________________ (normres013)__________________      5.7732E-15    
+ TF_coil_conduit_stress_upper_lim__normalised_residue____________________ (normres014)__________________      6.4393E-15    
  I_op_/_I_critical_(TF_coil)_______normalised_residue____________________ (normres015)__________________      7.9936E-15    
- Dump_voltage_upper_limit__________normalised_residue____________________ (normres016)__________________      5.6851E-10    
- J_winding_pack/J_protection_limit_normalised_residue____________________ (normres017)__________________      2.2204E-15    
- Upper_Lim._on_Psep_*_Bt_/_q_A_R___normalised_residue____________________ (normres018)__________________     -2.0295E-13    
- Dump_time_set_by_VV_stress________normalised_residue____________________ (normres019)__________________      9.3259E-15    
- TF_coil_temp._margin_lower_limit__normalised_residue____________________ (normres020)__________________      2.6001E-13    
+ Dump_voltage_upper_limit__________normalised_residue____________________ (normres016)__________________      5.6852E-10    
+ J_winding_pack/J_protection_limit_normalised_residue____________________ (normres017)__________________      1.7764E-15    
+ Upper_Lim._on_Psep_*_Bt_/_q_A_R___normalised_residue____________________ (normres018)__________________     -2.0006E-13    
+ Dump_time_set_by_VV_stress________normalised_residue____________________ (normres019)__________________      9.5479E-15    
+ TF_coil_temp._margin_lower_limit__normalised_residue____________________ (normres020)__________________      2.6046E-13    
  CS_temperature_margin_lower_limit_normalised_residue____________________ (normres021)__________________      5.1803E-09    
- CS_Tresca_yield_criterion_________normalised_residue____________________ (normres022)__________________     -8.4377E-15    
- Peak_toroidal_field_upper_limit___normalised_residue____________________ (normres023)__________________      1.3323E-15    
- taup/taueff_______________________normalised_residue____________________ (normres024)__________________      6.6613E-15    
+ CS_Tresca_yield_criterion_________normalised_residue____________________ (normres022)__________________     -6.8834E-15    
+ Peak_toroidal_field_upper_limit___normalised_residue____________________ (normres023)__________________      8.8818E-16    
+ taup/taueff_______________________normalised_residue____________________ (normres024)__________________      4.2188E-15    
  # Final Feasible Point #
  # Plant Availability #
  Allowable_blanket_neutron_fluence_(MW-yr/m2)____________________________ (abktflnc)____________________      1.5000E+01    
@@ -510,7 +510,7 @@
  WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_axial*1.0D-9)______      1.2751E+02 OP 
  WP_transverse_Poisson's_ratio___________________________________________ (poisson_wp_trans)____________      3.0540E-01 OP 
  WP_vertical-transverse_Pois._rat._______________________________________ (poisson_wp_axial)____________      3.1492E-01 OP 
- Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________      0.0000E+00    
+ Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________      2.4424E-08    
  toroidal__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_t_max(1))_____________     -3.9746E+08    
  Vertical__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_z_max(1))_____________      1.8254E+08    
  Von-Mises_stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_vmises_max(1))________      5.1366E+08    
@@ -1175,30 +1175,30 @@
  ftaulimit_______________________________________________________________ (itvar040)____________________      1.0000E+00    
  ftaulimit_(final_value/initial_value)___________________________________ (xcm040)______________________      1.0000E+00    
  ftaulimit_(range_normalised)____________________________________________ (nitvar040)___________________      1.0000E+00    
- Beta_consistency__________________normalised_residue____________________ (normres001)__________________     -2.2538E-14    
- Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________     -1.1545E-11    
- Density_upper_limit_______________normalised_residue____________________ (normres003)__________________      6.0618E-14    
- Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres004)__________________     -1.0251E-12    
- Radial_build_consistency__________normalised_residue____________________ (normres005)__________________      4.4187E-14    
+ Beta_consistency__________________normalised_residue____________________ (normres001)__________________     -2.2427E-14    
+ Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________     -1.1544E-11    
+ Density_upper_limit_______________normalised_residue____________________ (normres003)__________________      6.0396E-14    
+ Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres004)__________________     -1.0255E-12    
+ Radial_build_consistency__________normalised_residue____________________ (normres005)__________________      4.4409E-14    
  Burn_time_lower_limit_____________normalised_residue____________________ (normres006)__________________      5.6988E-10    
- L-H_power_threshold_limit_________normalised_residue____________________ (normres007)__________________      8.3905E-11    
- Net_electric_power_lower_limit____normalised_residue____________________ (normres008)__________________     -2.9807E-10    
- Beta_upper_limit__________________normalised_residue____________________ (normres009)__________________     -1.8030E-13    
- CS_coil_EOF_current_density_limit_normalised_residue____________________ (normres010)__________________     -3.8021E-12    
- CS_coil_BOP_current_density_limit_normalised_residue____________________ (normres011)__________________     -3.9821E-12    
- Injection_power_upper_limit_______normalised_residue____________________ (normres012)__________________      3.5246E-10    
- TF_coil_case_stress_upper_limit___normalised_residue____________________ (normres013)__________________      4.8095E-13    
- TF_coil_conduit_stress_upper_lim__normalised_residue____________________ (normres014)__________________      5.0249E-13    
- I_op_/_I_critical_(TF_coil)_______normalised_residue____________________ (normres015)__________________      6.3105E-13    
+ L-H_power_threshold_limit_________normalised_residue____________________ (normres007)__________________      8.3906E-11    
+ Net_electric_power_lower_limit____normalised_residue____________________ (normres008)__________________     -2.9806E-10    
+ Beta_upper_limit__________________normalised_residue____________________ (normres009)__________________     -1.8086E-13    
+ CS_coil_EOF_current_density_limit_normalised_residue____________________ (normres010)__________________     -3.8017E-12    
+ CS_coil_BOP_current_density_limit_normalised_residue____________________ (normres011)__________________     -3.9816E-12    
+ Injection_power_upper_limit_______normalised_residue____________________ (normres012)__________________      3.5245E-10    
+ TF_coil_case_stress_upper_limit___normalised_residue____________________ (normres013)__________________      4.4431E-13    
+ TF_coil_conduit_stress_upper_lim__normalised_residue____________________ (normres014)__________________      4.5786E-13    
+ I_op_/_I_critical_(TF_coil)_______normalised_residue____________________ (normres015)__________________      6.2661E-13    
  Dump_voltage_upper_limit__________normalised_residue____________________ (normres016)__________________     -4.7181E-11    
- J_winding_pack/J_protection_limit_normalised_residue____________________ (normres017)__________________      1.3545E-13    
- Upper_Lim._on_Psep_*_Bt_/_q_A_R___normalised_residue____________________ (normres018)__________________     -7.8954E-11    
- Dump_time_set_by_VV_stress________normalised_residue____________________ (normres019)__________________      7.9070E-13    
- TF_coil_temp._margin_lower_limit__normalised_residue____________________ (normres020)__________________      3.0508E-11    
+ J_winding_pack/J_protection_limit_normalised_residue____________________ (normres017)__________________      1.3700E-13    
+ Upper_Lim._on_Psep_*_Bt_/_q_A_R___normalised_residue____________________ (normres018)__________________     -7.8956E-11    
+ Dump_time_set_by_VV_stress________normalised_residue____________________ (normres019)__________________      7.9292E-13    
+ TF_coil_temp._margin_lower_limit__normalised_residue____________________ (normres020)__________________      3.0483E-11    
  CS_temperature_margin_lower_limit_normalised_residue____________________ (normres021)__________________     -1.3288E-09    
- CS_Tresca_yield_criterion_________normalised_residue____________________ (normres022)__________________     -1.3847E-12    
- Peak_toroidal_field_upper_limit___normalised_residue____________________ (normres023)__________________      9.8588E-14    
- taup/taueff_______________________normalised_residue____________________ (normres024)__________________      3.2570E-11    
+ CS_Tresca_yield_criterion_________normalised_residue____________________ (normres022)__________________     -1.3805E-12    
+ Peak_toroidal_field_upper_limit___normalised_residue____________________ (normres023)__________________      9.9698E-14    
+ taup/taueff_______________________normalised_residue____________________ (normres024)__________________      3.2568E-11    
  # Final Feasible Point #
  # Plant Availability #
  Allowable_blanket_neutron_fluence_(MW-yr/m2)____________________________ (abktflnc)____________________      1.5000E+01    
@@ -1536,7 +1536,7 @@
  WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_axial*1.0D-9)______      1.2782E+02 OP 
  WP_transverse_Poisson's_ratio___________________________________________ (poisson_wp_trans)____________      3.0540E-01 OP 
  WP_vertical-transverse_Pois._rat._______________________________________ (poisson_wp_axial)____________      3.1484E-01 OP 
- Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________      2.4424E-08    
+ Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________      0.0000E+00    
  toroidal__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_t_max(1))_____________     -3.9833E+08    
  Vertical__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_z_max(1))_____________      1.8167E+08    
  Von-Mises_stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_vmises_max(1))________      5.1384E+08    
@@ -2078,7 +2078,7 @@
  Number_of_constraints_(total)___________________________________________ (neqns+nineqns)_______________             24    
  Optimisation_switch_____________________________________________________ (ioptimz)_____________________              1    
  Figure_of_merit_switch__________________________________________________ (minmax)______________________              1    
- Square_root_of_the_sum_of_squares_of_the_constraint_residuals___________ (sqsumsq)_____________________      3.2661E-09 OP 
+ Square_root_of_the_sum_of_squares_of_the_constraint_residuals___________ (sqsumsq)_____________________      3.2660E-09 OP 
  VMCON_convergence_parameter_____________________________________________ (convergence_parameter)_______      3.9769E-10 OP 
  Number_of_VMCON_iterations______________________________________________ (nviter)______________________             15 OP 
  bt______________________________________________________________________ (itvar001)____________________      5.4955E+00    
@@ -2161,7 +2161,7 @@
  thkcas_(range_normalised)_______________________________________________ (nitvar026)___________________      5.5974E-01    
  thwcndut________________________________________________________________ (itvar027)____________________      8.0000E-03    
  thwcndut_(final_value/initial_value)____________________________________ (xcm027)______________________      7.0544E-01    
- thwcndut_(range_normalised)_____________________________________________ (nitvar027)___________________      2.3265E-16    
+ thwcndut_(range_normalised)_____________________________________________ (nitvar027)___________________      5.4741E-17    
  gapds___________________________________________________________________ (itvar028)____________________      2.0000E-02    
  gapds_(final_value/initial_value)_______________________________________ (xcm028)______________________      1.0000E+00    
  gapds_(range_normalised)________________________________________________ (nitvar028)___________________      0.0000E+00    
@@ -2202,29 +2202,29 @@
  ftaulimit_(final_value/initial_value)___________________________________ (xcm040)______________________      1.0000E+00    
  ftaulimit_(range_normalised)____________________________________________ (nitvar040)___________________      1.0000E+00    
  Beta_consistency__________________normalised_residue____________________ (normres001)__________________      2.7978E-14    
- Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________     -6.1062E-14    
- Density_upper_limit_______________normalised_residue____________________ (normres003)__________________     -2.2204E-16    
- Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres004)__________________     -2.2404E-13    
+ Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________     -6.0507E-14    
+ Density_upper_limit_______________normalised_residue____________________ (normres003)__________________     -1.6653E-15    
+ Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres004)__________________     -2.2449E-13    
  Radial_build_consistency__________normalised_residue____________________ (normres005)__________________     -0.0000E+00    
- Burn_time_lower_limit_____________normalised_residue____________________ (normres006)__________________      2.0302E-11    
- L-H_power_threshold_limit_________normalised_residue____________________ (normres007)__________________      5.3846E-13    
+ Burn_time_lower_limit_____________normalised_residue____________________ (normres006)__________________      2.0316E-11    
+ L-H_power_threshold_limit_________normalised_residue____________________ (normres007)__________________      5.3657E-13    
  Net_electric_power_lower_limit____normalised_residue____________________ (normres008)__________________      3.2501E-10    
- Beta_upper_limit__________________normalised_residue____________________ (normres009)__________________      3.2863E-14    
- CS_coil_EOF_current_density_limit_normalised_residue____________________ (normres010)__________________      3.0642E-14    
- CS_coil_BOP_current_density_limit_normalised_residue____________________ (normres011)__________________      4.1078E-14    
- Injection_power_upper_limit_______normalised_residue____________________ (normres012)__________________      5.7732E-15    
- TF_coil_case_stress_upper_limit___normalised_residue____________________ (normres013)__________________     -3.1086E-15    
- TF_coil_conduit_stress_upper_lim__normalised_residue____________________ (normres014)__________________     -7.7716E-16    
- I_op_/_I_critical_(TF_coil)_______normalised_residue____________________ (normres015)__________________     -1.4433E-15    
- Dump_voltage_upper_limit__________normalised_residue____________________ (normres016)__________________      1.1102E-14    
- J_winding_pack/J_protection_limit_normalised_residue____________________ (normres017)__________________     -2.5535E-15    
- Upper_Lim._on_Psep_*_Bt_/_q_A_R___normalised_residue____________________ (normres018)__________________     -4.8461E-13    
- Dump_time_set_by_VV_stress________normalised_residue____________________ (normres019)__________________      1.1102E-15    
- TF_coil_temp._margin_lower_limit__normalised_residue____________________ (normres020)__________________      6.4393E-15    
+ Beta_upper_limit__________________normalised_residue____________________ (normres009)__________________      3.2419E-14    
+ CS_coil_EOF_current_density_limit_normalised_residue____________________ (normres010)__________________      4.0856E-14    
+ CS_coil_BOP_current_density_limit_normalised_residue____________________ (normres011)__________________      5.1958E-14    
+ Injection_power_upper_limit_______normalised_residue____________________ (normres012)__________________     -1.5543E-15    
+ TF_coil_case_stress_upper_limit___normalised_residue____________________ (normres013)__________________     -2.2427E-14    
+ TF_coil_conduit_stress_upper_lim__normalised_residue____________________ (normres014)__________________     -3.1974E-14    
+ I_op_/_I_critical_(TF_coil)_______normalised_residue____________________ (normres015)__________________     -6.7724E-15    
+ Dump_voltage_upper_limit__________normalised_residue____________________ (normres016)__________________      5.3291E-15    
+ J_winding_pack/J_protection_limit_normalised_residue____________________ (normres017)__________________      1.7764E-15    
+ Upper_Lim._on_Psep_*_Bt_/_q_A_R___normalised_residue____________________ (normres018)__________________     -4.8272E-13    
+ Dump_time_set_by_VV_stress________normalised_residue____________________ (normres019)__________________      1.7764E-15    
+ TF_coil_temp._margin_lower_limit__normalised_residue____________________ (normres020)__________________     -7.6605E-15    
  CS_temperature_margin_lower_limit_normalised_residue____________________ (normres021)__________________      3.2499E-09    
- CS_Tresca_yield_criterion_________normalised_residue____________________ (normres022)__________________      1.9762E-14    
- Peak_toroidal_field_upper_limit___normalised_residue____________________ (normres023)__________________     -0.0000E+00    
- taup/taueff_______________________normalised_residue____________________ (normres024)__________________     -4.1078E-14    
+ CS_Tresca_yield_criterion_________normalised_residue____________________ (normres022)__________________      1.8874E-14    
+ Peak_toroidal_field_upper_limit___normalised_residue____________________ (normres023)__________________      2.2204E-16    
+ taup/taueff_______________________normalised_residue____________________ (normres024)__________________     -4.0523E-14    
  # Final Feasible Point #
  # Plant Availability #
  Allowable_blanket_neutron_fluence_(MW-yr/m2)____________________________ (abktflnc)____________________      1.5000E+01    
@@ -2562,7 +2562,7 @@
  WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_axial*1.0D-9)______      1.1005E+02 OP 
  WP_transverse_Poisson's_ratio___________________________________________ (poisson_wp_trans)____________      3.0580E-01 OP 
  WP_vertical-transverse_Pois._rat._______________________________________ (poisson_wp_axial)____________      3.1833E-01 OP 
- Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________      2.4424E-08    
+ Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________      0.0000E+00    
  toroidal__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_t_max(1))_____________     -3.7095E+08    
  Vertical__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_z_max(1))_____________      2.0905E+08    
  Von-Mises_stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_vmises_max(1))________      5.0878E+08    
@@ -3105,7 +3105,7 @@
  Optimisation_switch_____________________________________________________ (ioptimz)_____________________              1    
  Figure_of_merit_switch__________________________________________________ (minmax)______________________              1    
  Square_root_of_the_sum_of_squares_of_the_constraint_residuals___________ (sqsumsq)_____________________      3.6853E-09 OP 
- VMCON_convergence_parameter_____________________________________________ (convergence_parameter)_______      5.5958E-10 OP 
+ VMCON_convergence_parameter_____________________________________________ (convergence_parameter)_______      5.5960E-10 OP 
  Number_of_VMCON_iterations______________________________________________ (nviter)______________________             12 OP 
  bt______________________________________________________________________ (itvar001)____________________      5.4774E+00    
  bt_(final_value/initial_value)__________________________________________ (xcm001)______________________      9.9671E-01    
@@ -3187,7 +3187,7 @@
  thkcas_(range_normalised)_______________________________________________ (nitvar026)___________________      5.6246E-01    
  thwcndut________________________________________________________________ (itvar027)____________________      8.0000E-03    
  thwcndut_(final_value/initial_value)____________________________________ (xcm027)______________________      1.0000E+00    
- thwcndut_(range_normalised)_____________________________________________ (nitvar027)___________________      9.6541E-18    
+ thwcndut_(range_normalised)_____________________________________________ (nitvar027)___________________      1.9308E-17    
  gapds___________________________________________________________________ (itvar028)____________________      2.0000E-02    
  gapds_(final_value/initial_value)_______________________________________ (xcm028)______________________      1.0000E+00    
  gapds_(range_normalised)________________________________________________ (nitvar028)___________________      0.0000E+00    
@@ -3227,30 +3227,30 @@
  ftaulimit_______________________________________________________________ (itvar040)____________________      1.0000E+00    
  ftaulimit_(final_value/initial_value)___________________________________ (xcm040)______________________      1.0000E+00    
  ftaulimit_(range_normalised)____________________________________________ (nitvar040)___________________      1.0000E+00    
- Beta_consistency__________________normalised_residue____________________ (normres001)__________________      4.7740E-14    
- Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________     -9.7033E-14    
- Density_upper_limit_______________normalised_residue____________________ (normres003)__________________      2.2204E-16    
- Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres004)__________________     -3.7104E-13    
+ Beta_consistency__________________normalised_residue____________________ (normres001)__________________      4.8850E-14    
+ Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________     -9.5812E-14    
+ Density_upper_limit_______________normalised_residue____________________ (normres003)__________________     -3.3307E-16    
+ Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres004)__________________     -3.6937E-13    
  Radial_build_consistency__________normalised_residue____________________ (normres005)__________________      6.6613E-16    
- Burn_time_lower_limit_____________normalised_residue____________________ (normres006)__________________      4.7172E-10    
- L-H_power_threshold_limit_________normalised_residue____________________ (normres007)__________________      5.9297E-13    
- Net_electric_power_lower_limit____normalised_residue____________________ (normres008)__________________      1.1308E-10    
- Beta_upper_limit__________________normalised_residue____________________ (normres009)__________________      5.3291E-14    
- CS_coil_EOF_current_density_limit_normalised_residue____________________ (normres010)__________________     -6.7724E-15    
- CS_coil_BOP_current_density_limit_normalised_residue____________________ (normres011)__________________      9.5479E-15    
- Injection_power_upper_limit_______normalised_residue____________________ (normres012)__________________      3.7748E-15    
- TF_coil_case_stress_upper_limit___normalised_residue____________________ (normres013)__________________     -1.1324E-14    
- TF_coil_conduit_stress_upper_lim__normalised_residue____________________ (normres014)__________________     -1.2434E-14    
- I_op_/_I_critical_(TF_coil)_______normalised_residue____________________ (normres015)__________________      7.1054E-15    
- Dump_voltage_upper_limit__________normalised_residue____________________ (normres016)__________________      1.7986E-14    
- J_winding_pack/J_protection_limit_normalised_residue____________________ (normres017)__________________      1.5543E-15    
- Upper_Lim._on_Psep_*_Bt_/_q_A_R___normalised_residue____________________ (normres018)__________________     -5.0682E-13    
+ Burn_time_lower_limit_____________normalised_residue____________________ (normres006)__________________      4.7173E-10    
+ L-H_power_threshold_limit_________normalised_residue____________________ (normres007)__________________      5.9375E-13    
+ Net_electric_power_lower_limit____normalised_residue____________________ (normres008)__________________      1.1307E-10    
+ Beta_upper_limit__________________normalised_residue____________________ (normres009)__________________      5.4179E-14    
+ CS_coil_EOF_current_density_limit_normalised_residue____________________ (normres010)__________________     -3.4417E-15    
+ CS_coil_BOP_current_density_limit_normalised_residue____________________ (normres011)__________________      1.2212E-14    
+ Injection_power_upper_limit_______normalised_residue____________________ (normres012)__________________      7.5495E-15    
+ TF_coil_case_stress_upper_limit___normalised_residue____________________ (normres013)__________________      1.5765E-14    
+ TF_coil_conduit_stress_upper_lim__normalised_residue____________________ (normres014)__________________      1.9318E-14    
+ I_op_/_I_critical_(TF_coil)_______normalised_residue____________________ (normres015)__________________      1.7986E-14    
+ Dump_voltage_upper_limit__________normalised_residue____________________ (normres016)__________________      1.2212E-14    
+ J_winding_pack/J_protection_limit_normalised_residue____________________ (normres017)__________________      3.5527E-15    
+ Upper_Lim._on_Psep_*_Bt_/_q_A_R___normalised_residue____________________ (normres018)__________________     -5.0626E-13    
  Dump_time_set_by_VV_stress________normalised_residue____________________ (normres019)__________________      9.7700E-15    
- TF_coil_temp._margin_lower_limit__normalised_residue____________________ (normres020)__________________      5.7954E-14    
- CS_temperature_margin_lower_limit_normalised_residue____________________ (normres021)__________________      3.6534E-09    
- CS_Tresca_yield_criterion_________normalised_residue____________________ (normres022)__________________      3.3307E-15    
- Peak_toroidal_field_upper_limit___normalised_residue____________________ (normres023)__________________      1.3323E-15    
- taup/taueff_______________________normalised_residue____________________ (normres024)__________________     -6.8057E-14    
+ TF_coil_temp._margin_lower_limit__normalised_residue____________________ (normres020)__________________      9.2371E-14    
+ CS_temperature_margin_lower_limit_normalised_residue____________________ (normres021)__________________      3.6533E-09    
+ CS_Tresca_yield_criterion_________normalised_residue____________________ (normres022)__________________      4.2188E-15    
+ Peak_toroidal_field_upper_limit___normalised_residue____________________ (normres023)__________________      1.1102E-15    
+ taup/taueff_______________________normalised_residue____________________ (normres024)__________________     -6.8945E-14    
  # Final Feasible Point #
  # Plant Availability #
  Allowable_blanket_neutron_fluence_(MW-yr/m2)____________________________ (abktflnc)____________________      1.5000E+01    

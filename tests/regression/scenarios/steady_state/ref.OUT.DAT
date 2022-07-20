@@ -6,12 +6,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-1996-g8134be895
+   Tag No. : v2.1-2006-g4a375f66c
     Branch : HEAD
-   Git log : Merge branch |1634-cost-model-account-numbers| into |develop|
- Date/time : 18 Jul 2022 15:30:44 +00:00(hh:mm) UTC
+   Git log : Merge branch |1700-light-wrap-around-physics_functions-to-unblock-impurity| into |develop|
+ Date/time : 20 Jul 2022  9:31:27 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-c55928e9-project-20-concurrent-0
+  Computer : runner-9dc50af2-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_steady_state_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
@@ -131,30 +131,30 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  6.8017E-02              2.6093E-13                -3.8363E-12
-    2  Global power balance consistency      =  2.0722E-01 MW/m3       -1.1912E-12 MW/m3           5.7485E-12
-    3  Density upper limit                   <  7.0874E+19 /m3         -2.2118E+05 /m3            -3.1086E-15
-    4  Neutron wall load upper limit         <  1.2835E+00 MW/m2        3.2953E-11 MW/m2           2.5675E-11
-    5  Radial build consistency              =  8.7499E+00 m           -7.1886E-14 m               8.2157E-15
-    6  Volt second lower limit               >  3.9935E+02 V.sec        1.2153E-10 V.sec          -3.0431E-13
-    7  L-H power threshold limit             >  9.3614E+01 MW           9.0700E-09 MW             -9.6888E-11
-    8  Net electric power lower limit        >  5.0000E+02 MW          -2.9597E-08 MW             -5.9194E-11
-    9  Beta upper limit                      <  7.5986E-02             -3.4264E-13                -4.5094E-12
-   10  Peak toroidal field upper limit       <  1.1200E+01 T           -2.5366E-13 T               2.2649E-14
-   11  CS coil EOF current density limit     <  5.5990E+07 A/m2         1.1756E-04 A/m2            2.0999E-12
-   12  CS coil BOP current density limit     <  4.1669E+07 A/m2        -9.0566E-04 A/m2           -2.1735E-11
-   13  Injection power upper limit           <  2.2500E+02 MW           5.7980E-12 MW             -2.5757E-14
-   14  TF coil case stress upper limit       <  5.8000E+08 Pa           1.4067E-05 Pa              2.4203E-14
-   15  TF coil conduit stress upper lim      <  5.8000E+08 Pa           1.5259E-05 Pa              2.6423E-14
-   16  I_op / I_critical (TF coil)           <  2.0704E+07 A/m2        -1.2108E-06 A/m2            7.8604E-14
-   17  Dump voltage upper limit              <  1.0000E+01 V            8.1712E-14 V               8.2157E-15
-   18  J_winding pack/J_protection limit     <  1.5404E+07 A/m2         0.0000E+00 A/m2            9.7033E-14
-   19  TF coil temp. margin lower limit      >  1.5000E+00 K            1.3183E-11 K              -8.7884E-12
+    1  Beta consistency                      =  6.8017E-02              2.6074E-13                -3.8334E-12
+    2  Global power balance consistency      =  2.0722E-01 MW/m3       -1.1916E-12 MW/m3           5.7503E-12
+    3  Density upper limit                   <  7.0874E+19 /m3         -3.5226E+05 /m3            -4.9960E-15
+    4  Neutron wall load upper limit         <  1.2835E+00 MW/m2        3.2947E-11 MW/m2           2.5670E-11
+    5  Radial build consistency              =  8.7499E+00 m           -7.5771E-14 m               8.6597E-15
+    6  Volt second lower limit               >  3.9935E+02 V.sec        1.2197E-10 V.sec          -3.0542E-13
+    7  L-H power threshold limit             >  9.3614E+01 MW           9.0701E-09 MW             -9.6889E-11
+    8  Net electric power lower limit        >  5.0000E+02 MW          -2.9595E-08 MW             -5.9190E-11
+    9  Beta upper limit                      <  7.5986E-02             -3.4263E-13                -4.5092E-12
+   10  Peak toroidal field upper limit       <  1.1200E+01 T           -2.5864E-13 T               2.3093E-14
+   11  CS coil EOF current density limit     <  5.5990E+07 A/m2         1.1742E-04 A/m2            2.0972E-12
+   12  CS coil BOP current density limit     <  4.1669E+07 A/m2        -9.0573E-04 A/m2           -2.1736E-11
+   13  Injection power upper limit           <  2.2500E+02 MW           5.8549E-12 MW             -2.5979E-14
+   14  TF coil case stress upper limit       <  5.8000E+08 Pa           1.8835E-05 Pa              3.2419E-14
+   15  TF coil conduit stress upper lim      <  5.8000E+08 Pa           2.0027E-05 Pa              3.4417E-14
+   16  I_op / I_critical (TF coil)           <  2.0704E+07 A/m2        -1.2689E-06 A/m2            8.2379E-14
+   17  Dump voltage upper limit              <  1.0000E+01 V            6.9278E-14 V               6.6613E-15
+   18  J_winding pack/J_protection limit     <  1.5404E+07 A/m2         0.0000E+00 A/m2            9.6811E-14
+   19  TF coil temp. margin lower limit      >  1.5000E+00 K            1.3166E-11 K              -8.7775E-12
    20  CS temperature margin lower limit     >  1.5000E+00 K           -1.7358E-01 K              -1.4727E-10
-   21  taup/taueff                           >  5.0000E+00             -3.4255E-11                 6.8510E-12
+   21  taup/taueff                           >  5.0000E+00             -3.4250E-11                 6.8501E-12
    22  Dump time set by VV stress            >  2.8309E+01 s           -8.8926E-02 s               2.7089E-14
-   23  Upper Lim. on Psep * Bt / q A R       <  9.2000E+00 MWT/m       -8.3717E-10 MWT/m           9.0996E-11
-   24  CS Tresca yield criterion             <  6.6000E+08 Pa           9.0628E+07 Pa             -4.6134E-12
+   23  Upper Lim. on Psep * Bt / q A R       <  9.2000E+00 MWT/m       -8.3714E-10 MWT/m           9.0993E-11
+   24  CS Tresca yield criterion             <  6.6000E+08 Pa           9.0628E+07 Pa             -4.6099E-12
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -1308,16 +1308,16 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  htpmw_blkt                                                                     0.00                     0.00
  
  Shield:
- 2.5177670582933027 0.0 2.5177670582933027
+ 2.517767058293195 0.0 2.517767058293195
  0.0e0 0.0e0 0.0e0
  0.0e0 0.0e0 0.0e0
- 0.012588835291466514 0.0 0.012588835291466514
+ 0.012588835291465974 0.0 0.012588835291465974
  
  Divertor:
- 282.00134907638693 0.0 282.00134907638693
- 164.0692559413451 0.0 164.0692559413451
- 74.23756012002418 0.0 74.23756012002418
- 2.601540825688781 0.0 2.601540825688781
+ 282.00134907638045 0.0 282.00134907638045
+ 164.06925594134464 0.0 164.06925594134464
+ 74.23756012002269 0.0 74.23756012002269
+ 2.601540825688739 0.0 2.601540825688739
  
  TF coil:
  ptfnuc                                                                         0.00                     0.07
@@ -1331,7 +1331,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  pradhcd                                                                        0.00                     0.00
  0.0e0 0.0e0 0.0e0
  
- 3876.293113312662 0.06568220136531053 3876.3587955140274
+ 3876.2931133125776 0.06568220136530838 3876.358795513943
  
  Total power leaving reactor (across vacuum vessel boundary) (MW)                                    3876.424  OP 
  
@@ -1425,39 +1425,39 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  tramp tohs theat tburn tqnch tdwell
  ----- ---- ----- ----- ----- ------
- Duration 50.260131010504004 50.260131010504004 10.0 10000.0 50.260131010504004 0.0
+ Duration 50.260131010502526 50.260131010502526 10.0 10000.0 50.260131010502526 0.0
  ------ ----- ---- ----- ----- ----- ------
  
  Continous power usage [MWe]:
  
  System tramp tohs theat tburn tqnch tdwell
  ------ ----- ---- ----- ----- ----- ------
- Primary cooling 381.4328531410532 381.4328531410532 381.4328531410532 381.4328531410532 381.4328531410532 381.4328531410532
- Cryoplant 36.22390745334486 36.22390745334486 36.22390745334486 36.22390745334486 36.22390745334486 36.22390745334486
+ Primary cooling 381.43285314104463 381.43285314104463 381.43285314104463 381.43285314104463 381.43285314104463 381.43285314104463
+ Cryoplant 36.22390745332707 36.22390745332707 36.22390745332707 36.22390745332707 36.22390745332707 36.22390745332707
  Vacuum 0.5 0.5 0.5 0.5 0.5 0.5
  Tritium 15.0 15.0 15.0 15.0 15.0 15.0
- TF 6.834707490539754 6.834707490539754 6.834707490539754 6.834707490539754 6.834707490539754 6.834707490539754
- Facilities 73.8720530843917 73.8720530843917 73.8720530843917 73.8720530843917 73.8720530843917 73.8720530843917
+ TF 6.834707490539694 6.834707490539694 6.834707490539694 6.834707490539694 6.834707490539694 6.834707490539694
+ Facilities 73.87205308439016 73.87205308439016 73.87205308439016 73.87205308439016 73.87205308439016 73.87205308439016
  ------ ----- ---- ----- ----- ----- ------
- Total 513.8635211693295 513.8635211693295 513.8635211693295 513.8635211693295 513.8635211693295 513.8635211693295
+ Total 513.8635211693015 513.8635211693015 513.8635211693015 513.8635211693015 513.8635211693015 513.8635211693015
  ------ ----- ---- ----- ----- ----- ------
  
  Intermittent power usage [MWe]:
  
  System tramp tohs theat tburn tqnch tdwell
  ------ ----- ---- ----- ----- ----- ------
- H & CD 0.0 300.0 300.0 562.4999999999854 300.0 0.0
- PF 206.1652779900779 428.2435938154254 0.0 0.0 -634.4088718055064 0.0
+ H & CD 0.0 300.0 300.0 562.4999999999853 300.0 0.0
+ PF 206.16527798297685 428.2435938155557 0.0 0.0 -634.40887179854 0.0
  ------ ----- ---- ----- ----- ----- ------
- Total 206.1652779900779 728.2435938154254 300.0 562.4999999999854 -334.40887180550635 0.0
+ Total 206.16527798297685 728.2435938155556 300.0 562.4999999999853 -334.40887179853996 0.0
  ------ ----- ---- ----- ----- ----- ------
  
  Power production [MWe]:
  
   tramp tohs theat tburn tqnch tdwell avg
   ----- ---- ----- ----- ----- ------ ---
- Gross power 0.0 0.0 0.0 1577.0720872066495 0.0 0.0
- Net power -720.0287991594074 -1242.1071149847548 -813.8635211693295 500.70856603733455 -179.45464936382314 -513.8635211693295
+ Gross power 0.0 0.0 0.0 1577.0720872066154 0.0 0.0
+ Net power -720.0287991522783 -1242.1071149848572 -813.8635211693015 500.70856603732864 -179.45464937076156 -513.8635211693015
  ------ ----- ---- ----- ----- ----- ------
  
  
