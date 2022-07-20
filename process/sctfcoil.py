@@ -15,7 +15,6 @@ from process.fortran import process_output as po
 from process.fortran import error_handling
 from process.fortran import fwbs_variables
 from process.fortran import pfcoil_variables
-from process.fortran import maths_library
 from process.fortran import numerics
 
 from process.utilities.f2py_string_patch import f2py_compatible_to_string
@@ -4278,11 +4277,7 @@ class Sctfcoil:
             )
 
     @staticmethod
-    # @numba.njit(cache=True)
-    # this method cannot be currently numba'd
-    # because it uses the maths_library linesolv.
-    # the equivalent numpy solver produces minor differences
-    # that need to be investigated before swapping over to it.
+    @numba.njit(cache=True)
     def plane_stress(nu, rad, ey, j, nlayers, n_radial_array):
         """Calculates the stresses in a superconductor TF coil
         inboard leg at the midplane using the plain stress approximation
@@ -4432,9 +4427,9 @@ class Sctfcoil:
         #  Find solution vector cc
         # ***
         aa = numpy.asfortranarray(aa)
-        # cc = numpy.linalg.solve(aa, bb)
+        cc = numpy.linalg.solve(aa, bb)
 
-        maths_library.linesolv(aa, bb, cc)
+        # maths_library.linesolv(aa, bb, cc)
 
         #  Multiply c by (-1) (John Last, internal CCFE memorandum, 21/05/2013)
         for ii in range(nlayers):
