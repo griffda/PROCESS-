@@ -1947,7 +1947,6 @@ contains
    use physics_variables, only: te, dene, alphan, alphat, powerht, pscalingmw,vol, bt
    use constants, only: nout
    use stellarator_variables, only: istell
-   use physics_module, only: physics
    implicit none
 
    !  Arguments
@@ -1976,13 +1975,9 @@ contains
    bt_old = bt
    bt = min(bt_ecrh_max,bt)
 
-   if(istell/=0) then
-      call stphys(nout,0)
-      call stphys(nout,0) ! The second call seems to be necessary for all values to "converge" (and is sufficient)
-   else
-      call physics()
-      call physics()
-   end if
+   call stphys(nout,0)
+   call stphys(nout,0) ! The second call seems to be necessary for all values to "converge" (and is sufficient)
+
 
    powerht_out = max(powerht,0.00001D0) ! the radiation module sometimes returns negative heating power
    pscalingmw_out = pscalingmw
@@ -1993,13 +1988,8 @@ contains
    dene = dene_old
    bt = bt_old
 
-   if(istell/=0) then
-      call stphys(nout,0)
-      call stphys(nout,0)
-   else
-      call physics()
-      call physics()
-   end if
+   call stphys(nout,0)
+   call stphys(nout,0)
 
 
 
