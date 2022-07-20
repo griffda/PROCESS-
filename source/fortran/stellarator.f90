@@ -816,6 +816,10 @@ contains
          call ovarre(outfile,'Normalized collisionality (T)', '(nu_star_T)',nu_star_T)
          call ovarre(outfile,'Normalized collisionality (He)', '(nu_star_He)',nu_star_He)
 
+         call ovarre(outfile,'Obtained line averaged density at op. point (/m3)','(dnla)',dnla)
+         call ovarre(outfile,'Sudo density limit (/m3)','(dnelimt)',dnelimt)
+         call ovarre(outfile,'Ratio density to sudo limit (1)','(dnla/dnelimt)',dnla/dnelimt)
+
       end subroutine stphys_output
 
 

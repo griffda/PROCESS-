@@ -3831,7 +3831,7 @@ contains
   !---------------------------------
 
   subroutine init_itv_168
-    !! <LI> (168) fecrh_ignition (f-value for equation 88)
+    !! <LI> (168) fecrh_ignition (f-value for equation 91)
     use numerics, only: lablxc, boundl, boundu
     implicit none
     lablxc(168) = 'fecrh_ignition     '
@@ -3847,34 +3847,37 @@ contains
 
   subroutine set_itv_168(ratio)
     use constraint_variables, only: fecrh_ignition
+    implicit none
     real(kind(1.d0)) :: ratio
     fecrh_ignition = ratio
   end subroutine set_itv_168
 
   !---------------------------------
-  ! DUMMY variables below here
-  !---------------------------------
 
   subroutine init_itv_169
-    !! <LI> (169) DUMMY : Description
+    !! <LI> (169) te0_ecrh_achievable (iteration parameter for equation 91)
     use numerics, only: lablxc, boundl, boundu
     implicit none
-    lablxc(169) = 'DUMMY         '
-    boundl(169) = 1.0d-99
-    boundu(169) = 1.0d99
+    lablxc(169) = 'te0_ecrh_achievable'
+    boundl(169) = 1.0d0 
+    boundu(169) = 1.0d3
   end subroutine init_itv_169
 
   real(kind(1.d0)) function itv_169()
+    use stellarator_variables, only: te0_ecrh_achievable
     implicit none
-    itv_169 = DUMMY
+    itv_169 = te0_ecrh_achievable
   end function itv_169
 
   subroutine set_itv_169(ratio)
+    use stellarator_variables, only: te0_ecrh_achievable
     implicit none
     real(kind(1.d0)) :: ratio
-    DUMMY = ratio
+    te0_ecrh_achievable = ratio
   end subroutine set_itv_169
 
+  !---------------------------------
+  ! DUMMY variables below here
   !---------------------------------
 
   subroutine init_itv_170
