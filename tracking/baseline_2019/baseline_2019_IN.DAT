@@ -113,7 +113,9 @@ scraplo  = 0.225 * Gap between plasma and first wall; outboard side (m)
 shldith  = 0.3 * Inboard shield thickness (m)
 shldoth  = 0.800 * Outboard shield thickness (m)
 tfcth    = 1.400 * Inboard tf coil thickness; (centrepost for st) (m)
-thshield = 0.050 * Tf-vv thermal shield thickness (m)
+thshield_ib = 0.050 * Tf-vv thermal shield thickness; inboard side (m)
+thshield_ob = 0.050 * Tf-vv thermal shield thickness; outboard side (m)
+thshield_vb = 0.050 * Tf-vv thermal shield thickness; top and bottom (m)
 vvblgap  = 0.02 * Gap between vacuum vessel and blanket (m)
 
 *---------------Constraint Variables---------------*

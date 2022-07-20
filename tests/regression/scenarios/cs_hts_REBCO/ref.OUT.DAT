@@ -7,10 +7,10 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-1972-g677f840e2
+   Tag No. : v2.1-2006-g4a375f66c
     Branch : HEAD
-   Git log : Merge branch |1704-fix-outpu-from-writes-in-power-py| into |develop|
- Date/time :  6 Jul 2022  7:51:35 +00:00(hh:mm) UTC
+   Git log : Merge branch |1700-light-wrap-around-physics_functions-to-unblock-impurity| into |develop|
+ Date/time : 20 Jul 2022  9:23:35 +00:00(hh:mm) UTC
       User : root
   Computer : runner-9dc50af2-project-20-concurrent-0
  Directory : /builds/process/process
@@ -127,31 +127,31 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  3.0697E-02             -2.3379E-15                 7.6161E-14
-    2  Global power balance consistency      =  1.6273E-01 MW/m3        2.8003E-14 MW/m3          -1.7208E-13
-    3  Density upper limit                   <  7.8627E+19 /m3         -8.1920E+04 /m3            -9.9920E-16
-    4  Neutron wall load upper limit         <  9.9251E-01 MW/m2       -5.8364E-13 MW/m2          -5.8809E-13
-    5  Radial build consistency              =  9.2084E+00 m            5.1117E-15 m              -5.5511E-16
-    6  Burn time lower limit                 >  7.2000E+03 sec          1.6164E-05 sec            -2.2450E-09
-    7  L-H power threshold limit             >  1.1413E+02 MW          -1.8572E-10 MW              1.6273E-12
-    8  Net electric power lower limit        >  5.0000E+02 MW           7.0537E-07 MW              1.4107E-09
-    9  Beta upper limit                      <  5.6264E-02              5.1140E-15                 9.0816E-14
-   10  CS coil EOF current density limit     <  1.2121E+09 A/m2         1.4138E-04 A/m2            1.1657E-13
-   11  CS coil BOP current density limit     <  2.9047E+09 A/m2        -3.6240E-05 A/m2           -1.2546E-14
-   12  Injection power upper limit           <  5.1000E+01 MW          -5.4712E-13 MW              1.0658E-14
-   13  TF coil case stress upper limit       <  5.8000E+08 Pa          -9.5367E-07 Pa             -1.5543E-15
-   14  TF coil conduit stress upper lim      <  5.8000E+08 Pa          -2.5034E-06 Pa             -4.4409E-15
-   15  I_op / I_critical (TF coil)           <  2.0496E+07 A/m2         9.0748E-08 A/m2           -5.9952E-15
-   16  Dump voltage upper limit              <  1.0000E+01 V           -3.5492E-12 V              -3.5461E-13
-   17  J_winding pack/J_protection limit     <  1.5137E+07 A/m2         0.0000E+00 A/m2           -3.3307E-15
-   18  TF coil temp. margin lower limit      >  1.5000E+00 K            4.5297E-13 K              -3.0198E-13
-   19  Upper Lim. on Psep * Bt / q A R       <  9.2000E+00 MWT/m        1.3637E-11 MWT/m          -1.4827E-12
-   20  Dump time set by VV stress            >  2.4688E+01 s           -2.4557E+00 s              -1.7319E-14
+    1  Beta consistency                      =  3.0697E-02             -2.3584E-15                 7.6827E-14
+    2  Global power balance consistency      =  1.6273E-01 MW/m3        2.7895E-14 MW/m3          -1.7142E-13
+    3  Density upper limit                   <  7.8627E+19 /m3         -4.9152E+04 /m3            -6.6613E-16
+    4  Neutron wall load upper limit         <  9.9251E-01 MW/m2       -5.8231E-13 MW/m2          -5.8675E-13
+    5  Radial build consistency              =  9.2084E+00 m            9.2010E-15 m              -9.9920E-16
+    6  Burn time lower limit                 >  7.2000E+03 sec          1.6163E-05 sec            -2.2448E-09
+    7  L-H power threshold limit             >  1.1413E+02 MW          -1.8542E-10 MW              1.6246E-12
+    8  Net electric power lower limit        >  5.0000E+02 MW           7.0528E-07 MW              1.4106E-09
+    9  Beta upper limit                      <  5.6264E-02              5.0862E-15                 9.0372E-14
+   10  CS coil EOF current density limit     <  1.2121E+09 A/m2         1.2708E-04 A/m2            1.0481E-13
+   11  CS coil BOP current density limit     <  2.9047E+09 A/m2        -3.4809E-05 A/m2           -1.1879E-14
+   12  Injection power upper limit           <  5.1000E+01 MW          -6.5370E-13 MW              1.2879E-14
+   13  TF coil case stress upper limit       <  5.8000E+08 Pa           3.3379E-06 Pa              5.7732E-15
+   14  TF coil conduit stress upper lim      <  5.8000E+08 Pa           5.9605E-06 Pa              1.0214E-14
+   15  I_op / I_critical (TF coil)           <  2.0496E+07 A/m2         8.9067E-08 A/m2           -5.8842E-15
+   16  Dump voltage upper limit              <  1.0000E+01 V           -3.5563E-12 V              -3.5549E-13
+   17  J_winding pack/J_protection limit     <  1.5137E+07 A/m2         0.0000E+00 A/m2           -3.7748E-15
+   18  TF coil temp. margin lower limit      >  1.5000E+00 K            4.4054E-13 K              -2.9365E-13
+   19  Upper Lim. on Psep * Bt / q A R       <  9.2000E+00 MWT/m        1.3646E-11 MWT/m          -1.4835E-12
+   20  Dump time set by VV stress            >  2.4688E+01 s           -2.4557E+00 s              -1.3989E-14
    21  CS temperature margin lower limit     >  1.5000E+00 K           -3.2573E+01 K               6.6613E-16
-   22  CS Tresca yield criterion             <  6.6000E+08 Pa          -1.8358E-05 Pa             -2.7867E-14
-   23  Peak toroidal field upper limit       <  1.1200E+01 T            2.1139E-14 T              -1.8874E-15
-   24  taup/taueff                           >  5.0000E+00              4.6074E-13                -9.2149E-14
-   25  CS current/copper area < Max          <  1.3190E+07 A/m2        -2.7823E-07 A/m2            2.1094E-14
+   22  CS Tresca yield criterion             <  6.6000E+08 Pa          -1.8477E-05 Pa             -2.7978E-14
+   23  Peak toroidal field upper limit       <  1.1200E+01 T            2.3626E-14 T              -2.1094E-15
+   24  taup/taueff                           >  5.0000E+00              4.5741E-13                -9.1482E-14
+   25  CS current/copper area < Max          <  1.3190E+07 A/m2        -2.6359E-07 A/m2            1.9984E-14
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -517,13 +517,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  ************************************************ Radial Build ************************************************
  
  Device centreline                            0.000           0.000                       
- Machine build_variables.bore                 0.100           0.100   (bore)              
+ Machine bore                                 0.100           0.100   (bore)              
  Central solenoid                             2.848           2.948   (ohcth)             
  CS precompression                            0.102           3.050   (precomp)           
  Gap                                          0.050           3.100   (gapoh)             
  TF coil inboard leg                          1.400           4.500   (tfcth)             
  Gap                                          0.050           4.550   (tftsgap)           
- Thermal shield                               0.050           4.600   (thshield)          
+ Thermal shield, inboard                      0.050           4.600   (thshield_ib)       
  Gap                                          0.020           4.620   (gapds)             
  Vacuum vessel (and shielding)                0.600           5.220   (d_vv_in + shldith) 
  Gap                                          0.020           5.240   (vvblgap)           
@@ -538,7 +538,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Gap                                          0.020          13.424   (vvblgap)           
  Vacuum vessel (and shielding)                1.100          14.524   (d_vv_out+shldoth)  
  Gap                                          1.791          16.315   (gapsto)            
- Thermal shield                               0.050          16.365   (thshield)          
+ Thermal shield, outboard                     0.050          16.365   (thshield_ob)       
  Gap                                          0.050          16.415   (tftsgap)           
  TF coil outboard leg                         1.400          17.815   (tfthko)            
  
@@ -546,7 +546,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  TF coil                                      1.400           9.146   (tfcth)             
  Gap                                          0.050           7.746   (tftsgap)           
- Thermal shield                               0.050           7.696   (thshield)          
+ Thermal shield, vertical                     0.050           7.696   (thshield_vb)       
  Gap                                          0.050           7.646   (vgap2)             
  Vacuum vessel (and shielding)                0.600           7.596   (d_vv_top+shldtth)  
  Gap                                          0.020           6.996   (vvblgap)           
@@ -560,7 +560,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Divertor structure                           0.621          -8.113   (divfix)            
  Vacuum vessel (and shielding)                1.000          -9.113   (d_vv_bot+shldlth)  
  Gap                                          0.050          -9.163   (vgap2)             
- Thermal shield                               0.050          -9.213   (thshield)          
+ Thermal shield, vertical                     0.050          -9.213   (thshield_vb)       
  Gap                                          0.050          -9.263   (tftsgap)           
  TF coil                                      1.400         -10.663   (tfcth)             
  
@@ -1311,16 +1311,16 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  htpmw_blkt                                                                     0.00                     0.00
  
  Shield:
- 1.5103531191967907 0.0 1.5103531191967907
+ 1.510353119196293 0.0 1.510353119196293
  0.0e0 0.0e0 0.0e0
  0.0e0 0.0e0 0.0e0
- 0.007551765595983953 0.0 0.007551765595983953
+ 0.007551765595981465 0.0 0.007551765595981465
  
  Divertor:
- 186.91316061580346 0.0 186.91316061580346
- 174.3127852367274 0.0 174.3127852367274
- 30.411299884378735 0.0 30.411299884378735
- 1.958186228684548 0.0 1.958186228684548
+ 186.91316061576168 0.0 186.91316061576168
+ 174.31278523671995 0.0 174.31278523671995
+ 30.411299884369633 0.0 30.411299884369633
+ 1.9581862286842562 0.0 1.9581862286842562
  
  TF coil:
  ptfnuc                                                                         0.00                     0.05
@@ -1334,7 +1334,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  pradhcd                                                                        0.00                     0.00
  0.0e0 0.0e0 0.0e0
  
- 2471.9518967207932 0.054994262862537856 2472.006890983656
+ 2471.9518967202516 0.05499426286209977 2472.006890983114
  
  Total power leaving reactor (across vacuum vessel boundary) (MW)                                    2472.062  OP 
  
@@ -1428,39 +1428,39 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  tramp tohs theat tburn tqnch tdwell
  ----- ---- ----- ----- ----- ------
- Duration 500.0 181.62676537791805 10.0 7199.999983835786 181.62676537791805 0.0
+ Duration 500.0 181.62676537789886 10.0 7199.9999838372005 181.62676537789886 0.0
  ------ ----- ---- ----- ----- ----- ------
  
  Continous power usage [MWe]:
  
  System tramp tohs theat tburn tqnch tdwell
  ------ ----- ---- ----- ----- ----- ------
- Primary cooling 236.80693238106022 236.80693238106022 236.80693238106022 236.80693238106022 236.80693238106022 236.80693238106022
- Cryoplant 46.12331185780327 46.12331185780327 46.12331185780327 46.12331185780327 46.12331185780327 46.12331185780327
+ Primary cooling 236.80693238100548 236.80693238100548 236.80693238100548 236.80693238100548 236.80693238100548 236.80693238100548
+ Cryoplant 46.12331185773013 46.12331185773013 46.12331185773013 46.12331185773013 46.12331185773013 46.12331185773013
  Vacuum 0.5 0.5 0.5 0.5 0.5 0.5
  Tritium 15.0 15.0 15.0 15.0 15.0 15.0
- TF 9.579946981839843 9.579946981839843 9.579946981839843 9.579946981839843 9.579946981839843 9.579946981839843
- Facilities 65.2635486297659 65.2635486297659 65.2635486297659 65.2635486297659 65.2635486297659 65.2635486297659
+ TF 9.579946981838388 9.579946981838388 9.579946981838388 9.579946981838388 9.579946981838388 9.579946981838388
+ Facilities 65.26354862976308 65.26354862976308 65.26354862976308 65.26354862976308 65.26354862976308 65.26354862976308
  ------ ----- ---- ----- ----- ----- ------
- Total 373.27373985046927 373.27373985046927 373.27373985046927 373.27373985046927 373.27373985046927 373.27373985046927
+ Total 373.27373985033705 373.27373985033705 373.27373985033705 373.27373985033705 373.27373985033705 373.27373985033705
  ------ ----- ---- ----- ----- ----- ------
  
  Intermittent power usage [MWe]:
  
  System tramp tohs theat tburn tqnch tdwell
  ------ ----- ---- ----- ----- ----- ------
- H & CD 0.0 300.0 300.0 127.50000000000136 300.0 0.0
- PF 36.06322450216368 56.679106808673524 0.0 8.057093103923604 -475.3546379776084 0.0
+ H & CD 0.0 300.0 300.0 127.50000000000163 300.0 0.0
+ PF 36.063224502337576 56.67910680776877 0.0 8.05709310391088 -475.3546379767847 0.0
  ------ ----- ---- ----- ----- ----- ------
- Total 36.06322450216368 356.6791068086735 300.0 135.55709310392496 -175.35463797760838 0.0
+ Total 36.063224502337576 356.6791068077688 300.0 135.5570931039125 -175.35463797678472 0.0
  ------ ----- ---- ----- ----- ----- ------
  
  Power production [MWe]:
  
   tramp tohs theat tburn tqnch tdwell avg
   ----- ---- ----- ----- ----- ------ ---
- Gross power 0.0 0.0 0.0 1003.5030712117633 0.0 0.0
- Net power -409.33696435263295 -729.9528466591428 -673.2737398504693 494.6722382573691 -197.9191018728609 -373.27373985046927
+ Gross power 0.0 0.0 0.0 1003.5030712115426 0.0 0.0
+ Net power -409.3369643526746 -729.9528466581058 -673.273739850337 494.6722382572931 -197.91910187355234 -373.27373985033705
  ------ ----- ---- ----- ----- ----- ------
  
  

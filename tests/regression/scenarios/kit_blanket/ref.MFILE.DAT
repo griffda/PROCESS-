@@ -3,13 +3,13 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.4.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "06/07/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "07:57"
+ Date_of_run_____________________________________________________________ (date)________________________     "20/07/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "09:29"
  User____________________________________________________________________ (username)____________________     "root"    
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "Michael's test file                                                                                
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1972-g677f840e2"                                                                              
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-2006-g4a375f66c"                                                                              
  PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "HEAD"                                                                                              
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch |1704-fix-outpu-from-writes-in-power-py| into |develop|"                              
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch |1700-light-wrap-around-physics_functions-to-unblock-impurity| into |develop|"        
  Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-root/pytest-0/test_scenario_kit_blanket_0/IN.DAT                                                                                                                                         "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
@@ -19,7 +19,7 @@
  Optimisation_switch_____________________________________________________ (ioptimz)_____________________              1    
  Figure_of_merit_switch__________________________________________________ (minmax)______________________              1    
  Square_root_of_the_sum_of_squares_of_the_constraint_residuals___________ (sqsumsq)_____________________      9.0007E-07 OP 
- VMCON_convergence_parameter_____________________________________________ (convergence_parameter)_______      4.6846E-07 OP 
+ VMCON_convergence_parameter_____________________________________________ (convergence_parameter)_______      4.6847E-07 OP 
  Number_of_VMCON_iterations______________________________________________ (nviter)______________________             17 OP 
  bt______________________________________________________________________ (itvar001)____________________      5.5235E+00    
  bt_(final_value/initial_value)__________________________________________ (xcm001)______________________      9.7803E-01    
@@ -50,7 +50,7 @@
  ohcth_(range_normalised)________________________________________________ (nitvar009)___________________      6.4601E-02    
  q_______________________________________________________________________ (itvar010)____________________      3.0000E+00    
  q_(final_value/initial_value)___________________________________________ (xcm010)______________________      9.2974E-01    
- q_(range_normalised)____________________________________________________ (nitvar010)___________________      7.6220E-18    
+ q_(range_normalised)____________________________________________________ (nitvar010)___________________      0.0000E+00    
  bore____________________________________________________________________ (itvar011)____________________      2.6605E+00    
  bore_(final_value/initial_value)________________________________________ (xcm011)______________________      1.3302E+00    
  bore_(range_normalised)_________________________________________________ (nitvar011)___________________      2.5863E-01    
@@ -140,25 +140,25 @@
  tohs_(range_normalised)_________________________________________________ (nitvar039)___________________      1.6407E-01    
  Beta_consistency__________________normalised_residue____________________ (normres001)__________________      1.9117E-10    
  Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________     -4.6371E-10    
- Density_upper_limit_______________normalised_residue____________________ (normres003)__________________      2.8777E-12    
+ Density_upper_limit_______________normalised_residue____________________ (normres003)__________________      2.8784E-12    
  Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres004)__________________     -1.4133E-09    
- Radial_build_consistency__________normalised_residue____________________ (normres005)__________________     -8.3311E-13    
+ Radial_build_consistency__________normalised_residue____________________ (normres005)__________________     -8.3267E-13    
  Burn_time_lower_limit_____________normalised_residue____________________ (normres006)__________________     -8.7784E-07    
  Net_electric_power_lower_limit____normalised_residue____________________ (normres007)__________________     -2.0332E-07    
  Beta_upper_limit__________________normalised_residue____________________ (normres008)__________________      2.2831E-10    
- CS_coil_EOF_current_density_limit_normalised_residue____________________ (normres009)__________________      2.2157E-09    
+ CS_coil_EOF_current_density_limit_normalised_residue____________________ (normres009)__________________      2.2158E-09    
  CS_coil_BOP_current_density_limit_normalised_residue____________________ (normres010)__________________      2.1076E-09    
- Injection_power_upper_limit_______normalised_residue____________________ (normres011)__________________      6.1435E-12    
- TF_coil_case_stress_upper_limit___normalised_residue____________________ (normres012)__________________     -8.5506E-12    
- TF_coil_conduit_stress_upper_lim__normalised_residue____________________ (normres013)__________________     -7.1669E-12    
- I_op_/_I_critical_(TF_coil)_______normalised_residue____________________ (normres014)__________________     -3.4992E-11    
- Dump_voltage_upper_limit__________normalised_residue____________________ (normres015)__________________     -6.5706E-11    
- J_winding_pack/J_protection_limit_normalised_residue____________________ (normres016)__________________     -1.0380E-11    
+ Injection_power_upper_limit_______normalised_residue____________________ (normres011)__________________      6.1460E-12    
+ TF_coil_case_stress_upper_limit___normalised_residue____________________ (normres012)__________________     -8.3576E-12    
+ TF_coil_conduit_stress_upper_lim__normalised_residue____________________ (normres013)__________________     -6.9207E-12    
+ I_op_/_I_critical_(TF_coil)_______normalised_residue____________________ (normres014)__________________     -3.4982E-11    
+ Dump_voltage_upper_limit__________normalised_residue____________________ (normres015)__________________     -6.5701E-11    
+ J_winding_pack/J_protection_limit_normalised_residue____________________ (normres016)__________________     -1.0378E-11    
  First_wall_peak_temperature_limit_normalised_residue____________________ (normres017)__________________     -0.0000E+00    
  L-H_power_threshold_limit_________normalised_residue____________________ (normres018)__________________      5.8695E-09    
  Psep_/_R_upper_limit______________normalised_residue____________________ (normres019)__________________     -5.5321E-09    
  taup/taueff_______________________normalised_residue____________________ (normres020)__________________      1.0005E-10    
- Rate_of_change_of_energy_in_field_normalised_residue____________________ (normres021)__________________     -7.1092E-11    
+ Rate_of_change_of_energy_in_field_normalised_residue____________________ (normres021)__________________     -7.1082E-11    
  # Final Feasible Point #
  # Plant Availability #
  Allowable_blanket_neutron_fluence_(MW-yr/m2)____________________________ (abktflnc)____________________      5.0000E+00    
@@ -432,13 +432,13 @@
  Total_plant_cycle_time_(s)______________________________________________ (tcycle)______________________      9.5026E+03 OP 
  kallenbach_switch_______________________________________________________ (kallenbach_switch)___________              0    
  # Radial Build #
- Machine_build_variables.bore_(m)________________________________________ (bore)________________________      2.6605E+00 ITV
+ Machine_bore_(m)________________________________________________________ (bore)________________________      2.6605E+00 ITV
  CS_radial_thickness_(m)_________________________________________________ (ohcth)_______________________      6.5536E-01 ITV
  CS_precompression_(m)___________________________________________________ (precomp)_____________________      5.1782E-02    
  CS_precompresion_to_TF_coil_radial_gap_(m)______________________________ (gapoh)_______________________      5.0000E-02 ITV
  TF_coil_inboard_leg_(m)_________________________________________________ (tfcth)_______________________      1.2223E+00 ITV
  TF_coil_inboard_leg_insulation_gap_(m)__________________________________ (tftsgap)_____________________      2.0000E-02    
- Thermal_shield_(m)______________________________________________________ (thshield)____________________      5.0000E-02    
+ Thermal_shield,_inboard_(m)_____________________________________________ (thshield_ib)_________________      5.0000E-02    
  thermal_shield_to_vessel_radial_gap_(m)_________________________________ (gapds)_______________________      1.2000E-01 ITV
  Inboard_vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_in)_____________________      3.0000E-01    
  Inner_radiation_shield_radial_thickness_(m)_____________________________ (shldith)_____________________      3.0000E-01    
@@ -452,6 +452,7 @@
  Outer_radiation_shield_radial_thickness_(m)_____________________________ (shldoth)_____________________      8.0000E-01    
  Outboard_vacuum_vessel_radial_thickness_(m)_____________________________ (d_vv_out)____________________      3.0000E-01    
  Vessel_to_TF_radial_gap_(m)_____________________________________________ (gapsto)______________________      1.0459E+00    
+ Thermal_shield,_outboard_(m)____________________________________________ (thshield_ob)_________________      5.0000E-02    
  Gap_(m)_________________________________________________________________ (tftsgap)_____________________      2.0000E-02    
  TF_coil_outboard_leg_radial_thickness_(m)_______________________________ (tfthko)______________________      1.2223E+00    
  # Vertical Build #
@@ -510,7 +511,7 @@
  WP_vertical_modulus_(GPa)_______________________________________________ (eyoung_wp_axial*1.0D-9)______      1.0146E+02 OP 
  WP_transverse_Poisson's_ratio___________________________________________ (poisson_wp_trans)____________      3.0781E-01 OP 
  WP_vertical-transverse_Pois._rat._______________________________________ (poisson_wp_axial)____________      3.1510E-01 OP 
- Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________      0.0000E+00    
+ Radial____stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_r_max(1))_____________      2.4424E-08    
  toroidal__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_t_max(1))_____________     -3.5732E+08    
  Vertical__stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_z_max(1))_____________      1.9268E+08    
  Von-Mises_stress_at_maximum_shear_of_layer_1_(Pa)_______________________ (sig_tf_vmises_max(1))________      4.8338E+08    
@@ -1135,7 +1136,9 @@ tfcth    = 1.0500e+00 * Inboard tf coil thickness; (centrepost for st) (m)
 vgap2    = 0.061 * Vertical gap between vacuum vessel and tf coil (m)
 vgap   = 1.60 * Vertical gap between x-point and divertor (m)
 tftsgap = 0.02
-thshield = 0.05
+thshield_ib = 0.05
+thshield_ob = 0.05
+thshield_vb = 0.05
 vvblgap = 0.02
 *---------------Buildings Variables----------------*
 *---------------Constraint Variables---------------*

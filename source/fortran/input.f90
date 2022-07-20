@@ -194,7 +194,8 @@ contains
     use global_variables, only: run_tests, verbose, maxcal, runtitle
     use build_variables, only: fmsfw, blbmoth, blbuith, fmsbc, shldoth, &
       fmsdwi, shldtth, shldlth, vgap2, plleni, fwoth, vvblgap, fmsbl, &
-      thshield, iprecomp, blbpith, aplasmin, blbuoth, tfcth, fmsdwe, &
+      thshield_ib, thshield_ob, thshield_vb, iprecomp, &
+      blbpith, aplasmin, blbuoth, tfcth, fmsdwe, &
       iohcl, tftsgap, clhsf, bore, plleno, scrapli, gapomin, ddwex, &
       rinboard, fmstf, blnkoth, fseppc, plsepo, fmssh, blnkith, &
       ohcth, plsepi, fmsoh, blbmith, gapoh, fcspc, scraplo, vgaptop, &
@@ -1795,9 +1796,15 @@ contains
        case ('tftsgap')
           call parse_real_variable('tftsgap', tftsgap, 0.0D0, 5.0D0, &
                'Minimum gap between TF and thermal shield for manufacturing etc. (m)')
-       case ('thshield')
-          call parse_real_variable('thshield', thshield, 0.0D0, 10.0D0, &
-               'TF/VV thermal shield thickness (m)')
+       case ('thshield_ib')
+          call parse_real_variable('thshield_ib', thshield_ib, 0.0D0, 10.0D0, &
+               'TF/VV thermal shield thickness, inboard (m)')
+       case ('thshield_ob')
+          call parse_real_variable('thshield_ob', thshield_ob, 0.0D0, 10.0D0, &
+               'TF/VV thermal shield thickness, outboard (m)')
+       case ('thshield_vb')
+          call parse_real_variable('thshield_vb', thshield_vb, 0.0D0, 10.0D0, &
+               'TF/VV thermal shield thickness, vertical build (m)')
        case ('vgap')
           call parse_real_variable('vgap', vgap, 0.0D0, 10.0D0, &
                'Vert gap between x-pnt and divertor (m)')

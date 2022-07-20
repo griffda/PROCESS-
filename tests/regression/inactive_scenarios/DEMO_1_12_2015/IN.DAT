@@ -117,7 +117,9 @@ tfcth    = 1.0500e+00 * Inboard tf coil thickness; (centrepost for st) (m)
 vgap2    = 0.061 * Vertical gap between vacuum vessel and tf coil (m)
 vgap   = 1.60 * Vertical gap between x-point and divertor (m)
 tftsgap = 0.02
-thshield = 0.05
+thshield_ib = 0.05
+thshield_ob = 0.05
+thshield_vb = 0.05
 vvblgap = 0.02
 *---------------Buildings Variables----------------*
 *---------------Constraint Variables---------------*

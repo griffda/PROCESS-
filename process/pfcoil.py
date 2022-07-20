@@ -1013,6 +1013,7 @@ class PFCoil:
             sgn = 1.0e0
             pfv.ric[pfv.nohc - 1] = sgn * 1.0e-6 * pfv.cohbop * pfv.areaoh
         else:
+
             sgn = -1.0e0
             pfv.ric[pfv.nohc - 1] = sgn * 1.0e-6 * pfv.coheof * pfv.areaoh
 
