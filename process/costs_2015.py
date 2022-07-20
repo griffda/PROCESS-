@@ -181,7 +181,8 @@ class Costs2015:
             cost_variables.concost != cost_variables.concost
         ):
             self.write_costs_to_output()
-            for i in 100:  # noqa: E741
+
+            for i in range(100):  # noqa: E741
                 logger.log(
                     self.s_label[i],  # noqa: E741
                     self.s_kref[i],  # noqa: E741
