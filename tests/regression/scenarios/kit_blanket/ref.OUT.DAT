@@ -7,12 +7,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-2011-gdcbf35ef0
+   Tag No. : v2.1-2018-g8a2d74e8d
     Branch : HEAD
-   Git log : Merge branch |1444-remove-patterns-directory| into |develop|
- Date/time : 20 Jul 2022 11:34:23 +00:00(hh:mm) UTC
+   Git log : Merge branch |1717-markdown-requirement| into |develop|
+ Date/time : 21 Jul 2022 11:11:24 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-nkpubsxk-project-20-concurrent-0
+  Computer : runner-c55928e9-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_kit_blanket_0/IN.DAT
  Run title : Michael's test file
@@ -964,13 +964,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  6			-0.000e+00	1.461e+08	9.408e+06	9.408e+06	-1.570e+08	-0.000e+00
  
  And: equilibrium field:
- 0			0.000e+00	0.000e+00	-1.207e+06	-1.207e+06	2.084e+07	0.0e0
- 1			0.000e+00	0.000e+00	-1.345e+06	-1.345e+06	2.315e+07	0.0e0
- 2			0.000e+00	0.000e+00	-1.116e+05	-1.116e+05	1.210e+06	0.0e0
- 3			0.000e+00	0.000e+00	-1.116e+05	-1.116e+05	1.210e+06	0.0e0
- 4			0.000e+00	0.000e+00	-6.024e+03	-6.024e+03	-6.552e+05	0.0e0
- 5			0.000e+00	0.000e+00	-6.024e+03	-6.024e+03	-6.552e+05	0.0e0
- 6			0.000e+00	0.000e+00	-9.406e+06	-9.406e+06	1.570e+08	0.0e0
+ 0			0.000e+00	0.000e+00	1.951e+07	1.951e+07	1.951e+07	0.0e0
+ 1			0.000e+00	0.000e+00	2.075e+07	2.075e+07	2.075e+07	0.0e0
+ 2			0.000e+00	0.000e+00	-8.668e+06	-8.668e+06	-8.668e+06	0.0e0
+ 3			0.000e+00	0.000e+00	-8.668e+06	-8.668e+06	-8.668e+06	0.0e0
+ 4			0.000e+00	0.000e+00	-5.590e+06	-5.590e+06	-5.590e+06	0.0e0
+ 5			0.000e+00	0.000e+00	-5.590e+06	-5.590e+06	-5.590e+06	0.0e0
+ 6			0.000e+00	0.000e+00	3.322e-09	3.322e-09	-2.657e-08	0.0e0
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.302E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -5.991E-02  OP 

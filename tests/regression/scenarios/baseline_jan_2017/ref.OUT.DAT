@@ -7,12 +7,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-2011-gdcbf35ef0
+   Tag No. : v2.1-2018-g8a2d74e8d
     Branch : HEAD
-   Git log : Merge branch |1444-remove-patterns-directory| into |develop|
- Date/time : 20 Jul 2022 11:22:42 +00:00(hh:mm) UTC
+   Git log : Merge branch |1717-markdown-requirement| into |develop|
+ Date/time : 21 Jul 2022 11:01:08 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-nkpubsxk-project-20-concurrent-0
+  Computer : runner-c55928e9-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_baseline_jan_2010/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
@@ -933,13 +933,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  6			-0.000e+00	1.541e+08	1.570e+07	1.570e+07	-1.653e+08	-0.000e+00
  
  And: equilibrium field:
- 0			0.000e+00	0.000e+00	-1.759e+06	-1.759e+06	1.895e+07	0.0e0
- 1			0.000e+00	0.000e+00	-2.113e+06	-2.113e+06	2.268e+07	0.0e0
- 2			0.000e+00	0.000e+00	-1.354e+05	-1.354e+05	9.934e+05	0.0e0
- 3			0.000e+00	0.000e+00	-1.354e+05	-1.354e+05	9.934e+05	0.0e0
- 4			0.000e+00	0.000e+00	-4.114e+04	-4.114e+04	-6.242e+04	0.0e0
- 5			0.000e+00	0.000e+00	-4.114e+04	-4.114e+04	-6.242e+04	0.0e0
- 6			0.000e+00	0.000e+00	-1.570e+07	-1.570e+07	1.652e+08	0.0e0
+ 0			0.000e+00	0.000e+00	1.867e+07	1.867e+07	1.867e+07	0.0e0
+ 1			0.000e+00	0.000e+00	2.063e+07	2.063e+07	2.063e+07	0.0e0
+ 2			0.000e+00	0.000e+00	-8.162e+06	-8.162e+06	-8.162e+06	0.0e0
+ 3			0.000e+00	0.000e+00	-8.162e+06	-8.162e+06	-8.162e+06	0.0e0
+ 4			0.000e+00	0.000e+00	-5.526e+06	-5.526e+06	-5.526e+06	0.0e0
+ 5			0.000e+00	0.000e+00	-5.526e+06	-5.526e+06	-5.526e+06	0.0e0
+ 6			0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.0e0
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.325E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -9.502E-02  OP 

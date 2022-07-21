@@ -7,12 +7,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-2011-gdcbf35ef0
+   Tag No. : v2.1-2018-g8a2d74e8d
     Branch : HEAD
-   Git log : Merge branch |1444-remove-patterns-directory| into |develop|
- Date/time : 20 Jul 2022 11:22:53 +00:00(hh:mm) UTC
+   Git log : Merge branch |1717-markdown-requirement| into |develop|
+ Date/time : 21 Jul 2022 11:01:18 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-nkpubsxk-project-20-concurrent-0
+  Computer : runner-c55928e9-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_Bucked_and_wedge0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
@@ -959,13 +959,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  6			-0.000e+00	1.860e+08	7.687e+05	7.687e+05	-2.021e+08	-0.000e+00
  
  And: equilibrium field:
- 0			0.000e+00	0.000e+00	-1.390e+04	-1.390e+04	1.475e+07	0.0e0
- 1			0.000e+00	0.000e+00	-3.428e+04	-3.428e+04	2.011e+07	0.0e0
- 2			0.000e+00	0.000e+00	-4.186e+04	-4.186e+04	3.217e+05	0.0e0
- 3			0.000e+00	0.000e+00	-4.186e+04	-4.186e+04	3.217e+05	0.0e0
- 4			0.000e+00	0.000e+00	-4.016e+04	-4.016e+04	8.877e+05	0.0e0
- 5			0.000e+00	0.000e+00	-4.016e+04	-4.016e+04	8.877e+05	0.0e0
- 6			0.000e+00	0.000e+00	-7.685e+05	-7.685e+05	2.021e+08	0.0e0
+ 0			0.000e+00	0.000e+00	1.688e+07	1.688e+07	1.688e+07	0.0e0
+ 1			0.000e+00	0.000e+00	2.020e+07	2.020e+07	2.020e+07	0.0e0
+ 2			0.000e+00	0.000e+00	-8.571e+06	-8.571e+06	-8.571e+06	0.0e0
+ 3			0.000e+00	0.000e+00	-8.571e+06	-8.571e+06	-8.571e+06	0.0e0
+ 4			0.000e+00	0.000e+00	-5.364e+06	-5.364e+06	-5.364e+06	0.0e0
+ 5			0.000e+00	0.000e+00	-5.364e+06	-5.364e+06	-5.364e+06	0.0e0
+ 6			0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.0e0
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.204E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -3.803E-03  OP 

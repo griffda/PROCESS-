@@ -14,12 +14,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-2011-gdcbf35ef0
+   Tag No. : v2.1-2018-g8a2d74e8d
     Branch : HEAD
-   Git log : Merge branch |1444-remove-patterns-directory| into |develop|
- Date/time : 20 Jul 2022 11:36:42 +00:00(hh:mm) UTC
+   Git log : Merge branch |1717-markdown-requirement| into |develop|
+ Date/time : 21 Jul 2022 11:13:25 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-nkpubsxk-project-20-concurrent-0
+  Computer : runner-c55928e9-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_stellarator_0/IN.DAT
  Run title : HELIAS-5B
