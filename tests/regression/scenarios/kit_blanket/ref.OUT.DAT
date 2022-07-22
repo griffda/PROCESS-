@@ -7,12 +7,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-2006-g4a375f66c
+   Tag No. : v2.1-2023-g133353d7b
     Branch : HEAD
-   Git log : Merge branch |1700-light-wrap-around-physics_functions-to-unblock-impurity| into |develop|
- Date/time : 20 Jul 2022  9:29:44 +00:00(hh:mm) UTC
+   Git log : Merge branch |1613-add-menard-power-plant-design-to-test-suite| into |develop|
+ Date/time : 22 Jul 2022 15:28:13 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-9dc50af2-project-20-concurrent-0
+  Computer : runner-ueya2eyb-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_kit_blanket_0/IN.DAT
  Run title : Michael's test file
@@ -964,13 +964,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  6			-0.000e+00	1.461e+08	9.408e+06	9.408e+06	-1.570e+08	-0.000e+00
  
  And: equilibrium field:
- 0			0.000e+00	0.000e+00	-1.207e+06	-1.207e+06	2.084e+07	0.0e0
- 1			0.000e+00	0.000e+00	-1.345e+06	-1.345e+06	2.315e+07	0.0e0
- 2			0.000e+00	0.000e+00	-1.116e+05	-1.116e+05	1.210e+06	0.0e0
- 3			0.000e+00	0.000e+00	-1.116e+05	-1.116e+05	1.210e+06	0.0e0
- 4			0.000e+00	0.000e+00	-6.024e+03	-6.024e+03	-6.552e+05	0.0e0
- 5			0.000e+00	0.000e+00	-6.024e+03	-6.024e+03	-6.552e+05	0.0e0
- 6			0.000e+00	0.000e+00	-9.406e+06	-9.406e+06	1.570e+08	0.0e0
+ 0			0.000e+00	0.000e+00	1.951e+07	1.951e+07	1.951e+07	0.0e0
+ 1			0.000e+00	0.000e+00	2.075e+07	2.075e+07	2.075e+07	0.0e0
+ 2			0.000e+00	0.000e+00	-8.668e+06	-8.668e+06	-8.668e+06	0.0e0
+ 3			0.000e+00	0.000e+00	-8.668e+06	-8.668e+06	-8.668e+06	0.0e0
+ 4			0.000e+00	0.000e+00	-5.590e+06	-5.590e+06	-5.590e+06	0.0e0
+ 5			0.000e+00	0.000e+00	-5.590e+06	-5.590e+06	-5.590e+06	0.0e0
+ 6			0.000e+00	0.000e+00	3.322e-09	3.322e-09	-2.657e-08	0.0e0
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.302E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -5.991E-02  OP 

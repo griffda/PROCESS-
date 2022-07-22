@@ -7,12 +7,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-2006-g4a375f66c
+   Tag No. : v2.1-2023-g133353d7b
     Branch : HEAD
-   Git log : Merge branch |1700-light-wrap-around-physics_functions-to-unblock-impurity| into |develop|
- Date/time : 20 Jul 2022  9:25:17 +00:00(hh:mm) UTC
+   Git log : Merge branch |1613-add-menard-power-plant-design-to-test-suite| into |develop|
+ Date/time : 22 Jul 2022 15:23:44 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-9dc50af2-project-20-concurrent-0
+  Computer : runner-ueya2eyb-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_HARE_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
@@ -962,13 +962,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  6			-0.000e+00	1.543e+08	1.590e+07	1.590e+07	-1.654e+08	-0.000e+00
  
  And: equilibrium field:
- 0			0.000e+00	0.000e+00	-1.782e+06	-1.782e+06	1.898e+07	0.0e0
- 1			0.000e+00	0.000e+00	-2.141e+06	-2.141e+06	2.271e+07	0.0e0
- 2			0.000e+00	0.000e+00	-1.367e+05	-1.367e+05	9.948e+05	0.0e0
- 3			0.000e+00	0.000e+00	-1.367e+05	-1.367e+05	9.948e+05	0.0e0
- 4			0.000e+00	0.000e+00	-4.127e+04	-4.127e+04	-6.083e+04	0.0e0
- 5			0.000e+00	0.000e+00	-4.127e+04	-4.127e+04	-6.083e+04	0.0e0
- 6			0.000e+00	0.000e+00	-1.590e+07	-1.590e+07	1.654e+08	0.0e0
+ 0			0.000e+00	0.000e+00	1.867e+07	1.867e+07	1.867e+07	0.0e0
+ 1			0.000e+00	0.000e+00	2.063e+07	2.063e+07	2.063e+07	0.0e0
+ 2			0.000e+00	0.000e+00	-8.163e+06	-8.163e+06	-8.163e+06	0.0e0
+ 3			0.000e+00	0.000e+00	-8.163e+06	-8.163e+06	-8.163e+06	0.0e0
+ 4			0.000e+00	0.000e+00	-5.526e+06	-5.526e+06	-5.526e+06	0.0e0
+ 5			0.000e+00	0.000e+00	-5.526e+06	-5.526e+06	-5.526e+06	0.0e0
+ 6			0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.0e0
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.326E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -9.612E-02  OP 
@@ -2384,13 +2384,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  6			-0.000e+00	1.548e+08	1.646e+07	1.646e+07	-1.659e+08	-0.000e+00
  
  And: equilibrium field:
- 0			0.000e+00	0.000e+00	-1.848e+06	-1.848e+06	1.905e+07	0.0e0
- 1			0.000e+00	0.000e+00	-2.219e+06	-2.219e+06	2.279e+07	0.0e0
- 2			0.000e+00	0.000e+00	-1.402e+05	-1.402e+05	9.986e+05	0.0e0
- 3			0.000e+00	0.000e+00	-1.402e+05	-1.402e+05	9.986e+05	0.0e0
- 4			0.000e+00	0.000e+00	-4.167e+04	-4.167e+04	-5.633e+04	0.0e0
- 5			0.000e+00	0.000e+00	-4.167e+04	-4.167e+04	-5.633e+04	0.0e0
- 6			0.000e+00	0.000e+00	-1.646e+07	-1.646e+07	1.659e+08	0.0e0
+ 0			0.000e+00	0.000e+00	1.866e+07	1.866e+07	1.866e+07	0.0e0
+ 1			0.000e+00	0.000e+00	2.062e+07	2.062e+07	2.062e+07	0.0e0
+ 2			0.000e+00	0.000e+00	-8.165e+06	-8.165e+06	-8.165e+06	0.0e0
+ 3			0.000e+00	0.000e+00	-8.165e+06	-8.165e+06	-8.165e+06	0.0e0
+ 4			0.000e+00	0.000e+00	-5.526e+06	-5.526e+06	-5.526e+06	0.0e0
+ 5			0.000e+00	0.000e+00	-5.526e+06	-5.526e+06	-5.526e+06	0.0e0
+ 6			0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.0e0
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.327E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -9.919E-02  OP 
@@ -3806,13 +3806,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  6			-0.000e+00	1.552e+08	1.695e+07	1.695e+07	-1.664e+08	-0.000e+00
  
  And: equilibrium field:
- 0			0.000e+00	0.000e+00	-1.905e+06	-1.905e+06	1.912e+07	0.0e0
- 1			0.000e+00	0.000e+00	-2.287e+06	-2.287e+06	2.287e+07	0.0e0
- 2			0.000e+00	0.000e+00	-1.433e+05	-1.433e+05	1.002e+06	0.0e0
- 3			0.000e+00	0.000e+00	-1.433e+05	-1.433e+05	1.002e+06	0.0e0
- 4			0.000e+00	0.000e+00	-4.204e+04	-4.204e+04	-5.235e+04	0.0e0
- 5			0.000e+00	0.000e+00	-4.204e+04	-4.204e+04	-5.235e+04	0.0e0
- 6			0.000e+00	0.000e+00	-1.694e+07	-1.694e+07	1.663e+08	0.0e0
+ 0			0.000e+00	0.000e+00	1.866e+07	1.866e+07	1.866e+07	0.0e0
+ 1			0.000e+00	0.000e+00	2.062e+07	2.062e+07	2.062e+07	0.0e0
+ 2			0.000e+00	0.000e+00	-8.166e+06	-8.166e+06	-8.166e+06	0.0e0
+ 3			0.000e+00	0.000e+00	-8.166e+06	-8.166e+06	-8.166e+06	0.0e0
+ 4			0.000e+00	0.000e+00	-5.527e+06	-5.527e+06	-5.527e+06	0.0e0
+ 5			0.000e+00	0.000e+00	-5.527e+06	-5.527e+06	-5.527e+06	0.0e0
+ 6			0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.0e0
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.328E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -1.018E-01  OP 
@@ -5228,13 +5228,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  6			-0.000e+00	1.558e+08	1.783e+07	1.783e+07	-1.670e+08	-0.000e+00
  
  And: equilibrium field:
- 0			0.000e+00	0.000e+00	-2.010e+06	-2.010e+06	1.923e+07	0.0e0
- 1			0.000e+00	0.000e+00	-2.412e+06	-2.412e+06	2.299e+07	0.0e0
- 2			0.000e+00	0.000e+00	-1.489e+05	-1.489e+05	1.007e+06	0.0e0
- 3			0.000e+00	0.000e+00	-1.489e+05	-1.489e+05	1.007e+06	0.0e0
- 4			0.000e+00	0.000e+00	-4.283e+04	-4.283e+04	-4.461e+04	0.0e0
- 5			0.000e+00	0.000e+00	-4.283e+04	-4.283e+04	-4.461e+04	0.0e0
- 6			0.000e+00	0.000e+00	-1.782e+07	-1.782e+07	1.670e+08	0.0e0
+ 0			0.000e+00	0.000e+00	1.865e+07	1.865e+07	1.865e+07	0.0e0
+ 1			0.000e+00	0.000e+00	2.061e+07	2.061e+07	2.061e+07	0.0e0
+ 2			0.000e+00	0.000e+00	-8.170e+06	-8.170e+06	-8.170e+06	0.0e0
+ 3			0.000e+00	0.000e+00	-8.170e+06	-8.170e+06	-8.170e+06	0.0e0
+ 4			0.000e+00	0.000e+00	-5.527e+06	-5.527e+06	-5.527e+06	0.0e0
+ 5			0.000e+00	0.000e+00	-5.527e+06	-5.527e+06	-5.527e+06	0.0e0
+ 6			0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.0e0
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.329E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -1.067E-01  OP 
@@ -6650,13 +6650,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  6			-0.000e+00	1.561e+08	1.872e+07	1.872e+07	-1.673e+08	-0.000e+00
  
  And: equilibrium field:
- 0			0.000e+00	0.000e+00	-2.121e+06	-2.121e+06	1.933e+07	0.0e0
- 1			0.000e+00	0.000e+00	-2.544e+06	-2.544e+06	2.311e+07	0.0e0
- 2			0.000e+00	0.000e+00	-1.548e+05	-1.548e+05	1.012e+06	0.0e0
- 3			0.000e+00	0.000e+00	-1.548e+05	-1.548e+05	1.012e+06	0.0e0
- 4			0.000e+00	0.000e+00	-4.376e+04	-4.376e+04	-3.560e+04	0.0e0
- 5			0.000e+00	0.000e+00	-4.376e+04	-4.376e+04	-3.560e+04	0.0e0
- 6			0.000e+00	0.000e+00	-1.872e+07	-1.872e+07	1.673e+08	0.0e0
+ 0			0.000e+00	0.000e+00	1.864e+07	1.864e+07	1.864e+07	0.0e0
+ 1			0.000e+00	0.000e+00	2.060e+07	2.060e+07	2.060e+07	0.0e0
+ 2			0.000e+00	0.000e+00	-8.173e+06	-8.173e+06	-8.173e+06	0.0e0
+ 3			0.000e+00	0.000e+00	-8.173e+06	-8.173e+06	-8.173e+06	0.0e0
+ 4			0.000e+00	0.000e+00	-5.527e+06	-5.527e+06	-5.527e+06	0.0e0
+ 5			0.000e+00	0.000e+00	-5.527e+06	-5.527e+06	-5.527e+06	0.0e0
+ 6			0.000e+00	0.000e+00	3.540e-09	3.540e-09	0.000e+00	0.0e0
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.330E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -1.119E-01  OP 
@@ -8072,13 +8072,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  6			-0.000e+00	1.564e+08	1.963e+07	1.963e+07	-1.677e+08	-0.000e+00
  
  And: equilibrium field:
- 0			0.000e+00	0.000e+00	-2.234e+06	-2.234e+06	1.944e+07	0.0e0
- 1			0.000e+00	0.000e+00	-2.679e+06	-2.679e+06	2.323e+07	0.0e0
- 2			0.000e+00	0.000e+00	-1.608e+05	-1.608e+05	1.017e+06	0.0e0
- 3			0.000e+00	0.000e+00	-1.608e+05	-1.608e+05	1.017e+06	0.0e0
- 4			0.000e+00	0.000e+00	-4.481e+04	-4.481e+04	-2.626e+04	0.0e0
- 5			0.000e+00	0.000e+00	-4.481e+04	-4.481e+04	-2.626e+04	0.0e0
- 6			0.000e+00	0.000e+00	-1.963e+07	-1.963e+07	1.676e+08	0.0e0
+ 0			0.000e+00	0.000e+00	1.862e+07	1.862e+07	1.862e+07	0.0e0
+ 1			0.000e+00	0.000e+00	2.059e+07	2.059e+07	2.059e+07	0.0e0
+ 2			0.000e+00	0.000e+00	-8.176e+06	-8.176e+06	-8.176e+06	0.0e0
+ 3			0.000e+00	0.000e+00	-8.176e+06	-8.176e+06	-8.176e+06	0.0e0
+ 4			0.000e+00	0.000e+00	-5.528e+06	-5.528e+06	-5.528e+06	0.0e0
+ 5			0.000e+00	0.000e+00	-5.528e+06	-5.528e+06	-5.528e+06	0.0e0
+ 6			0.000e+00	0.000e+00	3.546e-09	3.546e-09	0.000e+00	0.0e0
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.330E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -1.171E-01  OP 
@@ -9494,13 +9494,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  6			-0.000e+00	1.568e+08	2.058e+07	2.058e+07	-1.680e+08	-0.000e+00
  
  And: equilibrium field:
- 0			0.000e+00	0.000e+00	-2.352e+06	-2.352e+06	1.955e+07	0.0e0
- 1			0.000e+00	0.000e+00	-2.819e+06	-2.819e+06	2.336e+07	0.0e0
- 2			0.000e+00	0.000e+00	-1.671e+05	-1.671e+05	1.022e+06	0.0e0
- 3			0.000e+00	0.000e+00	-1.671e+05	-1.671e+05	1.022e+06	0.0e0
- 4			0.000e+00	0.000e+00	-4.602e+04	-4.602e+04	-1.643e+04	0.0e0
- 5			0.000e+00	0.000e+00	-4.602e+04	-4.602e+04	-1.643e+04	0.0e0
- 6			0.000e+00	0.000e+00	-2.057e+07	-2.057e+07	1.680e+08	0.0e0
+ 0			0.000e+00	0.000e+00	1.861e+07	1.861e+07	1.861e+07	0.0e0
+ 1			0.000e+00	0.000e+00	2.058e+07	2.058e+07	2.058e+07	0.0e0
+ 2			0.000e+00	0.000e+00	-8.179e+06	-8.179e+06	-8.179e+06	0.0e0
+ 3			0.000e+00	0.000e+00	-8.179e+06	-8.179e+06	-8.179e+06	0.0e0
+ 4			0.000e+00	0.000e+00	-5.528e+06	-5.528e+06	-5.528e+06	0.0e0
+ 5			0.000e+00	0.000e+00	-5.528e+06	-5.528e+06	-5.528e+06	0.0e0
+ 6			0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.0e0
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.331E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -1.225E-01  OP 

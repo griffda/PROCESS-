@@ -6,12 +6,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-2006-g4a375f66c
+   Tag No. : v2.1-2023-g133353d7b
     Branch : HEAD
-   Git log : Merge branch |1700-light-wrap-around-physics_functions-to-unblock-impurity| into |develop|
- Date/time : 20 Jul 2022  9:30:32 +00:00(hh:mm) UTC
+   Git log : Merge branch |1613-add-menard-power-plant-design-to-test-suite| into |develop|
+ Date/time : 22 Jul 2022 15:29:07 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-9dc50af2-project-20-concurrent-0
+  Computer : runner-ueya2eyb-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_QH_mode_0/IN.DAT
  Run title : Example QH-mode plasma scenario
@@ -974,13 +974,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  6			-0.000e+00	1.686e+08	1.044e+07	1.044e+07	-1.813e+08	-0.000e+00
  
  And: equilibrium field:
- 0			0.000e+00	0.000e+00	-7.934e+05	-7.934e+05	1.452e+07	0.0e0
- 1			0.000e+00	0.000e+00	-1.097e+06	-1.097e+06	1.979e+07	0.0e0
- 2			0.000e+00	0.000e+00	-7.312e+04	-7.312e+04	5.502e+05	0.0e0
- 3			0.000e+00	0.000e+00	-7.312e+04	-7.312e+04	5.502e+05	0.0e0
- 4			0.000e+00	0.000e+00	-5.380e+04	-5.380e+04	1.757e+05	0.0e0
- 5			0.000e+00	0.000e+00	-5.380e+04	-5.380e+04	1.757e+05	0.0e0
- 6			0.000e+00	0.000e+00	-1.043e+07	-1.043e+07	1.812e+08	0.0e0
+ 0			0.000e+00	0.000e+00	1.663e+07	1.663e+07	1.663e+07	0.0e0
+ 1			0.000e+00	0.000e+00	1.927e+07	1.927e+07	1.927e+07	0.0e0
+ 2			0.000e+00	0.000e+00	-7.711e+06	-7.711e+06	-7.711e+06	0.0e0
+ 3			0.000e+00	0.000e+00	-7.711e+06	-7.711e+06	-7.711e+06	0.0e0
+ 4			0.000e+00	0.000e+00	-5.338e+06	-5.338e+06	-5.338e+06	0.0e0
+ 5			0.000e+00	0.000e+00	-5.338e+06	-5.338e+06	-5.338e+06	0.0e0
+ 6			0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.0e0
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.300E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -5.757E-02  OP 

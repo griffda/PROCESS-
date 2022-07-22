@@ -6,12 +6,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-2006-g4a375f66c
+   Tag No. : v2.1-2023-g133353d7b
     Branch : HEAD
-   Git log : Merge branch |1700-light-wrap-around-physics_functions-to-unblock-impurity| into |develop|
- Date/time : 20 Jul 2022  9:29:56 +00:00(hh:mm) UTC
+   Git log : Merge branch |1613-add-menard-power-plant-design-to-test-suite| into |develop|
+ Date/time : 22 Jul 2022 15:28:25 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-9dc50af2-project-20-concurrent-0
+  Computer : runner-ueya2eyb-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_L_mode_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
@@ -954,13 +954,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  6			-0.000e+00	5.285e+07	-2.234e+07	-2.234e+07	-5.285e+07	-0.000e+00
  
  And: equilibrium field:
- 0			0.000e+00	0.000e+00	4.869e+06	4.869e+06	1.144e+07	0.0e0
- 1			0.000e+00	0.000e+00	6.002e+06	6.002e+06	1.412e+07	0.0e0
- 2			0.000e+00	0.000e+00	3.495e+05	3.495e+05	8.781e+05	0.0e0
- 3			0.000e+00	0.000e+00	3.495e+05	3.495e+05	8.781e+05	0.0e0
- 4			0.000e+00	0.000e+00	-4.201e+04	-4.201e+04	-4.068e+04	0.0e0
- 5			0.000e+00	0.000e+00	-4.201e+04	-4.201e+04	-4.068e+04	0.0e0
- 6			0.000e+00	0.000e+00	2.232e+07	2.232e+07	5.281e+07	0.0e0
+ 0			0.000e+00	0.000e+00	1.949e+07	1.949e+07	1.949e+07	0.0e0
+ 1			0.000e+00	0.000e+00	2.216e+07	2.216e+07	2.216e+07	0.0e0
+ 2			0.000e+00	0.000e+00	-7.478e+06	-7.478e+06	-7.478e+06	0.0e0
+ 3			0.000e+00	0.000e+00	-7.478e+06	-7.478e+06	-7.478e+06	0.0e0
+ 4			0.000e+00	0.000e+00	-5.581e+06	-5.581e+06	-5.581e+06	0.0e0
+ 5			0.000e+00	0.000e+00	-5.581e+06	-5.581e+06	-5.581e+06	0.0e0
+ 6			0.000e+00	0.000e+00	4.471e-09	4.471e-09	0.000e+00	0.0e0
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 1.000E+00  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                 4.228E-01  OP 

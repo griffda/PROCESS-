@@ -7,12 +7,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-2006-g4a375f66c
+   Tag No. : v2.1-2023-g133353d7b
     Branch : HEAD
-   Git log : Merge branch |1700-light-wrap-around-physics_functions-to-unblock-impurity| into |develop|
- Date/time : 20 Jul 2022  9:31:49 +00:00(hh:mm) UTC
+   Git log : Merge branch |1613-add-menard-power-plant-design-to-test-suite| into |develop|
+ Date/time : 22 Jul 2022 15:30:25 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-9dc50af2-project-20-concurrent-0
+  Computer : runner-ueya2eyb-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_vacuum_model_0/IN.DAT
  Run title : demo 1 vacuum model test
@@ -1004,13 +1004,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  6			-0.000e+00	1.450e+08	1.867e+07	1.867e+07	-1.554e+08	-0.000e+00
  
  And: equilibrium field:
- 0			0.000e+00	0.000e+00	-1.991e+06	-1.991e+06	1.692e+07	0.0e0
- 1			0.000e+00	0.000e+00	-2.572e+06	-2.572e+06	2.175e+07	0.0e0
- 2			0.000e+00	0.000e+00	-1.306e+05	-1.306e+05	7.298e+05	0.0e0
- 3			0.000e+00	0.000e+00	-1.306e+05	-1.306e+05	7.298e+05	0.0e0
- 4			0.000e+00	0.000e+00	-7.737e+04	-7.737e+04	2.666e+05	0.0e0
- 5			0.000e+00	0.000e+00	-7.737e+04	-7.737e+04	2.666e+05	0.0e0
- 6			0.000e+00	0.000e+00	-1.867e+07	-1.867e+07	1.554e+08	0.0e0
+ 0			0.000e+00	0.000e+00	1.737e+07	1.737e+07	1.737e+07	0.0e0
+ 1			0.000e+00	0.000e+00	1.986e+07	1.986e+07	1.986e+07	0.0e0
+ 2			0.000e+00	0.000e+00	-7.641e+06	-7.641e+06	-7.641e+06	0.0e0
+ 3			0.000e+00	0.000e+00	-7.641e+06	-7.641e+06	-7.641e+06	0.0e0
+ 4			0.000e+00	0.000e+00	-4.960e+06	-4.960e+06	-4.960e+06	0.0e0
+ 5			0.000e+00	0.000e+00	-4.960e+06	-4.960e+06	-4.960e+06	0.0e0
+ 6			0.000e+00	0.000e+00	-6.574e-09	-6.574e-09	2.630e-08	0.0e0
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.330E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -1.202E-01  OP 

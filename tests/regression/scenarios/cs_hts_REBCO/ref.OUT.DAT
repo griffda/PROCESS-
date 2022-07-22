@@ -7,12 +7,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-2006-g4a375f66c
+   Tag No. : v2.1-2023-g133353d7b
     Branch : HEAD
-   Git log : Merge branch |1700-light-wrap-around-physics_functions-to-unblock-impurity| into |develop|
- Date/time : 20 Jul 2022  9:23:35 +00:00(hh:mm) UTC
+   Git log : Merge branch |1613-add-menard-power-plant-design-to-test-suite| into |develop|
+ Date/time : 22 Jul 2022 15:22:01 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-9dc50af2-project-20-concurrent-0
+  Computer : runner-ueya2eyb-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_cs_hts_REBCO_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
@@ -955,13 +955,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  6			-0.000e+00	3.077e+08	-3.278e+08	-3.278e+08	-6.790e+08	-0.000e+00
  
  And: equilibrium field:
- 0			0.000e+00	0.000e+00	9.676e+06	9.676e+06	1.996e+07	0.0e0
- 1			0.000e+00	0.000e+00	1.294e+07	1.294e+07	2.674e+07	0.0e0
- 2			0.000e+00	0.000e+00	4.510e+05	4.510e+05	9.743e+05	0.0e0
- 3			0.000e+00	0.000e+00	4.510e+05	4.510e+05	9.743e+05	0.0e0
- 4			0.000e+00	0.000e+00	-1.014e+05	-1.014e+05	-1.634e+05	0.0e0
- 5			0.000e+00	0.000e+00	-1.014e+05	-1.014e+05	-1.634e+05	0.0e0
- 6			0.000e+00	0.000e+00	3.277e+08	3.277e+08	6.790e+08	0.0e0
+ 0			0.000e+00	0.000e+00	1.640e+07	1.640e+07	1.640e+07	0.0e0
+ 1			0.000e+00	0.000e+00	1.902e+07	1.902e+07	1.902e+07	0.0e0
+ 2			0.000e+00	0.000e+00	-7.629e+06	-7.629e+06	-7.629e+06	0.0e0
+ 3			0.000e+00	0.000e+00	-7.629e+06	-7.629e+06	-7.629e+06	0.0e0
+ 4			0.000e+00	0.000e+00	-5.243e+06	-5.243e+06	-5.243e+06	0.0e0
+ 5			0.000e+00	0.000e+00	-5.243e+06	-5.243e+06	-5.243e+06	0.0e0
+ 6			0.000e+00	0.000e+00	-5.745e-08	-5.745e-08	-1.149e-07	0.0e0
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 4.532E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                 4.827E-01  OP 

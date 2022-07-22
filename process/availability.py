@@ -397,7 +397,7 @@ class Availability:
                 cv.t_operation,
                 "OP ",
             )
-            po.ovarre(self.outfile, "Total plant lifetime (years)", "(tlife)", tv.tlife)
+            po.ovarre(self.outfile, "Total plant lifetime (years)", "(tlife)", cv.tlife)
             po.ovarre(
                 self.outfile,
                 "Capacity factor: total lifetime elec. energy output / output power",
@@ -992,3 +992,5 @@ class Availability:
                 "OP ",
             )
             po.oblnkl(self.outfile)
+
+        return u_unplanned_vacuum
