@@ -6,14 +6,14 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-2030-g255cebe5
-    Branch : 1091-add-iter-to-the-test-suite
-   Git log : Merge branch |develop| into 1091-add-iter-to-the-test-suite
- Date/time : 22 Jul 2022 15:21:00 +01:00(hh:mm) UTC
-      User : smuldrew
-  Computer : K1344
- Directory : /home/smuldrew/process/tests/regression/scenarios/ITER
-     Input : /home/smuldrew/process/tests/regression/scenarios/ITER/IN.DAT
+   Tag No. : v2.1-2037-g941f1179c
+    Branch : HEAD
+   Git log : Merge branch |1091-add-iter-to-the-test-suite| into |develop|
+ Date/time : 22 Jul 2022 16:30:38 +00:00(hh:mm) UTC
+      User : root
+  Computer : runner-sn2siqxv-project-20-concurrent-0
+ Directory : /builds/process/process
+     Input : /tmp/pytest-of-root/pytest-0/test_scenario_ITER_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Steady-state tokamak model, (c) CCFE
  

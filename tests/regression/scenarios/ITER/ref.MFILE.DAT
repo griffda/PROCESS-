@@ -4,13 +4,13 @@
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.4.0   R"
  Date_of_run_____________________________________________________________ (date)________________________     "22/07/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "15:21"
- User____________________________________________________________________ (username)____________________     "smuldrew"
+ Time_of_run_____________________________________________________________ (time)________________________     "16:30"
+ User____________________________________________________________________ (username)____________________     "root"    
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "Run Title (change this line using input variable 'runtitle')                                       
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-2030-g255cebe5"                                                                               
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1091-add-iter-to-the-test-suite"                                                                   
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch |develop| into 1091-add-iter-to-the-test-suite"                                       
- Input_filename__________________________________________________________ (fileprefix)__________________     "/home/smuldrew/process/tests/regression/scenarios/ITER/IN.DAT                                                                                                                                           "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-2037-g941f1179c"                                                                              
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "HEAD"                                                                                              
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch |1091-add-iter-to-the-test-suite| into |develop|"                                     
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-root/pytest-0/test_scenario_ITER_0/IN.DAT                                                                                                                                                "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
