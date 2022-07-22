@@ -13,7 +13,6 @@ nav:
     - Introduction:
           - Installation Guide: installation.md
           - Usage Guide: usage.md
-          - Getting Started: getting-started.md
           - Cost Models: cost-models/cost-models.md
           - FAQs: FAQs.md
     - Tracking: tracking.html

@@ -138,7 +138,9 @@ class BldgsSizesParam(NamedTuple):
     hmax: Any
     tfcth: Any
     tftsgap: Any
-    thshield: Any
+    thshield_ib: Any
+    thshield_ob: Any
+    thshield_vb: Any
     shldith: Any
     shldoth: Any
     scrapli: Any
@@ -279,7 +281,9 @@ class BldgsSizesParam(NamedTuple):
             hmax=9.0730900215620327,
             tfcth=1.208,
             tftsgap=0.05000000000000001,
-            thshield=0.050000000000000003,
+            thshield_ib=0.050000000000000003,
+            thshield_ob=0.050000000000000003,
+            thshield_vb=0.050000000000000003,
             shldith=0.30000000000000004,
             shldoth=0.80000000000000004,
             scrapli=0.22500000000000003,
@@ -416,7 +420,9 @@ class BldgsSizesParam(NamedTuple):
             hmax=9.0730900215620327,
             tfcth=1.208,
             tftsgap=0.05000000000000001,
-            thshield=0.050000000000000003,
+            thshield_ib=0.050000000000000003,
+            thshield_ob=0.050000000000000003,
+            thshield_vb=0.050000000000000003,
             shldith=0.30000000000000004,
             shldoth=0.80000000000000004,
             scrapli=0.22500000000000003,
@@ -673,7 +679,9 @@ def test_bldgs_sizes(buildings, bldgssizesparam, monkeypatch):
     monkeypatch.setattr(build_variables, "hmax", bldgssizesparam.hmax)
     monkeypatch.setattr(build_variables, "tfcth", bldgssizesparam.tfcth)
     monkeypatch.setattr(build_variables, "tftsgap", bldgssizesparam.tftsgap)
-    monkeypatch.setattr(build_variables, "thshield", bldgssizesparam.thshield)
+    monkeypatch.setattr(build_variables, "thshield_ib", bldgssizesparam.thshield_ib)
+    monkeypatch.setattr(build_variables, "thshield_ob", bldgssizesparam.thshield_ob)
+    monkeypatch.setattr(build_variables, "thshield_vb", bldgssizesparam.thshield_vb)
     monkeypatch.setattr(build_variables, "shldith", bldgssizesparam.shldith)
     monkeypatch.setattr(build_variables, "shldoth", bldgssizesparam.shldoth)
     monkeypatch.setattr(build_variables, "scrapli", bldgssizesparam.scrapli)

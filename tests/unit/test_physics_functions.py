@@ -1,6 +1,9 @@
 """Unit tests for physics_functions.f90."""
 from process.fortran import physics_functions_module as pf
 from process.fortran import physics_variables as pv
+from process.fortran import impurity_radiation_module
+from process.fortran import physics_variables
+from process.fortran import physics_functions_module
 import pytest
 from pytest import approx
 
@@ -140,3 +143,45 @@ def test_res_diff_time(monkeypatch):
     monkeypatch.setattr(pv, "kappa95", 1.650)
     res_time = pf.res_diff_time()
     assert res_time == approx(4784.3, abs=0.1)
+
+
+def test_imprad(monkeypatch):
+
+    """Inputs taken from Hanni Lux's test_imprad from old impurityradiation
+    Outputs set to reflect this.
+
+    Unit test for the "Imprad" subroutine.
+
+    """
+    impurity_radiation_module.init_impurity_radiation_module()
+    impurity_radiation_module.initialise_imprad()
+
+    current_impurity_array = impurity_radiation_module.impurity_arr_frac
+    current_impurity_array[1] = 1.10601e-1  # Helium
+    current_impurity_array[8] = 5.1416e-3  # Argon
+
+    monkeypatch.setattr(
+        impurity_radiation_module, "impurity_arr_frac", current_impurity_array
+    )
+    monkeypatch.setattr(physics_variables, "rhopedt", 0.925e0)
+    monkeypatch.setattr(physics_variables, "rhopedn", 0.925e0)
+    monkeypatch.setattr(physics_variables, "te0", 40.0e0)
+    monkeypatch.setattr(physics_variables, "teped", 3.2494e0)
+    monkeypatch.setattr(physics_variables, "ne0", 1.03551089599055266e020)
+    monkeypatch.setattr(physics_variables, "neped", 9.39747e19)
+    monkeypatch.setattr(physics_variables, "alphat", 1.37e0)
+    monkeypatch.setattr(physics_variables, "tbeta", 2.0e0)
+    monkeypatch.setattr(physics_variables, "alphan", 1.0e0)
+    monkeypatch.setattr(physics_variables, "tesep", 0.1e0)
+    monkeypatch.setattr(physics_variables, "nesep", 3.6e19)
+    monkeypatch.setattr(impurity_radiation_module, "coreradiationfraction", 1.0)
+
+    radb, radl, radcore, radtot = physics_functions_module.imprad()
+
+    assert radb == pytest.approx(0.05950642693264711)
+
+    assert radl == pytest.approx(0.05552120648487812)
+
+    assert radcore == pytest.approx(0.04593865332065909)
+
+    assert radtot == pytest.approx(0.1150276334175252)

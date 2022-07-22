@@ -460,7 +460,7 @@ if __name__ == "__main__":
         "gapoh",
         "tfcth",
         "deltf",
-        "thshield",
+        "thshield_ib",
         "gapds",
         "d_vv_in",
         "shldith",

@@ -7,12 +7,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-1972-g677f840e2
+   Tag No. : v2.1-2018-g8a2d74e8d
     Branch : HEAD
-   Git log : Merge branch |1704-fix-outpu-from-writes-in-power-py| into |develop|
- Date/time :  6 Jul 2022  7:57:21 +00:00(hh:mm) UTC
+   Git log : Merge branch |1717-markdown-requirement| into |develop|
+ Date/time : 21 Jul 2022 11:11:24 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-9dc50af2-project-20-concurrent-0
+  Computer : runner-c55928e9-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_kit_blanket_0/IN.DAT
  Run title : Michael's test file
@@ -127,26 +127,26 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                               constraint                 residue                    residue
  
     1  Beta consistency                      =  3.6281E-02             -6.9360E-12                 1.9117E-10
-    2  Global power balance consistency      =  2.0577E-01 MW/m3        9.5418E-11 MW/m3          -4.6371E-10
-    3  Density upper limit                   <  8.7888E+19 /m3          2.5292E+08 /m3             2.8777E-12
+    2  Global power balance consistency      =  2.0577E-01 MW/m3        9.5417E-11 MW/m3          -4.6371E-10
+    3  Density upper limit                   <  8.7888E+19 /m3          2.5297E+08 /m3             2.8784E-12
     4  Neutron wall load upper limit         <  1.3340E+00 MW/m2       -1.8853E-09 MW/m2          -1.4133E-09
-    5  Radial build consistency              =  9.5184E+00 m            7.9298E-12 m              -8.3311E-13
+    5  Radial build consistency              =  9.5184E+00 m            7.9256E-12 m              -8.3267E-13
     6  Burn time lower limit                 >  7.2000E+03 sec          6.3205E-03 sec            -8.7784E-07
     7  Net electric power lower limit        >  5.0000E+02 MW          -1.0166E-04 MW             -2.0332E-07
     8  Beta upper limit                      <  5.6067E-02              1.2800E-11                 2.2831E-10
-    9  CS coil EOF current density limit     <  6.3406E+07 A/m2         1.4049E-01 A/m2            2.2157E-09
+    9  CS coil EOF current density limit     <  6.3406E+07 A/m2         1.4049E-01 A/m2            2.2158E-09
    10  CS coil BOP current density limit     <  5.8978E+07 A/m2         1.2430E-01 A/m2            2.1076E-09
-   11  Injection power upper limit           <  5.0000E+01 MW          -3.0718E-10 MW              6.1435E-12
-   12  TF coil case stress upper limit       <  5.5000E+08 Pa          -4.7028E-03 Pa             -8.5506E-12
-   13  TF coil conduit stress upper lim      <  5.5000E+08 Pa          -3.9418E-03 Pa             -7.1669E-12
-   14  I_op / I_critical (TF coil)           <  5.2922E+07 A/m2         9.2592E-04 A/m2           -3.4992E-11
-   15  Dump voltage upper limit              <  2.5546E+01 V            3.8100E+00 V              -6.5706E-11
-   16  J_winding pack/J_protection limit     <  2.6461E+07 A/m2         0.0000E+00 A/m2           -1.0380E-11
+   11  Injection power upper limit           <  5.0000E+01 MW          -3.0730E-10 MW              6.1460E-12
+   12  TF coil case stress upper limit       <  5.5000E+08 Pa          -4.5967E-03 Pa             -8.3576E-12
+   13  TF coil conduit stress upper lim      <  5.5000E+08 Pa          -3.8064E-03 Pa             -6.9207E-12
+   14  I_op / I_critical (TF coil)           <  5.2922E+07 A/m2         9.2565E-04 A/m2           -3.4982E-11
+   15  Dump voltage upper limit              <  2.5546E+01 V            3.8100E+00 V              -6.5701E-11
+   16  J_winding pack/J_protection limit     <  2.6461E+07 A/m2         0.0000E+00 A/m2           -1.0378E-11
    17  First wall peak temperature limit     <  9.0000E+02 K            0.0000E+00 K              -0.0000E+00
    18  L-H power threshold limit             >  1.3001E+02 MW          -7.6307E-07 MW              5.8695E-09
-   19  Psep / R upper limit                  <  1.7000E+01 MW/m         9.4045E-08 MW/m           -5.5321E-09
-   20  taup/taueff                           >  5.0000E+00             -5.0024E-10                 1.0005E-10
-   21  Rate of change of energy in field     <  2.5000E+02 MW           1.7773E-08 MW             -7.1092E-11
+   19  Psep / R upper limit                  <  1.7000E+01 MW/m         9.4046E-08 MW/m           -5.5321E-09
+   20  taup/taueff                           >  5.0000E+00             -5.0026E-10                 1.0005E-10
+   21  Rate of change of energy in field     <  2.5000E+02 MW           1.7770E-08 MW             -7.1082E-11
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -531,13 +531,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  ************************************************ Radial Build ************************************************
  
  Device centreline                            0.000           0.000                       
- Machine build_variables.bore                 2.660           2.660   (bore)              
+ Machine bore                                 2.660           2.660   (bore)              
  Central solenoid                             0.655           3.316   (ohcth)             
  CS precompression                            0.052           3.368   (precomp)           
  Gap                                          0.050           3.418   (gapoh)             
  TF coil inboard leg                          1.222           4.640   (tfcth)             
  Gap                                          0.020           4.660   (tftsgap)           
- Thermal shield                               0.050           4.710   (thshield)          
+ Thermal shield, inboard                      0.050           4.710   (thshield_ib)       
  Gap                                          0.120           4.830   (gapds)             
  Vacuum vessel (and shielding)                0.600           5.430   (d_vv_in + shldith) 
  Gap                                          0.020           5.450   (vvblgap)           
@@ -552,7 +552,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Gap                                          0.020          14.127   (vvblgap)           
  Vacuum vessel (and shielding)                1.100          15.227   (d_vv_out+shldoth)  
  Gap                                          1.046          16.273   (gapsto)            
- Thermal shield                               0.050          16.323   (thshield)          
+ Thermal shield, outboard                     0.050          16.323   (thshield_ob)       
  Gap                                          0.020          16.343   (tftsgap)           
  TF coil outboard leg                         1.222          17.565   (tfthko)            
  
@@ -560,7 +560,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  TF coil                                      1.222           9.074   (tfcth)             
  Gap                                          0.020           7.851   (tftsgap)           
- Thermal shield                               0.050           7.831   (thshield)          
+ Thermal shield, vertical                     0.050           7.831   (thshield_vb)       
  Gap                                          0.061           7.781   (vgap2)             
  Vacuum vessel (and shielding)                0.600           7.720   (d_vv_top+shldtth)  
  Gap                                          0.020           7.120   (vvblgap)           
@@ -574,7 +574,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Divertor structure                           0.200          -7.267   (divfix)            
  Vacuum vessel (and shielding)                1.000          -8.267   (d_vv_bot+shldlth)  
  Gap                                          0.061          -8.328   (vgap2)             
- Thermal shield                               0.050          -8.378   (thshield)          
+ Thermal shield, vertical                     0.050          -8.378   (thshield_vb)       
  Gap                                          0.020          -8.398   (tftsgap)           
  TF coil                                      1.222          -9.621   (tfcth)             
  
@@ -964,13 +964,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  6			-0.000e+00	1.461e+08	9.408e+06	9.408e+06	-1.570e+08	-0.000e+00
  
  And: equilibrium field:
- 0			0.000e+00	0.000e+00	-1.207e+06	-1.207e+06	2.084e+07	0.0e0
- 1			0.000e+00	0.000e+00	-1.345e+06	-1.345e+06	2.315e+07	0.0e0
- 2			0.000e+00	0.000e+00	-1.116e+05	-1.116e+05	1.210e+06	0.0e0
- 3			0.000e+00	0.000e+00	-1.116e+05	-1.116e+05	1.210e+06	0.0e0
- 4			0.000e+00	0.000e+00	-6.024e+03	-6.024e+03	-6.552e+05	0.0e0
- 5			0.000e+00	0.000e+00	-6.024e+03	-6.024e+03	-6.552e+05	0.0e0
- 6			0.000e+00	0.000e+00	-9.406e+06	-9.406e+06	1.570e+08	0.0e0
+ 0			0.000e+00	0.000e+00	1.951e+07	1.951e+07	1.951e+07	0.0e0
+ 1			0.000e+00	0.000e+00	2.075e+07	2.075e+07	2.075e+07	0.0e0
+ 2			0.000e+00	0.000e+00	-8.668e+06	-8.668e+06	-8.668e+06	0.0e0
+ 3			0.000e+00	0.000e+00	-8.668e+06	-8.668e+06	-8.668e+06	0.0e0
+ 4			0.000e+00	0.000e+00	-5.590e+06	-5.590e+06	-5.590e+06	0.0e0
+ 5			0.000e+00	0.000e+00	-5.590e+06	-5.590e+06	-5.590e+06	0.0e0
+ 6			0.000e+00	0.000e+00	3.322e-09	3.322e-09	-2.657e-08	0.0e0
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.302E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -5.991E-02  OP 
@@ -1275,14 +1275,14 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  htpmw_blkt                                                                     0.00                     0.00
  
  Shield:
- 10.328343155895906 0.0 10.328343155895906
+ 10.328343155894768 0.0 10.328343155894768
  0.0e0 0.0e0 0.0e0
  0.0e0 0.0e0 0.0e0
  0.0 0.0 0.0
  
  Divertor:
  0.0 0.0 0.0
- 161.8120228791986 0.0 161.8120228791986
+ 161.812022879199 0.0 161.812022879199
  0.0 0.0 0.0
  0.0 0.0 0.0
  
@@ -1298,7 +1298,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  pradhcd                                                                        0.00                     0.00
  0.0e0 0.0e0 0.0e0
  
- 2317.3084928607336 0.009595665726029082 2317.3180885264596
+ 2317.3084928604953 0.009595665726027705 2317.3180885262213
  
  Total power leaving reactor (across vacuum vessel boundary) (MW)                                    2317.327684  OP 
  
@@ -1394,7 +1394,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  tramp tohs theat tburn tqnch tdwell
  ----- ---- ----- ----- ----- ------
- Duration 164.3136060735018 164.14945661688495 10.0 7199.993679548653 164.14945661688495 1800.0
+ Duration 164.31360607536882 164.14945661875012 10.0 7199.993679548636 164.14945661875012 1800.0
  ------ ----- ---- ----- ----- ----- ------
  
  Continous power usage [MWe]:
@@ -1402,31 +1402,31 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  System tramp tohs theat tburn tqnch tdwell
  ------ ----- ---- ----- ----- ----- ------
  Primary cooling 0.0 0.0 0.0 0.0 0.0 0.0
- Cryoplant 43.003437502988426 43.003437502988426 43.003437502988426 43.003437502988426 43.003437502988426 43.003437502988426
+ Cryoplant 43.00343750306251 43.00343750306251 43.00343750306251 43.00343750306251 43.00343750306251 43.00343750306251
  Vacuum 0.5 0.5 0.5 0.5 0.5 0.5
  Tritium 15.0 15.0 15.0 15.0 15.0 15.0
- TF 12.868808250300324 12.868808250300324 12.868808250300324 12.868808250300324 12.868808250300324 12.868808250300324
- Facilities 112.95295624559034 112.95295624559034 112.95295624559034 112.95295624559034 112.95295624559034 112.95295624559034
+ TF 12.86880825030027 12.86880825030027 12.86880825030027 12.86880825030027 12.86880825030027 12.86880825030027
+ Facilities 112.95295624559 112.95295624559 112.95295624559 112.95295624559 112.95295624559 112.95295624559
  ------ ----- ---- ----- ----- ----- ------
- Total 184.3252019988791 184.3252019988791 184.3252019988791 184.3252019988791 184.3252019988791 184.3252019988791
+ Total 184.3252019989528 184.3252019989528 184.3252019989528 184.3252019989528 184.3252019989528 184.3252019989528
  ------ ----- ---- ----- ----- ----- ------
  
  Intermittent power usage [MWe]:
  
  System tramp tohs theat tburn tqnch tdwell
  ------ ----- ---- ----- ----- ----- ------
- H & CD 0.0 300.0 300.0 125.01165619016587 300.0 0.0
- PF 197.58606118274244 -76.177933026481 0.0 2.6712723693110085 -238.7742054923269 0.0
+ H & CD 0.0 300.0 300.0 125.01165619016612 300.0 0.0
+ PF 197.5860611843126 -76.1779330299758 0.0 2.671272369398293 -238.77420549290042 0.0
  ------ ----- ---- ----- ----- ----- ------
- Total 197.58606118274244 223.822066973519 300.0 127.68292855947688 61.2257945076731 0.0
+ Total 197.5860611843126 223.8220669700242 300.0 127.68292855956442 61.22579450709958 0.0
  ------ ----- ---- ----- ----- ----- ------
  
  Power production [MWe]:
  
   tramp tohs theat tburn tqnch tdwell avg
   ----- ---- ----- ----- ----- ------ ---
- Gross power 0.0 0.0 0.0 811.0596043677724 0.0 0.0
- Net power -381.9112631816215 -408.1472689723981 -484.3252019988791 499.05147380941645 -245.5509965065522 -184.3252019988791
+ Gross power 0.0 0.0 0.0 811.0596043676891 0.0 0.0
+ Net power -381.9112631832654 -408.14726896897696 -484.3252019989528 499.05147380917185 -245.55099650605237 -184.3252019989528
  ------ ----- ---- ----- ----- ----- ------
  
  
@@ -1572,7 +1572,9 @@ tfcth    = 1.0500e+00 * Inboard tf coil thickness; (centrepost for st) (m)
 vgap2    = 0.061 * Vertical gap between vacuum vessel and tf coil (m)
 vgap   = 1.60 * Vertical gap between x-point and divertor (m)
 tftsgap = 0.02
-thshield = 0.05
+thshield_ib = 0.05
+thshield_ob = 0.05
+thshield_vb = 0.05
 vvblgap = 0.02
 *---------------Buildings Variables----------------*
 *---------------Constraint Variables---------------*

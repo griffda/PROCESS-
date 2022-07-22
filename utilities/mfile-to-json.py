@@ -18,8 +18,8 @@ RADIAL_BUILD = [
     "precomp",
     "gapoh",
     "tfcth",
-    "deltf",
-    "thshield",
+    "tftsgap",
+    "thshield_ib",
     "gapds",
     "d_vv_in",
     "shldith",
@@ -36,7 +36,7 @@ RADIAL_BUILD = [
     "shldoth",
     "d_vv_out",
     "gapsto",
-    "thshield",
+    "thshield_ob",
     "tftsgap",
     "tfthko",
 ]
@@ -45,7 +45,7 @@ RADIAL_BUILD = [
 VERTICAL_BUILD_SN = [
     "tfcth",
     "tftsgap",
-    "thshield",
+    "thshield_vb",
     "vgap2",
     "d_vv_bot",
     "shldlth",
@@ -60,7 +60,7 @@ VERTICAL_BUILD_SN = [
     "shldtth",
     "d_vv_top",
     "vgap2",
-    "thshield",
+    "thshield_vb",
     "tftsgap",
     "tfcth",
 ]
@@ -69,7 +69,7 @@ VERTICAL_BUILD_SN = [
 VERTICAL_BUILD_DN = [
     "tfcth",
     "tftsgap",
-    "thshield",
+    "thshield_vb",
     "vgap2",
     "d_vv_bot",
     "shldlth",
@@ -82,7 +82,7 @@ VERTICAL_BUILD_DN = [
     "shldlth",
     "d_vv_bot",
     "vgap2",
-    "thshield",
+    "thshield_vb",
     "tftsgap",
     "tfcth",
 ]
