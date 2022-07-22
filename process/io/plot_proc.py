@@ -2357,9 +2357,10 @@ def plot_current_drive_info(axis, mfile_data, scan):
         ]
         if "iefrffix" in mfile_data.data.keys():
             data.insert(
-                1, ("pinjmwfix", f"{secondary_heating} secondary heating power", "MW")
+                1, ("pinjmwfix", f"{secondary_heating} secondary auxiliary power", "MW")
             )
-            data[0] = ((pinjie - pinjmwfix), "Steady state auxiliary power", "MW")
+            data[0] = ((pinjie - pinjmwfix), "Primary auxiliary power", "MW")
+            data.insert(2, (pinjie, "Total auxillary power", "MW"))
 
     if nbi:
         data = [
@@ -2382,9 +2383,10 @@ def plot_current_drive_info(axis, mfile_data, scan):
         ]
         if "iefrffix" in mfile_data.data.keys():
             data.insert(
-                1, ("pinjmwfix", f"{secondary_heating} secondary heating power", "MW")
+                1, ("pinjmwfix", f"{secondary_heating} secondary auxiliary power", "MW")
             )
-            data[0] = ((pinjie - pinjmwfix), "Steady state auxiliary power", "MW")
+            data[0] = ((pinjie - pinjmwfix), "Primary auxiliary power", "MW")
+            data.insert(2, (pinjie, "Total auxillary power", "MW"))
 
     if ebw:
         data = [
@@ -2405,9 +2407,10 @@ def plot_current_drive_info(axis, mfile_data, scan):
         ]
         if "iefrffix" in mfile_data.data.keys():
             data.insert(
-                1, ("pinjmwfix", f"{secondary_heating} secondary heating power", "MW")
+                1, ("pinjmwfix", f"{secondary_heating} secondary auxiliary power", "MW")
             )
-            data[0] = ((pinjie - pinjmwfix), "Steady state auxiliary power", "MW")
+            data[0] = ((pinjie - pinjmwfix), "Primary auxiliary power", "MW")
+            data.insert(2, (pinjie, "Total auxillary power", "MW"))
 
     coe = mfile_data.data["coe"].get_scan(scan)
     if coe == 0.0:
