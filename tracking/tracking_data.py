@@ -1,12 +1,12 @@
 """The tracking tool aims to provide a CLI for two important tracking tools.
 
 We can generate tracking data for a given run of PROCESS, which corresponds to one output MFile.
-When generating tracking data, we store metadata about the run, such as time and commit message, 
-and also variable data: the value of a given variable during this run; this is all stored in one 
+When generating tracking data, we store metadata about the run, such as time and commit message,
+and also variable data: the value of a given variable during this run; this is all stored in one
 JSON file.
 
 * Run title: the name of the run input, and hence output, file (e.g. baseline 2018).
-* Tracking history: the data held within all JSON files in the database that span many variables, 
+* Tracking history: the data held within all JSON files in the database that span many variables,
 many different run titles and spans a period of time.
 * Variable history: the data held within all JSON files in the database for a given variable;
 not all run titles will have a history for each variable being tracked
@@ -19,7 +19,7 @@ before being processed into a dataframe. This dataframe is then processed into a
 * The dashboard: represented by the entire html file generated, contains many panels
 * Panels: each parent module (or variable namespace) has its own tab which contains many graphs
 * Graphs: each graph shows the variable history of one variable, it will have many lines
-* Lines: each line represents many datapoints for a single variable, over a period of time, 
+* Lines: each line represents many datapoints for a single variable, over a period of time,
 that all come from the same run title
 * Datapoints: the value of a variable at a point in time during a given run
 
@@ -57,7 +57,7 @@ logging.basicConfig(level=logging.INFO, filename="tracker.log")
 logger = logging.getLogger("PROCESS Tracker")
 
 
-### Tracking ###
+# Tracking
 
 
 class TrackingFile:
@@ -110,7 +110,7 @@ class ProcessTracker:
         "pnucblkt",
         "triang",
         "triang95",
-        "pcoreradmw",
+        "pinnerzoneradmw",
         "tesep",
         "ralpne",
         "ieped",
@@ -220,7 +220,7 @@ class ProcessTracker:
             try:
                 # value of var in the mfile
                 variable_data = self.mfile.data[var]
-            except:
+            except Exception:
                 logger.info(f"{var} is not present in the MFile and will be skipped.")
                 continue
 
@@ -233,7 +233,7 @@ class ProcessTracker:
                 # see tracking_variables docstring
                 try:
                     _, var = var.split(".")
-                except:
+                except Exception:
                     logger.warning(
                         f"{var} is a dotted variable and must be in the form OVERRIDINGNAME.VARIABLE"
                     )
@@ -241,7 +241,7 @@ class ProcessTracker:
             try:
                 # value of the variable extracted from the mfile
                 mfile_var_value = self.mfile.data[var]
-            except:
+            except Exception:
                 logger.info(f"{var} is not present in the MFile and will be skipped.")
                 continue
 
@@ -258,7 +258,7 @@ class ProcessTracker:
             json.dump(self.tracking_file.asdict(), f, indent=4)
 
 
-### Plotting ###
+# Plotting
 
 colour_map = {}
 colours = itertools.cycle(
@@ -355,7 +355,7 @@ class TrackedData:
         )  # the JSON data of one run of PROCESS in python datastructures
         for variable, value in tracking_data.items():
             # create a new TrackedVariable when we see a variable we do not know
-            if not variable in self.tracked_variables.keys():
+            if variable not in self.tracked_variables.keys():
                 self.tracked_variables[variable] = TrackedVariable(variable)
 
             self.tracked_variables.get(variable).add_datapoint(
@@ -392,7 +392,7 @@ def plot_tracking_data(database):
         try:
             overriden_name, variable = i.split(".")
             overrides[variable] = overriden_name
-        except:
+        except Exception:
             continue
 
     for variable, history in loaded_tracking_database_data.tracked_variables.items():
@@ -536,7 +536,7 @@ class PythonFortranInterfaceVariables:
             # fortran module and is the next best
             # thing to check this is a module.
             # main_module is just the chosen arbitrary module
-            if type(module) == type(fortran.main_module):
+            if type(module) == type(fortran.main_module):  # noqa: E721
                 classes[name] = cls._get_variables(module)
 
         cls.tree = classes
@@ -552,7 +552,7 @@ class PythonFortranInterfaceVariables:
             # type(fortran.main_module.inform) => fortran subroutine
             # if its not a fortran subroutine, its a variable
             # because type `fortran` cannot be checked as a type
-            if type(function) != type(fortran.main_module.inform):
+            if type(function) != type(fortran.main_module.inform):  # noqa: E721
                 variables.append(name)
 
         return variables

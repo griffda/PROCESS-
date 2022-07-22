@@ -19,14 +19,14 @@ module physics_module
 
   integer :: iscz
   integer :: err242, err243
-  real(dp) :: rad_fraction_core
+  real(dp) :: rad_fraction_LCFS
   real(dp) :: total_plasma_internal_energy  ! [J]
   real(dp) :: total_loss_power        ! [W]
   real(dp) :: total_energy_conf_time  ! [s]
   real(dp) :: ptarmw, lambdaio, drsep
   real(dp) :: fio, fLI, fLO, fUI, fUO, pLImw, pLOmw, pUImw, pUOmw
-  real(dp) :: rho_star  
-  real(dp) :: nu_star  
+  real(dp) :: rho_star
+  real(dp) :: nu_star
   real(dp) :: beta_mcdonald
   real(dp) :: itart_r
 
@@ -44,7 +44,7 @@ module physics_module
     iscz = 0
     err242 = 0
     err243 = 0
-    rad_fraction_core = 0.0D0
+    rad_fraction_LCFS = 0.0D0
     total_plasma_internal_energy = 0.0D0
     total_loss_power = 0.0D0
     total_energy_conf_time = 0.0D0
@@ -75,128 +75,24 @@ module physics_module
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine physics
 
-    !! Routine to calculate tokamak plasma physics information
-    !! author: P J Knight, CCFE, Culham Science Centre
-    !! None
-    !! This routine calculates all the primary plasma physics
-    !! characteristics for a tokamak device.
-    !! AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !! T. Hartmann and H. Zohm: Towards a 'Physics Design Guidelines for a
-    !! DEMO Tokamak' Document, March 2012, EFDA Report
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    use div_kal_vars, only: impurity_enrichment, netau_sol
 
-    use build_variables, only: fwarea
-    use constraint_variables, only: peakradwallload, flhthresh, peakfactrad
-    use current_drive_module, only: cudriv
-    use current_drive_variables, only: irfcd, bscf_nevins, bscfmax, cboot, &
-      cnbeam, ftritbm, bscf_wilson, bscf_sauter, pinjmw, bootipf, pinjimw, &
-      bscf_iter89, pinjemw, enbeam, psipf, pscf_scene, plasipf, diaipf, &
-      diacf_scene, diacf_hender
-    use divertor_variables, only: prn1
-    use error_handling, only: idiags, report_error
-    use fwbs_variables, only: fhcd, fdiv
-    use impurity_radiation_module, only: fimp, impurity_arr
-    use physics_functions_module, only: plasma_elongation_ipb, &
-      total_mag_field, res_diff_time, t_eped_scaling, beta_poloidal, palph2, &
-      radpwr, pthresh, beamfus, palph
-    use physics_variables, only: ptremw, idensl, res_time, ignite, vol, dnalp, &
-      teped, beta, dnelimt, taup, pradpv, fgwped, photon_wall, kappaa_ipb, &
-      kappaa, gamma, plhthresh, betap, fvsbrnni, btot, hfact, nesep, palpfwmw, &
-      betanb, pradmw, rad_fraction, q95, wallmw, zeffai, dnla, vsstt, &
-      pedgeradmw, falpi, tin, ralpne, triang95, ti, tesep, ibss, dene, p0, &
-      psyncpv, pscalingmw, rad_fraction_sol, pcoreradmw, rplas, zeff, &
-      normalised_total_beta, pdhe3, pdivmax, pdivl, fgwsep, pdt, pdd, xarea, &
-      faccd, iwalld, itart, pdivu, gtscale, idivrt, pneutmw, neped, ipedestal, &
-      icurr, betalim, pdivt, te0, dlamie, dnbeta, ptrimw, facoh, te, &
-      protonrate, powfmw, rndfuel, csawth, q, ealphadt, falpha, &
-      pfuscmw, sarea, fusionrate, ilhthresh, pneutpv, isc, vsres, ftar, &
-      pedgeradpv, betbm0, palpnb, kappa95, rpfac, tauei, plinepv, ieped, &
-      aspect, falpe, piepv, pchargemw, alphat, triang, ne0, ten, aion, betaft, &
-      afuel, vsind, sf, palpipv, taueff, pcoreradpv, eps, &
-      dlimit, qfuel, pchargepv, pbrempv, pohmpv, alpharate, dnbeam2, ffwal, &
-      iinvqd, dnitot, alphan, beamfus0, palpmw, kappa, figmer, tauee, iprofile, &
-      rminor, vsbrn, ifalphap, palppv, palpepv, pohmmw, rlp, rmajor, ptripv, &
-      dntau, ftrit, bt, fhe3, rli, pthrmw, burnup, phiint, ptrepv, alphap, &
-      qstar, powerht, alphaj, fdeut, deni, q0, pperim, plascur, bp, idia, ips
-    use plasmod_module, only: convert_plasmod2process, setupplasmod
-    use profiles_module, only: plasma_profiles
-    use numerics, only: icc
-    use pulse_variables, only: lpulse
-    use reinke_variables, only: lhat, fzactual, impvardiv, fzmin
-    use times_variables, only: tramp, theat, tcycle, tpulse, tohs, tburn0, &
-      tdwell, pulsetimings, tqnch, tohsin, tburn, tdown
-    use reinke_module, only: reinke_tsep, reinke_fzmin
-		use global_variables, only: verbose
-		use constants, only: rmu0, pi, nout, echarge
+
+   subroutine plasmodphysics
+
       use plasmod_variables, only: mhd, radp, loss, num, geom, ped, inp0, &
-         i_flag, comp
-    implicit none
-    !  Local variables
+      i_flag, comp
+      use plasmod_module, only: convert_plasmod2process, setupplasmod
+      use global_variables, only: verbose
+      use times_variables, only: tramp, theat, tcycle, tpulse, tohs, tburn0, &
+     tdwell, pulsetimings, tqnch, tohsin, tburn, tdown
+      implicit none
+   !  Local variables
 
-    real(dp) :: betat,betpth,fusrat,pddpv,pdtpv,pdhe3pv, &
+      real(dp) :: betat,betpth,fusrat,pddpv,pdtpv,pdhe3pv, &
          pinj,sbar,sigvdt,zion, fsep, fgw
 
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    
-    ! Volume measure of plasma elongation (used by IPB scalings)
-    kappaa_IPB = plasma_elongation_IPB()
-
-    if (icurr == 2) then
-       q95 = q * 1.3D0 * (1.0D0 - eps)**0.6D0
-    else
-       q95 = q  !  i.e. input (or iteration variable) value
-    end if
-
-    if (ipedestal .ne. 3) then
-
-       !  Calculate plasma composition
-       ! Issue #261 Remove old radiation model (imprad_model=0)
-       call plasma_composition
-
-       !  Calculate plasma current
-       call culcur(alphaj,alphap,bt,eps,icurr,iprofile,kappa,kappa95,p0, &
-            pperim,q0,q,rli,rmajor,rminor,sf,triang,triang95,bp,qstar,plascur)
-
-       !  Calculate density and temperature profile quantities
-       !  If ipedestal = 1 then set pedestal density to
-       !    fgwped * Greenwald density limit
-       !  Note: this used to be done before plasma current
-       if (((ipedestal == 1).or.(ipedestal==2)).and.(fgwped >=0d0)) then
-          neped = fgwped * 1.0D14 * plascur/(pi*rminor*rminor)
-       endif
-       if (((ipedestal == 1).or.(ipedestal==2)).and.(fgwsep >=0d0)) then
-          nesep = fgwsep * 1.0D14 * plascur/(pi*rminor*rminor)
-       end if
-
-    else if (geom%counter.eq.0.d0) then
-       !if plasmod_i_equiltype = 2 plascur is an input
-       !This is not yet consistently implemented though and contradicts
-       !usual PROCESS workflows where q is an input/interation variable
-
-
-       !Note that alphap is 0 here!
-       !alphap is only used for icurr=7 (Connor-Hastie model)
-       call culcur(alphaj,alphap,bt,eps,icurr,iprofile,kappa,kappa95,p0, &
-            pperim,q0,q,rli,rmajor,rminor,sf,triang,triang95,bp,qstar,plascur)
-
-    endif
-
-    ! Issue #413 Dependence of Pedestal Properties on Plasma Parameters
-    ! ieped : switch for scaling pedestal-top temperature with plasma parameters
-    if ((ipedestal >= 1) .and. (ieped == 1)) teped = t_eped_scaling()
-
-    if (ipedestal .ne. 3)then
-
-       call plasma_profiles
-
-    else  ! Run PLASMOD
-
-       call setupPlasmod(i_flag, &
+      call setupPlasmod(i_flag, &
          geom%k, geom%d, geom%ip, geom%k95, geom%d95, &
          geom%r, geom%a, geom%q95, geom%bt, geom%counter, &
          comp%fcoreraditv, comp%qdivt, comp%pradfrac, &
@@ -218,37 +114,37 @@ module physics_module
          num%i_modeltype, num%ipedestal, num%iprocess, num%isawt, num%maxA, &
          num%nchannels, num%nx, num%nxt, num%test, num%tol, num%tolmin, &
          ped%tesep, ped%rho_t, ped%rho_n, ped%pedscal, ped%teped &
-    )
+   )
 
-       if(verbose == 1) then
+      if(verbose == 1) then
 
-          open(32,file='plasmodsolprima.dat')
-          write(32,*) 'num ',num
-          write(32,*) 'geom ',geom
-          write(32,*) 'comp ',comp
-          write(32,*) 'ped ',ped
-          write(32,*) 'inp0 ',inp0
-          write(32,*) 'mhd ',mhd
-          write(32,*) 'loss ',loss
-          close(32)
+         open(32,file='plasmodsolprima.dat')
+         write(32,*) 'num ',num
+         write(32,*) 'geom ',geom
+         write(32,*) 'comp ',comp
+         write(32,*) 'ped ',ped
+         write(32,*) 'inp0 ',inp0
+         write(32,*) 'mhd ',mhd
+         write(32,*) 'loss ',loss
+         close(32)
 
-       endif
+      endif
 
-       call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
+      call plasmod_EF(num,geom,comp,ped,inp0,radp,mhd,loss,i_flag)
 
-       if (verbose == 1) then
-          open(32,file='plasmodsoldopo.dat')
-          write(32,*) 'num ',num
-          write(32,*) 'geom ',geom
-          write(32,*) 'comp ',comp
-          write(32,*) 'ped ',ped
-          write(32,*) 'inp0 ',inp0
-          write(32,*) 'mhd ',mhd
-          write(32,*) 'loss ',loss
-          close(32)
-       endif
+      if (verbose == 1) then
+         open(32,file='plasmodsoldopo.dat')
+         write(32,*) 'num ',num
+         write(32,*) 'geom ',geom
+         write(32,*) 'comp ',comp
+         write(32,*) 'ped ',ped
+         write(32,*) 'inp0 ',inp0
+         write(32,*) 'mhd ',mhd
+         write(32,*) 'loss ',loss
+         close(32)
+      endif
 
-       call convert_Plasmod2PROCESS(theat, tburn, fusrat, &
+      call convert_Plasmod2PROCESS(theat, tburn, fusrat, &
          geom%k, geom%d, geom%perim, geom%ip, geom%q95, &
          comp%comparray, comp%globtau, comp%cxe, comp%che, comp%car, &
          ped%teped, ped%nped, ped%nsep, ped%tesep, &
@@ -265,442 +161,15 @@ module physics_module
          mhd%betan, mhd%bp, mhd%equilcheck, mhd%f_ni, mhd%fbs, mhd%ip_out, &
          mhd%q, mhd%q_sep, mhd%qstar, mhd%rli, mhd%sp, mhd%torsurf, mhd%vloop, &
          mhd%vp &
-       )
+      )
 
-    endif
 
-    ! Calculate total magnetic field [T]
-    btot = total_mag_field()
 
-    ! Calculate beta poloidal [-]
-    betap = beta_poloidal()
 
-    !  Set PF coil ramp times
-    if (lpulse /= 1) then
+   end subroutine plasmodphysics
 
-       if (tohsin == 0.0D0) then
-          tohs = plascur/5.0D5
-          tramp = tohs
-          tqnch = tohs
-       else
-          tohs = tohsin
-       end if
 
-    else
 
-       if (pulsetimings == 0.0D0) then
-         ! tramp is input
-         tohs = plascur/1.0D5
-         tqnch = tohs
-
-       else
-         !  tohs is set either in INITIAL or INPUT, or by being
-         !  iterated using limit equation 41.
-         tramp = max(tramp,tohs)
-         !tqnch = max(tqnch,tohs)
-         tqnch = tohs
-       end if
-
-    end if
-
-    !  Reset second tburn value (tburn0).
-    !  This is used to ensure that the burn time is used consistently;
-    !  see convergence loop in fcnvmc1, evaluators.f90
-    tburn0 = tburn
-
-    !  Pulse and down times : The reactor is assumed to be 'down'
-    !  at all times outside of the plasma current flat-top period.
-    !  The pulse length is the duration of non-zero plasma current
-    tpulse = tohs + theat + tburn + tqnch
-    tdown  = tramp + tohs + tqnch + tdwell
-
-    !  Total cycle time
-    tcycle = tramp + tohs + theat + tburn + tqnch + tdwell
-
-    !  Calculate bootstrap current fraction using various models
-    bscf_iter89 = bootstrap_fraction_iter89(aspect,beta,btot,cboot,plascur, &
-         q95,q0,rmajor,vol)
-
-    !Profile parameters are meaningless with ipedestal=3
-    if (ipedestal.ne.3) then
-       betat = beta * btot**2 / bt**2
-       bscf_nevins = cboot * bootstrap_fraction_nevins(alphan,alphat,betat,bt,dene, &
-            plascur,q95,q0,rmajor,rminor,ten,zeff)
-
-       !  Wilson scaling uses thermal poloidal beta, not total
-       betpth = (beta-betaft-betanb) * ( btot/bp )**2
-       bscf_wilson = cboot * bootstrap_fraction_wilson(alphaj,alphap,alphat,betpth, &
-            q0,q95,rmajor,rminor)
-
-       ! Hender scaling for diamagnetic current at tight aspect ratio
-       call diamagnetic_fraction_hender(beta,diacf_hender)
-
-       ! SCENE scaling for diamagnetic current
-       call diamagnetic_fraction_scene(beta,q95,q0,diacf_scene)
-
-       ! Pfirsch-Schlüter scaling for diamagnetic current
-       call ps_fraction_scene(beta,pscf_scene)
-    endif
-
-    bscf_sauter = cboot * bootstrap_fraction_sauter()
-
-    if (ipedestal .ne. 3) then
-       if (bscfmax < 0.0D0) then
-          bootipf = abs(bscfmax)
-          plasipf = bootipf
-       else
-          if (ibss == 1) then
-             bootipf = bscf_iter89
-          else if (ibss == 2) then
-             bootipf = bscf_nevins
-          else if (ibss == 3) then
-             bootipf = bscf_wilson
-          else if (ibss == 4) then
-             bootipf = bscf_sauter
-          else
-             idiags(1) = ibss ; call report_error(75)
-          end if
-
-          err242 = 0
-          if (bootipf.gt.bscfmax)then
-             bootipf = min(bootipf,bscfmax)
-             err242 = 1
-          end if
-
-          if (idia == 1) then
-             diaipf = diacf_hender
-          else if (idia == 2) then
-             diaipf = diacf_scene
-          end if
-
-          if (ips == 1) then
-             psipf = pscf_scene
-          end if
-
-          plasipf = bootipf + diaipf + psipf
-
-       end if
-
-       !  Plasma driven current fraction (Bootstrap + Diamagnetic
-       !  + Pfirsch-Schlüter) constrained to be less than
-       !  or equal to the total fraction of the plasma current
-       !  produced by non-inductive means (which also includes
-       !  the current drive proportion)
-       err243 = 0
-       if (plasipf.gt.fvsbrnni)then
-          plasipf = min(plasipf,fvsbrnni)
-          err243 = 1
-       end if
-
-    endif
-
-    !  Fraction of plasma current produced by inductive means
-    if (ipedestal .ne. 3) then
-      facoh = max( 1.0D-10, (1.0D0 - fvsbrnni) )
-    !   Fraction of plasma current produced by auxiliary current drive
-      faccd = fvsbrnni - plasipf
-    endif
-
-    !  Auxiliary current drive power calculations
-
-    if (irfcd /= 0) call cudriv(nout,0)
-
-    if (ipedestal .ne. 3) then  ! otherwise replaced by PLASMOD variables
-
-       !  Calculate fusion power + components
-       call palph(alphan,alphat,deni,fdeut,fhe3,ftrit,ti,palppv,pchargepv,pneutpv, &
-            sigvdt,fusionrate,alpharate,protonrate,pdtpv,pdhe3pv,pddpv)
-
-       pdt = pdtpv * vol
-       pdhe3 = pdhe3pv * vol
-       pdd = pddpv * vol
-
-
-       !  Calculate neutral beam slowing down effects
-       !  If ignited, then ignore beam fusion effects
-
-       if ((cnbeam /= 0.0D0).and.(ignite == 0)) then
-          call beamfus(beamfus0,betbm0,bp,bt,cnbeam,dene,deni,dlamie, &
-               ealphadt,enbeam,fdeut,ftrit,ftritbm,sigvdt,ten,tin,vol, &
-               zeffai,betanb,dnbeam2,palpnb)
-          fusionrate = fusionrate + 1.0D6*palpnb / (1.0D3*ealphadt*echarge) / vol
-          alpharate = alpharate + 1.0D6*palpnb / (1.0D3*ealphadt*echarge) / vol
-       end if
-
-       pdt = pdt + 5.0D0*palpnb
-
-       ! Create some derived values and add beam contribution to fusion power
-       call palph2(bt,bp,dene,deni,dnitot,falpe,falpi,palpnb, &
-            ifalphap,pchargepv,pneutpv,ten,tin,vol,palpmw,pneutmw,pchargemw,betaft, &
-            palppv,palpipv,palpepv,pfuscmw,powfmw)
-
-    endif
-
-    !  Nominal mean neutron wall load on entire first wall area including divertor and beam holes
-    !  Note that 'fwarea' excludes these, so they have been added back in.
-    if (iwalld == 1) then
-       wallmw = ffwal * pneutmw / sarea
-    else
-       if (idivrt == 2) then
-         !Double null configuration
-         wallmw = (1.0D0-fhcd-2.0D0*fdiv)*pneutmw / fwarea
-       else
-         ! Single null Configuration
-         wallmw = (1.0D0-fhcd-fdiv)*pneutmw / fwarea
-       end if 
-    end if
-
-    if (ipedestal .ne. 3) then ! otherwise replaced by PLASMOD variables
-
-        !  Calculate ion/electron equilibration power
-
-        call rether(alphan,alphat,dene,dlamie,te,ti,zeffai,piepv)
-
-
-       !  Calculate radiation power
-
-       call radpwr(pbrempv,plinepv,psyncpv, &
-            pcoreradpv,pedgeradpv,pradpv)
-
-       pcoreradmw = pcoreradpv*vol
-       pedgeradmw = pedgeradpv*vol
-       pradmw = pradpv*vol
-    endif
-
-    if (ipedestal .ne. 3) then
-       !  Calculate ohmic power
-       call pohm(facoh,kappa95,plascur,rmajor,rminor,ten,vol,zeff, &
-            pohmpv,pohmmw,rpfac,rplas)
-
-       !  Calculate L- to H-mode power threshold for different scalings
-
-       call pthresh(dene,dnla,bt,rmajor,kappa,sarea,aion,aspect,pthrmw)
-
-       !  Enforced L-H power threshold value (if constraint 15 is turned on)
-
-       plhthresh = pthrmw(ilhthresh)
-
-       !  Power transported to the divertor by charged particles,
-       !  i.e. excludes neutrons and radiation, and also NBI orbit loss power,
-       !  which is assumed to be absorbed by the first wall
-       if (ignite == 0) then
-          pinj = pinjmw
-       else
-          pinj = 0.0D0
-       end if
-       pdivt = falpha*palpmw + pchargemw + pinj + pohmmw - pradmw
-
-       !  The following line is unphysical, but prevents -ve sqrt argument
-       !  Should be obsolete if constraint eqn 17 is turned on
-       pdivt = max(0.001D0, pdivt)
-
-       ! if double null configuration share the power 
-       ! over the upper and lower divertor, where ftar gives
-       ! the factor of power conducted to the lower divertor
-       if (idivrt == 2) then 
-         pdivl = ftar * pdivt
-         pdivu = (1.0D0-ftar) * pdivt
-         pdivmax = max(pdivl, pdivu)
-       end if
-    end if
-
-    ! Resistive diffusion time = current penetration time ~ mu0.a^2/resistivity
-    res_time = res_diff_time()
-
-    !  Power transported to the first wall by escaped alpha particles
-    palpfwmw = palpmw * (1.0D0-falpha)
-
-    !  Density limit
-    call culdlm(bt,idensl,pdivt,plascur,prn1,qstar,q95, &
-         rmajor,rminor,sarea,zeff,dlimit,dnelimt)
-
-    if (ipedestal .ne. 3) then
-
-       !  Calculate transport losses and energy confinement time using the
-       !  chosen scaling law
-       call pcond(afuel,palpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
-            iinvqd,isc,ignite,kappa,kappa95,kappaa,pchargemw,pinjmw, &
-            plascur,pcoreradpv,rmajor,rminor,te,ten,tin,q95,qstar,vol, &
-            xarea,zeff,ptrepv,ptripv,tauee,tauei,taueff,powerht)
-
-       ptremw = ptrepv*vol
-       ptrimw = ptripv*vol
-       !  Total transport power from scaling law (MW)
-       !pscalingmw = ptremw + ptrimw !KE - why is this commented?
-
-       ! Calculate Volt-second requirements
-       call vscalc(csawth,eps,facoh,gamma,kappa,rmajor,rplas, &
-            plascur,theat,tburn,phiint,rli,rlp,vsbrn,vsind,vsres,vsstt)
-
-       !  Calculate auxiliary physics related information
-       sbar = 1.0D0
-       call phyaux(aspect,dene,deni,fusionrate,alpharate,plascur,sbar,dnalp, &
-            taueff,vol,burnup,dntau,figmer,fusrat,qfuel,rndfuel,taup)
-
-    endif
-
-    !ptremw = ptrepv*vol
-    !ptrimw = ptripv*vol
-    !  Total transport power from scaling law (MW)
-    pscalingmw = ptremw + ptrimw
-
-    ! !!!vscal and phyaux should be replaced by PLASMOD output ipedestal 3 - is this done?
-
-    !  Calculate beta limit
-    if (iprofile == 0) then
-
-       select case (gtscale)
-
-          case (1)  
-          
-             !  Original scaling law
-             dnbeta = 2.7D0 * (1.0D0 + 5.0D0*eps**3.5D0)
-          
-          case (2)
-              
-             ! See Issue #1439
-             ! dnbeta found from aspect ratio scaling on p32 of Menard:
-             ! Menard, et al. "Fusion Nuclear Science Facilities
-             ! and Pilot Plants Based on the Spherical Tokamak."
-             ! Nucl. Fusion, 2016, 44.
-             dnbeta = 3.12D0 + 3.5D0*eps**1.7D0
-             
-       end select
-
-    else
-       !  Relation between beta limit and plasma internal inductance
-       !  Hartmann and Zohm
-       dnbeta = 4.0D0 * rli
-    end if
-
-    call culblm(bt,dnbeta,plascur,rminor,betalim)
-
-    ! MDK
-    !  Nominal mean photon wall load on entire first wall area including divertor and beam holes
-    !  Note that 'fwarea' excludes these, so they have been added back in.
-    if (iwalld == 1) then
-       photon_wall = ffwal * pradmw / sarea
-    else
-       if (idivrt == 2) then
-         ! Double Null configuration in - including SoL radiation
-         photon_wall = (1.0D0-fhcd-2.0D0*fdiv)*pradmw / fwarea + &
-         (1.0D0-fhcd-2.0D0*fdiv)*rad_fraction_sol*pdivt / (fwarea)
-       else
-         ! Single null configuration - including SoL radaition
-         photon_wall = (1.0D0-fhcd-fdiv)*pradmw / fwarea + &
-         (1.0D0-fhcd-fdiv)*rad_fraction_sol*pdivt / fwarea
-       end if 
-    end if
-
-    peakradwallload = photon_wall *peakfactrad 
-
-    ! Calculate the target imbalances 
-    ! find the total power into the targets
-    ptarmw =  pdivt * (1.0D0 - rad_fraction_sol) 
-    ! use ftar to find deltarsep
-    ! Parameters taken from double null machine 
-    ! D. Brunner et al 
-    lambdaio = 1.57d-3
-    drsep = - 2.0d0 * 1.5d-3 * atanh(2.0d0 *(ftar - 0.5d0)) ! this needs updating
-    ! Find the innner and outer lower target imbalance
-    fio = 0.16d0 + (0.16d0 - 0.41d0) * (1.0d0 - ( 2.0d0 / (1.0d0 + exp(-(drsep/lambdaio)**2))))
-    if (idivrt == 2) then
-      ! Double Null configuration
-      ! Find all the power fractions accross the targets
-      fLI = ftar * fio
-      fLO = ftar * ( 1.0d0 - fio )
-      fUI = (1.0d0 - ftar ) * fio
-      fUO = (1.0d0 - ftar ) * ( 1.0d0 - fio )  
-      ! power into each target
-      pLImw = fLI * ptarmw
-      pLOmw = fLO * ptarmw
-      pUImw = fUI * ptarmw
-      pUOmw = fUO * ptarmw
-    else
-      ! Single null configuration
-      fLI = fio
-      fLO = 1.0d0 - fio
-      ! power into each target 
-      pLImw = fLI * ptarmw
-      pLOmw = fLO * ptarmw
-    end if
-
-    ! Calculate some derived quantities that may not have been defined earlier
-    total_loss_power = 1d6 * (falpha*palpmw+pchargemw+pohmmw+pinjmw)
-    rad_fraction_core = 1.0D6*pradmw / total_loss_power
-    rad_fraction = rad_fraction_core + (1.0d0 - rad_fraction_core) * rad_fraction_sol
-    total_plasma_internal_energy = 1.5D0*beta*btot*btot/(2.0D0*rmu0)*vol
-    total_energy_conf_time = total_plasma_internal_energy / total_loss_power
-
-    if (any(icc == 78)) then
-       write(*,*) 'reinke t and fz, physics = ', tesep, ', ', fzmin
-       fsep = nesep/dene
-       fgw = dlimit(7)/dene
-       !calculate separatrix temperature, if Reinke criterion is used
-       tesep = reinke_tsep(bt, flhthresh, q95, rmajor, eps, fgw, kappa, lhat)
-       fzmin =  reinke_fzmin(bt, flhthresh, q95, rmajor, eps, fsep, fgw, kappa, lhat, &
-            netau_sol, tesep, impvardiv, impurity_arr%frac, impurity_enrichment)
-
-       if (fzmin >= 1.0D0) then
-          call report_error(217)
-       endif
-
-       write(*,*) 'fzactual, frac, impvardiv = ', fzactual, ', ', &
-         impurity_arr(impvardiv)%frac, ', ',  impvardiv  
-
-    endif
-
-    if (verbose == 1) then
-       !write some PROCESS outputs that have been generated by PLASMOD
-       open(32,file='processOutput_plasmod.dat')
-       write(32,*) 'te0 ',te0, ' ne0 ',ne0
-       write(32,*) 'teped ',teped, ' neped ',neped
-       write(32,*) 'nesep ',nesep, ' vol ',vol
-       write(32,*) 'plascur ',plascur, ' bootipf ',bootipf
-       write(32,*) 'q95 ',q95, ' qstar ',qstar
-       write(32,*) 'kappaa ',kappaa
-       write(32,*) 'FIELDS -----'
-       write(32,*) 'bp ',bp, ' bt ',bt
-       write(32,*) 'btot ', btot
-       write(32,*) 'BETA -----'
-       write(32,*) 'betap ', betap, ' betaft ',betaft
-       write(32,*) 'normalised_total_beta ',normalised_total_beta
-       write(32,*) 'RATES -----'
-       write(32,*) 'fusionrate ',fusionrate, ' alpharate ',alpharate
-       write(32,*) 'POWERS -----'
-       write(32,*) 'palpmw ',palpmw, ' pchargemw ',pchargemw, ' pneutmw ',pneutmw
-       write(32,*) 'palppv ',palppv, ' pchargepv ',pchargepv, ' pneutpv ',pneutpv
-       write(32,*) 'pdt ',pdt, ' pdhe3 ',pdhe3, ' pdd ',pdd
-       write(32,*) 'palpepv ',palpepv, ' palpipv ',palpipv
-       write(32,*) 'powfmw ',powfmw, ' pfuscmw ',pfuscmw, ' hfact ',hfact
-       write(32,*) 'ptrepv ',ptrepv, ' ptripv ',ptripv
-       write(32,*) 'powerht ',powerht
-       write(32,*) 'CONFINEMENT -----'
-       write(32,*) 'tauee ',tauee, ' tauei ',tauei
-       write(32,*) 'taueff ',taueff, ' taup ',taup, ' dntau ',dntau
-       write(32,*) 'NEUTRAL BEAM -----'
-       write(32,*) 'betanb ',betanb, ' dnbeam2 ',dnbeam2, ' palpnb ',palpnb
-       write(32,*) 'IMPURITIES -----'
-       write(32,*) 'ralpne ',ralpne, ' fimp_13 ',fimp(13)
-       write(32,*) 'RADIATION -----'
-       write(32,*) 'rad_fraction ', rad_fraction, ' pradmw ',pradmw
-       write(32,*) 'pcoreradmw ', pcoreradmw, ' pedgeradmw ',pedgeradmw
-       write(32,*) 'psyncpv ', psyncpv, ' pbrempv ',pbrempv
-       write(32,*) 'plinepv ', plinepv, ' piepv ',piepv
-       write(32,*) 'pinjemw ', pinjemw, ' pinjimw ',pinjimw
-       write(32,*) 'FUELLING -----'
-       write(32,*) 'qfuel ',qfuel, ' burnup ',burnup, ' rndfuel ',rndfuel
-       write(32,*) 'PLASMA INDUCTANCE -----'
-       write(32,*) 'phiint ', phiint, ' rlp ',rlp
-       write(32,*) 'vsbrn ', vsbrn, ' vsind ',vsind
-       write(32,*) 'vsres ', vsres, ' vsstt ',vsstt
-       write(32,*) 'PLASMA RESISTANCE -----'
-       write(32,*) 'pohmpv ', pohmpv, ' pohmmw ',pohmmw
-       write(32,*) 'rpfac ', rpfac, ' rplas ',rplas
-       close(32)
-    endif
-
-  end subroutine physics
 
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -767,7 +236,7 @@ module physics_module
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    use physics_functions_module, only: radpwr
+
     use constants, only: pi, rmu0
     implicit none
 
@@ -2329,8 +1798,8 @@ module physics_module
 
 		use current_drive_variables, only: ftritbm
 		use error_handling, only: fdiags, report_error
-    use impurity_radiation_module, only: nimp, impurity_arr, element2index, &
-      zav_of_te
+    use impurity_radiation_module, only: nimp, impurity_arr_frac, element2index, &
+      zav_of_te, impurity_arr_Z, impurity_arr_amass
     use physics_variables, only: alphat, ignite, falpe, afuel, ftrit, deni, &
       aion, dnitot, protium, zeffai, rncne, rnone, falpi, ralpne, dlamee, &
       rnbeam, zeff, dnz, pcoef, alpharate, rnfene, abeam, dlamie, te, &
@@ -2379,9 +1848,9 @@ module physics_module
 
     znimp = 0.0D0
     do imp = 1,nimp
-       if (impurity_arr(imp)%Z > 2) then
-         ! znimp = znimp + impurity_arr(imp)%Z*(impurity_arr(imp)%frac * dene)
-          znimp = znimp + Zav_of_te(impurity_arr(imp),te)*(impurity_arr(imp)%frac * dene)
+       if (impurity_arr_Z(imp) > 2) then
+         ! znimp = znimp + impurity_arr(imp)%Z*(impurity_arr_frac(imp) * dene)
+          znimp = znimp + Zav_of_te(imp,te)*(impurity_arr_frac(imp) * dene)
        end if
     end do
 
@@ -2406,17 +1875,17 @@ module physics_module
     !  Set hydrogen and helium impurity fractions for
     !  radiation calculations
 
-    impurity_arr(element2index('H_'))%frac = &
+    impurity_arr_frac(element2index('H_')) = &
          (dnprot + (fdeut+ftrit)*deni + dnbeam)/dene
 
-    impurity_arr(element2index('He'))%frac = fhe3*deni/dene + ralpne
+    impurity_arr_frac(element2index('He')) = fhe3*deni/dene + ralpne
 
     !  Total impurity density
 
     dnz = 0.0D0
     do imp = 1,nimp
-       if (impurity_arr(imp)%Z > 2) then
-          dnz = dnz + impurity_arr(imp)%frac*dene
+       if (impurity_arr_Z(imp) > 2) then
+          dnz = dnz + impurity_arr_frac(imp)*dene
        end if
     end do
 
@@ -2427,15 +1896,15 @@ module physics_module
     !  Set some (obsolescent) impurity fraction variables
     !  for the benefit of other routines
 
-    rncne = impurity_arr(element2index('C_'))%frac
-    rnone = impurity_arr(element2index('O_'))%frac
+    rncne = impurity_arr_frac(element2index('C_'))
+    rnone = impurity_arr_frac(element2index('O_'))
     ! Issue #261 Remove zfear.  Use the sum of Fe and Ar concentrations
     ! if (zfear == 0) then
     !    rnfene = impurity_arr(element2index('Fe'))%frac
     ! else
     !    rnfene = impurity_arr(element2index('Ar'))%frac
     ! end if
-    rnfene = impurity_arr(element2index('Fe'))%frac + impurity_arr(element2index('Ar'))%frac
+    rnfene = impurity_arr_frac(element2index('Fe')) + impurity_arr_frac(element2index('Ar'))
 
     !  Effective charge
     !  Calculation should be sum(ni.Zi^2) / sum(ni.Zi),
@@ -2443,8 +1912,8 @@ module physics_module
 
     zeff = 0.0D0
     do imp = 1,nimp
-       !zeff = zeff + impurity_arr(imp)%frac * (impurity_arr(imp)%Z)**2
-       zeff = zeff + impurity_arr(imp)%frac * Zav_of_te(impurity_arr(imp),te)**2
+       !zeff = zeff + impurity_arr_frac(imp) * (impurity_arr(imp)%Z)**2
+       zeff = zeff + impurity_arr_frac(imp) * Zav_of_te(imp,te)**2
     end do
 
     !  Define coulomb logarithm
@@ -2481,8 +1950,8 @@ module physics_module
 
     aion = afuel*deni + 4.0D0*dnalp + dnprot + abeam*dnbeam
     do imp = 1,nimp
-       if (impurity_arr(imp)%Z > 2) then
-          aion = aion + dene*impurity_arr(imp)%frac*impurity_arr(imp)%amass
+       if (impurity_arr_Z(imp) > 2) then
+          aion = aion + dene*impurity_arr_frac(imp)*impurity_arr_amass(imp)
        end if
     end do
     aion = aion/dnitot
@@ -2493,10 +1962,10 @@ module physics_module
          dnalp + dnprot + (1.0D0-ftritbm)*dnbeam/2.0D0 + ftritbm*dnbeam/3.0D0 &
          ) / dene
     do imp = 1,nimp
-       if (impurity_arr(imp)%Z > 2) then
-          zeffai = zeffai + impurity_arr(imp)%frac &
-          !     * (impurity_arr(imp)%Z)**2 / impurity_arr(imp)%amass
-               * Zav_of_te(impurity_arr(imp),te)**2 / impurity_arr(imp)%amass
+       if (impurity_arr_Z(imp) > 2) then
+          zeffai = zeffai + impurity_arr_frac(imp) &
+          !     * (impurity_arr(imp)%Z)**2 / impurity_arr_amass(imp)
+               * Zav_of_te(imp,te)**2 / impurity_arr_amass(imp)
        end if
     end do
 
@@ -2759,7 +2228,7 @@ module physics_module
     kappaa = xarea/(pi*rminor*rminor)
 
     ! Separatrix kappa defined with plasma volume for IPB scalings
-    kappaa_IPB = vol / ( 2.0D0 * pi*pi * rminor*rminor * rmajor ) 
+    kappaa_IPB = vol / ( 2.0D0 * pi*pi * rminor*rminor * rmajor )
 
     !  Calculate Neo-Alcator confinement time (used in several scalings)
     taueena = 0.07D0 * n20 * rminor * rmajor*rmajor * qstar
@@ -3103,7 +2572,7 @@ module physics_module
 
     case (33)  !  IPB98(y,1), ELMy H-mode scaling
        !  Data selection : full ITERH.DB3
-       !  Nuclear Fusion 39 (1999) 2175, Table 5 
+       !  Nuclear Fusion 39 (1999) 2175, Table 5
        tauee = hfact * 0.0503D0 * pcur**0.91D0 * bt**0.15D0 * &
             dnla19**0.44D0 * powerht**(-0.65D0) * rmajor**2.05D0 * &
             kappaa_IPB**0.72D0 * aspect**(-0.57D0) * afuel**0.13D0
@@ -3295,7 +2764,7 @@ module physics_module
 
         tauee = hfact*((((1.0D0/aspect)-0.4D0)/(0.6D0-0.4D0))*taunstx + &
                  ((0.6D0-(1.0D0/aspect))/(0.6D0-0.4D0))*taupetty)
-         
+
         gtaue = 0.0D0
         ptaue = ((((1.0D0/aspect)-0.4D0)/(0.6D0-0.4D0))*0.32D0 + &
                 ((0.6D0-(1.0D0/aspect))/(0.6D0-0.4D0))*0.44D0)
@@ -3821,20 +3290,20 @@ module physics_module
       psipf, pscf_scene, diacf_hender, diacf_scene, diaipf
 		use error_handling, only: fdiags, idiags, report_error
     use impurity_radiation_module, only: nimp, coreradiationfraction, &
-      coreradius, fimp, impurity_arr
+      coreradius, fimp, impurity_arr_frac, impurity_arr_Label
     use physics_variables, only: ieped, ftar, dnelimt, fgwped, kappaa, deni, &
-      betap, iculbl, rad_fraction, palpnb, ten, falpi, iradloss, pthrmw, &
+      betap, iculbl, rad_fraction_total, palpnb, ten, falpi, iradloss, pthrmw, &
       ralpne, taueff, dntau, dene, rad_fraction_sol, iprofile, rhopedn, &
       xarea, itart, epbetmax, neped, te0, ptrimw, dnbeta, powerht, psyncpv, &
       res_time, ignite, vol, bvert, tbeta, photon_wall, burnup, kappaa_ipb, &
-      hfact, ilhthresh, alphan, fkzohm, alpha_crit, pohmmw, pedgeradmw, qlim, &
+      hfact, ilhthresh, alphan, fkzohm, alpha_crit, pohmmw, pouterzoneradmw, qlim, &
       qfuel, triang95, rplas, zeff, pdhe3, plascur, pdt, pdd, pbrempv, &
       ipedestal, dlamie, vsres, falpe, rli, ptremw, alphat, rminor, isc, &
       teped, fdeut, gamma, dnprot, ftrit, aion, btot, vsbrn, betanb, protium, &
-      pchargemw, wallmw, vsstt, aspect, ti, q0, pcoreradmw, &
+      pchargemw, wallmw, vsstt, aspect, ti, q0, pinnerzoneradmw, &
       normalised_total_beta, pdivmax, dnbeam, kappa95, nesep_crit, fhe3, &
       triang, pneutmw, tauee, betalim, rlp, te, dlimit, ne0, qstar, dnalp, &
-      taup, sarea, ti0, plhthresh, bp, dnitot, pradmw, csawth, rndfuel, q95, &
+      taup, sarea, ti0, plhthresh, bp, dnitot, pradmw, pradsolmw, csawth, rndfuel, q95, &
       rhopedt, tauratio, pperim, tesep, vsind, ibss, alphaj, dnz, q, ssync, &
       psolradmw, tauei, ishape, plinepv, palpmw, icurr, pdivt, gammaft, powfmw
     use physics_variables, only: betaft, tauscl, fgwsep, rmajor, falpha, &
@@ -3847,6 +3316,7 @@ module physics_module
     use reinke_variables, only: fzactual, impvardiv, fzmin
 		use stellarator_variables, only: iotabar, istell
 		use constants, only: rmu0, mproton, mfile, echarge, pi, epsilon0
+    use div_kal_vars, only: kallenbach_switch
     implicit none
 
     !  Arguments
@@ -3864,7 +3334,7 @@ module physics_module
     real(dp) :: fgwsep_out ! nesep/dlimit(7)
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    ! Dimensionless plasma parameters. See reference below.    
+    ! Dimensionless plasma parameters. See reference below.
     nu_star = 1/rmu0  * (15.d0*echarge**4 * dlamie) / (4.d0*pi**1.5d0 * epsilon0**2) * &
               vol**2 * rmajor**2 * bt * sqrt(eps) * dnla**3 * kappa           / &
               (total_plasma_internal_energy**2 * plascur)
@@ -3872,7 +3342,7 @@ module physics_module
    rho_star = sqrt(2.d0* mproton * aion * total_plasma_internal_energy / (3.d0 * vol * dnla) ) / &
               (echarge * bt * eps * rmajor)
 
-   beta_mcdonald = 4.d0/3.d0 *rmu0 * total_plasma_internal_energy / (vol * bt**2) 
+   beta_mcdonald = 4.d0/3.d0 *rmu0 * total_plasma_internal_energy / (vol * bt**2)
 
     call oheadr(outfile,'Plasma')
     if (istell == 0) then
@@ -4054,7 +3524,7 @@ module physics_module
        call ovarrf(outfile,'Normalised total beta',' ',normalised_total_beta, 'OP ')
        !call ovarrf(outfile,'Normalised toroidal beta',' ',normalised_total_beta*(btot/bt)**2, 'OP ')
        normalised_toroidal_beta=normalised_total_beta*(btot/bt)**2
-       call ovarrf(outfile,'Normalised toroidal beta','(normalised_toroidal_beta)',normalised_toroidal_beta, 'OP ')       
+       call ovarrf(outfile,'Normalised toroidal beta','(normalised_toroidal_beta)',normalised_toroidal_beta, 'OP ')
     end if
 
     if (iculbl == 0) then
@@ -4106,12 +3576,12 @@ module physics_module
    call ocmmnt(outfile,'Plasma ion densities / electron density:')
    do imp = 1,nimp
       ! MDK Update fimp, as this will make the ITV output work correctly.
-      fimp(imp) = impurity_arr(imp)%frac
-      str1 = impurity_arr(imp)%label // ' concentration'
+      fimp(imp) = impurity_arr_frac(imp)
+      str1 = impurity_arr_Label(imp) // ' concentration'
       str2 = '(fimp('//int_to_string2(imp)//')'
       ! MDK Add output flag for H which is calculated
       if (imp==1) then
-        !call ovarre(outfile,str1,str2,impurity_arr(imp)%frac, 'OP ')
+        !call ovarre(outfile,str1,str2,impurity_arr_frac(imp), 'OP ')
         call ovarre(outfile,str1,str2,fimp(imp), 'OP ')
       else
         call ovarre(outfile,str1,str2,fimp(imp))
@@ -4231,18 +3701,14 @@ module physics_module
     call ovarre(outfile,"Normalised minor radius defining 'core'", '(coreradius)',coreradius)
     call ovarre(outfile,"Fraction of core radiation subtracted from P_L", &
          '(coreradiationfraction)',coreradiationfraction)
-    call ovarre(outfile,'Total core radiation power (MW)', '(pcoreradmw)',pcoreradmw, 'OP ')
-    call ovarre(outfile,'Edge radiation power (MW)','(pedgeradmw)', pedgeradmw, 'OP ')
+    call ovarre(outfile,'Radiation power from inner zone (MW)', '(pinnerzoneradmw)',pinnerzoneradmw, 'OP ')
+    call ovarre(outfile,'Radiation power from outer zone (MW)','(pouterzoneradmw)', pouterzoneradmw, 'OP ')
     if (istell/=0) then
         call ovarre(outfile,'SOL radiation power (MW)','(psolradmw)', psolradmw, 'OP ')
     end if
-    call ovarre(outfile,'Total radiation power (MW)','(pradmw)',pradmw, 'OP ')
-    call ovarre(outfile,'Core radiation fraction = total radiation in core / total power deposited in plasma', &
-        '(rad_fraction_core)', rad_fraction_core, 'OP ')
-    call ovarre(outfile,'SoL radiation fraction = total radiation in SoL / total power accross separatrix', &
-        '(rad_fraction_sol)', rad_fraction_sol, 'IP ')
-    call ovarre(outfile,'Radiation fraction = total radiation / total power deposited in plasma', &
-        '(rad_fraction)', rad_fraction, 'OP ')
+    call ovarre(outfile,'Total radiation power from inside LCFS (MW)','(pradmw)',pradmw, 'OP ')
+    call ovarre(outfile,'LCFS radiation fraction = total radiation in LCFS / total power deposited in plasma', &
+        '(rad_fraction_LCFS)', rad_fraction_LCFS, 'OP ')
     call ovarre(outfile,'Nominal mean radiation load on inside surface of reactor (MW/m2)', &
         '(photon_wall)', photon_wall, 'OP ')
     call ovarre(outfile,'Peaking factor for radiation wall load', &
@@ -4255,6 +3721,14 @@ module physics_module
         '(wallmw)', wallmw, 'OP ')
     if (istell == 0) then
     call oblnkl(outfile)
+    if (kallenbach_switch == 0) then
+         call ovarre(outfile,'Radiation power from SoL (MW)','(pradsolmw)',pradsolmw, 'OP ')
+         call ovarre(outfile,'SoL radiation fraction = total radiation in SoL / total power accross separatrix', &
+         '(rad_fraction_sol)', rad_fraction_sol, 'IP ')
+         call ovarre(outfile,'Radiation fraction total = SoL + LCFS radiation / total power deposited in plasma', &
+         '(rad_fraction_total)', rad_fraction_total, 'OP ')
+    end if
+
     call ovarre(outfile,'Power incident on the divertor targets (MW)', &
         '(ptarmw)',ptarmw, 'OP ')
     call ovarre(outfile, 'Fraction of power to the lower divertor', &
@@ -4264,7 +3738,7 @@ module physics_module
     if (idivrt == 2) then
       call ovarre(outfile,'Midplane seperation of the two magnetic closed flux surfaces (m)', &
            '(drsep)',drsep, 'OP ')
-    end if 
+    end if
     call ovarre(outfile,'Fraction of power on the inner targets', &
         '(fio)',fio, 'OP ')
     call ovarre(outfile,'Fraction of power incident on the lower inner target', &
@@ -4281,7 +3755,7 @@ module physics_module
         '(pLImw)',pLImw, 'OP ')
     call ovarre(outfile,'Power incident on the lower outer target (MW)', &
         '(pLOmw)',pLOmw, 'OP ')
-    if (idivrt == 2) then    
+    if (idivrt == 2) then
       call ovarre(outfile,'Power incident on the upper innner target (MW)', &
            '(pUImw)',pUImw, 'OP ')
       call ovarre(outfile,'Power incident on the upper outer target (MW)', &
@@ -4317,8 +3791,8 @@ module physics_module
 
     if (idivrt == 2) then
       ! Double null divertor configuration
-      call ovarre(outfile,'Psep / R ratio (MW/m)','(pdivmax/rmajor)',pdivmax/rmajor, 'OP ')
-      call ovarre(outfile,'Psep Bt / qAR ratio (MWT/m)','(pdivmaxbt/qar)', ((pdivmax*bt)/(q95*aspect*rmajor)), 'OP ')
+      call ovarre(outfile,'Pdivt / R ratio (MW/m) (On peak divertor)','(pdivmax/rmajor)',pdivmax/rmajor, 'OP ')
+      call ovarre(outfile,'Pdivt Bt / qAR ratio (MWT/m) (On peak divertor)','(pdivmaxbt/qar)', ((pdivmax*bt)/(q95*aspect*rmajor)), 'OP ')
     else
       ! Single null divertor configuration
       call ovarre(outfile,'Psep / R ratio (MW/m)','(pdivt/rmajor)',pdivt/rmajor, 'OP ')
@@ -4423,7 +3897,7 @@ module physics_module
        call ovarre(outfile,'Radiation power subtracted from plasma power balance (MW)', '',pradmw, 'OP ')
        call ocmmnt(outfile,'  (Radiation correction is total radiation power)')
     else if (iradloss == 1) then
-       call ovarre(outfile,'Radiation power subtracted from plasma power balance (MW)', '',pcoreradmw, 'OP ')
+       call ovarre(outfile,'Radiation power subtracted from plasma power balance (MW)', '',pinnerzoneradmw, 'OP ')
        call ocmmnt(outfile,'  (Radiation correction is core radiation power)')
     else
        call ovarre(outfile,'Radiation power subtracted from plasma power balance (MW)', '',0.0D0)
@@ -4480,7 +3954,7 @@ module physics_module
           if (err243==1)then
               call report_error(243)
           end if
-          
+
           if (bscfmax < 0.0D0) then
              call ocmmnt(outfile,'  (User-specified bootstrap current fraction used)')
           else if (ibss == 1) then
@@ -4492,7 +3966,7 @@ module physics_module
           else if (ibss == 4) then
              call ocmmnt(outfile,'  (Sauter et al bootstrap current fraction model used)')
           end if
-          
+
           if (idia == 0) then
              call ocmmnt(outfile,'  (Diamagnetic current fraction not calculated)')
              ! Error to show if diamagnetic current is above 1% but not used
@@ -4504,7 +3978,7 @@ module physics_module
           else if (idia == 2) then
              call ocmmnt(outfile,'  (SCENE diamagnetic current fraction scaling used)')
          end if
-         
+
          if (ips == 0) then
               call ocmmnt(outfile,'  (Pfirsch-Schlüter current fraction not calculated)')
          else if (ips == 1) then

@@ -50,7 +50,7 @@ RUN apt-get install -y \
     tk-dev \
     wget \
     xz-utils \
-    zlib1g-dev 
+    zlib1g-dev
 
 
 # Install pyenv.

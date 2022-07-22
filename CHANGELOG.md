@@ -4,20 +4,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [2.4.0] - 2022-05-18
+### Added
+- Support for debug builds using `-DCMAKE_BUILD_TYPE=Debug` flag (#1277)
 
 ### Changed
-- Converted `buildings_module` to pure Python (#1552)
+- Converted `pfcoil.f90` to Python (#1456)
+- ChangeLog update procedure (#1574)
+- Converted `pulse.f90` from Fortran to Python
+- Converted `buildings_module.f90` to pure Python (#1552)
 - Converted `water_usage.f90` to Python (#1570)
-- Convert `machine_build.f90` to Python (#1576)
+- Converted `machine_build.f90` to Python (#1576)
+- Converted `kallenbach_module.f90` to Python, with the non-scanning part becoming utilities (#1579)
+- Converted `structure.f90` to Python (#1538)
+- Converted `costs.f90` to Python (#1637)
 
 ### Fixed
+- Bug where fpdivlim was being called for iteration variable 154 when it should be fne0 (#1659)
+- thwcndut may now be input as zero. This is a conduit-free winding pack.
 - Divertor's `run` method was not being called with `output=True` from `output.py` (#1553)
 - Tracker's plotting inner loop should run over `set(titles)` to avoid running in `O(n)` opposed to `O(1)` (#1520)
 - Fixed a typo in the implementation of `extended_plane_strain` from `sctfcoil.f90` (#1565)
 
 ### Removed
 - Removed Python 3.6 support in CI (#1490)
+- Majority of `fispact` code (`lib/fispact/` and `fispact.f90`) as it is no longer used in PROCESS (#1650)
+
 
 ## [2.3.0] - 2022-01-20
 ### Added
@@ -202,7 +214,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## 1.0.16
 
 ### Bug Fixes
- 
+
 - Fixed units issue with Lang et al. (2012) confinement scaling (#821)
 - Fixed issue with error numbering (#826)
 - Fixed issue with costing of TF coil dump resistors (#847)
@@ -210,10 +222,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Features
 
 - new command line argument `./process.exe help` provides help info
-- new CMake option `-Ddll=ON/OFF`. Default is `ON`. Useful for profiling with gprof 
-- Updated version of Kallenbach testing (now can run test case that matches Kallenbach 
+- new CMake option `-Ddll=ON/OFF`. Default is `ON`. Useful for profiling with gprof
+- Updated version of Kallenbach testing (now can run test case that matches Kallenbach
   paper or user defined inputs). See Userguide for more info.
-- Updated version of Kallenbach scanning (now can specify the variable to scan 
+- Updated version of Kallenbach scanning (now can specify the variable to scan
   from a selection, number of scan points etc.). See Userguide for more info.
 - Added NSTX and NSTX-Petty08 confinement time scalings (#820)
 - Added option to input the confinement time
@@ -230,7 +242,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Documentation update
 
-- Developper documentation update (code description/compilation/git instructions) 
+- Developper documentation update (code description/compilation/git instructions)
 
 ## 1.0.15
 
@@ -246,7 +258,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added Hubbard 2012 and 2017 I-mode threshold scaling
 - Added Hubbard I mode confinement time scaling
 - Added I-mode version of Reinke criterion (fzmin)
-- New figure of linear combination figure of merit. Linear combination (50/50 
+- New figure of linear combination figure of merit. Linear combination (50/50
   weighted) of $`Q`$ and $`t_{burn}`$.
 - I mode scalings for confinement time and L-I power threshold from Hubbard 2017.
 - New utility called `plot_profiles.py`. Plots T and n profiles for a list of given MFILES.
@@ -256,7 +268,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Minor Changes
 - Explicitly state 1990 $ for old cost model
-- Made photon_wall and rad_fraction global variables, and added calculations to stellarator. 
+- Made photon_wall and rad_fraction global variables, and added calculations to stellarator.
 - TF coil documentation now in repository and makefile target `tfdoc`.
 
 ## 1.0.14
@@ -276,7 +288,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Corrected units on ucme and uciac in global variables.
 - Fixed issue with plot_proc.py scan counting (Issue #748)
 - Fixed issue with run_process.py not working (Issue #766)
-- Switched obsolete estotf for estotftgj in stellarator 
+- Switched obsolete estotf for estotftgj in stellarator
 - Corrected ztot calculation in tfpwr subroutine for resistive TF coils (#773)
 - Corrected deltf in sctfcoil.f90 (#779)
 
@@ -309,8 +321,8 @@ Utilities
  - New script popcon.py to plot POPCON plot from MFILE.
 
 Miscellaneous
-- TF stress in conduit Tresca criterion can now have regular and CEA adjusted options 
-  (adjustment from [Torre et al. 2016](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=7390035) 
+- TF stress in conduit Tresca criterion can now have regular and CEA adjusted options
+  (adjustment from [Torre et al. 2016](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=7390035)
   paper). (Issue #678)
 - [Snipes et al.](2000; http://iopscience.iop.org/article/10.1088/0741-3335/42/5A/336) H-mode threshold scaling options added (Issue #680)
 - Initial version of `.gitlab-ci.yml` created for GitLab CI.
@@ -321,7 +333,7 @@ Miscellaneous
 ### Minor changes
 
 - Changed upper bound on `coheof` from 1.0e8 to 5.0e8 (Issue #668).
-- A number of changes to `plot_proc.py` and outputs in the fortran associated 
+- A number of changes to `plot_proc.py` and outputs in the fortran associated
   with vertical build. (Merge request !18)
 - Update utilities guide for a number of Python utilities
     - `cad_output.py` (Issue #671)

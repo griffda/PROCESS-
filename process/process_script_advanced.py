@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 """Script to build and run PROCESS simply.
 
-This compiles, runs and displays output from PROCESS. The aim is to provide a 
+This compiles, runs and displays output from PROCESS. The aim is to provide a
 common entry point to the code in Python, and to automate a standard workflow.
 """
 # TODO This requires converting to run the Python-wrapped version of Process
 import subprocess
-import os
-import sys
 import argparse
 from shutil import copy
 from pathlib import Path
@@ -20,15 +18,17 @@ ROOT_DIR = Path(__file__).parent.parent
 PROCESS_EXE_PATH = ROOT_DIR.joinpath("bin/process.exe")
 # The Process executable (for running Process)
 
+
 class Process(object):
     """A Process workflow based on command line arguments."""
+
     def __init__(self):
         """Parse command line arguments and run accordingly."""
         # File paths
         self.run_dir = None
         self.input = None
         self.ref_input = None
-        
+
         # Run actions
         self.parse_args()
         if self.args.build:
@@ -49,26 +49,32 @@ class Process(object):
 
     def parse_args(self):
         """Parse the command line arguments."""
-        parser = argparse.ArgumentParser(description="Script to automate "
-            "running PROCESS")
+        parser = argparse.ArgumentParser(
+            description="Script to automate " "running PROCESS"
+        )
 
         # Optional arguments
-        parser.add_argument("--input",
+        parser.add_argument(
+            "--input",
             "-i",
             metavar="input_file_path",
-            help="The path to the input file that Process runs on")
-        parser.add_argument("--ref_input",
+            help="The path to the input file that Process runs on",
+        )
+        parser.add_argument(
+            "--ref_input",
             "-r",
             metavar="reference_input",
-            help="Reference input file to record changes against")
-        parser.add_argument("--build",
-            "-b",
-            action="store_true",
-            help="Rebuilds Process if present")
-        parser.add_argument("--util",
+            help="Reference input file to record changes against",
+        )
+        parser.add_argument(
+            "--build", "-b", action="store_true", help="Rebuilds Process if present"
+        )
+        parser.add_argument(
+            "--util",
             "-u",
             metavar="util_name",
-            help="Utility to run after Process runs")
+            help="Utility to run after Process runs",
+        )
 
         self.args = parser.parse_args()
         # Store namespace object of the args
@@ -81,7 +87,7 @@ class Process(object):
 
     def set_input(self):
         """Try to find or validate the input file path, then store it.
-        
+
         Also set the run directory according to the input file path.
         """
         if self.args.input:
@@ -94,9 +100,12 @@ class Process(object):
                 raise FileNotFoundError("Input file not found on this path.")
         else:
             # No input file specified; try to find one in the current dir
-            input_files = [path for path in Path.cwd().iterdir() if "IN.DAT" in
-                path.name and "REF_IN.DAT" not in path.name]
-            
+            input_files = [
+                path
+                for path in Path.cwd().iterdir()
+                if "IN.DAT" in path.name and "REF_IN.DAT" not in path.name
+            ]
+
             if len(input_files) == 0:
                 # No input file found
                 raise FileNotFoundError("Input file not found in this dir.")
@@ -105,9 +114,11 @@ class Process(object):
                 self.input = input_files[0]
             else:
                 # More than one input file; ambiguous which one to use
-                raise Exception("More than one IN.DAT found in this dir. "
-                    "Specifiy which one to use with the \"-i\" option, or "
-                    "remove the other ones.")
+                raise Exception(
+                    "More than one IN.DAT found in this dir. "
+                    'Specifiy which one to use with the "-i" option, or '
+                    "remove the other ones."
+                )
 
         # self.input is now defined
         self.run_dir = self.input.parent
@@ -115,11 +126,11 @@ class Process(object):
 
     def set_ref_input(self):
         """Find an input file to use as a reference for changes.
-        
-        Find or create a reference input file to compare with the current 
+
+        Find or create a reference input file to compare with the current
         input file, to allow the changes to be tracked.
         """
-        # self.args.ref_input: reference input file path; can already be set as 
+        # self.args.ref_input: reference input file path; can already be set as
         # command line arg
         if self.args.ref_input:
             # Ref input specified as command line arg. Check it exists
@@ -128,21 +139,23 @@ class Process(object):
                 # Store path object
                 self.ref_input = path
             else:
-                raise FileNotFoundError("Reference input file not found; "
-                    "check the path.")
-            
+                raise FileNotFoundError(
+                    "Reference input file not found; " "check the path."
+                )
+
             # Input file exists
             if "REF_IN.DAT" in self.ref_input.name:
                 # Ref file specified; got a ref file
                 pass
             elif "IN.DAT" in self.ref_input.name:
-                # Regular input file specified. Make a reference copy as 
+                # Regular input file specified. Make a reference copy as
                 # REF_IN.DAT and update self.ref_input
                 self.create_ref_input()
             else:
                 # File isn't an IN.DAT or a REF_IN.DAT
-                raise ValueError("Reference input file should end in IN.DAT or "
-                    "REF_IN.DAT")
+                raise ValueError(
+                    "Reference input file should end in IN.DAT or " "REF_IN.DAT"
+                )
         else:
             # Ref input not specified: try to find one in the input file's dir
             ref_inputs = list(self.run_dir.glob("*REF_IN.DAT"))
@@ -154,9 +167,11 @@ class Process(object):
                 self.ref_input = ref_inputs[0]
             else:
                 # More than one ref file: error
-                raise Exception("More than one REF_IN.DAT found in this dir. "
-                    "Specifiy which one to use with the \"-r\" option, or "
-                    "remove the other ones.")
+                raise Exception(
+                    "More than one REF_IN.DAT found in this dir. "
+                    'Specifiy which one to use with the "-r" option, or '
+                    "remove the other ones."
+                )
 
         # Now either have raised an exception or have a ref input file set,
         # with suffix "REF_IN.DAT"
@@ -177,8 +192,8 @@ class Process(object):
 
     def input_file_diff(self):
         """Perform a diff between the reference input and input files.
-        
-        This compares the REF_IN.DAT and IN.DAT files to highlight the 
+
+        This compares the REF_IN.DAT and IN.DAT files to highlight the
         modifications.
         """
         # Run a diff on the files
@@ -188,8 +203,9 @@ class Process(object):
         after = after_file.readlines()
         before_file.close()
         after_file.close()
-        diff = unified_diff(before, after, fromfile=self.ref_input.name, 
-            tofile=self.input.name)
+        diff = unified_diff(
+            before, after, fromfile=self.ref_input.name, tofile=self.input.name
+        )
 
         # Write diff to output file
         diff_path = self.run_dir.joinpath("input.diff")
@@ -199,8 +215,7 @@ class Process(object):
     def create_dicts(self):
         """Create Python dictionaries"""
         # cmake must be run from the project root directory
-        subprocess.run(["cmake", "--build", "build", "--target", "dicts"], 
-            cwd=ROOT_DIR)
+        subprocess.run(["cmake", "--build", "build", "--target", "dicts"], cwd=ROOT_DIR)
 
     def validate_input(self):
         """Validate the input file using the input_validator module."""
@@ -216,10 +231,12 @@ class Process(object):
         # TODO allow options to be passed to utils
         subprocess.run(["python", "./utilities/" + self.args.util + ".py"])
 
+
 def main():
     """Run Process."""
     print("Running process.py")
     Process()
+
 
 if __name__ == "__main__":
     main()

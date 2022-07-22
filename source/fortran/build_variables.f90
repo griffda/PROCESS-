@@ -210,13 +210,13 @@ module build_variables
   !! Switch selecting the he parametrization of the outer radius of the top of the CP part of the TF coil
   !!  0 : `r_cp_top` is set by the plasma shape
   !!  1 : `r_cp_top` is a user input
-  !!  2 : `r_cp_top` is set using the CP top and midplane CP radius ratio 
+  !!  2 : `r_cp_top` is set using the CP top and midplane CP radius ratio
 
   real(dp) :: r_cp_top
   !! Top outer radius of the centropost (ST only) (m)
 
   real(dp) :: f_r_cp
-  !! Ratio between the top and the midplane TF CP outer radius [-] 
+  !! Ratio between the top and the midplane TF CP outer radius [-]
   !! Not used by default (-1) must be larger than 1 otherwise
 
   real(dp) :: dr_tf_inner_bore
@@ -226,7 +226,7 @@ module build_variables
   !! TF coil vertical inner bore (m)
 
   real(dp) :: scrapli
-  !! Gap between plasma and first wall, inboard side (m) (if `iscrp=1`) 
+  !! Gap between plasma and first wall, inboard side (m) (if `iscrp=1`)
   !! Iteration variable: ixc = 73
   !! Scan variable: nsweep = 58
 
@@ -277,8 +277,14 @@ module build_variables
   real(dp) :: tftsgap
   !! Minimum metal-to-metal gap between TF coil and thermal shield (m)
 
-  real(dp) :: thshield
-  !! TF-VV thermal shield thickness (m)
+  real(dp) :: thshield_ib
+  !! TF-VV thermal shield thickness, inboard (m)
+
+  real(dp) :: thshield_ob
+  !! TF-VV thermal shield thickness, outboard (m)
+
+  real(dp) :: thshield_vb
+  !! TF-VV thermal shield thickness, vertical build (m)
 
   real(dp) :: vgap2
   !! vertical gap between vacuum vessel and thermal shields (m)
@@ -393,7 +399,9 @@ module build_variables
     tfootfi = 1.19D0
     tfthko = 0.0D0
     tftsgap = 0.05D0
-    thshield = 0.05D0
+    thshield_ib = 0.05D0
+    thshield_ob = 0.05D0
+    thshield_vb = 0.05D0
     vgap2 = 0.163D0
     vgap= 0.0D0
     vgaptop = 0.60D0

@@ -217,7 +217,8 @@ bore     = 1.090    * Central solenoid inboard radius (m)
 ohcth    = 0.650    * Central solenoid thickness (m)
 gapoh    = 0.116    * Gap between central solenoid and tf coil (m)
 tfcth    = 0.874    * Inboard tf coil thickness (m)
-thshield = 0.000    * TF-VV thermal shield thickness (m)
+thshield_ib = 0.000    * TF-VV thermal shield thickness; inboard (m)
+thshield_ob = 0.000    * TF-VV thermal shield thickness; outboard (m)
 gapds    = 0.037    * Gap between inboard vacuum vessel and tf coil (m)
 d_vv_in  = 0.280    * Inboard vacuum vessel thickness (m)
 d_vv_out = 0.280    * Outboard vacuum vessel thickness (m)
@@ -237,6 +238,7 @@ ddwex    = 0.150    * Cryostat thickness (m)
 
 shldtth = 0.300    * Upper/lower shield thickness (m);
 vgap2   = 0.116    * Vertical gap between vacuum vessel and tf coil (m)
+thshield_vb = 0.000    * TF-VV thermal shield thickness; top and bottom (m)
 
 *----------------Cost Variables--------------------*
 

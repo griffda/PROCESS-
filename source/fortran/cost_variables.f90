@@ -3,7 +3,7 @@ module cost_variables
   !!
   !! Module containing global variables relating to the costing algorithms of a fusion power plant.
   !!
-  !!### References 
+  !!### References
   !!
   !! - AEA FUS 251: A User's Guide to the PROCESS Systems Code
 
@@ -56,7 +56,7 @@ module cost_variables
 
   real(dp) :: cpfact
   !! Total plant capacity factor
-  
+
   real(dp), dimension(4) :: cfind
   !! indirect cost factor (func of lsa) (cost model = 0)
 
@@ -112,7 +112,7 @@ module cost_variables
   !! Maintenance cost factor: first wall, blanket, shield, divertor
 
   real(dp) :: maintenance_gen
-  !! Maintenance cost factor: All other components except coils, vacuum vessel, 
+  !! Maintenance cost factor: All other components except coils, vacuum vessel,
   !! thermal shield, cryostat, land
 
   real(dp) :: amortization
@@ -126,7 +126,7 @@ module cost_variables
   !! - =2 use $ 1980 STEP model (NOT RECOMMENDED - Under Development)
 
   integer :: i_cp_lifetime
-  !! Switch for the centrepost lifetime constraint 
+  !! Switch for the centrepost lifetime constraint
   !!  0 : The CP full power year lifetime is set by the user via cplife_input
   !!  1 : The CP lifetime is equal to the divertor lifetime
   !!  2 : The CP lifetime is equal to the breeding blankets lifetime
@@ -296,7 +296,7 @@ module cost_variables
   !! Switch for fuel type:
   !!
   !! - =2 treat initial blanket, divertor, first wall
-  !!   as capital costs. Treat all later items and 
+  !!   as capital costs. Treat all later items and
   !!   fraction fcdfuel of CD equipment as fuel costs
   !! - =1 treat blanket divertor, first wall and
   !!   fraction fcdfuel of CD equipment as fuel cost
@@ -348,14 +348,14 @@ module cost_variables
   real(dp) :: step_con
   !! Contingency Percentage
 
-  real(dp) :: step_cconfix 
-  !! fixed cost of superconducting cable ($/m) (if cost model = 2) 
+  real(dp) :: step_cconfix
+  !! fixed cost of superconducting cable ($/m) (if cost model = 2)
 
   real(dp) :: step_cconshtf
-  !! cost of TF coil steel conduit/sheath ($/m) (if cost model = 2) 
+  !! cost of TF coil steel conduit/sheath ($/m) (if cost model = 2)
 
   real(dp) :: step_cconshpf
-  !! cost of PF coil steel conduit/sheath ($/m) (if cost model = 2) 
+  !! cost of PF coil steel conduit/sheath ($/m) (if cost model = 2)
 
   character(len=50) :: step_currency
   !! description of the constant dollar year used
@@ -363,13 +363,13 @@ module cost_variables
   real(dp) :: step_ucblbe
   !! unit cost for blanket Be ($/kg) (if cost model = 2)
 
-  real(dp) :: step_ucblbreed 
-  !! unit cost for blanket breeder material ($/kg) (if cost model = 2) 
+  real(dp) :: step_ucblbreed
+  !! unit cost for blanket breeder material ($/kg) (if cost model = 2)
 
   real(dp) :: step_ucblss
   !! unit cost for blanket stainless steel ($/kg) (if cost model = 2)
 
-  real(dp) :: step_ucblvd 
+  real(dp) :: step_ucblvd
   !! Unit cost for blanket Vd ($/kg) (if cost model = 2)
 
   real(dp) :: step_uccase
@@ -378,13 +378,13 @@ module cost_variables
   real(dp) :: step_uccu
   !! unit cost for copper in superconducting cable ($/kg) (if cost model = 2)
 
-  real(dp) :: step_ucfwa 
+  real(dp) :: step_ucfwa
   !! first wall armour cost ($/kg) (if cost model = 2)
 
-  real(dp) :: step_ucfws 
+  real(dp) :: step_ucfws
   !! first wall structure cost ($/kg) (if cost model = 2)
 
-  real(dp) :: step_ucfwps 
+  real(dp) :: step_ucfwps
   !! first wall passive stabiliser cost ($) (if cost model = 2)
 
   real(dp) :: step_ucshw
@@ -414,21 +414,21 @@ module cost_variables
   real(dp) :: step_ucwindtf
   !! cost of TF coil superconductor windings ($/m) (if cost model = 2)
 
-  real(dp) :: step_ucwindpf 
+  real(dp) :: step_ucwindpf
   !! cost of PF coil superconductor windings ($/m) (if cost model = 2)
 
   real(dp) :: step_rh_costfrac
   !! fraction of capital cost for remote handling (if cost_model = 2)
-  
+
   real(dp), dimension(70) :: step_ref
   !! Reference values for cost model 2
 
   real(dp) :: step91_per
   !! Percentage of cdirt used in calculating step91 (3.0D-1 = 30%)
-  
+
   real(dp) :: step92_per
   !! Percentage of cdirt used in calculating step92 (3.0D-1 = 30%)
-  
+
   real(dp) :: step93_per
   !! Percentage of cdirt used in calculating step93 (3.0D-1 = 30%)
 
@@ -521,7 +521,7 @@ module cost_variables
 
   real(dp), parameter :: uces1 = 3.2D4
   !! MGF (motor-generator flywheel) cost factor ($/MVA**0.8)
-  
+
   real(dp), parameter :: uces2 = 8.8D3
   !! MGF (motor-generator flywheel) cost factor ($/MJ**0.8)
 
@@ -545,7 +545,7 @@ module cost_variables
 
   real(dp), parameter :: ucfws = 5.3D4
   !! first wall structure cost ($/m2)
-  
+
   real(dp), parameter :: ucgss = 35.0D0
   !! cost of reactor structure ($/kg)
 
@@ -699,7 +699,32 @@ module cost_variables
 
   real(dp) :: whole_site_area
   !! area of entire plant site (m2); default 1.0E6 m2 (i.e. 1 km2)
-  
+
+  integer :: isitetype
+  !! switch for type of site:
+  !!
+  !! - =0 Site with river infrastructure
+  !! - =1 Site with sea infrastructure
+  !! - =2 Land-locked site (uses lake/artificial waterfront)
+
+  integer :: isiteaccomm
+  !! switch for including Campus Accommodation:
+  !!
+  !! - =0 campus accommodation has to be costed
+  !! - =1 no campus accommodation required in costing
+
+  integer :: igridconn
+  !! switch for site connection (outgoing) to electricity grid:
+  !!
+  !! - =0 site has no connection to grid and has to be costed
+  !! - =1 site already has connection to grid
+
+  integer :: irailaccess
+  !! switch for rail access to site:
+  !!
+  !! - =0 site has no rail access and has to be costed
+  !! - =1 site already has rail access
+
   contains
 
   subroutine init_cost_variables
@@ -810,24 +835,24 @@ module cost_variables
     startupratio = 1.0
     startuppwr = 0.0
     step_con = 1.5D-1
-    step_cconfix = 233.0D0  
+    step_cconfix = 233.0D0
     step_cconshtf = 91.0D0
     step_cconshpf = 91.0D0
     step_currency = "2017 US$"
     step_ucblbe = 8400.4D0
-    step_ucblbreed = 802.2D0 
-    step_ucblss = 488.3D0 
-    step_ucblvd = 200.0D0 
+    step_ucblbreed = 802.2D0
+    step_ucblss = 488.3D0
+    step_ucblvd = 200.0D0
     step_uccase = 91.0D0
     step_uccu = 82.0D0
     step_ucfwa = 774.05D0
-    step_ucfws = 5115.7D0 
+    step_ucfws = 5115.7D0
     step_ucfwps = 0.0D0
     step_ucsc = (/ 1230.0D0, 1230.0D0, 443.0D0, 1230.0D0, 1230.0D0, 2567.0D0, &
       443.0D0, 2567.0D0, 2567.0D0/)
     step_ucshw = 269.638D0
     step_ucshwc = 930.251D0
-    step_ucfnc = 104.3D0 
+    step_ucfnc = 104.3D0
     step_ucint = 91.0D0
     step_ucgss = 91.0D0
     step_ucwindtf = 1520.0D0
@@ -839,7 +864,7 @@ module cost_variables
       (/ 8.92D0, 8.9D-1, 3.317D1, 7.4491D2, 1.0685D2, 2.368D1, 2.725D1, 9.7D0, 2.5403D2, &
       8.9D0, 1.96D0, 4.083D1, 1.467D1, 6.1D0, 2.59D0, 2.59D0, 2.71D0, 9.2D-1, 8.56D0, &
       6.7025D2, 1.51424D3, 1.02302D3, 2.8154D2, 5.9D1, 3.254D1, 2.7254D2, 4.292D2, 3.955D1, &
-      4.305D2, 1.994D1, 2.295D1, 1.364D2, 5.6836D2, 3.643D1, 1.703D1, 1.325D1, 3.79D0, 1.383D1, &
+      4.305D2, 1.994D1, 2.295D1, 3.81D2, 5.6836D2, 3.643D1, 1.703D1, 1.325D1, 3.79D0, 1.383D1, &
       1.465D1, 1.058D1, 3.1413D2, 0.0D0, 0.0D0, 1.95D0, 6.5D-2, 0.0D0, 1.628D1, 1.603D1, 9.44D0, &
       1.9051D2, 1.9585D2, 1.107D1, 1.319D2, 4.858D1, 2.793D1, 1.2876D2, 2.588D1, 3.01D1, &
       4.14D1, 1.895D1, 5.13D0, 4.228D1, 8.744D1, 1.992D1, 4.664D1, 3.674D1, 1.85D1, 2.23D0, &
@@ -886,7 +911,7 @@ module cost_variables
     ucpfic = 1.0D4
     ucpfps = 3.5D4
     ucrb = 400.0D0
-    ucsc = & 
+    ucsc = &
       (/600.0D0, 600.0D0, 300.0D0, 600.0D0, 600.0D0, 600.0D0, 300.0D0, 1200.0D0, &
       1200.0D0/)
     ucshld = 32.0D0
@@ -905,6 +930,10 @@ module cost_variables
     sitecost = 1.0D8
     wfbuilding = 1.0D8
     whole_site_area = 1.0D6
+    isitetype = 0
+    isiteaccomm = 1
+    igridconn = 0
+    irailaccess = 0
 
   end subroutine init_cost_variables
 end module cost_variables

@@ -1,4 +1,3 @@
-
 """Useful functions for the GUI
 
 """
@@ -10,8 +9,8 @@ from lib.guiindat import GuiInDat
 
 def dict_to_in_dat(di):
     """Converts a dictionary recieved from the client to a
-       GuiInDat object. The ixc and icc arrays are created
-       from the itervar_#, constraint_# style checkboxes
+    GuiInDat object. The ixc and icc arrays are created
+    from the itervar_#, constraint_# style checkboxes
 
     """
     in_dat = GuiInDat()
@@ -64,8 +63,8 @@ def dict_to_in_dat(di):
 
 def split_dicts(request):
     """Converts a submission from the client to two dictionaries.
-       Reference values start with 'ref_'. These are split into
-       their own dictionary so they can be dealt with seperately
+    Reference values start with 'ref_'. These are split into
+    their own dictionary so they can be dealt with seperately
 
     """
     assert request.method == "POST"

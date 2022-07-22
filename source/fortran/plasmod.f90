@@ -67,7 +67,7 @@ contains
     use div_kal_vars, only: impurity_enrichment
     use error_handling, only: report_error
     use impurity_radiation_module, only: coreradiationfraction, &
-        impurity_arr, coreradius
+        impurity_arr_frac, coreradius
     use physics_variables, only: hfact, tesep, bt, protium, teped, rhopedn, &
         triang95, triang, plascur, ieped, fgwped, aspect, kappa95, q95, &
         kappa, ilhthresh, fdeut, fvsbrnni, rhopedt, fgwsep, rmajor
@@ -95,18 +95,18 @@ contains
 
     !  Arguments
     integer, intent(out) :: i_flag
-    
+
     ! geometry type
     real(dp), intent(out) :: geom_k, geom_d, geom_ip, geom_k95, geom_d95, &
       geom_r, geom_a, geom_q95, geom_bt, geom_counter
-    
+
     ! composition type
     real(dp), intent(out) :: comp_fcoreraditv, comp_qdivt, comp_pradfrac, &
       comp_pradpos, comp_psep_r, comp_psepb_q95AR, comp_protium, &
       comp_psepplh_inf, comp_psepplh_sup, comp_c_car, comp_fuelmix
     real(dp), dimension(:), intent(out) :: comp_comparray, comp_globtau
     integer, dimension(:), intent(out) :: comp_imptype
-    
+
     ! inputs type
     real(dp), intent(out) :: inp0_car_qdivt, inp0_chisaw, inp0_chisawpos, inp0_contrpovr, &
       inp0_contrpovs, inp0_cxe_psepfac, &
@@ -119,7 +119,7 @@ contains
     integer, intent(out) :: inp0_PLH
     real(dp), dimension(:), intent(out) :: inp0_x_heat, inp0_x_cd, inp0_x_fus, inp0_x_control, &
       inp0_dx_heat, inp0_dx_cd, inp0_dx_fus, inp0_dx_control
-    
+
     ! numerics_transp type
     real(dp), intent(out) :: num_Ainc, num_capA, num_dgy, num_dt, num_dtinc, &
       num_dtmax, num_dtmaxmax, &
@@ -129,7 +129,7 @@ contains
     integer, intent(out) :: num_i_equiltype, num_i_impmodel, num_isawt, &
       num_i_modeltype, num_ipedestal, num_iprocess, num_nchannels, num_nx, &
       num_nxt
-    
+
     ! pedestal type
     real(dp), intent(out) :: ped_tesep, ped_rho_t, ped_rho_n, ped_pedscal, &
       ped_teped
@@ -152,8 +152,8 @@ contains
        ! The Xe fraction is used as an iteration variable inside PLASMOD
        ! it adjusts to fulfil psepqbarmax, pseprmax or psepplh_sup.
        comp_comparray = 0.d0 !array of impurity concentrations
-       comp_comparray(comp_imptype(3)) = impurity_arr(comp_imptype(3))%frac !argon concentration, uses Kallenbach model if qdivt = 0. from PLASMOD inputs
-       comp_comparray(comp_imptype(1)) = impurity_arr(comp_imptype(1))%frac
+       comp_comparray(comp_imptype(3)) = impurity_arr_frac(comp_imptype(3)) !argon concentration, uses Kallenbach model if qdivt = 0. from PLASMOD inputs
+       comp_comparray(comp_imptype(1)) = impurity_arr_frac(comp_imptype(1))
        comp_protium   = protium !protium is treated separately
 
        ! Impurities to be used for (1)intrinsic (2)Psep control (3)SOL seeding
@@ -314,7 +314,7 @@ contains
     inp0_fpion = fpion ! Fraction of neutral beam energy to ions
 
     if (comp_qdivt.eq.0.d0) then
-       comp_comparray(comp_imptype(3)) = impurity_arr(comp_imptype(3))%frac !argon concentration, uses Kallenbach model if qdivt = 0. from PLASMOD inputs
+       comp_comparray(comp_imptype(3)) = impurity_arr_frac(comp_imptype(3)) !argon concentration, uses Kallenbach model if qdivt = 0. from PLASMOD inputs
        !else
        !@EF: What should happen, if this is not assigned?
     endif
@@ -362,8 +362,8 @@ contains
         ftritbm, plasipf
 		use div_kal_vars, only: netau_sol
 		use error_handling, only: idiags, fdiags, report_error
-    use impurity_radiation_module, only: impurity_arr, nimp, element2index, &
-        zav_of_te
+    use impurity_radiation_module, only: impurity_arr_amass, impurity_arr_frac, impurity_arr_Z, &
+      nimp, element2index, zav_of_te
     use physics_variables, only: rplas, tin, pohmmw, sf, facoh, eps, &
         pneutmw, pdt, p0, powerht, faccd, gammaft, dnla, bp, ptripv, &
         plhthresh, plascur, psyncpv, dlamee, q95, pradpv, dnalp, aion, &
@@ -374,12 +374,12 @@ contains
         piepv, powfmw, neped, bt, vsind, vol, taup, teped, palpipv, csawth, &
         falpe, pradmw, rncne, palpepv, qfuel, palpmw, te, betanb, dene, &
         triang, rnone, ptrepv, palpnb, tauei, tauee, pneutpv, dntau, &
-        pcoreradmw, ti0, rli, pchargemw, pfuscmw, vsstt, rlp, ralpne, &
+        pinnerzoneradmw, ti0, rli, pchargemw, pfuscmw, vsstt, rlp, ralpne, &
         pchargepv, hfact, figmer, protium, pohmpv, pdivt, rndfuel, rpfac, &
-        betaft, ptrimw, ni0, zeff, vsres, nesep, dnz, pedgeradmw, dlamie, &
+        betaft, ptrimw, ni0, zeff, vsres, nesep, dnz, pouterzoneradmw, dlamie, &
         falpi, kappa, rnfene, pbrempv, rmajor, dnbeam, gamma, kappaa, deni, &
         dnprot, beta, fdeut, palppv, aspect
-    
+
 		use constants, only: rmu0, echarge, pi, nout
     use structs, only: geometry, composition, pedestal, radial_profiles, &
       MHD_EQ, power_losses
@@ -390,21 +390,21 @@ contains
     !  Arguments
     ! geometry type
     real(dp), intent(in) :: geom_k, geom_d, geom_perim, geom_ip, geom_q95
-    
+
     ! composition type
     real(dp), intent(in) :: comp_cxe, comp_che, comp_car
     real(dp), dimension(:), intent(in) :: comp_comparray, comp_globtau
-    
+
     ! pedestal type
     real(dp), intent(in) :: ped_teped, ped_nped, ped_nsep, ped_tesep
-    
+
     ! radial_profiles type
     real(dp), intent(in) :: radp_av_te, radp_av_ten, radp_av_ti, radp_av_ne, &
       radp_av_ni, radp_av_nhe, radp_av_nd, radp_av_nz, radp_zeff
     real(dp), dimension(:), intent(in) :: radp_ne, radp_psi, radp_te, radp_ti, &
       radp_jcd, radp_jpar, radp_ipol, radp_qprof, radp_Volum, radp_vp, &
       radp_cc, radp_palph, radp_nions
-    
+
     ! power_losses type
     real(dp), intent(in) :: loss_alpharate, loss_betaft, loss_dfuelreq, loss_fusionrate, loss_h, &
       loss_palpe, loss_palpi, loss_pbrehms, loss_pdiv, loss_peaux, loss_pfus, &
@@ -412,7 +412,7 @@ contains
       loss_pohm, loss_prad, loss_pradcore, loss_pradedge, loss_psep, &
       loss_psepe, loss_psepi, loss_psync, loss_qcd, loss_qfus, loss_qheat, &
       loss_qtot, loss_rplas, loss_tauee, loss_taueff, loss_tauei, loss_wth
-    
+
     ! mhd_eq type
     real(dp), intent(in) :: mhd_betan, mhd_bp, mhd_equilcheck, mhd_f_ni, mhd_fbs, mhd_ip_out, &
       mhd_q, mhd_q_sep, mhd_qstar, mhd_rli, mhd_sp, mhd_torsurf, mhd_vloop, &
@@ -515,7 +515,7 @@ contains
     end if
 
     do imp=1,nimp
-       impurity_arr(imp)%frac=comp_comparray(imp)
+       impurity_arr_frac(imp)=comp_comparray(imp)
     enddo
 
     if (.false.) then !This cannot be used as PLASMOD cannot vary Z with Te yet
@@ -523,8 +523,8 @@ contains
        !  Sum of Zi.ni for all impurity ions (those with charge > helium)
        znimp = 0.0D0
        do imp = 1,nimp
-          if (impurity_arr(imp)%Z > 2) then
-             znimp = znimp + Zav_of_te(impurity_arr(imp),te)*(impurity_arr(imp)%frac * dene)
+          if (impurity_arr_Z(imp) > 2) then
+             znimp = znimp + Zav_of_te(imp,te)*(impurity_arr_frac(imp) * dene)
           end if
        end do
 
@@ -551,17 +551,17 @@ contains
 
     !  Set hydrogen and helium impurity fractions for
     !  radiation calculations
-    impurity_arr(element2index('H_'))%frac = &
+    impurity_arr_frac(element2index('H_')) = &
          (dnprot + (fdeut+ftrit)*deni + dnbeam)/dene
 
-    impurity_arr(element2index('He'))%frac = fhe3*deni/dene + ralpne
+    impurity_arr_frac(element2index('He')) = fhe3*deni/dene + ralpne
 
     if (plasmod_i_impmodel == 0 ) then
        !  Total impurity density (/m3)
        dnz = 0.0D0
        do imp = 1,nimp
-          if (impurity_arr(imp)%Z > 2) then
-             dnz = dnz + impurity_arr(imp)%frac*dene
+          if (impurity_arr_Z(imp) > 2) then
+             dnz = dnz + impurity_arr_frac(imp)*dene
           end if
        end do
 
@@ -582,8 +582,8 @@ contains
 
     !  Set some (obsolescent) impurity fraction variables
     !  for the benefit of other routines
-    rncne = impurity_arr(element2index('C_'))%frac
-    rnone = impurity_arr(element2index('O_'))%frac
+    rncne = impurity_arr_frac(element2index('C_'))
+    rnone = impurity_arr_frac(element2index('O_'))
 
     ! Issue #261 Remove zfear.  Use the sum of Fe and Ar concentrations
     ! if (zfear == 0) then
@@ -591,7 +591,7 @@ contains
     ! else
     !    rnfene = impurity_arr(element2index('Ar'))%frac
     ! end if
-    rnfene = impurity_arr(element2index('Fe'))%frac + impurity_arr(element2index('Ar'))%frac
+    rnfene = impurity_arr_frac(element2index('Fe')) + impurity_arr_frac(element2index('Ar'))
 
     !  Effective charge
     !  Calculation should be sum(ni.Zi^2) / sum(ni.Zi),
@@ -599,7 +599,7 @@ contains
     if (.false.) then !This cannot be used as PLASMOD cannot vary Z with Te yet
        zeff = 0.0D0
        do imp = 1,nimp
-          zeff = zeff + impurity_arr(imp)%frac * Zav_of_te(impurity_arr(imp),te)**2
+          zeff = zeff + impurity_arr_frac(imp) * Zav_of_te(imp,te)**2
        end do
 
        if ((zeff - radp_zeff)/zeff > 1e-6) then
@@ -628,8 +628,8 @@ contains
 
     aion = afuel*deni + 4.0D0*dnalp + dnprot + abeam*dnbeam
     do imp = 1,nimp
-       if (impurity_arr(imp)%Z > 2) then
-          aion = aion + dene*impurity_arr(imp)%frac*impurity_arr(imp)%amass
+       if (impurity_arr_Z(imp) > 2) then
+          aion = aion + dene*impurity_arr_frac(imp)*impurity_arr_amass(imp)
        end if
     end do
     aion = aion/dnitot
@@ -640,9 +640,9 @@ contains
          dnalp + dnprot + (1.0D0-ftritbm)*dnbeam/2.0D0 + ftritbm*dnbeam/3.0D0 &
          ) / dene
     do imp = 1,nimp
-       if (impurity_arr(imp)%Z > 2) then
-          zeffai = zeffai + impurity_arr(imp)%frac &
-               * Zav_of_te(impurity_arr(imp),te)**2 / impurity_arr(imp)%amass
+       if (impurity_arr_Z(imp) > 2) then
+          zeffai = zeffai + impurity_arr_frac(imp) &
+               * Zav_of_te(imp,te)**2 / impurity_arr_amass(imp)
        end if
     end do
 
@@ -738,8 +738,8 @@ contains
     gammaft = (betaft+betanb)/betath !(Fast alpha + beam beta)/(thermal beta)
     hfact  = loss_H
     pradmw     = loss_prad ! fradpwr is total radiation fraction
-    pedgeradmw = loss_pradedge
-    pcoreradmw = loss_pradcore
+    pouterzoneradmw = loss_pradedge
+    pinnerzoneradmw = loss_pradcore
     psyncpv    = loss_psync/vol
     pbrempv    = loss_pbrehms/vol
     plinepv    = loss_pline/vol
@@ -797,7 +797,7 @@ contains
     !---------------------------------------
 
     pinjmw =loss_pnbi
-    pradpv = loss_Prad/vol !Total radiation power (MW)
+    pradpv = loss_Prad/vol !Total radiation power/volume in lcsf (MW/m3)
     ptrimw = loss_psepi !Ion transport (MW)
     ptremw = loss_psepe !Electron transport (MW)
 
@@ -817,7 +817,7 @@ contains
 		use constraint_variables, only: psepbqarmax, pseprmax
 		use physics_variables, only: rmajor, bt, aspect
     use process_output, only: ovarin, ocmmnt, oheadr, ovarrf, osubhd
-    
+
 		use constants, only: echarge, rmu0
     use plasmod_variables, only: radp, ped, geom, plasmod_i_equiltype, loss, &
       inp0, mhd, num, i_flag, comp
@@ -968,7 +968,7 @@ contains
 
     integer, parameter :: radp_file = 15  !  Radial profiles file unit identifier
     integer :: file_name_length
-    character(len = 50) :: outfile_radp
+    character(len = 300) :: outfile_radp
     integer :: j
 
     file_name_length = LEN_TRIM(fileprefix)

@@ -40,7 +40,16 @@ def examples_as_cwd():
     os.chdir(cwd)
 
 
-def test_examples(examples_as_cwd):
+@pytest.fixture
+def delete_plot_procs():
+    yield
+    plot_proc_1 = Path("../examples/plot_proc_1")
+    plot_proc_2 = Path("../examples/plot_proc_2")
+    plot_proc_1.unlink(missing_ok=True)
+    plot_proc_2.unlink(missing_ok=True)
+
+
+def test_examples(examples_as_cwd, delete_plot_procs):
     """Run the examples.py script and check no exceptions are raised.
 
     examples.py uses temp dirs to clean up any produced files itself.
@@ -66,10 +75,11 @@ def scan_cleanup(examples_as_cwd):
         if "IN.DAT" not in file.name:
             os.remove(file)
 
+
 def test_scan(scan_cleanup):
     """Run the scan.py script and check no exceptions are raised.
 
-    scan.py intentionally produces files when running the notebook, but remove 
+    scan.py intentionally produces files when running the notebook, but remove
     them when testing.
     :param scan_cleanup: fixture to delete any produced files
     :type scan_cleanup: None

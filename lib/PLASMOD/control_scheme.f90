@@ -30,7 +30,7 @@ if (inp0%contrpovr.gt.0.) inp0%q_control=inp0%contrpovr*geom%r
 
 !this below is: if Psep < PLH*psepplhinf, applies NBI to not go into L mode
 	if (comp%psepplh_inf.gt.0.) then
-		q_heat=max(0.,min(inp0%pheatmax-q_cd-q_fus-inp0%q_control,q_heat+ & 
+		q_heat=max(0.,min(inp0%pheatmax-q_cd-q_fus-inp0%q_control,q_heat+ &
 		& inp0%qnbi_psepfac*(comp%psepplh_inf-Psep/PLH)*num%dt/(1.+num%dt)))
 	endif
 
@@ -38,7 +38,7 @@ if (inp0%contrpovr.gt.0.) inp0%q_control=inp0%contrpovr*geom%r
 dum2=1.d6
 	if (comp%psepplh_sup.gt.0.d0) then !use psep/Plh sup as constraint
 dum2=min(comp%psepplh_sup*PLH,dum2)
-	endif 
+	endif
 	if (comp%psepb_q95AR.gt.0.d0) then !use psepbqar as constraint
 dum2=min(dum2,comp%psepb_q95AR*(btor/q_95/geom%A/rpmajor)**(-1.))
 
@@ -64,28 +64,28 @@ endif
 
 !constraint: current drive fni or loop voltage!
 	if (inp0%f_ni.gt.0.) then !use f_ni as constraint
-		q_cd=max(0.,min(inp0%pheatmax-q_heat-q_fus-inp0%q_control,q_cd+& 
+		q_cd=max(0.,min(inp0%pheatmax-q_heat-q_fus-inp0%q_control,q_cd+&
 		& inp0%qnbi_psepfac*(inp0%f_ni-(fbs+fcd))*num%dt/(1.+num%dt)))
 	endif
 	if (inp0%fcdp.ge.0.) then ! use fcdp as constraint
 		q_cd=inp0%fcdp*(inp0%pheatmax-q_heat-q_fus-inp0%q_control)
 	endif
 	if (inp0%V_loop.gt.-1.e3) then !use loop voltage as constraint
-		q_cd=max(0.,min(inp0%pheatmax-q_heat-q_fus-inp0%q_control,q_cd+& 
+		q_cd=max(0.,min(inp0%pheatmax-q_heat-q_fus-inp0%q_control,q_cd+&
 		& inp0%qnbi_psepfac*(vloop-inp0%V_loop)*num%dt/(1.+num%dt)))
 	endif
 
 
 !constraint: pfusion target
 	if (inp0%pfus.gt.0.) then
-		q_fus=max(0.,min(inp0%pheatmax-q_heat-q_cd-inp0%q_control,q_fus+& 
+		q_fus=max(0.,min(inp0%pheatmax-q_heat-q_cd-inp0%q_control,q_fus+&
 		& inp0%qnbi_psepfac*(1.d0-pfus(nx)/inp0%pfus)*num%dt/(1.+num%dt)))
 		if (i_diagz.eq.1) 	write(*,*) q_heat,q_cd,q_fus,pfus(nx)
 	endif
 
 
 !sum up all powers
- loss%pnbi=min(inp0%maxpauxor*geom%r, & 
+ loss%pnbi=min(inp0%maxpauxor*geom%r, &
  & min(inp0%pheatmax,q_heat+q_cd+q_fus+inp0%q_control))
 
 !this below limits the total power to the actual one if overridden

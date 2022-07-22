@@ -105,6 +105,10 @@ module constraint_variables
   !! f-value for maximum neutral beam shine-through fraction
   !! (`constraint equation 59`, `iteration variable 105`)
 
+  real(dp) :: fncycle
+  !! f-value for minimum CS coil stress load cycles
+  !! (`constraint equation 90`, `iteration variable 167`)
+
   real(dp) :: fnesep
   !! f-value for Eich critical separatrix density
   !! (`constraint equation 76`, `iteration variable 144`)
@@ -163,7 +167,7 @@ module constraint_variables
   real(dp) :: fstrcond
   !! f-value for maxiumum TF coil conduit Tresca yield criterion
   !! (`constraint equation 32`, `iteration variable 49`)
-  
+
   real(dp) :: fstr_wp
   !! f-value for maxiumum TF coil strain absolute value
   !! (`constraint equation 88`, `iteration variable 165`)
@@ -331,6 +335,7 @@ module constraint_variables
     flhthresh = 1.0D0
     fmva = 1.0D0
     fnbshinef = 1.0D0
+    fncycle = 1.0D0
     fnesep = 1.0D0
     foh_stress = 1.0D0
     fpeakb = 1.0D0

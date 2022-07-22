@@ -5,7 +5,7 @@ Defines fixtures that will be shared across all test modules.
 import pytest
 from system_check import system_compatible
 import warnings
-import numpy as np
+
 
 from process.fortran import error_handling as eh
 
@@ -19,7 +19,7 @@ def pytest_addoption(parser):
     """
     parser.addoption(
         "--reg-tolerance",
-        default=0.0,
+        default=5.0,
         type=float,
         help="Percentage tolerance for regression tests",
     )
@@ -89,19 +89,26 @@ def precondition(request):
         warnings.warn(basic_error_message, UserWarning)
 
 
-@pytest.fixture
-def initialise_error_module(monkeypatch):
-    """pytest fixture to initialise error module
+@pytest.fixture(scope="session", autouse="True")
+def initialise_error_module():
+    """pytest fixture to initialise the error module before tests run.
 
-    Any routine which can raise an error should initialise
-    the error module otherwise segmentation faults can occur.
-
-    This fixture also resets the `fdiags` array to 0's.
-
-    :param monkeypatch: Mock fixture
-    :type monkeypatch: object
+    Initialise the error module initially otherwise segmentation faults can
+    occur when tested subroutines raise errors.
     """
     eh.init_error_handling()
     eh.initialise_error_list()
-    # monkeypatch.setattr(eh, 'fdiags', np.zeros(8))
-    # monkeypatch.setattr(eh, 'errors_on', False)
+
+
+@pytest.fixture
+def reinitialise_error_module():
+    """Re-initialise the error module.
+
+    If a subroutine raises an error and writes to error variables, this should
+    be cleaned up when the test finishes to prevent any side-effects.
+
+    """
+    # TODO Perhaps this should be autoused by all tests? Specify use explicitly
+    # for now for known error-raisers
+    yield
+    eh.init_error_handling()

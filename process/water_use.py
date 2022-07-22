@@ -43,7 +43,7 @@ class WaterUse:
                 "2. Water bodies (pond, lake, river): recirculating or once-through",
             )
 
-        ## call subroutines for cooling mechanisms:
+        # call subroutines for cooling mechanisms:
 
         # cooling towers
         self.cooling_towers(wastethermeng, output=output)
@@ -60,14 +60,14 @@ class WaterUse:
         """
         water_usage_variables.evapratio = 1.0e0 - (
             (
-                -0.000279e0 * water_usage_variables.airtemp ** 3
-                + 0.00109e0 * water_usage_variables.airtemp ** 2
+                -0.000279e0 * water_usage_variables.airtemp**3
+                + 0.00109e0 * water_usage_variables.airtemp**2
                 - 0.345e0 * water_usage_variables.airtemp
                 + 26.7e0
             )
             / 100.0e0
         )
-        ## Diehl et al. USGS Report 2013–5188, http://dx.doi.org/10.3133/sir20135188
+        # Diehl et al. USGS Report 2013–5188, http://dx.doi.org/10.3133/sir20135188
 
         water_usage_variables.volheat = (
             water_usage_variables.waterdens * water_usage_variables.latentheat
@@ -83,12 +83,12 @@ class WaterUse:
 
         water_usage_variables.evapvol = wastetherm * water_usage_variables.volperenergy
 
-        ## find water withdrawn from external source
+        # find water withdrawn from external source
         water_usage_variables.waterusetower = 1.4e0 * water_usage_variables.evapvol
         # Estimated as a ratio to evaporated water (averaged across obervered dataset)
         #  as per Diehl et al. USGS Report 2014–5184, http://dx.doi.org/10.3133/sir20145184
 
-        ### end break
+        # end break
 
         #  Output section
         if output:
@@ -171,10 +171,10 @@ class WaterUse:
                 i = 2.408e0
                 j = 20.596e0
 
-            ## Unfortunately, the source spreadsheet was from the US, so the fits for
-            ##   water body heating due to heat loading and the cooling wind functions
-            ##   are in non-metric units, hence the conversions required here.
-            ## Limitations: maximum wind speed of ~5 m/s; initial water_usage_variables.watertemp < 25 degC
+            # Unfortunately, the source spreadsheet was from the US, so the fits for
+            #   water body heating due to heat loading and the cooling wind functions
+            #   are in non-metric units, hence the conversions required here.
+            # Limitations: maximum wind speed of ~5 m/s; initial water_usage_variables.watertemp < 25 degC
 
             # convert water_usage_variables.windspeed to mph
             water_usage_variables.windspeedmph = (
@@ -190,9 +190,9 @@ class WaterUse:
                 + (e * water_usage_variables.watertemp)
                 + (f * water_usage_variables.windspeedmph)
                 + (g * heatload)
-                + (h * water_usage_variables.watertemp ** 2)
-                + (i * water_usage_variables.windspeedmph ** 2)
-                + (j * heatload ** 2)
+                + (h * water_usage_variables.watertemp**2)
+                + (i * water_usage_variables.windspeedmph**2)
+                + (j * heatload**2)
             )
 
             # estimate resultant heated water temperature
@@ -204,7 +204,7 @@ class WaterUse:
             windfunction = (
                 a
                 + (b * water_usage_variables.windspeed)
-                + (c * water_usage_variables.windspeed ** 2)
+                + (c * water_usage_variables.windspeed**2)
             ) / 1000.0e0
 
             # difference in saturation vapour pressure (Clausius-Clapeyron approximation)
@@ -233,10 +233,10 @@ class WaterUse:
             # convert heat loading to J/(m2.day)
             heatloadmet = heatload * 1000000.0e0 / 4046.85642e0 * SECDAY
 
-            ## find evaporation ratio: ratio of the heat used to evaporate water
+            # find evaporation ratio: ratio of the heat used to evaporate water
             #   to the total heat discharged through the tower
             water_usage_variables.evapratio = deltaE / heatloadmet
-            ## Diehl et al. USGS Report 2013–5188, http://dx.doi.org/10.3133/sir20135188
+            # Diehl et al. USGS Report 2013–5188, http://dx.doi.org/10.3133/sir20135188
 
             water_usage_variables.volheat = (
                 water_usage_variables.waterdens * water_usage_variables.latentheat
@@ -254,23 +254,23 @@ class WaterUse:
                 wastetherm * water_usage_variables.volperenergy
             )
 
-            ## using this method the estimates for pond, lake and river evaporation produce similar results,
+            # using this method the estimates for pond, lake and river evaporation produce similar results,
             #   the average will be taken and used in the next stage of calculation
             evapsum = evapsum + water_usage_variables.evapvol
 
-        evapmean = evapsum / 3.0e0
+        evapsum = evapsum / icool
 
-        ## water volume withdrawn from external source depends on recirculation or 'once-through' system choice
+        # water volume withdrawn from external source depends on recirculation or 'once-through' system choice
         #   Estimated as a ratio to evaporated water (averaged across obervered dataset)
         #   as per Diehl et al. USGS Report 2014–5184, http://dx.doi.org/10.3133/sir20145184
 
         # recirculating water system:
-        water_usage_variables.wateruserecirc = 1.0e0 * water_usage_variables.evapvol
+        water_usage_variables.wateruserecirc = 1.0e0 * evapsum
 
         # once-through water system:
-        water_usage_variables.wateruseonethru = 98.0e0 * water_usage_variables.evapvol
+        water_usage_variables.wateruseonethru = 98.0e0 * evapsum
 
-        ### end break
+        # end break
 
         #  Output section
         if output:

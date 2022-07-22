@@ -1,11 +1,11 @@
 """Create Python-Fortran dictionaries JSON.
 
-This module produces the python_fortran_dicts.json file used by Python in 
-Process. Make directs the Ford documentation program to read in the Process 
+This module produces the python_fortran_dicts.json file used by Python in
+Process. Make directs the Ford documentation program to read in the Process
 source, create a project object which contains the structure of Process used for
-documenting the code within Ford, and then creates a pickled file from that 
-project object. Make then calls this module to create dictionaries of variables 
-which are used by Python in Process. The dicts are created from hardcoded 
+documenting the code within Ford, and then creates a pickled file from that
+project object. Make then calls this module to create dictionaries of variables
+which are used by Python in Process. The dicts are created from hardcoded
 values, Process source parsing and the Ford project object, and then dumped into
 the JSON file for later use.
 
@@ -19,8 +19,9 @@ import re
 import logging
 import argparse
 import json
-import argparse
 import pickle
+
+import numpy
 import create_dicts_config
 from pathlib import Path
 
@@ -31,6 +32,7 @@ output_dict = {}
 # Dict of nested dicts e.g. output_dict['DICT_DESCRIPTIONS'] =
 # {descriptions_dict}
 # Dicts stored in output_dict are used to create other derivative dicts
+
 
 # Classes for the various dictionary types
 class Dictionary(object):
@@ -305,7 +307,7 @@ class DefaultValues(ProjectDictionary):
         working_dict = self.dict[self.name]
 
         for key, value in working_dict.items():
-            if value:
+            if value is not None and isinstance(value, str):
                 # Guard against None
                 # Is it a list?
                 if type(value) is list or value[0:2] == "(/":
@@ -315,6 +317,8 @@ class DefaultValues(ProjectDictionary):
                     value = self.convert_value_to_float(value)
 
                 working_dict[key] = value
+            elif value is not None and isinstance(value, numpy.ndarray):
+                working_dict[key] = value.tolist()
 
     def convert_value_to_float(self, value):
         # Convert a value to float: 1D3 to 1000
@@ -326,7 +330,7 @@ class DefaultValues(ProjectDictionary):
             value = value.replace("d", "E")
             value = float(value)
             return value
-        except:
+        except Exception:
             # Failed conversion; don't change anything
             return original_value
 
@@ -460,7 +464,7 @@ class DefaultValues(ProjectDictionary):
             # This probably means that something was picked up by the init
             # subroutine regex in error
             return
-        elif self.dict[self.name][var] == None:
+        elif self.dict[self.name][var] is None:
             # Only overwrite the value if Ford has produced a None, which is
             # stored on self.dict
             # Find the var in the Ford project again
@@ -491,7 +495,7 @@ class DefaultValues(ProjectDictionary):
                                 self.dict[self.name][var] = mod_var.initial
 
             # If it's not an array, set it to the value in the init subroutine
-            if self.dict[self.name][var] == None:
+            if self.dict[self.name][var] is None:
                 self.dict[self.name][var] = value
 
 
@@ -594,7 +598,7 @@ def slice_file(file, re1, re2):
         if re.search(re1, filetext[i]):
             start = i
             break
-    if start == None:
+    if start is None:
         logging.warning("Could not match %s in file %s\n", re1, file)
         return ""
     end = None
@@ -603,7 +607,7 @@ def slice_file(file, re1, re2):
         if re.search(re2, filetext[i]):
             end = i
             break
-    if end == None:
+    if end is None:
         logging.warning("Could not match %s in file %s\n", re2, file)
         return ""
     # return slice

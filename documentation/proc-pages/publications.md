@@ -7,6 +7,31 @@ The [physics](http://www.sciencedirect.com/science/article/pii/S0920379614005961
 Below is a list of publications using or citing PROCESS by year:
 
 ## 2022
+
+[Validation and results of an approximate model for the stress of a tokamak toroidal field coil at the inboard midplane](https://arxiv.org/abs/2206.14699)   
+C.P.S. Swanson, S. Kahn, C. Rana, P.H. Titus, A.W. Brooks, W. Guttenfelder, Y. Zhai, T.G. Brown, J.E. Menard   
+arXiv:2206.14699 (2022) 
+
+[Toward DEMO power plant concept selection under epistemic uncertainty](https://ieeexplore.ieee.org/document/9794814)   
+E. Miralles-Dolz, A. Pearce, J. Morris, E. Patelli   
+IEEE Transactions on Plasma Science (Early Access)   
+
+[Boosting the efficiency of future fusion power plants combining energy and heat production](https://ieeexplore.ieee.org/document/9794822)   
+P. Cano-Megias, J. Hidalgo-Salaverri, R. Chacartegui, J. Ayllon-Guerola, J.A. Becerra-Villanueva, E. Viezzer   
+IEEE Transactions on Plasma Science (Early Access)   
+
+[Recent progress in Chinese fusion research based on superconducting tokamak configuration](https://www.sciencedirect.com/science/article/pii/S2666675822000650)   
+J. Zheng, J. Qin, K. Lu, M. Xu, X. Duan, G. Xu, J. Hu, X. Gong, Q. Zang, Z. Liu, L. Wang, R. Ding, J. Chen, P. Li, L. Xue, L. Cai, Y. Song   
+The Innovation 3(4) (2022) 100269   
+
+[Training and upgrading tokamak power plants with remountable superconducting magnets](https://arxiv.org/abs/2205.04441)   
+S.B.L. Chislett-McDonald, E. Surrey, J. Naish, A. Turner, D.P. Hampshire   
+arXiv:2205.04441 (2022)   
+
+[Designing a fusion power plant with superconducting training magnets](http://etheses.dur.ac.uk/14404/)   
+S.B.L. Chislett-McDonald   
+Durham University PhD Thesis (2022)   
+
 [EU-DEMO design space exploration and design drivers](https://www.sciencedirect.com/science/article/pii/S0920379622000801?via%3Dihub)   
 R. Kembleton, J. Morris, M. Siccinio, F. Maviglia, the PROCESS team   
 Fusion Engineering and Design 178 (2022) 113080   
@@ -17,7 +42,8 @@ Fusion Engineering and Design 176 (2022) 113047
 
 [The DEMO magnet system – Status and future challenges](https://www.sciencedirect.com/science/article/pii/S0920379621007468)   
 V. Corato, C. Vorpahl, K. Sedlak, V.A. Anvar, J. Bennet, M.E. Biancolini, F. Bonne, R. Bonifetto, D.P. Boso, A. Brighenti, P. Bruzzone, G. Celentano, A. della Corte, G. De Marzi, V. D'Auria, F. Demattè, A. Dembkowska, O. Dicuonzo, C. Fiamozzi Zignani, W.H. Fietz, C. Frittitta, L. Giannini, F. Giorgetti, R. Guarino, R. Heller, C. Hoa, M. Huguet, G. Jiolat, M. Kumar, B. Lacroix, M. Lewandowska, N. Misiara, L. Morici, L. Muzzi, D.S. Nickel, S. Nicollet, A. Nijhuis, F. Nunio, C. Portafaix, X. Sarasola, L. Savoldi, I. Tiseanu, G. Tomassetti, A. Torre, S. Turtù, D. Uglietti, R. Vallcorba, K.-P. Weiss, R. Wesche, M.J. Wolf, K. Yagotintsev, L. Zani, R. Zanino, A. Zappatore   
-Fusion Engineering and Design 174 (2022) 112971
+Fusion Engineering and Design 174 (2022) 112971   
+
 ## 2021
 
 [Fusion energy: A global effort – A UK opportunity](https://imeche.org/policy-and-press/reports/detail/fusion-energy-a-global-effort-a-uk-opportunity)   

@@ -7,7 +7,7 @@ module read_radiation
   !! author: M Kovari, CCFE, Culham Science Centre
   !! N/A
   !! This module contains the PROCESS Kallenbach divertor model
-  !! 
+  !!
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -24,22 +24,22 @@ module read_radiation
 
   ! Vars in function read_lz requiring re-initialisation on each new run
   integer :: location
-  
+
   ! Length of temperature and netau data
   integer :: nt, nnetau
-  
+
   ! Impurity data array
   real(dp), dimension(200,5) :: impurity_data
-  
+
   ! The values of the Lz, mean Z, and mean Z^2 stored in the data files
   real(dp), dimension(nimp,200,5) :: data_lz, data_z, data_qz
-  
+
   ! The values of ln(n.tau) at which the data is stored.
   real(dp), dimension(nimp,5) :: lnetau_lz, lnetau_z, lnetau_qz
-  
+
   ! The values of ln(Te) at which the data is stored.
   real(dp), dimension(nimp, 200) :: logT_lz, logT_z, logT_qz
-  
+
   ! First call boolean switch array
   logical :: FirstCall(nimp)
 
@@ -52,7 +52,7 @@ contains
             lzdir = INSTALLDIR//'/process/data/lz_non_corona_14_elements/'
         else
             lzdir = trim(process_dir)//'/data/lz_non_corona_14_elements/'
-        end if    
+        end if
   end function lzdir
 
   subroutine init_read_radiation
@@ -75,7 +75,7 @@ contains
     FirstCall = .true.
   end subroutine init_read_radiation
 
-  FUNCTION read_lz(element, te, netau, mean_z, mean_qz, verbose)
+  function read_lz(element, te, netau, mean_z, mean_qz, verbose)
     !! Read Lz, mean_z or mean_qz data from database
     !! author: M Koviar, CCFE, Culham Science Centre
     !! element : input char : element name
@@ -254,7 +254,7 @@ contains
     !! logT_array    : output real array : log temperature array
     !! lnetau_array  : output real array : log netau array
     !! Read the impurity data from database
-    !! 
+    !!
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -340,128 +340,5 @@ contains
     close(unit=8)
 
   end subroutine read_impurity_data
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine plot_Lz()
-    !! Write loss data to file for plotting
-    !! author: M Kovari, CCFE, Culham Science Centre
-    !! Write loss data to file for plotting
-    !! Compare to Figure 3 in Kallenbach 2016.
-    !! 
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    use impurity_radiation_module, only: nimp, imp_label
-    implicit none
-
-    ! Subroutine declarations !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    character(len=2) :: element
-
-    real(dp) :: dummy
-
-    integer :: i, j
-
-    integer, parameter :: points = 27
-
-    ! Temperature plot points
-    real(dp), parameter :: te(points) = (/1., 1.2, 1.5, 2., 2.5, 3., 4., 5., 6., 7., 8., 9., &
-        10., 12., 14., 16., 20., 30., 40., 50., 60., 70., 80., 90., 100., 150., 200./)
-
-    real(dp) :: Lz_plot(nimp)
-
-    real(dp), parameter :: netau = 0.5
-
-    open(unit=12,file='radiative_loss_functions.txt',status='replace')
-    write(12,'(30a11)')'Te (eV)', (imp_label(i), i=2,nimp)
-
-    ! Just read data.  Exclude hydrogen by starting at 2
-    do i=2,nimp
-        element=imp_label(i)
-        dummy=read_lz(element,30.0d0,netau, mean_z=.false., mean_qz=.false., verbose=.false.)
-    enddo
-
-    do i=1,points
-        do j=2,nimp
-            Lz_plot(j)=read_lz(imp_label(j),te(i),netau, mean_z=.false., mean_qz=.false., verbose=.false.)
-        enddo
-        write(12,'(30es11.3)')te(i), (Lz_plot(j), j=2,nimp)
-    enddo
-    close(unit=12)
-
-  end subroutine plot_Lz
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine plot_z()
-    !! Write z and z^2 data to file for plotting
-    !! author: M Kovari, CCFE, Culham Science Centre
-    !! Write z and z^2 data to file for plotting
-    !! 
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    use impurity_radiation_module, only: nimp, imp_label
-    implicit none
-
-    ! Subroutine declarations !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    character(len=2) :: element
-
-    real(dp) :: dummy
-
-    integer :: i, j, k
-
-    integer, parameter :: points = 27
-
-    real(dp), parameter :: te(points) = (/1., 1.2, 1.5, 2., 2.5, 3.,4., 5., 6., 7., &
-        8., 9.,10.,12., 14., 16., 20., 30., 40., 50., 60., 70., 80., 90., 100., 150., 200./)
-
-    real(dp) :: Z_plot(3,nimp)
-
-    real(dp), parameter :: netau(3) = (/0.1, 1.0, 10.0/)
-
-    open(unit=12,file='mean_Z.txt',status='replace')
-
-    write(12,*)'Mean Z'
-
-    write(12,'(a11,  42(3(a4, es7.1)))')'Te (ev)',((imp_label(i),netau(j), j=1,3),i=2,nimp)
-
-    ! Just read data.  Exclude hydrogen by starting at 2
-    do i = 2, nimp
-        element = imp_label(i)
-        dummy = read_lz(element,30.0d0,1.0d0, mean_z=.true., mean_qz=.false., verbose=.true.)
-        dummy = read_lz(element,30.0d0,1.0d0, mean_z=.false., mean_qz=.true., verbose=.true.)
-    enddo
-
-    do i = 1, points
-        do j = 1, 3
-            do k = 2, nimp
-                element = imp_label(k)
-                Z_plot(j,k) = read_lz(element,te(i),netau(j), mean_z=.true., mean_qz=.false., verbose=.false.)
-            enddo
-        enddo
-        write(12,'(42es11.3)')te(i), ((Z_plot(j,k), j=1,3), k=2,nimp)
-    enddo
-
-    write(12,*)
-    write(12,*)'Mean Z^2'
-    write(12,'(a11,  42(3(a4, es7.1)))')'Te (ev)', ((imp_label(i),netau(j), j=1,3),i=2,nimp)
-    do i = 1, points
-        do j = 1, 3
-            do k = 2, nimp
-                element = imp_label(k)
-                Z_plot(j,k) = read_lz(element,te(i),netau(j), mean_z=.false., mean_qz=.true., verbose=.false.)
-            enddo
-        enddo
-        write(12,'(42es11.3)')te(i), ((Z_plot(j,k), j=1,3), k=2,nimp)
-    enddo
-
-    close(unit=12)
-
-  end subroutine plot_z
 
 end module read_radiation

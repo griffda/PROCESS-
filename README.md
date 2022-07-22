@@ -10,11 +10,15 @@ Please see the [installation guide](http://process.gitpages.ccfe.ac.uk/process/i
 ## Documentation
 To read about how the code works and the modules in it see the [documentation](http://process.gitpages.ccfe.ac.uk/process), which is hosted on Gitlab Pages.
 
+## Tracking and Testing
+Process uses a mixture of tracking and testing to ensure code reliability. Tests are run on each branch and ensure the output of keys functions are correct. Tracking, on the other hand, shows graphs of a variables changes over time, and what commit caused the change.
+
+Our tracker can be found here: http://process.gitpages.ccfe.ac.uk/process/tracking.html
+Documentation on testing can be found here: http://process.gitpages.ccfe.ac.uk/process/development/testing/
+
 ## Development
 Please see the CONTRIBUTING.md for guidance on how to contribute to PROCESS. Further information is found in the development section of the [documentation](http://process.gitpages.ccfe.ac.uk/process).
 
-## Testing
-PROCESS uses the `pytest` testing framework, and tests are located in the `tests` directory. Usage documentation is coming soon...
 
 ## Publications
 A list of publications using PROCESS is given [here](http://process.gitpages.ccfe.ac.uk/process/publications), including two papers outlining the physics and engineering models in PROCESS.
