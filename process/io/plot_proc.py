@@ -2302,7 +2302,7 @@ def plot_current_drive_info(axis, mfile_data, scan):
             print(
                 "Options 1, 2, 4, 6 and 9 not implemented yet in this python script plot_proc.py\n"
             )
-        print("NEEDS TO BE IMPLEMENTED in plot_current_drive_info subroutine!!\n")
+            print("NEEDS TO BE IMPLEMENTED in plot_current_drive_info subroutine!!\n")
 
     axis.set_ylim([ymin, ymax])
     axis.set_xlim([xmin, xmax])
