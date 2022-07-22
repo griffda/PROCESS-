@@ -12,14 +12,14 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-2021-g5abca39e code contains untracked changes
-    Branch : 1613-add-menard-power-plant-design-to-test-suite
-   Git log : Merge branch |develop| into 1613-add-menard-power-plant-design-to-test-suite
- Date/time : 22 Jul 2022 14:45:40 +01:00(hh:mm) UTC
-      User : smuldrew
-  Computer : K1344
- Directory : /home/smuldrew/process/tests/regression/scenarios/Menard_HTS-PP
-     Input : /home/smuldrew/process/tests/regression/scenarios/Menard_HTS-PP/IN.DAT
+   Tag No. : v2.1-2023-g133353d7b
+    Branch : HEAD
+   Git log : Merge branch |1613-add-menard-power-plant-design-to-test-suite| into |develop|
+ Date/time : 22 Jul 2022 15:29:02 +00:00(hh:mm) UTC
+      User : root
+  Computer : runner-ueya2eyb-project-20-concurrent-0
+ Directory : /builds/process/process
+     Input : /tmp/pytest-of-root/pytest-0/test_scenario_Menard_HTS_PP_0/IN.DAT
  Run title : Pilot Plant Menard et al. 2016, Section 5
   Run type : Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
  
