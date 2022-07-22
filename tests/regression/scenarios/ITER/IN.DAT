@@ -128,7 +128,9 @@ shldith  = 0.218 * inboard shield thickness (m) (`iteration variable 93`)
 shldoth  = 0.618 * outboard shield thickness (m) (`iteration variable 94`)
 tfcth    = 1.148 * inboard TF coil thickness; (centrepost for ST) (m)
 tftsgap  = 0.038 * Minimum metal-to-metal gap between TF coil and thermal shield (m)
-thshield = 0.00 * TF-VV thermal shield thickness (m)
+thshield_ib = 0.00 * TF-VV thermal shield thickness Inboard (m)
+thshield_ob = 0.00 * TF-VV thermal shield thickness Outboard (m)
+thshield_vb = 0.00 * TF-VV thermal shield thickness Vertical (m)
 vvblgap  = 0.000 * gap between vacuum vessel and blanket (m)
 
 *---------------Buildings Variables----------------*

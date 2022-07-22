@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.4.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "07/07/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "16:53"
- User____________________________________________________________________ (username)____________________     "jg6173"  
+ Date_of_run_____________________________________________________________ (date)________________________     "22/07/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "15:21"
+ User____________________________________________________________________ (username)____________________     "smuldrew"
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "Run Title (change this line using input variable 'runtitle')                                       
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1973-g68062ef7"                                                                               
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "develop"                                                                                           
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Overwrite regression references for |Merge branch |1704-fix-outpu-from-writes-in-power-py| into |de
- Input_filename__________________________________________________________ (fileprefix)__________________     "/home/jg6173/process/tests/regression/scenarios/ITER/IN.DAT                                                                                                                                             "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-2030-g255cebe5"                                                                               
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1091-add-iter-to-the-test-suite"                                                                   
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch |develop| into 1091-add-iter-to-the-test-suite"                                       
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/home/smuldrew/process/tests/regression/scenarios/ITER/IN.DAT                                                                                                                                           "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -528,13 +528,13 @@
  Total_plant_cycle_time_(s)______________________________________________ (tcycle)______________________      2.2882E+03 OP 
  kallenbach_switch_______________________________________________________ (kallenbach_switch)___________              0    
  # Radial Build #
- Machine_build_variables.bore_(m)________________________________________ (bore)________________________      9.9171E-01 ITV
+ Machine_bore_(m)________________________________________________________ (bore)________________________      9.9171E-01 ITV
  CS_radial_thickness_(m)_________________________________________________ (ohcth)_______________________      1.0074E+00 ITV
  CS_precompression_(m)___________________________________________________ (precomp)_____________________      1.0347E-01    
  CS_precompresion_to_TF_coil_radial_gap_(m)______________________________ (gapoh)_______________________      4.1461E-02 ITV
  TF_coil_inboard_leg_(m)_________________________________________________ (tfcth)_______________________      1.1455E+00 ITV
  TF_coil_inboard_leg_insulation_gap_(m)__________________________________ (tftsgap)_____________________      3.8000E-02    
- Thermal_shield_(m)______________________________________________________ (thshield)____________________      0.0000E+00    
+ Thermal_shield,_inboard_(m)_____________________________________________ (thshield_ib)_________________      0.0000E+00    
  thermal_shield_to_vessel_radial_gap_(m)_________________________________ (gapds)_______________________      0.0000E+00    
  Inboard_vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_in)_____________________      7.0000E-02    
  Inner_radiation_shield_radial_thickness_(m)_____________________________ (shldith)_____________________      2.1800E-01    
@@ -548,6 +548,7 @@
  Outer_radiation_shield_radial_thickness_(m)_____________________________ (shldoth)_____________________      6.1800E-01    
  Outboard_vacuum_vessel_radial_thickness_(m)_____________________________ (d_vv_out)____________________      2.0000E-01    
  Vessel_to_TF_radial_gap_(m)_____________________________________________ (gapsto)______________________      4.6950E-01    
+ Thermal_shield,_outboard_(m)____________________________________________ (thshield_ob)_________________      0.0000E+00    
  Gap_(m)_________________________________________________________________ (tftsgap)_____________________      3.8000E-02    
  TF_coil_outboard_leg_radial_thickness_(m)_______________________________ (tfthko)______________________      1.1455E+00    
  # Vertical Build #
@@ -1221,7 +1222,9 @@ shldith  = 0.218 * inboard shield thickness (m) (`iteration variable 93`)
 shldoth  = 0.618 * outboard shield thickness (m) (`iteration variable 94`)
 tfcth    = 1.148 * inboard TF coil thickness; (centrepost for ST) (m)
 tftsgap  = 0.038 * Minimum metal-to-metal gap between TF coil and thermal shield (m)
-thshield = 0.00 * TF-VV thermal shield thickness (m)
+thshield_ib = 0.00 * TF-VV thermal shield thickness Inboard (m)
+thshield_ob = 0.00 * TF-VV thermal shield thickness Outboard (m)
+thshield_vb = 0.00 * TF-VV thermal shield thickness Vertical (m)
 vvblgap  = 0.000 * gap between vacuum vessel and blanket (m)
 
 *---------------Buildings Variables----------------*
