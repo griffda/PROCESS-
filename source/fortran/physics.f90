@@ -75,10 +75,21 @@ module physics_module
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  subroutine get_geom_counter(counter)
+
+      use plasmod_variables, only: geom
+
+      implicit none
+
+      real(dp), intent(out) :: counter
+
+      counter = geom%counter
 
 
+  end subroutine
 
-   subroutine plasmodphysics
+
+  subroutine plasmodphysics
 
       use plasmod_variables, only: mhd, radp, loss, num, geom, ped, inp0, &
       i_flag, comp

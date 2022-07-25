@@ -109,14 +109,38 @@ class Physics:
                     / (numpy.pi * physics_variables.rminor * physics_variables.rminor)
                 )
 
-        # elif  (geom%counter.eq.0.e0) :
-        #     #if plasmod_i_equiltype = 2 physics_variables.plascur is an input
-        #     #This is not yet consistently implemented though and contradicts
-        #     #usual PROCESS workflows where physics_variables.q is an input/interation variable
+        elif (physics_module.get_geom_counter()) == 0:
+            #     #if plasmod_i_equiltype = 2 physics_variables.plascur is an input
+            #     #This is not yet consistently implemented though and contradicts
+            #     #usual PROCESS workflows where physics_variables.q is an input/interation variable
 
-        #     #Note that physics_variables.alphap is 0 here#
-        #     #alphap is only used for icurr=7 (Connor-Hastie model)
-        #     call culcur(alphaj,alphap,bt,eps,icurr,iprofile,kappa,kappa95,p0,            pperim,q0,q,rli,rmajor,rminor,sf,triang,triang95,bp,qstar,plascur)
+            #     #Note that physics_variables.alphap is 0 here#
+            #     #alphap is only used for icurr=7 (Connor-Hastie model)
+
+            (
+                physics_variables.bp,
+                physics_variables.qstar,
+                physics_variables.plascur,
+            ) = physics_module.culcur(
+                physics_variables.alphaj,
+                physics_variables.alphap,
+                physics_variables.bt,
+                physics_variables.eps,
+                physics_variables.icurr,
+                physics_variables.iprofile,
+                physics_variables.kappa,
+                physics_variables.kappa95,
+                physics_variables.p0,
+                physics_variables.pperim,
+                physics_variables.q0,
+                physics_variables.q,
+                physics_variables.rli,
+                physics_variables.rmajor,
+                physics_variables.rminor,
+                physics_variables.sf,
+                physics_variables.triang,
+                physics_variables.triang95,
+            )
 
         # Issue #413 Dependence of Pedestal Properties on Plasma Parameters
         # physics_variables.ieped : switch for scaling pedestal-top temperature with plasma parameters
@@ -129,7 +153,7 @@ class Physics:
 
         else:  # Run PLASMOD
 
-            physics_module.physicsplasmod()
+            physics_module.plasmodphysics()
 
         # Calculate total magnetic field [T]
         physics_variables.btot = physics_functions_module.total_mag_field()
