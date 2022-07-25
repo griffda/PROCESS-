@@ -583,7 +583,8 @@ contains
       pscalingmw, psolradmw, psyncpv, ptremw, ptrepv, ptrimw, ptripv, q, q95, &
       qfuel, qstar, rad_fraction_total, rmajor, rminor, rndfuel, sarea, tauee, &
       taueff, tauei, taup, te, ten, ti, tin, vol, wallmw, xarea, zeff, zeffai, &
-      ffwal, palpnb, palppv, pchargepv, dtdrho_max,dndrho_max,rho_max_dt, rho_max_dn
+      ffwal, palpnb, palppv, pchargepv,rho_te_max, rho_ne_max, &
+      gradient_length_ne, gradient_length_te
     use profiles_module, only: plasma_profiles
     use stellarator_variables, only: f_rad, iotabar
     use physics_functions_module, only: radpwr
@@ -805,10 +806,11 @@ contains
          call ovarre(outfile,'Heat flux due to neoclassical particle transport (e) (MW/m2): ','(g_neo_e)',g_neo_e)
          call ovarre(outfile,'Particle flux due to neoclassical particle transport (e) (1/m2/s): ','(dndt_neo_e)',dndt_neo_e)
 
-         call ovarre(outfile,'Radius of Maximum ne gradient (m)','(r_max_dn)',rho_max_dn*rminor)
-         call ovarre(outfile,'Radius of Maximum te gradient (m)','(r_max_dt)',rho_max_dt*rminor)
-         call ovarre(outfile,'Maxium ne gradient (10^20/m4)','(drdn_max)',dndrho_max/rminor)
-         call ovarre(outfile,'Maxium te gradient (keV/m)','(drdt_max)',dtdrho_max/rminor)
+         call ovarre(outfile,'r/a of maximum ne gradient (m)','(rho_ne_max)',rho_ne_max)
+         call ovarre(outfile,'r/a of maximum te gradient (m)','(rho_te_max)',rho_te_max)
+         call ovarre(outfile,'Maxium ne gradient length (1)','(gradient_length_ne)',gradient_length_ne)
+         call ovarre(outfile,'Maxium te gradient length (1)','(gradient_length_te)',gradient_length_te)
+         call ovarre(outfile,'Gradient Length Ratio (T/n) (1)','(gradient_length_ratio)',gradient_length_te/gradient_length_ne)
 
          call ovarre(outfile,'Normalized ion Larmor radius', '(rho_star)', rho_star)
          call ovarre(outfile,'Normalized collisionality (electrons)', '(nu_star_e)',nu_star_e)
