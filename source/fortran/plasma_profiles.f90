@@ -38,8 +38,8 @@ contains
     use maths_library, only: gamfun, sumup3
     use physics_variables, only: rhopedt, ten, tin, alphap, tbeta, te0, p0, &
       nesep, tesep, pcoef, ipedestal, ni0, ne0, ti0, tratio, dnla, alphat, &
-      dnitot, neped, ti, rhopedn, dene, teped, alphan, te, dndrho_max, rho_max_dn, &
-      rho_max_dt, dtdrho_max
+      dnitot, neped, ti, rhopedn, dene, teped, alphan, te, rho_ne_max, &
+      rho_te_max, gradient_length_ne, gradient_length_te, rminor
     implicit none
 
     !  Arguments
@@ -48,7 +48,7 @@ contains
 
     integer, parameter :: nrho = 501
     integer :: irho
-    real(dp) :: drho, rho, integ1, integ2, dens, temp
+    real(dp) :: drho, rho, integ1, integ2, dens, temp, te_max, ne_max, dndrho_max, dtdrho_max
     real(dp), dimension(nrho) :: arg1, arg2, arg3
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -157,20 +157,23 @@ contains
     alphap = alphan + alphat
 
     ! The gradient information for ipedestal = 0:
+    ! All formulas can be obtained from the analytical parametric form of the ipedestal profiles
+    ! rho_max is obtained by equalling the second derivative to zero e.g.
+
     if (ipedestal == 0) then
       if(alphat > 1.0d0) then
          ! Rho (normalized radius), where temperature derivative is largest
-         rho_max_dt = 1.0d0/sqrt(-1.0d0 +2.0d0 * alphat)
+         rho_te_max = 1.0d0/sqrt(-1.0d0 +2.0d0 * alphat)
          dtdrho_max = -2.0d0**alphat*(-1.0d0 + alphat)**(-1.0d0 + alphat)*alphat*(-1.0d0 + &
-                     2.0d0 * alphat)**(0.5d0 - alphat)
-
+                     2.0d0 * alphat)**(0.5d0 - alphat)*te0
+         te_max = te0*(1d0 - rho_te_max**2)**alphat          
       elseif (alphat .le. 1.0d0 .and. alphaT > 0.0d0) then
          ! This makes the profiles very 'boxy'
-         ! The gradient diverges here at the edge so define some 'wrong' value of 0.95
+         ! The gradient diverges here at the edge so define some 'wrong' value of 0.9
          ! to approximate the gradient
-         rho_max_dt = 0.95d0
-         dtdrho_max = -2.0d0 * alphat * rho_max_dt*(1.d0-rho_max_dt**2)**(-1.0d0+alphat)
-
+         rho_te_max = 0.9d0
+         dtdrho_max = -2.0d0 * alphat * rho_te_max*(1.d0-rho_te_max**2)**(-1.0d0+alphat)*te0
+         te_max = te0*(1d0 - rho_te_max**2)**alphat 
       else
          print *, "ERROR: alphat is negative!"
          call exit(1)
@@ -178,21 +181,27 @@ contains
 
       ! Same for density
       if(alphan > 1.0d0) then
-         rho_max_dn = 1.0d0/sqrt(-1.0d0 +2.0d0 * alphan)
+         rho_ne_max = 1.0d0/sqrt(-1.0d0 +2.0d0 * alphan)
          dndrho_max = -2.0d0**alphan*(-1.0d0 + alphan)**(-1.0d0 + alphan)*alphan*(-1.0d0 + &
-                     2.0d0 * alphan)**(0.5d0 - alphan)
-
+                     2.0d0 * alphan)**(0.5d0 - alphan)*ne0
+         ne_max = ne0*(1d0 - rho_ne_max**2)**alphan
       elseif (alphan .le. 1.0d0 .and. alphan > 0.0d0) then
          ! This makes the profiles very 'boxy'
-         ! The gradient diverges here at the edge so define some 'wrong' value of 0.95
+         ! The gradient diverges here at the edge so define some 'wrong' value of 0.9
          ! to approximate the gradient
-         rho_max_dn = 0.95d0
-         dndrho_max = -2.0d0 * alphan * rho_max_dn*(1.d0-rho_max_dn**2)**(-1.0d0+alphan)
-
+         rho_ne_max = 0.9d0
+         dndrho_max = -2.0d0 * alphan * rho_ne_max*(1.d0-rho_ne_max**2)**(-1.0d0+alphan)*ne0
+         ne_max = ne0*(1d0 - rho_ne_max**2)**alphan
       else
          print *, "ERROR: alphan is negative!"
          call exit(1)
       end if
+
+      ! set normalized gradient length
+      ! te at rho_te_max
+      gradient_length_te = -dtdrho_max * rminor*rho_te_max/te_max
+      ! same for density:
+      gradient_length_ne = -dndrho_max * rminor*rho_ne_max/ne_max
 
     end if
 

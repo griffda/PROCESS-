@@ -12,27 +12,29 @@ To activate the stellarator coding, it is necessary to create a file `deivce.dat
 
 ## Stellarators in PROCESS
 
-PROCESS can model four types of stellarators without further specifications, a HELIAS type stellarator with 3, 4 or 5 field periods as described in the collected paper [^13], and a W7-X like stellarator.
+PROCESS can model any module stellarator reactor when provided with a dedicated input file.
+The procedure use is based on the prescription described in [^6], using a set of pre-calculated parameters which needs to be provided by a file with the name `stella_conf.json` which can be calculated by the `pre-sPROCESS` code [^6].
+This functionionality is enabled by `istell=6`, and PROCESS will then expect the configuration file `stella_conf.json` in the same directory as the input file. 
+Using `istell=6` is the advised way to use the stellarator version of PROCESS as no hardcoded stellarator-parameters are being used in this case.
+
+Nevertheless, there are four types of stellarators which can be used without providding the configuration file, a HELIAS type stellarator with 3, 4 or 5 field periods as described in the collected paper [^13], and a W7-X like stellarator.
 
 <img src=../images/HSR3.png alt="drawing" width="200"/>
 <img src=../images/HSR4.png alt="drawing" width="200"/>
 <img src=../images/HSR5.png alt="drawing" width="200"/>
+
+*Figure 2: Different HELIAS stellarator types, implemented as `istell=1,2,3`*[^1]
 
 The user can switch between these models by using the switch variable `istell`:
 
  - `istell=1`: Helias-5
  - `istell=2`: Helias-4
  - `istell=3`: Helias-3
+ - `istell=4`: W7-X
+ - `istell=5`: A W7-X variation with 30 coils
+ - `istell-6`: Use the `stella_conf.json` file.
 
-In addition, PROCESS features modelling of W7-X, by using `istell=4` and a slight variation of W7-X with 30 coils as proposed in [^14] can be accessed with `istell=5`.
-
-**PROCESS can also model generic stellarators** based on the prescription published in [^6], using a set of pre-calculated parameters which needs to be provided by a file with the name `stella_conf.json` which can be calculated by the `pre-sPROCESS` code [^6].
-This functionionality is enabled by `istell=6`, and PROCESS will then expect the configuration file `stella_conf.json` in the same directory as the input file. 
-Using `istell=6` is the advised way to use the stellarator version of PROCESS as no hardcoded stellarator-parameters are being used in this case.
-
-The stellarator version of PROCESS assumes the coil-set itself to be **fixed in shape** and can only scale the *overall* size of the machine in major radius `rmajor`. There is no capability in PROCESS to seperately scale the minor coil radius -- in other words: the coil aspect ratio is fixed. Also the number of coils is fixed and is given by the configuration file specifications.
-
-
+The stellarator version of PROCESS assumes the coil-set itself to be **fixed in shape** and can only scale the *overall* size of the machine in major radius `rmajor`. There is no capability in PROCESS to seperately scale the minor coil radius -- in other words: the coil aspect ratio is fixed. Also the number of coils is considered fixed and is given by the configuration.
 
 ## Input File Specifications
 
@@ -64,7 +66,6 @@ icc = 91 * ECRH ignitability (checks critical density at ignition point)
 A reasonable start for iteration variables (next to the required f-values) are:
 
 ```
-ixc = 1 * plasma aspect ratio (inconsistent scaling)
 ixc = 2 * Toroidal Magnetic field strength
 ixc = 3 * Major Radius of the machine
 ixc = 4 * Electron Temperature
@@ -73,8 +74,8 @@ ixc = 10 * "ISS04 Renormalization Factor" (can also be fixed)
 ixc = 50 * Coil current density, aka winding pack thickness (required!) 
 ixc = 59 * Winding Pack copper fraction
 ixc = 56 * Exponential Quench Dumping Time
-ixc = 169 * Achievable Temperature of the ECRH at the ignition point
 ixc = 109 * Thermal alpha particle pressure (iterated to consistency, use together with `taulimit`)
+ixc = 169 * Achievable Temperature of the ECRH at the ignition point
 ```
 
 
@@ -87,8 +88,8 @@ The model call is in the following order
 
  1. Stellarator New Configuration setup (`stnewconfig`)
  2. Stellarator Geometry (`stgeom`)
- 3. Stellarator Physics Loop Routine (`stopt`)
- 4. Stellarator physics (`stphys`)
+ 3. Stellarator Physics Loop Routine (containing steps requiring to evalute the physics model at different operation points) (`stopt`)
+ 4. Stellarator Physics (`stphys`)
  5. Stellarator radial and toroidal build (`stbild`)
  6. Stellarator Structure Mass (`ststrc`)
  7. Stellarator first wall, blanket and shield module (`stfwbs`)
@@ -104,7 +105,8 @@ The model call is in the following order
  16. Costs
 
 Calls 1-8 are *stellarator specfic*, although use certain overlap with the tokamak modules as will be addressed more in detail below.
-
+Calls 9-16 use the tokamak models and assume applicability also to stellarators.
+In these calls, there are `if (istell == 0) then` calls in these models implemented if certain steps are not applicable.
 
 ## Stellarator physics
 
@@ -125,11 +127,18 @@ The beta limit is assumed to be 5%, based on 3-D MHD calculations[^7]. To apply 
 
 ### Density limit
 
-The density limit relevant to stellarators has been proposed to be[^8]
+The density limit relevant to certain stellarators experiments has been proposed to be[^8]
 
 $n_{max} = 0.25(PB_0/R_0a^2_p)^{1/2}$
 
-where $n$ is the line-averaged electron density in units of $10^{20} m^{-3}$, $p$ is the absorbed heating power (MW), $B_0$ is the on-axis field (t), $R_0$ is the major radius (m), and $a_p$ is the plasma minor radius (m). To enforce the density limit, turn on constraint equation no. 5 with iteration variable no. 9 (`fdene`).
+where $n$ is the line-averaged electron density in units of $10^{20} m^{-3}$, $p$ is the absorbed heating power (MW), $B_0$ is the on-axis field (t), $R_0$ is the major radius (m), and $a_p$ is the plasma minor radius (m). To enforce the Sudo density limit, turn on constraint equation no. 5 with iteration variable no. 9 (`fdene`).
+
+Note that the Sudo limit is a radiation based density limit and it is unclear how well this limit extrapolates to reactor parameters, especially as no impurity dependence e.g. is present in the Sudo model.
+PROCESS features an impurity dependent radiation module already which can be used with `icc=17` and by setting the `fimp` vector.
+For certain regimes, this model is able to reassemble a Sudo-like scaling behaviour in the maximal achievable density, see also the density limit chapter in [^15].
+
+In addition to the sudo limit the density in a stellarator is bound by the ECRH heating which requires density values below the critical density.
+The constraint equation `icc=91` together with `ixc = 169` enforces that the found design point can in principle be achieved with ECRH O1 heating (it checks if the most performant O1 ECRH heatable design point is ignited).
 
 ### $\tau_E$ scaling laws
 
@@ -142,6 +151,17 @@ $\tau_E$ (ISS95[^11]: `isc=37`) = $0.079 \, R^{0.65}_0 \, a^{2.21}_p \, \bar{n}^
 $\tau_E$ (ISS04[^12]: `isc=38`) = $0.134 \, R^{0.64}_0 \, a^{2.28}_p \, \bar{n}^{0.54}_{20} \, B^{0.84}_0 \, P^{-0.61} \, \bar{\iota}^{0.41}$
 
 Here $\bar{\iota}$ is the rotational transform, which is equivalent to the reciprocal of the tokamak safety factor $q$.
+
+### Gradient informed neoclassical transport checks
+
+As no 1D solver options are available for stellarators yet (the PLASMOD module can not be called yet for stellarator-PROCESS), PROCESS prints several neoclassics parameters as obtained from the 1/$\nu$ regime.
+The two most important parameters are `q_PROCESS` and `total_q_neo_e`.
+`q_PROCESS` is the heat flux that PROCESS obtaines from the 0D confinement time scalings.
+`total_q_neo_e` is the estimated total neoclassical flux as obtained from the 1/$\nu$ electron transport regime, multiplied by a factor of 4 (2 for the ion contribution and another factor of 2 for the radial electrical field influence).
+The user should check if `q_PROCESS>total_q_neo_e`. If not, the design point is likely not feasible.
+
+PROCESS inherits a full neoclassics module with is *in principle* capable of calculating the radial electrical field and the actual neoclassical fluxes based on mono-energetic transport coefficients with can be passed via the `stella_conf.json` file, the functionality is already implemented (but not yet accessible for the user yet as no viable pre-processing routines are implemented yet).
+
 
 ### Heating power options
 
@@ -161,7 +181,7 @@ Although the divertor has the same function in both stellarators and tokamaks, t
 
 ![alt text](../images/stelldiv.png "Five-period HELIAS plasma")
 
-Figure 2: *A five-period HELIAS plasma (specifically W7-X) with island divertor plates shown in red*
+Figure 3: *A five-period HELIAS plasma (specifically W7-X) with island divertor plates shown in red*
 
 Rather than trying to describe the complex physics with a two-point scrape-off layer model as is used for tokamaks, the stellarator divertor model[^3] is based on fundamental principles which relate the power crossing the separatrix with an effective wetted area on the divertor plates allowing the code to estimate the heat load delivered to the divertor. A basic island divertor model is used which assumes diffusive cross-field transport and high radiation at the X-point.
 
@@ -169,27 +189,15 @@ The radiated power fraction in the scrape-off layer is given by the input parame
 
 A number of other input parameters may be used to modify the divertor model; see the variable descriptor file for more details.
 
-## Machine configuration
+## Stellarator Technological entities
 
-There are a large number of possible stellarator configurations. As stated earlier, PROCESS has the capabilities to model any modular stellarator type, based on coil filaments and the plasma shape.
+### Stellarator coils
+
+There are a large number of possible stellarator configurations. As stated earlier, PROCESS has the capabilities to model very generic modular stellarator coil sets, based on coil filaments and the plasma shape for geometrical distances.
 The relevant parameters for PROCESS' scaling laws enter the systems code model via a configuration dependent file called `stella_conf.json` which needs to be located in the same directory as the input file.
 This file needs to be prepared by hand or can be written automatically by the pre-sPROCESS ing code.
 
 Alternatively `istell = 1,2,3,4,5` allow for pre-selected stellarator machines.
-
-### Machine build
-
-Since a stellarator is inherently non-axisymmetric, the build of the `PROCESS` stellarator is definedin at the most critical position in radial and toroidal region.
-This is enforced by the constraint equations `82` and `83`. 
-
-The surface areas of for the first wall, blanket and shield components are scaled linearly with their effective minor radius from the plasma surface area calculation(the area of a simple torus of circular cross-section is $4\pi^2Ra$, hence the linear scaling with $a$). The input parameters `fhole` may be used to specify the hole fraction, to adjust the surface area to take into account of ports and divertors, for instance. The volume of the first wall etc. are simply given by the product of their surface area and their mean thickness.
-
-In contrast to tokamaks, which in `PROCESS` are assumed to have a cylindrical external cryostat completely surrounding the fusion power core, the stellarator model assumes that the external cryostat (labelled as the outer vessel in Figure 1) is toroidal with a circular cross-section. Its cross-section is assumed to be centred at the mean plasma major radius.
-
-All items external to the fusion power core (buildings, turbines, power conversion systems, etc.) remain unchanged.
-
-### Stellarator coils
-
 
 ![alt text](../images/stellartor_windingpack.png "Thingy")
 *Figure 3: Differences of the stellarator coil cross section in PROCESS compared to the tokamak description. Note the identical `thkcas` around the cable area.*
@@ -228,31 +236,41 @@ thwcndut = 0.006 * thickness of steel around each conductor (one side) (m)
 tinstf = 0.1 * insulation on top of winding pack (one side) (m)
 ```
 
+### Machine build
 
+Since a stellarator is inherently non-axisymmetric, the build of the `PROCESS` stellarator is defined at the most critical position in radial and toroidal direction.
+The radial and toroidal build consistency is enforced by the constraint equations `82` and `83`. 
+
+The surface areas of for the first wall, blanket and shield components are scaled linearly with their effective minor radius from the plasma surface area calculation(the area of a simple torus of circular cross-section is $4\pi^2Ra$, hence the linear scaling with $a$). The input parameters `fhole` may be used to specify the hole fraction, to adjust the surface area to take into account of ports and divertors, for instance. The volume of the first wall etc. are simply given by the product of their surface area and their mean thickness.
+
+In contrast to tokamaks, which in `PROCESS` are assumed to have a cylindrical external cryostat completely surrounding the fusion power core, the stellarator model assumes that the external cryostat (labelled as the outer vessel in Figure 1) is toroidal with a circular cross-section. Its cross-section is assumed to be centred at the mean plasma major radius.
+
+All items external to the fusion power core (buildings, turbines, power conversion systems, etc.) remain unchanged.
 
 ## Stellarator Blanket
 
 There are two blanket modules implemented in stellarator-PROCESS at the moment,
- - blktmodel = 1: Calls the KIT HCPB model
- - blktmodel = 0 AND ipowerflow=1: Calls a "simple" model (`ipowerflow=0` is even simpler and not advised)
+ - `blktmodel = 1`: Calls the KIT HCPB model
+ - `blktmodel = 0` AND `ipowerflow=1`: Calls a "simple" model (`ipowerflow=0` is even simpler and not advised)
 
 The KIT HCPB model is documented elsewhere, for the simple module the following set of input parameters should be provided:
 ```
+blkttype = 0,1,2 (only relevant for mass calculations)
 emult = 1.18 *Energy multiplication in blanket and shield
 etahtp = 1. *Electrical efficiency of primary coolant pumps
-fblbe = 0.47 *Beryllium fraction of blanket by volume
-fblli2o = 0.07 *Lithium oxide fraction of blanket by volume
-fbllipb = 0. *Lithium lead fraction of blanket by volume
-fblss = 0.13 *Stainless steel fraction of blanket by volume
-fblvd = 0. *Vanadium fraction of blanket by volume
-fhole = 0. *Area fraction taken up by other holes (not used)
-fwclfr = 0.1 *First wall coolant fraction
+fblbe = 0.47 *Beryllium fraction of blanket by volume (only relevant for mass calculations)
+fblli2o = 0.07 *Lithium oxide fraction of blanket by volume (only relevant for mass calculations)
+fbllipb = 0. *Lithium lead fraction of blanket by volume (only relevant for mass calculations)
+fblss = 0.13 *Stainless steel fraction of blanket by volume (only relevant for mass calculations)
+fblvd = 0. *Vanadium fraction of blanket by volume (only relevant for mass calculations)
+fhole = 0. *Area fraction taken up by other holes (in addition to fdiv and fhcd when ipowerflow=1)
+fwclfr = 0.1 *First wall coolant fraction (only relevant for mass calculations)
+primary_pumping = 1 *Switch for pumping power (0: User sets pump power directly)
 htpmw_blkt = 120. *Blanket coolant mechanical pumping power (MW)
 htpmw_fw = 56. *First wall coolant mechanical pumping power (MW)
 htpmw_div = 24. *Divertor coolant mechanical pumping power (MW)
-primary_pumping = 1 *Switch for pumping power (0: User sets pump power directly)
 secondary_cycle = 2 *Switch for power conversion cycle (2: user input thermal-electric efficiency)
-vfblkt = 0.1 *Coolant void fraction in blanket (blktmodel=0)
+vfblkt = 0.1 *Coolant void fraction in blanket (blktmodel=0) (only relevant for mass calculations)
 vfshld = 0.6 *Coolant void fraction in shield
 declblkt = 0.075 *Neutron decay length in blanket area (m)
 declfw = 0.075 *Neutron decay length in first wall (m)
@@ -271,6 +289,12 @@ shldtth = 0.2 *Upper/lower shield thickness (m)
 vgap = 0. *Vertical gap between x-point and divertor (m)
 ```
 
+The simple stellarator blanket module is largely reduced to calculating masses given on blanket and shield sizes as defined in the input file.
+It also calculates neutron heat depositions based on the neutron decay length (this enters the cost function via shield pumping powers e.g.).
+Most of the blanket constraints implemented in tokamak PROCESS, namely `icc=52,53,54,55` are not available with `blktmodel = 0` and the KIT HCPB model, `blktmodel = 1` should be used instead.
+Note, that PROCESS also features other blanket models (HCLL, WCLL) and thermohydraulic blanket models but they are not yet available for stellarators.
+
+
 
 [^1]: F. Schauer, K. Egorov and V. Bykov, *"HELIAS 5-B magnet system structure and maintenance concept"*, Fusion Engineering and Design 88 (2013) 1619-1622
 [^2]: F. Warmer, *"Stellarator Plasma Geometry model for the systems code PROCESS"*, IPP Greifswald, Germany, internal note, 19/06/2013
@@ -286,3 +310,6 @@ vgap = 0. *Vertical gap between x-point and divertor (m)
 [^12]: H. Yamada et al., *Nuclear Fusion*, **45** (2005) 1684
 [^13]: T. Andreeva et al., *The Helias Reactor Concept: Comparative Analysis of Different Field Period Configurations*, *Fusion Science and Technology*, **46** (2004) doi.org/10.13182/FST04-A579
 [^14]: C. Zhu et al. *New method to design stellarator coils without the winding surface*, Nucl. Fus. **58** (2018) 016008 doi.org/10.1088/1741-4326/aa8e0a
+[^15]: J. Lion *Systems Codes Models for stellarator fusion
+power plants and application to stellarator
+optimization*, PhD Thesis (TU Berlin) (2022) to appear
