@@ -493,6 +493,7 @@ module stellarator_configuration
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     
         use fson_library, only: fson_parse, fson_value, fson_get, fson_destroy 
+        use global_variables, only: output_prefix
 
 
     
@@ -512,7 +513,7 @@ module stellarator_configuration
     
         !  Parse the json file
     
-        filename = 'stella_conf.json'
+        filename = trim(output_prefix) // 'stella_conf.json'
         stellafile => fson_parse(trim(filename))
     
         !  Extract information arrays from the file
