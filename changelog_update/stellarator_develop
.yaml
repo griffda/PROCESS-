@@ -8,7 +8,7 @@ Added:
 - Updated quench description
 - Actual output of VV force density during quench
 - Updated Stellarator regression test case (HELIAS-5)
-- Gradient lengths information
+- Gradient lengths information for stellarators
 Changed: 
 - 
 Deprecated:  
