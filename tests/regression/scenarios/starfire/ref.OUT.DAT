@@ -6,12 +6,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-2023-g133353d7b
+   Tag No. : v2.1-2040-g2e707c123
     Branch : HEAD
-   Git log : Merge branch |1613-add-menard-power-plant-design-to-test-suite| into |develop|
- Date/time : 22 Jul 2022 15:29:51 +00:00(hh:mm) UTC
+   Git log : Merge branch |1719-physics-py-not-calling-plasmod-correctly| into |develop|
+ Date/time : 25 Jul 2022 14:23:09 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-ueya2eyb-project-20-concurrent-0
+  Computer : runner-8r7le1vq-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_starfire_0/IN.DAT
  Run title : starfire
