@@ -2217,7 +2217,7 @@ module physics_module
     if (iradloss == 0) then
        powerht = powerht - pradpv*vol
     else if (iradloss == 1) then
-       powerht = powerht - pcoreradpv*vol
+       powerht = powerht - pcoreradpv*vol ! shouldn't this be vol_core instead of vol?
     else
        continue  !  do not adjust powerht for radiation
     end if
@@ -3316,7 +3316,8 @@ module physics_module
       triang, pneutmw, tauee, betalim, rlp, te, dlimit, ne0, qstar, dnalp, &
       taup, sarea, ti0, plhthresh, bp, dnitot, pradmw, pradsolmw, csawth, rndfuel, q95, &
       rhopedt, tauratio, pperim, tesep, vsind, ibss, alphaj, dnz, q, ssync, &
-      psolradmw, tauei, ishape, plinepv, palpmw, icurr, pdivt, gammaft, powfmw
+      psolradmw, tauei, ishape, plinepv, palpmw, palpfwmw, icurr, pdivt, &
+      gammaft, powfmw
     use physics_variables, only: betaft, tauscl, fgwsep, rmajor, falpha, &
       nesep, facoh, kappa, dlimit, beta, dlimit, eps, pthrmw, dnla, bt, &
       pthrmw, pthrmw, pthrmw, idivrt, ips, idia
@@ -3715,7 +3716,7 @@ module physics_module
     call ovarre(outfile,'Radiation power from inner zone (MW)', '(pinnerzoneradmw)',pinnerzoneradmw, 'OP ')
     call ovarre(outfile,'Radiation power from outer zone (MW)','(pouterzoneradmw)', pouterzoneradmw, 'OP ')
     if (istell/=0) then
-        call ovarre(outfile,'SOL radiation power (MW)','(psolradmw)', psolradmw, 'OP ')
+        call ovarre(outfile,'SOL radiation power as imposed by f_rad (MW)','(psolradmw)', psolradmw, 'OP ')
     end if
     call ovarre(outfile,'Total radiation power from inside LCFS (MW)','(pradmw)',pradmw, 'OP ')
     call ovarre(outfile,'LCFS radiation fraction = total radiation in LCFS / total power deposited in plasma', &
@@ -3728,6 +3729,8 @@ module physics_module
         '(maxradwallload)', maxradwallload, 'IP ')
     call ovarre(outfile,'Peak radiation wall load (MW/m^2)', &
         '(peakradwallload)', peakradwallload, 'OP ')
+    call ovarre(outfile,'Fast alpha particle power incident on the first wall (MW)', &
+        '(palpfwmw)', palpfwmw, 'OP ')
     call ovarre(outfile,'Nominal mean neutron load on inside surface of reactor (MW/m2)', &
         '(wallmw)', wallmw, 'OP ')
     if (istell == 0) then

@@ -238,7 +238,7 @@ contains
       fcqt, fzeffmax, fstrcase, fhldiv, foh_stress, fwalld, gammax, fjprot, &
       ftohs, tcycmn, auxmin, zeffmax, peakfactrad, fdtmp, fpoloidalpower, &
       fnbshinef, freinke, fvvhe, fqval, fq, ftaucq, fbetap, fbeta, fjohc, &
-      fflutf, bmxlim, tbrnmn, fbetatry_lower, fstr_wp, fncycle
+      fflutf, bmxlim, tbrnmn, fbetatry_lower, fecrh_ignition, fstr_wp, fncycle
     use cost_variables, only: ucich, uctfsw, dintrt, ucblbe, uubop, dtlife, &
       cost_factor_vv, cfind, uccry, fcap0cp, uccase, uuves, cconshtf, conf_mag, &
       ucbllipb, ucfuel, uumag, ucpfbs, ireactor, uucd, div_umain_time, div_nu, &
@@ -344,7 +344,8 @@ contains
     use scan_module, only: isweep_2, nsweep, isweep, scan_dim, nsweep_2, &
       sweep_2, sweep, ipnscns, ipnscnv
     use stellarator_variables, only: f_asym, isthtr, n_res, iotabar, fdivwet, &
-      f_w, bmn, shear, m_res, f_rad, flpitch, istell
+      f_w, bmn, shear, m_res, f_rad, flpitch, istell, max_gyrotron_frequency, &
+      te0_ecrh_achievable
     use tfcoil_variables, only: fcoolcp, tfinsgap, vftf, &
       quench_detection_ef, fhts, dr_tf_wp, rcool, rhotfleg, thkcas, &
       casthi, n_pancake, bcritsc, i_tf_sup, str_pf_con_res, thwcndut, farc4tf, &
@@ -543,7 +544,7 @@ contains
           call parse_real_variable('alphat', alphat, 0.0D0, 10.0D0, &
                'Temperature profile factor')
        case ('aspect')
-          call parse_real_variable('aspect', aspect, 1.001D0, 20.0D0, &
+          call parse_real_variable('aspect', aspect, 1.001D0, 40.0D0, &
                'Aspect ratio')
        case ('beamfus0')
           call parse_real_variable('beamfus0', beamfus0, 0.01D0, 10.0D0, &
@@ -896,7 +897,10 @@ contains
                'F-value for beta limit')
        case ('fbetatry_lower')
           call parse_real_variable('fbetatry_lower', fbetatry_lower, 0.001D0, 10.0D0, &
-                  'F-value for (lower) beta limit')
+               'F-value for (lower) beta limit')
+       case ('fecrh_ignition')
+          call parse_real_variable('fecrh_ignition', fecrh_ignition, 0.001D0, 10.0D0, &
+               'F-value for ecrh ignition constraint')
        case ('fcwr')
           call parse_real_variable('fcwr', fcwr, 0.001D0, 10.0D0, &
                'F-value for conducting wall radius')
@@ -3686,11 +3690,17 @@ contains
           !  Stellarator settings
 
        case ('istell')
-          call parse_int_variable('istell', istell, 0, 5, &
-               'Stellarator machine specification (1=Helias5, 2=Helias4, 3=Helias3)')
+          call parse_int_variable('istell', istell, 0, 6, &
+               'Stellarator machine specification (1=Helias5, 2=Helias4, 3=Helias3, 4=W7X50, 5=W7X30, 6=jsoninput)')
        case ('bmn')
           call parse_real_variable('bmn', bmn, 1.0D-4, 1.0D-2, &
                'Relative radial field perturbation')
+       case ('max_gyrotron_frequency')
+          call parse_real_variable('max_gyrotron_frequency', max_gyrotron_frequency, 1.0d9, 1.0d14, &
+                'Maximum avail. gyrotron frequency')
+       case ('te0_ecrh_achievable')
+          call parse_real_variable('te0_ecrh_achievable', te0_ecrh_achievable, 1.0d0, 1.0d3, &
+                  'Maximum achievable ecrh temperature (peak value)')
        case ('f_asym')
           call parse_real_variable('f_asym', f_asym, 0.9D0, 2.0D0, &
                'Heat load peaking factor')
@@ -3708,7 +3718,7 @@ contains
                'Field line pitch (rad)')
        case ('iotabar')
           call parse_real_variable('iotabar', iotabar, 0.1D0, 10.0D0, &
-               'Stellarator rotational transform')
+               'Stellarator rotational transform (at s=2/3)')
        case ('isthtr')
           call parse_int_variable('isthtr', isthtr, 1, 3, &
                'Stellarator method of auxiliary heating')

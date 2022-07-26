@@ -286,6 +286,8 @@ contains
         case (89); call constraint_eqn_089(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
          ! Constraint for minimum CS stress load cycles
         case (90); call constraint_eqn_090(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
+         ! Constraint for indication of ECRH ignitability
+        case (91); call constraint_eqn_091(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
        case default
 
         idiags(1) = icc(i)
@@ -3149,9 +3151,9 @@ contains
       !! residual error in physical units; output string; units string
       !! available_radial_space > required_radial_space
       !! #=# build
-      !! #=#=# tftort, ftoroidalgap
+      !! #=#=# required_radial_space, f_avspace
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !! f_avspace : input real : f-value for constraint toroidalgap > tftort
+      !! f_avspace : input real : f-value for constraint available_radial_space > required_radial_space
       !! available_radial_space : input real :  avaible space in radial direction as given by each s.-configuration
       !! required_radial_space : input real :  required space in radial direction
       use build_variables, only: available_radial_space, required_radial_space, f_avspace
@@ -3175,10 +3177,10 @@ contains
       !! args : output structure : residual error; constraint value;
       !! residual error in physical units; output string; units string
       !!  (beta-betaft) > betalim_lower
-      !! #=# tfcoil
-      !! #=#=# tftort, ftoroidalgap
+      !! #=# physics
+      !! #=#=# betaft, beta, fbetatry_lower
       !! Logic change during pre-factoring: err, symbol, units will be assigned only if present.
-      !! fbetatry_lower : input real : f-value for constraint toroidalgap > tftort
+      !! fbetatry_lower : input real : f-value for constraint beta-betaft > betalim_lower
       !! betalim_lower : input real :  Lower limit for beta
       !! beta : input real :  plasma beta
       !! betaft : input real : Alpha particle beta
@@ -3369,7 +3371,6 @@ contains
       !! fncycle : input real : f-value for constraint n_cycle > n_cycle_min
       !! n_cycle : input real : Allowable number of cycles for CS
       !! n_cycle_min : input real :  Minimum required cycles for CS
-      
       use CS_fatigue_variables, only: n_cycle, n_cycle_min, bkt_life_csf
       use constraint_variables, only: fncycle
       use cost_variables, only: ibkt_life, bktcycles
@@ -3392,5 +3393,49 @@ contains
       tmp_units = ''
 
    end subroutine constraint_eqn_090
+
+   subroutine constraint_eqn_091(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
+      !! Equation for checking if the design point is ECRH ignitable 
+      !! at lower values for n and B. Or if the design point is ECRH heatable (if ignite==0)
+      !! stellarators only (but in principle usable also for tokamaks).
+      !! author: J Lion, IPP Greifswald
+      !! args : output structure : residual error; constraint value; 
+      !! residual error in physical units; output string; units string
+      !!  powerht_local > powerscaling
+      !! #=# physics
+      !! #=#=# fecrh_ignition, powerht_local, powerscaling
+      !! fecrh_ignition : input real : f-value for constraint powerht_local > powerscaling
+      !! max_gyrotron_frequency : input real :  Max. av. gyrotron frequency
+      !! te0_ecrh_achievable : input real : Max. achievable electron temperature at ignition point
+      use constraint_variables, only: fecrh_ignition
+      use stellarator_module, only: power_at_ignition_point
+      use stellarator_variables, only: max_gyrotron_frequency, te0_ecrh_achievable
+      use physics_variables, only: ignite
+      use current_drive_variables, only: pheat
+      implicit none
+      real(dp), intent(out) :: tmp_cc
+      real(dp), intent(out) :: tmp_con
+      real(dp), intent(out) :: tmp_err
+      character(len=1), intent(out) :: tmp_symbol
+      character(len=10), intent(out) :: tmp_units
+      real(dp) :: te0_ECRH_needed,b_ECRH,powerht_local,powerscaling
+
+      call power_at_ignition_point(max_gyrotron_frequency,te0_ecrh_achievable,powerht_local,powerscaling)
+
+      ! Achievable ECRH te needs to be larger than needed te for igntion
+      if(ignite==0) then
+         tmp_cc = 1.0D0 - fecrh_ignition* (powerht_local+pheat)/powerscaling
+      else
+         tmp_cc = 1.0D0 - fecrh_ignition* powerht_local/powerscaling
+      endif
+
+      tmp_con = powerscaling * (1.0D0 - tmp_cc)
+      tmp_err = powerht_local * tmp_cc
+      tmp_symbol = '<'
+      tmp_units = 'MW'
+
+   end subroutine constraint_eqn_091
+
+
 
 end module constraints

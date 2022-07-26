@@ -134,6 +134,7 @@ def test_plot_proc(mfile_path):
     """
     EXCLUSIONS = [
         "stellarator",
+        "stellarator_config",
         "IFE",
         "starfire",
         "QH_mode",
