@@ -6,14 +6,14 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-2133-g724ee71d
-    Branch : stellarator_develop
-   Git log : Merge branch |develop| into stellarator_develop
- Date/time : 22 Jul 2022 17:13:40 +01:00(hh:mm) UTC
-      User : smuldrew
-  Computer : K1344
- Directory : /home/smuldrew/process/tests/regression/scenarios/stellarator_config
-     Input : /home/smuldrew/process/tests/regression/scenarios/stellarator_config/IN.DAT
+   Tag No. : v2.1-2149-g4400c03a2
+    Branch : HEAD
+   Git log : Merge branch |stellarator_develop| into |develop|
+ Date/time : 26 Jul 2022 14:56:52 +00:00(hh:mm) UTC
+      User : root
+  Computer : runner-8a63d9a8-project-20-concurrent-0
+ Directory : /builds/process/process
+     Input : /tmp/pytest-of-root/pytest-0/test_scenario_stellarator_conf0/IN.DAT
  Run title : HELIAS_DEMO_6
   Run type : Reactor concept design: Stellarator model, (c) CCFE
  
@@ -495,10 +495,11 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Heat flux due to neoclassical energy transport (e) (MW/m2):              (q_neo_e)                 1.047E-01     
  Heat flux due to neoclassical particle transport (e) (MW/m2):            (g_neo_e)                 1.668E-02     
  Particle flux due to neoclassical particle transport (e) (1/m2/s):       (dndt_neo_e)              9.615E+18     
- Radius of Maximum ne gradient (m)                                        (r_max_dn)                1.400E+00     
- Radius of Maximum te gradient (m)                                        (r_max_dt)                1.246E+00     
- Maxium ne gradient (10^20/m4)                                            (drdn_max)               -2.049E+00     
- Maxium te gradient (keV/m)                                               (drdt_max)               -1.071E+00     
+ r/a of maximum ne gradient (m)                                           (rho_ne_max)              9.000E-01     
+ r/a of maximum te gradient (m)                                           (rho_te_max)              8.452E-01     
+ Maxium ne gradient length (1)                                            (gradient_length_ne)      4.399E+00     
+ Maxium te gradient length (1)                                            (gradient_length_te)      8.844E+00     
+ Gradient Length Ratio (T/n) (1)                                          (gradient_length_ratio)   2.011E+00     
  Normalized ion Larmor radius                                             (rho_star)                2.670E-03     
  Normalized collisionality (electrons)                                    (nu_star_e)               1.117E-02     
  Normalized collisionality (D)                                            (nu_star_D)               5.543E-03     

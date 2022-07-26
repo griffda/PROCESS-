@@ -6,12 +6,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-2040-g2e707c123
+   Tag No. : v2.1-2149-g4400c03a2
     Branch : HEAD
-   Git log : Merge branch |1719-physics-py-not-calling-plasmod-correctly| into |develop|
- Date/time : 25 Jul 2022 14:18:21 +00:00(hh:mm) UTC
+   Git log : Merge branch |stellarator_develop| into |develop|
+ Date/time : 26 Jul 2022 14:51:47 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-8r7le1vq-project-20-concurrent-0
+  Computer : runner-8a63d9a8-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_Hybrid_mode_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
@@ -323,6 +323,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Peaking factor for radiation wall load                                   (peakfactrad)             3.330E+00  IP 
  Maximum permitted radiation wall load (MW/m^2)                           (maxradwallload)          1.000E+00  IP 
  Peak radiation wall load (MW/m^2)                                        (peakradwallload)         5.250E-01  OP 
+ Fast alpha particle power incident on the first wall (MW)                (palpfwmw)                2.098E+01  OP 
  Nominal mean neutron load on inside surface of reactor (MW/m2)           (wallmw)                  8.541E-01  OP 
  
  Radiation power from SoL (MW)                                            (pradsolmw)               1.727E+02  OP 

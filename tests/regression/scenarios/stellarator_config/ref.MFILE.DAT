@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.4.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "22/07/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "17:13"
- User____________________________________________________________________ (username)____________________     "smuldrew"
+ Date_of_run_____________________________________________________________ (date)________________________     "26/07/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "14:56"
+ User____________________________________________________________________ (username)____________________     "root"    
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "HELIAS_DEMO_6                                                                                      
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-2133-g724ee71d"                                                                               
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "stellarator_develop"                                                                               
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch |develop| into stellarator_develop"                                                   
- Input_filename__________________________________________________________ (fileprefix)__________________     "/home/smuldrew/process/tests/regression/scenarios/stellarator_config/IN.DAT                                                                                                                             "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-2149-g4400c03a2"                                                                              
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "HEAD"                                                                                              
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch |stellarator_develop| into |develop|"                                                 
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-root/pytest-0/test_scenario_stellarator_conf0/IN.DAT                                                                                                                                     "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -335,10 +335,11 @@
  Heat_flux_due_to_neoclassical_energy_transport_(e)_(MW/m2):_____________ (q_neo_e)_____________________      1.0474E-01    
  Heat_flux_due_to_neoclassical_particle_transport_(e)_(MW/m2):___________ (g_neo_e)_____________________      1.6678E-02    
  Particle_flux_due_to_neoclassical_particle_transport_(e)_(1/m2/s):______ (dndt_neo_e)__________________      9.6147E+18    
- Radius_of_Maximum_ne_gradient_(m)_______________________________________ (r_max_dn)____________________      1.4003E+00    
- Radius_of_Maximum_te_gradient_(m)_______________________________________ (r_max_dt)____________________      1.2457E+00    
- Maxium_ne_gradient_(10^20/m4)___________________________________________ (drdn_max)____________________     -2.0487E+00    
- Maxium_te_gradient_(keV/m)______________________________________________ (drdt_max)____________________     -1.0711E+00    
+ r/a_of_maximum_ne_gradient_(m)__________________________________________ (rho_ne_max)__________________      9.0000E-01    
+ r/a_of_maximum_te_gradient_(m)__________________________________________ (rho_te_max)__________________      8.4515E-01    
+ Maxium_ne_gradient_length_(1)___________________________________________ (gradient_length_ne)__________      4.3986E+00    
+ Maxium_te_gradient_length_(1)___________________________________________ (gradient_length_te)__________      8.8438E+00    
+ Gradient_Length_Ratio_(T/n)_(1)_________________________________________ (gradient_length_ratio)_______      2.0106E+00    
  Normalized_ion_Larmor_radius____________________________________________ (rho_star)____________________      2.6697E-03    
  Normalized_collisionality_(electrons)___________________________________ (nu_star_e)___________________      1.1167E-02    
  Normalized_collisionality_(D)___________________________________________ (nu_star_D)___________________      5.5435E-03    

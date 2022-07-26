@@ -3,13 +3,13 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.4.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "25/07/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "14:23"
+ Date_of_run_____________________________________________________________ (date)________________________     "26/07/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "14:56"
  User____________________________________________________________________ (username)____________________     "root"    
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "HELIAS-5B                                                                                          
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-2040-g2e707c123"                                                                              
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-2149-g4400c03a2"                                                                              
  PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "HEAD"                                                                                              
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch |1719-physics-py-not-calling-plasmod-correctly| into |develop|"                       
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch |stellarator_develop| into |develop|"                                                 
  Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-root/pytest-0/test_scenario_stellarator_0/IN.DAT                                                                                                                                         "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
@@ -214,7 +214,7 @@
  Helium_ion_density_(thermalised_ions_only)_(/m3)________________________ (dnalp)_______________________      2.1134E+19 OP 
  Proton_density_(/m3)____________________________________________________ (dnprot)______________________      5.3993E+16 OP 
  Hot_beam_density_(/m3)__________________________________________________ (dnbeam)______________________      0.0000E+00 OP 
- Density_limit_from_scaling_(/m3)________________________________________ (dnelimt)_____________________      0.0000E+00 OP 
+ Density_limit_from_scaling_(/m3)________________________________________ (dnelimt)_____________________      1.3248E+20 OP 
  Helium_ion_density_(thermalised_ions_only)_/_electron_density___________ (ralpne)______________________      1.0000E-01    
  H__concentration________________________________________________________ (fimp(01)_____________________      7.9950E-01 OP 
  He_concentration________________________________________________________ (fimp(02)_____________________      1.0000E-01    
@@ -253,15 +253,16 @@
  Synchrotron_wall_reflectivity_factor____________________________________ (ssync)_______________________      6.0000E-01    
  Normalised_minor_radius_defining_'core'_________________________________ (coreradius)__________________      6.0000E-01    
  Fraction_of_core_radiation_subtracted_from_P_L__________________________ (coreradiationfraction)_______      1.0000E+00    
- Radiation_power_from_inner_zone_(MW)____________________________________ (pinnerzoneradmw)_____________      1.3169E+02 OP 
- Radiation_power_from_outer_zone_(MW)____________________________________ (pouterzoneradmw)_____________      1.1543E+02 OP 
- SOL_radiation_power_(MW)________________________________________________ (psolradmw)___________________      2.9564E+02 OP 
- Total_radiation_power_from_inside_LCFS_(MW)_____________________________ (pradmw)______________________      5.4277E+02 OP 
+ Radiation_power_from_inner_zone_(MW)____________________________________ (pinnerzoneradmw)_____________      1.2945E+02 OP 
+ Radiation_power_from_outer_zone_(MW)____________________________________ (pouterzoneradmw)_____________      1.1347E+02 OP 
+ SOL_radiation_power_as_imposed_by_f_rad_(MW)____________________________ (psolradmw)___________________      2.8988E+02 OP 
+ Total_radiation_power_from_inside_LCFS_(MW)_____________________________ (pradmw)______________________      5.3280E+02 OP 
  LCFS_radiation_fraction_=_total_radiation_in_LCFS_/_total_power_deposite (rad_fraction_LCFS)___________      0.0000E+00 OP 
- Nominal_mean_radiation_load_on_inside_surface_of_reactor_(MW/m2)________ (photon_wall)_________________      2.5610E-01 OP 
+ Nominal_mean_radiation_load_on_inside_surface_of_reactor_(MW/m2)________ (photon_wall)_________________      2.5459E-01 OP 
  Peaking_factor_for_radiation_wall_load__________________________________ (peakfactrad)_________________      3.3300E+00 IP 
  Maximum_permitted_radiation_wall_load_(MW/m^2)__________________________ (maxradwallload)______________      1.0000E+00 IP 
  Peak_radiation_wall_load_(MW/m^2)_______________________________________ (peakradwallload)_____________      8.4777E-01 OP 
+ Fast_alpha_particle_power_incident_on_the_first_wall_(MW)_______________ (palpfwmw)____________________      3.0620E+01 OP 
  Nominal_mean_neutron_load_on_inside_surface_of_reactor_(MW/m2)__________ (wallmw)______________________      1.1710E+00 OP 
  Ohmic_heating_power_(MW)________________________________________________ (pohmmw)______________________      0.0000E+00 OP 
  Fraction_of_alpha_power_deposited_in_plasma_____________________________ (falpha)______________________      9.5000E-01    
@@ -306,13 +307,19 @@
  Heat_flux_due_to_neoclassical_energy_transport_(e)_(MW/m2):_____________ (q_neo_e)_____________________      2.8220E-02    
  Heat_flux_due_to_neoclassical_particle_transport_(e)_(MW/m2):___________ (g_neo_e)_____________________      4.4917E-03    
  Particle_flux_due_to_neoclassical_particle_transport_(e)_(1/m2/s):______ (dndt_neo_e)__________________      3.0786E+18    
- Radius_of_Maximum_ne_gradient_(m)_______________________________________ (r_max_dn)____________________      1.7664E+00    
- Radius_of_Maximum_te_gradient_(m)_______________________________________ (r_max_dt)____________________      1.5080E+00    
- Maxium_ne_gradient_(/m4)________________________________________________ (drdn_max)____________________     -4.9885E+00    
- Maxium_te_gradient_(keV/m)______________________________________________ (drdt_max)____________________     -8.8486E-01    
+ r/a_of_maximum_ne_gradient_(m)__________________________________________ (rho_ne_max)__________________      9.0000E-01    
+ r/a_of_maximum_te_gradient_(m)__________________________________________ (rho_te_max)__________________      8.4515E-01    
+ Maxium_ne_gradient_length_(1)___________________________________________ (gradient_length_ne)__________      5.3246E+00    
+ Maxium_te_gradient_length_(1)___________________________________________ (gradient_length_te)__________      1.0706E+01    
+ Gradient_Length_Ratio_(T/n)_(1)_________________________________________ (gradient_length_ratio)_______      2.0106E+00    
  Normalized_ion_Larmor_radius____________________________________________ (rho_star)____________________      2.0431E-03    
- Normalized_collisionality_(electrons)___________________________________ (nu_star_e)___________________      7.4658E-02    
- Normalized_collisionality_(ions)________________________________________ (nu_star_i)___________________      2.0497E-02    
+ Normalized_collisionality_(electrons)___________________________________ (nu_star_e)___________________      2.1735E-02    
+ Normalized_collisionality_(D)___________________________________________ (nu_star_D)___________________      1.1284E-02    
+ Normalized_collisionality_(T)___________________________________________ (nu_star_T)___________________      9.9305E-03    
+ Normalized_collisionality_(He)__________________________________________ (nu_star_He)__________________      3.5837E-02    
+ Obtained_line_averaged_density_at_op._point_(/m3)_______________________ (dnla)________________________      2.3826E+20    
+ Sudo_density_limit_(/m3)________________________________________________ (dnelimt)_____________________      1.3248E+20    
+ Ratio_density_to_sudo_limit_(1)_________________________________________ (dnla/dnelimt)________________      1.7985E+00    
  # ECRH Ignition at lower values. Information: #
  Maximal_available_gyrotron_freq_(input)_________________________________ (max_gyro_frequency)__________      0.0000E+00    
  Operating_point:_bfield_________________________________________________ (bt)__________________________      5.5000E+00    
@@ -321,11 +328,11 @@
  Ignition_point:_bfield_(T)______________________________________________ (bt_ecrh)_____________________      0.0000E+00    
  Ignition_point:_density_(/m3)___________________________________________ (ne0_max_ECRH)________________      0.0000E+00    
  Maximum_reachable_ECRH_temperature_(pseudo)_(keV)_______________________ (te0_ecrh_achievable)_________      0.0000E+00    
- Ignition_point:_Heating_Power_(MW)______________________________________ (powerht_ecrh)________________      1.0000E-03    
+ Ignition_point:_Heating_Power_(MW)______________________________________ (powerht_ecrh)________________             NaN    
  Ignition_point:_Loss_Power_(MW)_________________________________________ (pscalingmw_ecrh)_____________             NaN    
  Operation_point_ECRH_ignitable?_________________________________________ (ecrh_bool)___________________              0    
  # Divertor #
- Power_to_divertor_(MW)__________________________________________________ (pdivt.)______________________      5.1211E+01    
+ Power_to_divertor_(MW)__________________________________________________ (pdivt.)______________________      5.1155E+01    
  Angle_of_incidence_(deg)________________________________________________ (anginc)______________________      2.0054E+00    
  Perp._heat_transport_coefficient_(m2/s)_________________________________ (xpertin)_____________________      1.5000E+00    
  Divertor_plasma_temperature_(eV)________________________________________ (tdiv)________________________      3.0000E+00    
@@ -345,7 +352,7 @@
  Power_decay_width_(cm)__________________________________________________ (100*l_q)_____________________      1.7716E+01    
  Island_width_(m)________________________________________________________ (w_r)_________________________      3.7523E-01    
  Perp._distance_from_X-point_to_plate_(m)________________________________ (Delta)_______________________      2.2514E-01    
- Peak_heat_load_(MW/m2)__________________________________________________ (hldiv)_______________________      4.0171E+00    
+ Peak_heat_load_(MW/m2)__________________________________________________ (hldiv)_______________________      4.0127E+00    
  # Radial Build #
  Avail._Space_(m)________________________________________________________ (available_radial_space)______      1.8829E+00    
  Req._Space_(m)__________________________________________________________ (required_radial_space)_______      2.0333E+00    
@@ -450,17 +457,17 @@
  Gravity_support_structure_mass_(kg)_____________________________________ (clgsmass)____________________      9.7646E+05    
  Mass_of_cooled_components_(kg)__________________________________________ (coldmass)____________________      3.2485E+07    
  # First Wall / Blanket / Shield #
- Average_neutron_wall_load_(MW/m2)_______________________________________ (wallmw)______________________      1.1718E+00    
- First_wall_full-power_lifetime_(years)__________________________________ (fwlife)______________________      1.2801E+01    
+ Average_neutron_wall_load_(MW/m2)_______________________________________ (wallmw)______________________      1.1710E+00    
+ First_wall_full-power_lifetime_(years)__________________________________ (fwlife)______________________      1.2809E+01    
  Inboard_shield_thickness_(m)____________________________________________ (shldith)_____________________      4.0000E-01    
  Outboard_shield_thickness_(m)___________________________________________ (shldoth)_____________________      7.0000E-01    
  Top_shield_thickness_(m)________________________________________________ (shldtth)_____________________      7.0000E-01    
  Inboard_blanket_thickness_(m)___________________________________________ (blnkith)_____________________      7.0000E-01    
  Outboard_blanket_thickness_(m)__________________________________________ (blnkoth)_____________________      8.0000E-01    
  Top_blanket_thickness_(m)_______________________________________________ (blnktth)_____________________      7.5000E-01    
- Blanket_heating_(including_energy_multiplication)_(MW)__________________ (pnucblkt)____________________      2.2311E+03    
- Shield_nuclear_heating_(MW)_____________________________________________ (pnucshld)____________________      1.0523E-01    
- Coil_nuclear_heating_(MW)_______________________________________________ (ptfnuc)______________________      4.0557E-04    
+ Blanket_heating_(including_energy_multiplication)_(MW)__________________ (pnucblkt)____________________      2.2297E+03    
+ Shield_nuclear_heating_(MW)_____________________________________________ (pnucshld)____________________      1.0517E-01    
+ Coil_nuclear_heating_(MW)_______________________________________________ (ptfnuc)______________________      4.0531E-04    
  First_wall_/_blanket_thermodynamic_model________________________________ (secondary_cycle)_____________              2    
  First_wall_area_(m2)____________________________________________________ (fwarea)______________________      2.1252E+03    
  First_wall_mass_(kg)____________________________________________________ (fwmass)______________________      6.2624E+04    
@@ -524,7 +531,7 @@
  Total_outgassing_load_(Pa_m3/s)_________________________________________ (ogas)________________________      2.8186E-04 OP 
  Base_pressure_required_(Pa)_____________________________________________ (pbase)_______________________      5.0000E-04    
  Required_N2_pump_speed_(m3/s)___________________________________________ (s(1))________________________      5.6372E-01 OP 
- N2_pump_speed_provided_(m3/s)___________________________________________ (snet(1))_____________________      2.9611E+01 OP 
+ N2_pump_speed_provided_(m3/s)___________________________________________ (snet(1))_____________________      2.9578E+01 OP 
  Plasma_chamber_volume_(m3)______________________________________________ (volume)______________________      1.7567E+03 OP 
  Chamber_pressure_after_burn_(Pa)________________________________________ (pend)________________________      4.3747E-01 OP 
  Chamber_pressure_before_burn_(Pa)_______________________________________ (pstart)______________________      4.3747E-03    
@@ -533,18 +540,18 @@
  CS_ramp-up_time_burns_(s)_______________________________________________ (tramp.)______________________      0.0000E+00    
  Allowable_pumping_time_between_burns_(s)________________________________ (tpump)_______________________      1.8000E+03    
  Required_D-T_pump_speed_(m3/s)__________________________________________ (s(2))________________________      4.4943E+00 OP 
- D-T_pump_speed_provided_(m3/s)__________________________________________ (snet(2))_____________________      7.0695E+01 OP 
+ D-T_pump_speed_provided_(m3/s)__________________________________________ (snet(2))_____________________      7.0616E+01 OP 
  Divertor_chamber_gas_pressure_(Pa)______________________________________ (prdiv)_______________________      3.6000E-01    
- Helium_gas_fraction_in_divertor_chamber_________________________________ (fhe)_________________________      1.9946E-01 OP 
- Required_helium_pump_speed_(m3/s)_______________________________________ (s(3))________________________      6.2792E+01 OP 
- Helium_pump_speed_provided_(m3/s)_______________________________________ (snet(3))_____________________      6.2792E+01 OP 
- D-T_fuelling_rate_(kg/s)________________________________________________ (frate)_______________________      4.5347E-05 OP 
- Required_D-T_pump_speed_(m3/s)__________________________________________ (s(4))________________________      6.2792E+01 OP 
- D-T_pump_speed_provided_(m3/s)__________________________________________ (snet(4))_____________________      7.0695E+01 OP 
+ Helium_gas_fraction_in_divertor_chamber_________________________________ (fhe)_________________________      1.9951E-01 OP 
+ Required_helium_pump_speed_(m3/s)_______________________________________ (s(3))________________________      6.2736E+01 OP 
+ Helium_pump_speed_provided_(m3/s)_______________________________________ (snet(3))_____________________      6.2736E+01 OP 
+ D-T_fuelling_rate_(kg/s)________________________________________________ (frate)_______________________      4.5306E-05 OP 
+ Required_D-T_pump_speed_(m3/s)__________________________________________ (s(4))________________________      6.2736E+01 OP 
+ D-T_pump_speed_provided_(m3/s)__________________________________________ (snet(4))_____________________      7.0616E+01 OP 
  Number_of_large_pump_ducts______________________________________________ (nduct)_______________________             50    
- Passage_diameter,_divertor_to_ducts_(m)_________________________________ (d(imax))_____________________      3.2617E-01 OP 
+ Passage_diameter,_divertor_to_ducts_(m)_________________________________ (d(imax))_____________________      3.2603E-01 OP 
  Passage_length_(m)______________________________________________________ (l1)__________________________      1.4806E+00 OP 
- Diameter_of_ducts_(m)___________________________________________________ (dout)________________________      3.9141E-01 OP 
+ Diameter_of_ducts_(m)___________________________________________________ (dout)________________________      3.9124E-01 OP 
  Duct_length,_divertor_to_elbow_(m)______________________________________ (l2)__________________________      4.7000E+00 OP 
  Duct_length,_elbow_to_pumps_(m)_________________________________________ (l3)__________________________      2.0000E+00    
  Number_of_pumps_________________________________________________________ (pumpn)_______________________      1.0000E+02 OP 
@@ -561,12 +568,12 @@
  Total_pulsed_power_(MW)_________________________________________________ (pacpmw)______________________      4.5309E+02 OP 
  Total_base_power_required_at_all_times_(MW)_____________________________ (fcsht)_______________________      8.0998E+01 OP 
  # Cryogenics #
- Conduction_and_radiation_heat_loads_on_cryogenic_components_(MW)________ (qss/1.0d6)___________________      1.5035E-02 OP 
- Nuclear_heating_of_cryogenic_components_(MW)____________________________ (qnuc/1.0d6)__________________      3.7283E-04 OP 
+ Conduction_and_radiation_heat_loads_on_cryogenic_components_(MW)________ (qss/1.0d6)___________________      1.5096E-02 OP 
+ Nuclear_heating_of_cryogenic_components_(MW)____________________________ (qnuc/1.0d6)__________________      4.0531E-04 OP 
  AC_losses_in_cryogenic_components_(MW)__________________________________ (qac/1.0d6)___________________      0.0000E+00 OP 
- Resistive_losses_in_current_leads_(MW)__________________________________ (qcl/1.0d6)___________________      9.0307E-02 OP 
- 45%_allowance_for_heat_loads_in_transfer_lines,_storage_tanks_etc_(MW)__ (qmisc/1.0d6)_________________      4.7571E-02 OP 
- Sum_=_Total_heat_removal_at_cryogenic_temperatures_(tfcoil_variables.tmp (helpow_+_helpow_cryal/1.0d6)_      1.5329E-01 OP 
+ Resistive_losses_in_current_leads_(MW)__________________________________ (qcl/1.0d6)___________________      8.3382E-02 OP 
+ 45%_allowance_for_heat_loads_in_transfer_lines,_storage_tanks_etc_(MW)__ (qmisc/1.0d6)_________________      4.4497E-02 OP 
+ Sum_=_Total_heat_removal_at_cryogenic_temperatures_(tfcoil_variables.tmp (helpow_+_helpow_cryal/1.0d6)_      1.4338E-01 OP 
  Temperature_of_cryogenic_superconducting_components_(K)_________________ (tmpcry)______________________      4.2000E+00    
  Temperature_of_cryogenic_aluminium_components_(K)_______________________ (tcoolin)_____________________      3.1315E+02    
  Efficiency_(figure_of_merit)_of_cryogenic_plant_is_13%_of_ideal_Carnot_v ______________________________      1.8906E-03 OP 
@@ -592,7 +599,7 @@
  Electrical_efficiency_of_heat_transport_coolant_pumps___________________ (etahtp)______________________      1.0000E+00    
  Thermal_to_electric_conversion_efficiency_of_the_power_conversion_cycle_ (etath)_______________________      4.0000E-01    
  Fraction_of_total_high-grade_thermal_power_to_divertor__________________ (pdivfraction)________________      3.7226E-02    
- Total_power_leaving_reactor_(across_vacuum_vessel_boundary)_(MW)________ ______________________________      3.6076E+03    
+ Total_power_leaving_reactor_(across_vacuum_vessel_boundary)_(MW)________ ______________________________      3.6054E+03    
  Heat_removal_from_cryogenic_plant_(MW)__________________________________ (crypmw)______________________      7.5839E+01    
  Heat_removal_from_facilities_(MW)_______________________________________ (fachtmw)_____________________      8.0998E+01    
  Coolant_pumping_efficiency_losses_(MW)__________________________________ (htpsecmw)____________________      0.0000E+00    
@@ -603,25 +610,25 @@
  Total_low-grade_thermal_power_(MW)______________________________________ (psechtmw)____________________      2.5309E+02    
  Total_High-grade_thermal_power_(MW)_____________________________________ (pthermmw)____________________      3.6054E+03    
  Number_of_primary_heat_exchangers_______________________________________ (nphx)________________________              4 OP 
- Transport_power_from_scaling_law_(MW)___________________________________ (pscalingmw)__________________      4.5473E+02    
- Radiation_power_from_inside_"coreradius"_(MW)___________________________ (pinnerzoneradmw.)____________      1.2945E+02    
- Total_(MW)______________________________________________________________ ______________________________      5.8418E+02    
- Alpha_power_deposited_in_plasma_(MW)____________________________________ (falpha*palpmw)_______________      5.8215E+02    
- Power_from_charged_products_of_DD_and/or_D-He3_fusion_(MW)______________ (pchargemw.)__________________      2.1754E+00    
+ Transport_power_from_scaling_law_(MW)___________________________________ (pscalingmw)__________________      4.5450E+02    
+ Radiation_power_from_inside_"coreradius"_(MW)___________________________ (pcoreradmw.)_________________      1.2945E+02    
+ Total_(MW)______________________________________________________________ ______________________________      5.8395E+02    
+ Alpha_power_deposited_in_plasma_(MW)____________________________________ (falpha*palpmw)_______________      5.8178E+02    
+ Power_from_charged_products_of_DD_and/or_D-He3_fusion_(MW)______________ (pchargemw.)__________________      2.1740E+00    
  Ohmic_heating_(MW)______________________________________________________ (pohmmw.)_____________________      0.0000E+00    
  Injected_power_deposited_in_plasma_(MW)_________________________________ (pinjmw)______________________      0.0000E+00    
- Total_(MW)______________________________________________________________ ______________________________      5.8432E+02    
- Fusion_power_(MW)_______________________________________________________ (powfmw)______________________      3.0673E+03    
- Power_from_energy_multiplication_in_blanket_and_shield_(MW)_____________ (emultmw)_____________________      3.4219E+02    
+ Total_(MW)______________________________________________________________ ______________________________      5.8395E+02    
+ Fusion_power_(MW)_______________________________________________________ (powfmw)______________________      3.0653E+03    
+ Power_from_energy_multiplication_in_blanket_and_shield_(MW)_____________ (emultmw)_____________________      3.4197E+02    
  Injected_power_(MW)_____________________________________________________ (pinjmw.)_____________________      0.0000E+00    
  Ohmic_power_(MW)________________________________________________________ (pohmmw.)_____________________      0.0000E+00    
  Power_deposited_in_primary_coolant_by_pump_(MW)_________________________ (htpmw_mech)__________________      2.0000E+02    
- Total_(MW)______________________________________________________________ ______________________________      3.6095E+03    
+ Total_(MW)______________________________________________________________ ______________________________      3.6073E+03    
  Heat_extracted_from_first_wall_and_blanket_(MW)_________________________ (pthermfw_blkt)_______________      3.4711E+03    
  Heat_extracted_from_shield__(MW)________________________________________ (pthermshld)__________________      1.0517E-01    
  Heat_extracted_from_divertor_(MW)_______________________________________ (pthermdiv)___________________      1.3421E+02    
  Nuclear_and_photon_power_lost_to_H/CD_system_(MW)_______________________ (psechcd)_____________________      0.0000E+00    
- Nuclear_power_lost_to_TF_(MW)___________________________________________ (ptfnuc)______________________      4.0557E-04    
+ Nuclear_power_lost_to_TF_(MW)___________________________________________ (ptfnuc)______________________      4.0531E-04    
  Total_(MW)______________________________________________________________ ______________________________      3.6054E+03    
  Net_electric_power_output(MW)___________________________________________ (pnetelmw.)___________________      9.8908E+02    
  Required_Net_electric_power_output(MW)__________________________________ (pnetelin)____________________      1.0000E+03    
@@ -636,15 +643,15 @@
  Total_(MW)______________________________________________________________ (tot_plant_power)_____________      1.4422E+03    
  Total_(MW)______________________________________________________________ ______________________________      1.4422E+03    
  Gross_electrical_output*_(MW)___________________________________________ (pgrossmw)____________________      1.4422E+03    
- Fusion_power_(MW)_______________________________________________________ (powfmw)______________________      3.0673E+03    
- Power_from_energy_multiplication_in_blanket_and_shield_(MW)_____________ (emultmw)_____________________      3.4219E+02    
- Total_(MW)______________________________________________________________ ______________________________      3.4095E+03    
+ Fusion_power_(MW)_______________________________________________________ (powfmw)______________________      3.0653E+03    
+ Power_from_energy_multiplication_in_blanket_and_shield_(MW)_____________ (emultmw)_____________________      3.4197E+02    
+ Total_(MW)______________________________________________________________ ______________________________      3.4073E+03    
  Net_electrical_output_(MW)	_____________________________________________ (pnetelmw)____________________      9.8908E+02    
  Heat_rejected_by_main_power_conversion_circuit_(MW)_____________________ (rejected_main)_______________      2.1633E+03    
  Heat_rejected_by_other_cooling_circuits_(MW)____________________________ (psechtmw)____________________      2.5309E+02    
  Total_(MW)______________________________________________________________ ______________________________      3.4054E+03    
- Net_electric_power_/_total_nuclear_power_(%)____________________________ (pnetelmw/(powfmw+emultmw)____      2.9010E+01    
- Net_electric_power_/_total_fusion_power_(%)_____________________________ (pnetelmw/powfmw)_____________      3.2246E+01    
+ Net_electric_power_/_total_nuclear_power_(%)____________________________ (pnetelmw/(powfmw+emultmw)____      2.9029E+01    
+ Net_electric_power_/_total_fusion_power_(%)_____________________________ (pnetelmw/powfmw)_____________      3.2267E+01    
  Gross_electric_power*_/_high_grade_heat_(%)_____________________________ (etath)_______________________      4.0000E+01    
  Recirculating_power_fraction____________________________________________ (cirpowfr)____________________      3.1417E-01    
  # Errors and Warnings #
