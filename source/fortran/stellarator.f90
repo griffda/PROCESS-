@@ -91,16 +91,17 @@ contains
     ! This routine is called before (!!!) the input file. put everything that depends on the input file in stcaller
     if (istell == 0) return
 
+    boundu(1) = 40.0D0 ! allow higher aspect ratio
     !  Numerics quantities
 
     !boundl(1) = 5.0D0
 
-    !boundu(1) = 40.0D0
+
     !boundu(3) = 30.0D0
     !boundu(29) = 20.0D0
 
     !  These lines switch off tokamak specifics (solenoid, pf coils, pulses etc.).
-    !  Are they still up to date? (11/03/20 JL)
+    !  Are they still up to date? (26/07/22 JL)
     
     !  Build quantities
 

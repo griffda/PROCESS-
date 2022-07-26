@@ -29,7 +29,7 @@ contains
     implicit none
     lablxc(1) = 'aspect        '
     boundl(1) = 1.100D0
-    boundu(1) = 40.00D0 
+    boundu(1) = 10.00D0 
   end subroutine init_itv_1
 
   real(kind(1.d0)) function itv_1()
