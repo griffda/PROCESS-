@@ -370,7 +370,7 @@ module numerics
   !! <LI> (166) f_copperaoh_m2 : CS coil current /copper area < Maximum value
   !! <LI> (167) fncycle : f-value for minimum CS coil stress load cycles
   !! <LI> (168) fecrh_ignition: f-value for equation 91
-  !! <LI> (169) EMPTY : Description
+  !! <LI> (169) te0_ecrh_achievable: Max. achievable electron temperature at ignition point
   !! <LI> (170) EMPTY : Description
   !! <LI> (171) EMPTY : Description
   !! <LI> (172) EMPTY : Description

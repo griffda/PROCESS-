@@ -3397,6 +3397,7 @@ contains
    subroutine constraint_eqn_091(tmp_cc, tmp_con, tmp_err, tmp_symbol, tmp_units)
       !! Equation for checking if the design point is ECRH ignitable 
       !! at lower values for n and B. Or if the design point is ECRH heatable (if ignite==0)
+      !! stellarators only (but in principle usable also for tokamaks).
       !! author: J Lion, IPP Greifswald
       !! args : output structure : residual error; constraint value; 
       !! residual error in physical units; output string; units string
@@ -3405,7 +3406,7 @@ contains
       !! #=#=# fecrh_ignition, powerht_local, powerscaling
       !! fecrh_ignition : input real : f-value for constraint powerht_local > powerscaling
       !! max_gyrotron_frequency : input real :  Max. av. gyrotron frequency
-      !! te0_ecrh_achievable : input real : Alpha particle beta
+      !! te0_ecrh_achievable : input real : Max. achievable electron temperature at ignition point
       use constraint_variables, only: fecrh_ignition
       use stellarator_module, only: power_at_ignition_point
       use stellarator_variables, only: max_gyrotron_frequency, te0_ecrh_achievable

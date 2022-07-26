@@ -29,7 +29,7 @@ contains
     implicit none
     lablxc(1) = 'aspect        '
     boundl(1) = 1.100D0
-    boundu(1) = 10.00D0 
+    boundu(1) = 10.00D0
   end subroutine init_itv_1
 
   real(kind(1.d0)) function itv_1()
@@ -3740,14 +3740,13 @@ contains
     boundl(164) = 0.001D0
     boundu(164) = 1.000D0
   end subroutine init_itv_164
- 
- 
+
   real(kind(1.d0)) function itv_164()
     use heat_transport_variables, only: f_crypmw
     implicit none
     itv_164 = f_crypmw
   end function itv_164
- 
+
   subroutine set_itv_164(ratio)
     use heat_transport_variables, only: f_crypmw
     implicit none
@@ -3765,13 +3764,13 @@ contains
     boundl(165) = 1.0d-9
     boundu(165) = 1.0d0
   end subroutine init_itv_165
-  
+
   real(kind(1.d0)) function itv_165()
     use constraint_variables, only: fstr_wp
     implicit none
     itv_165 = fstr_wp
   end function itv_165
-  
+
   subroutine set_itv_165(ratio)
     use constraint_variables, only: fstr_wp
     implicit none
@@ -4205,8 +4204,8 @@ contains
            case (166);  xcm(i) = itv_166()
            case (167);  xcm(i) = itv_167()
            case (168);  xcm(i) = itv_168()
-            ! DUMMY Cases
            case (169);  xcm(i) = itv_169()
+            ! DUMMY Cases
            case (170);  xcm(i) = itv_170()
            case (171);  xcm(i) = itv_171()
            case (172);  xcm(i) = itv_172()
@@ -4472,8 +4471,8 @@ contains
            case (166);  call set_itv_166(ratio)
            case (167);  call set_itv_167(ratio)
            case (168);  call set_itv_168(ratio)
-            ! DUMMY Cases
            case (169);  call set_itv_169(ratio)
+            ! DUMMY Cases
            case (170);  call set_itv_170(ratio)
            case (171);  call set_itv_171(ratio)
            case (172);  call set_itv_172(ratio)

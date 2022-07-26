@@ -347,9 +347,7 @@ contains
       nprof = 1.0D0/dene * nprofile(rho,rhopedn,ne0,neped,nesep,alphan)
       nprofsq = nprof*nprof
 
-      
       fint = 2.0D0 * rho * sigv * nprofsq
-      ! For stellarators (and in principle also tokamaks) this is inaccurate The jacobi determinant should be included here.
 
     end function fint
 
@@ -413,6 +411,7 @@ contains
     real(dp) :: betath, fact, fact2, palppv_no_nb
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
     ! Store the palppv value without the NB alpha power
     palppv_no_nb = palppv
 

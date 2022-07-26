@@ -3066,7 +3066,7 @@ contains
           call parse_real_variable('ucrb', ucrb, 1.0D2, 1.0D3, &
                'Cost of reactor building ($/m3)')
        case ('ucsc')
-          call parse_real_array('ucsc', ucsc, isub1, 8, &
+          call parse_real_array('ucsc', ucsc, isub1, 5, &
                'Cost of superconductor ($/kg)', icode)
        case ('step_uc_cryo_al')
           call parse_real_variable('step_uc_cryo_al', step_uc_cryo_al, &
