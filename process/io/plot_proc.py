@@ -2282,6 +2282,28 @@ def plot_current_drive_info(axis, mfile_data, scan):
         )
         print("NEEDS TO BE IMPLEMENTED in plot_current_drive_info subroutine!!\n")
 
+    if "iefrffix" in mfile_data.data.keys():
+        secondary_heating = ""
+        iefrffix = mfile_data.data["iefrffix"].get_scan(scan)
+
+        if (iefrffix == 5) or (iefrffix == 8):
+            secondary_heating = "NBI"
+        if (iefrffix == 3) or (iefrffix == 7) or (iefrffix == 10) or (iefrffix == 11):
+            secondary_heating = "ECH"
+        if iefrffix == 12:
+            secondary_heating = "EBW"
+        if (
+            (iefrffix == 1)
+            or (iefrffix == 2)
+            or (iefrffix == 4)
+            or (iefrffix == 6)
+            or (iefrffix == 9)
+        ):
+            print(
+                "Options 1, 2, 4, 6 and 9 not implemented yet in this python script plot_proc.py\n"
+            )
+            print("NEEDS TO BE IMPLEMENTED in plot_current_drive_info subroutine!!\n")
+
     axis.set_ylim([ymin, ymax])
     axis.set_xlim([xmin, xmax])
     axis.set_axis_off()
@@ -2289,7 +2311,7 @@ def plot_current_drive_info(axis, mfile_data, scan):
     axis.set_autoscalex_on(False)
 
     pinjie = mfile_data.data["pinjmw"].get_scan(scan)
-
+    pinjmwfix = mfile_data.data["pinjmwfix"].get_scan(scan)
     pdivt = mfile_data.data["pdivt"].get_scan(scan)
     pdivr = pdivt / mfile_data.data["rmajor"].get_scan(scan)
 
@@ -2333,6 +2355,12 @@ def plot_current_drive_info(axis, mfile_data, scan):
             (flh, r"$\frac{P_{\mathrm{div}}}{P_{\mathrm{LH}}}$", ""),
             (hstar, "H* (non-rad. corr.)", ""),
         ]
+        if "iefrffix" in mfile_data.data.keys():
+            data.insert(
+                1, ("pinjmwfix", f"{secondary_heating} secondary auxiliary power", "MW")
+            )
+            data[0] = ((pinjie - pinjmwfix), "Primary auxiliary power", "MW")
+            data.insert(2, (pinjie, "Total auxillary power", "MW"))
 
     if nbi:
         data = [
@@ -2353,6 +2381,12 @@ def plot_current_drive_info(axis, mfile_data, scan):
             (flh, r"$\frac{P_{\mathrm{div}}}{P_{\mathrm{LH}}}$", ""),
             (hstar, "H* (non-rad. corr.)", ""),
         ]
+        if "iefrffix" in mfile_data.data.keys():
+            data.insert(
+                1, ("pinjmwfix", f"{secondary_heating} secondary auxiliary power", "MW")
+            )
+            data[0] = ((pinjie - pinjmwfix), "Primary auxiliary power", "MW")
+            data.insert(2, (pinjie, "Total auxillary power", "MW"))
 
     if ebw:
         data = [
@@ -2371,6 +2405,12 @@ def plot_current_drive_info(axis, mfile_data, scan):
             (flh, r"$\frac{P_{\mathrm{div}}}{P_{\mathrm{LH}}}$", ""),
             (hstar, "H* (non-rad. corr.)", ""),
         ]
+        if "iefrffix" in mfile_data.data.keys():
+            data.insert(
+                1, ("pinjmwfix", f"{secondary_heating} secondary auxiliary power", "MW")
+            )
+            data[0] = ((pinjie - pinjmwfix), "Primary auxiliary power", "MW")
+            data.insert(2, (pinjie, "Total auxillary power", "MW"))
 
     coe = mfile_data.data["coe"].get_scan(scan)
     if coe == 0.0:
