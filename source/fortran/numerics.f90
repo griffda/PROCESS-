@@ -19,7 +19,7 @@ module numerics
   integer, parameter :: ipnvars = 175
   !!  ipnvars FIX : total number of variables available for iteration
 
-  integer, parameter :: ipeqns = 90
+  integer, parameter :: ipeqns = 91
   !!  ipeqns  FIX : number of constraint equations available
 
   integer, parameter :: ipnfoms = 19
@@ -192,8 +192,8 @@ module numerics
   !!  <LI> (87) Constraint for cryogenic power
   !!  <LI> (88) Constraint for TF coil strain absolute value
   !!  <LI> (89) Constraint for CS coil quench protection
-  !!  <LI> (90) Lower Limit on number of stress load cycles for CS (itr 167 fncycle) </UL>
-
+  !!  <LI> (90) Lower Limit on number of stress load cycles for CS (itr 167 fncycle)
+  !!  <LI> (91) Checking if the design point is ECRH ignitable (itv 168 fecrh_ignition) </UL>
 
   integer, dimension(ipnvars) :: ixc
   !!  ixc(ipnvars) /0/ :
@@ -369,8 +369,8 @@ module numerics
   !! <LI> (165) fstr_wp : f-value for TF coil strain absolute value
   !! <LI> (166) f_copperaoh_m2 : CS coil current /copper area < Maximum value
   !! <LI> (167) fncycle : f-value for minimum CS coil stress load cycles
-  !! <LI> (168) EMPTY : Description
-  !! <LI> (169) EMPTY : Description
+  !! <LI> (168) fecrh_ignition: f-value for equation 91
+  !! <LI> (169) te0_ecrh_achievable: Max. achievable electron temperature at ignition point
   !! <LI> (170) EMPTY : Description
   !! <LI> (171) EMPTY : Description
   !! <LI> (172) EMPTY : Description
@@ -436,8 +436,8 @@ contains
       'plant availability.   ', &
       'min R0, max tau_burn. ', &
       'net electrical output.', &
-      'Null figure of merit. ',  &
-      'max Q, max t_burn.    ' &
+      'Null figure of merit. ', &
+      'max Q, max t_burn.    '  &
       /)
 
     ncalls = 0
@@ -540,7 +540,8 @@ contains
       'Cryogenic plant power            ', &
       'TF coil strain absolute value    ', &
       'CS current/copper area < Max     ', &
-      'CS stress load cycles            '  &
+      'CS stress load cycles            ', &
+      'ECRH ignitability                '  &
       /)
 
     ! Please note: All strings between '...' above must be exactly 33 chars long

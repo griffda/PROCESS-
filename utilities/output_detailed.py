@@ -874,7 +874,7 @@ def create_plots():
         "gapoh",
         "tfcth",
         "deltf",
-        "thshield",
+        "thshield_ib",
         "gapds",
         "d_vv_in",
         "shldith",

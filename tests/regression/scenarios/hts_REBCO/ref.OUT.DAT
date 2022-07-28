@@ -13,12 +13,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-1980-gc41b84554
+   Tag No. : v2.4.0-446-gaa7b4de4f
     Branch : HEAD
-   Git log : Merge branch |1706-update-publication-list| into |develop|
- Date/time :  8 Jul 2022  8:08:02 +00:00(hh:mm) UTC
+   Git log : Merge branch |1542-convert-impurity_radiation-f90-to-python| into |develop|
+ Date/time : 28 Jul 2022  9:26:30 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-sn2siqxv-project-20-concurrent-0
+  Computer : runner-nkpubsxk-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_hts_REBCO_0/IN.DAT
  Run title : hts model using "croco" conductor based on kit design
@@ -321,6 +321,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Peaking factor for radiation wall load                                   (peakfactrad)             3.330E+00  IP 
  Maximum permitted radiation wall load (MW/m^2)                           (maxradwallload)          1.000E+00  IP 
  Peak radiation wall load (MW/m^2)                                        (peakradwallload)         7.775E-01  OP 
+ Fast alpha particle power incident on the first wall (MW)                (palpfwmw)                2.270E+01  OP 
  Nominal mean neutron load on inside surface of reactor (MW/m2)           (wallmw)                  1.223E+00  OP 
  
  Radiation power from SoL (MW)                                            (pradsolmw)               1.099E+02  OP 
@@ -519,13 +520,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  ************************************************ Radial Build ************************************************
  
  Device centreline                            0.000           0.000                       
- Machine build_variables.bore                 2.553           2.553   (bore)              
+ Machine bore                                 2.553           2.553   (bore)              
  Central solenoid                             0.560           3.113   (ohcth)             
  CS precompression                            0.055           3.168   (precomp)           
  Gap                                          0.050           3.218   (gapoh)             
  TF coil inboard leg                          1.078           4.295   (tfcth)             
  Gap                                          0.021           4.316   (tftsgap)           
- Thermal shield                               0.050           4.366   (thshield)          
+ Thermal shield, inboard                      0.050           4.366   (thshield_ib)       
  Gap                                          0.028           4.395   (gapds)             
  Vacuum vessel (and shielding)                0.600           4.995   (d_vv_in + shldith) 
  Gap                                          0.020           5.015   (vvblgap)           
@@ -540,7 +541,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Gap                                          0.020          13.277   (vvblgap)           
  Vacuum vessel (and shielding)                1.100          14.377   (d_vv_out+shldoth)  
  Gap                                          1.489          15.866   (gapsto)            
- Thermal shield                               0.050          15.916   (thshield)          
+ Thermal shield, outboard                     0.050          15.916   (thshield_ob)       
  Gap                                          0.021          15.937   (tftsgap)           
  TF coil outboard leg                         1.078          17.015   (tfthko)            
  
@@ -549,7 +550,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Double null case
  TF coil                                      1.078           9.588   (tfcth)             
  Gap                                          0.021           8.510   (tftsgap)           
- Thermal shield                               0.050           8.489   (thshield)          
+ Thermal shield, vertical                     0.050           8.489   (thshield_vb)       
  Gap                                          0.120           8.439   (vgap2)             
  Vacuum vessel (and shielding)                1.000           8.319   (d_vv_top+shldtth)  
  Divertor structure                           0.621           7.319   (divfix)            
@@ -561,7 +562,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Divertor structure                           0.621          -7.319   (divfix)            
  Vacuum vessel (and shielding)                1.000          -8.319   (d_vv_bot+shldlth)  
  Gap                                          0.120          -8.439   (vgap2)             
- Thermal shield                               0.050          -8.489   (thshield)          
+ Thermal shield, vertical                     0.050          -8.489   (thshield_vb)       
  Gap                                          0.021          -8.510   (tftsgap)           
  TF coil                                      1.078          -9.588   (tfcth)             
  
@@ -978,13 +979,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  6			-0.000e+00	1.498e+08	2.092e+07	2.092e+07	-1.642e+08	-0.000e+00
  
  And: equilibrium field:
- 0			0.000e+00	0.000e+00	-3.078e+06	-3.078e+06	2.448e+07	0.0e0
- 1			0.000e+00	0.000e+00	-3.078e+06	-3.078e+06	2.448e+07	0.0e0
- 2			0.000e+00	0.000e+00	-2.097e+05	-2.097e+05	1.327e+06	0.0e0
- 3			0.000e+00	0.000e+00	-2.097e+05	-2.097e+05	1.327e+06	0.0e0
- 4			0.000e+00	0.000e+00	8.568e+04	8.568e+04	-1.044e+06	0.0e0
- 5			0.000e+00	0.000e+00	8.568e+04	8.568e+04	-1.044e+06	0.0e0
- 6			0.000e+00	0.000e+00	-2.092e+07	-2.092e+07	1.642e+08	0.0e0
+ 0			0.000e+00	0.000e+00	2.051e+07	2.051e+07	2.051e+07	0.0e0
+ 1			0.000e+00	0.000e+00	2.051e+07	2.051e+07	2.051e+07	0.0e0
+ 2			0.000e+00	0.000e+00	-8.107e+06	-8.107e+06	-8.107e+06	0.0e0
+ 3			0.000e+00	0.000e+00	-8.107e+06	-8.107e+06	-8.107e+06	0.0e0
+ 4			0.000e+00	0.000e+00	-5.533e+06	-5.533e+06	-5.533e+06	0.0e0
+ 5			0.000e+00	0.000e+00	-5.533e+06	-5.533e+06	-5.533e+06	0.0e0
+ 6			0.000e+00	0.000e+00	-3.473e-09	-3.473e-09	2.779e-08	0.0e0
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.119E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -1.274E-01  OP 

@@ -143,6 +143,7 @@ LIST(APPEND PROCESS_SRCS
     plot_radiation.f90
     rebco_variables.f90
     primary_pumping_variables.f90
+    reinke_variables.f90
 )
 
 PREPROCESS()

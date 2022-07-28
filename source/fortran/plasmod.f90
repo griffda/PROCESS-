@@ -968,7 +968,7 @@ contains
 
     integer, parameter :: radp_file = 15  !  Radial profiles file unit identifier
     integer :: file_name_length
-    character(len = 50) :: outfile_radp
+    character(len = 300) :: outfile_radp
     integer :: j
 
     file_name_length = LEN_TRIM(fileprefix)

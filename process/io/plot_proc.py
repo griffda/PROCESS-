@@ -59,7 +59,7 @@ RADIAL_BUILD = [
     "gapoh",
     "tfcth",
     "tftsgap",
-    "thshieldi",
+    "thshield_ib",
     "gapds",
     "d_vv_in",
     "shldith",
@@ -76,7 +76,7 @@ RADIAL_BUILD = [
     "shldoth",
     "d_vv_out",
     "gapsto",
-    "thshieldo",
+    "thshield_ob",
     "tftsgap",
     "tfthko",
 ]
@@ -90,7 +90,7 @@ vertical_upper = [
     "shldtth",
     "d_vv_top",
     "vgap2",
-    "thshield",
+    "thshield_vb",
     "tftsgap",
     "tfcth",
 ]
@@ -102,7 +102,7 @@ vertical_lower = [
     "shldlth",
     "d_vv_bot",
     "vgap2",
-    "thshield",
+    "thshield_vb",
     "tftsgap",
     "tfcth",
 ]
@@ -292,16 +292,10 @@ def cumulative_radial_build(section, mfile_data, scan):
             cumulative_build += mfile_data.data["rminor"].get_scan(scan)
         elif item == "vvblgapi" or item == "vvblgapo":
             cumulative_build += mfile_data.data["vvblgap"].get_scan(scan)
-        elif item == "thshieldi" or item == "thshieldo":
-            cumulative_build += mfile_data.data["thshield"].get_scan(scan)
         elif "d_vv_in" in item:
             cumulative_build += mfile_data.data["d_vv_in"].get_scan(scan)
         elif "d_vv_out" in item:
             cumulative_build += mfile_data.data["d_vv_out"].get_scan(scan)
-        # elif "d_vv_top" in item:
-        #    cumulative_build += mfile_data.data["d_vv_top"].get_scan(scan)
-        # elif "d_vv_bot" in item:
-        #    cumulative_build += mfile_data.data["d_vv_bot"].get_scan(scan)
         else:
             cumulative_build += mfile_data.data[item].get_scan(scan)
         if item == section:
@@ -335,8 +329,6 @@ def cumulative_radial_build2(section, mfile_data, scan):
             build = mfile_data.data["rminor"].get_scan(scan)
         elif item == "vvblgapi" or item == "vvblgapo":
             build = mfile_data.data["vvblgap"].get_scan(scan)
-        elif item == "thshieldi" or item == "thshieldo":
-            build = mfile_data.data["thshield"].get_scan(scan)
         elif "d_vv_in" in item:
             build = mfile_data.data["d_vv_in"].get_scan(scan)
         elif "d_vv_out" in item:
@@ -492,7 +484,7 @@ def toroidal_cross_section(axis, mfile_data, scan, demo_ranges):
     r2, r1 = cumulative_radial_build2("tfcth", mfile_data, scan)
     arc_fill(axis, r1, r2, color=tfc)
 
-    r2, r1 = cumulative_radial_build2("thshieldi", mfile_data, scan)
+    r2, r1 = cumulative_radial_build2("thshield_ib", mfile_data, scan)
     arc_fill(axis, r1, r2, color=thermal_shield)
 
     r2, r1 = cumulative_radial_build2("d_vv_in", mfile_data, scan)
@@ -521,7 +513,7 @@ def toroidal_cross_section(axis, mfile_data, scan, demo_ranges):
     r2, r1 = cumulative_radial_build2("d_vv_out", mfile_data, scan)
     arc_fill(axis, r1, r2, color=vessel)
 
-    r2, r1 = cumulative_radial_build2("thshieldo", mfile_data, scan)
+    r2, r1 = cumulative_radial_build2("thshield_ob", mfile_data, scan)
     arc_fill(axis, r1, r2, color=thermal_shield)
 
     arc_fill(axis, rdewex, rdewex + ddwex, color=cryostat)
@@ -2290,6 +2282,28 @@ def plot_current_drive_info(axis, mfile_data, scan):
         )
         print("NEEDS TO BE IMPLEMENTED in plot_current_drive_info subroutine!!\n")
 
+    if "iefrffix" in mfile_data.data.keys():
+        secondary_heating = ""
+        iefrffix = mfile_data.data["iefrffix"].get_scan(scan)
+
+        if (iefrffix == 5) or (iefrffix == 8):
+            secondary_heating = "NBI"
+        if (iefrffix == 3) or (iefrffix == 7) or (iefrffix == 10) or (iefrffix == 11):
+            secondary_heating = "ECH"
+        if iefrffix == 12:
+            secondary_heating = "EBW"
+        if (
+            (iefrffix == 1)
+            or (iefrffix == 2)
+            or (iefrffix == 4)
+            or (iefrffix == 6)
+            or (iefrffix == 9)
+        ):
+            print(
+                "Options 1, 2, 4, 6 and 9 not implemented yet in this python script plot_proc.py\n"
+            )
+            print("NEEDS TO BE IMPLEMENTED in plot_current_drive_info subroutine!!\n")
+
     axis.set_ylim([ymin, ymax])
     axis.set_xlim([xmin, xmax])
     axis.set_axis_off()
@@ -2297,7 +2311,7 @@ def plot_current_drive_info(axis, mfile_data, scan):
     axis.set_autoscalex_on(False)
 
     pinjie = mfile_data.data["pinjmw"].get_scan(scan)
-
+    pinjmwfix = mfile_data.data["pinjmwfix"].get_scan(scan)
     pdivt = mfile_data.data["pdivt"].get_scan(scan)
     pdivr = pdivt / mfile_data.data["rmajor"].get_scan(scan)
 
@@ -2341,6 +2355,12 @@ def plot_current_drive_info(axis, mfile_data, scan):
             (flh, r"$\frac{P_{\mathrm{div}}}{P_{\mathrm{LH}}}$", ""),
             (hstar, "H* (non-rad. corr.)", ""),
         ]
+        if "iefrffix" in mfile_data.data.keys():
+            data.insert(
+                1, ("pinjmwfix", f"{secondary_heating} secondary auxiliary power", "MW")
+            )
+            data[0] = ((pinjie - pinjmwfix), "Primary auxiliary power", "MW")
+            data.insert(2, (pinjie, "Total auxillary power", "MW"))
 
     if nbi:
         data = [
@@ -2361,6 +2381,12 @@ def plot_current_drive_info(axis, mfile_data, scan):
             (flh, r"$\frac{P_{\mathrm{div}}}{P_{\mathrm{LH}}}$", ""),
             (hstar, "H* (non-rad. corr.)", ""),
         ]
+        if "iefrffix" in mfile_data.data.keys():
+            data.insert(
+                1, ("pinjmwfix", f"{secondary_heating} secondary auxiliary power", "MW")
+            )
+            data[0] = ((pinjie - pinjmwfix), "Primary auxiliary power", "MW")
+            data.insert(2, (pinjie, "Total auxillary power", "MW"))
 
     if ebw:
         data = [
@@ -2379,6 +2405,12 @@ def plot_current_drive_info(axis, mfile_data, scan):
             (flh, r"$\frac{P_{\mathrm{div}}}{P_{\mathrm{LH}}}$", ""),
             (hstar, "H* (non-rad. corr.)", ""),
         ]
+        if "iefrffix" in mfile_data.data.keys():
+            data.insert(
+                1, ("pinjmwfix", f"{secondary_heating} secondary auxiliary power", "MW")
+            )
+            data[0] = ((pinjie - pinjmwfix), "Primary auxiliary power", "MW")
+            data.insert(2, (pinjie, "Total auxillary power", "MW"))
 
     coe = mfile_data.data["coe"].get_scan(scan)
     if coe == 0.0:
@@ -2677,8 +2709,6 @@ def test(f):
                 build = m_file.data["rminor"].get_scan(scan)
             elif item == "vvblgapi" or item == "vvblgapo":
                 build = m_file.data["vvblgap"].get_scan(scan)
-            elif item == "thshieldi" or item == "thshieldo":
-                build = m_file.data["thshield"].get_scan(scan)
             elif "d_vv_in" in item:
                 build = m_file.data["d_vv_in"].get_scan(scan)
             elif "d_vv_out" in item:
@@ -2713,7 +2743,9 @@ def test(f):
         colour_dict = {}
         colour_dict["ohcth"] = solenoid
         colour_dict["tfcth"] = tfc
-        colour_dict["thshield"] = thermal_shield
+        colour_dict["thshield_ib"] = thermal_shield
+        colour_dict["thshield_ob"] = thermal_shield
+        colour_dict["thshield_vb"] = thermal_shield
         colour_dict["d_vv_in"] = vessel
         colour_dict["d_vv_out"] = vessel
         colour_dict["d_vv_top"] = vessel
@@ -3003,8 +3035,6 @@ def main(args=None):
             build = m_file.data["rminor"].get_scan(scan)
         elif item == "vvblgapi" or item == "vvblgapo":
             build = m_file.data["vvblgap"].get_scan(scan)
-        elif item == "thshieldi" or item == "thshieldo":
-            build = m_file.data["thshield"].get_scan(scan)
         elif "d_vv_in" in item:
             build = m_file.data["d_vv_in"].get_scan(scan)
         elif "d_vv_out" in item:
@@ -3039,7 +3069,9 @@ def main(args=None):
     colour_dict = {}
     colour_dict["ohcth"] = solenoid
     colour_dict["tfcth"] = tfc
-    colour_dict["thshield"] = thermal_shield
+    colour_dict["thshield_ib"] = thermal_shield
+    colour_dict["thshield_ob"] = thermal_shield
+    colour_dict["thshield_vb"] = thermal_shield
     colour_dict["d_vv_in"] = vessel
     colour_dict["d_vv_out"] = vessel
     colour_dict["d_vv_top"] = vessel

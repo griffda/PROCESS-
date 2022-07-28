@@ -40,7 +40,16 @@ def examples_as_cwd():
     os.chdir(cwd)
 
 
-def test_examples(examples_as_cwd):
+@pytest.fixture
+def delete_plot_procs():
+    yield
+    plot_proc_1 = Path("../examples/plot_proc_1")
+    plot_proc_2 = Path("../examples/plot_proc_2")
+    plot_proc_1.unlink(missing_ok=True)
+    plot_proc_2.unlink(missing_ok=True)
+
+
+def test_examples(examples_as_cwd, delete_plot_procs):
     """Run the examples.py script and check no exceptions are raised.
 
     examples.py uses temp dirs to clean up any produced files itself.

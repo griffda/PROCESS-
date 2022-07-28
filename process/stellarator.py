@@ -52,15 +52,6 @@ class Stellarator:
         """
 
         if output:
-            # original routine contained the following debug
-            # print statements that have been removed due to
-            # f2py derived-type limitations.
-            # print *,"Used stellarator configuration: ", config%name
-            # print *,"Deviation from reference point"
-            # print *,"aspect ratio",aspect/config%aspect_ref
-            # print *,"major radius",rmajor/config%rmajor_ref
-            # print *,"n_tf (should be 1)", n_tf/(config%coilspermodule*config%symmetry)
-
             self.costs.costs(output=True)
             # TODO: should availability.run be called
             # rather than availability.avail?
@@ -68,6 +59,15 @@ class Stellarator:
             ph.outplas(self.outfile)
             st.stigma(self.outfile)
             st.stheat(self.outfile, 1)
+            st.stphys(self.outfile, 1)
+            st.stopt(self.outfile, 1)
+
+            # As stopt changes dene, te and bt, stphys needs two calls
+            # to correct for larger changes (it is only consistent after
+            # two or three fix point iterations) call stphys here again, just to be sure.
+            # This can be removed once the bad practice in stopt is removed!
+            st.stphys(self.outfile, 0)
+
             st.stdiv(self.outfile, 1)
             st.stbild(self.outfile, 1)
             st.stcoil(self.outfile, 1)
@@ -84,7 +84,8 @@ class Stellarator:
 
         st.stnewconfig()
         st.stgeom()
-        st.stphys()
+        st.stphys(self.outfile, 0)
+        st.stopt(self.outfile, 0)
         st.stcoil(self.outfile, 0)
         st.stbild(self.outfile, 0)
         st.ststrc(self.outfile, 0)

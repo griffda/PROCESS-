@@ -52,7 +52,7 @@ class Caller:
         # Vertical build
         self.models.build.vbuild(output=False)
 
-        ft.physics_module.physics()
+        self.models.physics.physics()
 
         # call build subroutines again if PLASMOD used, issue #650
         if ft.physics_variables.ipedestal == 3:

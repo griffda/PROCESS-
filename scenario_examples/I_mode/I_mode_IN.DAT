@@ -302,7 +302,9 @@ fgwped = 0.65
 ****************
 
 * Thermal shield radial thickness [m]
-thshield = 0.050
+thshield_ib = 0.05
+thshield_ob = 0.05
+thshield_vb = 0.05
 
 * Gap between thermal shield and vacuum vessel [m]
 gapds = 0.02
