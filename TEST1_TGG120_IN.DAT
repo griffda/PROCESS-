@@ -1,7 +1,7 @@
 *************************************************************************
 *****                                                               *****
 *****        Fusion Nuclear Science Facility (FNSF)                 *****
-*****            Tom Griffiths (29/08/2019)                        *****
+*****           Tom Griffiths  (29/07/2022)                         *****
 *****      Menard et al. (2016), Nucl. Fusion, 56, 106023           *****
 *****                                                               *****
 *****                                                               *****
@@ -104,7 +104,7 @@ runtitle = FNSF (Menard et al. 2016)
 
 epsvmc   = 1.0E-7   *Error tolerance for VMCON
 ioptimz  = 1        *Code operation switch (VMCON only)
-minmax   = -5       *Switch for figure-of-merit (5: fusion gain Q)
+minmax   = -6       *Switch for figure-of-merit (6: Cost of electricity)
 
 *---------------Constraint Variables---------------*
 
@@ -170,9 +170,7 @@ thkcas   = 0.0      *Inboard TF coil case outer (non-plasma side) thickness (m)
 blnkith  = 0.0      *Inboard blanket thickness (m)
 blnkoth  = 0.7      *Outboard blanket thickness (m)
 d_vv_in  = 0.0      *Inboard vacuum vessel thickness (m)
-d_vv_out = 0.3      *Outboard vacuum vessel thickness (m)
-d_vv_top = 0.3      *Topside vacuum vessel thickness  (m)
-d_vv_bot = 0.3      *Underside vacuum vessel thickness (m)
+d_vv_out = 0.3      *Outboard vacuum vessel se the rm or unlink c thickness (m)
 gapds    = 0.0      *Gap between inboard vacuum vessel and thermal shield (m)
 gapomin  = 0.0      *Minimum gap between outboard vacuum vessel and TF coil (m)
 iprecomp = 0        *Switch for existence of central solenoid pre-compression structure (0: no pre-compression structure)
@@ -251,7 +249,7 @@ fkind    = 1.0      *Multiplier for Nth of a kind costs
 iavail   = 0        *Switch for plant availability model (0: use input value for cfactr)
 ifueltyp = 1        *Switch (1: treat blanket divertor first wall and fraction fcdfuel of CD equipment as fuel cost)
 lsa      = 2        *Level of safety assurance switch (2: in-between)
-output_costs = 0    *Switch for costs output (0: do not write cost-related outputs to file)
+output_costs = 1    *Switch for costs output (0: do not write cost-related outputs to file)
 discount_rate = 0.08     *Effective cost of money in constant dollars 
 ucblvd   = 280.0    *Unit cost for blanket vanadium ($/kg)
 ucdiv    = 5.0E5    *Cost of divertor blade ($) 
