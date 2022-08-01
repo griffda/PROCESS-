@@ -1263,7 +1263,7 @@ class Costs2015:
 
         # Create variable name of format s + array entry
 
-        po.ovarrf(constants.mfile, descr, vname, value)
+        po.ovarrf(file, descr, vname, value)
 
     def ocost_vname(self, file, descr, vname, value):
         """
@@ -1283,4 +1283,4 @@ class Costs2015:
         #       write(file,10) dum70, value, ' '
         # 10    format(1x,a,t73,f10.0, tl1, a)
 
-        po.ovarrf(constants.mfile, descr, vname, value)
+        po.ovarrf(file, descr, vname, value)
