@@ -6,12 +6,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.4.0-446-gaa7b4de4f
+   Tag No. : v2.4.0-449-g77d924928
     Branch : HEAD
-   Git log : Merge branch |1542-convert-impurity_radiation-f90-to-python| into |develop|
- Date/time : 28 Jul 2022  9:29:34 +00:00(hh:mm) UTC
+   Git log : Merge branch |1720-cost-model-1-output-not-printing-to-out-dat| into |develop|
+ Date/time :  1 Aug 2022 15:04:46 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-nkpubsxk-project-20-concurrent-0
+  Computer : runner-sn2siqxv-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_ITER_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
@@ -143,28 +143,86 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  ******************************** Buildings (M$) ********************************
  
+ Admin Buildings                                                          1                            34.830     
+ Tokamak Complex (excluding hot cell)                                     2                          1050.660     
+ Neutral beam buildings                                                   3                             8.662     
+ Cryoplant buildings                                                      4                           177.213     
+ PF Coil winding building                                                 5                            54.968     
+ Magnet power supplies and related buildings                              6                            29.791     
+ Magnet discharge buildings                                               7                            12.554     
+ Heat removal system buildings                                            8                            14.906     
+ Total cost of buildings                                                  9                          1383.583     
  
  ********************************** Land (M$) ***********************************
  
+ Land purchasing                                                          10                           55.894     
+ Land improvement                                                         11                          192.441     
+ Road improvements                                                        12                          153.922     
+ Total land costs                                                         13                          402.258     
  
  ******************************** TF Coils (M$) *********************************
  
+ TF Coil insertion and welding                                            14                          278.415     
+ TF coil winding                                                          16                          778.643     
+ Copper strand for TF coil                                                17                           32.654     
+ Strands with Nb3Sn superconductor and copper stabiliser                  18                          331.958     
+ Testing of superconducting strands                                       19                            4.000     
+ Cabling and jacketing                                                    20                          152.343     
+ Total TF coil costs                                                      21                         1578.014     
  
  ************************* First wall and blanket (M$) **************************
  
+ Lithium enrichment                                                       22                           60.011     
+ Lithium orthosilicate pebble manufacturing                               23                           33.353     
+ Titanium beryllide pebble manufacturing                                  24                          886.694     
+ First wall W coating manufacturing                                       25                           68.463     
+ Blanket and shield materials and manufacturing                           26                          215.493     
+ Total first wall and blanket cost                                        27                         1264.015     
  
  ***************** Active maintenance and remote handling (M$) ******************
  
+ Moveable equipment                                                       28                          319.015     
+ Active maintenance facility with fixed equipment                         29                          971.576     
+ Total remote handling costs                                              31                         1290.591     
  
  ***************** Vacuum vessel and liquid nitrogen plant (M$) *****************
  
+ Vacuum vessel                                                            32                          530.548     
+ Liquid nitrogen plant                                                    33                          368.245     
+ Total liquid nitrogen plant and vacuum vessel                            34                          898.793     
  
  **************** System for converting heat to electricity (M$) ****************
  
+ Energy conversion system                                                 35                            0.000     
  
  ************************** Remaining subsystems (M$) ***************************
  
+ CS and PF coils                                                          36                         1207.310     
+ Vacuum vessel in-wall shielding, ports and in-vessel coils               37                           99.842     
+ Divertor                                                                 38                          300.978     
+ Ex-vessel neutral beam remote handling equipment                         41                           97.130     
+ Vacuum vessel pressure suppression system                                43                           62.071     
+ Cryostat                                                                 44                          277.335     
+ Heat removal system                                                      45                         1123.483     
+ Thermal shields                                                          46                          107.690     
+ Pellet injection system                                                  47                           25.000     
+ Gas injection and wall conditioning system                               48                           32.000     
+ Vacuum pumping                                                           49                          201.000     
+ Tritium plant                                                            50                          226.000     
+ Cryoplant and distribution                                               51                         1699.920     
+ Electrical power supply and distribution                                 52                         1127.684     
+ Neutral beam heating and current drive system                            53                          878.486     
+ Diagnostics systems                                                      54                          640.000     
+ Radiological protection                                                  55                           19.000     
+ Access control and security systems                                      56                           37.674     
+ Assembly                                                                 57                         1218.191     
+ Control and communication                                                58                          329.160     
+ Additional project expenditure                                           59                         1624.000     
+ Logistics                                                                60                          101.926     
+ Total remaining subsystem costs                                          61                        11435.881     
  
+ TOTAL OVERNIGHT CAPITAL COST (M$)                                        (total_costs)             18253.135     
+ Annual maintenance cost (M$)                                             (maintenance)               813.744     
  
  Net electric output (MW)                                                 (pnetelmw)                    0.000  OP 
  Capacity factor                                                          (cpfact)                      0.000  OP 
