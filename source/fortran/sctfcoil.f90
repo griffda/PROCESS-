@@ -1938,18 +1938,18 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
     real(dp) :: t_turn_oh
     !! Central Solenoid (OH) turn dimension [m]
-  
+
     real(dp) :: l_cond_cst
     !! Length of CS of CS coil turn conduit
-  
+
     real(dp) :: d_cond_cst
     !! Depth/width of CS of CS coil turn conduit
-    
+
     real(dp) :: r_in_cst
-    !! Length of CS of CS coil turn conduit length 
+    !! Length of CS of CS coil turn conduit length
 
     real(dp) :: p1
-    !! CS coil conduit calculation part 1 
+    !! CS coil conduit calculation part 1
 
     real(dp) :: p2
     !! CS coil conduit calculation part 2
@@ -2108,7 +2108,7 @@ subroutine stresscl( n_tf_layer, n_radial_array, iprint, outfile )
 
             ! CS Turn vertical cross-sectionnal area
             a_oh_turn = a_oh / n_oh_turns
-            	     
+
             ! CS coil turn geometry calculation - stadium shape
             ! Literature: https://doi.org/10.1016/j.fusengdes.2017.04.052
             d_cond_cst = (a_oh_turn/ld_ratio_cst)**0.5  ! width of cs turn conduit
@@ -5614,7 +5614,7 @@ contains
             !  Critical current in cable
             icrit = jcritstr * acs * fcond
 
-        case (8) ! Branch YCBO model fit to Tallahassee data
+        case (8) ! Durham Ginzburg-Landau critical surface model for REBCO
             bc20m = 430
             tc0m = 185
             ! If strain limit achieved, throw a warning and use the lower strain
@@ -5628,7 +5628,7 @@ contains
             !  Critical current in cable (copper added at this stage in HTS cables)
             icrit = jcritstr * acs * fcond
 
-        case (9) ! High Current Density REBCO tape
+        case (9) ! Hazelton experimental data + Zhai conceptual model for REBCO
             bc20m = 138
             tc0m = 92
             ! If strain limit achieved, throw a warning and use the lower strain
