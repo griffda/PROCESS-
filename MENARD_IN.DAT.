@@ -102,7 +102,7 @@ runtitle = Pilot Plant Menard et al. 2016, Section 5
 
 epsvmc   = 1.0E-7   *Error tolerance for VMCON
 ioptimz  = 1        *Code operation switch (VMCON only)
-minmax   = -17      *Switch for figure-of-merit (17: net electrical output)
+minmax   = -6       * Switch for figure-of-merit (6: Cost of Electricity)
 
 *---------------Constraint Variables---------------*
 
