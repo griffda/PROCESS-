@@ -109,7 +109,7 @@ boundl(166) = 0.001
 boundu(166) = 1.0
 
 * Set the maximum allower current/copper ratio
-copperaoh_m2_max = 5D7
+copperaoh_m2_max = 1.0D8
 
 
 *-----------------Build Variables------------------*

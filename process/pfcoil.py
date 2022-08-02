@@ -1889,6 +1889,8 @@ class PFCoil:
                     )
                 elif pfv.isumatoh == 5:
                     op.ocmmnt(self.outfile, " (WST Nb3Sn critical surface model)")
+                elif pfv.isumatoh == 6:
+                    op.ocmmnt(self.outfile, " (REBCO HTS)")
                 elif pfv.isumatoh == 7:
                     op.ocmmnt(
                         self.outfile,
@@ -1898,6 +1900,11 @@ class PFCoil:
                     op.ocmmnt(
                         self.outfile,
                         " (Durham Ginzburg-Landau critical surface model for REBCO)",
+                    )
+                elif pfv.isumatoh == 9:
+                    op.ocmmnt(
+                        self.outfile,
+                        " (Hazelton experimental data + Zhai conceptual model for REBCO)",
                     )
 
                 op.osubhd(self.outfile, "Central Solenoid Current Density Limits :")
@@ -2080,7 +2087,7 @@ class PFCoil:
                     pfv.fcuohsu,
                 )
                 # If REBCO material is used, print copperaoh_m2
-                if pfv.isumatoh == 6 or pfv.isumatoh == 8:
+                if pfv.isumatoh == 6 or pfv.isumatoh == 8 or pfv.isumatoh == 9:
                     op.ovarre(
                         self.outfile,
                         "CS current/copper area (A/m2)",
@@ -2209,14 +2216,14 @@ class PFCoil:
 
                 # REBCO fractures in strains above ~+/- 0.7%
                 if (
-                    (pfv.isumatoh == 8)
+                    (pfv.isumatoh == 6 or pfv.isumatoh == 8 or pfv.isumatoh == 9)
                     and tfv.str_cs_con_res > 0.7e-2
                     or tfv.str_cs_con_res < -0.7e-2
                 ):
                     eh.report_error(262)
 
                 if (
-                    (pfv.isumatpf == 8)
+                    (pfv.isumatpf == 6 or pfv.isumatpf == 8 or pfv.isumatpf == 9)
                     and tfv.str_pf_con_res > 0.7e-2
                     or tfv.str_pf_con_res < -0.7e-2
                 ):
@@ -2252,17 +2259,22 @@ class PFCoil:
             elif pfv.isumatpf == 6:
                 op.ocmmnt(
                     self.outfile,
-                    "REBCO 2nd generation HTS superconductor in CrCo strand",
+                    " (REBCO 2nd generation HTS superconductor in CrCo strand)",
                 )
             elif pfv.isumatpf == 7:
                 op.ocmmnt(
                     self.outfile,
-                    " (Durham Nb-Ti Ginzburg-Landau critical surface model)",
+                    " (Durham Ginzburg-Landau critical surface model for Nb-Ti)",
                 )
             elif pfv.isumatpf == 8:
                 op.ocmmnt(
                     self.outfile,
-                    " (Durham REBCO Ginzburg-Landau critical surface model)",
+                    " (Durham Ginzburg-Landau critical surface model for REBCO)",
+                )
+            elif pfv.isumatpf == 9:
+                op.ocmmnt(
+                    self.outfile,
+                    " (Hazelton experimental data + Zhai conceptual model for REBCO)",
                 )
 
             op.ovarre(
@@ -2885,10 +2897,10 @@ class PFCoil:
             # The CS coil current/copper area calculation for quench protection
             # Copper area = (area of coil - area of steel)*(1- void fraction)*
             # (fraction of copper in strands)
-            rcv.copperaoh_m2 = ioheof / pfv.awpoh * (1.0 - pfv.vfohc) * pfv.fcuohsu
+            rcv.copperaoh_m2 = ioheof / (pfv.awpoh * (1.0 - pfv.vfohc) * pfv.fcuohsu)
 
         elif isumat == 7:
-            # Durham Ginzburg-Landau Nb-Ti parameterisation
+            # Durham Ginzburg-Landau critical surface model for Nb-Ti
             bc20m = tfv.b_crit_upper_nbti
             tc0m = tfv.t_crit_nbti
             jcritsc, bcrit, tcrit = sc.gl_nbti(thelium, bmax, strain, bc20m, tc0m)
@@ -2896,16 +2908,30 @@ class PFCoil:
 
             # The CS coil current at EOF
             ioheof = bv.hmax * pfv.ohhghf * bv.ohcth * 2.0 * pfv.coheof
-            # The CS coil current/copper area calculation for quench protection
-            rcv.copperaoh_m2 = ioheof / pfv.awpoh * (1.0 - pfv.vfohc) * pfv.fcuohsu
 
         elif isumat == 8:
-            # Branch YCBO model fit to Tallahassee data
+            # Durham Ginzburg-Landau critical surface model for REBCO
             bc20m = 429e0
             tc0m = 185e0
             jcritsc, bcrit, tcrit = sc.gl_rebco(thelium, bmax, strain, bc20m, tc0m)
             # A0 calculated for tape cross section already
             jcritstr = jcritsc * (1.0e0 - fcu)
+
+            # The CS coil current at EOF
+            ioheof = bv.hmax * pfv.ohhghf * bv.ohcth * 2.0 * pfv.coheof
+            # The CS coil current/copper area calculation for quench protection
+            rcv.copperaoh_m2 = ioheof / (pfv.awpoh * (1.0 - pfv.vfohc) * pfv.fcuohsu)
+
+        elif isumat == 9:
+            # Hazelton experimental data + Zhai conceptual model for REBCO
+            bc20m = 138
+            tc0m = 92
+            jcritsc, bcrit, tcrit = sc.hijc_rebco(thelium, bmax, strain, bc20m, tc0m)
+
+            # The CS coil current at EOF
+            ioheof = bv.hmax * pfv.ohhghf * bv.ohcth * 2.0 * pfv.coheof
+            # The CS coil current/copper area calculation for quench protection
+            rcv.copperaoh_m2 = ioheof / (pfv.awpoh * (1.0 - pfv.vfohc) * pfv.fcuohsu)
 
         else:
             # Error condition
