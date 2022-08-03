@@ -6,12 +6,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.4.0-455-ga46841e2e
+   Tag No. : v2.4.0-458-ged7945daa
     Branch : HEAD
-   Git log : Merge branch |1711-merge-the-cs-fatigue-and-cs-quench-protection-regression-tests| into |develop|
- Date/time :  3 Aug 2022 11:52:09 +00:00(hh:mm) UTC
+   Git log : Merge branch |1727-update-ec-ebw-unit-cost| into |develop|
+ Date/time :  3 Aug 2022 13:43:14 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-8a63d9a8-project-20-concurrent-0
+  Computer : runner-9dc50af2-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_steady_state_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
