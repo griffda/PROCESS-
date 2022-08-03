@@ -35,7 +35,7 @@ class Divertor:
         :type output: boolean
         """
 
-        if pv.itart == 1:
+        if pv.itart == 1 and dv.i_hldiv == 0:
             self.divtart(
                 pv.rmajor,
                 pv.rminor,
