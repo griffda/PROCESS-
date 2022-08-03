@@ -7,14 +7,14 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.4.0-458-g262e4726 code contains untracked changes
-    Branch : 1672-pf-coil-and-cs-superconductor-material-options-not-all-in-variable-description
-   Git log : Merge branch |develop| of git.ccfe.ac.uk:process/process into 1672-pf-coil-and-cs-superconductor-material-options-not-all-in-variable-description
- Date/time :  3 Aug 2022  9:45:24 +01:00(hh:mm) UTC
-      User : jg6173
-  Computer : L1088
- Directory : /home/jg6173/process/tests/regression/scenarios/cs_fatigue
-     Input : /home/jg6173/process/tests/regression/scenarios/cs_fatigue/IN.DAT
+   Tag No. : v2.4.0-455-ga46841e2e
+    Branch : HEAD
+   Git log : Merge branch |1711-merge-the-cs-fatigue-and-cs-quench-protection-regression-tests| into |develop|
+ Date/time :  3 Aug 2022 11:41:33 +00:00(hh:mm) UTC
+      User : root
+  Computer : runner-8a63d9a8-project-20-concurrent-0
+ Directory : /builds/process/process
+     Input : /tmp/pytest-of-root/pytest-0/test_scenario_cs_fatigue_and_h0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
   Run type : Reactor concept design: Pulsed tokamak model, (c) CCFE
  

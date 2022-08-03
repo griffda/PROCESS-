@@ -3,13 +3,13 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.4.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "02/08/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "13:04"
+ Date_of_run_____________________________________________________________ (date)________________________     "03/08/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "11:41"
  User____________________________________________________________________ (username)____________________     "root"    
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "demo 1 model for cost paper                                                                        
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.4.0-452-g30fc137a5"                                                                             
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.4.0-455-ga46841e2e"                                                                             
  PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "HEAD"                                                                                              
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch |1672-pf-coil-and-cs-superconductor-material-options-not-all-in-variable-description| 
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch |1711-merge-the-cs-fatigue-and-cs-quench-protection-regression-tests| into |develop|" 
  Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-root/pytest-0/test_scenario_costs_paper_0/IN.DAT                                                                                                                                         "
  
  Scan_point_number_______________________________________________________ (iscan)_______________________              1    

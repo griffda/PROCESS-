@@ -12,12 +12,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.4.0-452-g30fc137a5
+   Tag No. : v2.4.0-455-ga46841e2e
     Branch : HEAD
-   Git log : Merge branch |1672-pf-coil-and-cs-superconductor-material-options-not-all-in-variable-description| into |develop|
- Date/time :  2 Aug 2022 13:16:53 +00:00(hh:mm) UTC
+   Git log : Merge branch |1711-merge-the-cs-fatigue-and-cs-quench-protection-regression-tests| into |develop|
+ Date/time :  3 Aug 2022 11:51:09 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-c55928e9-project-20-concurrent-0
+  Computer : runner-8a63d9a8-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_Menard_HTS_PP_0/IN.DAT
  Run title : Pilot Plant Menard et al. 2016, Section 5
