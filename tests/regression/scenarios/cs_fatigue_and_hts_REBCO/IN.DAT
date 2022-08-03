@@ -1,8 +1,3 @@
-* Input file to test the CS coil REBCO quench protection model
-* Constraint equation 89
-* Iteration variable ixc = 166 [f_copperaoh_m2]
-* Set the CS coil material to REBCO with [isumatoh] = 6
-
 *---------------Constraint Equations---------------*
 
 icc = 1 * Beta
@@ -29,9 +24,6 @@ icc = 60 * OH coil temp margin
 icc = 72 * OH stress limit
 icc = 25 * Max TF field
 icc = 62 * taulimit
-
-* CS coil quench protection constrain equation
-icc = 89 * CS coil quench protection
 
 *---------------Iteration Variables----------------*
 
@@ -103,6 +95,16 @@ ixc = 123 * foh_stress
 ixc = 109 * ralpne
 ixc = 110 * ftaulimit
 
+*isweep = 3
+*nsweep = 17
+*sweep = 11.8, 12.5, 13.36
+
+* CS fatigue constraints and variables
+icc = 90
+ixc = 167
+t_crack_vertical = 0.4D-3
+bkt_life_csf = 1 *switch for whether blanket model feeds n_cycle_min
+
 * This is the iteration variable used for the CS coil quench protection model
 ixc = 166 * f_copperaoh for CS coil quench model
 boundl(166) = 0.001
@@ -111,7 +113,15 @@ boundu(166) = 1.0
 * Set the maximum allower current/copper ratio
 copperaoh_m2_max = 1.0D8
 
+* Turn on blanket lifetime model to set n_cycle_min
+*BLANKET LIFETIME*
+ibkt_life = 1
+* DESCRIPTION: Switch for plant blanket lifetime model
+* JUSTIFICATION: Model built for DEMO design point
 
+life_dpa = 70.0
+* DESCRIPTION: Allowable DPA from DEMO fw/blanket lifetime calculation in availability module
+* JUSTIFICATION: Takne from default reference point: EFDA_D_2NUZCR (HCPB blanket)
 *-----------------Build Variables------------------*
 
 blnkith  = 0.755 * Inboard blanket thickness (m);
@@ -263,9 +273,7 @@ zref(8) = 1.0
 
 alstroh = 6.6D8 * allowable hoop stress in Central Solenoid structural material (Pa)
 fcuohsu = 0.70 * copper fraction of strand in central solenoid cable
-
-* This is the control for the CS coil material. 6 for REBCO
-isumatoh = 6 * WST Nb3Sn parameterisation
+isumatoh = 5 * WST Nb3Sn parameterisation
 oh_steel_frac = 0.8
 
 *----------------Physics Variables-----------------*
