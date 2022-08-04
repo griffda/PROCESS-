@@ -1710,7 +1710,7 @@ def plot_pf_coils(axis, mfile_data, scan):
             coil_text[i],
             ha="center",
             va="center",
-            fontsize="smaller",
+            fontsize=5 * abs((coils_dr[i] * coils_dz[i])),
         )
 
 
