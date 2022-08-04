@@ -1685,7 +1685,7 @@ def plot_pf_coils(axis, mfile_data, scan):
         coils_z.append(mfile_data.data["zpf[{:01}]".format(coil)].get_scan(scan))
         coils_dr.append(mfile_data.data["pfdr({:01})".format(coil)].get_scan(scan))
         coils_dz.append(mfile_data.data["pfdz({:01})".format(coil)].get_scan(scan))
-        coil_text.append(str(coil))
+        coil_text.append(str(coil + 1))
 
     for i in range(len(coils_r)):
         r_1 = coils_r[i] - 0.5 * coils_dr[i]
