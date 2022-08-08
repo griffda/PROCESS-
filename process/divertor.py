@@ -35,7 +35,7 @@ class Divertor:
         :type output: boolean
         """
 
-        if pv.itart == 1 and dv.i_hldiv == 0:
+        if pv.itart == 1:
             self.divtart(
                 pv.rmajor,
                 pv.rminor,
@@ -817,14 +817,16 @@ class Divertor:
 
         areadv = 2.0e0 * (a1 + a2 + a3)
 
-        dv.hldiv = pdivt / areadv
-
-        if output:
+        if output and dv.i_hldiv == 0:
+            dv.hldiv = pdivt / areadv
             po.osubhd(self.outfile, "Divertor Heat Load")
             po.ocmmnt(self.outfile, "Assume an expanded divertor with a gaseous target")
             po.oblnkl(self.outfile)
             po.ovarre(self.outfile, "Power to the divertor (MW)", "(pdivt.)", pdivt)
             po.ovarre(self.outfile, "Divertor surface area (m2)", "(areadv)", areadv)
             po.ovarre(self.outfile, "Divertor heat load (MW/m2)", "(hldiv)", dv.hldiv)
-
-        return dv.hldiv
+            # return dv.hldiv
+        elif output:
+            po.osubhd(self.outfile, "Divertor Heat Load")
+            po.ovarre(self.outfile, "Power to the divertor (MW)", "(pdivt.)", pdivt)
+            po.ovarre(self.outfile, "Divertor heat load (MW/m2)", "(hldiv)", dv.hldiv)
