@@ -816,17 +816,19 @@ class Divertor:
         #  Total divertor area (N.B. there are two of them)
 
         areadv = 2.0e0 * (a1 + a2 + a3)
+        if dv.i_hldiv == 0:
+            dv.hldiv = pdivt / areadv
 
         if output and dv.i_hldiv == 0:
-            dv.hldiv = pdivt / areadv
             po.osubhd(self.outfile, "Divertor Heat Load")
             po.ocmmnt(self.outfile, "Assume an expanded divertor with a gaseous target")
             po.oblnkl(self.outfile)
             po.ovarre(self.outfile, "Power to the divertor (MW)", "(pdivt.)", pdivt)
             po.ovarre(self.outfile, "Divertor surface area (m2)", "(areadv)", areadv)
             po.ovarre(self.outfile, "Divertor heat load (MW/m2)", "(hldiv)", dv.hldiv)
-            # return dv.hldiv
+
         elif output:
             po.osubhd(self.outfile, "Divertor Heat Load")
             po.ovarre(self.outfile, "Power to the divertor (MW)", "(pdivt.)", pdivt)
             po.ovarre(self.outfile, "Divertor heat load (MW/m2)", "(hldiv)", dv.hldiv)
+        return dv.hldiv
