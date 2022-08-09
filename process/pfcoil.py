@@ -2833,6 +2833,21 @@ class PFCoil:
             deltaj_gl_rebco = jcrit0 - jsc
             return deltaj_gl_rebco
 
+        def deltaj_hijc_rebco(temperature):
+            """Critical current density and current density difference in high current density REBCO.
+
+            :param temperature: temperature
+            :type temperature: float
+            :return: difference in current density
+            :rtype: float
+            """
+            jcrit0, b, t = sc.hijc_rebco(temperature, bmax, strain, bc20m, tc0m)
+            if ml.variable_error(jcrit0):  # superconductors.GL_REBCO has failed.
+                print(f"deltaj_hijc_REBCO: {bmax=} {temperature=} {jcrit0=}")
+
+            deltaj_hijc_rebco = jcrit0 - jsc
+            return deltaj_hijc_rebco
+
         # Find critical current density in superconducting strand, jcritstr
         if isumat == 1:
             # ITER Nb3Sn critical surface parameterization
@@ -2927,6 +2942,8 @@ class PFCoil:
             bc20m = 138
             tc0m = 92
             jcritsc, bcrit, tcrit = sc.hijc_rebco(thelium, bmax, strain, bc20m, tc0m)
+            # A0 calculated for tape cross section already
+            jcritstr = jcritsc * (1.0e0 - fcu)
 
             # The CS coil current at EOF
             ioheof = bv.hmax * pfv.ohhghf * bv.ohcth * 2.0 * pfv.coheof
@@ -3039,7 +3056,7 @@ class PFCoil:
 
         # SCM 10/08/20 Use secant solver for superconductors.GL_REBCO.
         elif isumat == 8:
-            # Current sharing temperature for Durham Ginzburg-Landau Nb-Ti
+            # Current sharing temperature for Durham Ginzburg-Landau REBCO
             x1 = 4.0e0  # Initial values of temperature
             x2 = 6.0e0
             # Solve for deltaj_superconductors.GL_REBCO = 0
@@ -3053,6 +3070,23 @@ class PFCoil:
             ):  # current sharing secant solver has failed.
                 print(
                     f"Gl_REBCO: {current_sharing_t=} {tmarg=} {jsc=} {jcrit0=} {residual=}"
+                )
+
+        elif isumat == 9:
+            # Current sharing temperature for Hazelton REBCO
+            x1 = 19.0e0  # Initial values of temperature
+            x2 = 21.0e0
+            # Solve for deltaj_superconductors.HIJC_REBCO = 0
+            current_sharing_t, error, residual = pml.secant_solve(
+                deltaj_hijc_rebco, x1, x2, 100e0
+            )
+            tmarg = current_sharing_t - thelium
+            jcrit0, b, t = sc.hijc_rebco(current_sharing_t, bmax, strain, bc20m, tc0m)
+            if ml.variable_error(
+                current_sharing_t
+            ):  # current sharing secant solver has failed.
+                print(
+                    f"HIJC_REBCO: {current_sharing_t=} {tmarg=} {jsc=} {jcrit0=} {residual=}"
                 )
 
         return jcritwp, jcritstr, jcritsc, tmarg
