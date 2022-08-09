@@ -6,12 +6,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.4.0-462-gf6b6b2789
+   Tag No. : v2.4.0-465-g6281e3174
     Branch : HEAD
-   Git log : Merge branch |1730-scale-plot_proc-py-pf-coil-labels-with-size| into |develop|
- Date/time :  5 Aug 2022 15:39:14 +00:00(hh:mm) UTC
+   Git log : Merge branch |1732-critical-current-density-error-message-from-pfcoil-py| into |develop|
+ Date/time :  9 Aug 2022 13:22:48 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-sn2siqxv-project-20-concurrent-0
+  Computer : runner-8a63d9a8-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_secondary_CD_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
