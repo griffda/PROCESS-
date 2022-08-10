@@ -275,7 +275,7 @@ contains
       c5div, ksic, fififi, divplt, delld, c2div, betao, divdum, tdiv, c6div, &
       omegan, prn1, fgamp, frrp, xpertin, c1div, betai, bpsout, xparain, fdiva, &
       zeffdiv, hldivlim, rlenmax, divfix, c3div, divleg_profile_inner, &
-      divleg_profile_outer
+      divleg_profile_outer, hldiv, i_hldiv
     use fwbs_variables, only: fblhebpo, vfblkt, fdiv, fvolso, fwcoolant, &
       pitch, iblanket, blktmodel, afwi, fblli2o, nphcdin, breeder_multiplier, &
       fw_armour_thickness, roughness, fwclfr, breedmat, fblli, fblvd, &
@@ -936,6 +936,12 @@ contains
        case ('fhldiv')
           call parse_real_variable('fhldiv', fhldiv, 0.001D0, 10.0D0, &
                'F-value for divertor heat load')
+       case ('hldiv')
+          call parse_real_variable('hldiv', hldiv, 0.0D0, 10.0D0, &
+               'Divertor heat load (MW/m2)')
+       case ('i_hldiv')
+          call parse_int_variable('i_hldiv', i_hldiv, 0, 1, &
+               'Switch for user input hldiv')
        case ('fflutf')
           call parse_real_variable('fflutf', fflutf, 0.001D0, 10.0D0, &
                'F-value for neutron fluence on TF coil')
