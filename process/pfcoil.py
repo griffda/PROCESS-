@@ -1834,7 +1834,7 @@ class PFCoil:
             for ig in range(pf.nef):
                 op.write(
                     self.outfile,
-                    f"{ig}\t\t\t{pfv.sxlg[:pfv.ncirt,ig]}",
+                    f"{ig}\t{pfv.sxlg[:pfv.ncirt,ig]}",
                 )
 
             if bv.iohcl != 0:
@@ -2327,7 +2327,7 @@ class PFCoil:
         op.osubhd(self.outfile, "Geometry of PF coils, central solenoid and plasma:")
         op.write(
             self.outfile,
-            "coil\t\t\tR(m)\t\t\tZ(m)\t\t\tdR(m)\t\t\tdZ(m)\t\t\tturns\t\tsteel thickness(m)",
+            "coil\t\t\tR(m)\t\tZ(m)\t\tdR(m)\t\tdZ(m)\t\tturns\t\tsteel thickness(m)",
         )
         op.oblnkl(self.outfile)
 
@@ -2435,18 +2435,18 @@ class PFCoil:
         # Plasma
         op.write(
             self.outfile,
-            f"Plasma\t\t{pv.rmajor:.2e}\t0.0e0\t\t\t{2.0e0*pv.rminor:.2e}\t{2.0e0*pv.rminor*pv.kappa:.2e}\t1.0e0",
+            f"Plasma\t\t\t{pv.rmajor:.2e}\t0.0e0\t\t{2.0e0*pv.rminor:.2e}\t{2.0e0*pv.rminor*pv.kappa:.2e}\t1.0e0",
         )
 
         op.osubhd(self.outfile, "PF Coil Information at Peak Current:")
 
         op.write(
             self.outfile,
-            "coil\tcurrent\tallowed J\t\tactual J\t\tJ\t\t\tcond. mass\tsteel mass\tfield",
+            "coil\tcurrent\t\tallowed J\tactual J\tJ\t\tcond. mass\tsteel mass\tfield",
         )
         op.write(
             self.outfile,
-            "\t\t\t\t(MA)\t\t(A/m2)\t\t(A/m2)\t\tratio\t\t\t(kg)\t\t\t(kg)\t\t\t(T)",
+            "\t(MA)\t\t(A/m2)\t\t(A/m2)\t\tratio\t\t(kg)\t\t(kg)\t\t(T)",
         )
 
         op.oblnkl(self.outfile)
@@ -2481,14 +2481,14 @@ class PFCoil:
         # Miscellaneous totals
         op.write(
             self.outfile,
-            "\t" * 4 + "------" + "\t" * 16 + "---------" + "\t" + "---------",
+            "\t" * 1 + "------" + "\t" * 8 + "---------" + "\t" + "---------",
         )
 
         op.write(
             self.outfile,
-            "\t" * 4
+            "\t" * 1
             + f"{pf.ricpf:.2e}"
-            + "\t" * 16
+            + "\t" * 7
             + f"{pfv.whtpf:.2e}\t{pfv.whtpfs:.2e}",
         )
 
@@ -2508,8 +2508,8 @@ class PFCoil:
         """
         op.oheadr(self.outfile, "Volt Second Consumption")
 
-        op.write(self.outfile, "\t" * 4 + "volt-sec\t\t\tvolt-sec\t\tvolt-sec")
-        op.write(self.outfile, "\t" * 4 + "start-up\t\t\tburn\t\t\ttotal")
+        op.write(self.outfile, "\t" * 3 + "volt-sec\t\t\tvolt-sec\t\tvolt-sec")
+        op.write(self.outfile, "\t" * 3 + "start-up\t\t\tburn\t\t\ttotal")
         op.write(
             self.outfile,
             f"PF coils:\t\t{pfv.vsefsu:.2f}\t\t\t\t{pfv.vsefbn:.2f}\t\t\t{pfv.vseft:.2f}",
@@ -2519,7 +2519,7 @@ class PFCoil:
             f"CS coil:\t\t{pfv.vsohsu:.2f}\t\t\t\t{pfv.vsohbn:.2f}\t\t\t{pfv.vsoh:.2f}",
         )
         op.write(
-            self.outfile, "\t" * 4 + "-" * 7 + "\t" * 4 + "-" * 7 + "\t" * 3 + "-" * 7
+            self.outfile, "\t" * 3 + "-" * 7 + "\t" * 4 + "-" * 7 + "\t" * 3 + "-" * 7
         )
         op.write(
             self.outfile,
@@ -2537,7 +2537,7 @@ class PFCoil:
 
         op.osubhd(self.outfile, "Summary of volt-second consumption by circuit (Wb):")
 
-        op.write(self.outfile, "circuit\t\tBOP\t\t\t\tBOF\t\t\t\tEOF")
+        op.write(self.outfile, "circuit\t\t\tBOP\t\t\tBOF\t\tEOF")
         op.oblnkl(self.outfile)
 
         for k in range(pf.nef):
@@ -2548,23 +2548,23 @@ class PFCoil:
 
         op.write(
             self.outfile,
-            f"CS coil\t\t{pf.vsdum[pfv.nohc-1,0]:.3f}\t\t\t{pf.vsdum[pfv.nohc-1,1]:.3f}\t\t{pf.vsdum[pfv.nohc-1,2]:.3f}",
+            f"\tCS coil\t\t\t{pf.vsdum[pfv.nohc-1,0]:.3f}\t\t\t{pf.vsdum[pfv.nohc-1,1]:.3f}\t\t{pf.vsdum[pfv.nohc-1,2]:.3f}",
         )
 
         op.oshead(self.outfile, "Waveforms")
         op.ocmmnt(self.outfile, "Currents (Amps/coil) as a function of time:")
         op.oblnkl(self.outfile)
 
-        op.write(self.outfile, "\t" * 12 + "time (sec)")
-        line = "\t"
+        op.write(self.outfile, "\t" * 8 + "time (sec)")
+        line = "\t\t"
         for k in range(6):
-            line += f"\t\t\t{tv.tim[k]:.2f}"
+            line += f"\t\t{tv.tim[k]:.2f}"
         op.write(self.outfile, line)
 
-        line = ""
+        line = "\t\t"
         for k in range(6):
             label = f2py_compatible_to_string(tv.timelabel[k])
-            line += f"\t\t\t\t\t{label}"
+            line += f"\t\t{label}"
         op.write(self.outfile, line)
 
         op.ocmmnt(self.outfile, "circuit")
@@ -2575,7 +2575,7 @@ class PFCoil:
                 line += f"\t{pfv.cpt[k,jj]*pfv.turns[k]:.3e}"
             op.write(self.outfile, line)
 
-        line = "Plasma (A)"
+        line = "Plasma (A)\t\t"
         for jj in range(6):
             line += f"\t{pfv.cpt[pfv.ncirt-1,jj]:.3e}"
 
