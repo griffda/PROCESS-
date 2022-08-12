@@ -42,8 +42,8 @@ from process.io.process_funcs import (
     check_input_error,
     process_stopped,
     no_unfeasible_mfile,
-    vary_iteration_variables,
     set_variable_in_indat,
+    vary_iteration_variables,
 )
 
 
@@ -94,9 +94,7 @@ def run_monte_carlo(args):
     LBS, UBS = get_variable_range(itervars, config.factor)
 
     config.checks_before_run()
-
     config.set_sample_values()
-
     RUN_ID = 0
     MFileDataSet = []
     indexDataSet = []
@@ -149,7 +147,6 @@ def run_monte_carlo(args):
 
                     RUN_ID += 1
 
-                    break
                 else:
                     print(
                         "WARNING: %i non feasible point(s) in sweep!\
@@ -159,7 +156,8 @@ def run_monte_carlo(args):
             else:
                 print("PROCESS has stopped without finishing!")
 
-            vary_iteration_variables(itervars, LBS, UBS)
+            if config.vary_iteration_variables is True:
+                vary_iteration_variables(itervars, LBS, UBS)
 
         config.write_error_summary(j)
 

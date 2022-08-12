@@ -716,6 +716,7 @@ class UncertaintiesConfig(ProcessConfig, Config):
     ncdf_writer = None
     figure_of_merit = "rmajor"
     latin_hypercube_level = 4
+    vary_iteration_variables = False
 
     def __init__(self, configfilename="config_evaluate_uncertainties.json"):
 
@@ -756,7 +757,9 @@ class UncertaintiesConfig(ProcessConfig, Config):
         self.latin_hypercube_level = self.get(
             "latin_hypercube_level", default=self.latin_hypercube_level
         )
-
+        self.vary_iteration_variables = self.get(
+            "vary_iteration_variables", default=self.vary_iteration_variables
+        )
         # setup the output_vars
         for u_dict in self.uncertainties:
             if not u_dict["varname"] in self.output_vars:
