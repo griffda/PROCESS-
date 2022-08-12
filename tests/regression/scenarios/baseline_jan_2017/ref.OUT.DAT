@@ -7,12 +7,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.4.0-474-ge1526b63e
+   Tag No. : v2.4.0-477-gfe8b967b1
     Branch : HEAD
-   Git log : Merge branch |1690-uncertainty-scripts-always-assume-default-number-of-vary_run-attempts| into |develop|
- Date/time : 11 Aug 2022  9:40:04 +00:00(hh:mm) UTC
+   Git log : Merge branch |1733-fix-to-monte-carlo-method-in-evaluate_uncertainties-py| into |develop|
+ Date/time : 12 Aug 2022 12:41:01 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-9dc50af2-project-20-concurrent-0
+  Computer : runner-7084ce6e-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_baseline_jan_2010/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
