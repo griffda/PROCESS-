@@ -428,6 +428,11 @@ class SingleRun:
                 caller = Caller(self.models)
                 fortran.define_iteration_variables.loadxc()
                 caller.call_models(fortran.numerics.xcm, fortran.numerics.nvar)
+                # To ensure that, at the start of a run, all physics/engineering
+                # variables are fully initialised with consistent values, we perform
+                # a second evaluation call here
+                caller.call_models(fortran.numerics.xcm, fortran.numerics.nvar)
+                self.ifail = 6
 
             final.finalise(self.models, self.ifail)
 
