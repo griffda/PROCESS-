@@ -7,12 +7,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.4.0-480-g5a8495cc9
+   Tag No. : v2.4.0-483-g6ad4d7ae5
     Branch : HEAD
-   Git log : Merge branch |1734-fix-pfcoil-py-output-alignment| into |develop|
- Date/time : 15 Aug 2022 11:03:25 +00:00(hh:mm) UTC
+   Git log : Merge branch |1023-missing-values-with-once-through| into |develop|
+ Date/time : 16 Aug 2022 16:06:03 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-8a63d9a8-project-20-concurrent-0
+  Computer : runner-c55928e9-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_G_L_Nb_Ti_0/IN.DAT
  Run title : TF coil testing
