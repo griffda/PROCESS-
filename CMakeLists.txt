@@ -1,14 +1,19 @@
-#   CMake file for Pythonic PROCESS
-#   Author  :   K. Zarebski (UKAEA)
-#   Date    :   last modified 2020-11-09
+# CMake file for Pythonic PROCESS
+# Author  :   K. Zarebski (UKAEA)
+# Date    :   last modified 2020-11-09
 
 # Specify the minimum version for CMake
 # 3.12 is required due to use of list TRANSFORM commands
 CMAKE_MINIMUM_REQUIRED(VERSION 3.13)
 
 # Ensure python3 interpreter is used
+if(CMAKE_HOST_APPLE)
+    SET(CMAKE_FIND_FRAMEWORK NEVER)
+    set(CMAKE_MACOSX_RPATH ON)
+endif()
+
 SET(Python3_FIND_VIRTUALENV FIRST)
-find_package(PythonInterp 3 REQUIRED)
+find_package(PythonInterp 3.8 EXACT REQUIRED)
 
 # Set project name
 PROJECT(process LANGUAGES Fortran)
@@ -65,7 +70,6 @@ FILE(GLOB PROCESS_SRC_PATHS ${PROCESS_SRC_DIR}/*.f90 ${PROCESS_SRC_DIR}/*.f)
 FILE(GLOB PROCESS_PYTHON_SRC_PATHS ${PROCESS_PYTHON_SRC_DIR}/*.py)
 
 # 'Cherry Pick' Files to Compile in REFPROP, PLASMOD and PROCESS libraries
-
 LIST(APPEND PLASMOD_SRCS
     e3m.f
     equil.f90
@@ -142,6 +146,8 @@ LIST(APPEND PROCESS_SRCS
     read_and_get_atomic_data.f90
     plot_radiation.f90
     rebco_variables.f90
+    read_radiation.f90
+    divertor_ode_var.f90
     primary_pumping_variables.f90
     reinke_variables.f90
 )
@@ -160,15 +166,19 @@ SET_TARGET_PROPERTIES(${PROJECT_NAME}
     LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/process/lib
 )
 
-SET_TARGET_PROPERTIES(${PROJECT_NAME}
-    PROPERTIES BUILD_RPATH $ORIGIN
-)
+IF(NOT CMAKE_HOST_APPLE)
+    SET_TARGET_PROPERTIES(${PROJECT_NAME}
+        PROPERTIES BUILD_RPATH $ORIGIN
+    )
+ENDIF()
 
 ADD_DEPENDENCIES(${PROJECT_NAME} ${PIP_NAME})
 
-
-
-SET(LIBRARY_OUTPUT_SUFFIX ".so")
+IF(CMAKE_HOST_APPLE)
+    SET(LIBRARY_OUTPUT_SUFFIX ".dylib")
+ELSEIF(CMAKE_HOST_UNIX)
+    SET(LIBRARY_OUTPUT_SUFFIX ".so")
+ENDIF()
 
 # Stage 3: Run f2py
 # Builds every time to make sure the libprocess.so file is up-to-date
@@ -196,15 +206,15 @@ ADD_CUSTOM_TARGET(install_process ALL
     COMMAND ${PYTHON_EXECUTABLE} -m pip install --no-cache-dir ${CMAKE_SOURCE_DIR}
 )
 
-ADD_DEPENDENCIES(install_process ${PIP_NAME} ${F2PY_NAME} ${FORD_NAME} ${GFORTLIB_NAME} ${DICTS_NAME} coverage_cleanup)
+ADD_DEPENDENCIES(install_process ${PIP_NAME} f2py ${FORD_NAME} ${GFORTLIB_NAME} ${DICTS_NAME} coverage_cleanup)
 
-if (EXISTS ${CMAKE_SOURCE_DIR}/lcov_results)
-  execute_process(COMMAND echo "-- Delete existing lcov_coverage directory...")
-  execute_process(COMMAND cmake -E remove_directory ${CMAKE_SOURCE_DIR}/lcov_results)
-  execute_process(COMMAND mkdir ${CMAKE_SOURCE_DIR}/lcov_results)
-elseif (NOT EXISTS ${CMAKE_SOURCE_DIR}/lcov_results)
-  execute_process(COMMAND echo "-- Create lcov_coverage directory...")
-  execute_process(COMMAND mkdir ${CMAKE_SOURCE_DIR}/lcov_results)
+if(EXISTS ${CMAKE_SOURCE_DIR}/lcov_results)
+    execute_process(COMMAND echo "-- Delete existing lcov_coverage directory...")
+    execute_process(COMMAND cmake -E remove_directory ${CMAKE_SOURCE_DIR}/lcov_results)
+    execute_process(COMMAND mkdir ${CMAKE_SOURCE_DIR}/lcov_results)
+elseif(NOT EXISTS ${CMAKE_SOURCE_DIR}/lcov_results)
+    execute_process(COMMAND echo "-- Create lcov_coverage directory...")
+    execute_process(COMMAND mkdir ${CMAKE_SOURCE_DIR}/lcov_results)
 endif()
 
 # Custom target to run the regression tests and generate coverage report
@@ -214,7 +224,7 @@ ADD_CUSTOM_TARGET(regression
 )
 
 ADD_CUSTOM_TARGET(coverage
-  COMMAND lcov --gcov-tool gcov --capture --directory build/CMakeFiles/process.dir/source/fortran/ --output-file lcov_results/coverage.info
-  COMMAND genhtml --output-directory lcov_results/html lcov_results/coverage.info
-  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMAND lcov --gcov-tool gcov --capture --directory build/CMakeFiles/process.dir/source/fortran/ --output-file lcov_results/coverage.info
+    COMMAND genhtml --output-directory lcov_results/html lcov_results/coverage.info
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
