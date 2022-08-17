@@ -130,7 +130,8 @@ def test_differentail(t, y, expected_yp, monkeypatch):
     ]
 
     for p in mock_params:
-        monkeypatch.setattr(divertor_ode, p, getattr(differntial_context, p))
+        param = getattr(differntial_context, p)
+        monkeypatch.setattr(divertor_ode, p, param)
     monkeypatch.setattr(div_kal_vars, "netau_sol", differntial_context.netau_sol)
     monkeypatch.setattr(div_kal_vars, "abserr_sol", differntial_context.abserr_sol)
     monkeypatch.setattr(

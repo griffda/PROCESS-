@@ -18,54 +18,54 @@ module divertor_ode
   ! Module-level declarations !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  logical, public, save :: impurities_present(14)
+  logical, save :: impurities_present(14)
 
   ! impurity element name - temporary
 
   ! relative ion mass
   ! Issue #501: change from 2 to 2.5
-  real(dp), private :: aplas
+  real(dp) :: aplas
 
   ! ion mass [kg]
-  real(dp), private :: mi
+  real(dp) :: mi
 
   ! conversion from flux density [el/s] to Pascal [Molecules]
   ! see page 6 of paper.
-  real(dp), private :: fluxdens_to_pa
+  real(dp) :: fluxdens_to_pa
 
   ! Useful values (combinations of other constants/variables)
-  real(dp), private :: eightemi, eightemi48,  elEion
-  real(dp), private, parameter :: degree=pi/180.0D0
+  real(dp) :: eightemi, eightemi48,  elEion
+  real(dp), parameter :: degree=pi/180.0D0
   real(dp), parameter :: ln10=log(10.0D0)
 
   ! constant in thermal conductivity (equation 5) [J/(s m eV^7/2)]
-  real(dp), private :: kappa0
+  real(dp) :: kappa0
 
   ! neutral velocity along the flux bundle, groups 1 & 2 [m/s]
-  real(dp), private :: v01, v02
+  real(dp) :: v01, v02
 
   ! Allowable absolute/relative error (UNUSED)
-!   real(dp), private :: abserr, relerr
+!   real(dp) :: abserr, relerr
 
   ! Circumference of plasma at outboard midplane and at target [m]
-  real(dp), private :: circumference_omp, circumference_target
+  real(dp) :: circumference_omp, circumference_target
 
   ! Circumference of normal to helical field line [m]
-  real(dp), private :: circumf_bu
+  real(dp) :: circumf_bu
 
   ! Flux bundle area perp. to B at target and at omp [m2]
-  real(dp), private :: area_target, area_omp
+  real(dp) :: area_target, area_omp
 
   ! Zeff for divertor region
   real(dp) :: zeff_div
 
   ! SOL radial thickness extrapolated to OMP [m]
-  real(dp), private :: sol_broadening
+  real(dp) :: sol_broadening
 
   ! Ratio: psep_kallenbach / Powerup
-  real(dp), private, parameter :: seppowerratio=2.3D0
+  real(dp), parameter :: seppowerratio=2.3D0
 
-  real(dp), private :: lengthofwidesol
+  real(dp) :: lengthofwidesol
 
 contains
 

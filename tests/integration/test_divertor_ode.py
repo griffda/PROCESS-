@@ -19,7 +19,6 @@ def test_divertor_kallenbach():
 
     # Sets the PROCESS default values
     SingleRun.init_module_vars()
-    SingleRun.initialise()
 
     # Prepare data as per Kallenbach paper
     rmajor = 8.0e0
