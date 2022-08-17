@@ -7,8 +7,13 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.13)
 
 # Ensure python3 interpreter is used
+if(CMAKE_HOST_APPLE)
+    SET(CMAKE_FIND_FRAMEWORK NEVER)
+    set(CMAKE_MACOSX_RPATH ON)
+endif()
+
 SET(Python3_FIND_VIRTUALENV FIRST)
-find_package(PythonInterp 3 REQUIRED)
+find_package(PythonInterp 3.8 EXACT REQUIRED)
 
 # Set project name
 PROJECT(process LANGUAGES Fortran)
@@ -161,13 +166,19 @@ SET_TARGET_PROPERTIES(${PROJECT_NAME}
     LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/process/lib
 )
 
-SET_TARGET_PROPERTIES(${PROJECT_NAME}
-    PROPERTIES BUILD_RPATH $ORIGIN
-)
+IF(NOT CMAKE_HOST_APPLE)
+    SET_TARGET_PROPERTIES(${PROJECT_NAME}
+        PROPERTIES BUILD_RPATH $ORIGIN
+    )
+ENDIF()
 
 ADD_DEPENDENCIES(${PROJECT_NAME} ${PIP_NAME})
 
-SET(LIBRARY_OUTPUT_SUFFIX ".so")
+IF(CMAKE_HOST_APPLE)
+    SET(LIBRARY_OUTPUT_SUFFIX ".dylib")
+ELSEIF(CMAKE_HOST_UNIX)
+    SET(LIBRARY_OUTPUT_SUFFIX ".so")
+ENDIF()
 
 # Stage 3: Run f2py
 # Builds every time to make sure the libprocess.so file is up-to-date
@@ -195,7 +206,7 @@ ADD_CUSTOM_TARGET(install_process ALL
     COMMAND ${PYTHON_EXECUTABLE} -m pip install --no-cache-dir ${CMAKE_SOURCE_DIR}
 )
 
-ADD_DEPENDENCIES(install_process ${PIP_NAME} ${F2PY_NAME} ${FORD_NAME} ${GFORTLIB_NAME} ${DICTS_NAME} coverage_cleanup)
+ADD_DEPENDENCIES(install_process ${PIP_NAME} f2py ${FORD_NAME} ${GFORTLIB_NAME} ${DICTS_NAME} coverage_cleanup)
 
 if(EXISTS ${CMAKE_SOURCE_DIR}/lcov_results)
     execute_process(COMMAND echo "-- Delete existing lcov_coverage directory...")
