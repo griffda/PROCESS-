@@ -523,7 +523,7 @@ class Buildings:
                 - (
                     build_variables.tfcth
                     + build_variables.tftsgap
-                    + build_variables.thshield
+                    + build_variables.thshield_vb
                     + build_variables.vgap2
                 )
             )
@@ -567,7 +567,7 @@ class Buildings:
                 - (
                     build_variables.tfcth
                     + build_variables.tftsgap
-                    + build_variables.thshield
+                    + build_variables.thshield_vb
                     + build_variables.vgap2
                 )
             )
@@ -961,19 +961,19 @@ class Buildings:
             po.ovarre(
                 self.outfile,
                 "   Reactor hall length (m)",
-                "(buildings_variables.reactor_hall_l)",
+                "(reactor_hall_l)",
                 buildings_variables.reactor_hall_l,
             )
             po.ovarre(
                 self.outfile,
                 "   Reactor hall width (m)",
-                "(buildings_variables.reactor_hall_w)",
+                "(reactor_hall_w)",
                 buildings_variables.reactor_hall_w,
             )
             po.ovarre(
                 self.outfile,
                 "   Reactor hall height (m)",
-                "(buildings_variables.reactor_hall_h)",
+                "(reactor_hall_h)",
                 buildings_variables.reactor_hall_h,
             )
             if (current_drive_variables.iefrf == 5) or (
@@ -986,13 +986,13 @@ class Buildings:
                 po.ovarre(
                     self.outfile,
                     "      NBI system length (m)",
-                    "(buildings_variables.nbi_sys_l)",
+                    "(nbi_sys_l)",
                     buildings_variables.nbi_sys_l,
                 )
                 po.ovarre(
                     self.outfile,
                     "      NBI system width (m)",
-                    "(buildings_variables.nbi_sys_w)",
+                    "(nbi_sys_w)",
                     buildings_variables.nbi_sys_w,
                 )
 
@@ -1089,19 +1089,19 @@ class Buildings:
                     po.ovarre(
                         self.outfile,
                         "   HCD (EC/EBW) building length (m)",
-                        "(buildings_variables.hcd_building_l)",
+                        "(hcd_building_l)",
                         buildings_variables.hcd_building_l,
                     )
                     po.ovarre(
                         self.outfile,
                         "   HCD (EC/EBW) building width (m)",
-                        "(buildings_variables.hcd_building_w)",
+                        "(hcd_building_w)",
                         buildings_variables.hcd_building_w,
                     )
                     po.ovarre(
                         self.outfile,
                         "   HCD (EC/EBW) building height (m)",
-                        "(buildings_variables.hcd_building_h)",
+                        "(hcd_building_h)",
                         buildings_variables.hcd_building_h,
                     )
                 po.oblnkl(self.outfile)
@@ -1121,19 +1121,19 @@ class Buildings:
                 po.ovarre(
                     self.outfile,
                     "   Turbine hall length (m)",
-                    "(buildings_variables.turbine_hall_l)",
+                    "(turbine_hall_l)",
                     buildings_variables.turbine_hall_l,
                 )
                 po.ovarre(
                     self.outfile,
                     "   Turbine hall width (m)",
-                    "(buildings_variables.turbine_hall_w)",
+                    "(turbine_hall_w)",
                     buildings_variables.turbine_hall_w,
                 )
                 po.ovarre(
                     self.outfile,
                     "   Turbine hall height (m)",
-                    "(buildings_variables.turbine_hall_h)",
+                    "(turbine_hall_h)",
                     buildings_variables.turbine_hall_h,
                 )
 
@@ -1141,7 +1141,7 @@ class Buildings:
             po.ovarre(
                 self.outfile,
                 "Effective floor area (m2)",
-                "(buildings_variables.efloor)",
+                "(efloor)",
                 buildings_variables.efloor,
             )
             po.ovarre(
@@ -1462,7 +1462,7 @@ class Buildings:
                 po.ovarre(
                     self.outfile,
                     "Staff buildings footprint (m2)",
-                    "(buildings_variables.staff_buildings_area)",
+                    "(staff_buildings_area)",
                     buildings_variables.staff_buildings_area,
                 )
                 po.ovarre(

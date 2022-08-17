@@ -26,8 +26,16 @@
 # When set in conjunction with CI_TEST_BUILD=true, setting CI_TEST_EXTERNAL as "true" will cause the STEP trigger to run
 # The Docker image used by all the jobs can be set using DOCKER_CI_IMAGE where it defaults to "ci-image"; this corresponds to git.ccfe.ac.uk:4567/process/process/ci-image
 # The Docker image tag used by all the jobs can be set using DOCKER_CI_IMAGE_VERSION where it defaults to "latest".
-  # This means that when neither DOCKER_CI_IMAGE or DOCKER_CI_IMAGE_VERSION are set the default image used will be "ci-image:latest"
+# This means that when neither DOCKER_CI_IMAGE or DOCKER_CI_IMAGE_VERSION are set the default image used will be "ci-image:latest"
+# Setting CI_TEST_OVERWRITE_REG_REFS to "true" will cause the regression
+# references to be overwritten
 
+workflow:
+    rules:
+        # Prevent merge request event pipelines running alongside branch ones
+        - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+          when: never
+        - when: always
 
 stages:
     - containers
@@ -168,11 +176,18 @@ make-py38:
 unit-py38:
     extends: .test_template
     script:
-        - pytest tests/unit/ -vs | tee tests/unit/pytest.log
+        # Perform editable install to ensure pytest tests against the same
+        # installed process package location as where pytest-cov installs its
+        # coverage hooks by default
+        # TODO Remove editable install once editable becomes cmake default
+        - pip install -e .
+        - pytest --cov=process tests/unit -vs | tee tests/unit/pytest.log
     artifacts:
-        when: on_failure
+        when: always
         paths:
             - tests/unit/pytest.log
+            # .coverage required for coverage badge
+            - .coverage
         expire_in: 1 week
 
 integration-py38:
@@ -186,9 +201,12 @@ integration-py38:
         expire_in: 1 week
 
 regression-py38:
+    rules:
+        - if: $CI_COMMIT_BRANCH != "develop"
     extends: .test_template
+    allow_failure: true
     script:
-        - pytest tests/regression -vs | tee tests/regression/pytest.log
+        - pytest tests/regression -vs --reg-tolerance=0 | tee tests/regression/pytest.log
         - lcov --gcov-tool gcov --capture --directory build/CMakeFiles/process.dir/source/fortran/ --output-file lcov_results/coverage.info
         - genhtml --output-directory lcov_results/html lcov_results/coverage.info
     artifacts:
@@ -196,19 +214,48 @@ regression-py38:
         paths:
             - lcov_results
             - tests/regression/pytest.log
-        expire_in: 1 week
-
+        expire_in: 2 weeks
 
 regression-py38-5-percent:
+    rules:
+        - if: $CI_COMMIT_BRANCH != "develop"
     extends: .test_template
+    allow_failure: true
     script:
-        - pytest tests/regression -vs --reg-tolerance=5 | tee tests/regression/pytest.log
+        - pytest tests/regression -vs | tee tests/regression/pytest.log
     artifacts:
         when: on_failure
         paths:
             - tests/regression/pytest.log
-        expire_in: 1 week
+        expire_in: 2 weeks
 
+regression-py38-overwrite:
+    # Overwrite regression references with up-to-date versions on develop branch
+    # This only occurs when a branch is merged to develop
+    rules:
+        # Prevent overwrite commits from recursively triggering pipelines
+        - if: $CI_COMMIT_BRANCH == "develop" && $CI_COMMIT_TITLE !~ /^Overwrite regression references for/
+        # CI variable to test triggering overwrites
+        - if: $CI_TEST_OVERWRITE_REG_REFS
+    extends: .test_template
+    script:
+        # Set up ssh to allow overwrite commit to be pushed
+        - *setup-ssh
+        - pytest tests/regression -vs --reg-tolerance=0 --overwrite | tee tests/regression/pytest.log
+        # Remote URL is sandboxed inside job, so need to set original SSH push URL
+        - git remote set-url --push origin "git@$CI_SERVER_HOST:$CI_PROJECT_PATH.git"
+        # Commit the overwritten regression references to develop (or other branch if testing)
+        - git add .
+        # $CI_COMMIT_TITLE will normally be the merge commit on develop
+        - git commit -m "Overwrite regression references for \"$CI_COMMIT_TITLE\""
+        # Runner runs on a detached HEAD, so git push needs to specifically
+        # target the commit's branch
+        - git push origin HEAD:$CI_COMMIT_BRANCH
+    artifacts:
+        when: on_failure
+        paths:
+            - tests/regression/pytest.log
+        expire_in: 2 weeks
 
 baseline_2019-py38:
     extends: .test_template
@@ -336,11 +383,12 @@ pages:
     variables:
         PY_VERSION: py38
     script:
+
     # FORD documentation
         - ford documentation/ford/index.md
 
     # python docs documentation
-        - python3 -m pip install mkdocstrings
+        - python3 -m pip install mkdocstrings==0.18.0
         - python3 ${CI_PROJECT_DIR}/scripts/document_fortran_interface.py
         - python3 ${CI_PROJECT_DIR}/scripts/vardes.py
     # mkdocstrings imports process to write its documentation,
@@ -363,27 +411,44 @@ pages:
         - apt-get install bc -y
 
     # Setup badges
+        # TODO Use installed anybadge in all cases: coverage and quality scripts
+        # require modification first
         - git clone https://github.com/jmorris-uk/anybadge.git
+        - pip install anybadge
     # checks for the tag on the most up-to-date branch (master)
         - MASTER_VERSION=$(git describe $(git rev-list --tags --max-count=1))
         - DEVELOP_VERSION=$(git describe)
         - declare -i CONTRIBUTORS=$(git shortlog -s -n --all | wc -l)
         - echo $CONTRIBUTORS
+        # TODO Is Fortran coverage and quality working/meaningful?
         - bash scripts/coverage_badge.sh source/fortran/ anybadge/
         - cp coverage.svg public/
         - bash scripts/code_quality.sh source/fortran/ anybadge/
         - cp quality.svg public/
         - cp -r code_quality public/
-        - cd anybadge
-        - python3 anybadge.py -v $MASTER_VERSION -l master -c blue -f mversion.svg
-        - python3 anybadge.py -v $DEVELOP_VERSION -l develop -c blue -f dversion.svg
-        - python3 anybadge.py -v $CONTRIBUTORS -l contributors -c blue -f contributors.svg -m "%d"
-        - cp mversion.svg ../public
-        - cp dversion.svg ../public
-        - cp contributors.svg ../public
-        - ls ../public
-        - du -shc ../public/*
-        - du -shc ../public/ford_site/*
+        - anybadge --value $MASTER_VERSION --label master --color blue --file mversion.svg
+        - anybadge --value $DEVELOP_VERSION --label develop --color blue --file dversion.svg
+        - anybadge --value $CONTRIBUTORS --label contributors --color blue --file contributors.svg --value-format "%d"
+
+        # Test coverage: extract total percentage from report
+        # coverage uses .coverage report file from unit test job
+        - coverage_str=$(coverage report --precision=1)
+        - re="TOTAL.+\s([0-9]*\.[0-9]*)%"
+        - if [[ "$coverage_str" =~ $re ]]; then
+        - python_coverage=${BASH_REMATCH[1]}
+        - echo "Python test coverage = ${python_coverage}%"
+        - else
+        - echo "Couldn't extract coverage percentage."
+        - fi
+        - anybadge --value $python_coverage --file python_coverage.svg coverage
+
+        - cp mversion.svg public/
+        - cp dversion.svg public/
+        - cp contributors.svg public/
+        - cp python_coverage.svg public/
+        - ls public
+        - du -shc public/*
+        - du -shc public/ford_site/*
     artifacts:
         expire_in: 1 week
         paths:
@@ -396,6 +461,7 @@ pages:
     dependencies:
         - make-py38
         - tracking_rtv # needed to ensure tracking.html is present in this job
+        - unit-py38 # .coverage artefact required for coverage badge
 
 
 

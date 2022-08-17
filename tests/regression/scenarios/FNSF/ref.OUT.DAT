@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.1-1732-g6406e21f code contains untracked changes
-    Branch : 1663-pfcoil-variables-in-mfile-start-pfv
-   Git log : Merge\ branch\ |1651-convert-costs_2015-f90-to-pytho
- Date/time : 19 May 2022 14:48:13 +00:00(hh:mm) UTC
+   Tag No. : v2.4.0-477-gfe8b967b1
+    Branch : HEAD
+   Git log : Merge branch |1733-fix-to-monte-carlo-method-in-evaluate_uncertainties-py| into |develop|
+ Date/time : 12 Aug 2022 12:46:09 +00:00(hh:mm) UTC
       User : root
-  Computer : 3ad262c2e59e
- Directory : /root/process
-     Input : /tmp/pytest-of-root/pytest-0/popen-gw0/test_scenario_FNSF_0/IN.DAT
+  Computer : runner-7084ce6e-project-20-concurrent-0
+ Directory : /builds/process/process
+     Input : /tmp/pytest-of-root/pytest-0/test_scenario_FNSF_0/IN.DAT
  Run title : FNSF (Menard et al. 2016)
   Run type : Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
  
@@ -105,18 +105,18 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
     1  Beta consistency                      =  1.4470E-01             -3.2618E-07                 2.2541E-06
     2  Global power balance consistency      =  1.5068E+00 MW/m3        8.0468E-06 MW/m3          -5.3404E-06
-    3  Density upper limit                   <  2.4404E+20 /m3          1.2203E+08 /m3             5.0004E-13
+    3  Density upper limit                   <  2.4404E+20 /m3          1.2177E+08 /m3             4.9893E-13
     4  Beam ion density consistency          =  1.5292E+18 /m3         -3.4171E+13 /m3             2.2346E-05
     5  Neutron wall load upper limit         <  1.0180E+00 MW/m2       -4.0227E-06 MW/m2          -3.9515E-06
     6  Fusion power upper limit              <  1.6200E+02 MW           6.3981E-04 MW             -3.9494E-06
     7  Radial build consistency              =  1.7000E+00 m            0.0000E+00 m              -0.0000E+00
-    8  L-H power threshold limit             >  1.7084E+01 MW          -1.9097E-03 MW              1.1177E-04
+    8  L-H power threshold limit             <  1.7084E+01 MW          -1.9097E-03 MW              1.1177E-04
     9  Radiation fraction upper limit        <  1.5068E+00 MW/m3       -2.1957E-05 MW/m3           1.7227E-05
-   10  Beta upper limit                      <  1.9308E-01              2.4455E-13                 1.2668E-12
+   10  Beta upper limit                      <  1.9308E-01              2.4461E-13                 1.2670E-12
    11  Injection power upper limit           <  8.0000E+01 MW          -1.7881E-03 MW              2.2351E-05
    12  Average centrepost temperature        =  7.3443E+01 deg C        6.6437E-06 deg C          -9.0460E-08
    13  Peak centrepost temp. upper limit     <  2.0000E+02 deg C        1.1919E-05 deg C          -1.1919E-07
-   14  Ip/Irod upper limit                   <  7.6151E-01              8.1661E-17                -2.2204E-16
+   14  Ip/Irod upper limit                   <  7.6151E-01              1.6332E-16                -4.4409E-16
    15  Psep / R upper limit                  <  1.9998E+01 MW/m         1.1234E-03 MW/m           -1.1178E-04
  
  ******************************************** Final Feasible Point ********************************************
@@ -290,6 +290,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Peaking factor for radiation wall load                                   (peakfactrad)             3.330E+00  IP 
  Maximum permitted radiation wall load (MW/m^2)                           (maxradwallload)          1.000E+00  IP 
  Peak radiation wall load (MW/m^2)                                        (peakradwallload)         2.454E+00  OP 
+ Fast alpha particle power incident on the first wall (MW)                (palpfwmw)                1.619E+00  OP 
  Nominal mean neutron load on inside surface of reactor (MW/m2)           (wallmw)                  1.018E+00  OP 
  
  Radiation power from SoL (MW)                                            (pradsolmw)               1.367E+01  OP 
@@ -320,8 +321,8 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Ignited plasma switch (0=not ignited, 1=ignited)                         (ignite)                          0     
  
  Power into divertor zone via charged particles (MW)                      (pdivt)                   1.709E+01  OP 
- Psep / R ratio (MW/m)                                                    (pdivmax/rmajor)          1.005E+01  OP 
- Psep Bt / qAR ratio (MWT/m)                                              (pdivmaxbt/qar)           2.785E+00  OP 
+ Pdivt / R ratio (MW/m) (On peak divertor)                                (pdivmax/rmajor)          1.005E+01  OP 
+ Pdivt Bt / qAR ratio (MWT/m) (On peak divertor)                          (pdivmaxbt/qar)           2.785E+00  OP 
  
  H-mode Power Threshold Scalings :
  
@@ -510,13 +511,13 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
   its range of applicability.)
  
  Device centreline                            0.000           0.000                       
- Machine build_variables.bore                 0.000           0.000   (bore)              
+ Machine bore                                 0.000           0.000   (bore)              
  Central solenoid                             0.000           0.000   (ohcth)             
  CS precompression                            0.000           0.000   (precomp)           
  Gap                                          0.000           0.000   (gapoh)             
  TF coil inboard leg                          0.541           0.541   (tfcth)             
  Gap                                          0.050           0.591   (tftsgap)           
- Thermal shield                               0.000           0.591   (thshield)          
+ Thermal shield, inboard                      0.000           0.591   (thshield_ib)       
  Gap                                          0.000           0.591   (gapds)             
  Vacuum vessel (and shielding)                0.000           0.591   (d_vv_in + shldith) 
  Gap                                          0.000           0.591   (vvblgap)           
@@ -531,7 +532,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Gap                                          0.000           3.509   (vvblgap)           
  Vacuum vessel (and shielding)                0.550           4.059   (d_vv_out+shldoth)  
  Gap                                          0.000           4.059   (gapsto)            
- Thermal shield                               0.000           4.059   (thshield)          
+ Thermal shield, outboard                     0.000           4.059   (thshield_ob)       
  Gap                                          0.050           4.109   (tftsgap)           
  TF coil outboard leg                         0.541           4.650   (tfthko)            
  
@@ -540,7 +541,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Double null case
  TF coil                                      0.541           4.962   (tfcth)             
  Gap                                          0.050           4.421   (tftsgap)           
- Thermal shield                               0.000           4.371   (thshield)          
+ Thermal shield, vertical                     0.000           4.371   (thshield_vb)       
  Gap                                          0.000           4.371   (vgap2)             
  Vacuum vessel (and shielding)                1.000           4.371   (d_vv_top+shldtth)  
  Divertor structure                           0.200           3.371   (divfix)            
@@ -552,7 +553,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Divertor structure                           0.200          -3.371   (divfix)            
  Vacuum vessel (and shielding)                1.000          -4.371   (d_vv_bot+shldlth)  
  Gap                                          0.000          -4.371   (vgap2)             
- Thermal shield                               0.000          -4.371   (thshield)          
+ Thermal shield, vertical                     0.000          -4.371   (thshield_vb)       
  Gap                                          0.050          -4.421   (tftsgap)           
  TF coil                                      0.541          -4.962   (tfcth)             
  
@@ -784,7 +785,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  PF coil current scaling information :
  
- Sum of squares of residuals                                              (pf.ssq0)                 0.000E+00  OP 
+ Sum of squares of residuals                                              (ssq0)                    0.000E+00  OP 
  Smoothing parameter                                                      (alfapf)                  5.000E-10     
  
  ****************************************** Volt Second Consumption *******************************************
@@ -829,10 +830,10 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  3			-0.000e+00	0.000e+00	-0.000e+00	-0.000e+00	-0.000e+00	-0.000e+00
  
  And: equilibrium field:
- 0			0.000e+00	0.000e+00	4.200e+04	4.200e+04	4.200e+04	0.0e0
- 1			0.000e+00	0.000e+00	4.200e+04	4.200e+04	4.200e+04	0.0e0
- 2			0.000e+00	0.000e+00	-4.200e+04	-4.200e+04	-4.200e+04	0.0e0
- 3			0.000e+00	0.000e+00	-4.200e+04	-4.200e+04	-4.200e+04	0.0e0
+ 0			0.000e+00	0.000e+00	6.888e+06	6.888e+06	6.888e+06	0.0e0
+ 1			0.000e+00	0.000e+00	6.888e+06	6.888e+06	6.888e+06	0.0e0
+ 2			0.000e+00	0.000e+00	-3.751e+06	-3.751e+06	-3.751e+06	0.0e0
+ 3			0.000e+00	0.000e+00	-3.751e+06	-3.751e+06	-3.751e+06	0.0e0
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.000E-01     
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                 1.000E+00  OP 
@@ -1111,17 +1112,8 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Efficiency of transfer of PF stored energy into or out of storage        (etapsu)                  9.000E-01     
  (Energy is dissipated in PFC power supplies only when total PF energy increases or decreases.)
  Maximum stored energy in poloidal field (MJ)                             (ensxpfm)                 4.467E+02  OP 
- Peak absolute rate of change of stored energy in poloidal field (MW)     peakpoloidalpower         2.382E+01  OP 
+ Peak absolute rate of change of stored energy in poloidal field (MW)     (peakpoloidalpower)       2.382E+01  OP 
  Energy stored in poloidal magnetic field :
- 
-                                            time (sec)
-
-                     0.00      18.76      37.51      47.51    1047.51    1066.27
- Time point         Start      BOP        EOR        BOF        EOF        EOP        
- Energy (MJ)      0.000E+00  0.000E+00  4.467E+02  4.467E+02  4.467E+02  0.000E+00
- 
- Interval                tramp      tohs       theat      tburn      tqnch      
- dE/dt (MW)            0.000E+00  2.382E+01  0.000E+00  0.000E+00 -2.382E+01
  
  
  *********************************************** Vacuum System ************************************************
@@ -1205,12 +1197,12 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  ************************************************* Cryogenics *************************************************
  
- Conduction and radiation heat loads on cryogenic components (MW)         (qss/1.0D6)               0.000E+00  OP 
- Nuclear heating of cryogenic components (MW)                             (qnuc/1.0D6)              0.000E+00  OP 
- AC losses in cryogenic components (MW)                                   (qac/1.0D6)               0.000E+00  OP 
- Resistive losses in current leads (MW)                                   (qcl/1.0D6)               0.000E+00  OP 
- 45% allowance for heat loads in transfer lines, storage tanks etc (MW)   (qmisc/1.0D6)             0.000E+00  OP 
- Sum = Total heat removal at cryogenic temperatures (tmpcry & tcoolin) (M (helpow + helpow_cryal/1. 0.000E+00  OP 
+ Conduction and radiation heat loads on cryogenic components (MW)         (qss/1.0d6)               0.000E+00  OP 
+ Nuclear heating of cryogenic components (MW)                             (qnuc/1.0d6)              0.000E+00  OP 
+ AC losses in cryogenic components (MW)                                   (qac/1.0d6)               0.000E+00  OP 
+ Resistive losses in current leads (MW)                                   (qcl/1.0d6)               0.000E+00  OP 
+ 45% allowance for heat loads in transfer lines, storage tanks etc (MW)   (qmisc/1.0d6)             0.000E+00  OP 
+ Sum = Total heat removal at cryogenic temperatures (tfcoil_variables.tmp (helpow + helpow_cryal/1. 0.000E+00  OP 
  Temperature of cryogenic superconducting components (K)                  (tmpcry)                  4.500E+00     
  Temperature of cryogenic aluminium components (K)                        (tcoolin)                 3.131E+02     
  Efficiency (figure of merit) of cryogenic plant is 13% of ideal Carnot v                          -1.560E-02  OP 
@@ -1227,7 +1219,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Neutron power multiplication in blanket                                  (emult)                   1.269E+00     
  Double Null Divertor area fraction of whole toroid surface               (2*fdiv)                  2.300E-01     
  H/CD apparatus + diagnostics area fraction                               (fhcd)                    0.000E+00     
- First wall area fraction                                                 (1-2*fdiv-fhcd)           7.700E-01     
+ First wall area fraction                                                 (1-2fdiv-fhcd)            7.700E-01     
  Switch for pumping of primary coolant                                    (primary_pumping)                 2     
  Mechanical pumping power is calculated for FW and blanket
  Mechanical pumping power for FW cooling loop including heat exchanger (M (htpmw_fw)                2.470E-01  OP 
@@ -1255,52 +1247,51 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Power Balance for Reactor (across vacuum vessel boundary) - Detail
  ------------------------------------------------------------------
  
-                                            High-grade             Low-grade              Total
-                                             thermal power (MW)     thermal power (MW)      (MW)
-         First wall:
-                               neutrons              2.60                0.00                2.60
-             charged particle transport              1.62                0.00                1.62
-                              radiation             72.20                0.00               72.20
-                        coolant pumping              0.25                0.00                0.25
+ High-grade             Low-grade              Total
+ thermal power (MW)     thermal power (MW)      (MW)
+ First wall:
+ pnucfw                                                                         0.00                     2.60
+ palpfwmw                                                                       0.00                     1.62
+ pradfw                                                                         0.00                    72.20
+ htpmw_fw                                                                       0.00                     0.25
  
-         Blanket:
-                               neutrons            103.85                0.00              103.85
-             charged particle transport              0.00                0.00                0.00
-                              radiation              0.00                0.00                0.00
-                        coolant pumping              0.00                0.00                0.00
+ Blanket:
+ pnucblkt                                                                       0.00                   103.85
+ 0.0e0 0.0e0 0.0e0
+ 0.0e0 0.0e0 0.0e0
+ htpmw_blkt                                                                     0.00                     0.00
  
-         Shield:
-                               neutrons              0.12                0.00                0.12
-             charged particle transport              0.00                0.00                0.00
-                              radiation              0.00                0.00                0.00
-                        coolant pumping              0.05                0.00                0.05
+ Shield:
+ 0.11899955875500363 0.0 0.11899955875500363
+ 0.0e0 0.0e0 0.0e0
+ 0.0e0 0.0e0 0.0e0
+ 0.047526753536125205 0.0 0.047526753536125205
  
-         Divertor:
-                               neutrons              0.00               29.81               29.81
-             charged particle transport              0.00               17.09               17.09
-                              radiation              0.00               21.57               21.57
-                        coolant pumping              0.00                0.34                0.34
+ Divertor:
+ 0.0 29.808117724670158 29.808117724670158
+ 0.0 17.085876730991572 17.085876730991572
+ 0.0 21.566111486145463 21.566111486145463
+ 0.0 0.34230052970903596 0.34230052970903596
  
-         TART centrepost:
-                               neutrons              0.00                6.37                6.37
-             charged particle transport              0.00                0.00                0.00
-                              radiation              0.00                0.00                0.00
-                        coolant pumping              0.00                0.53                0.53
+ TART centrepost:
+ pnuc_cp                                                                        0.00                     6.37
+ 0.0e0 0.0e0 0.0e0
+ 0.0e0 0.0e0 0.0e0
+ ppumpmw                                                                        0.00                     0.53
  
-         TF coil:
-                               neutrons              0.00                6.37                6.37
-             charged particle transport              0.00                0.00                0.00
-                              radiation              0.00                0.00                0.00
-                        coolant pumping              0.00                0.00                0.00
+ TF coil:
+ ptfnuc                                                                         0.00                     6.37
+ 0.0e0 0.0e0 0.0e0
+ 0.0e0 0.0e0 0.0e0
+ 0.0e0 0.0e0 0.0e0
  
-         Losses to H/CD apparatus + diagnostics:
-                               neutrons              0.00                0.00                0.00
-             charged particle transport              0.00                0.00                0.00
-                              radiation              0.00                0.00                0.00
-                        coolant pumping              0.00                0.00                0.00
+ Losses to H/CD apparatus + diagnostics:
+ pnuchcd                                                                        0.00                     0.00
+ 0.0e0 0.0e0 0.0e0
+ pradhcd                                                                        0.00                     0.00
+ 0.0e0 0.0e0 0.0e0
  
-         ----------------------------------------------------------------------------------------
-                                 Totals            180.69               82.07              262.76
+ 180.69135777989646 82.07186548575353 262.76322326565
  
  Total power leaving reactor (across vacuum vessel boundary) (MW)                                     269.132  OP 
  
@@ -1323,9 +1314,9 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Power Balance across separatrix :
  -------------------------------
  Only energy deposited in the plasma is included here.
- Total power loss is scaling power plus core radiation only (iradloss = 1)
+ Total power loss is scaling power plus core radiation only (physics_variables.iradloss = 1)
  Transport power from scaling law (MW)                                    (pscalingmw)                 74.496  OP 
- Radiation power from inside "coreradius" (MW)                            (pinnerzoneradmw.)           36.355  OP 
+ Radiation power from inside "coreradius" (MW)                            (pcoreradmw.)                36.355  OP 
  Total (MW)                                                                                           110.851  OP 
  
  Alpha power deposited in plasma (MW)                                     (falpha*palpmw)              30.752  OP 
@@ -1390,44 +1381,44 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  Time-dependent power usage
  
-         Pulse timings [s]:
+ Pulse timings [s]:
  
-                                          tramp      tohs     theat     tburn     tqnch    tdwell
-                                          -----      ----     -----     -----     -----    ------
-                               Duration   18.76     18.76     10.00   1000.00     18.76    100.00
-                                 ------   -----      ----     -----     -----     -----    ------
+ tramp tohs theat tburn tqnch tdwell
+ ----- ---- ----- ----- ----- ------
+ Duration 18.756208934876145 18.756208934876145 10.0 1000.0 18.756208934876145 100.0
+ ------ ----- ---- ----- ----- ----- ------
  
-         Continous power usage [MWe]:
+ Continous power usage [MWe]:
  
-                                 System   tramp      tohs     theat     tburn     tqnch    tdwell
-                                 ------   -----      ----     -----     -----     -----    ------
-                        Primary cooling    0.67      0.67      0.67      0.67      0.67      0.67
-                              Cyroplant    0.00      0.00      0.00      0.00      0.00      0.00
-                                 Vacuum    0.50      0.50      0.50      0.50      0.50      0.50
-                                Tritium   15.00     15.00     15.00     15.00     15.00     15.00
-                                     TF  278.07    278.07    278.07    278.07    278.07    278.07
-                             Facilities   23.47     23.47     23.47     23.47     23.47     23.47
-                                 ------   -----      ----     -----     -----     -----    ------
-                                  Total  317.72    317.72    317.72    317.72    317.72    317.72
-                                 ------   -----      ----     -----     -----     -----    ------
+ System tramp tohs theat tburn tqnch tdwell
+ ------ ----- ---- ----- ----- ----- ------
+ Primary cooling 0.6718961093707925 0.6718961093707925 0.6718961093707925 0.6718961093707925 0.6718961093707925 0.6718961093707925
+ Cryoplant 0.0 0.0 0.0 0.0 0.0 0.0
+ Vacuum 0.5 0.5 0.5 0.5 0.5 0.5
+ Tritium 15.0 15.0 15.0 15.0 15.0 15.0
+ TF 278.0746502893704 278.0746502893704 278.0746502893704 278.0746502893704 278.0746502893704 278.0746502893704
+ Facilities 23.4723004565555 23.4723004565555 23.4723004565555 23.4723004565555 23.4723004565555 23.4723004565555
+ ------ ----- ---- ----- ----- ----- ------
+ Total 317.7188468552967 317.7188468552967 317.7188468552967 317.7188468552967 317.7188468552967 317.7188468552967
+ ------ ----- ---- ----- ----- ----- ------
  
-         Intermittent power usage [MWe]:
+ Intermittent power usage [MWe]:
  
-                                 System   tramp      tohs     theat     tburn     tqnch    tdwell
-                                 ------   -----      ----     -----     -----     -----    ------
-                                 H & CD    0.00    400.00    400.00    266.67    400.00      0.00
-                                     PF    0.00     23.82      0.00      0.00    -23.82      0.00
-                                 ------   -----      ----     -----     -----     -----    ------
-                                  Total    0.00    423.82    400.00    266.67    376.18      0.00
-                                 ------   -----      ----     -----     -----     -----    ------
+ System tramp tohs theat tburn tqnch tdwell
+ ------ ----- ---- ----- ----- ----- ------
+ H & CD 0.0 399.99999999999994 399.99999999999994 266.6728326169898 399.99999999999994 0.0
+ PF 0.0 23.81660577911825 0.0 0.0 -23.816605779118166 0.0
+ ------ ----- ---- ----- ----- ----- ------
+ Total 0.0 423.8166057791182 399.99999999999994 266.6728326169898 376.1833942208818 0.0
+ ------ ----- ---- ----- ----- ----- ------
  
-         Power production [MWe]:
+ Power production [MWe]:
  
-                                          tramp      tohs     theat     tburn     tqnch    tdwell       avg
-                                          -----      ----     -----     -----     -----    ------       ---
-                            Gross power    0.00      0.00      0.00     78.12      0.00      0.00
-                              Net power -317.72   -741.54   -717.72   -506.27   -693.90   -317.72   -495.68
-                                 ------   -----      ----     -----     -----     -----    ------
+  tramp tohs theat tburn tqnch tdwell avg
+  ----- ---- ----- ----- ----- ------ ---
+ Gross power 0.0 0.0 0.0 78.12196372940637 0.0 0.0
+ Net power -317.7188468552967 -741.5354526344149 -717.7188468552966 -506.2697157428802 -693.9022410761785 -317.7188468552967
+ ------ ----- ---- ----- ----- ----- ------
  
  
  *************************** Water usage during plant operation (secondary cooling) ***************************
@@ -1436,8 +1427,8 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  1. Cooling towers
  2. Water bodies (pond, lake, river): recirculating or once-through
  Volume used in cooling tower (m3/day)                                    (waterusetower)           4.760E+03  OP 
- Volume used in recirculating water system (m3/day)                       (wateruserecirc)          1.593E+03  OP 
- Volume used in once-through water system (m3/day)                        (wateruseonethru)         1.561E+05  OP 
+ Volume used in recirculating water system (m3/day)                       (wateruserecirc)          1.597E+03  OP 
+ Volume used in once-through water system (m3/day)                        (wateruseonethru)         1.565E+05  OP 
  
  ******************************************** Errors and Warnings *********************************************
  
@@ -1447,9 +1438,11 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
 150     2   CHECK: Lower limit of volume averaged electron temperature (te) has been raised 
 155     2   CHECK: dene used as iteration variable without constraint 81 (neped<ne0)        
 272     2   Double-null: Upper vertical build forced to match lower                         
+ 39     1   CHECK: Operating with a single null in a double null machine                    
  62     1   RADIALB: Ripple result may be inaccurate, as the fit has been extrapolated      
 143     1   RADIALB: (TF coil ripple calculation) (R+a)/rtot out of fitted range            
- Final error identifier                                                   (error_id)                      143     
+277     2   CHECK: One or more collision between TF and PF coils. Check PF placement.       
+ Final error identifier                                                   (error_id)                      277     
  
  ******************************************* End of PROCESS Output ********************************************
  
@@ -1639,7 +1632,9 @@ shldith  = 0.00     *Inboard shield thickness (m)
 shldoth  = 0.25     *Outboard shield thickness (m)
 shldtth  = 0.2      *Upper/lower shield thickness (m)
 tfootfi  = 1.0      *TF coil outboard leg / inboard leg radial thickness ratio tfootfi 
-thshield = 0.0      *TF-VV thermal shield thickness (m)
+thshield_ib = 0.0   *TF-VV thermal shield thickness, inboard (m)
+thshield_ob = 0.0   *TF-VV thermal shield thickness, outboard (m)
+thshield_vb = 0.0   *TF-VV thermal shield thickness, vertical (m)
 vgap     = 0.5      *Vertical gap between x-point and divertor (m)
 vgap2    = 0.0      *Vertical gap between vacuum vessel and TF coil (m)
 vvblgap  = 0.0      *Gap between vacuum vessel and blanket (m)

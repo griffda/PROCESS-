@@ -62,6 +62,10 @@ module constraint_variables
   !! f-value for first wall coolant temperature rise
   !! (`constraint equation 38`, `iteration variable 62`)
 
+  real(dp) :: fecrh_ignition
+  !! f-value for ecrh ignition constraint
+  !! (`constraint equation 91`, `iteration variable 168`)
+
   real(dp) :: fflutf
   !! f-value for neutron fluence on TF coil (`constraint equation 53`, `iteration variable 92`)
 
@@ -104,6 +108,10 @@ module constraint_variables
   real(dp) :: fnbshinef
   !! f-value for maximum neutral beam shine-through fraction
   !! (`constraint equation 59`, `iteration variable 105`)
+
+  real(dp) :: fncycle
+  !! f-value for minimum CS coil stress load cycles
+  !! (`constraint equation 90`, `iteration variable 167`)
 
   real(dp) :: fnesep
   !! f-value for Eich critical separatrix density
@@ -331,6 +339,7 @@ module constraint_variables
     flhthresh = 1.0D0
     fmva = 1.0D0
     fnbshinef = 1.0D0
+    fncycle = 1.0D0
     fnesep = 1.0D0
     foh_stress = 1.0D0
     fpeakb = 1.0D0
@@ -389,5 +398,6 @@ module constraint_variables
     fpoloidalpower = 1.0D0
     fpsep = 1.0D0
     fcqt = 1.0D0
+    fecrh_ignition = 1.0D0
   end subroutine init_constraint_variables
 end module constraint_variables

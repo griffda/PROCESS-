@@ -156,19 +156,13 @@ def write(models, outfile):
         # KIT HCLL model
         ft.kit_hcll_module.kit_hcll(ft.constants.nout, 1)
 
-    # FISPACT and LOCA model (not used)
-    # if (ifispact == 1) then
-    #   call fispac(0)
-    #   call fispac(1)
-    #   call loca(outfile,0)
-    #   call loca(outfile,1)
-    # end if
+    # FISPACT and LOCA model (not used)- removed
 
     # Toroidal field coil power model
-    ft.power_module.tfpwr(outfile, 1)
+    models.power.tfpwr(output=True)
 
     # Poloidal field coil power model !
-    ft.power_module.pfpwr(outfile, 1)
+    models.power.pfpwr(output=True)
 
     # Vacuum model
     models.vacuum.run(output=True)
@@ -177,11 +171,11 @@ def write(models, outfile):
     models.buildings.run(output=True)
 
     # Plant AC power requirements
-    ft.power_module.acpow(outfile, 1)
+    models.power.acpow(output=True)
 
     # Plant heat transport pt 2 & 3
-    ft.power_module.power2(outfile, 1)
-    ft.power_module.power3(ft.constants.nout, 1)
+    models.power.power2(output=True)
+    models.power.power3(output=True)
 
     # Water usage in secondary cooling system
     models.water_use.run(output=True)

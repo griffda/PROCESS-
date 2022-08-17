@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.4.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "19/05/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "14:48"
+ Date_of_run_____________________________________________________________ (date)________________________     "12/08/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "12:46"
  User____________________________________________________________________ (username)____________________     "root"    
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "FNSF (Menard et al. 2016)                                                                          
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.1-1732-g6406e21f"                                                                               
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1663-pfcoil-variables-in-mfile-start-pfv"                                                          
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge\ branch\ |1651-convert-costs_2015-f90-to-pytho"                                              
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-root/pytest-0/popen-gw0/test_scenario_FNSF_0/IN.DAT                                                                                                                                      "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.4.0-477-gfe8b967b1"                                                                             
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "HEAD"                                                                                              
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch |1733-fix-to-monte-carlo-method-in-evaluate_uncertainties-py| into |develop|"         
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-root/pytest-0/test_scenario_FNSF_0/IN.DAT                                                                                                                                                "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -74,24 +74,24 @@
  fpsepr_(range_normalised)_______________________________________________ (nitvar017)___________________      5.0197E-01    
  flhthresh_______________________________________________________________ (itvar018)____________________      1.0000E+00    
  flhthresh_(final_value/initial_value)___________________________________ (xcm018)______________________      1.0000E+00    
- flhthresh_(range_normalised)____________________________________________ (nitvar018)___________________      2.2204E-22    
+ flhthresh_(range_normalised)____________________________________________ (nitvar018)___________________      0.0000E+00    
  fimp(13)________________________________________________________________ (itvar019)____________________      3.8910E-04    
  fimp(13)_(final_value/initial_value)____________________________________ (xcm019)______________________      8.8432E-01    
  fimp(13)_(range_normalised)_____________________________________________ (nitvar019)___________________      0.0000E+00    
  Beta_consistency__________________normalised_residue____________________ (normres001)__________________      2.2541E-06    
  Global_power_balance_consistency__normalised_residue____________________ (normres002)__________________     -5.3404E-06    
- Density_upper_limit_______________normalised_residue____________________ (normres003)__________________      5.0004E-13    
+ Density_upper_limit_______________normalised_residue____________________ (normres003)__________________      4.9893E-13    
  Beam_ion_density_consistency______normalised_residue____________________ (normres004)__________________      2.2346E-05    
  Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres005)__________________     -3.9515E-06    
  Fusion_power_upper_limit__________normalised_residue____________________ (normres006)__________________     -3.9494E-06    
  Radial_build_consistency__________normalised_residue____________________ (normres007)__________________     -0.0000E+00    
  L-H_power_threshold_limit_________normalised_residue____________________ (normres008)__________________      1.1177E-04    
  Radiation_fraction_upper_limit____normalised_residue____________________ (normres009)__________________      1.7227E-05    
- Beta_upper_limit__________________normalised_residue____________________ (normres010)__________________      1.2668E-12    
+ Beta_upper_limit__________________normalised_residue____________________ (normres010)__________________      1.2670E-12    
  Injection_power_upper_limit_______normalised_residue____________________ (normres011)__________________      2.2351E-05    
  Average_centrepost_temperature____normalised_residue____________________ (normres012)__________________     -9.0460E-08    
  Peak_centrepost_temp._upper_limit_normalised_residue____________________ (normres013)__________________     -1.1919E-07    
- Ip/Irod_upper_limit_______________normalised_residue____________________ (normres014)__________________     -2.2204E-16    
+ Ip/Irod_upper_limit_______________normalised_residue____________________ (normres014)__________________     -4.4409E-16    
  Psep_/_R_upper_limit______________normalised_residue____________________ (normres015)__________________     -1.1178E-04    
  # Final Feasible Point #
  # Plant Availability #
@@ -226,6 +226,7 @@
  Peaking_factor_for_radiation_wall_load__________________________________ (peakfactrad)_________________      3.3300E+00 IP 
  Maximum_permitted_radiation_wall_load_(MW/m^2)__________________________ (maxradwallload)______________      1.0000E+00 IP 
  Peak_radiation_wall_load_(MW/m^2)_______________________________________ (peakradwallload)_____________      2.4539E+00 OP 
+ Fast_alpha_particle_power_incident_on_the_first_wall_(MW)_______________ (palpfwmw)____________________      1.6185E+00 OP 
  Nominal_mean_neutron_load_on_inside_surface_of_reactor_(MW/m2)__________ (wallmw)______________________      1.0180E+00 OP 
  Radiation_power_from_SoL_(MW)___________________________________________ (pradsolmw)___________________      1.3669E+01 OP 
  SoL_radiation_fraction_=_total_radiation_in_SoL_/_total_power_accross_se (rad_fraction_sol)____________      8.0000E-01 IP 
@@ -253,8 +254,8 @@
  Injection_power_to_electrons_(MW)_______________________________________ (pinjemw)_____________________      5.1059E+01 OP 
  Ignited_plasma_switch_(0=not_ignited,_1=ignited)________________________ (ignite)______________________              0    
  Power_into_divertor_zone_via_charged_particles_(MW)_____________________ (pdivt)_______________________      1.7086E+01 OP 
- Psep_/_R_ratio_(MW/m)___________________________________________________ (pdivmax/rmajor)______________      1.0051E+01 OP 
- Psep_Bt_/_qAR_ratio_(MWT/m)_____________________________________________ (pdivmaxbt/qar)_______________      2.7850E+00 OP 
+ Pdivt_/_R_ratio_(MW/m)_(On_peak_divertor)_______________________________ (pdivmax/rmajor)______________      1.0051E+01 OP 
+ Pdivt_Bt_/_qAR_ratio_(MWT/m)_(On_peak_divertor)_________________________ (pdivmaxbt/qar)_______________      2.7850E+00 OP 
  ITER_1996_scaling:_nominal_(MW)_________________________________________ (pthrmw(1))___________________      7.3164E+00 OP 
  ITER_1996_scaling:_upper_bound_(MW)_____________________________________ (pthrmw(2))___________________      9.6723E+00 OP 
  ITER_1996_scaling:_lower_bound_(MW)_____________________________________ (pthrmw(3))___________________      5.4605E+00 OP 
@@ -371,13 +372,13 @@
  Divertor_surface_area_(m2)______________________________________________ (areadv)______________________      8.8925E+01    
  Divertor_heat_load_(MW/m2)______________________________________________ (hldiv)_______________________      1.9214E-01    
  # Radial Build #
- Machine_build_variables.bore_(m)________________________________________ (bore)________________________      0.0000E+00    
+ Machine_bore_(m)________________________________________________________ (bore)________________________      0.0000E+00    
  CS_radial_thickness_(m)_________________________________________________ (ohcth)_______________________      0.0000E+00    
  CS_precompression_(m)___________________________________________________ (precomp)_____________________      0.0000E+00    
  CS_precompresion_to_TF_coil_radial_gap_(m)______________________________ (gapoh)_______________________      0.0000E+00    
  TF_coil_inboard_leg_(m)_________________________________________________ (tfcth)_______________________      5.4057E-01 ITV
  TF_coil_inboard_leg_insulation_gap_(m)__________________________________ (tftsgap)_____________________      5.0000E-02    
- Thermal_shield_(m)______________________________________________________ (thshield)____________________      0.0000E+00    
+ Thermal_shield,_inboard_(m)_____________________________________________ (thshield_ib)_________________      0.0000E+00    
  thermal_shield_to_vessel_radial_gap_(m)_________________________________ (gapds)_______________________      0.0000E+00    
  Inboard_vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_in)_____________________      0.0000E+00    
  Inner_radiation_shield_radial_thickness_(m)_____________________________ (shldith)_____________________      0.0000E+00    
@@ -391,10 +392,12 @@
  Outer_radiation_shield_radial_thickness_(m)_____________________________ (shldoth)_____________________      2.5000E-01    
  Outboard_vacuum_vessel_radial_thickness_(m)_____________________________ (d_vv_out)____________________      3.0000E-01    
  Vessel_to_TF_radial_gap_(m)_____________________________________________ (gapsto)______________________      0.0000E+00    
+ Thermal_shield,_outboard_(m)____________________________________________ (thshield_ob)_________________      0.0000E+00    
  Gap_(m)_________________________________________________________________ (tftsgap)_____________________      5.0000E-02    
  TF_coil_outboard_leg_radial_thickness_(m)_______________________________ (tfthko)______________________      5.4057E-01    
  # Vertical Build #
  Divertor_null_switch____________________________________________________ (i_single_null)_______________              0    
+ Thermal_shield,_vertical_(m)____________________________________________ (thshield_vb)_________________      0.0000E+00    
  Vessel_-_TF_coil_vertical_gap_(m)_______________________________________ (vgap2)_______________________      0.0000E+00    
  Topside_vacuum_vessel_radial_thickness_(m)______________________________ (d_vv_top)____________________      3.0000E-01    
  Top_radiation_shield_thickness_(m)______________________________________ (shldtth)_____________________      7.0000E-01    
@@ -550,7 +553,7 @@
  PF_coil_3_turns_________________________________________________________ (turns[3])____________________      8.9315E+01    
  PF_coil_3_current_(MA)__________________________________________________ (ric[3])______________________     -3.7512E+00    
  PF_coil_3_field_(T)_____________________________________________________ (bpf[3])______________________      3.9604E+00    
- Sum_of_squares_of_residuals_____________________________________________ (pf.ssq0)_____________________      0.0000E+00 OP 
+ Sum_of_squares_of_residuals_____________________________________________ (ssq0)________________________      0.0000E+00 OP 
  Smoothing_parameter_____________________________________________________ (alfapf)______________________      5.0000E-10    
  # Volt Second Consumption #
  Total_volt-second_consumption_by_coils_(Wb)_____________________________ (vstot)_______________________     -7.0000E+00 OP 
@@ -772,7 +775,7 @@
  Maximum_PF_coil_voltage_(kV)____________________________________________ (vpfskv)______________________      2.0000E+01    
  Efficiency_of_transfer_of_PF_stored_energy_into_or_out_of_storage_______ (etapsu)______________________      9.0000E-01    
  Maximum_stored_energy_in_poloidal_field_(MJ)____________________________ (ensxpfm)_____________________      4.4671E+02 OP 
- Peak_absolute_rate_of_change_of_stored_energy_in_poloidal_field_(MW)____ peakpoloidalpower_____________      2.3817E+01 OP 
+ Peak_absolute_rate_of_change_of_stored_energy_in_poloidal_field_(MW)____ (peakpoloidalpower)___________      2.3817E+01 OP 
  # Vacuum System #
  First_wall_outgassing_rate_(Pa_m/s)_____________________________________ (rat)_________________________      1.3000E-08    
  Total_outgassing_load_(Pa_m3/s)_________________________________________ (ogas)________________________      1.7098E-05 OP 
@@ -829,12 +832,12 @@
  Total_pulsed_power_(MW)_________________________________________________ (pacpmw)______________________      9.7643E+02 OP 
  Total_base_power_required_at_all_times_(MW)_____________________________ (fcsht)_______________________      2.3472E+01 OP 
  # Cryogenics #
- Conduction_and_radiation_heat_loads_on_cryogenic_components_(MW)________ (qss/1.0D6)___________________      0.0000E+00 OP 
- Nuclear_heating_of_cryogenic_components_(MW)____________________________ (qnuc/1.0D6)__________________      0.0000E+00 OP 
- AC_losses_in_cryogenic_components_(MW)__________________________________ (qac/1.0D6)___________________      0.0000E+00 OP 
- Resistive_losses_in_current_leads_(MW)__________________________________ (qcl/1.0D6)___________________      0.0000E+00 OP 
- 45%_allowance_for_heat_loads_in_transfer_lines,_storage_tanks_etc_(MW)__ (qmisc/1.0D6)_________________      0.0000E+00 OP 
- Sum_=_Total_heat_removal_at_cryogenic_temperatures_(tmpcry_&_tcoolin)_(M (helpow_+_helpow_cryal/1.0D6)_      0.0000E+00 OP 
+ Conduction_and_radiation_heat_loads_on_cryogenic_components_(MW)________ (qss/1.0d6)___________________      0.0000E+00 OP 
+ Nuclear_heating_of_cryogenic_components_(MW)____________________________ (qnuc/1.0d6)__________________      0.0000E+00 OP 
+ AC_losses_in_cryogenic_components_(MW)__________________________________ (qac/1.0d6)___________________      0.0000E+00 OP 
+ Resistive_losses_in_current_leads_(MW)__________________________________ (qcl/1.0d6)___________________      0.0000E+00 OP 
+ 45%_allowance_for_heat_loads_in_transfer_lines,_storage_tanks_etc_(MW)__ (qmisc/1.0d6)_________________      0.0000E+00 OP 
+ Sum_=_Total_heat_removal_at_cryogenic_temperatures_(tfcoil_variables.tmp (helpow_+_helpow_cryal/1.0d6)_      0.0000E+00 OP 
  Temperature_of_cryogenic_superconducting_components_(K)_________________ (tmpcry)______________________      4.5000E+00    
  Temperature_of_cryogenic_aluminium_components_(K)_______________________ (tcoolin)_____________________      3.1315E+02    
  Efficiency_(figure_of_merit)_of_cryogenic_plant_is_13%_of_ideal_Carnot_v ______________________________     -1.5598E-02 OP 
@@ -844,7 +847,7 @@
  Neutron_power_multiplication_in_blanket_________________________________ (emult)_______________________      1.2690E+00    
  Double_Null_Divertor_area_fraction_of_whole_toroid_surface______________ (2*fdiv)______________________      2.3000E-01    
  H/CD_apparatus_+_diagnostics_area_fraction______________________________ (fhcd)________________________      0.0000E+00    
- First_wall_area_fraction________________________________________________ (1-2*fdiv-fhcd)_______________      7.7000E-01    
+ First_wall_area_fraction________________________________________________ (1-2fdiv-fhcd)________________      7.7000E-01    
  Switch_for_pumping_of_primary_coolant___________________________________ (primary_pumping)_____________              2    
  Mechanical_pumping_power_for_FW_cooling_loop_including_heat_exchanger_(M (htpmw_fw)____________________      2.4695E-01 OP 
  Mechanical_pumping_power_for_blanket_cooling_loop_including_heat_exchang (htpmw_blkt)__________________      1.5236E-03 OP 
@@ -873,7 +876,7 @@
  Total_High-grade_thermal_power_(MW)_____________________________________ (pthermmw)____________________      1.9008E+02    
  Number_of_primary_heat_exchangers_______________________________________ (nphx)________________________              1 OP 
  Transport_power_from_scaling_law_(MW)___________________________________ (pscalingmw)__________________      7.4496E+01    
- Radiation_power_from_inside_"coreradius"_(MW)___________________________ (pinnerzoneradmw.)____________      3.6355E+01    
+ Radiation_power_from_inside_"coreradius"_(MW)___________________________ (pcoreradmw.)_________________      3.6355E+01    
  Total_(MW)______________________________________________________________ ______________________________      1.1085E+02    
  Alpha_power_deposited_in_plasma_(MW)____________________________________ (falpha*palpmw)_______________      3.0752E+01    
  Power_from_charged_products_of_DD_and/or_D-He3_fusion_(MW)______________ (pchargemw.)__________________      9.7953E-02    
@@ -918,12 +921,12 @@
  Recirculating_power_fraction____________________________________________ (cirpowfr)____________________      7.4886E+00    
  # Water usage during plant operation (secondary cooling) #
  Volume_used_in_cooling_tower_(m3/day)___________________________________ (waterusetower)_______________      4.7598E+03 OP 
- Volume_used_in_recirculating_water_system_(m3/day)______________________ (wateruserecirc)______________      1.5933E+03 OP 
- Volume_used_in_once-through_water_system_(m3/day)_______________________ (wateruseonethru)_____________      1.5614E+05 OP 
+ Volume_used_in_recirculating_water_system_(m3/day)______________________ (wateruserecirc)______________      1.5970E+03 OP 
+ Volume_used_in_once-through_water_system_(m3/day)_______________________ (wateruseonethru)_____________      1.5651E+05 OP 
  # Errors and Warnings #
  # Errors and Warnings #
  PROCESS_error_status_flag_______________________________________________ (error_status)________________              2    
- Final_error_identifier__________________________________________________ (error_id)____________________            143    
+ Final_error_identifier__________________________________________________ (error_id)____________________            277    
  # End of PROCESS Output #
  # End of PROCESS Output #
  # Copy of PROCESS Input Follows #
@@ -1110,7 +1113,9 @@ shldith  = 0.00     *Inboard shield thickness (m)
 shldoth  = 0.25     *Outboard shield thickness (m)
 shldtth  = 0.2      *Upper/lower shield thickness (m)
 tfootfi  = 1.0      *TF coil outboard leg / inboard leg radial thickness ratio tfootfi 
-thshield = 0.0      *TF-VV thermal shield thickness (m)
+thshield_ib = 0.0   *TF-VV thermal shield thickness, inboard (m)
+thshield_ob = 0.0   *TF-VV thermal shield thickness, outboard (m)
+thshield_vb = 0.0   *TF-VV thermal shield thickness, vertical (m)
 vgap     = 0.5      *Vertical gap between x-point and divertor (m)
 vgap2    = 0.0      *Vertical gap between vacuum vessel and TF coil (m)
 vvblgap  = 0.0      *Gap between vacuum vessel and blanket (m)

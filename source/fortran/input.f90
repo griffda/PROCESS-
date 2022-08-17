@@ -194,7 +194,8 @@ contains
     use global_variables, only: run_tests, verbose, maxcal, runtitle
     use build_variables, only: fmsfw, blbmoth, blbuith, fmsbc, shldoth, &
       fmsdwi, shldtth, shldlth, vgap2, plleni, fwoth, vvblgap, fmsbl, &
-      thshield, iprecomp, blbpith, aplasmin, blbuoth, tfcth, fmsdwe, &
+      thshield_ib, thshield_ob, thshield_vb, iprecomp, &
+      blbpith, aplasmin, blbuoth, tfcth, fmsdwe, &
       iohcl, tftsgap, clhsf, bore, plleno, scrapli, gapomin, ddwex, &
       rinboard, fmstf, blnkoth, fseppc, plsepo, fmssh, blnkith, &
       ohcth, plsepi, fmsoh, blbmith, gapoh, fcspc, scraplo, vgaptop, &
@@ -237,7 +238,7 @@ contains
       fcqt, fzeffmax, fstrcase, fhldiv, foh_stress, fwalld, gammax, fjprot, &
       ftohs, tcycmn, auxmin, zeffmax, peakfactrad, fdtmp, fpoloidalpower, &
       fnbshinef, freinke, fvvhe, fqval, fq, ftaucq, fbetap, fbeta, fjohc, &
-      fflutf, bmxlim, tbrnmn, fbetatry_lower, fstr_wp
+      fflutf, bmxlim, tbrnmn, fbetatry_lower, fecrh_ignition, fstr_wp, fncycle
     use cost_variables, only: ucich, uctfsw, dintrt, ucblbe, uubop, dtlife, &
       cost_factor_vv, cfind, uccry, fcap0cp, uccase, uuves, cconshtf, conf_mag, &
       ucbllipb, ucfuel, uumag, ucpfbs, ireactor, uucd, div_umain_time, div_nu, &
@@ -274,7 +275,7 @@ contains
       c5div, ksic, fififi, divplt, delld, c2div, betao, divdum, tdiv, c6div, &
       omegan, prn1, fgamp, frrp, xpertin, c1div, betai, bpsout, xparain, fdiva, &
       zeffdiv, hldivlim, rlenmax, divfix, c3div, divleg_profile_inner, &
-      divleg_profile_outer
+      divleg_profile_outer, hldiv, i_hldiv
     use fwbs_variables, only: fblhebpo, vfblkt, fdiv, fvolso, fwcoolant, &
       pitch, iblanket, blktmodel, afwi, fblli2o, nphcdin, breeder_multiplier, &
       fw_armour_thickness, roughness, fwclfr, breedmat, fblli, fblvd, &
@@ -308,7 +309,7 @@ contains
       fbmaxcs, ngc, rpf2, fcohbop, ohhghf, vfohc, isumatoh, ngrpmx, ngc2, rpf1, &
       ngrp, isumatpf, nfxfh, alfapf, routr, sigpfcf, pfclres, bmaxcs_lim, &
       ncls, nfixmx, cptdin, ipfloc, i_sup_pf_shape, rref, i_pf_current, &
-      ccl0_ma, ccls_ma
+      ccl0_ma, ccls_ma, ld_ratio_cst
     use physics_variables, only: ipedestal, taumax, i_single_null, fvsbrnni, &
       rhopedt, cvol, fdeut, ffwal, eped_sf, iculbl, itartpf, ilhthresh, &
       fpdivlim, epbetmax, isc, kappa95, aspect, cwrmax, nesep, csawth, dene, &
@@ -343,7 +344,8 @@ contains
     use scan_module, only: isweep_2, nsweep, isweep, scan_dim, nsweep_2, &
       sweep_2, sweep, ipnscns, ipnscnv
     use stellarator_variables, only: f_asym, isthtr, n_res, iotabar, fdivwet, &
-      f_w, bmn, shear, m_res, f_rad, flpitch, istell
+      f_w, bmn, shear, m_res, f_rad, flpitch, istell, max_gyrotron_frequency, &
+      te0_ecrh_achievable
     use tfcoil_variables, only: fcoolcp, tfinsgap, vftf, &
       quench_detection_ef, fhts, dr_tf_wp, rcool, rhotfleg, thkcas, &
       casthi, n_pancake, bcritsc, i_tf_sup, str_pf_con_res, thwcndut, farc4tf, &
@@ -376,7 +378,7 @@ contains
     use reinke_variables, only: reinke_mode, fzactual, impvardiv, lhat
     use water_usage_variables, only: airtemp, watertemp, windspeed
     use CS_fatigue_variables, only: residual_sig_hoop, t_crack_radial, t_crack_vertical, &
-      t_structural_vertical, t_structural_radial
+      t_structural_vertical, t_structural_radial, n_cycle_min, bkt_life_csf
     implicit none
 
     !  Arguments
@@ -542,7 +544,7 @@ contains
           call parse_real_variable('alphat', alphat, 0.0D0, 10.0D0, &
                'Temperature profile factor')
        case ('aspect')
-          call parse_real_variable('aspect', aspect, 1.001D0, 20.0D0, &
+          call parse_real_variable('aspect', aspect, 1.001D0, 40.0D0, &
                'Aspect ratio')
        case ('beamfus0')
           call parse_real_variable('beamfus0', beamfus0, 0.01D0, 10.0D0, &
@@ -895,7 +897,10 @@ contains
                'F-value for beta limit')
        case ('fbetatry_lower')
           call parse_real_variable('fbetatry_lower', fbetatry_lower, 0.001D0, 10.0D0, &
-                  'F-value for (lower) beta limit')
+               'F-value for (lower) beta limit')
+       case ('fecrh_ignition')
+          call parse_real_variable('fecrh_ignition', fecrh_ignition, 0.001D0, 10.0D0, &
+               'F-value for ecrh ignition constraint')
        case ('fcwr')
           call parse_real_variable('fcwr', fcwr, 0.001D0, 10.0D0, &
                'F-value for conducting wall radius')
@@ -931,6 +936,12 @@ contains
        case ('fhldiv')
           call parse_real_variable('fhldiv', fhldiv, 0.001D0, 10.0D0, &
                'F-value for divertor heat load')
+       case ('hldiv')
+          call parse_real_variable('hldiv', hldiv, 0.0D0, 10.0D0, &
+               'Divertor heat load (MW/m2)')
+       case ('i_hldiv')
+          call parse_int_variable('i_hldiv', i_hldiv, 0, 1, &
+               'Switch for user input hldiv')
        case ('fflutf')
           call parse_real_variable('fflutf', fflutf, 0.001D0, 10.0D0, &
                'F-value for neutron fluence on TF coil')
@@ -952,6 +963,9 @@ contains
        case ('fnbshinef')
           call parse_real_variable('fnbshinef', fnbshinef, 0.001D0, 10.0D0, &
                'F-value for maximum NBI shine-through fraction')
+       case ('fncycle')
+          call parse_real_variable('fncycle', fncycle, 1.0D-8, 1.0D0, &
+               'F-value for minimum CS coil stress load cycles')
        case ('fpeakb')
           call parse_real_variable('fpeakb', fpeakb, 0.001D0, 10.0D0, &
                'F-value for max toroidal field')
@@ -1101,7 +1115,7 @@ contains
           call parse_real_variable('psepbqarmax', psepbqarmax, 1.0D0, 50.0D0, &
                'Maximum Psep*Bt/q*A*R ratio (MW.T/m)')
        case ('pseprmax')
-          call parse_real_variable('pseprmax', pseprmax, 1.0D0, 50.0D0, &
+          call parse_real_variable('pseprmax', pseprmax, 1.0D0, 60.0D0, &
                'Maximum Psep/R ratio (MW/m)')
        case ('ptfnucmax')
           call parse_real_variable('ptfnucmax', ptfnucmax, 1.0D-6, 1.0D0, &
@@ -1788,9 +1802,15 @@ contains
        case ('tftsgap')
           call parse_real_variable('tftsgap', tftsgap, 0.0D0, 5.0D0, &
                'Minimum gap between TF and thermal shield for manufacturing etc. (m)')
-       case ('thshield')
-          call parse_real_variable('thshield', thshield, 0.0D0, 10.0D0, &
-               'TF/VV thermal shield thickness (m)')
+       case ('thshield_ib')
+          call parse_real_variable('thshield_ib', thshield_ib, 0.0D0, 10.0D0, &
+               'TF/VV thermal shield thickness, inboard (m)')
+       case ('thshield_ob')
+          call parse_real_variable('thshield_ob', thshield_ob, 0.0D0, 10.0D0, &
+               'TF/VV thermal shield thickness, outboard (m)')
+       case ('thshield_vb')
+          call parse_real_variable('thshield_vb', thshield_vb, 0.0D0, 10.0D0, &
+               'TF/VV thermal shield thickness, vertical build (m)')
        case ('vgap')
           call parse_real_variable('vgap', vgap, 0.0D0, 10.0D0, &
                'Vert gap between x-pnt and divertor (m)')
@@ -1903,7 +1923,7 @@ contains
           call parse_real_variable('dcase', dcase, 1.0D3, 1.0D5, &
                'Density of TF coil case (kg/m3)')
        case ('dcond')
-          call parse_real_array('dcond', dcond, isub1, 8, &
+          call parse_real_array('dcond', dcond, isub1, 9, &
                'TF/PF coil superconductor density (kg/m3)', icode)
        case ('dcondins')
           call parse_real_variable('dcondins', dcondins, 5.0D2, 1.0D4, &
@@ -2253,10 +2273,10 @@ contains
           call parse_int_variable('ipfres', ipfres, 0, 1, &
                'Switch for supercond / resist PF coils')
        case ('isumatoh')
-          call parse_int_variable('isumatoh', isumatoh, 1, 8, &
+          call parse_int_variable('isumatoh', isumatoh, 1, 9, &
                'Central Solenoid superconductor material')
        case ('isumatpf')
-          call parse_int_variable('isumatpf', isumatpf, 1, 8, &
+          call parse_int_variable('isumatpf', isumatpf, 1, 9, &
                'PF coil superconductor material')
        case ('i_pf_current')
           call parse_int_variable('i_pf_current', i_pf_current, 0, 2, &
@@ -2784,7 +2804,7 @@ contains
          call parse_real_variable('step_ucfwps', step_ucfwps, 0.0D0, 1.0D9, &
          'first wall passive stabiliser cost ($) (if cost model = 2)' )
        case('step_ucsc')
-         call parse_real_array('step_ucsc', step_ucsc, isub1, 7, &
+         call parse_real_array('step_ucsc', step_ucsc, isub1, 9, &
               'cost of superconductor ($/kg) (if cost model = 2)', icode)
        case('step_ucfnc')
          call parse_real_variable('step_ucfnc', step_ucfnc, 0.0D0, 3.0D2, &
@@ -3052,7 +3072,7 @@ contains
           call parse_real_variable('ucrb', ucrb, 1.0D2, 1.0D3, &
                'Cost of reactor building ($/m3)')
        case ('ucsc')
-          call parse_real_array('ucsc', ucsc, isub1, 5, &
+          call parse_real_array('ucsc', ucsc, isub1, 9, &
                'Cost of superconductor ($/kg)', icode)
        case ('step_uc_cryo_al')
           call parse_real_variable('step_uc_cryo_al', step_uc_cryo_al, &
@@ -3676,11 +3696,17 @@ contains
           !  Stellarator settings
 
        case ('istell')
-          call parse_int_variable('istell', istell, 0, 5, &
-               'Stellarator machine specification (1=Helias5, 2=Helias4, 3=Helias3)')
+          call parse_int_variable('istell', istell, 0, 6, &
+               'Stellarator machine specification (1=Helias5, 2=Helias4, 3=Helias3, 4=W7X50, 5=W7X30, 6=jsoninput)')
        case ('bmn')
           call parse_real_variable('bmn', bmn, 1.0D-4, 1.0D-2, &
                'Relative radial field perturbation')
+       case ('max_gyrotron_frequency')
+          call parse_real_variable('max_gyrotron_frequency', max_gyrotron_frequency, 1.0d9, 1.0d14, &
+                'Maximum avail. gyrotron frequency')
+       case ('te0_ecrh_achievable')
+          call parse_real_variable('te0_ecrh_achievable', te0_ecrh_achievable, 1.0d0, 1.0d3, &
+                  'Maximum achievable ecrh temperature (peak value)')
        case ('f_asym')
           call parse_real_variable('f_asym', f_asym, 0.9D0, 2.0D0, &
                'Heat load peaking factor')
@@ -3698,7 +3724,7 @@ contains
                'Field line pitch (rad)')
        case ('iotabar')
           call parse_real_variable('iotabar', iotabar, 0.1D0, 10.0D0, &
-               'Stellarator rotational transform')
+               'Stellarator rotational transform (at s=2/3)')
        case ('isthtr')
           call parse_int_variable('isthtr', isthtr, 1, 3, &
                'Stellarator method of auxiliary heating')
@@ -3921,11 +3947,14 @@ contains
        case('residual_sig_hoop')
           call parse_real_variable('residual_sig_hoop',residual_sig_hoop, 0.0D0, 1.0D9, &
                'residual hoop stress in strucutal material (Pa) ')
-       case('t_crack_radial')
-          call parse_real_variable('t_crack_radial',t_crack_radial, 1.0D-3, 1.0D0, &
+       case('n_cycle_min')
+         call parse_real_variable('n_cycle_min',n_cycle_min, 0.0D0, 1.0D8, &
+               'Minimum required cycles for CS')
+      case('t_crack_radial')
+          call parse_real_variable('t_crack_radial',t_crack_radial, 1.0D-5, 1.0D0, &
                'Inital radial crack size (m)')
        case('t_crack_vertical')
-          call parse_real_variable('t_crack_vertical',t_crack_vertical, 1.0D-3, 1.0D0, &
+          call parse_real_variable('t_crack_vertical',t_crack_vertical, 1.0D-5, 1.0D0, &
                'Inital vertical crack size (m)')
        case('t_structural_radial')
          call parse_real_variable('t_structural_radial',t_structural_radial, 1.0D-3, 1.0D0, &
@@ -3933,6 +3962,12 @@ contains
        case('t_structural_vertical')
          call parse_real_variable('t_structural_vertical',t_structural_vertical, 1.0D-3, 1.0D0, &
             'CS structural vertical thickness (m)')
+       case('ld_ratio_cst')
+            call parse_real_variable('ld_ratio_cst',ld_ratio_cst, 0.0D0, 5.0D0, &
+               'CS coil turn conduit length to depth ratio')
+       case('bkt_life_csf')
+            call parse_real_variable('bkt_life_csf',bkt_life_csf, 0.0D0, 1.0D0, &
+               'Switch for bkt_life -> n_cycle_min')
 
        case default
           error_message = 'Unknown variable in input file: '//varnam(1:varlen)

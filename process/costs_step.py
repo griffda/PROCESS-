@@ -576,7 +576,7 @@ class CostsStep:
         step210104 += step21010403
 
         # 21.01.04.04 Campus Accommodation
-        if cv.isiteaccomm == 1:
+        if cv.isiteaccomm == 0:
             # 21.01.04.04.01 Residential
             # Campus accommodation including canteen, shops, laundry,
             # internal recreation facilities, medical centre and sports pitches.
@@ -593,11 +593,11 @@ class CostsStep:
 
         # 21.01.04.06 Ancillary buildings
         # Generic costs from BCIS building rates
-        # 21.01.04.06 Medical Centre​
+        # 21.01.04.06.01 Medical Centre​
         step2101040601 = cv.site_imp_uc[37]
-        # 21.01.04.06 Public information centre
+        # 21.01.04.06.02 Public information centre
         step2101040602 = cv.site_imp_uc[38]
-        # 21.01.04.06 Indoor sports and entertainment centre​
+        # 21.01.04.06.03 Indoor sports and entertainment centre​
         step2101040603 = cv.site_imp_uc[39]
         step210104 += step2101040601 + step2101040602 + step2101040603
 

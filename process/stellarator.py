@@ -1,6 +1,5 @@
 from process.fortran import constants
 from process.fortran import physics_module as ph
-from process.fortran import power_module as pw
 from process.fortran import stellarator_module as st
 
 
@@ -19,7 +18,7 @@ class Stellarator:
     NOTE: currently the IFE module is only partially wrapped to unblock the wrapping of availability
     """
 
-    def __init__(self, availability, vacuum, buildings, costs) -> None:
+    def __init__(self, availability, vacuum, buildings, costs, power) -> None:
         """Initialises the IFE module's variables
 
         :param availability: a pointer to the availability model, allowing use of availability's variables/methods
@@ -37,6 +36,7 @@ class Stellarator:
         self.buildings = buildings
         self.vacuum = vacuum
         self.costs = costs
+        self.power = power
 
     def run(self, output: bool):
         """Routine to call the physics and engineering modules
@@ -52,15 +52,6 @@ class Stellarator:
         """
 
         if output:
-            # original routine contained the following debug
-            # print statements that have been removed due to
-            # f2py derived-type limitations.
-            # print *,"Used stellarator configuration: ", config%name
-            # print *,"Deviation from reference point"
-            # print *,"aspect ratio",aspect/config%aspect_ref
-            # print *,"major radius",rmajor/config%rmajor_ref
-            # print *,"n_tf (should be 1)", n_tf/(config%coilspermodule*config%symmetry)
-
             self.costs.costs(output=True)
             # TODO: should availability.run be called
             # rather than availability.avail?
@@ -68,35 +59,45 @@ class Stellarator:
             ph.outplas(self.outfile)
             st.stigma(self.outfile)
             st.stheat(self.outfile, 1)
+            st.stphys(self.outfile, 1)
+            st.stopt(self.outfile, 1)
+
+            # As stopt changes dene, te and bt, stphys needs two calls
+            # to correct for larger changes (it is only consistent after
+            # two or three fix point iterations) call stphys here again, just to be sure.
+            # This can be removed once the bad practice in stopt is removed!
+            st.stphys(self.outfile, 0)
+
             st.stdiv(self.outfile, 1)
             st.stbild(self.outfile, 1)
             st.stcoil(self.outfile, 1)
             st.ststrc(self.outfile, 1)
             st.stfwbs(self.outfile, 1)
 
-            pw.tfpwr(self.outfile, 1)
+            self.power.tfpwr(output=True)
             self.buildings.run(output=True)
             self.vacuum.run(output=True)
-            pw.acpow(self.outfile, 1)
-            pw.power2(self.outfile, 1)
+            self.power.acpow(output=True)
+            self.power.power2(output=True)
 
             return
 
         st.stnewconfig()
         st.stgeom()
-        st.stphys()
+        st.stphys(self.outfile, 0)
+        st.stopt(self.outfile, 0)
         st.stcoil(self.outfile, 0)
         st.stbild(self.outfile, 0)
         st.ststrc(self.outfile, 0)
         st.stfwbs(self.outfile, 0)
         st.stdiv(self.outfile, 0)
 
-        pw.tfpwr(self.outfile, 0)
-        pw.power1()
+        self.power.tfpwr(output=False)
+        self.power.power1()
         self.buildings.run(output=False)
         self.vacuum.run(output=False)
-        pw.acpow(self.outfile, 0)
-        pw.power2(self.outfile, 0)
+        self.power.acpow(output=False)
+        self.power.power2(output=False)
         # TODO: should availability.run be called
         # rather than availability.avail?
         self.availability.avail(output=False)

@@ -53,7 +53,7 @@ module pfcoil_variables
   !! Central solenoid (OH) trun cross-sectional area (m2)
 
   real(dp) :: awpoh
-  !! central solenoid conductor+void area (m2)
+  !! central solenoid conductor+void area with area of steel subtracted (m2)
 
   real(dp) :: bmaxoh
   !! maximum field in central solenoid at end of flat-top (EoF) (T)
@@ -142,7 +142,10 @@ module pfcoil_variables
   !! - =3 NbTi
   !! - =4 ITER Nb3Sn model with user-specified parameters
   !! - =5 WST Nb3Sn parameterisation
-  !! - =6 REBCO HTS parameterisation
+  !! - =6 REBCO HTS tape in CroCo strand
+  !! - =7 Durham Ginzburg-Landau critical surface model for Nb-Ti
+  !! - =8 Durham Ginzburg-Landau critical surface model for REBCO
+  !! - =9 Hazelton experimental data + Zhai conceptual model for REBCO
 
   integer :: isumatpf
   !! switch for superconductor material in PF coils:
@@ -154,6 +157,10 @@ module pfcoil_variables
   !! - =3 NbTi
   !! - =4 ITER Nb3Sn model with user-specified parameters
   !! - =5 WST Nb3Sn parameterisation
+  !! - =6 REBCO HTS tape in CroCo strand
+  !! - =7 Durham Ginzburg-Landau critical surface model for Nb-Ti
+  !! - =8 Durham Ginzburg-Landau critical surface model for REBCO
+  !! - =9 Hazelton experimental data + Zhai conceptual model for REBCO
 
   integer :: i_pf_current
   !! Switch for controlling the current of the PF coils:
@@ -371,6 +378,21 @@ module pfcoil_variables
   real(dp) :: fbmaxcs
   !! F-value for CS mmax field (`cons. 79`, `itvar 149`)
 
+  real(dp) :: ld_ratio_cst
+  !! Ratio of CS coil turn conduit length to depth
+
+  real(dp) :: l_cond_cst
+  !! Length of CS of CS coil turn conduit
+
+  real(dp) :: d_cond_cst
+  !! Depth/width of CS of CS coil turn conduit
+
+  real(dp) :: r_out_cst
+  !! Length of CS of CS coil turn conduit length
+
+  real(dp) :: r_in_cst
+  !! Length of CS of CS coil turn conduit length
+
   contains
 
   subroutine init_pfcoil_variables
@@ -471,5 +493,10 @@ module pfcoil_variables
       1.0D0, 1.0D0, 1.0D0, 1.0D0, 1.0D0, 1.0D0, 1.0D0/)
     bmaxcs_lim = 13.0
     fbmaxcs = 13.0
+    ld_ratio_cst = 70/22
+    l_cond_cst = 0.0D0
+    d_cond_cst = 0.0D0
+    r_in_cst = 0.0D0
+    r_out_cst = 3.0D-3
   end subroutine init_pfcoil_variables
 end module pfcoil_variables

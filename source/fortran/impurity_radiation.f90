@@ -47,7 +47,7 @@ module impurity_radiation_module
   !!        (iteration variable 102 is fimp(impvar))
   real(dp), public, dimension(nimp) :: fimp
 
-  character(len=2), public, dimension(nimp) :: imp_label
+  character*2, public, dimension(nimp) :: imp_label
   !! imp_label(nimp) : impurity ion species names:<UL>
   !! <LI> ( 1)  Hydrogen  (fraction calculated by code)
   !! <LI> ( 2)  Helium
@@ -101,7 +101,7 @@ module impurity_radiation_module
   ! Temp_keV, Lz_Wm3, Zav
   ! since these can no longer be allocatable
 
-  character(len=2), dimension(nimp) :: impurity_arr_Label
+  character*2, dimension(nimp) :: impurity_arr_Label
   integer, dimension(nimp) :: impurity_arr_Z
   real(dp), dimension(nimp) :: impurity_arr_amass
   real(dp), dimension(nimp) :: impurity_arr_frac
@@ -113,7 +113,7 @@ module impurity_radiation_module
 
 !   type(imp_dat),  dimension(nimp), save, public :: impurity_arr
 
-  logical :: toolow
+  logical, public :: toolow
   !! Used for reporting error in function pimpden
 
 contains
@@ -440,7 +440,6 @@ contains
     end do
 
     close(unit=unit)
-
   end subroutine import_impdata
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -574,7 +573,7 @@ contains
        pline = 0.0D0
        pimp = pbrem
     end if
-
+    !!! end break
   end subroutine impradprofile
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

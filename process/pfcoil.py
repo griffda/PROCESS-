@@ -7,28 +7,32 @@ from process.fortran import physics_variables as pv
 from process.fortran import tfcoil_variables as tfv
 from process.fortran import fwbs_variables as fwbsv
 from process.fortran import constants
-from process.fortran import cs_fatigue as csf
 from process.fortran import cs_fatigue_variables as csfv
 from process.fortran import maths_library as ml
 from process.fortran import process_output as op
 from process.fortran import numerics
 from process.fortran import superconductors as sc
 from process.fortran import rebco_variables as rcv
+from process.fortran import constraint_variables as ctv
 from process import maths_library as pml
 from process.utilities.f2py_string_patch import f2py_compatible_to_string
 from process import fortran as ft
 import math
 import numpy as np
+import numba
+
+RMU0 = ft.constants.rmu0
 
 
 class PFCoil:
     """Calculate poloidal field coil system parameters."""
 
-    def __init__(self):
+    def __init__(self, cs_fatigue) -> None:
         """Initialise Fortran module variables."""
         self.outfile = ft.constants.nout  # output file unit
         self.mfile = ft.constants.mfile  # mfile file unit
         pf.init_pfcoil_module()
+        self.cs_fatigue = cs_fatigue
 
     def run(self):
         """Run the PF coil model."""
@@ -858,10 +862,10 @@ class PFCoil:
         """
         lrow1 = bfix.shape[0]
         lcol1 = gmat.shape[1]
-        bfix = self.fixb(lrow1, npts, rpts, zpts, nfix, rfix, zfix, cfix)
+        bfix = fixb(lrow1, npts, rpts, zpts, int(nfix), rfix, zfix, cfix)
 
         # Set up matrix equation
-        nrws, gmat, bvec, rc, zc, cc, xc = self.mtrx(
+        nrws, gmat, bvec = mtrx(
             lrow1,
             lcol1,
             npts,
@@ -869,178 +873,62 @@ class PFCoil:
             zpts,
             brin,
             bzin,
-            ngrp,
+            int(ngrp),
             ncls,
             rcls,
             zcls,
             alfa,
             bfix,
+            int(pfv.nclsmx),
         )
 
         # Solve matrix equation
         ccls, umat, vmat, sigma, work2 = self.solv(pfv.ngrpmx, ngrp, nrws, gmat, bvec)
 
         # Calculate the norm of the residual vectors
-        brssq, brnrm, bzssq, bznrm, ssq = self.rsid(
-            npts, brin, bzin, nfix, ngrp, ccls, bfix, gmat
+        brssq, brnrm, bzssq, bznrm, ssq = rsid(
+            npts, brin, bzin, nfix, int(ngrp), ccls, bfix, gmat
         )
 
         return ssq, ccls
 
-    def fixb(self, lrow1, npts, rpts, zpts, nfix, rfix, zfix, cfix):
-        """Calculates the field from the fixed current loops.
+    def tf_pf_collision_detector(self):
+        #  Collision test between TF and PF coils for picture frame TF
+        #  See issue 1612
+        #  https://git.ccfe.ac.uk/process/process/-/issues/1612
 
-        author: P J Knight, CCFE, Culham Science Centre
-        author: D Strickler, ORNL
-        author: J Galambos, ORNL
-        This routine calculates the fields at the points specified by
-        (rpts,zpts) from the set of coils with fixed currents.
+        if tfv.i_tf_shape == 2:
+            pf_tf_collision = 0
 
-        :param lrow1: row length of array bfix; should be >= nptsmx
-        :type lrow1: int
-        :param npts: number of data points at which field is to be fixed;
-        should be <= nptsmx
-        :type npts: int
-        :param rpts: coords of data points (m)
-        :type rpts: numpy.ndarray
-        :param zpts: coords of data points (m)
-        :type zpts: numpy.ndarray
-        :param nfix: number of coils with fixed currents, <= nfixmx
-        :type nfix: int
-        :param rfix: coordinates of coils with fixed currents (m)
-        :type rfix: numpy.ndarray
-        :param zfix: coordinates of coils with fixed currents (m)
-        :type zfix: numpy.ndarray
-        :param cfix: Fixed currents (A)
-        :type cfix: numpy.ndarray
-        :return: Fields at data points (T)
-        :rtype: numpy.ndarray
-        """
-        bfix = np.zeros(lrow1)
-        for i in range(npts):
-            bfix[i] = 0.0e0
-            bfix[npts + i] = 0.0e0
+            for i in range(pfv.ngrp):
+                for ii in range(pfv.ngrp):
+                    for ij in range(pfv.ncls[ii]):
+                        if pf.rcls[ii, ij] <= (  # Outboard TF coil collision
+                            pf.rclsnorm - pfv.routr + pfv.rpf[i]
+                        ) and pf.rcls[ii, ij] >= (
+                            bv.r_tf_outboard_mid - (0.5 * bv.tfthko) - pfv.rpf[i]
+                        ):
+                            pf_tf_collision += 1
+                        if pf.rcls[ii, ij] <= (  # Inboard TF coil collision
+                            bv.bore
+                            + bv.ohcth
+                            + bv.precomp
+                            + bv.gapoh
+                            + bv.tfcth
+                            + pfv.rpf[i]
+                        ) and pf.rcls[ii, ij] >= (
+                            bv.bore + bv.ohcth + bv.precomp + bv.gapoh - pfv.rpf[i]
+                        ):
+                            pf_tf_collision += 1
+                        if (  # Vertical TF coil collision
+                            abs(pf.zcls[ii, ij]) <= bv.hpfu + pfv.rpf[i]
+                            and abs(pf.zcls[ii, ij])
+                            >= bv.hpfu - (0.5 * bv.tfthko) - pfv.rpf[i]
+                        ):
+                            pf_tf_collision += 1
 
-        if nfix <= 0:
-            return bfix
-
-        for i in range(npts):
-            # bfield() only operates correctly on nfix slices of array
-            # arguments, not entire arrays
-            work1, brw, bzw, psw = pf.bfield(
-                rfix[:nfix], zfix[:nfix], cfix[:nfix], rpts[i], zpts[i], nfix
-            )
-            bfix[i] = brw
-            bfix[npts + i] = bzw
-
-        return bfix
-
-    def mtrx(
-        self,
-        lrow1,
-        lcol1,
-        npts,
-        rpts,
-        zpts,
-        brin,
-        bzin,
-        ngrp,
-        ncls,
-        rcls,
-        zcls,
-        alfa,
-        bfix,
-    ):
-        """Calculate the currents in a group of ring coils.
-
-        Set up the matrix equation to calculate the currents in a group of ring
-        coils.
-        author: P J Knight, CCFE, Culham Science Centre
-        author: D Strickler, ORNL
-        author: J Galambos, ORNL
-
-        :param lrow1: row length of arrays bfix, bvec, gmat, umat, vmat; should
-        be >= (2*nptsmx + ngrpmx)
-        :type lrow1: int
-        :param lcol1: column length of arrays gmat, umat, vmat; should be >=
-        ngrpmx
-        :type lcol1: int
-        :param npts: number of data points at which field is to be fixed; should
-        be <= nptsmx
-        :type npts: int
-        :param rpts: coords of data points (m)
-        :type rpts: numpy.ndarray
-        :param zpts: coords of data points (m)
-        :type zpts: numpy.ndarray
-        :param brin: field components at data points (T)
-        :type brin: numpy.ndarray
-        :param bzin: field components at data points (T)
-        :type bzin: numpy.ndarray
-        :param ngrp: number of coil groups, where all coils in a group have the
-        same current, <= ngrpmx
-        :type ngrp: int
-        :param ncls: number of coils in each group, each value <= nclsmx
-        :type ncls: numpy.ndarray
-        :param rcls: coords R(i,j), Z(i,j) of coil j in group i (m)
-        :type rcls: numpy.ndarray
-        :param zcls: coords R(i,j), Z(i,j) of coil j in group i (m)
-        :type zcls: numpy.ndarray
-        :param alfa: smoothing parameter (0 = no smoothing, 1.0D-9 = large
-        smoothing)
-        :type alfa: float
-        :param bfix: Fields at data points (T)
-        :type bfix: numpy.ndarray
-        :return: actual number of rows to use, work array, work array,
-        Coordinates of conductor loops (m), Coordinates of conductor loops (m),
-        Currents in conductor loops (A), Mutual inductances (H)
-        :rtype: tuple[int, numpy.ndarray, numpy.ndarray, numpy.ndarray
-        numpy.ndarray, numpy.ndarray, numpy.ndarray]
-        """
-        bvec = np.zeros(lrow1)
-        gmat = np.zeros((lrow1, lcol1), order="F")
-        rc = np.zeros(pfv.nclsmx)
-        zc = np.zeros(pfv.nclsmx)
-        cc = np.zeros(pfv.nclsmx)
-
-        for i in range(npts):
-            bvec[i] = brin[i] - bfix[i]
-            bvec[i + npts] = bzin[i] - bfix[i + npts]
-            for j in range(ngrp):
-                nc = ncls[j]
-                for k in range(nc):
-                    rc[k] = rcls[j, k]
-                    zc[k] = zcls[j, k]
-                    cc[k] = 1.0e0
-
-                # bfield() requires slices of array arguments of length nc
-                # nc can equal 0, however!
-                # f2py can't handle passing zero-length arrays
-                if nc > 0:
-                    xc, brw, bzw, psw = pf.bfield(
-                        rc[:nc], zc[:nc], cc[:nc], rpts[i], zpts[i]
-                    )
-                else:
-                    xc, brw, bzw, psw = pf.bfield(
-                        rc[:1], zc[:1], cc[:1], rpts[i], zpts[i], 1, nciszero=True
-                    )
-
-                gmat[i, j] = brw
-                gmat[i + npts, j] = bzw
-
-        # Add constraint equations
-        nrws = 2 * npts
-
-        for j in range(ngrp):
-            bvec[nrws + j] = 0.0e0
-            for i in range(ngrp):
-                gmat[nrws + j, i] = 0.0e0
-
-            nc = ncls[j]
-            gmat[nrws + j, j] = nc * alfa
-
-        nrws = 2 * npts + ngrp
-
-        return nrws, gmat, bvec, rc, zc, cc, xc
+                        if pf_tf_collision >= 1:
+                            eh.report_error(277)
 
     def solv(self, ngrpmx, ngrp, nrws, gmat, bvec):
         """Solve a matrix using singular value decomposition.
@@ -1072,7 +960,9 @@ class PFCoil:
         eps = 1.0e-10
         ccls = np.zeros(ngrpmx)
 
-        sigma, umat, vmat, ierr, work2 = ml.svd(nrws, gmat, truth, truth)
+        sigma, umat, vmat, ierr, work2 = ml.svd(
+            nrws, np.asfortranarray(gmat), truth, truth
+        )
 
         for i in range(ngrp):
             work2[i] = 0.0e0
@@ -1123,6 +1013,7 @@ class PFCoil:
             sgn = 1.0e0
             pfv.ric[pfv.nohc - 1] = sgn * 1.0e-6 * pfv.cohbop * pfv.areaoh
         else:
+
             sgn = -1.0e0
             pfv.ric[pfv.nohc - 1] = sgn * 1.0e-6 * pfv.coheof * pfv.areaoh
 
@@ -1133,6 +1024,32 @@ class PFCoil:
 
         # Turn vertical cross-sectionnal area
         pfv.a_oh_turn = pfv.areaoh / pfv.turns[pfv.nohc - 1]
+
+        # Depth/width of cs turn conduit
+        pfv.d_cond_cst = (pfv.a_oh_turn / pfv.ld_ratio_cst) ** 0.5
+        # length of cs turn conduit
+        pfv.l_cond_cst = pfv.ld_ratio_cst * pfv.d_cond_cst
+        # Radius of turn space = pfv.r_in_cst
+        # Radius of curved outer corrner pfv.r_out_cst = 3mm from literature
+        # pfv.ld_ratio_cst = 70 / 22 from literature
+        p1_cst = ((pfv.l_cond_cst - pfv.d_cond_cst) / constants.pi) ** 2
+        p2_cst = (
+            (pfv.l_cond_cst * pfv.d_cond_cst)
+            - (4 - constants.pi) * (pfv.r_out_cst**2)
+            - (pfv.a_oh_turn * pfv.oh_steel_frac)
+        ) / constants.pi
+        # CS coil turn geometry calculation - stadium shape
+        # Literature: https://doi.org/10.1016/j.fusengdes.2017.04.052
+        pfv.r_in_cst = -((pfv.l_cond_cst - pfv.d_cond_cst) / constants.pi) + math.sqrt(
+            p1_cst + p2_cst
+        )
+        # Thickness of steel conduit in cs turn
+        csfv.t_structural_radial = (pfv.d_cond_cst / 2) - pfv.r_in_cst
+        # In this model the vertical and radial have the same thickness
+        csfv.t_structural_vertical = csfv.t_structural_radial
+        # add a check for negative conduit thickness
+        if csfv.t_structural_radial < 1.0e-3:
+            csfv.t_structural_radial = 1.0e-3
 
         # Non-steel area void fraction for coolant
         pfv.vf[pfv.nohc - 1] = pfv.vfohc
@@ -1193,12 +1110,10 @@ class PFCoil:
             # Calculation of CS fatigue
             # this is only valid for pulsed reactor design
             if pv.facoh > 0.0e-4:
-                csf.ncycle(
-                    csfv.n_cycle,
+                csfv.n_cycle, csfv.t_crack_radial = self.cs_fatigue.ncycle(
                     pf.sig_hoop,
                     csfv.residual_sig_hoop,
                     csfv.t_crack_vertical,
-                    csfv.t_crack_radial,
                     csfv.t_structural_vertical,
                     csfv.t_structural_radial,
                 )
@@ -1431,21 +1346,19 @@ class PFCoil:
 
         # Calculate the field at the inner and outer edges
         # of the coil of interest
-        pf.xind[:kk], bri, bzi, psi = pf.bfield(
+        pf.xind[:kk], bri, bzi, psi = bfield(
             pf.rfxf[:kk],
             pf.zfxf[:kk],
             pf.cfxf[:kk],
             pfv.ra[i - 1],
             pfv.zpf[i - 1],
-            kk,
         )
-        pf.xind[:kk], bro, bzo, psi = pf.bfield(
+        pf.xind[:kk], bro, bzo, psi = bfield(
             pf.rfxf[:kk],
             pf.zfxf[:kk],
             pf.cfxf[:kk],
             pfv.rb[i - 1],
             pfv.zpf[i - 1],
-            kk,
         )
 
         # bpf and bpf2 for the Central Solenoid are calculated in OHCALC
@@ -1804,8 +1717,8 @@ class PFCoil:
 
                 reqv = rp * (1.0e0 + delzoh**2 / (24.0e0 * rp**2))
 
-                xcin, br, bz, psi = pf.bfield(rc, zc, cc, reqv - deltar, zp)
-                xcout, br, bz, psi = pf.bfield(rc, zc, cc, reqv + deltar, zp)
+                xcin, br, bz, psi = bfield(rc, zc, cc, reqv - deltar, zp)
+                xcout, br, bz, psi = bfield(rc, zc, cc, reqv + deltar, zp)
 
                 for ii in range(nplas):
                     xc[ii] = 0.5e0 * (xcin[ii] + xcout[ii])
@@ -1829,7 +1742,7 @@ class PFCoil:
             ncoils = ncoils + pfv.ncls[i]
             rp = pfv.rpf[ncoils - 1]
             zp = pfv.zpf[ncoils - 1]
-            xc, br, bz, psi = pf.bfield(rc, zc, cc, rp, zp)
+            xc, br, bz, psi = bfield(rc, zc, cc, rp, zp)
             for ii in range(nplas):
                 xpfpl = xpfpl + xc[ii]
 
@@ -1863,7 +1776,7 @@ class PFCoil:
                 ncoils = ncoils + pfv.ncls[i]
                 rp = pfv.rpf[ncoils - 1]
                 zp = pfv.zpf[ncoils - 1]
-                xc, br, bz, psi = pf.bfield(rc, zc, cc, rp, zp)
+                xc, br, bz, psi = bfield(rc, zc, cc, rp, zp)
                 for ii in range(noh):
                     xohpf = xohpf + xc[ii]
 
@@ -1894,7 +1807,7 @@ class PFCoil:
 
             rp = pfv.rpf[i]
             zp = pfv.zpf[i]
-            xc, br, bz, psi = pf.bfield(rc, zc, cc, rp, zp)
+            xc, br, bz, psi = bfield(rc, zc, cc, rp, zp)
             for k in range(pf.nef):
                 if k < i:
                     pfv.sxlg[i, k] = xc[k] * pfv.turns[k] * pfv.turns[i]
@@ -1976,6 +1889,8 @@ class PFCoil:
                     )
                 elif pfv.isumatoh == 5:
                     op.ocmmnt(self.outfile, " (WST Nb3Sn critical surface model)")
+                elif pfv.isumatoh == 6:
+                    op.ocmmnt(self.outfile, " (REBCO HTS)")
                 elif pfv.isumatoh == 7:
                     op.ocmmnt(
                         self.outfile,
@@ -1985,6 +1900,11 @@ class PFCoil:
                     op.ocmmnt(
                         self.outfile,
                         " (Durham Ginzburg-Landau critical surface model for REBCO)",
+                    )
+                elif pfv.isumatoh == 9:
+                    op.ocmmnt(
+                        self.outfile,
+                        " (Hazelton experimental data + Zhai conceptual model for REBCO)",
                     )
 
                 op.osubhd(self.outfile, "Central Solenoid Current Density Limits :")
@@ -2167,7 +2087,7 @@ class PFCoil:
                     pfv.fcuohsu,
                 )
                 # If REBCO material is used, print copperaoh_m2
-                if pfv.isumatoh == 6 or pfv.isumatoh == 8:
+                if pfv.isumatoh == 6 or pfv.isumatoh == 8 or pfv.isumatoh == 9:
                     op.ovarre(
                         self.outfile,
                         "CS current/copper area (A/m2)",
@@ -2210,9 +2130,15 @@ class PFCoil:
                 if pv.facoh > 0.0e-4:
                     op.ovarre(
                         self.outfile,
-                        "residual hoop stress in CS Steel (Pa)",
+                        "Residual hoop stress in CS Steel (Pa)",
                         "(csfv.residual_sig_hoop)",
                         csfv.residual_sig_hoop,
+                    )
+                    op.ovarre(
+                        self.outfile,
+                        "Minimum burn time (s)",
+                        "(ctv.tbrnmn)",
+                        ctv.tbrnmn,
                     )
                     op.ovarre(
                         self.outfile,
@@ -2225,6 +2151,30 @@ class PFCoil:
                         "Initial radial crack size (m)",
                         "(csfv.t_crack_radial)",
                         csfv.t_crack_radial,
+                    )
+                    op.ovarre(
+                        self.outfile,
+                        "CS turn area (m)",
+                        "(pfv.a_oh_turn)",
+                        pfv.a_oh_turn,
+                    )
+                    op.ovarre(
+                        self.outfile,
+                        "CS turn length (m)",
+                        "(pfv.l_cond_cst)",
+                        pfv.l_cond_cst,
+                    )
+                    op.ovarre(
+                        self.outfile,
+                        "CS turn internal cable space radius (m)",
+                        "(pfv.r_in_cst)",
+                        pfv.r_in_cst,
+                    )
+                    op.ovarre(
+                        self.outfile,
+                        "CS turn width (m)",
+                        "(pfv.d_cond_cst)",
+                        pfv.d_cond_cst,
                     )
                     op.ovarre(
                         self.outfile,
@@ -2245,7 +2195,13 @@ class PFCoil:
                         csfv.n_cycle,
                         "OP ",
                     )
-
+                    op.ovarre(
+                        self.outfile,
+                        "Minimum number of cycles required till CS fracture",
+                        "(csfv.n_cycle_min)",
+                        csfv.n_cycle_min,
+                        "OP ",
+                    )
                 # Check whether CS coil is hitting any limits
                 # iteration variable (39) fjohc0
                 # iteration variable(38) fjohc
@@ -2260,14 +2216,14 @@ class PFCoil:
 
                 # REBCO fractures in strains above ~+/- 0.7%
                 if (
-                    (pfv.isumatoh == 8)
+                    (pfv.isumatoh == 6 or pfv.isumatoh == 8 or pfv.isumatoh == 9)
                     and tfv.str_cs_con_res > 0.7e-2
                     or tfv.str_cs_con_res < -0.7e-2
                 ):
                     eh.report_error(262)
 
                 if (
-                    (pfv.isumatpf == 8)
+                    (pfv.isumatpf == 6 or pfv.isumatpf == 8 or pfv.isumatpf == 9)
                     and tfv.str_pf_con_res > 0.7e-2
                     or tfv.str_pf_con_res < -0.7e-2
                 ):
@@ -2303,17 +2259,22 @@ class PFCoil:
             elif pfv.isumatpf == 6:
                 op.ocmmnt(
                     self.outfile,
-                    "REBCO 2nd generation HTS superconductor in CrCo strand",
+                    " (REBCO 2nd generation HTS superconductor in CrCo strand)",
                 )
             elif pfv.isumatpf == 7:
                 op.ocmmnt(
                     self.outfile,
-                    " (Durham Nb-Ti Ginzburg-Landau critical surface model)",
+                    " (Durham Ginzburg-Landau critical surface model for Nb-Ti)",
                 )
             elif pfv.isumatpf == 8:
                 op.ocmmnt(
                     self.outfile,
-                    " (Durham REBCO Ginzburg-Landau critical surface model)",
+                    " (Durham Ginzburg-Landau critical surface model for REBCO)",
+                )
+            elif pfv.isumatpf == 9:
+                op.ocmmnt(
+                    self.outfile,
+                    " (Hazelton experimental data + Zhai conceptual model for REBCO)",
                 )
 
             op.ovarre(
@@ -2420,6 +2381,7 @@ class PFCoil:
                 f"(bpf[{k}])",
                 pfv.bpf[k],
             )
+        self.tf_pf_collision_detector()
 
         # Central Solenoid, if present
         if bv.iohcl != 0:
@@ -2532,7 +2494,7 @@ class PFCoil:
 
         op.osubhd(self.outfile, "PF coil current scaling information :")
         op.ovarre(
-            self.outfile, "Sum of squares of residuals ", "(pf.ssq0)", pf.ssq0, "OP "
+            self.outfile, "Sum of squares of residuals ", "(ssq0)", pf.ssq0, "OP "
         )
         op.ovarre(self.outfile, "Smoothing parameter ", "(alfapf)", pfv.alfapf)
 
@@ -2641,9 +2603,9 @@ class PFCoil:
                 self.outfile,
                 (
                     f"{k}\t\t\t{0.0:.3e}\t{0.0:.3e}\t"
-                    f"{pfv.cpt[k,2]+pfv.cpt[k,1]*(pfv.fcohbof/pfv.fcohbop)*pfv.turns[k]:.3e}\t"
-                    f"{pfv.cpt[k,3]+pfv.cpt[k,1]*pfv.fcohbof/pfv.fcohbop*pfv.turns[k]:.3e}\t"
-                    f"{pfv.cpt[k,4]+pfv.cpt[k,1]*(1.0e0/pfv.fcohbop)*pfv.turns[k]:.3e}\t"
+                    f"{(pfv.cpt[k,2]+pfv.cpt[k,1]*pfv.fcohbof/pfv.fcohbop)*pfv.turns[k]:.3e}\t"
+                    f"{(pfv.cpt[k,3]+pfv.cpt[k,1]*pfv.fcohbof/pfv.fcohbop)*pfv.turns[k]:.3e}\t"
+                    f"{(pfv.cpt[k,4]+pfv.cpt[k,1]*1.0e0/pfv.fcohbop)*pfv.turns[k]:.3e}\t"
                     "0.0e0"
                 ),
             )
@@ -2714,73 +2676,6 @@ class PFCoil:
             / (9.0e0 * a + 10.0e0 * b + 8.4e0 * c + 3.2e0 * c * b / a)
         )
         return selfinductance
-
-    def rsid(self, npts, brin, bzin, nfix, ngrp, ccls, bfix, gmat):
-        """Computes the norm of the residual vectors.
-
-        author: P J Knight, CCFE, Culham Science Centre
-        author: D Strickler, ORNL
-        author: J Galambos, ORNL
-        author: P C Shipe, ORNL
-        This routine calculates the residuals from the matrix
-        equation for calculation of the currents in a group of ring coils.
-
-        :param npts: number of data points at which field is  to be fixed;
-        should be <= nptsmx
-        :type npts: int
-        :param brin: field components at data points (T)
-        :type brin: numpy.ndarray
-        :param bzin: field components at data points (T)
-        :type bzin: numpy.ndarray
-        :param nfix: number of coils with fixed currents, <= nfixmx
-        :type nfix: int
-        :param ngrp: number of coil groups, where all coils in a group have the
-        same current, <= ngrpmx
-        :type ngrp: int
-        :param ccls: coil currents in each group (A)
-        :type ccls: numpy.ndarray
-        :param bfix: work array
-        :type bfix: numpy.ndarray
-        :param gmat: work array
-        :type gmat: numpy.ndarray
-        :return: sum of squares of radial field residues (brssq), radial field
-        residue norm (brnrm), sum of squares of vertical field residues (bzssq),
-        vertical field residue norm (bznrm), sum of squares of elements of
-        residual vector (ssq)
-        :rtype: tuple[float, float, float, float, float]
-        """
-        brnrm = 0.0e0
-        brssq = 0.0e0
-
-        for i in range(npts):
-            svec = 0.0e0
-            if nfix > 0:
-                svec = bfix[i]
-
-            for j in range(ngrp):
-                svec = svec + gmat[i, j] * ccls[j]
-
-            rvec = svec - brin[i]
-            brnrm = brnrm + brin[i] ** 2
-            brssq = brssq + rvec**2
-
-        bznrm = 0.0e0
-        bzssq = 0.0e0
-
-        for i in range(npts):
-            svec = 0.0e0
-            if nfix > 0:
-                svec = bfix[i + npts]
-            for j in range(ngrp):
-                svec = svec + gmat[i + npts, j] * ccls[j]
-
-            rvec = svec - bzin[i]
-            bznrm = bznrm + bzin[i] ** 2
-            bzssq = bzssq + rvec**2
-
-        ssq = brssq / (1.0e0 + brnrm) + bzssq / (1.0e0 + bznrm)
-
-        return brssq, brnrm, bzssq, bznrm, ssq
 
     def waveform(self):
         """Sets up the PF coil waveforms.
@@ -2938,6 +2833,21 @@ class PFCoil:
             deltaj_gl_rebco = jcrit0 - jsc
             return deltaj_gl_rebco
 
+        def deltaj_hijc_rebco(temperature):
+            """Critical current density and current density difference in high current density REBCO.
+
+            :param temperature: temperature
+            :type temperature: float
+            :return: difference in current density
+            :rtype: float
+            """
+            jcrit0, b, t = sc.hijc_rebco(temperature, bmax, strain, bc20m, tc0m)
+            if ml.variable_error(jcrit0):  # superconductors.GL_REBCO has failed.
+                print(f"deltaj_hijc_REBCO: {bmax=} {temperature=} {jcrit0=}")
+
+            deltaj_hijc_rebco = jcrit0 - jsc
+            return deltaj_hijc_rebco
+
         # Find critical current density in superconducting strand, jcritstr
         if isumat == 1:
             # ITER Nb3Sn critical surface parameterization
@@ -3002,10 +2912,10 @@ class PFCoil:
             # The CS coil current/copper area calculation for quench protection
             # Copper area = (area of coil - area of steel)*(1- void fraction)*
             # (fraction of copper in strands)
-            rcv.copperaoh_m2 = ioheof / pfv.awpoh * (1.0 - pfv.vfohc) * pfv.fcuohsu
+            rcv.copperaoh_m2 = ioheof / (pfv.awpoh * (1.0 - pfv.vfohc) * pfv.fcuohsu)
 
         elif isumat == 7:
-            # Durham Ginzburg-Landau Nb-Ti parameterisation
+            # Durham Ginzburg-Landau critical surface model for Nb-Ti
             bc20m = tfv.b_crit_upper_nbti
             tc0m = tfv.t_crit_nbti
             jcritsc, bcrit, tcrit = sc.gl_nbti(thelium, bmax, strain, bc20m, tc0m)
@@ -3013,16 +2923,32 @@ class PFCoil:
 
             # The CS coil current at EOF
             ioheof = bv.hmax * pfv.ohhghf * bv.ohcth * 2.0 * pfv.coheof
-            # The CS coil current/copper area calculation for quench protection
-            rcv.copperaoh_m2 = ioheof / pfv.awpoh * (1.0 - pfv.vfohc) * pfv.fcuohsu
 
         elif isumat == 8:
-            # Branch YCBO model fit to Tallahassee data
+            # Durham Ginzburg-Landau critical surface model for REBCO
             bc20m = 429e0
             tc0m = 185e0
             jcritsc, bcrit, tcrit = sc.gl_rebco(thelium, bmax, strain, bc20m, tc0m)
             # A0 calculated for tape cross section already
             jcritstr = jcritsc * (1.0e0 - fcu)
+
+            # The CS coil current at EOF
+            ioheof = bv.hmax * pfv.ohhghf * bv.ohcth * 2.0 * pfv.coheof
+            # The CS coil current/copper area calculation for quench protection
+            rcv.copperaoh_m2 = ioheof / (pfv.awpoh * (1.0 - pfv.vfohc) * pfv.fcuohsu)
+
+        elif isumat == 9:
+            # Hazelton experimental data + Zhai conceptual model for REBCO
+            bc20m = 138
+            tc0m = 92
+            jcritsc, bcrit, tcrit = sc.hijc_rebco(thelium, bmax, strain, bc20m, tc0m)
+            # A0 calculated for tape cross section already
+            jcritstr = jcritsc * (1.0e0 - fcu)
+
+            # The CS coil current at EOF
+            ioheof = bv.hmax * pfv.ohhghf * bv.ohcth * 2.0 * pfv.coheof
+            # The CS coil current/copper area calculation for quench protection
+            rcv.copperaoh_m2 = ioheof / (pfv.awpoh * (1.0 - pfv.vfohc) * pfv.fcuohsu)
 
         else:
             # Error condition
@@ -3130,7 +3056,7 @@ class PFCoil:
 
         # SCM 10/08/20 Use secant solver for superconductors.GL_REBCO.
         elif isumat == 8:
-            # Current sharing temperature for Durham Ginzburg-Landau Nb-Ti
+            # Current sharing temperature for Durham Ginzburg-Landau REBCO
             x1 = 4.0e0  # Initial values of temperature
             x2 = 6.0e0
             # Solve for deltaj_superconductors.GL_REBCO = 0
@@ -3146,4 +3072,331 @@ class PFCoil:
                     f"Gl_REBCO: {current_sharing_t=} {tmarg=} {jsc=} {jcrit0=} {residual=}"
                 )
 
+        elif isumat == 9:
+            # Current sharing temperature for Hazelton REBCO
+            x1 = 19.0e0  # Initial values of temperature
+            x2 = 21.0e0
+            # Solve for deltaj_superconductors.HIJC_REBCO = 0
+            current_sharing_t, error, residual = pml.secant_solve(
+                deltaj_hijc_rebco, x1, x2, 100e0
+            )
+            tmarg = current_sharing_t - thelium
+            jcrit0, b, t = sc.hijc_rebco(current_sharing_t, bmax, strain, bc20m, tc0m)
+            if ml.variable_error(
+                current_sharing_t
+            ):  # current sharing secant solver has failed.
+                print(
+                    f"HIJC_REBCO: {current_sharing_t=} {tmarg=} {jsc=} {jcrit0=} {residual=}"
+                )
+
         return jcritwp, jcritstr, jcritsc, tmarg
+
+
+@numba.njit(cache=True)
+def bfield(rc, zc, cc, rp, zp):
+    """Calculate the field at a point due to currents in a number
+    of circular poloidal conductor loops.
+    author: P J Knight, CCFE, Culham Science Centre
+    author: D Strickler, ORNL
+    author: J Galambos, ORNL
+    nc : input integer : number of loops
+    rc(nc) : input real array : R coordinates of loops (m)
+    zc(nc) : input real array : Z coordinates of loops (m)
+    cc(nc) : input real array : Currents in loops (A)
+    xc(nc) : output real array : Mutual inductances (H)
+    rp, zp : input real : coordinates of point of interest (m)
+    br : output real : radial field component at (rp,zp) (T)
+    bz : output real : vertical field component at (rp,zp) (T)
+    psi : output real : poloidal flux at (rp,zp) (Wb)
+    This routine calculates the magnetic field components and
+    the poloidal flux at an (R,Z) point, given the locations
+    and currents of a set of conductor loops.
+    <P>The mutual inductances between the loops and a poloidal
+    filament at the (R,Z) point of interest is also found."""
+
+    #  Elliptic integral coefficients
+
+    a0 = 1.38629436112
+    a1 = 0.09666344259
+    a2 = 0.03590092383
+    a3 = 0.03742563713
+    a4 = 0.01451196212
+    b0 = 0.5
+    b1 = 0.12498593597
+    b2 = 0.06880248576
+    b3 = 0.03328355346
+    b4 = 0.00441787012
+    c1 = 0.44325141463
+    c2 = 0.06260601220
+    c3 = 0.04757383546
+    c4 = 0.01736506451
+    d1 = 0.24998368310
+    d2 = 0.09200180037
+    d3 = 0.04069697526
+    d4 = 0.00526449639
+
+    nc = len(rc)
+
+    xc = np.empty((nc,))
+    br = 0
+    bz = 0
+    psi = 0
+
+    for i in range(nc):
+        d = (rp + rc[i]) ** 2 + (zp - zc[i]) ** 2
+        s = 4.0 * rp * rc[i] / d
+
+        t = 1.0 - s
+        a = np.log(1.0 / t)
+
+        dz = zp - zc[i]
+        zs = dz**2
+        dr = rp - rc[i]
+        sd = np.sqrt(d)
+
+        #  Evaluation of elliptic integrals
+
+        xk = (
+            a0
+            + t * (a1 + t * (a2 + t * (a3 + a4 * t)))
+            + a * (b0 + t * (b1 + t * (b2 + t * (b3 + b4 * t))))
+        )
+        xe = (
+            1.0
+            + t * (c1 + t * (c2 + t * (c3 + c4 * t)))
+            + a * t * (d1 + t * (d2 + t * (d3 + d4 * t)))
+        )
+
+        #  Mutual inductances
+
+        xc[i] = 0.5 * RMU0 * sd * ((2.0 - s) * xk - 2.0 * xe)
+
+        #  Radial, vertical fields
+
+        brx = (
+            RMU0
+            * cc[i]
+            * dz
+            / (2 * np.pi * rp * sd)
+            * (-xk + (rc[i] ** 2 + rp**2 + zs) / (dr**2 + zs) * xe)
+        )
+        bzx = (
+            RMU0
+            * cc[i]
+            / (2 * np.pi * sd)
+            * (xk + (rc[i] ** 2 - rp**2 - zs) / (dr**2 + zs) * xe)
+        )
+
+        #  Sum fields, flux
+
+        br += brx
+        bz += bzx
+        psi += xc[i] * cc[i]
+
+    return xc, br, bz, psi
+
+
+@numba.njit(cache=True)
+def rsid(npts, brin, bzin, nfix, ngrp, ccls, bfix, gmat):
+    """Computes the norm of the residual vectors.
+
+    author: P J Knight, CCFE, Culham Science Centre
+    author: D Strickler, ORNL
+    author: J Galambos, ORNL
+    author: P C Shipe, ORNL
+    This routine calculates the residuals from the matrix
+    equation for calculation of the currents in a group of ring coils.
+
+    :param npts: number of data points at which field is  to be fixed;
+    should be <= nptsmx
+    :type npts: int
+    :param brin: field components at data points (T)
+    :type brin: numpy.ndarray
+    :param bzin: field components at data points (T)
+    :type bzin: numpy.ndarray
+    :param nfix: number of coils with fixed currents, <= nfixmx
+    :type nfix: int
+    :param ngrp: number of coil groups, where all coils in a group have the
+    same current, <= ngrpmx
+    :type ngrp: int
+    :param ccls: coil currents in each group (A)
+    :type ccls: numpy.ndarray
+    :param bfix: work array
+    :type bfix: numpy.ndarray
+    :param gmat: work array
+    :type gmat: numpy.ndarray
+    :return: sum of squares of radial field residues (brssq), radial field
+    residue norm (brnrm), sum of squares of vertical field residues (bzssq),
+    vertical field residue norm (bznrm), sum of squares of elements of
+    residual vector (ssq)
+    :rtype: tuple[float, float, float, float, float]
+    """
+    brnrm = 0.0e0
+    brssq = 0.0e0
+
+    for i in range(npts):
+        svec = 0.0e0
+        if nfix > 0:
+            svec = bfix[i]
+
+        for j in range(ngrp):
+            svec = svec + gmat[i, j] * ccls[j]
+
+        rvec = svec - brin[i]
+        brnrm = brnrm + brin[i] ** 2
+        brssq = brssq + rvec**2
+
+    bznrm = 0.0e0
+    bzssq = 0.0e0
+
+    for i in range(npts):
+        svec = 0.0e0
+        if nfix > 0:
+            svec = bfix[i + npts]
+        for j in range(ngrp):
+            svec = svec + gmat[i + npts, j] * ccls[j]
+
+        rvec = svec - bzin[i]
+        bznrm = bznrm + bzin[i] ** 2
+        bzssq = bzssq + rvec**2
+
+    ssq = brssq / (1.0e0 + brnrm) + bzssq / (1.0e0 + bznrm)
+
+    return brssq, brnrm, bzssq, bznrm, ssq
+
+
+@numba.njit(cache=True)
+def fixb(lrow1, npts, rpts, zpts, nfix, rfix, zfix, cfix):
+    """Calculates the field from the fixed current loops.
+
+    author: P J Knight, CCFE, Culham Science Centre
+    author: D Strickler, ORNL
+    author: J Galambos, ORNL
+    This routine calculates the fields at the points specified by
+    (rpts,zpts) from the set of coils with fixed currents.
+
+    :param lrow1: row length of array bfix; should be >= nptsmx
+    :type lrow1: int
+    :param npts: number of data points at which field is to be fixed;
+    should be <= nptsmx
+    :type npts: int
+    :param rpts: coords of data points (m)
+    :type rpts: numpy.ndarray
+    :param zpts: coords of data points (m)
+    :type zpts: numpy.ndarray
+    :param nfix: number of coils with fixed currents, <= nfixmx
+    :type nfix: int
+    :param rfix: coordinates of coils with fixed currents (m)
+    :type rfix: numpy.ndarray
+    :param zfix: coordinates of coils with fixed currents (m)
+    :type zfix: numpy.ndarray
+    :param cfix: Fixed currents (A)
+    :type cfix: numpy.ndarray
+    :return: Fields at data points (T)
+    :rtype: numpy.ndarray
+    """
+    bfix = np.zeros(lrow1)
+
+    if nfix <= 0:
+        return bfix
+
+    for i in range(npts):
+        # bfield() only operates correctly on nfix slices of array
+        # arguments, not entire arrays
+        _, brw, bzw, _ = bfield(rfix[:nfix], zfix[:nfix], cfix[:nfix], rpts[i], zpts[i])
+        bfix[i] = brw
+        bfix[npts + i] = bzw
+
+    return bfix
+
+
+@numba.njit(cache=True)
+def mtrx(
+    lrow1,
+    lcol1,
+    npts,
+    rpts,
+    zpts,
+    brin,
+    bzin,
+    ngrp,
+    ncls,
+    rcls,
+    zcls,
+    alfa,
+    bfix,
+    nclsmx,
+):
+    """Calculate the currents in a group of ring coils.
+
+    Set up the matrix equation to calculate the currents in a group of ring
+    coils.
+    author: P J Knight, CCFE, Culham Science Centre
+    author: D Strickler, ORNL
+    author: J Galambos, ORNL
+
+    :param lrow1: row length of arrays bfix, bvec, gmat, umat, vmat; should
+    be >= (2*nptsmx + ngrpmx)
+    :type lrow1: int
+    :param lcol1: column length of arrays gmat, umat, vmat; should be >=
+    ngrpmx
+    :type lcol1: int
+    :param npts: number of data points at which field is to be fixed; should
+    be <= nptsmx
+    :type npts: int
+    :param rpts: coords of data points (m)
+    :type rpts: numpy.ndarray
+    :param zpts: coords of data points (m)
+    :type zpts: numpy.ndarray
+    :param brin: field components at data points (T)
+    :type brin: numpy.ndarray
+    :param bzin: field components at data points (T)
+    :type bzin: numpy.ndarray
+    :param ngrp: number of coil groups, where all coils in a group have the
+    same current, <= ngrpmx
+    :type ngrp: int
+    :param ncls: number of coils in each group, each value <= nclsmx
+    :type ncls: numpy.ndarray
+    :param rcls: coords R(i,j), Z(i,j) of coil j in group i (m)
+    :type rcls: numpy.ndarray
+    :param zcls: coords R(i,j), Z(i,j) of coil j in group i (m)
+    :type zcls: numpy.ndarray
+    :param alfa: smoothing parameter (0 = no smoothing, 1.0D-9 = large
+    smoothing)
+    :type alfa: float
+    :param bfix: Fields at data points (T)
+    :type bfix: numpy.ndarray
+    :return: actual number of rows to use, work array, work array,
+    Coordinates of conductor loops (m), Coordinates of conductor loops (m),
+    Currents in conductor loops (A), Mutual inductances (H)
+    :rtype: tuple[int, numpy.ndarray, numpy.ndarray, numpy.ndarray
+    numpy.ndarray, numpy.ndarray, numpy.ndarray]
+    """
+    bvec = np.zeros(lrow1)
+    gmat = np.zeros((lrow1, lcol1))
+    cc = np.ones(nclsmx)
+
+    for i in range(npts):
+        bvec[i] = brin[i] - bfix[i]
+        bvec[i + npts] = bzin[i] - bfix[i + npts]
+
+        for j in range(ngrp):
+            nc = ncls[j]
+
+            _, gmat[i, j], gmat[i + npts, j], _ = bfield(
+                rcls[j, :nc], zcls[j, :nc], cc[:nc], rpts[i], zpts[i]
+            )
+
+    # Add constraint equations
+    nrws = 2 * npts
+
+    bvec[nrws : nrws + ngrp] = 0.0
+    np.fill_diagonal(gmat[nrws : nrws + ngrp, :ngrp], ncls[:ngrp] * alfa)
+
+    nrws = 2 * npts + ngrp
+
+    # numba doesnt like np.zeros(..., order="F") so this acts as a work
+    # around to that missing signature
+    gmat = np.asfortranarray(gmat)
+
+    return nrws, gmat, bvec

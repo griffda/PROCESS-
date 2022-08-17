@@ -1,6 +1,6 @@
-#   CMake file for Pythonic PROCESS
-#   Author  :   K. Zarebski (UKAEA)
-#   Date    :   last modified 2020-11-09
+# CMake file for Pythonic PROCESS
+# Author  :   K. Zarebski (UKAEA)
+# Date    :   last modified 2020-11-09
 
 # Specify the minimum version for CMake
 # 3.12 is required due to use of list TRANSFORM commands
@@ -24,11 +24,11 @@ INCLUDE(${CMAKE_SOURCE_DIR}/cmake/gfortranlibs.cmake)
 # Retrieve and set information for preprocessor
 FindPreprocessingVars()
 
-SET(CMAKE_Fortran_FLAGS "-cpp -ffree-line-length-none -fPIC -ftest-coverage -fprofile-arcs -fcheck=all,no-array-temps -finit-local-zero")
+SET(CMAKE_Fortran_FLAGS "-cpp -ffree-line-length-none -fPIC -ftest-coverage -fprofile-arcs -finit-local-zero")
 
 IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
     # space before -g is very necessary
-    STRING(CONCAT CMAKE_Fortran_FLAGS ${CMAKE_Fortran_FLAGS} " -g -O0")
+    STRING(CONCAT CMAKE_Fortran_FLAGS ${CMAKE_Fortran_FLAGS} " -g -O0 -fcheck=all,no-bounds,no-array-temps")
 ENDIF()
 
 # Get System information, log as much information as we can
@@ -65,7 +65,6 @@ FILE(GLOB PROCESS_SRC_PATHS ${PROCESS_SRC_DIR}/*.f90 ${PROCESS_SRC_DIR}/*.f)
 FILE(GLOB PROCESS_PYTHON_SRC_PATHS ${PROCESS_PYTHON_SRC_DIR}/*.py)
 
 # 'Cherry Pick' Files to Compile in REFPROP, PLASMOD and PROCESS libraries
-
 LIST(APPEND PLASMOD_SRCS
     e3m.f
     equil.f90
@@ -97,10 +96,8 @@ LIST(APPEND PROCESS_SRCS
     sctfcoil.f90
     plasma_profiles.f90
     superconductors.f90
-    plasma_geometry.f90
     stellarator_fwbs.f90
     stellarator_variables.f90
-    plant_power.f90
     final_module.f90
     cost_variables.f90
     divertor_variables.f90
@@ -137,7 +134,6 @@ LIST(APPEND PROCESS_SRCS
     global_variables.f90
     constraint_variables.f90
     vacuum_variables.f90
-    CS_fatigue.f90
     CS_fatigue_variables.f90
     impurity_radiation.f90
     pulse_variables.f90
@@ -147,6 +143,8 @@ LIST(APPEND PROCESS_SRCS
     rebco_variables.f90
     read_radiation.f90
     divertor_ode_var.f90
+    primary_pumping_variables.f90
+    reinke_variables.f90
 )
 
 PREPROCESS()
@@ -168,8 +166,6 @@ SET_TARGET_PROPERTIES(${PROJECT_NAME}
 )
 
 ADD_DEPENDENCIES(${PROJECT_NAME} ${PIP_NAME})
-
-
 
 SET(LIBRARY_OUTPUT_SUFFIX ".so")
 
@@ -201,13 +197,13 @@ ADD_CUSTOM_TARGET(install_process ALL
 
 ADD_DEPENDENCIES(install_process ${PIP_NAME} ${F2PY_NAME} ${FORD_NAME} ${GFORTLIB_NAME} ${DICTS_NAME} coverage_cleanup)
 
-if (EXISTS ${CMAKE_SOURCE_DIR}/lcov_results)
-  execute_process(COMMAND echo "-- Delete existing lcov_coverage directory...")
-  execute_process(COMMAND cmake -E remove_directory ${CMAKE_SOURCE_DIR}/lcov_results)
-  execute_process(COMMAND mkdir ${CMAKE_SOURCE_DIR}/lcov_results)
-elseif (NOT EXISTS ${CMAKE_SOURCE_DIR}/lcov_results)
-  execute_process(COMMAND echo "-- Create lcov_coverage directory...")
-  execute_process(COMMAND mkdir ${CMAKE_SOURCE_DIR}/lcov_results)
+if(EXISTS ${CMAKE_SOURCE_DIR}/lcov_results)
+    execute_process(COMMAND echo "-- Delete existing lcov_coverage directory...")
+    execute_process(COMMAND cmake -E remove_directory ${CMAKE_SOURCE_DIR}/lcov_results)
+    execute_process(COMMAND mkdir ${CMAKE_SOURCE_DIR}/lcov_results)
+elseif(NOT EXISTS ${CMAKE_SOURCE_DIR}/lcov_results)
+    execute_process(COMMAND echo "-- Create lcov_coverage directory...")
+    execute_process(COMMAND mkdir ${CMAKE_SOURCE_DIR}/lcov_results)
 endif()
 
 # Custom target to run the regression tests and generate coverage report
@@ -217,7 +213,7 @@ ADD_CUSTOM_TARGET(regression
 )
 
 ADD_CUSTOM_TARGET(coverage
-  COMMAND lcov --gcov-tool gcov --capture --directory build/CMakeFiles/process.dir/source/fortran/ --output-file lcov_results/coverage.info
-  COMMAND genhtml --output-directory lcov_results/html lcov_results/coverage.info
-  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMAND lcov --gcov-tool gcov --capture --directory build/CMakeFiles/process.dir/source/fortran/ --output-file lcov_results/coverage.info
+    COMMAND genhtml --output-directory lcov_results/html lcov_results/coverage.info
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )

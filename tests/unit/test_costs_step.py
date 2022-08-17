@@ -220,7 +220,7 @@ def test_step_a20(monkeypatch, costs_step):
 
 @pytest.mark.parametrize(
     "isitetype, isiteaccomm, igridconn, irailaccess, exp",
-    ((0, 0, 0, 0, 5.0877341e3), (1, 1, 1, 1, 6.1786241e3), (2, 0, 0, 0, 4.9938941e3)),
+    ((0, 0, 0, 0, 5.6742341e3), (1, 1, 1, 1, 5.5921241e3), (2, 0, 0, 0, 5.5803941e3)),
 )
 def test_step_a21(
     monkeypatch, costs_step, isitetype, isiteaccomm, igridconn, irailaccess, exp

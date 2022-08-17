@@ -20,7 +20,8 @@ from process.fortran import fwbs_variables as fwbsv
 from process.fortran import tfcoil_variables as tfv
 from process.fortran import times_variables as tv
 from process.fortran import constants
-from process.pfcoil import PFCoil
+from process.pfcoil import PFCoil, mtrx, fixb
+from process.cs_fatigue import CsFatigue
 
 
 @pytest.fixture
@@ -30,7 +31,7 @@ def pfcoil():
     :return: a PFCoil instance
     :rtype: process.pfcoil.PFCoil
     """
-    return PFCoil()
+    return PFCoil(cs_fatigue=CsFatigue())
 
 
 def test_pfcoil(monkeypatch, pfcoil):
@@ -644,7 +645,7 @@ def test_mtrx(pfcoil):
         ]
     )
 
-    nrws, gmat, bvec, rc, zc, cc, xc = pfcoil.mtrx(
+    nrws, gmat, bvec = mtrx(
         lrow1,
         lcol1,
         npts,
@@ -658,6 +659,7 @@ def test_mtrx(pfcoil):
         zcls,
         alfa,
         bfix,
+        int(pfv.nclsmx),
     )
 
     gmat_exp = np.array(
@@ -1631,18 +1633,10 @@ def test_mtrx(pfcoil):
             0.00000000e00,
         ]
     )
-    rc_exp = np.array([18.59769338, 0.0])
-    zc_exp = np.array([-2.88322581, 0.0])
-    cc_exp = np.array([1.0, 1.0])
-    xc_exp = np.array([1.65994082e-05, -1.48549917e-16])
 
     assert nrws == 68
     assert_array_almost_equal(gmat, gmat_exp)
     assert_array_almost_equal(bvec, bvec_exp)
-    assert_array_almost_equal(rc, rc_exp)
-    assert_array_almost_equal(zc, zc_exp)
-    assert_array_almost_equal(cc, cc_exp)
-    assert_array_almost_equal(xc, xc_exp)
 
 
 def test_solv(pfcoil):
@@ -2026,7 +2020,7 @@ def test_fixb(pfcoil):
         ]
     )
 
-    bfix = pfcoil.fixb(lrow1, npts, rpts, zpts, nfix, rfix, zfix, cfix)
+    bfix = fixb(lrow1, npts, rpts, zpts, nfix, rfix, zfix, cfix)
 
     assert_array_almost_equal(bfix, bfix_exp)
 

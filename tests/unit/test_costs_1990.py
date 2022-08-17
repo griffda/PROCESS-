@@ -2219,7 +2219,8 @@ class Acc2222Param(NamedTuple):
             fncmass=310716.52923547616,
             dcond=numpy.array(
                 numpy.array(
-                    (6080, 6080, 6070, 6080, 6080, 8500, 6070, 8500, 8500), order="F"
+                    (6080, 6080, 6070, 6080, 6080, 8500, 6070, 8500, 8500),
+                    order="F",
                 ),
                 order="F",
             ).transpose(),
@@ -2411,7 +2412,8 @@ class Acc2222Param(NamedTuple):
             fncmass=310716.52923547616,
             dcond=numpy.array(
                 numpy.array(
-                    (6080, 6080, 6070, 6080, 6080, 8500, 6070, 8500, 8500), order="F"
+                    (6080, 6080, 6070, 6080, 6080, 8500, 6070, 8500, 8500),
+                    order="F",
                 ),
                 order="F",
             ).transpose(),

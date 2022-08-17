@@ -143,6 +143,12 @@ module physics_variables
   real(dp) :: dnz
   !! high Z ion density (/m3)
 
+  real(dp) :: gradient_length_ne
+  !! Max. normalized gradient length in el. density (ipedestal==0 only) (1)
+
+  real(dp) :: gradient_length_te
+  !! Max. normalized gradient length in el. temperature (ipedestal==0 only) (1)
+
   real(dp), parameter :: ealphadt = 3520.0D0
   !! alpha birth energy in D-T reaction (keV)
 
@@ -367,6 +373,12 @@ module physics_variables
 
   real(dp) :: rhopedt
   !! r/a of temperature pedestal (`ipedestal>=1`)
+
+  real(dp) :: rho_te_max
+  !! r/a where the temperature gradient is largest (`ipedestal==0`)
+
+  real(dp) :: rho_ne_max
+  !! r/a where the density gradient is largest (`ipedestal==0`)
 
   real(dp) :: tbeta
   !! temperature profile index beta  (`ipedestal=1,2`)

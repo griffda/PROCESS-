@@ -86,3 +86,7 @@ env/
 !scenario_examples/*/*.DAT
 !scenario_examples/*/*.pdf
 */.ipynb_checkpoints/
+REBCO_JC.DAT
+*.whl
+python_modules.txt
+quench_data.DAT

@@ -3804,73 +3804,79 @@ contains
   end subroutine  set_itv_166
 
   !---------------------------------
-  ! DUMMY variables below here
-  !---------------------------------
 
-  subroutine init_itv_167
-    !! <LI> (167) DUMMY : Description
+  subroutine init_itv_167 
+    !! <LI> (167) fncycle : f-value for minimum CS coil stress load cycles
     use numerics, only: lablxc, boundl, boundu
     implicit none
-    lablxc(167) = 'DUMMY         '
-    boundl(167) = 1.0d-99
-    boundu(167) = 1.0d99
+    lablxc(167) = 'fncycle       '
+    boundl(167) = 1.0d-8
+    boundu(167) = 1.0d0
   end subroutine init_itv_167
 
   real(kind(1.d0)) function itv_167()
+    use constraint_variables, only: fncycle
     implicit none
-    itv_167 = DUMMY
+    itv_167 = fncycle 
   end function itv_167
 
   subroutine set_itv_167(ratio)
+    use constraint_variables, only: fncycle
     implicit none
     real(kind(1.d0)) :: ratio
-    DUMMY = ratio
-  end subroutine set_itv_167
+    fncycle = ratio
+  end subroutine  set_itv_167
 
   !---------------------------------
 
   subroutine init_itv_168
-    !! <LI> (168) DUMMY : Description
+    !! <LI> (168) fecrh_ignition (f-value for equation 91)
     use numerics, only: lablxc, boundl, boundu
     implicit none
-    lablxc(168) = 'DUMMY         '
-    boundl(168) = 1.0d-99
-    boundu(168) = 1.0d99
+    lablxc(168) = 'fecrh_ignition     '
+    boundl(168) = 0.010D0
+    boundu(168) = 2.000D0
   end subroutine init_itv_168
 
   real(kind(1.d0)) function itv_168()
+    use constraint_variables, only: fecrh_ignition
     implicit none
-    itv_168 = DUMMY
+    itv_168 = fecrh_ignition 
   end function itv_168
 
   subroutine set_itv_168(ratio)
+    use constraint_variables, only: fecrh_ignition
     implicit none
     real(kind(1.d0)) :: ratio
-    DUMMY = ratio
+    fecrh_ignition = ratio
   end subroutine set_itv_168
 
   !---------------------------------
 
   subroutine init_itv_169
-    !! <LI> (169) DUMMY : Description
+    !! <LI> (169) te0_ecrh_achievable (iteration parameter for equation 91)
     use numerics, only: lablxc, boundl, boundu
     implicit none
-    lablxc(169) = 'DUMMY         '
-    boundl(169) = 1.0d-99
-    boundu(169) = 1.0d99
+    lablxc(169) = 'te0_ecrh_achievable'
+    boundl(169) = 1.0d0 
+    boundu(169) = 1.0d3
   end subroutine init_itv_169
 
   real(kind(1.d0)) function itv_169()
+    use stellarator_variables, only: te0_ecrh_achievable
     implicit none
-    itv_169 = DUMMY
+    itv_169 = te0_ecrh_achievable
   end function itv_169
 
   subroutine set_itv_169(ratio)
+    use stellarator_variables, only: te0_ecrh_achievable
     implicit none
     real(kind(1.d0)) :: ratio
-    DUMMY = ratio
+    te0_ecrh_achievable = ratio
   end subroutine set_itv_169
 
+  !---------------------------------
+  ! DUMMY variables below here
   !---------------------------------
 
   subroutine init_itv_170
@@ -4195,11 +4201,11 @@ contains
            case (163);  xcm(i) = itv_163()
            case (164);  xcm(i) = itv_164()
            case (165);  xcm(i) = itv_165()
-            ! DUMMY Cases
            case (166);  xcm(i) = itv_166()
            case (167);  xcm(i) = itv_167()
            case (168);  xcm(i) = itv_168()
            case (169);  xcm(i) = itv_169()
+            ! DUMMY Cases
            case (170);  xcm(i) = itv_170()
            case (171);  xcm(i) = itv_171()
            case (172);  xcm(i) = itv_172()
@@ -4462,11 +4468,11 @@ contains
            case (163);  call set_itv_163(ratio)
            case (164);  call set_itv_164(ratio)
            case (165);  call set_itv_165(ratio)
-            ! DUMMY Cases
            case (166);  call set_itv_166(ratio)
            case (167);  call set_itv_167(ratio)
            case (168);  call set_itv_168(ratio)
            case (169);  call set_itv_169(ratio)
+            ! DUMMY Cases
            case (170);  call set_itv_170(ratio)
            case (171);  call set_itv_171(ratio)
            case (172);  call set_itv_172(ratio)

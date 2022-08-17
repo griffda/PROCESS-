@@ -710,8 +710,8 @@ module cost_variables
   integer :: isiteaccomm
   !! switch for including Campus Accommodation:
   !!
-  !! - =0 no campus accommodation required in costing
-  !! - =1 campus accommodation costed
+  !! - =0 campus accommodation has to be costed
+  !! - =1 no campus accommodation required in costing
 
   integer :: igridconn
   !! switch for site connection (outgoing) to electricity grid:
@@ -868,7 +868,7 @@ module cost_variables
       1.465D1, 1.058D1, 3.1413D2, 0.0D0, 0.0D0, 1.95D0, 6.5D-2, 0.0D0, 1.628D1, 1.603D1, 9.44D0, &
       1.9051D2, 1.9585D2, 1.107D1, 1.319D2, 4.858D1, 2.793D1, 1.2876D2, 2.588D1, 3.01D1, &
       4.14D1, 1.895D1, 5.13D0, 4.228D1, 8.744D1, 1.992D1, 4.664D1, 3.674D1, 1.85D1, 2.23D0, &
-      19.21D0, 12.85D0 /)
+      17.25D0, 11.55D0 /)
     step91_per = 3.0D-1
     step92_per = 3.25D-1
     step93_per = 1.5D-1
@@ -931,7 +931,7 @@ module cost_variables
     wfbuilding = 1.0D8
     whole_site_area = 1.0D6
     isitetype = 0
-    isiteaccomm = 0
+    isiteaccomm = 1
     igridconn = 0
     irailaccess = 0
 
