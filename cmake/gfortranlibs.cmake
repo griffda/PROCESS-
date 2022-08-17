@@ -1,11 +1,11 @@
-#   GFortranLibs Finder
-#   Author  :   K. Zarebski
-#   Date    :   last modified 2020-11-06
+# GFortranLibs Finder
+# Author  :   K. Zarebski
+# Date    :   last modified 2020-11-06
 #
-#   Get the location of the GFortran Libraries so they can
-#   be included with the Python module
-#   TODO: Ideally we do not want to do this (likely be removed
-#   when f90wrap is dropped)
+# Get the location of the GFortran Libraries so they can
+# be included with the Python module
+# TODO: Ideally we do not want to do this (likely be removed
+# when f90wrap is dropped)
 
 MACRO(GET_GFORTRANLIBS)
     MESSAGE(STATUS "[gfortran libraries]")
@@ -15,6 +15,7 @@ MACRO(GET_GFORTRANLIBS)
     # Get the path of libgfortran.so
     EXECUTE_PROCESS(
         COMMAND bash -c "gfortran --print-file-name ${LIBGFORTRAN_NAME}${LIBRARY_OUTPUT_SUFFIX}"
+
         # Returns just "libgfortran.so" rather than full path if not found
         OUTPUT_VARIABLE LIBGFORTRAN_PATH
     )
@@ -24,6 +25,7 @@ MACRO(GET_GFORTRANLIBS)
     IF(LIBGFORTRAN_PATH STREQUAL ${LIBGFORTRAN_NAME}${LIBRARY_OUTPUT_SUFFIX})
         MESSAGE(FATAL_ERROR "Could not retrieve location of gfortran library")
     ENDIF()
+
     MESSAGE(STATUS "\tlibgfortran path: ${LIBGFORTRAN_PATH}")
 
     # Define copy destination for gfortran library
