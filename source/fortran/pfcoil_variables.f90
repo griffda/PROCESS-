@@ -53,7 +53,7 @@ module pfcoil_variables
   !! Central solenoid (OH) trun cross-sectional area (m2)
 
   real(dp) :: awpoh
-  !! central solenoid conductor+void area (m2)
+  !! central solenoid conductor+void area with area of steel subtracted (m2)
 
   real(dp) :: bmaxoh
   !! maximum field in central solenoid at end of flat-top (EoF) (T)
@@ -142,9 +142,10 @@ module pfcoil_variables
   !! - =3 NbTi
   !! - =4 ITER Nb3Sn model with user-specified parameters
   !! - =5 WST Nb3Sn parameterisation
-  !! - =6 REBCO HTS parameterisation
-  !! - =7 Durham Ginzbug-Landau Nb-Ti parameterisation
-  !! - =8 Branch YCBO model fit to Tallahassee data
+  !! - =6 REBCO HTS tape in CroCo strand
+  !! - =7 Durham Ginzburg-Landau critical surface model for Nb-Ti
+  !! - =8 Durham Ginzburg-Landau critical surface model for REBCO
+  !! - =9 Hazelton experimental data + Zhai conceptual model for REBCO
 
   integer :: isumatpf
   !! switch for superconductor material in PF coils:
@@ -156,10 +157,11 @@ module pfcoil_variables
   !! - =3 NbTi
   !! - =4 ITER Nb3Sn model with user-specified parameters
   !! - =5 WST Nb3Sn parameterisation
-  !! - =6 REBCO HTS parameterisation
-  !! - =7 Durham Ginzbug-Landau Nb-Ti parameterisation
-  !! - =8 Branch YCBO model fit to Tallahassee data
-  
+  !! - =6 REBCO HTS tape in CroCo strand
+  !! - =7 Durham Ginzburg-Landau critical surface model for Nb-Ti
+  !! - =8 Durham Ginzburg-Landau critical surface model for REBCO
+  !! - =9 Hazelton experimental data + Zhai conceptual model for REBCO
+
   integer :: i_pf_current
   !! Switch for controlling the current of the PF coils:
   !!
@@ -387,7 +389,7 @@ module pfcoil_variables
 
   real(dp) :: r_out_cst
   !! Length of CS of CS coil turn conduit length
-  
+
   real(dp) :: r_in_cst
   !! Length of CS of CS coil turn conduit length
 

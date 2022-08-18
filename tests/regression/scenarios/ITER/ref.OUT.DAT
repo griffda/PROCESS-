@@ -6,12 +6,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.4.0-446-gaa7b4de4f
+   Tag No. : v2.4.0-486-g677917259
     Branch : HEAD
-   Git log : Merge branch |1542-convert-impurity_radiation-f90-to-python| into |develop|
- Date/time : 28 Jul 2022  9:29:34 +00:00(hh:mm) UTC
+   Git log : Merge branch |mac| into |develop|
+ Date/time : 18 Aug 2022  9:59:21 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-nkpubsxk-project-20-concurrent-0
+  Computer : runner-7084ce6e-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_ITER_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
@@ -143,28 +143,86 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  ******************************** Buildings (M$) ********************************
  
+ Admin Buildings                                                          1                            34.830     
+ Tokamak Complex (excluding hot cell)                                     2                          1050.660     
+ Neutral beam buildings                                                   3                             8.662     
+ Cryoplant buildings                                                      4                           177.213     
+ PF Coil winding building                                                 5                            54.968     
+ Magnet power supplies and related buildings                              6                            29.791     
+ Magnet discharge buildings                                               7                            12.554     
+ Heat removal system buildings                                            8                            14.906     
+ Total cost of buildings                                                  9                          1383.583     
  
  ********************************** Land (M$) ***********************************
  
+ Land purchasing                                                          10                           55.894     
+ Land improvement                                                         11                          192.441     
+ Road improvements                                                        12                          153.922     
+ Total land costs                                                         13                          402.258     
  
  ******************************** TF Coils (M$) *********************************
  
+ TF Coil insertion and welding                                            14                          278.415     
+ TF coil winding                                                          16                          778.643     
+ Copper strand for TF coil                                                17                           32.654     
+ Strands with Nb3Sn superconductor and copper stabiliser                  18                          331.958     
+ Testing of superconducting strands                                       19                            4.000     
+ Cabling and jacketing                                                    20                          152.343     
+ Total TF coil costs                                                      21                         1578.014     
  
  ************************* First wall and blanket (M$) **************************
  
+ Lithium enrichment                                                       22                           60.011     
+ Lithium orthosilicate pebble manufacturing                               23                           33.353     
+ Titanium beryllide pebble manufacturing                                  24                          886.694     
+ First wall W coating manufacturing                                       25                           68.463     
+ Blanket and shield materials and manufacturing                           26                          215.493     
+ Total first wall and blanket cost                                        27                         1264.015     
  
  ***************** Active maintenance and remote handling (M$) ******************
  
+ Moveable equipment                                                       28                          319.015     
+ Active maintenance facility with fixed equipment                         29                          971.576     
+ Total remote handling costs                                              31                         1290.591     
  
  ***************** Vacuum vessel and liquid nitrogen plant (M$) *****************
  
+ Vacuum vessel                                                            32                          530.548     
+ Liquid nitrogen plant                                                    33                          368.245     
+ Total liquid nitrogen plant and vacuum vessel                            34                          898.793     
  
  **************** System for converting heat to electricity (M$) ****************
  
+ Energy conversion system                                                 35                            0.000     
  
  ************************** Remaining subsystems (M$) ***************************
  
+ CS and PF coils                                                          36                         1207.310     
+ Vacuum vessel in-wall shielding, ports and in-vessel coils               37                           99.842     
+ Divertor                                                                 38                          300.978     
+ Ex-vessel neutral beam remote handling equipment                         41                           97.130     
+ Vacuum vessel pressure suppression system                                43                           62.071     
+ Cryostat                                                                 44                          277.335     
+ Heat removal system                                                      45                         1123.483     
+ Thermal shields                                                          46                          107.690     
+ Pellet injection system                                                  47                           25.000     
+ Gas injection and wall conditioning system                               48                           32.000     
+ Vacuum pumping                                                           49                          201.000     
+ Tritium plant                                                            50                          226.000     
+ Cryoplant and distribution                                               51                         1699.920     
+ Electrical power supply and distribution                                 52                         1127.684     
+ Neutral beam heating and current drive system                            53                          878.486     
+ Diagnostics systems                                                      54                          640.000     
+ Radiological protection                                                  55                           19.000     
+ Access control and security systems                                      56                           37.674     
+ Assembly                                                                 57                         1218.191     
+ Control and communication                                                58                          329.160     
+ Additional project expenditure                                           59                         1624.000     
+ Logistics                                                                60                          101.926     
+ Total remaining subsystem costs                                          61                        11435.881     
  
+ TOTAL OVERNIGHT CAPITAL COST (M$)                                        (total_costs)             18253.135     
+ Annual maintenance cost (M$)                                             (maintenance)               813.744     
  
  Net electric output (MW)                                                 (pnetelmw)                    0.000  OP 
  Capacity factor                                                          (cpfact)                      0.000  OP 
@@ -950,7 +1008,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  Geometry of PF coils, central solenoid and plasma:
  
- coil			R(m)			Z(m)			dR(m)			dZ(m)			turns		steel thickness(m)
+ coil			R(m)		Z(m)		dR(m)		dZ(m)		turns		steel thickness(m)
  
  PF 0			3.80e+00	8.09e+00	7.50e-01	7.50e-01	4.21e+02	2.50e-01
  PF 1			3.80e+00	-9.43e+00	8.98e-01	8.98e-01	6.05e+02	3.14e-01
@@ -959,12 +1017,12 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  PF 4			1.26e+01	2.00e+00	4.26e-01	4.26e-01	1.36e+02	1.59e-01
  PF 5			1.26e+01	-2.00e+00	4.26e-01	4.26e-01	1.36e+02	1.59e-01
  CS				1.50e+00	0.00e+00	1.01e+00	1.05e+01	2.99e+03	3.42e-01
- Plasma		6.20e+00	0.0e0			4.00e+00	8.29e+00	1.0e0
+ Plasma			6.20e+00	0.0e0		4.00e+00	8.29e+00	1.0e0
  
  PF Coil Information at Peak Current:
  
- coil	current	allowed J		actual J		J			cond. mass	steel mass	field
- 				(MA)		(A/m2)		(A/m2)		ratio			(kg)			(kg)			(T)
+ coil	current		allowed J	actual J	J		cond. mass	steel mass	field
+ 	(MA)		(A/m2)		(A/m2)		ratio		(kg)		(kg)		(T)
  
  PF 0	1.69e+01	-1.78e+08	3.00e+07	-1.69e-01	5.71e+04	1.86e+05	1.46e+01
  PF 1	2.42e+01	-1.19e+09	3.00e+07	-2.52e-02	8.19e+04	2.84e+05	1.60e+01
@@ -973,8 +1031,8 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  PF 4	-5.45e+00	6.10e+08	3.00e+07	4.92e-02	6.12e+04	2.31e+05	4.52e+00
  PF 5	-5.45e+00	6.10e+08	3.00e+07	4.92e-02	6.12e+04	2.31e+05	4.52e+00
  CS		-1.20e+02	2.58e+07	1.13e+07	4.37e-01	1.36e+05	5.28e+05	1.40e+01
- 				------																---------	---------
- 				1.78e+02																4.64e+05	1.64e+06
+ 	------								---------	---------
+ 	1.78e+02							4.64e+05	1.64e+06
  
  PF coil current scaling information :
  
@@ -983,18 +1041,18 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  ****************************************** Volt Second Consumption *******************************************
  
- 				volt-sec			volt-sec		volt-sec
- 				start-up			burn			total
+ 			volt-sec			volt-sec		volt-sec
+ 			start-up			burn			total
  PF coils:		-121.32				-17.55			-138.87
  CS coil:		-96.45				-36.66			-133.10
- 				-------				-------			-------
+ 			-------				-------			-------
  Total:			-217.76				-54.21			-271.97
  
  Total volt-second consumption by coils (Wb)                              (vstot)                  -2.700E+02  OP 
  
  Summary of volt-second consumption by circuit (Wb):
  
- circuit		BOP				BOF				EOF
+ circuit			BOP			BOF		EOF
  
  	0			15.570			4.268		-4.493
  	1			16.626			2.050		-7.304
@@ -1002,15 +1060,15 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  	3			-4.218			-16.022		-13.649
  	4			3.717			-32.198		-34.289
  	5			3.717			-32.198		-34.289
- CS coil		65.150			-31.296		-67.953
+ 	CS coil			65.150			-31.296		-67.953
  
  ********************************** Waveforms ***********************************
  
  Currents (Amps/coil) as a function of time:
  
- 												time (sec)
- 				0.00			26.07			52.15			62.15			462.15			488.22
- 					Start					BOP					EOR					BOF					EOF					EOP
+ 								time (sec)
+ 				0.00		26.07		52.15		62.15		462.15		488.22
+ 				Start		BOP		EOR		BOF		EOF		EOP
  circuit
  	0			0.000e+00	1.686e+07	4.620e+06	4.620e+06	-4.864e+06	0.000e+00
  	1			0.000e+00	2.420e+07	2.985e+06	2.985e+06	-1.063e+07	0.000e+00
@@ -1019,7 +1077,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  	4			-0.000e+00	5.904e+05	-5.114e+06	-5.114e+06	-5.446e+06	-0.000e+00
  	5			-0.000e+00	5.904e+05	-5.114e+06	-5.114e+06	-5.446e+06	-0.000e+00
  	6			-0.000e+00	1.147e+08	-5.508e+07	-5.508e+07	-1.196e+08	-0.000e+00
- Plasma (A)	0.000e+00	0.000e+00	1.304e+07	1.304e+07	1.304e+07	0.000e+00
+ Plasma (A)			0.000e+00	0.000e+00	1.304e+07	1.304e+07	1.304e+07	0.000e+00
  
  This consists of: CS coil field balancing:
  0			0.000e+00	1.686e+07	-8.097e+06	-8.097e+06	-1.758e+07	0.000e+00
@@ -1108,12 +1166,12 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  Inductance matrix [H]:
  
- 0			[2.1e+00 1.7e-02 7.5e-02 2.3e-02 9.5e-02 6.1e-02 1.8e-01 3.9e-04]
- 1			[1.7e-02 4.1e+00 2.8e-02 9.6e-02 7.4e-02 1.2e-01 1.7e-01 4.2e-04]
- 2			[7.5e-02 2.8e-02 4.1e-01 4.5e-02 2.4e-01 1.3e-01 6.7e-02 4.0e-04]
- 3			[2.3e-02 9.6e-02 4.5e-02 4.1e-01 1.3e-01 2.4e-01 6.7e-02 4.0e-04]
- 4			[9.5e-02 7.4e-02 2.4e-01 1.3e-01 1.3e+00 3.8e-01 1.3e-01 8.6e-04]
- 5			[6.1e-02 1.2e-01 1.3e-01 2.4e-01 3.8e-01 1.3e+00 1.3e-01 8.6e-04]
+ 0	[2.1e+00 1.7e-02 7.5e-02 2.3e-02 9.5e-02 6.1e-02 1.8e-01 3.9e-04]
+ 1	[1.7e-02 4.1e+00 2.8e-02 9.6e-02 7.4e-02 1.2e-01 1.7e-01 4.2e-04]
+ 2	[7.5e-02 2.8e-02 4.1e-01 4.5e-02 2.4e-01 1.3e-01 6.7e-02 4.0e-04]
+ 3	[2.3e-02 9.6e-02 4.5e-02 4.1e-01 1.3e-01 2.4e-01 6.7e-02 4.0e-04]
+ 4	[9.5e-02 7.4e-02 2.4e-01 1.3e-01 1.3e+00 3.8e-01 1.3e-01 8.6e-04]
+ 5	[6.1e-02 1.2e-01 1.3e-01 2.4e-01 3.8e-01 1.3e+00 1.3e-01 8.6e-04]
  CS			[1.8e-01 1.7e-01 6.7e-02 6.7e-02 1.3e-01 1.3e-01 5.2e+00 1.7e-03]
  Plasma	[3.9e-04 4.2e-04 4.0e-04 4.0e-04 8.6e-04 8.6e-04 1.7e-03 1.1e-05]
  

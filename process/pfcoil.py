@@ -1834,7 +1834,7 @@ class PFCoil:
             for ig in range(pf.nef):
                 op.write(
                     self.outfile,
-                    f"{ig}\t\t\t{pfv.sxlg[:pfv.ncirt,ig]}",
+                    f"{ig}\t{pfv.sxlg[:pfv.ncirt,ig]}",
                 )
 
             if bv.iohcl != 0:
@@ -1889,6 +1889,8 @@ class PFCoil:
                     )
                 elif pfv.isumatoh == 5:
                     op.ocmmnt(self.outfile, " (WST Nb3Sn critical surface model)")
+                elif pfv.isumatoh == 6:
+                    op.ocmmnt(self.outfile, " (REBCO HTS)")
                 elif pfv.isumatoh == 7:
                     op.ocmmnt(
                         self.outfile,
@@ -1898,6 +1900,11 @@ class PFCoil:
                     op.ocmmnt(
                         self.outfile,
                         " (Durham Ginzburg-Landau critical surface model for REBCO)",
+                    )
+                elif pfv.isumatoh == 9:
+                    op.ocmmnt(
+                        self.outfile,
+                        " (Hazelton experimental data + Zhai conceptual model for REBCO)",
                     )
 
                 op.osubhd(self.outfile, "Central Solenoid Current Density Limits :")
@@ -2080,7 +2087,7 @@ class PFCoil:
                     pfv.fcuohsu,
                 )
                 # If REBCO material is used, print copperaoh_m2
-                if pfv.isumatoh == 6 or pfv.isumatoh == 8:
+                if pfv.isumatoh == 6 or pfv.isumatoh == 8 or pfv.isumatoh == 9:
                     op.ovarre(
                         self.outfile,
                         "CS current/copper area (A/m2)",
@@ -2209,14 +2216,14 @@ class PFCoil:
 
                 # REBCO fractures in strains above ~+/- 0.7%
                 if (
-                    (pfv.isumatoh == 8)
+                    (pfv.isumatoh == 6 or pfv.isumatoh == 8 or pfv.isumatoh == 9)
                     and tfv.str_cs_con_res > 0.7e-2
                     or tfv.str_cs_con_res < -0.7e-2
                 ):
                     eh.report_error(262)
 
                 if (
-                    (pfv.isumatpf == 8)
+                    (pfv.isumatpf == 6 or pfv.isumatpf == 8 or pfv.isumatpf == 9)
                     and tfv.str_pf_con_res > 0.7e-2
                     or tfv.str_pf_con_res < -0.7e-2
                 ):
@@ -2252,17 +2259,22 @@ class PFCoil:
             elif pfv.isumatpf == 6:
                 op.ocmmnt(
                     self.outfile,
-                    "REBCO 2nd generation HTS superconductor in CrCo strand",
+                    " (REBCO 2nd generation HTS superconductor in CrCo strand)",
                 )
             elif pfv.isumatpf == 7:
                 op.ocmmnt(
                     self.outfile,
-                    " (Durham Nb-Ti Ginzburg-Landau critical surface model)",
+                    " (Durham Ginzburg-Landau critical surface model for Nb-Ti)",
                 )
             elif pfv.isumatpf == 8:
                 op.ocmmnt(
                     self.outfile,
-                    " (Durham REBCO Ginzburg-Landau critical surface model)",
+                    " (Durham Ginzburg-Landau critical surface model for REBCO)",
+                )
+            elif pfv.isumatpf == 9:
+                op.ocmmnt(
+                    self.outfile,
+                    " (Hazelton experimental data + Zhai conceptual model for REBCO)",
                 )
 
             op.ovarre(
@@ -2315,7 +2327,7 @@ class PFCoil:
         op.osubhd(self.outfile, "Geometry of PF coils, central solenoid and plasma:")
         op.write(
             self.outfile,
-            "coil\t\t\tR(m)\t\t\tZ(m)\t\t\tdR(m)\t\t\tdZ(m)\t\t\tturns\t\tsteel thickness(m)",
+            "coil\t\t\tR(m)\t\tZ(m)\t\tdR(m)\t\tdZ(m)\t\tturns\t\tsteel thickness(m)",
         )
         op.oblnkl(self.outfile)
 
@@ -2423,18 +2435,18 @@ class PFCoil:
         # Plasma
         op.write(
             self.outfile,
-            f"Plasma\t\t{pv.rmajor:.2e}\t0.0e0\t\t\t{2.0e0*pv.rminor:.2e}\t{2.0e0*pv.rminor*pv.kappa:.2e}\t1.0e0",
+            f"Plasma\t\t\t{pv.rmajor:.2e}\t0.0e0\t\t{2.0e0*pv.rminor:.2e}\t{2.0e0*pv.rminor*pv.kappa:.2e}\t1.0e0",
         )
 
         op.osubhd(self.outfile, "PF Coil Information at Peak Current:")
 
         op.write(
             self.outfile,
-            "coil\tcurrent\tallowed J\t\tactual J\t\tJ\t\t\tcond. mass\tsteel mass\tfield",
+            "coil\tcurrent\t\tallowed J\tactual J\tJ\t\tcond. mass\tsteel mass\tfield",
         )
         op.write(
             self.outfile,
-            "\t\t\t\t(MA)\t\t(A/m2)\t\t(A/m2)\t\tratio\t\t\t(kg)\t\t\t(kg)\t\t\t(T)",
+            "\t(MA)\t\t(A/m2)\t\t(A/m2)\t\tratio\t\t(kg)\t\t(kg)\t\t(T)",
         )
 
         op.oblnkl(self.outfile)
@@ -2469,14 +2481,14 @@ class PFCoil:
         # Miscellaneous totals
         op.write(
             self.outfile,
-            "\t" * 4 + "------" + "\t" * 16 + "---------" + "\t" + "---------",
+            "\t" * 1 + "------" + "\t" * 8 + "---------" + "\t" + "---------",
         )
 
         op.write(
             self.outfile,
-            "\t" * 4
+            "\t" * 1
             + f"{pf.ricpf:.2e}"
-            + "\t" * 16
+            + "\t" * 7
             + f"{pfv.whtpf:.2e}\t{pfv.whtpfs:.2e}",
         )
 
@@ -2496,8 +2508,8 @@ class PFCoil:
         """
         op.oheadr(self.outfile, "Volt Second Consumption")
 
-        op.write(self.outfile, "\t" * 4 + "volt-sec\t\t\tvolt-sec\t\tvolt-sec")
-        op.write(self.outfile, "\t" * 4 + "start-up\t\t\tburn\t\t\ttotal")
+        op.write(self.outfile, "\t" * 3 + "volt-sec\t\t\tvolt-sec\t\tvolt-sec")
+        op.write(self.outfile, "\t" * 3 + "start-up\t\t\tburn\t\t\ttotal")
         op.write(
             self.outfile,
             f"PF coils:\t\t{pfv.vsefsu:.2f}\t\t\t\t{pfv.vsefbn:.2f}\t\t\t{pfv.vseft:.2f}",
@@ -2507,7 +2519,7 @@ class PFCoil:
             f"CS coil:\t\t{pfv.vsohsu:.2f}\t\t\t\t{pfv.vsohbn:.2f}\t\t\t{pfv.vsoh:.2f}",
         )
         op.write(
-            self.outfile, "\t" * 4 + "-" * 7 + "\t" * 4 + "-" * 7 + "\t" * 3 + "-" * 7
+            self.outfile, "\t" * 3 + "-" * 7 + "\t" * 4 + "-" * 7 + "\t" * 3 + "-" * 7
         )
         op.write(
             self.outfile,
@@ -2525,7 +2537,7 @@ class PFCoil:
 
         op.osubhd(self.outfile, "Summary of volt-second consumption by circuit (Wb):")
 
-        op.write(self.outfile, "circuit\t\tBOP\t\t\t\tBOF\t\t\t\tEOF")
+        op.write(self.outfile, "circuit\t\t\tBOP\t\t\tBOF\t\tEOF")
         op.oblnkl(self.outfile)
 
         for k in range(pf.nef):
@@ -2536,23 +2548,23 @@ class PFCoil:
 
         op.write(
             self.outfile,
-            f"CS coil\t\t{pf.vsdum[pfv.nohc-1,0]:.3f}\t\t\t{pf.vsdum[pfv.nohc-1,1]:.3f}\t\t{pf.vsdum[pfv.nohc-1,2]:.3f}",
+            f"\tCS coil\t\t\t{pf.vsdum[pfv.nohc-1,0]:.3f}\t\t\t{pf.vsdum[pfv.nohc-1,1]:.3f}\t\t{pf.vsdum[pfv.nohc-1,2]:.3f}",
         )
 
         op.oshead(self.outfile, "Waveforms")
         op.ocmmnt(self.outfile, "Currents (Amps/coil) as a function of time:")
         op.oblnkl(self.outfile)
 
-        op.write(self.outfile, "\t" * 12 + "time (sec)")
-        line = "\t"
+        op.write(self.outfile, "\t" * 8 + "time (sec)")
+        line = "\t\t"
         for k in range(6):
-            line += f"\t\t\t{tv.tim[k]:.2f}"
+            line += f"\t\t{tv.tim[k]:.2f}"
         op.write(self.outfile, line)
 
-        line = ""
+        line = "\t\t"
         for k in range(6):
             label = f2py_compatible_to_string(tv.timelabel[k])
-            line += f"\t\t\t\t\t{label}"
+            line += f"\t\t{label}"
         op.write(self.outfile, line)
 
         op.ocmmnt(self.outfile, "circuit")
@@ -2563,7 +2575,7 @@ class PFCoil:
                 line += f"\t{pfv.cpt[k,jj]*pfv.turns[k]:.3e}"
             op.write(self.outfile, line)
 
-        line = "Plasma (A)"
+        line = "Plasma (A)\t\t"
         for jj in range(6):
             line += f"\t{pfv.cpt[pfv.ncirt-1,jj]:.3e}"
 
@@ -2821,6 +2833,21 @@ class PFCoil:
             deltaj_gl_rebco = jcrit0 - jsc
             return deltaj_gl_rebco
 
+        def deltaj_hijc_rebco(temperature):
+            """Critical current density and current density difference in high current density REBCO.
+
+            :param temperature: temperature
+            :type temperature: float
+            :return: difference in current density
+            :rtype: float
+            """
+            jcrit0, b, t = sc.hijc_rebco(temperature, bmax, strain, bc20m, tc0m)
+            if ml.variable_error(jcrit0):  # superconductors.GL_REBCO has failed.
+                print(f"deltaj_hijc_REBCO: {bmax=} {temperature=} {jcrit0=}")
+
+            deltaj_hijc_rebco = jcrit0 - jsc
+            return deltaj_hijc_rebco
+
         # Find critical current density in superconducting strand, jcritstr
         if isumat == 1:
             # ITER Nb3Sn critical surface parameterization
@@ -2885,10 +2912,10 @@ class PFCoil:
             # The CS coil current/copper area calculation for quench protection
             # Copper area = (area of coil - area of steel)*(1- void fraction)*
             # (fraction of copper in strands)
-            rcv.copperaoh_m2 = ioheof / pfv.awpoh * (1.0 - pfv.vfohc) * pfv.fcuohsu
+            rcv.copperaoh_m2 = ioheof / (pfv.awpoh * (1.0 - pfv.vfohc) * pfv.fcuohsu)
 
         elif isumat == 7:
-            # Durham Ginzburg-Landau Nb-Ti parameterisation
+            # Durham Ginzburg-Landau critical surface model for Nb-Ti
             bc20m = tfv.b_crit_upper_nbti
             tc0m = tfv.t_crit_nbti
             jcritsc, bcrit, tcrit = sc.gl_nbti(thelium, bmax, strain, bc20m, tc0m)
@@ -2896,16 +2923,32 @@ class PFCoil:
 
             # The CS coil current at EOF
             ioheof = bv.hmax * pfv.ohhghf * bv.ohcth * 2.0 * pfv.coheof
-            # The CS coil current/copper area calculation for quench protection
-            rcv.copperaoh_m2 = ioheof / pfv.awpoh * (1.0 - pfv.vfohc) * pfv.fcuohsu
 
         elif isumat == 8:
-            # Branch YCBO model fit to Tallahassee data
+            # Durham Ginzburg-Landau critical surface model for REBCO
             bc20m = 429e0
             tc0m = 185e0
             jcritsc, bcrit, tcrit = sc.gl_rebco(thelium, bmax, strain, bc20m, tc0m)
             # A0 calculated for tape cross section already
             jcritstr = jcritsc * (1.0e0 - fcu)
+
+            # The CS coil current at EOF
+            ioheof = bv.hmax * pfv.ohhghf * bv.ohcth * 2.0 * pfv.coheof
+            # The CS coil current/copper area calculation for quench protection
+            rcv.copperaoh_m2 = ioheof / (pfv.awpoh * (1.0 - pfv.vfohc) * pfv.fcuohsu)
+
+        elif isumat == 9:
+            # Hazelton experimental data + Zhai conceptual model for REBCO
+            bc20m = 138
+            tc0m = 92
+            jcritsc, bcrit, tcrit = sc.hijc_rebco(thelium, bmax, strain, bc20m, tc0m)
+            # A0 calculated for tape cross section already
+            jcritstr = jcritsc * (1.0e0 - fcu)
+
+            # The CS coil current at EOF
+            ioheof = bv.hmax * pfv.ohhghf * bv.ohcth * 2.0 * pfv.coheof
+            # The CS coil current/copper area calculation for quench protection
+            rcv.copperaoh_m2 = ioheof / (pfv.awpoh * (1.0 - pfv.vfohc) * pfv.fcuohsu)
 
         else:
             # Error condition
@@ -3013,7 +3056,7 @@ class PFCoil:
 
         # SCM 10/08/20 Use secant solver for superconductors.GL_REBCO.
         elif isumat == 8:
-            # Current sharing temperature for Durham Ginzburg-Landau Nb-Ti
+            # Current sharing temperature for Durham Ginzburg-Landau REBCO
             x1 = 4.0e0  # Initial values of temperature
             x2 = 6.0e0
             # Solve for deltaj_superconductors.GL_REBCO = 0
@@ -3027,6 +3070,23 @@ class PFCoil:
             ):  # current sharing secant solver has failed.
                 print(
                     f"Gl_REBCO: {current_sharing_t=} {tmarg=} {jsc=} {jcrit0=} {residual=}"
+                )
+
+        elif isumat == 9:
+            # Current sharing temperature for Hazelton REBCO
+            x1 = 19.0e0  # Initial values of temperature
+            x2 = 21.0e0
+            # Solve for deltaj_superconductors.HIJC_REBCO = 0
+            current_sharing_t, error, residual = pml.secant_solve(
+                deltaj_hijc_rebco, x1, x2, 100e0
+            )
+            tmarg = current_sharing_t - thelium
+            jcrit0, b, t = sc.hijc_rebco(current_sharing_t, bmax, strain, bc20m, tc0m)
+            if ml.variable_error(
+                current_sharing_t
+            ):  # current sharing secant solver has failed.
+                print(
+                    f"HIJC_REBCO: {current_sharing_t=} {tmarg=} {jsc=} {jcrit0=} {residual=}"
                 )
 
         return jcritwp, jcritstr, jcritsc, tmarg

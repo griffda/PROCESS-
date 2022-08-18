@@ -722,7 +722,7 @@ class Sctfcoil:
             #  Critical current in cable
             icrit = jcritstr * acs * fcond
 
-        elif isumat == 8:  # Branch YCBO model fit to Tallahassee data
+        elif isumat == 8:  # Durham Ginzburg-Landau critical surface model for REBCO
             bc20m = 430
             tc0m = 185
             # If strain limit achieved, throw a warning and use the lower strain
@@ -739,7 +739,9 @@ class Sctfcoil:
             #  Critical current in cable (copper added at this stage in HTS cables)
             icrit = jcritstr * acs * fcond
 
-        elif isumat == 9:  # High Current Density REBCO tape
+        elif (
+            isumat == 9
+        ):  # Hazelton experimental data + Zhai conceptual model for REBCO
             bc20m = 138
             tc0m = 92
             # If strain limit achieved, throw a warning and use the lower strain

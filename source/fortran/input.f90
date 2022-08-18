@@ -275,7 +275,7 @@ contains
       c5div, ksic, fififi, divplt, delld, c2div, betao, divdum, tdiv, c6div, &
       omegan, prn1, fgamp, frrp, xpertin, c1div, betai, bpsout, xparain, fdiva, &
       zeffdiv, hldivlim, rlenmax, divfix, c3div, divleg_profile_inner, &
-      divleg_profile_outer
+      divleg_profile_outer, hldiv, i_hldiv
     use fwbs_variables, only: fblhebpo, vfblkt, fdiv, fvolso, fwcoolant, &
       pitch, iblanket, blktmodel, afwi, fblli2o, nphcdin, breeder_multiplier, &
       fw_armour_thickness, roughness, fwclfr, breedmat, fblli, fblvd, &
@@ -936,6 +936,12 @@ contains
        case ('fhldiv')
           call parse_real_variable('fhldiv', fhldiv, 0.001D0, 10.0D0, &
                'F-value for divertor heat load')
+       case ('hldiv')
+          call parse_real_variable('hldiv', hldiv, 0.0D0, 10.0D0, &
+               'Divertor heat load (MW/m2)')
+       case ('i_hldiv')
+          call parse_int_variable('i_hldiv', i_hldiv, 0, 1, &
+               'Switch for user input hldiv')
        case ('fflutf')
           call parse_real_variable('fflutf', fflutf, 0.001D0, 10.0D0, &
                'F-value for neutron fluence on TF coil')
@@ -1917,7 +1923,7 @@ contains
           call parse_real_variable('dcase', dcase, 1.0D3, 1.0D5, &
                'Density of TF coil case (kg/m3)')
        case ('dcond')
-          call parse_real_array('dcond', dcond, isub1, 8, &
+          call parse_real_array('dcond', dcond, isub1, 9, &
                'TF/PF coil superconductor density (kg/m3)', icode)
        case ('dcondins')
           call parse_real_variable('dcondins', dcondins, 5.0D2, 1.0D4, &
@@ -2267,10 +2273,10 @@ contains
           call parse_int_variable('ipfres', ipfres, 0, 1, &
                'Switch for supercond / resist PF coils')
        case ('isumatoh')
-          call parse_int_variable('isumatoh', isumatoh, 1, 8, &
+          call parse_int_variable('isumatoh', isumatoh, 1, 9, &
                'Central Solenoid superconductor material')
        case ('isumatpf')
-          call parse_int_variable('isumatpf', isumatpf, 1, 8, &
+          call parse_int_variable('isumatpf', isumatpf, 1, 9, &
                'PF coil superconductor material')
        case ('i_pf_current')
           call parse_int_variable('i_pf_current', i_pf_current, 0, 2, &
@@ -2798,7 +2804,7 @@ contains
          call parse_real_variable('step_ucfwps', step_ucfwps, 0.0D0, 1.0D9, &
          'first wall passive stabiliser cost ($) (if cost model = 2)' )
        case('step_ucsc')
-         call parse_real_array('step_ucsc', step_ucsc, isub1, 7, &
+         call parse_real_array('step_ucsc', step_ucsc, isub1, 9, &
               'cost of superconductor ($/kg) (if cost model = 2)', icode)
        case('step_ucfnc')
          call parse_real_variable('step_ucfnc', step_ucfnc, 0.0D0, 3.0D2, &
@@ -3066,7 +3072,7 @@ contains
           call parse_real_variable('ucrb', ucrb, 1.0D2, 1.0D3, &
                'Cost of reactor building ($/m3)')
        case ('ucsc')
-          call parse_real_array('ucsc', ucsc, isub1, 5, &
+          call parse_real_array('ucsc', ucsc, isub1, 9, &
                'Cost of superconductor ($/kg)', icode)
        case ('step_uc_cryo_al')
           call parse_real_variable('step_uc_cryo_al', step_uc_cryo_al, &

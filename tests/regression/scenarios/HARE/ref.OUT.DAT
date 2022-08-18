@@ -7,12 +7,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.4.0-446-gaa7b4de4f
+   Tag No. : v2.4.0-486-g677917259
     Branch : HEAD
-   Git log : Merge branch |1542-convert-impurity_radiation-f90-to-python| into |develop|
- Date/time : 28 Jul 2022  9:25:37 +00:00(hh:mm) UTC
+   Git log : Merge branch |mac| into |develop|
+ Date/time : 18 Aug 2022  9:55:22 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-nkpubsxk-project-20-concurrent-0
+  Computer : runner-7084ce6e-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_HARE_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
@@ -882,7 +882,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Geometry of PF coils, central solenoid and plasma:
  
- coil			R(m)			Z(m)			dR(m)			dZ(m)			turns		steel thickness(m)
+ coil			R(m)		Z(m)		dR(m)		dZ(m)		turns		steel thickness(m)
  
  PF 0			6.68e+00	9.92e+00	1.36e+00	1.36e+00	4.86e+02	1.56e-01
  PF 1			6.68e+00	-1.09e+01	1.44e+00	1.44e+00	5.41e+02	1.72e-01
@@ -891,12 +891,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  PF 4			1.77e+01	8.55e+00	8.31e-01	8.31e-01	1.29e+02	7.70e-02
  PF 5			1.77e+01	-8.55e+00	8.31e-01	8.31e-01	1.29e+02	7.70e-02
  CS				3.00e+00	0.00e+00	6.49e-01	1.60e+01	3.85e+03	1.62e-01
- Plasma		9.46e+00	0.0e0			6.11e+00	1.09e+01	1.0e0
+ Plasma			9.46e+00	0.0e0		6.11e+00	1.09e+01	1.0e0
  
  PF Coil Information at Peak Current:
  
- coil	current	allowed J		actual J		J			cond. mass	steel mass	field
- 				(MA)		(A/m2)		(A/m2)		ratio			(kg)			(kg)			(T)
+ coil	current		allowed J	actual J	J		cond. mass	steel mass	field
+ 	(MA)		(A/m2)		(A/m2)		ratio		(kg)		(kg)		(T)
  
  PF 0	2.05e+01	3.78e+08	1.10e+07	2.91e-02	3.32e+05	3.10e+05	6.24e+00
  PF 1	2.28e+01	3.40e+08	1.10e+07	3.23e-02	3.70e+05	3.62e+05	6.61e+00
@@ -905,8 +905,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  PF 4	-5.53e+00	7.59e+08	8.00e+06	1.05e-02	3.26e+05	2.42e+05	2.69e+00
  PF 5	-5.53e+00	7.59e+08	8.00e+06	1.05e-02	3.26e+05	2.42e+05	2.69e+00
  CS		-1.65e+02	5.93e+07	1.59e+07	2.68e-01	4.17e+05	7.63e+05	1.20e+01
- 				------																---------	---------
- 				2.38e+02																3.36e+06	3.01e+06
+ 	------								---------	---------
+ 	2.38e+02							3.36e+06	3.01e+06
  
  PF coil current scaling information :
  
@@ -915,18 +915,18 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  ****************************************** Volt Second Consumption *******************************************
  
- 				volt-sec			volt-sec		volt-sec
- 				start-up			burn			total
+ 			volt-sec			volt-sec		volt-sec
+ 			start-up			burn			total
  PF coils:		-241.22				-131.69			-372.91
  CS coil:		-201.02				-263.43			-464.45
- 				-------				-------			-------
+ 			-------				-------			-------
  Total:			-442.24				-395.12			-837.36
  
  Total volt-second consumption by coils (Wb)                              (vstot)                  -8.400E+02  OP 
  
  Summary of volt-second consumption by circuit (Wb):
  
- circuit		BOP				BOF				EOF
+ circuit			BOP			BOF		EOF
  
  	0			46.153			53.447		-0.801
  	1			47.654			51.317		-4.694
@@ -934,15 +934,15 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  	3			9.236			-77.003		-87.858
  	4			-0.121			-39.971		-39.829
  	5			-0.121			-39.971		-39.829
- CS coil		224.121			23.100		-240.330
+ 	CS coil			224.121			23.100		-240.330
  
  ********************************** Waveforms ***********************************
  
  Currents (Amps/coil) as a function of time:
  
- 												time (sec)
- 				0.00			30.00			60.00			70.00			7270.00			7300.00
- 					Start					BOP					EOR					BOF					EOF					EOP
+ 								time (sec)
+ 				0.00		30.00		60.00		70.00		7270.00		7300.00
+ 				Start		BOP		EOR		BOF		EOF		EOP
  circuit
  	0			0.000e+00	1.770e+07	2.050e+07	2.050e+07	-3.074e+05	0.000e+00
  	1			0.000e+00	2.118e+07	2.281e+07	2.281e+07	-2.086e+06	0.000e+00
@@ -951,7 +951,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  	4			-0.000e+00	-1.677e+04	-5.528e+06	-5.528e+06	-5.508e+06	-0.000e+00
  	5			-0.000e+00	-1.677e+04	-5.528e+06	-5.528e+06	-5.508e+06	-0.000e+00
  	6			-0.000e+00	1.543e+08	1.590e+07	1.590e+07	-1.654e+08	-0.000e+00
- Plasma (A)	0.000e+00	0.000e+00	2.065e+07	2.065e+07	2.065e+07	0.000e+00
+ Plasma (A)			0.000e+00	0.000e+00	2.065e+07	2.065e+07	2.065e+07	0.000e+00
  
  This consists of: CS coil field balancing:
  0			0.000e+00	1.770e+07	1.824e+06	1.824e+06	-1.898e+07	0.000e+00
@@ -1040,12 +1040,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Inductance matrix [H]:
  
- 0			[4.9e+00 8.8e-02 4.1e-01 2.7e-01 3.3e-01 9.8e-02 1.3e+00 1.3e-03]
- 1			[8.8e-02 6.0e+00 2.8e-01 4.3e-01 1.0e-01 3.6e-01 1.2e+00 1.2e-03]
- 2			[4.1e-01 2.8e-01 4.2e+00 1.5e+00 8.5e-01 4.5e-01 6.9e-01 2.1e-03]
- 3			[2.7e-01 4.3e-01 1.5e+00 4.2e+00 4.5e-01 8.5e-01 6.9e-01 2.1e-03]
- 4			[3.3e-01 1.0e-01 8.5e-01 4.5e-01 1.5e+00 1.5e-01 3.6e-01 9.3e-04]
- 5			[9.8e-02 3.6e-01 4.5e-01 8.5e-01 1.5e-01 1.5e+00 3.6e-01 9.3e-04]
+ 0	[4.9e+00 8.8e-02 4.1e-01 2.7e-01 3.3e-01 9.8e-02 1.3e+00 1.3e-03]
+ 1	[8.8e-02 6.0e+00 2.8e-01 4.3e-01 1.0e-01 3.6e-01 1.2e+00 1.2e-03]
+ 2	[4.1e-01 2.8e-01 4.2e+00 1.5e+00 8.5e-01 4.5e-01 6.9e-01 2.1e-03]
+ 3	[2.7e-01 4.3e-01 1.5e+00 4.2e+00 4.5e-01 8.5e-01 6.9e-01 2.1e-03]
+ 4	[3.3e-01 1.0e-01 8.5e-01 4.5e-01 1.5e+00 1.5e-01 3.6e-01 9.3e-04]
+ 5	[9.8e-02 3.6e-01 4.5e-01 8.5e-01 1.5e-01 1.5e+00 3.6e-01 9.3e-04]
  CS			[1.3e+00 1.2e+00 6.9e-01 6.9e-01 3.6e-01 3.6e-01 2.6e+01 5.6e-03]
  Plasma	[1.3e-03 1.2e-03 2.1e-03 2.1e-03 9.3e-04 9.3e-04 5.6e-03 1.7e-05]
  
@@ -2305,7 +2305,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Geometry of PF coils, central solenoid and plasma:
  
- coil			R(m)			Z(m)			dR(m)			dZ(m)			turns		steel thickness(m)
+ coil			R(m)		Z(m)		dR(m)		dZ(m)		turns		steel thickness(m)
  
  PF 0			6.69e+00	9.93e+00	1.37e+00	1.37e+00	4.87e+02	1.57e-01
  PF 1			6.69e+00	-1.09e+01	1.44e+00	1.44e+00	5.42e+02	1.73e-01
@@ -2314,12 +2314,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  PF 4			1.77e+01	8.56e+00	8.31e-01	8.31e-01	1.29e+02	7.71e-02
  PF 5			1.77e+01	-8.56e+00	8.31e-01	8.31e-01	1.29e+02	7.71e-02
  CS				3.00e+00	0.00e+00	6.55e-01	1.60e+01	3.86e+03	1.64e-01
- Plasma		9.47e+00	0.0e0			6.11e+00	1.09e+01	1.0e0
+ Plasma			9.47e+00	0.0e0		6.11e+00	1.09e+01	1.0e0
  
  PF Coil Information at Peak Current:
  
- coil	current	allowed J		actual J		J			cond. mass	steel mass	field
- 				(MA)		(A/m2)		(A/m2)		ratio			(kg)			(kg)			(T)
+ coil	current		allowed J	actual J	J		cond. mass	steel mass	field
+ 	(MA)		(A/m2)		(A/m2)		ratio		(kg)		(kg)		(T)
  
  PF 0	2.06e+01	3.75e+08	1.10e+07	2.93e-02	3.34e+05	3.13e+05	6.27e+00
  PF 1	2.29e+01	3.38e+08	1.10e+07	3.26e-02	3.71e+05	3.65e+05	6.64e+00
@@ -2328,8 +2328,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  PF 4	-5.53e+00	7.59e+08	8.00e+06	1.05e-02	3.26e+05	2.43e+05	2.69e+00
  PF 5	-5.53e+00	7.59e+08	8.00e+06	1.05e-02	3.26e+05	2.43e+05	2.69e+00
  CS		-1.66e+02	5.89e+07	1.58e+07	2.68e-01	4.21e+05	7.72e+05	1.20e+01
- 				------																---------	---------
- 				2.39e+02																3.37e+06	3.03e+06
+ 	------								---------	---------
+ 	2.39e+02							3.37e+06	3.03e+06
  
  PF coil current scaling information :
  
@@ -2338,18 +2338,18 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  ****************************************** Volt Second Consumption *******************************************
  
- 				volt-sec			volt-sec		volt-sec
- 				start-up			burn			total
+ 			volt-sec			volt-sec		volt-sec
+ 			start-up			burn			total
  PF coils:		-241.65				-132.89			-374.54
  CS coil:		-201.47				-265.69			-467.16
- 				-------				-------			-------
+ 			-------				-------			-------
  Total:			-443.12				-398.58			-841.70
  
  Total volt-second consumption by coils (Wb)                              (vstot)                  -8.400E+02  OP 
  
  Summary of volt-second consumption by circuit (Wb):
  
- circuit		BOP				BOF				EOF
+ circuit			BOP			BOF		EOF
  
  	0			46.432			53.708		-1.014
  	1			47.940			51.591		-4.909
@@ -2357,15 +2357,15 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  	3			9.282			-77.083		-88.022
  	4			-0.091			-40.015		-39.908
  	5			-0.091			-40.015		-39.908
- CS coil		225.441			23.975		-241.718
+ 	CS coil			225.441			23.975		-241.718
  
  ********************************** Waveforms ***********************************
  
  Currents (Amps/coil) as a function of time:
  
- 												time (sec)
- 				0.00			30.00			60.00			70.00			7270.00			7300.00
- 					Start					BOP					EOR					BOF					EOF					EOP
+ 								time (sec)
+ 				0.00		30.00		60.00		70.00		7270.00		7300.00
+ 				Start		BOP		EOR		BOF		EOF		EOP
  circuit
  	0			0.000e+00	1.777e+07	2.055e+07	2.055e+07	-3.881e+05	0.000e+00
  	1			0.000e+00	2.126e+07	2.288e+07	2.288e+07	-2.177e+06	0.000e+00
@@ -2374,7 +2374,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  	4			-0.000e+00	-1.254e+04	-5.528e+06	-5.528e+06	-5.513e+06	-0.000e+00
  	5			-0.000e+00	-1.254e+04	-5.528e+06	-5.528e+06	-5.513e+06	-0.000e+00
  	6			-0.000e+00	1.548e+08	1.646e+07	1.646e+07	-1.659e+08	-0.000e+00
- Plasma (A)	0.000e+00	0.000e+00	2.066e+07	2.066e+07	2.066e+07	0.000e+00
+ Plasma (A)			0.000e+00	0.000e+00	2.066e+07	2.066e+07	2.066e+07	0.000e+00
  
  This consists of: CS coil field balancing:
  0			0.000e+00	1.777e+07	1.890e+06	1.890e+06	-1.905e+07	0.000e+00
@@ -2463,12 +2463,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Inductance matrix [H]:
  
- 0			[5.0e+00 8.9e-02 4.1e-01 2.7e-01 3.3e-01 9.9e-02 1.3e+00 1.3e-03]
- 1			[8.9e-02 6.0e+00 2.8e-01 4.3e-01 1.0e-01 3.6e-01 1.2e+00 1.2e-03]
- 2			[4.1e-01 2.8e-01 4.2e+00 1.5e+00 8.5e-01 4.6e-01 7.0e-01 2.1e-03]
- 3			[2.7e-01 4.3e-01 1.5e+00 4.2e+00 4.6e-01 8.5e-01 7.0e-01 2.1e-03]
- 4			[3.3e-01 1.0e-01 8.5e-01 4.6e-01 1.5e+00 1.5e-01 3.6e-01 9.3e-04]
- 5			[9.9e-02 3.6e-01 4.6e-01 8.5e-01 1.5e-01 1.5e+00 3.6e-01 9.3e-04]
+ 0	[5.0e+00 8.9e-02 4.1e-01 2.7e-01 3.3e-01 9.9e-02 1.3e+00 1.3e-03]
+ 1	[8.9e-02 6.0e+00 2.8e-01 4.3e-01 1.0e-01 3.6e-01 1.2e+00 1.2e-03]
+ 2	[4.1e-01 2.8e-01 4.2e+00 1.5e+00 8.5e-01 4.6e-01 7.0e-01 2.1e-03]
+ 3	[2.7e-01 4.3e-01 1.5e+00 4.2e+00 4.6e-01 8.5e-01 7.0e-01 2.1e-03]
+ 4	[3.3e-01 1.0e-01 8.5e-01 4.6e-01 1.5e+00 1.5e-01 3.6e-01 9.3e-04]
+ 5	[9.9e-02 3.6e-01 4.6e-01 8.5e-01 1.5e-01 1.5e+00 3.6e-01 9.3e-04]
  CS			[1.3e+00 1.2e+00 7.0e-01 7.0e-01 3.6e-01 3.6e-01 2.6e+01 5.6e-03]
  Plasma	[1.3e-03 1.2e-03 2.1e-03 2.1e-03 9.3e-04 9.3e-04 5.6e-03 1.7e-05]
  
@@ -3728,7 +3728,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Geometry of PF coils, central solenoid and plasma:
  
- coil			R(m)			Z(m)			dR(m)			dZ(m)			turns		steel thickness(m)
+ coil			R(m)		Z(m)		dR(m)		dZ(m)		turns		steel thickness(m)
  
  PF 0			6.69e+00	9.93e+00	1.37e+00	1.37e+00	4.88e+02	1.58e-01
  PF 1			6.69e+00	-1.09e+01	1.44e+00	1.44e+00	5.44e+02	1.73e-01
@@ -3737,12 +3737,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  PF 4			1.77e+01	8.57e+00	8.31e-01	8.31e-01	1.29e+02	7.71e-02
  PF 5			1.77e+01	-8.57e+00	8.31e-01	8.31e-01	1.29e+02	7.71e-02
  CS				3.01e+00	0.00e+00	6.61e-01	1.60e+01	3.87e+03	1.65e-01
- Plasma		9.48e+00	0.0e0			6.12e+00	1.09e+01	1.0e0
+ Plasma			9.48e+00	0.0e0		6.12e+00	1.09e+01	1.0e0
  
  PF Coil Information at Peak Current:
  
- coil	current	allowed J		actual J		J			cond. mass	steel mass	field
- 				(MA)		(A/m2)		(A/m2)		ratio			(kg)			(kg)			(T)
+ coil	current		allowed J	actual J	J		cond. mass	steel mass	field
+ 	(MA)		(A/m2)		(A/m2)		ratio		(kg)		(kg)		(T)
  
  PF 0	2.06e+01	3.73e+08	1.10e+07	2.95e-02	3.35e+05	3.15e+05	6.29e+00
  PF 1	2.29e+01	3.35e+08	1.10e+07	3.28e-02	3.73e+05	3.68e+05	6.66e+00
@@ -3751,8 +3751,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  PF 4	-5.53e+00	7.59e+08	8.00e+06	1.05e-02	3.26e+05	2.43e+05	2.69e+00
  PF 5	-5.53e+00	7.59e+08	8.00e+06	1.05e-02	3.26e+05	2.43e+05	2.69e+00
  CS		-1.66e+02	5.86e+07	1.57e+07	2.68e-01	4.26e+05	7.80e+05	1.21e+01
- 				------																---------	---------
- 				2.39e+02																3.38e+06	3.05e+06
+ 	------								---------	---------
+ 	2.39e+02							3.38e+06	3.05e+06
  
  PF coil current scaling information :
  
@@ -3761,18 +3761,18 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  ****************************************** Volt Second Consumption *******************************************
  
- 				volt-sec			volt-sec		volt-sec
- 				start-up			burn			total
+ 			volt-sec			volt-sec		volt-sec
+ 			start-up			burn			total
  PF coils:		-242.03				-133.94			-375.97
  CS coil:		-201.86				-267.68			-469.54
- 				-------				-------			-------
+ 			-------				-------			-------
  Total:			-443.89				-401.62			-845.51
  
  Total volt-second consumption by coils (Wb)                              (vstot)                  -8.500E+02  OP 
  
  Summary of volt-second consumption by circuit (Wb):
  
- circuit		BOP				BOF				EOF
+ circuit			BOP			BOF		EOF
  
  	0			46.677			53.937		-1.201
  	1			48.192			51.831		-5.097
@@ -3780,15 +3780,15 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  	3			9.323			-77.153		-88.166
  	4			-0.064			-40.052		-39.977
  	5			-0.064			-40.052		-39.977
- CS coil		226.601			24.742		-242.937
+ 	CS coil			226.601			24.742		-242.937
  
  ********************************** Waveforms ***********************************
  
  Currents (Amps/coil) as a function of time:
  
- 												time (sec)
- 				0.00			30.00			60.00			70.00			7270.00			7300.00
- 					Start					BOP					EOR					BOF					EOF					EOP
+ 								time (sec)
+ 				0.00		30.00		60.00		70.00		7270.00		7300.00
+ 				Start		BOP		EOR		BOF		EOF		EOP
  circuit
  	0			0.000e+00	1.783e+07	2.060e+07	2.060e+07	-4.588e+05	0.000e+00
  	1			0.000e+00	2.133e+07	2.294e+07	2.294e+07	-2.256e+06	0.000e+00
@@ -3797,7 +3797,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  	4			-0.000e+00	-8.798e+03	-5.528e+06	-5.528e+06	-5.517e+06	-0.000e+00
  	5			-0.000e+00	-8.798e+03	-5.528e+06	-5.528e+06	-5.517e+06	-0.000e+00
  	6			-0.000e+00	1.552e+08	1.695e+07	1.695e+07	-1.664e+08	-0.000e+00
- Plasma (A)	0.000e+00	0.000e+00	2.067e+07	2.067e+07	2.067e+07	0.000e+00
+ Plasma (A)			0.000e+00	0.000e+00	2.067e+07	2.067e+07	2.067e+07	0.000e+00
  
  This consists of: CS coil field balancing:
  0			0.000e+00	1.783e+07	1.947e+06	1.947e+06	-1.912e+07	0.000e+00
@@ -3886,12 +3886,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Inductance matrix [H]:
  
- 0			[5.0e+00 8.9e-02 4.1e-01 2.7e-01 3.3e-01 9.9e-02 1.4e+00 1.3e-03]
- 1			[8.9e-02 6.1e+00 2.8e-01 4.4e-01 1.0e-01 3.6e-01 1.2e+00 1.2e-03]
- 2			[4.1e-01 2.8e-01 4.2e+00 1.5e+00 8.5e-01 4.6e-01 7.0e-01 2.1e-03]
- 3			[2.7e-01 4.4e-01 1.5e+00 4.2e+00 4.6e-01 8.5e-01 7.0e-01 2.1e-03]
- 4			[3.3e-01 1.0e-01 8.5e-01 4.6e-01 1.5e+00 1.5e-01 3.6e-01 9.3e-04]
- 5			[9.9e-02 3.6e-01 4.6e-01 8.5e-01 1.5e-01 1.5e+00 3.6e-01 9.3e-04]
+ 0	[5.0e+00 8.9e-02 4.1e-01 2.7e-01 3.3e-01 9.9e-02 1.4e+00 1.3e-03]
+ 1	[8.9e-02 6.1e+00 2.8e-01 4.4e-01 1.0e-01 3.6e-01 1.2e+00 1.2e-03]
+ 2	[4.1e-01 2.8e-01 4.2e+00 1.5e+00 8.5e-01 4.6e-01 7.0e-01 2.1e-03]
+ 3	[2.7e-01 4.4e-01 1.5e+00 4.2e+00 4.6e-01 8.5e-01 7.0e-01 2.1e-03]
+ 4	[3.3e-01 1.0e-01 8.5e-01 4.6e-01 1.5e+00 1.5e-01 3.6e-01 9.3e-04]
+ 5	[9.9e-02 3.6e-01 4.6e-01 8.5e-01 1.5e-01 1.5e+00 3.6e-01 9.3e-04]
  CS			[1.4e+00 1.2e+00 7.0e-01 7.0e-01 3.6e-01 3.6e-01 2.6e+01 5.6e-03]
  Plasma	[1.3e-03 1.2e-03 2.1e-03 2.1e-03 9.3e-04 9.3e-04 5.6e-03 1.7e-05]
  
@@ -5151,7 +5151,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Geometry of PF coils, central solenoid and plasma:
  
- coil			R(m)			Z(m)			dR(m)			dZ(m)			turns		steel thickness(m)
+ coil			R(m)		Z(m)		dR(m)		dZ(m)		turns		steel thickness(m)
  
  PF 0			6.70e+00	9.94e+00	1.37e+00	1.37e+00	4.90e+02	1.59e-01
  PF 1			6.70e+00	-1.09e+01	1.45e+00	1.45e+00	5.46e+02	1.75e-01
@@ -5160,12 +5160,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  PF 4			1.77e+01	8.58e+00	8.31e-01	8.31e-01	1.29e+02	7.72e-02
  PF 5			1.77e+01	-8.58e+00	8.31e-01	8.31e-01	1.29e+02	7.72e-02
  CS				3.01e+00	0.00e+00	6.68e-01	1.61e+01	3.88e+03	1.67e-01
- Plasma		9.50e+00	0.0e0			6.13e+00	1.09e+01	1.0e0
+ Plasma			9.50e+00	0.0e0		6.13e+00	1.09e+01	1.0e0
  
  PF Coil Information at Peak Current:
  
- coil	current	allowed J		actual J		J			cond. mass	steel mass	field
- 				(MA)		(A/m2)		(A/m2)		ratio			(kg)			(kg)			(T)
+ coil	current		allowed J	actual J	J		cond. mass	steel mass	field
+ 	(MA)		(A/m2)		(A/m2)		ratio		(kg)		(kg)		(T)
  
  PF 0	2.07e+01	3.69e+08	1.10e+07	2.98e-02	3.37e+05	3.20e+05	6.33e+00
  PF 1	2.31e+01	3.31e+08	1.10e+07	3.32e-02	3.75e+05	3.73e+05	6.70e+00
@@ -5174,8 +5174,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  PF 4	-5.53e+00	7.59e+08	8.00e+06	1.05e-02	3.27e+05	2.44e+05	2.69e+00
  PF 5	-5.53e+00	7.59e+08	8.00e+06	1.05e-02	3.27e+05	2.44e+05	2.69e+00
  CS		-1.67e+02	5.81e+07	1.56e+07	2.68e-01	4.32e+05	7.92e+05	1.21e+01
- 				------																---------	---------
- 				2.40e+02																3.39e+06	3.07e+06
+ 	------								---------	---------
+ 	2.40e+02							3.39e+06	3.07e+06
  
  PF coil current scaling information :
  
@@ -5184,18 +5184,18 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  ****************************************** Volt Second Consumption *******************************************
  
- 				volt-sec			volt-sec		volt-sec
- 				start-up			burn			total
+ 			volt-sec			volt-sec		volt-sec
+ 			start-up			burn			total
  PF coils:		-242.67				-135.83			-378.50
  CS coil:		-202.47				-271.23			-473.70
- 				-------				-------			-------
+ 			-------				-------			-------
  Total:			-445.14				-407.06			-852.20
  
  Total volt-second consumption by coils (Wb)                              (vstot)                  -8.500E+02  OP 
  
  Summary of volt-second consumption by circuit (Wb):
  
- circuit		BOP				BOF				EOF
+ circuit			BOP			BOF		EOF
  
  	0			47.105			54.356		-1.526
  	1			48.632			52.269		-5.424
@@ -5203,15 +5203,15 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  	3			9.391			-77.278		-88.419
  	4			-0.011			-40.119		-40.106
  	5			-0.011			-40.119		-40.106
- CS coil		228.627			26.154		-245.074
+ 	CS coil			228.627			26.154		-245.074
  
  ********************************** Waveforms ***********************************
  
  Currents (Amps/coil) as a function of time:
  
- 												time (sec)
- 				0.00			30.00			60.00			70.00			7270.00			7300.00
- 					Start					BOP					EOR					BOF					EOF					EOP
+ 								time (sec)
+ 				0.00		30.00		60.00		70.00		7270.00		7300.00
+ 				Start		BOP		EOR		BOF		EOF		EOP
  circuit
  	0			0.000e+00	1.794e+07	2.070e+07	2.070e+07	-5.810e+05	0.000e+00
  	1			0.000e+00	2.146e+07	2.306e+07	2.306e+07	-2.393e+06	0.000e+00
@@ -5220,7 +5220,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  	4			-0.000e+00	-1.511e+03	-5.527e+06	-5.527e+06	-5.525e+06	-0.000e+00
  	5			-0.000e+00	-1.511e+03	-5.527e+06	-5.527e+06	-5.525e+06	-0.000e+00
  	6			-0.000e+00	1.558e+08	1.783e+07	1.783e+07	-1.670e+08	-0.000e+00
- Plasma (A)	0.000e+00	0.000e+00	2.068e+07	2.068e+07	2.068e+07	0.000e+00
+ Plasma (A)			0.000e+00	0.000e+00	2.068e+07	2.068e+07	2.068e+07	0.000e+00
  
  This consists of: CS coil field balancing:
  0			0.000e+00	1.794e+07	2.052e+06	2.052e+06	-1.923e+07	0.000e+00
@@ -5309,12 +5309,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Inductance matrix [H]:
  
- 0			[5.0e+00 9.1e-02 4.2e-01 2.8e-01 3.3e-01 1.0e-01 1.4e+00 1.3e-03]
- 1			[9.1e-02 6.1e+00 2.9e-01 4.4e-01 1.0e-01 3.6e-01 1.3e+00 1.2e-03]
- 2			[4.2e-01 2.9e-01 4.3e+00 1.5e+00 8.5e-01 4.6e-01 7.1e-01 2.1e-03]
- 3			[2.8e-01 4.4e-01 1.5e+00 4.3e+00 4.6e-01 8.5e-01 7.1e-01 2.1e-03]
- 4			[3.3e-01 1.0e-01 8.5e-01 4.6e-01 1.5e+00 1.5e-01 3.7e-01 9.3e-04]
- 5			[1.0e-01 3.6e-01 4.6e-01 8.5e-01 1.5e-01 1.5e+00 3.7e-01 9.3e-04]
+ 0	[5.0e+00 9.1e-02 4.2e-01 2.8e-01 3.3e-01 1.0e-01 1.4e+00 1.3e-03]
+ 1	[9.1e-02 6.1e+00 2.9e-01 4.4e-01 1.0e-01 3.6e-01 1.3e+00 1.2e-03]
+ 2	[4.2e-01 2.9e-01 4.3e+00 1.5e+00 8.5e-01 4.6e-01 7.1e-01 2.1e-03]
+ 3	[2.8e-01 4.4e-01 1.5e+00 4.3e+00 4.6e-01 8.5e-01 7.1e-01 2.1e-03]
+ 4	[3.3e-01 1.0e-01 8.5e-01 4.6e-01 1.5e+00 1.5e-01 3.7e-01 9.3e-04]
+ 5	[1.0e-01 3.6e-01 4.6e-01 8.5e-01 1.5e-01 1.5e+00 3.7e-01 9.3e-04]
  CS			[1.4e+00 1.3e+00 7.1e-01 7.1e-01 3.7e-01 3.7e-01 2.6e+01 5.7e-03]
  Plasma	[1.3e-03 1.2e-03 2.1e-03 2.1e-03 9.3e-04 9.3e-04 5.7e-03 1.7e-05]
  
@@ -6574,7 +6574,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Geometry of PF coils, central solenoid and plasma:
  
- coil			R(m)			Z(m)			dR(m)			dZ(m)			turns		steel thickness(m)
+ coil			R(m)		Z(m)		dR(m)		dZ(m)		turns		steel thickness(m)
  
  PF 0			6.71e+00	9.94e+00	1.38e+00	1.38e+00	4.93e+02	1.60e-01
  PF 1			6.71e+00	-1.09e+01	1.45e+00	1.45e+00	5.49e+02	1.77e-01
@@ -6583,12 +6583,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  PF 4			1.77e+01	8.59e+00	8.32e-01	8.32e-01	1.29e+02	7.79e-02
  PF 5			1.77e+01	-8.59e+00	8.32e-01	8.32e-01	1.29e+02	7.79e-02
  CS				3.03e+00	0.00e+00	6.70e-01	1.61e+01	3.89e+03	1.68e-01
- Plasma		9.52e+00	0.0e0			6.14e+00	1.09e+01	1.0e0
+ Plasma			9.52e+00	0.0e0		6.14e+00	1.09e+01	1.0e0
  
  PF Coil Information at Peak Current:
  
- coil	current	allowed J		actual J		J			cond. mass	steel mass	field
- 				(MA)		(A/m2)		(A/m2)		ratio			(kg)			(kg)			(T)
+ coil	current		allowed J	actual J	J		cond. mass	steel mass	field
+ 	(MA)		(A/m2)		(A/m2)		ratio		(kg)		(kg)		(T)
  
  PF 0	2.08e+01	3.65e+08	1.10e+07	3.01e-02	3.39e+05	3.24e+05	6.37e+00
  PF 1	2.32e+01	3.27e+08	1.10e+07	3.36e-02	3.78e+05	3.79e+05	6.74e+00
@@ -6597,8 +6597,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  PF 4	-5.53e+00	7.66e+08	8.00e+06	1.05e-02	3.28e+05	2.47e+05	2.63e+00
  PF 5	-5.53e+00	7.66e+08	8.00e+06	1.05e-02	3.28e+05	2.47e+05	2.63e+00
  CS		-1.67e+02	5.80e+07	1.55e+07	2.68e-01	4.36e+05	7.99e+05	1.21e+01
- 				------																---------	---------
- 				2.41e+02																3.41e+06	3.10e+06
+ 	------								---------	---------
+ 	2.41e+02							3.41e+06	3.10e+06
  
  PF coil current scaling information :
  
@@ -6607,18 +6607,18 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  ****************************************** Volt Second Consumption *******************************************
  
- 				volt-sec			volt-sec		volt-sec
- 				start-up			burn			total
+ 			volt-sec			volt-sec		volt-sec
+ 			start-up			burn			total
  PF coils:		-243.22				-137.73			-380.94
  CS coil:		-202.91				-274.77			-477.68
- 				-------				-------			-------
+ 			-------				-------			-------
  Total:			-446.13				-412.50			-858.63
  
  Total volt-second consumption by coils (Wb)                              (vstot)                  -8.600E+02  OP 
  
  Summary of volt-second consumption by circuit (Wb):
  
- circuit		BOP				BOF				EOF
+ circuit			BOP			BOF		EOF
  
  	0			47.511			54.791		-1.832
  	1			49.049			52.723		-5.733
@@ -6626,15 +6626,15 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  	3			9.452			-77.399		-88.664
  	4			0.050			-40.184		-40.244
  	5			0.050			-40.184		-40.244
- CS coil		230.557			27.648		-247.126
+ 	CS coil			230.557			27.648		-247.126
  
  ********************************** Waveforms ***********************************
  
  Currents (Amps/coil) as a function of time:
  
- 												time (sec)
- 				0.00			30.00			60.00			70.00			7270.00			7300.00
- 					Start					BOP					EOR					BOF					EOF					EOP
+ 								time (sec)
+ 				0.00		30.00		60.00		70.00		7270.00		7300.00
+ 				Start		BOP		EOR		BOF		EOF		EOP
  circuit
  	0			0.000e+00	1.804e+07	2.080e+07	2.080e+07	-6.956e+05	0.000e+00
  	1			0.000e+00	2.157e+07	2.318e+07	2.318e+07	-2.521e+06	0.000e+00
@@ -6643,7 +6643,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  	4			-0.000e+00	6.903e+03	-5.527e+06	-5.527e+06	-5.535e+06	-0.000e+00
  	5			-0.000e+00	6.903e+03	-5.527e+06	-5.527e+06	-5.535e+06	-0.000e+00
  	6			-0.000e+00	1.561e+08	1.872e+07	1.872e+07	-1.673e+08	-0.000e+00
- Plasma (A)	0.000e+00	0.000e+00	2.069e+07	2.069e+07	2.069e+07	0.000e+00
+ Plasma (A)			0.000e+00	0.000e+00	2.069e+07	2.069e+07	2.069e+07	0.000e+00
  
  This consists of: CS coil field balancing:
  0			0.000e+00	1.804e+07	2.163e+06	2.163e+06	-1.933e+07	0.000e+00
@@ -6732,12 +6732,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Inductance matrix [H]:
  
- 0			[5.1e+00 9.2e-02 4.2e-01 2.8e-01 3.3e-01 1.0e-01 1.4e+00 1.3e-03]
- 1			[9.2e-02 6.2e+00 2.9e-01 4.4e-01 1.0e-01 3.6e-01 1.3e+00 1.2e-03]
- 2			[4.2e-01 2.9e-01 4.3e+00 1.5e+00 8.5e-01 4.6e-01 7.2e-01 2.1e-03]
- 3			[2.8e-01 4.4e-01 1.5e+00 4.3e+00 4.6e-01 8.5e-01 7.2e-01 2.1e-03]
- 4			[3.3e-01 1.0e-01 8.5e-01 4.6e-01 1.5e+00 1.5e-01 3.7e-01 9.4e-04]
- 5			[1.0e-01 3.6e-01 4.6e-01 8.5e-01 1.5e-01 1.5e+00 3.7e-01 9.4e-04]
+ 0	[5.1e+00 9.2e-02 4.2e-01 2.8e-01 3.3e-01 1.0e-01 1.4e+00 1.3e-03]
+ 1	[9.2e-02 6.2e+00 2.9e-01 4.4e-01 1.0e-01 3.6e-01 1.3e+00 1.2e-03]
+ 2	[4.2e-01 2.9e-01 4.3e+00 1.5e+00 8.5e-01 4.6e-01 7.2e-01 2.1e-03]
+ 3	[2.8e-01 4.4e-01 1.5e+00 4.3e+00 4.6e-01 8.5e-01 7.2e-01 2.1e-03]
+ 4	[3.3e-01 1.0e-01 8.5e-01 4.6e-01 1.5e+00 1.5e-01 3.7e-01 9.4e-04]
+ 5	[1.0e-01 3.6e-01 4.6e-01 8.5e-01 1.5e-01 1.5e+00 3.7e-01 9.4e-04]
  CS			[1.4e+00 1.3e+00 7.2e-01 7.2e-01 3.7e-01 3.7e-01 2.7e+01 5.7e-03]
  Plasma	[1.3e-03 1.2e-03 2.1e-03 2.1e-03 9.4e-04 9.4e-04 5.7e-03 1.7e-05]
  
@@ -7997,7 +7997,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Geometry of PF coils, central solenoid and plasma:
  
- coil			R(m)			Z(m)			dR(m)			dZ(m)			turns		steel thickness(m)
+ coil			R(m)		Z(m)		dR(m)		dZ(m)		turns		steel thickness(m)
  
  PF 0			6.73e+00	9.95e+00	1.38e+00	1.38e+00	4.95e+02	1.62e-01
  PF 1			6.73e+00	-1.09e+01	1.46e+00	1.46e+00	5.52e+02	1.78e-01
@@ -8006,12 +8006,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  PF 4			1.78e+01	8.61e+00	8.33e-01	8.33e-01	1.29e+02	7.82e-02
  PF 5			1.78e+01	-8.61e+00	8.33e-01	8.33e-01	1.29e+02	7.82e-02
  CS				3.04e+00	0.00e+00	6.73e-01	1.61e+01	3.90e+03	1.68e-01
- Plasma		9.53e+00	0.0e0			6.15e+00	1.09e+01	1.0e0
+ Plasma			9.53e+00	0.0e0		6.15e+00	1.09e+01	1.0e0
  
  PF Coil Information at Peak Current:
  
- coil	current	allowed J		actual J		J			cond. mass	steel mass	field
- 				(MA)		(A/m2)		(A/m2)		ratio			(kg)			(kg)			(T)
+ coil	current		allowed J	actual J	J		cond. mass	steel mass	field
+ 	(MA)		(A/m2)		(A/m2)		ratio		(kg)		(kg)		(T)
  
  PF 0	2.09e+01	3.61e+08	1.10e+07	3.05e-02	3.41e+05	3.29e+05	6.41e+00
  PF 1	2.33e+01	3.23e+08	1.10e+07	3.41e-02	3.80e+05	3.84e+05	6.78e+00
@@ -8020,8 +8020,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  PF 4	-5.54e+00	7.65e+08	8.00e+06	1.05e-02	3.29e+05	2.48e+05	2.63e+00
  PF 5	-5.54e+00	7.65e+08	8.00e+06	1.05e-02	3.29e+05	2.48e+05	2.63e+00
  CS		-1.68e+02	5.78e+07	1.55e+07	2.68e-01	4.40e+05	8.06e+05	1.21e+01
- 				------																---------	---------
- 				2.41e+02																3.42e+06	3.13e+06
+ 	------								---------	---------
+ 	2.41e+02							3.42e+06	3.13e+06
  
  PF coil current scaling information :
  
@@ -8030,18 +8030,18 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  ****************************************** Volt Second Consumption *******************************************
  
- 				volt-sec			volt-sec		volt-sec
- 				start-up			burn			total
+ 			volt-sec			volt-sec		volt-sec
+ 			start-up			burn			total
  PF coils:		-243.78				-139.68			-383.46
  CS coil:		-203.35				-278.42			-481.77
- 				-------				-------			-------
+ 			-------				-------			-------
  Total:			-447.14				-418.10			-865.23
  
  Total volt-second consumption by coils (Wb)                              (vstot)                  -8.700E+02  OP 
  
  Summary of volt-second consumption by circuit (Wb):
  
- circuit		BOP				BOF				EOF
+ circuit			BOP			BOF		EOF
  
  	0			47.929			55.237		-2.148
  	1			49.478			53.190		-6.050
@@ -8049,15 +8049,15 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  	3			9.514			-77.523		-88.914
  	4			0.114			-40.250		-40.386
  	5			0.114			-40.250		-40.386
- CS coil		232.538			29.184		-249.234
+ 	CS coil			232.538			29.184		-249.234
  
  ********************************** Waveforms ***********************************
  
  Currents (Amps/coil) as a function of time:
  
- 												time (sec)
- 				0.00			30.00			60.00			70.00			7270.00			7300.00
- 					Start					BOP					EOR					BOF					EOF					EOP
+ 								time (sec)
+ 				0.00		30.00		60.00		70.00		7270.00		7300.00
+ 				Start		BOP		EOR		BOF		EOF		EOP
  circuit
  	0			0.000e+00	1.814e+07	2.090e+07	2.090e+07	-8.127e+05	0.000e+00
  	1			0.000e+00	2.168e+07	2.331e+07	2.331e+07	-2.651e+06	0.000e+00
@@ -8066,7 +8066,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  	4			-0.000e+00	1.561e+04	-5.526e+06	-5.526e+06	-5.545e+06	-0.000e+00
  	5			-0.000e+00	1.561e+04	-5.526e+06	-5.526e+06	-5.545e+06	-0.000e+00
  	6			-0.000e+00	1.564e+08	1.963e+07	1.963e+07	-1.677e+08	-0.000e+00
- Plasma (A)	0.000e+00	0.000e+00	2.070e+07	2.070e+07	2.070e+07	0.000e+00
+ Plasma (A)			0.000e+00	0.000e+00	2.070e+07	2.070e+07	2.070e+07	0.000e+00
  
  This consists of: CS coil field balancing:
  0			0.000e+00	1.814e+07	2.276e+06	2.276e+06	-1.944e+07	0.000e+00
@@ -8155,12 +8155,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Inductance matrix [H]:
  
- 0			[5.2e+00 9.3e-02 4.2e-01 2.8e-01 3.4e-01 1.0e-01 1.4e+00 1.3e-03]
- 1			[9.3e-02 6.3e+00 2.9e-01 4.5e-01 1.0e-01 3.7e-01 1.3e+00 1.3e-03]
- 2			[4.2e-01 2.9e-01 4.3e+00 1.5e+00 8.6e-01 4.6e-01 7.2e-01 2.1e-03]
- 3			[2.8e-01 4.5e-01 1.5e+00 4.3e+00 4.6e-01 8.6e-01 7.2e-01 2.1e-03]
- 4			[3.4e-01 1.0e-01 8.6e-01 4.6e-01 1.5e+00 1.5e-01 3.7e-01 9.4e-04]
- 5			[1.0e-01 3.7e-01 4.6e-01 8.6e-01 1.5e-01 1.5e+00 3.7e-01 9.4e-04]
+ 0	[5.2e+00 9.3e-02 4.2e-01 2.8e-01 3.4e-01 1.0e-01 1.4e+00 1.3e-03]
+ 1	[9.3e-02 6.3e+00 2.9e-01 4.5e-01 1.0e-01 3.7e-01 1.3e+00 1.3e-03]
+ 2	[4.2e-01 2.9e-01 4.3e+00 1.5e+00 8.6e-01 4.6e-01 7.2e-01 2.1e-03]
+ 3	[2.8e-01 4.5e-01 1.5e+00 4.3e+00 4.6e-01 8.6e-01 7.2e-01 2.1e-03]
+ 4	[3.4e-01 1.0e-01 8.6e-01 4.6e-01 1.5e+00 1.5e-01 3.7e-01 9.4e-04]
+ 5	[1.0e-01 3.7e-01 4.6e-01 8.6e-01 1.5e-01 1.5e+00 3.7e-01 9.4e-04]
  CS			[1.4e+00 1.3e+00 7.2e-01 7.2e-01 3.7e-01 3.7e-01 2.7e+01 5.8e-03]
  Plasma	[1.3e-03 1.3e-03 2.1e-03 2.1e-03 9.4e-04 9.4e-04 5.8e-03 1.7e-05]
  
@@ -9420,7 +9420,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Geometry of PF coils, central solenoid and plasma:
  
- coil			R(m)			Z(m)			dR(m)			dZ(m)			turns		steel thickness(m)
+ coil			R(m)		Z(m)		dR(m)		dZ(m)		turns		steel thickness(m)
  
  PF 0			6.74e+00	9.96e+00	1.38e+00	1.38e+00	4.98e+02	1.63e-01
  PF 1			6.74e+00	-1.09e+01	1.46e+00	1.46e+00	5.55e+02	1.80e-01
@@ -9429,12 +9429,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  PF 4			1.78e+01	8.62e+00	8.33e-01	8.33e-01	1.29e+02	7.84e-02
  PF 5			1.78e+01	-8.62e+00	8.33e-01	8.33e-01	1.29e+02	7.84e-02
  CS				3.05e+00	0.00e+00	6.75e-01	1.61e+01	3.91e+03	1.69e-01
- Plasma		9.55e+00	0.0e0			6.16e+00	1.10e+01	1.0e0
+ Plasma			9.55e+00	0.0e0		6.16e+00	1.10e+01	1.0e0
  
  PF Coil Information at Peak Current:
  
- coil	current	allowed J		actual J		J			cond. mass	steel mass	field
- 				(MA)		(A/m2)		(A/m2)		ratio			(kg)			(kg)			(T)
+ coil	current		allowed J	actual J	J		cond. mass	steel mass	field
+ 	(MA)		(A/m2)		(A/m2)		ratio		(kg)		(kg)		(T)
  
  PF 0	2.10e+01	3.57e+08	1.10e+07	3.08e-02	3.43e+05	3.34e+05	6.45e+00
  PF 1	2.34e+01	3.18e+08	1.10e+07	3.46e-02	3.83e+05	3.90e+05	6.83e+00
@@ -9443,8 +9443,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  PF 4	-5.55e+00	7.65e+08	8.00e+06	1.05e-02	3.30e+05	2.49e+05	2.63e+00
  PF 5	-5.55e+00	7.65e+08	8.00e+06	1.05e-02	3.30e+05	2.49e+05	2.63e+00
  CS		-1.68e+02	5.77e+07	1.54e+07	2.68e-01	4.44e+05	8.13e+05	1.21e+01
- 				------																---------	---------
- 				2.42e+02																3.44e+06	3.15e+06
+ 	------								---------	---------
+ 	2.42e+02							3.44e+06	3.15e+06
  
  PF coil current scaling information :
  
@@ -9453,18 +9453,18 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  ****************************************** Volt Second Consumption *******************************************
  
- 				volt-sec			volt-sec		volt-sec
- 				start-up			burn			total
+ 			volt-sec			volt-sec		volt-sec
+ 			start-up			burn			total
  PF coils:		-244.37				-141.73			-386.09
  CS coil:		-203.82				-282.23			-486.05
- 				-------				-------			-------
+ 			-------				-------			-------
  Total:			-448.19				-423.96			-872.15
  
  Total volt-second consumption by coils (Wb)                              (vstot)                  -8.700E+02  OP 
  
  Summary of volt-second consumption by circuit (Wb):
  
- circuit		BOP				BOF				EOF
+ circuit			BOP			BOF		EOF
  
  	0			48.366			55.704		-2.479
  	1			49.927			53.679		-6.383
@@ -9472,15 +9472,15 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  	3			9.579			-77.652		-89.175
  	4			0.181			-40.317		-40.535
  	5			0.181			-40.317		-40.535
- CS coil		234.612			30.793		-251.439
+ 	CS coil			234.612			30.793		-251.439
  
  ********************************** Waveforms ***********************************
  
  Currents (Amps/coil) as a function of time:
  
- 												time (sec)
- 				0.00			30.00			60.00			70.00			7270.00			7300.00
- 					Start					BOP					EOR					BOF					EOF					EOP
+ 								time (sec)
+ 				0.00		30.00		60.00		70.00		7270.00		7300.00
+ 				Start		BOP		EOR		BOF		EOF		EOP
  circuit
  	0			0.000e+00	1.824e+07	2.101e+07	2.101e+07	-9.347e+05	0.000e+00
  	1			0.000e+00	2.180e+07	2.344e+07	2.344e+07	-2.787e+06	0.000e+00
@@ -9489,7 +9489,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  	4			-0.000e+00	2.479e+04	-5.525e+06	-5.525e+06	-5.555e+06	-0.000e+00
  	5			-0.000e+00	2.479e+04	-5.525e+06	-5.525e+06	-5.555e+06	-0.000e+00
  	6			-0.000e+00	1.568e+08	2.058e+07	2.058e+07	-1.680e+08	-0.000e+00
- Plasma (A)	0.000e+00	0.000e+00	2.071e+07	2.071e+07	2.071e+07	0.000e+00
+ Plasma (A)			0.000e+00	0.000e+00	2.071e+07	2.071e+07	2.071e+07	0.000e+00
  
  This consists of: CS coil field balancing:
  0			0.000e+00	1.824e+07	2.394e+06	2.394e+06	-1.955e+07	0.000e+00
@@ -9578,12 +9578,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Inductance matrix [H]:
  
- 0			[5.2e+00 9.5e-02 4.3e-01 2.8e-01 3.4e-01 1.0e-01 1.4e+00 1.3e-03]
- 1			[9.5e-02 6.3e+00 2.9e-01 4.5e-01 1.1e-01 3.7e-01 1.3e+00 1.3e-03]
- 2			[4.3e-01 2.9e-01 4.3e+00 1.5e+00 8.6e-01 4.6e-01 7.3e-01 2.1e-03]
- 3			[2.8e-01 4.5e-01 1.5e+00 4.3e+00 4.6e-01 8.6e-01 7.3e-01 2.1e-03]
- 4			[3.4e-01 1.1e-01 8.6e-01 4.6e-01 1.5e+00 1.5e-01 3.8e-01 9.4e-04]
- 5			[1.0e-01 3.7e-01 4.6e-01 8.6e-01 1.5e-01 1.5e+00 3.8e-01 9.4e-04]
+ 0	[5.2e+00 9.5e-02 4.3e-01 2.8e-01 3.4e-01 1.0e-01 1.4e+00 1.3e-03]
+ 1	[9.5e-02 6.3e+00 2.9e-01 4.5e-01 1.1e-01 3.7e-01 1.3e+00 1.3e-03]
+ 2	[4.3e-01 2.9e-01 4.3e+00 1.5e+00 8.6e-01 4.6e-01 7.3e-01 2.1e-03]
+ 3	[2.8e-01 4.5e-01 1.5e+00 4.3e+00 4.6e-01 8.6e-01 7.3e-01 2.1e-03]
+ 4	[3.4e-01 1.1e-01 8.6e-01 4.6e-01 1.5e+00 1.5e-01 3.8e-01 9.4e-04]
+ 5	[1.0e-01 3.7e-01 4.6e-01 8.6e-01 1.5e-01 1.5e+00 3.8e-01 9.4e-04]
  CS			[1.4e+00 1.3e+00 7.3e-01 7.3e-01 3.8e-01 3.8e-01 2.7e+01 5.8e-03]
  Plasma	[1.3e-03 1.3e-03 2.1e-03 2.1e-03 9.4e-04 9.4e-04 5.8e-03 1.7e-05]
  
