@@ -1256,11 +1256,171 @@ class Sctfcoil:
         if output:
             tfcoil_variables.n_rad_per_layer = 500
 
-        self.stresscl(
-            tfcoil_variables.n_tf_stress_layers,
-            tfcoil_variables.n_rad_per_layer,
-            output,
-        )
+        try:
+            (
+                sig_tf_r_max,
+                sig_tf_t_max,
+                sig_tf_z_max,
+                sig_tf_vmises_max,
+                sig_tf_tresca_max,
+                deflect,
+                eyoung_axial,
+                eyoung_trans,
+                eyoung_wp_axial,
+                eyoung_wp_trans,
+                poisson_wp_trans,
+                radial_array,
+                s_tresca_cond_cea,
+                poisson_wp_axial,
+                sig_tf_r,
+                sig_tf_smeared_r,
+                sig_tf_smeared_t,
+                sig_tf_smeared_z,
+                sig_tf_t,
+                sig_tf_tresca,
+                sig_tf_vmises,
+                sig_tf_z,
+                str_tf_r,
+                str_tf_t,
+                str_tf_z,
+                n_radial_array,
+                n_tf_bucking,
+                tfcoil_variables.sig_tf_wp,
+                sig_tf_case,
+                sig_tf_cs_bucked,
+                str_wp,
+                casestr,
+                insstrain,
+            ) = self.stresscl(
+                tfcoil_variables.n_tf_stress_layers,
+                tfcoil_variables.n_rad_per_layer,
+                tfcoil_variables.n_tf_wp_layers,
+                tfcoil_variables.i_tf_bucking,
+                build_variables.r_tf_inboard_in,
+                build_variables.bore,
+                build_variables.hmax,
+                pfcoil_variables.ohhghf,
+                build_variables.ohcth,
+                pfcoil_variables.ipfres,
+                pfcoil_variables.coheof,
+                pfcoil_variables.cohbop,
+                pfcoil_variables.cptdin,
+                pfcoil_variables.ncls,
+                pfcoil_variables.ld_ratio_cst,
+                pfcoil_variables.r_out_cst,
+                pfcoil_variables.oh_steel_frac,
+                tfcoil_variables.eyoung_steel,
+                tfcoil_variables.poisson_steel,
+                tfcoil_variables.eyoung_cond_axial,
+                tfcoil_variables.poisson_cond_axial,
+                tfcoil_variables.eyoung_cond_trans,
+                tfcoil_variables.poisson_cond_trans,
+                tfcoil_variables.eyoung_ins,
+                tfcoil_variables.poisson_ins,
+                tfcoil_variables.thicndut,
+                tfcoil_variables.eyoung_copper,
+                tfcoil_variables.poisson_copper,
+                tfcoil_variables.i_tf_sup,
+                tfcoil_variables.eyoung_res_tf_buck,
+                sctfcoil_module.r_wp_inner,
+                sctfcoil_module.tan_theta_coil,
+                sctfcoil_module.theta_coil,
+                sctfcoil_module.r_wp_outer,
+                sctfcoil_module.a_tf_steel,
+                sctfcoil_module.a_case_front,
+                sctfcoil_module.a_case_nose,
+                tfcoil_variables.tfinsgap,
+                tfcoil_variables.tinstf,
+                tfcoil_variables.n_tf_turn,
+                tfcoil_variables.i_tf_turns_integer,
+                sctfcoil_module.t_cable,
+                sctfcoil_module.t_cable_radial,
+                tfcoil_variables.dhecoil,
+                tfcoil_variables.fcutfsu,
+                tfcoil_variables.thwcndut,
+                sctfcoil_module.t_lat_case_av,
+                sctfcoil_module.t_wp_toroidal_av,
+                sctfcoil_module.a_tf_ins,
+                tfcoil_variables.aswp,
+                tfcoil_variables.acond,
+                sctfcoil_module.awpc,
+                tfcoil_variables.eyoung_al,
+                tfcoil_variables.poisson_al,
+                tfcoil_variables.fcoolcp,
+                tfcoil_variables.n_tf_graded_layers,
+                tfcoil_variables.ritfc,
+                tfcoil_variables.casthi,
+                tfcoil_variables.i_tf_stress_model,
+                sctfcoil_module.vforce_inboard_tot,
+                tfcoil_variables.i_tf_tresca,
+                tfcoil_variables.acasetf,
+                tfcoil_variables.vforce,
+                tfcoil_variables.acndttf,
+            )
+
+            tfcoil_variables.sig_tf_case = (
+                tfcoil_variables.sig_tf_case
+                if tfcoil_variables.sig_tf_case is None
+                else sig_tf_case
+            )
+
+            tfcoil_variables.sig_tf_cs_bucked = (
+                tfcoil_variables.sig_tf_cs_bucked
+                if tfcoil_variables.sig_tf_cs_bucked is None
+                else sig_tf_cs_bucked
+            )
+
+            tfcoil_variables.str_wp = (
+                tfcoil_variables.str_wp if tfcoil_variables.str_wp is None else str_wp
+            )
+
+            tfcoil_variables.casestr = (
+                tfcoil_variables.casestr
+                if tfcoil_variables.casestr is None
+                else casestr
+            )
+
+            tfcoil_variables.insstrain = (
+                tfcoil_variables.insstrain
+                if tfcoil_variables.insstrain is None
+                else insstrain
+            )
+
+            if output:
+                self.out_stress(
+                    sig_tf_r_max,
+                    sig_tf_t_max,
+                    sig_tf_z_max,
+                    sig_tf_vmises_max,
+                    sig_tf_tresca_max,
+                    deflect,
+                    eyoung_axial,
+                    eyoung_trans,
+                    eyoung_wp_axial,
+                    eyoung_wp_trans,
+                    poisson_wp_trans,
+                    radial_array,
+                    s_tresca_cond_cea,
+                    poisson_wp_axial,
+                    sig_tf_r,
+                    sig_tf_smeared_r,
+                    sig_tf_smeared_t,
+                    sig_tf_smeared_z,
+                    sig_tf_t,
+                    sig_tf_tresca,
+                    sig_tf_vmises,
+                    sig_tf_z,
+                    str_tf_r,
+                    str_tf_t,
+                    str_tf_z,
+                    n_radial_array,
+                    n_tf_bucking,
+                )
+        except ValueError as e:
+            if e.args[1] == 245 and e.args[2] == 0:
+                error_handling.report_error(245)
+                tfcoil_variables.sig_tf_case = 0.0e0
+                tfcoil_variables.sig_tf_wp = 0.0e0
 
         if output:
             self.outtf(peaktfflag)
@@ -3362,7 +3522,74 @@ class Sctfcoil:
             tfcoil_variables.ritfc / (tfcoil_variables.n_tf * sctfcoil_module.awptf),
         )
 
-    def stresscl(self, n_tf_layer, n_radial_array, output: bool):
+    @staticmethod
+    @numba.njit(cache=True)
+    def stresscl(
+        n_tf_layer,
+        n_radial_array,
+        n_tf_wp_layers,
+        i_tf_bucking,
+        r_tf_inboard_in,
+        bore,
+        hmax,
+        ohhghf,
+        ohcth,
+        ipfres,
+        coheof,
+        cohbop,
+        cptdin,
+        ncls,
+        ld_ratio_cst,
+        r_out_cst,
+        oh_steel_frac,
+        eyoung_steel,
+        poisson_steel,
+        eyoung_cond_axial,
+        poisson_cond_axial,
+        eyoung_cond_trans,
+        poisson_cond_trans,
+        eyoung_ins,
+        poisson_ins,
+        thicndut,
+        eyoung_copper,
+        poisson_copper,
+        i_tf_sup,
+        eyoung_res_tf_buck,
+        r_wp_inner,
+        tan_theta_coil,
+        theta_coil,
+        r_wp_outer,
+        a_tf_steel,
+        a_case_front,
+        a_case_nose,
+        tfinsgap,
+        tinstf,
+        n_tf_turn,
+        i_tf_turns_integer,
+        t_cable,
+        t_cable_radial,
+        dhecoil,
+        fcutfsu,
+        thwcndut,
+        t_lat_case_av,
+        t_wp_toroidal_av,
+        a_tf_ins,
+        aswp,
+        acond,
+        awpc,
+        eyoung_al,
+        poisson_al,
+        fcoolcp,
+        n_tf_graded_layers,
+        ritfc,
+        casthi,
+        i_tf_stress_model,
+        vforce_inboard_tot,
+        i_tf_tresca,
+        acasetf,
+        vforce,
+        acndttf,
+    ):
         """TF coil stress routine
 
 
@@ -3392,15 +3619,15 @@ class Sctfcoil:
         # two transverse directions (radial and toroidal). Used in the
         # stress models.
 
-        eyoung_member_array = numpy.zeros((tfcoil_variables.n_tf_wp_layers,))
+        eyoung_member_array = numpy.zeros((n_tf_wp_layers,))
         # Array to store the Young's moduli of the members to composite into smeared
         # properties [Pa]
 
-        poisson_member_array = numpy.zeros((tfcoil_variables.n_tf_wp_layers,))
+        poisson_member_array = numpy.zeros((n_tf_wp_layers,))
         # Array to store the Poisson's ratios of the members to composite into smeared
         # properti
 
-        l_member_array = numpy.zeros((tfcoil_variables.n_tf_wp_layers,))
+        l_member_array = numpy.zeros((n_tf_wp_layers,))
         # Array to store the linear dimension (thickness) of the members to composite into smeared
         # properties [m]
 
@@ -3414,9 +3641,7 @@ class Sctfcoil:
         # stress models. d(transverse strain)/d(vertical strain) with
         # only vertical stress.
 
-        sig_tf_wp_av_z = numpy.zeros(
-            ((n_tf_layer - tfcoil_variables.i_tf_bucking) * n_radial_array,)
-        )
+        sig_tf_wp_av_z = numpy.zeros(((n_tf_layer - i_tf_bucking) * n_radial_array,))
         # TF Inboard leg WP smeared vertical stress r distribution at mid-plane [Pa]
 
         sig_tf_r_max = numpy.zeros((n_tf_layer,))
@@ -3455,16 +3680,16 @@ class Sctfcoil:
         str_tf_t = 0
         str_tf_z = 0
 
-        if (
-            abs(build_variables.r_tf_inboard_in)
-            < numpy.finfo(float(build_variables.r_tf_inboard_in)).eps
-        ):
+        sig_tf_case = None
+        sig_tf_cs_bucked = None
+        str_wp = None
+        casestr = None
+        insstrain = None
+
+        if abs(r_tf_inboard_in) < numpy.finfo(float(r_tf_inboard_in)).eps:
             # New extended plane strain model can handle it
             if tfcoil_variables.i_tf_stress_model != 2:
-                error_handling.report_error(245)
-                tfcoil_variables.sig_tf_case = 0.0e0
-                tfcoil_variables.sig_tf_wp = 0.0e0
-                return
+                raise ValueError("r_tf_inboard_in is ~= 0", 245)
 
         # TODO: following is no longer used/needed?
         # if tfcoil_variables.acstf >= 0.0e0:
@@ -3475,47 +3700,34 @@ class Sctfcoil:
         # LAYER ELASTIC PROPERTIES
         # ------------------------
         # Number of bucking layers
-        n_tf_bucking = copy.copy(tfcoil_variables.i_tf_bucking)
+        n_tf_bucking = copy.copy(i_tf_bucking)
 
         # CS properties (bucked and wedged)
         # ---
-        if tfcoil_variables.i_tf_bucking >= 2:
+        if i_tf_bucking >= 2:
 
             # Calculation performed at CS flux swing (no current on CS)
             jeff[0] = 0.0e0
 
             # Inner radius of the CS
-            radtf[0] = build_variables.bore
+            radtf[0] = bore
 
             # Superconducting CS
-            if pfcoil_variables.ipfres == 0:
+            if ipfres == 0:
 
                 # Getting the turn dimention from scratch
                 # as the TF is called before CS in caller.f90
                 # -#
 
                 # CS vertical cross-section area [m2]
-                a_oh = (
-                    2.0e0
-                    * build_variables.hmax
-                    * pfcoil_variables.ohhghf
-                    * build_variables.ohcth
-                )
+                a_oh = 2.0e0 * hmax * ohhghf * ohcth
 
                 # Maximum current in Central Solenoid, at either BOP or EOF [MA-turns]
                 # Absolute value
-                curr_oh_max = (
-                    1.0e-6
-                    * max(pfcoil_variables.coheof, pfcoil_variables.cohbop)
-                    * a_oh
-                )
+                curr_oh_max = 1.0e-6 * max(coheof, cohbop) * a_oh
 
                 #  Number of turns
-                n_oh_turns = (
-                    1.0e6
-                    * curr_oh_max
-                    / pfcoil_variables.cptdin[sum(pfcoil_variables.ncls)]
-                )
+                n_oh_turns = 1.0e6 * curr_oh_max / cptdin[sum(ncls)]
 
                 # CS Turn vertical cross-sectionnal area
                 a_oh_turn = a_oh / n_oh_turns
@@ -3523,19 +3735,17 @@ class Sctfcoil:
                 # CS coil turn geometry calculation - stadium shape
                 # Literature: https://doi.org/10.1016/j.fusengdes.2017.04.052
                 d_cond_cst = (
-                    a_oh_turn / pfcoil_variables.ld_ratio_cst
+                    a_oh_turn / ld_ratio_cst
                 ) ** 0.5  # width of cs turn conduit
-                l_cond_cst = (
-                    pfcoil_variables.ld_ratio_cst * d_cond_cst
-                )  # length of cs turn conduit
+                l_cond_cst = ld_ratio_cst * d_cond_cst  # length of cs turn conduit
                 # Radius of turn space = r_in_cst
                 # Radius of curved outer corrner r_out_cst = 3mm from literature
                 # ld_ratio_cst = 70 / 22 from literature
                 p1 = ((l_cond_cst - d_cond_cst) / numpy.pi) ** 2
                 p2 = (
                     (l_cond_cst * d_cond_cst)
-                    - (4 - numpy.pi) * (pfcoil_variables.r_out_cst**2)
-                    - (a_oh_turn * pfcoil_variables.oh_steel_frac)
+                    - (4 - numpy.pi) * (r_out_cst**2)
+                    - (a_oh_turn * oh_steel_frac)
                 ) / numpy.pi
                 r_in_cst = -((l_cond_cst - d_cond_cst) / numpy.pi) + numpy.sqrt(p1 + p2)
                 t_cond_oh = (
@@ -3558,30 +3768,30 @@ class Sctfcoil:
                 # [EDIT: eyoung_cond is for the TF coil, not the CS coil]
 
                 # Get transverse properties
-                (eyoung_trans[0], a_working, poisson_trans[0],) = self.eyoung_parallel(
-                    tfcoil_variables.eyoung_steel,
-                    pfcoil_variables.oh_steel_frac,
-                    tfcoil_variables.poisson_steel,
-                    tfcoil_variables.eyoung_cond_axial,
-                    1e0 - pfcoil_variables.oh_steel_frac,
-                    tfcoil_variables.poisson_cond_axial,
+                (eyoung_trans[0], a_working, poisson_trans[0],) = eyoung_parallel(
+                    eyoung_steel,
+                    oh_steel_frac,
+                    poisson_steel,
+                    eyoung_cond_axial,
+                    1e0 - oh_steel_frac,
+                    poisson_cond_axial,
                 )
 
                 # Get vertical properties
                 # Split up into "members", concentric squares in cross section
                 # (described in Figure 10 of the TF coil documentation)
                 # Conductor
-                eyoung_member_array[0] = tfcoil_variables.eyoung_cond_trans
-                poisson_member_array[0] = tfcoil_variables.poisson_cond_trans
+                eyoung_member_array[0] = eyoung_cond_trans
+                poisson_member_array[0] = poisson_cond_trans
                 l_member_array[0] = t_cable_oh
                 # Steel conduit
-                eyoung_member_array[1] = tfcoil_variables.eyoung_steel
-                poisson_member_array[1] = tfcoil_variables.poisson_steel
+                eyoung_member_array[1] = eyoung_steel
+                poisson_member_array[1] = poisson_steel
                 l_member_array[1] = 2 * t_cond_oh
                 # Insulation
-                eyoung_member_array[2] = tfcoil_variables.eyoung_ins
-                poisson_member_array[2] = tfcoil_variables.poisson_ins
-                l_member_array[2] = 2 * tfcoil_variables.thicndut
+                eyoung_member_array[2] = eyoung_ins
+                poisson_member_array[2] = poisson_ins
+                l_member_array[2] = 2 * thicndut
                 # [EDIT: Add central cooling channel? Would be new member #1]
 
                 # Compute the composited (smeared) properties
@@ -3590,29 +3800,29 @@ class Sctfcoil:
                     a_working,
                     poisson_axial[0],
                     eyoung_cs_stiffest_leg,
-                ) = self.eyoung_t_nested_squares(
+                ) = eyoung_t_nested_squares(
                     3, eyoung_member_array, l_member_array, poisson_member_array
                 )
 
             # resistive CS (copper)
             else:
                 # Here is a rough approximation
-                eyoung_trans[0] = tfcoil_variables.eyoung_copper
-                eyoung_axial[0] = tfcoil_variables.eyoung_copper
-                poisson_trans[0] = tfcoil_variables.poisson_copper
-                poisson_axial[0] = tfcoil_variables.poisson_copper
+                eyoung_trans[0] = eyoung_copper
+                eyoung_axial[0] = eyoung_copper
+                poisson_trans[0] = poisson_copper
+                poisson_axial[0] = poisson_copper
 
         # ---
 
         # CS-TF interlayer properties
         # ---
-        if tfcoil_variables.i_tf_bucking == 3:
+        if i_tf_bucking == 3:
 
             # No current in this layer
             jeff[1] = 0.0e0
 
             # Outer radius of the CS
-            radtf[1] = build_variables.bore + build_variables.ohcth
+            radtf[1] = bore + ohcth
 
             # Assumed to be Kapton for the moment
             # Ref : https://www.dupont.com/content/dam/dupont/products-and-services/membranes-and-films/polyimde-films/documents/DEC-Kapton-summary-of-properties.pdf
@@ -3625,78 +3835,60 @@ class Sctfcoil:
 
         # bucking cylinder/casing properties
         # ---
-        if tfcoil_variables.i_tf_bucking >= 1:
+        if i_tf_bucking >= 1:
 
             # No current in bucking cylinder/casing
             jeff[n_tf_bucking - 1] = 0.0e0
 
-            if tfcoil_variables.i_tf_sup == 1:
-                eyoung_trans[n_tf_bucking - 1] = tfcoil_variables.eyoung_steel
-                eyoung_axial[n_tf_bucking - 1] = tfcoil_variables.eyoung_steel
-                poisson_trans[n_tf_bucking - 1] = tfcoil_variables.poisson_steel
-                poisson_axial[n_tf_bucking - 1] = tfcoil_variables.poisson_steel
+            if i_tf_sup == 1:
+                eyoung_trans[n_tf_bucking - 1] = eyoung_steel
+                eyoung_axial[n_tf_bucking - 1] = eyoung_steel
+                poisson_trans[n_tf_bucking - 1] = poisson_steel
+                poisson_axial[n_tf_bucking - 1] = poisson_steel
 
             # Bucking cylinder properties
             else:
-                eyoung_trans[n_tf_bucking - 1] = tfcoil_variables.eyoung_res_tf_buck
-                eyoung_axial[n_tf_bucking - 1] = tfcoil_variables.eyoung_res_tf_buck
-                poisson_trans[
-                    n_tf_bucking - 1
-                ] = tfcoil_variables.poisson_steel  # Seek better value #
-                poisson_axial[
-                    n_tf_bucking - 1
-                ] = tfcoil_variables.poisson_steel  # Seek better value #
+                eyoung_trans[n_tf_bucking - 1] = eyoung_res_tf_buck
+                eyoung_axial[n_tf_bucking - 1] = eyoung_res_tf_buck
+                poisson_trans[n_tf_bucking - 1] = poisson_steel  # Seek better value #
+                poisson_axial[n_tf_bucking - 1] = poisson_steel  # Seek better value #
 
             # Innernost TF casing radius
-            radtf[n_tf_bucking - 1] = build_variables.r_tf_inboard_in
+            radtf[n_tf_bucking - 1] = r_tf_inboard_in
 
         # ---
 
         # (Super)conductor layer properties
         # ---
         # SC coil
-        if tfcoil_variables.i_tf_sup == 1:
+        if i_tf_sup == 1:
 
             # Inner/outer radii of the layer representing the WP in stress calculations [m]
             # These radii are chosen to preserve the true WP area; see Issue #1048
-            r_wp_inner_eff = sctfcoil_module.r_wp_inner * numpy.sqrt(
-                sctfcoil_module.tan_theta_coil / sctfcoil_module.theta_coil
-            )
-            r_wp_outer_eff = sctfcoil_module.r_wp_outer * numpy.sqrt(
-                sctfcoil_module.tan_theta_coil / sctfcoil_module.theta_coil
-            )
+            r_wp_inner_eff = r_wp_inner * numpy.sqrt(tan_theta_coil / theta_coil)
+            r_wp_outer_eff = r_wp_outer * numpy.sqrt(tan_theta_coil / theta_coil)
 
             # Area of the cylinder representing the WP in stress calculations [m2]
-            a_wp_eff = (
-                r_wp_outer_eff**2 - r_wp_inner_eff**2
-            ) * sctfcoil_module.theta_coil
+            a_wp_eff = (r_wp_outer_eff**2 - r_wp_inner_eff**2) * theta_coil
 
             # Steel cross-section under the area representing the WP in stress calculations [m2]
-            a_wp_steel_eff = (
-                sctfcoil_module.a_tf_steel
-                - sctfcoil_module.a_case_front
-                - sctfcoil_module.a_case_nose
-            )
+            a_wp_steel_eff = a_tf_steel - a_case_front - a_case_nose
 
             # WP effective insulation thickness (SC only) [m]
             # include groundwall insulation + insertion gap in tfcoil_variables.thicndut
             # inertion gap is tfcoil_variables.tfinsgap on 4 sides
-            t_ins_eff = (
-                tfcoil_variables.thicndut
-                + (tfcoil_variables.tfinsgap + tfcoil_variables.tinstf)
-                / tfcoil_variables.n_tf_turn
-            )
+            t_ins_eff = thicndut + (tfinsgap + tinstf) / n_tf_turn
 
             # Effective WP young modulus in the toroidal direction [Pa]
             # The toroidal property drives the stress calculation (J. Last report no 4)
             # Hence, the radial direction is relevant for the property smearing
             # Rem : This assumption might be re-defined for bucked and wedged design
-            if tfcoil_variables.i_tf_turns_integer == 0:
+            if i_tf_turns_integer == 0:
                 # Non-integer number of turns
-                t_cable_eyng = sctfcoil_module.t_cable
+                t_cable_eyng = t_cable
             else:
                 # Integer number of turns
-                t_cable_eyng = sctfcoil_module.t_cable_radial
+                t_cable_eyng = t_cable_radial
 
             # Average WP Young's modulus in the transverse
             # (radial and toroidal) direction
@@ -3704,29 +3896,28 @@ class Sctfcoil:
             # (described in Figure 10 of the TF coil documentation)
             # Helium
             eyoung_member_array[0] = 0e0
-            poisson_member_array[0] = tfcoil_variables.poisson_steel
-            l_member_array[0] = tfcoil_variables.dhecoil
+            poisson_member_array[0] = poisson_steel
+            l_member_array[0] = dhecoil
             # Conductor and co-wound copper
             (
                 eyoung_member_array[1],
                 l_member_array[1],
                 poisson_member_array[1],
-            ) = self.eyoung_series(
-                tfcoil_variables.eyoung_cond_trans,
-                (t_cable_eyng - tfcoil_variables.dhecoil)
-                * (1.0e0 - tfcoil_variables.fcutfsu),
-                tfcoil_variables.poisson_cond_trans,
-                tfcoil_variables.eyoung_copper,
-                (t_cable_eyng - tfcoil_variables.dhecoil) * tfcoil_variables.fcutfsu,
-                tfcoil_variables.poisson_copper,
+            ) = eyoung_series(
+                eyoung_cond_trans,
+                (t_cable_eyng - dhecoil) * (1.0e0 - fcutfsu),
+                poisson_cond_trans,
+                eyoung_copper,
+                (t_cable_eyng - dhecoil) * fcutfsu,
+                poisson_copper,
             )
             # Steel conduit
-            eyoung_member_array[2] = tfcoil_variables.eyoung_steel
-            poisson_member_array[2] = tfcoil_variables.poisson_steel
-            l_member_array[2] = 2 * tfcoil_variables.thwcndut
+            eyoung_member_array[2] = eyoung_steel
+            poisson_member_array[2] = poisson_steel
+            l_member_array[2] = 2 * thwcndut
             # Insulation
-            eyoung_member_array[3] = tfcoil_variables.eyoung_ins
-            poisson_member_array[3] = tfcoil_variables.poisson_ins
+            eyoung_member_array[3] = eyoung_ins
+            poisson_member_array[3] = poisson_ins
             l_member_array[3] = 2 * t_ins_eff
 
             # Compute the composited (smeared) properties
@@ -3735,7 +3926,7 @@ class Sctfcoil:
                 a_working,
                 poisson_wp_trans,
                 eyoung_wp_stiffest_leg,
-            ) = self.eyoung_t_nested_squares(
+            ) = eyoung_t_nested_squares(
                 4,
                 eyoung_member_array,
                 l_member_array,
@@ -3743,55 +3934,40 @@ class Sctfcoil:
             )
 
             # Lateral casing correction (series-composition)
-            (
-                eyoung_wp_trans_eff,
-                a_working,
-                poisson_wp_trans_eff,
-            ) = self.eyoung_series(
+            (eyoung_wp_trans_eff, a_working, poisson_wp_trans_eff,) = eyoung_series(
                 eyoung_wp_trans,
-                sctfcoil_module.t_wp_toroidal_av,
+                t_wp_toroidal_av,
                 poisson_wp_trans,
-                tfcoil_variables.eyoung_steel,
-                2.0e0 * sctfcoil_module.t_lat_case_av,
-                tfcoil_variables.poisson_steel,
+                eyoung_steel,
+                2.0e0 * t_lat_case_av,
+                poisson_steel,
             )
 
             # Average WP Young's modulus in the vertical direction
             # Split up into "members", concentric squares in cross section
             # (described in Figure 10 of the TF coil documentation)
             # Steel conduit
-            eyoung_member_array[0] = tfcoil_variables.eyoung_steel
-            poisson_member_array[0] = tfcoil_variables.poisson_steel
-            l_member_array[0] = tfcoil_variables.aswp
+            eyoung_member_array[0] = eyoung_steel
+            poisson_member_array[0] = poisson_steel
+            l_member_array[0] = aswp
             # Insulation
-            eyoung_member_array[1] = tfcoil_variables.eyoung_ins
-            poisson_member_array[1] = tfcoil_variables.poisson_ins
-            l_member_array[1] = sctfcoil_module.a_tf_ins
+            eyoung_member_array[1] = eyoung_ins
+            poisson_member_array[1] = poisson_ins
+            l_member_array[1] = a_tf_ins
             # Copper
-            eyoung_member_array[2] = tfcoil_variables.eyoung_copper
-            poisson_member_array[2] = tfcoil_variables.poisson_copper
-            l_member_array[2] = tfcoil_variables.acond * tfcoil_variables.fcutfsu
+            eyoung_member_array[2] = eyoung_copper
+            poisson_member_array[2] = poisson_copper
+            l_member_array[2] = acond * fcutfsu
             # Conductor
-            eyoung_member_array[3] = tfcoil_variables.eyoung_cond_axial
-            poisson_member_array[3] = tfcoil_variables.poisson_cond_axial
-            l_member_array[3] = tfcoil_variables.acond * (
-                1.0e0 - tfcoil_variables.fcutfsu
-            )
+            eyoung_member_array[3] = eyoung_cond_axial
+            poisson_member_array[3] = poisson_cond_axial
+            l_member_array[3] = acond * (1.0e0 - fcutfsu)
             # Helium and void
             eyoung_member_array[4] = 0e0
-            poisson_member_array[4] = tfcoil_variables.poisson_steel
-            l_member_array[4] = (
-                sctfcoil_module.awpc
-                - tfcoil_variables.acond
-                - sctfcoil_module.a_tf_ins
-                - tfcoil_variables.aswp
-            )
+            poisson_member_array[4] = poisson_steel
+            l_member_array[4] = awpc - acond - a_tf_ins - aswp
             # Compute the composite / smeared properties:
-            (
-                eyoung_wp_axial,
-                a_working,
-                poisson_wp_axial,
-            ) = self.eyoung_parallel_array(
+            (eyoung_wp_axial, a_working, poisson_wp_axial,) = eyoung_parallel_array(
                 5,
                 eyoung_member_array,
                 l_member_array,
@@ -3800,14 +3976,10 @@ class Sctfcoil:
 
             # Average WP Young's modulus in the vertical direction, now including the lateral case
             # Parallel-composite the steel and insulation, now including the lateral case (sidewalls)
-            (
-                eyoung_wp_axial_eff,
-                a_working,
-                poisson_wp_axial_eff,
-            ) = self.eyoung_parallel(
-                tfcoil_variables.eyoung_steel,
-                a_wp_steel_eff - tfcoil_variables.aswp,
-                tfcoil_variables.poisson_steel,
+            (eyoung_wp_axial_eff, a_working, poisson_wp_axial_eff,) = eyoung_parallel(
+                eyoung_steel,
+                a_wp_steel_eff - aswp,
+                poisson_steel,
                 eyoung_wp_axial,
                 a_working,
                 poisson_wp_axial,
@@ -3817,12 +3989,12 @@ class Sctfcoil:
         else:
 
             # Picking the conductor material Young's modulus
-            if tfcoil_variables.i_tf_sup == 0:
-                eyoung_cond = tfcoil_variables.eyoung_copper
-                poisson_cond = tfcoil_variables.poisson_copper
-            elif tfcoil_variables.i_tf_sup == 2:
-                eyoung_cond = tfcoil_variables.eyoung_al
-                poisson_cond = tfcoil_variables.poisson_al
+            if i_tf_sup == 0:
+                eyoung_cond = eyoung_copper
+                poisson_cond = poisson_copper
+            elif i_tf_sup == 2:
+                eyoung_cond = eyoung_al
+                poisson_cond = poisson_al
 
             # Effective WP young modulus in the toroidal direction [Pa]
             # Rem : effect of cooling pipes and insulation not taken into account
@@ -3833,25 +4005,22 @@ class Sctfcoil:
             poisson_wp_trans = poisson_cond
 
             # WP area using the stress model circular geometry (per coil) [m2]
-            a_wp_eff = (
-                sctfcoil_module.r_wp_outer**2 - sctfcoil_module.r_wp_inner**2
-            ) * sctfcoil_module.theta_coil
+            a_wp_eff = (r_wp_outer**2 - r_wp_inner**2) * theta_coil
 
             # Effective conductor region young modulus in the vertical direction [Pa]
             # Parallel-composite conductor and insulator
-            (eyoung_wp_axial, a_working, poisson_wp_axial,) = self.eyoung_parallel(
+            (eyoung_wp_axial, a_working, poisson_wp_axial,) = eyoung_parallel(
                 eyoung_cond,
-                (a_wp_eff - sctfcoil_module.a_tf_ins)
-                * (1.0e0 - tfcoil_variables.fcoolcp),
+                (a_wp_eff - a_tf_ins) * (1.0e0 - fcoolcp),
                 poisson_cond,
-                tfcoil_variables.eyoung_ins,
-                sctfcoil_module.a_tf_ins,
-                tfcoil_variables.poisson_ins,
+                eyoung_ins,
+                a_tf_ins,
+                poisson_ins,
             )
             # Parallel-composite cooling pipes into that
-            (eyoung_wp_axial, a_working, poisson_wp_axial,) = self.eyoung_parallel(
+            (eyoung_wp_axial, a_working, poisson_wp_axial,) = eyoung_parallel(
                 0e0,
-                (a_wp_eff - sctfcoil_module.a_tf_ins) * tfcoil_variables.fcoolcp,
+                (a_wp_eff - a_tf_ins) * fcoolcp,
                 poisson_cond,
                 eyoung_wp_axial,
                 a_working,
@@ -3863,18 +4032,18 @@ class Sctfcoil:
             poisson_wp_axial_eff = poisson_wp_axial
 
             # Effect conductor layer inner/outer radius
-            r_wp_inner_eff = sctfcoil_module.r_wp_inner
-            r_wp_outer_eff = sctfcoil_module.r_wp_outer
+            r_wp_inner_eff = r_wp_inner
+            r_wp_outer_eff = r_wp_outer
 
         # Thickness of the layer representing the WP in stress calcualtions [m]
         dr_tf_wp_eff = r_wp_outer_eff - r_wp_outer_eff
 
         # Thickness of WP with homogeneous stress property [m]
-        dr_wp_layer = dr_tf_wp_eff / tfcoil_variables.n_tf_graded_layers
+        dr_wp_layer = dr_tf_wp_eff / n_tf_graded_layers
 
-        for ii in range(tfcoil_variables.n_tf_graded_layers):
+        for ii in range(n_tf_graded_layers):
             # Homogeneous current in (super)conductor
-            jeff[n_tf_bucking + ii] = tfcoil_variables.ritfc / (
+            jeff[n_tf_bucking + ii] = ritfc / (
                 numpy.pi * (r_wp_outer_eff**2 - r_wp_inner_eff**2)
             )
 
@@ -3893,19 +4062,19 @@ class Sctfcoil:
         # As per Issue #1509
         jeff[n_tf_layer - 1] = 0.0e0
         radtf[n_tf_layer - 1] = r_wp_outer_eff
-        eyoung_trans[n_tf_layer - 1] = tfcoil_variables.eyoung_steel
-        eyoung_axial[n_tf_layer - 1] = tfcoil_variables.eyoung_steel
-        poisson_trans[n_tf_layer - 1] = tfcoil_variables.poisson_steel
-        poisson_axial[n_tf_layer - 1] = tfcoil_variables.poisson_steel
+        eyoung_trans[n_tf_layer - 1] = eyoung_steel
+        eyoung_axial[n_tf_layer - 1] = eyoung_steel
+        poisson_trans[n_tf_layer - 1] = poisson_steel
+        poisson_axial[n_tf_layer - 1] = poisson_steel
 
         # last layer radius
-        radtf[n_tf_layer] = r_wp_outer_eff + tfcoil_variables.casthi
+        radtf[n_tf_layer] = r_wp_outer_eff + casthi
 
         # The ratio between the true cross sectional area of the
         # front case, and that considered by the plane strain solver
         f_tf_stress_front_case = (
-            sctfcoil_module.a_case_front
-            / sctfcoil_module.theta_coil
+            a_case_front
+            / theta_coil
             / (radtf[n_tf_layer] ** 2 - radtf[n_tf_layer - 1] ** 2)
         )
 
@@ -3928,8 +4097,8 @@ class Sctfcoil:
         # Rem SK : Can be easily ameneded playing around the boundary conditions
         if abs(radtf[0]) < numpy.finfo(float(radtf[0])).eps:
             # New extended plane strain model can handle it
-            if tfcoil_variables.i_tf_stress_model != 2:
-                error_handling.report_error(245)
+            if i_tf_stress_model != 2:
+                # error_handling.report_error(245)
                 radtf[0] = 1.0e-9
             elif abs(radtf[1]) < numpy.finfo(float(radtf[0])).eps:
                 logger.error(
@@ -3942,10 +4111,10 @@ class Sctfcoil:
 
         # Old generalized plane stress model
         # ---
-        if tfcoil_variables.i_tf_stress_model == 1:
+        if i_tf_stress_model == 1:
             # Plane stress calculation (SC) [Pa]
 
-            (sig_tf_r, sig_tf_t, deflect, radial_array,) = self.plane_stress(
+            (sig_tf_r, sig_tf_t, deflect, radial_array,) = plane_stress(
                 nu=poisson_trans,
                 rad=radtf,
                 ey=eyoung_trans,
@@ -3955,59 +4124,29 @@ class Sctfcoil:
             )
 
             # Vertical stress [Pa]
-            sig_tf_z[:] = tfcoil_variables.vforce / (
-                tfcoil_variables.acasetf
-                + tfcoil_variables.acndttf * tfcoil_variables.n_tf_turn
+            sig_tf_z[:] = vforce / (
+                acasetf + acndttf * n_tf_turn
             )  # Array equation [EDIT: Are you sure? It doesn't look like one to me]
 
             # Strain in vertical direction on WP
-            tfcoil_variables.str_wp = sig_tf_z[n_tf_bucking] / eyoung_wp_axial_eff
+            str_wp = sig_tf_z[n_tf_bucking] / eyoung_wp_axial_eff
 
             # Case strain
-            tfcoil_variables.casestr = (
-                sig_tf_z[n_tf_bucking - 1] / tfcoil_variables.eyoung_steel
-            )
+            casestr = sig_tf_z[n_tf_bucking - 1] / eyoung_steel
 
             # Radial strain in insulator
-            tfcoil_variables.insstrain = (
+            insstrain = (
                 sig_tf_r[n_radial_array - 1]
                 * eyoung_wp_stiffest_leg
                 / eyoung_wp_trans_eff
-                / tfcoil_variables.eyoung_ins
+                / eyoung_ins
             )
         # ---
 
         # New generalized plane strain formulation
         # ---
-        elif tfcoil_variables.i_tf_stress_model == 0:
-            # Generalized plane strain calculation [Pa]
-            # Issues #977 and #991
-            # build_variables.bore > 0, O(n^3) in layers
-            (
-                radial_array,
-                sig_tf_r,
-                sig_tf_t,
-                sig_tf_z,
-                str_tf_r,
-                str_tf_t,
-                str_tf_z,
-                deflect,
-            ) = sctfcoil_module.generalized_plane_strain(
-                poisson_trans,
-                poisson_axial,
-                eyoung_trans,
-                eyoung_axial,
-                radtf,
-                jeff,
-                sctfcoil_module.vforce_inboard_tot,
-                n_radial_array,
-                n_tf_bucking,
-            )
-
-            # Strain in TF conductor material
-            tfcoil_variables.str_wp = str_tf_z[n_tf_bucking * n_radial_array]
-
-        elif tfcoil_variables.i_tf_stress_model == 2:
+        # See #1670 for why i_tf_stress_model=0 was removed
+        elif i_tf_stress_model in (0, 2):
             # Extended plane strain calculation [Pa]
             # Issues #1414 and #998
             # Permits build_variables.bore >= 0, O(n) in layers
@@ -4022,29 +4161,29 @@ class Sctfcoil:
                 str_tf_t,
                 str_tf_z,
                 deflect,
-            ) = self.extended_plane_strain(
+            ) = extended_plane_strain(
                 poisson_trans,
                 poisson_axial,
                 eyoung_trans,
                 eyoung_axial,
                 radtf,
                 jeff,
-                sctfcoil_module.vforce_inboard_tot,
+                vforce_inboard_tot,
                 int(n_tf_layer),
                 int(n_radial_array),
                 int(n_tf_bucking),
             )
 
             # Strain in TF conductor material
-            tfcoil_variables.str_wp = str_tf_z[n_tf_bucking * n_radial_array]
+            str_wp = str_tf_z[n_tf_bucking * n_radial_array]
 
         # ---
 
         # Storing the smeared properties for output
-        if output:
-            sig_tf_smeared_r[:] = sig_tf_r  # Array equation
-            sig_tf_smeared_t[:] = sig_tf_t  # Array equation
-            sig_tf_smeared_z[:] = sig_tf_z  # Array equation
+
+        sig_tf_smeared_r[:] = sig_tf_r  # Array equation
+        sig_tf_smeared_t[:] = sig_tf_t  # Array equation
+        sig_tf_smeared_z[:] = sig_tf_z  # Array equation
 
         # ------------------------------
 
@@ -4052,7 +4191,7 @@ class Sctfcoil:
         # --------------------------------
         # SC central solenoid coil stress unsmearing (bucked and wedged only)
         # ---
-        if tfcoil_variables.i_tf_bucking >= 2 and pfcoil_variables.ipfres == 0:
+        if i_tf_bucking >= 2 and ipfres == 0:
             # Central Solenoid (OH) steel conduit stress unsmearing factors
             for ii in range(n_radial_array):
                 sig_tf_r[ii] = sig_tf_r[ii] * eyoung_cs_stiffest_leg / eyoung_axial[0]
@@ -4067,10 +4206,7 @@ class Sctfcoil:
         # ---
         # This correction is only applied if the plane stress model is used
         # as the generalized plane strain calculates the vertical stress properly
-        if (
-            tfcoil_variables.i_tf_bucking >= 2
-            and tfcoil_variables.i_tf_stress_model == 1
-        ):
+        if i_tf_bucking >= 2 and i_tf_stress_model == 1:
             for ii in range((n_tf_bucking - 1) * n_radial_array):
 
                 sig_tf_z[ii] = 0.0e0
@@ -4080,20 +4216,20 @@ class Sctfcoil:
         # Toroidal coil unsmearing
         # ---
         # Copper magnets
-        if tfcoil_variables.i_tf_sup == 0:
+        if i_tf_sup == 0:
 
             # Vertical force unsmearing factor
-            fac_sig_z = tfcoil_variables.eyoung_copper / eyoung_wp_axial_eff
+            fac_sig_z = eyoung_copper / eyoung_wp_axial_eff
 
             # Toroidal WP steel stress unsmearing factor
             fac_sig_t = 1.0e0
             fac_sig_r = 1.0e0
 
-        elif tfcoil_variables.i_tf_sup == 1:
+        elif i_tf_sup == 1:
 
             # Vertical WP steel stress unsmearing factor
-            if tfcoil_variables.i_tf_stress_model != 1:
-                fac_sig_z = tfcoil_variables.eyoung_steel / eyoung_wp_axial_eff
+            if i_tf_stress_model != 1:
+                fac_sig_z = eyoung_steel / eyoung_wp_axial_eff
                 fac_sig_z_wp_av = eyoung_wp_axial / eyoung_wp_axial_eff
             else:
                 fac_sig_z = 1.0e0
@@ -4104,10 +4240,10 @@ class Sctfcoil:
             # Radial WP steel conduit stress unsmearing factor
             fac_sig_r = eyoung_wp_stiffest_leg / eyoung_wp_trans_eff
 
-        elif tfcoil_variables.i_tf_sup == 2:
+        elif i_tf_sup == 2:
 
             # Vertical WP steel stress unsmearing factor
-            fac_sig_z = tfcoil_variables.eyoung_al / eyoung_wp_axial_eff
+            fac_sig_z = eyoung_al / eyoung_wp_axial_eff
 
             # Toroidal WP steel stress unsmearing factor
             # NO CALCULTED FOR THE MOMENT (to be done later)
@@ -4122,7 +4258,7 @@ class Sctfcoil:
         #                to be taken into account
         for ii in range(
             n_tf_bucking * n_radial_array,
-            ((n_tf_bucking + tfcoil_variables.n_tf_graded_layers) * n_radial_array),
+            ((n_tf_bucking + n_tf_graded_layers) * n_radial_array),
         ):
             sig_tf_wp_av_z[ii - n_tf_bucking * n_radial_array] = (
                 sig_tf_z[ii] * fac_sig_z_wp_av
@@ -4136,7 +4272,7 @@ class Sctfcoil:
         # stiffness as per the updated description of
         # Issue #1509
         for ii in range(
-            (n_tf_bucking + tfcoil_variables.n_tf_graded_layers) * n_radial_array,
+            (n_tf_bucking + n_tf_graded_layers) * n_radial_array,
             (n_tf_layer * n_radial_array),
         ):
 
@@ -4152,22 +4288,22 @@ class Sctfcoil:
         sig_tf_tresca = numpy.maximum(sig_tf_tresca_tmp1, abs(sig_tf_z - sig_tf_t))
 
         # Array equation
-        if output:
-            sig_tf_vmises = numpy.sqrt(
-                0.5e0
-                * (
-                    (sig_tf_r - sig_tf_t) ** 2
-                    + (sig_tf_r - sig_tf_z) ** 2
-                    + (sig_tf_z - sig_tf_t) ** 2
-                )
+
+        sig_tf_vmises = numpy.sqrt(
+            0.5e0
+            * (
+                (sig_tf_r - sig_tf_t) ** 2
+                + (sig_tf_r - sig_tf_z) ** 2
+                + (sig_tf_z - sig_tf_t) ** 2
             )
+        )
 
         # Array equation
         s_tresca_cond_cea = copy.copy(sig_tf_tresca)
 
         # SC conducting layer stress distribution corrections
         # ---
-        if tfcoil_variables.i_tf_sup == 1:
+        if i_tf_sup == 1:
 
             # GRADED MODIF : add another do loop to allow the graded properties
             #                to be taken into account
@@ -4176,15 +4312,11 @@ class Sctfcoil:
             ):
 
                 # Addaped Von-mises stress calculation to WP strucure [Pa]
-                if output:
-                    svmxz = self.sigvm(
-                        0.0e0, sig_tf_t[ii], sig_tf_z[ii], 0.0e0, 0.0e0, 0.0e0
-                    )
 
-                    svmyz = self.sigvm(
-                        sig_tf_r[ii], 0.0e0, sig_tf_z[ii], 0.0e0, 0.0e0, 0.0e0
-                    )
-                    sig_tf_vmises[ii] = max(svmxz, svmyz)
+                svmxz = sigvm(0.0e0, sig_tf_t[ii], sig_tf_z[ii], 0.0e0, 0.0e0, 0.0e0)
+
+                svmyz = sigvm(sig_tf_r[ii], 0.0e0, sig_tf_z[ii], 0.0e0, 0.0e0, 0.0e0)
+                sig_tf_vmises[ii] = max(svmxz, svmyz)
 
                 # Maximum shear stress for the Tresca yield criterion using CEA calculation [Pa]
                 s_tresca_cond_cea[ii] = (
@@ -4203,11 +4335,7 @@ class Sctfcoil:
             for jj in range(ii * n_radial_array, (ii + 1) * n_radial_array):
 
                 # CEA out of plane approximation
-                if (
-                    tfcoil_variables.i_tf_tresca == 1
-                    and tfcoil_variables.i_tf_sup == 1
-                    and ii >= tfcoil_variables.i_tf_bucking + 1
-                ):
+                if i_tf_tresca == 1 and i_tf_sup == 1 and ii >= i_tf_bucking + 1:
                     if sig_max < s_tresca_cond_cea[jj]:
                         sig_max = s_tresca_cond_cea[jj]
                         ii_max = jj
@@ -4219,263 +4347,65 @@ class Sctfcoil:
                         ii_max = jj
 
             # OUT.DAT output
-            if output:
-                sig_tf_r_max[ii] = sig_tf_r[ii_max]
-                sig_tf_t_max[ii] = sig_tf_t[ii_max]
-                sig_tf_z_max[ii] = sig_tf_z[ii_max]
-                sig_tf_vmises_max[ii] = sig_tf_vmises[ii_max]
+
+            sig_tf_r_max[ii] = sig_tf_r[ii_max]
+            sig_tf_t_max[ii] = sig_tf_t[ii_max]
+            sig_tf_z_max[ii] = sig_tf_z[ii_max]
+            sig_tf_vmises_max[ii] = sig_tf_vmises[ii_max]
 
             # Maximum shear stress for the Tresca yield criterion (or CEA OOP correction)
 
-            if (
-                tfcoil_variables.i_tf_tresca == 1
-                and tfcoil_variables.i_tf_sup == 1
-                and ii >= tfcoil_variables.i_tf_bucking + 1
-            ):
+            if i_tf_tresca == 1 and i_tf_sup == 1 and ii >= i_tf_bucking + 1:
                 sig_tf_tresca_max[ii] = s_tresca_cond_cea[ii_max]
             else:
                 sig_tf_tresca_max[ii] = sig_tf_tresca[ii_max]
 
         # Constraint equation for the Tresca yield criterion
 
-        tfcoil_variables.sig_tf_wp = sig_tf_tresca_max[n_tf_bucking]
+        sig_tf_wp = sig_tf_tresca_max[n_tf_bucking]
         # Maximum assumed in the first graded layer
 
-        if tfcoil_variables.i_tf_bucking >= 1:
-            tfcoil_variables.sig_tf_case = sig_tf_tresca_max[n_tf_bucking - 1]
-        if tfcoil_variables.i_tf_bucking >= 2:
-            tfcoil_variables.sig_tf_cs_bucked = sig_tf_tresca_max[0]
+        if i_tf_bucking >= 1:
+            sig_tf_case = sig_tf_tresca_max[n_tf_bucking - 1]
+        if i_tf_bucking >= 2:
+            sig_tf_cs_bucked = sig_tf_tresca_max[0]
         # ----------------
 
-        if output:
-            self.out_stress(
-                sig_tf_r_max,
-                sig_tf_t_max,
-                sig_tf_z_max,
-                sig_tf_vmises_max,
-                sig_tf_tresca_max,
-                deflect,
-                eyoung_axial,
-                eyoung_trans,
-                eyoung_wp_axial,
-                eyoung_wp_trans,
-                poisson_wp_trans,
-                radial_array,
-                s_tresca_cond_cea,
-                poisson_wp_axial,
-                sig_tf_r,
-                sig_tf_smeared_r,
-                sig_tf_smeared_t,
-                sig_tf_smeared_z,
-                sig_tf_t,
-                sig_tf_tresca,
-                sig_tf_vmises,
-                sig_tf_z,
-                str_tf_r,
-                str_tf_t,
-                str_tf_z,
-                n_radial_array,
-                n_tf_bucking,
-            )
-
-    @staticmethod
-    @numba.njit(cache=True)
-    def plane_stress(nu, rad, ey, j, nlayers, n_radial_array):
-        """Calculates the stresses in a superconductor TF coil
-        inboard leg at the midplane using the plain stress approximation
-        author: P J Knight, CCFE, Culham Science Centre
-        author: J Morris, CCFE, Culham Science Centre
-        author: S Kahn, CCFE, Culham Science Centre
-        This routine calculates the stresses in a superconductor TF coil
-        inboard leg at midplane.
-        <P>A 2 layer plane stress model developed by CCFE is used. The first layer
-        is the steel case inboard of the winding pack, and the second
-        layer is the winding pack itself.
-        PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
-        """
-        alpha = numpy.zeros((nlayers,))
-        beta = numpy.zeros((nlayers,))
-        # Lorentz body force parametres
-
-        area = numpy.zeros((nlayers,))
-        # Layer area
-
-        aa = numpy.zeros(
-            (
-                2 * nlayers,
-                2 * nlayers,
-            )
+        return (
+            sig_tf_r_max,
+            sig_tf_t_max,
+            sig_tf_z_max,
+            sig_tf_vmises_max,
+            sig_tf_tresca_max,
+            deflect,
+            eyoung_axial,
+            eyoung_trans,
+            eyoung_wp_axial,
+            eyoung_wp_trans,
+            poisson_wp_trans,
+            radial_array,
+            s_tresca_cond_cea,
+            poisson_wp_axial,
+            sig_tf_r,
+            sig_tf_smeared_r,
+            sig_tf_smeared_t,
+            sig_tf_smeared_z,
+            sig_tf_t,
+            sig_tf_tresca,
+            sig_tf_vmises,
+            sig_tf_z,
+            str_tf_r,
+            str_tf_t,
+            str_tf_z,
+            n_radial_array,
+            n_tf_bucking,
+            sig_tf_wp,
+            sig_tf_case,
+            sig_tf_cs_bucked,
+            str_wp,
+            casestr,
+            insstrain,
         )
-        # Matrix encoding the integration constant cc coeficients
-
-        bb = numpy.zeros((2 * nlayers,))
-        # Vector encoding the alpha/beta (lorentz forces) contribution
-
-        cc = numpy.zeros((2 * nlayers,))
-        c1 = numpy.zeros((nlayers,))
-        c2 = numpy.zeros((nlayers,))
-        # Integration constants vector (solution)
-
-        rradius = numpy.zeros((nlayers * n_radial_array,))
-        # Radius array [m]
-
-        sigr = numpy.zeros((nlayers * n_radial_array,))
-        # Radial stress radial distribution [Pa]
-
-        sigt = numpy.zeros((nlayers * n_radial_array,))
-        # Toroidal stress radial distribution [Pa]
-
-        r_deflect = numpy.zeros((nlayers * n_radial_array,))
-        # Radial deflection (displacement) radial distribution [m]
-
-        kk = ey / (1 - nu**2)
-
-        # Lorentz forces parametrisation coeficients (array equation)
-        alpha = 0.5e0 * RMU0 * j**2 / kk
-
-        inner_layer_curr = 0.0e0
-        for ii in range(nlayers):
-
-            beta[ii] = (
-                0.5e0
-                * RMU0
-                * j[ii]
-                * (inner_layer_curr - numpy.pi * j[ii] * rad[ii] ** 2)
-                / (numpy.pi * kk[ii])
-            )
-
-            # Layer area
-            area[ii] = numpy.pi * (rad[ii + 1] ** 2 - rad[ii] ** 2)
-
-            # Total current carried by the inners layers
-            inner_layer_curr = inner_layer_curr + area[ii] * j[ii]
-        # ***
-
-        # Null radial stress at R(1)
-        aa[0, 0] = kk[0] * (1.0e0 + nu[0])
-        aa[0, 1] = -kk[0] * (1.0e0 - nu[0]) / (rad[0] ** 2)
-
-        # Inter-layer boundary conditions
-        if nlayers != 1:
-            for ii in range(nlayers - 1):
-
-                # Continuous radial normal stress at R(ii+1)
-                aa[2 * ii + 1, 2 * ii] = kk[ii] * (1.0e0 + nu[ii])
-                aa[2 * ii + 1, 2 * ii + 1] = (
-                    -kk[ii] * (1.0e0 - nu[ii]) / rad[ii + 1] ** 2
-                )
-                aa[2 * ii + 1, 2 * ii + 2] = -kk[ii + 1] * (1.0e0 + nu[ii + 1])
-                aa[2 * ii + 1, 2 * ii + 3] = (
-                    kk[ii + 1] * (1.0e0 - nu[ii + 1]) / rad[ii + 1] ** 2
-                )
-
-                # Continuous displacement at R(ii+1)
-                aa[2 * ii + 2, 2 * ii] = rad[ii + 1]
-                aa[2 * ii + 2, 2 * ii + 1] = 1.0e0 / rad[ii + 1]
-                aa[2 * ii + 2, 2 * ii + 2] = -rad[ii + 1]
-                aa[2 * ii + 2, 2 * ii + 3] = -1.0e0 / rad[ii + 1]
-
-        # Radial stress = 0
-        aa[2 * (nlayers - 1) + 1, 2 * (nlayers - 1)] = kk[nlayers - 1] * (
-            1.0e0 + nu[nlayers - 1]
-        )
-        aa[2 * (nlayers - 1) + 1, 2 * (nlayers - 1) + 1] = (
-            -kk[nlayers - 1] * (1.0e0 - nu[nlayers - 1]) / rad[nlayers] ** 2
-        )
-        # ***
-
-        # Right hand side vector bb
-        # ***
-        # Null radial stress at R(1)
-        bb[0] = -kk[0] * (
-            0.125e0 * alpha[0] * (3.0e0 + nu[0]) * rad[0] ** 2
-            + 0.5e0 * beta[0] * (1.0e0 + (1.0e0 + nu[0]) * numpy.log(rad[0]))
-        )
-
-        # Inter-layer boundary conditions
-        if nlayers != 1:
-            for ii in range(nlayers - 1):
-
-                # Continuous radial normal stress at R[ii+1]
-                bb[2 * ii + 1] = -kk[ii] * (
-                    0.125e0 * alpha[ii] * (3.0e0 + nu[ii]) * rad[ii + 1] ** 2
-                    + 0.5e0
-                    * beta[ii]
-                    * (1.0e0 + (1.0e0 + nu[ii]) * numpy.log(rad[ii + 1]))
-                ) + kk[ii + 1] * (
-                    0.125e0 * alpha[ii + 1] * (3.0e0 + nu[ii + 1]) * rad[ii + 1] ** 2
-                    + 0.5e0
-                    * beta[ii + 1]
-                    * (1.0e0 + (1.0e0 + nu[ii + 1]) * numpy.log(rad[ii + 1]))
-                )
-
-                # Continuous displacement at R(ii+1)
-                bb[2 * ii + 2] = (
-                    -0.125e0 * alpha[ii] * rad[ii + 1] ** 3
-                    - 0.5e0 * beta[ii] * rad[ii + 1] * numpy.log(rad[ii + 1])
-                    + 0.125e0 * alpha[ii + 1] * rad[ii + 1] ** 3
-                    + 0.5e0 * beta[ii + 1] * rad[ii + 1] * numpy.log(rad[ii + 1])
-                )
-
-        # Null radial stress at R(nlayers+1)
-        bb[2 * (nlayers - 1) + 1] = -kk[nlayers - 1] * (
-            0.125e0 * alpha[nlayers - 1] * (3.0e0 + nu[nlayers - 1]) * rad[nlayers] ** 2
-            + 0.5e0
-            * beta[nlayers - 1]
-            * (1.0e0 + (1.0e0 + nu[nlayers - 1]) * numpy.log(rad[nlayers]))
-        )
-        # ***
-
-        #  Find solution vector cc
-        # ***
-        aa = numpy.asfortranarray(aa)
-        cc = numpy.linalg.solve(aa, bb)
-
-        # maths_library.linesolv(aa, bb, cc)
-
-        #  Multiply c by (-1) (John Last, internal CCFE memorandum, 21/05/2013)
-        for ii in range(nlayers):
-            c1[ii] = cc[2 * ii]
-            c2[ii] = cc[2 * ii + 1]
-        # ***
-        # ------
-
-        # Radial/toroidal/vertical stress radial distribution
-        # ------
-
-        for ii in range(nlayers):
-
-            dradius = (rad[ii + 1] - rad[ii]) / n_radial_array
-            for jj in range(ii * n_radial_array, (ii + 1) * n_radial_array):
-
-                rad_c = rad[ii] + dradius * (jj - n_radial_array * ii)
-                rradius[jj] = rad_c
-
-                # Radial stress radial distribution [Pa]
-                sigr[jj] = kk[ii] * (
-                    (1.0e0 + nu[ii]) * c1[ii]
-                    - ((1.0e0 - nu[ii]) * c2[ii]) / rad_c**2
-                    + 0.125e0 * (3.0e0 + nu[ii]) * alpha[ii] * rad_c**2
-                    + 0.5e0 * beta[ii] * (1.0e0 + (1.0e0 + nu[ii]) * numpy.log(rad_c))
-                )
-
-                # Radial stress radial distribution [Pa]
-                sigt[jj] = kk[ii] * (
-                    (1.0e0 + nu[ii]) * c1[ii]
-                    + (1.0e0 - nu[ii]) * c2[ii] / rad_c**2
-                    + 0.125e0 * (1.0e0 + 3.0e0 * nu[ii]) * alpha[ii] * rad_c**2
-                    + 0.5e0 * beta[ii] * (nu[ii] + (1.0e0 + nu[ii]) * numpy.log(rad_c))
-                )
-
-                #  Deflection [m]
-                r_deflect[jj] = (
-                    c1[ii] * rad_c
-                    + c2[ii] / rad_c
-                    + 0.125e0 * alpha[ii] * rad_c**3
-                    + 0.5e0 * beta[ii] * rad_c * numpy.log(rad_c)
-                )
-
-        return sigr, sigt, r_deflect, rradius
 
     def outtf(self, peaktfflag):
         """Writes superconducting TF coil output to file
@@ -6145,618 +6075,6 @@ class Sctfcoil:
                 "OP ",
             )
 
-    @staticmethod
-    @numba.njit(cache=True, error_model="numpy")
-    def extended_plane_strain(
-        nu_t,
-        nu_zt,
-        ey_t,
-        ey_z,
-        rad,
-        d_curr,
-        v_force,
-        nlayers,
-        n_radial_array,
-        i_tf_bucking,
-    ):
-        """Author : C. Swanson, PPPL and S. Kahn, CCFE
-        September 2021
-        There is a writeup of the derivation of this model on the gitlab server.
-        https://git.ccfe.ac.uk/process/process/-/issues/1414
-        This surboutine estimates the radial displacement, stresses, and strains of
-        the inboard midplane of the TF. It assumes that structures are axisymmetric
-        and long in the axial (z) direction, the "axisymmetric extended plane strain"
-        problem. The TF is assumed to be constructed from some number of layers,
-        within which materials properties and current densities are uniform.
-        The 1D radially-resolved solution is reduced to a 0D matrix inversion problem
-        using analytic solutions to Lame's thick cylinder problem. Materials may be
-        transverse-isotropic in Young's modulus and Poisson's ratio. The consraints
-        are: Either zero radial stress or zero radial displacement at the inner
-        surface (depending on whether the inner radius is zero), zero radial stress
-        at the outer surface, total axial force (tension) is equal to the input,
-        and optionally the axial force of an inner subset of cylinders is zero (slip
-        conditions between the inner and outer subset). The matrix inversion / linear
-        solve is always 4x4, no matter how many layers there are.
-        The problem is formulated around a solution vector (A,B,eps_z,1.0,eps_z_slip)
-        where A and B are the parameters in Lame's solution where u = A*r + B/r, u
-        is the radial displacement. eps_z is the axial strain on the outer, force-
-        carrying layers. eps_z_slip is the axial strain on the inner, non-force-
-        carrying layers (optionally). The solution vector is A,B at the outermost
-        radius, and is transformed via matrix multiplication into those A,B
-        values at other radii. The constraints are inner products with this vector,
-        and so when stacked form a matrix to invert.
-        """
-        # outputs
-        sigr = numpy.zeros((n_radial_array * nlayers,))
-        # Stress distribution in the radial direction (r) [Pa]
-
-        sigt = numpy.zeros((n_radial_array * nlayers,))
-        # Stress distribution in the toroidal direction (t) [Pa]
-
-        sigz = numpy.zeros((n_radial_array * nlayers,))
-        # Stress distribution in the vertical direction (z)
-
-        str_r = numpy.zeros((n_radial_array * nlayers,))
-        # Strain distribution in the radial direction (r)
-
-        str_t = numpy.zeros((n_radial_array * nlayers,))
-        # Strain distribution in the toroidal direction (t)
-
-        str_z = numpy.zeros((n_radial_array * nlayers,))
-        # Uniform strain in the vertical direction (z)
-
-        r_deflect = numpy.zeros((n_radial_array * nlayers,))
-        # Radial displacement radial distribution [m]
-
-        rradius = numpy.zeros((n_radial_array * nlayers,))
-        # Radius array [m]
-
-        # local arrays
-        # Stiffness form of compliance tensor
-        nu_tz = numpy.zeros((nlayers,))
-        # Transverse-axial Poisson's ratio
-        # (ratio of axial strain to transverse strain upon transverse stress)
-        ey_bar_z = numpy.zeros((nlayers,))
-        # Axial effective Young's modulus (zero cross-strains, not stresses) [Pa]
-        ey_bar_t = numpy.zeros((nlayers,))
-        # Transverse effective Young's modulus [Pa]
-        nu_bar_t = numpy.zeros((nlayers,))
-        # Transverse effective Poisson's ratio
-        nu_bar_tz = numpy.zeros((nlayers,))
-        # Transverse-axial effective Poisson's ratio
-        nu_bar_zt = numpy.zeros((nlayers,))
-        # Axial-transverse effective Poisson's ratio
-
-        # Lorentz force parameters
-        currents = numpy.zeros((nlayers,))
-        # Currents in each layer [A]
-        currents_enclosed = numpy.zeros((nlayers,))
-        # Currents enclosed by inner radius of each layer [A]
-        f_lin_fac = numpy.zeros((nlayers,))
-        # Factor that multiplies r linearly in the force density
-        f_rec_fac = numpy.zeros((nlayers,))
-        # Factor that multiplies r reciprocally in the force density
-        f_int_A = numpy.zeros((nlayers,))
-        # Force density integral that adds to Lame parameter A
-        f_int_B = numpy.zeros((nlayers,))
-        # Force density integral that adds to Lame parameter B
-
-        # Layer transfer matrices
-        M_int = numpy.zeros(
-            (
-                5,
-                5,
-                nlayers,
-            ),
-        )
-        # Matrix that transforms the Lame parmeter vector from the
-        # outer radius to the inner radius of each layer
-        M_ext = numpy.zeros(
-            (
-                5,
-                5,
-                nlayers,
-            ),
-        )
-        # Matrix that transforms the Lame parmeter vector from the
-        # inner radius of one layer to the outer radius of the
-        # next inner.
-        M_tot = numpy.zeros(
-            (
-                5,
-                5,
-                nlayers,
-            ),
-        )
-        # Matrix that transforms the Lame parmeter vector from the
-        # outer radius of the outer layer to the inner radius of
-        # each.
-
-        # Axial force inner product
-        v_force_row = numpy.zeros(
-            (
-                1,
-                5,
-            ),
-        )
-        # Row vector (matrix multiplication is inner product) to
-        # obtain the axial force from the force-carrying layers
-        v_force_row_slip = numpy.zeros(
-            (
-                1,
-                5,
-            ),
-        )
-        # Row vector (matrix multiplication is inner product) to
-        # obtain the axial force inner slip layers (no net force)
-        rad_row_helper = numpy.zeros(
-            (
-                1,
-                5,
-            ),
-        )
-        # A helper variable to store [radius, 1, 0, 0, 0] in row
-
-        # Boundary condition matrix
-        M_bc = numpy.zeros(
-            (
-                4,
-                5,
-            ),
-        )
-        # Boundary condition matrix. Multiply this with the
-        # outermost solution vector, (A,B,eps_z,1.0,eps_z_slip),
-        # to obtain a zero vector.
-        M_toinv = numpy.zeros(
-            (
-                4,
-                4,
-            ),
-        )
-        # Matrix to invert to get the solution
-        RHS_vec = numpy.zeros((4,))
-        # Right-hand-side vector to divide M_toinv
-        A_vec_solution = numpy.zeros((5,))
-        # Solution vector, Lame parameters at outer radius, strain
-        # of force-carrying layers, and strain of slip layers
-        # (A,B,eps_z,1,eps_z_slip)
-
-        # Constructing the solution everywhere
-        A_vec_layer = numpy.zeros((5,))
-        # Lame parameters and strains vector at outer radius
-        # of each layer
-
-        # The stress calcualtion differential equations is analytically sloved
-        # The final solution is given by the layer boundary conditions on
-        # radial stress and displacement between layers solved
-        # The problem is set as aa.cc = bb, cc being the constant we search
-
-        # Inner slip layers parameters
-        # Section 15 in the writeup
-        # Innermost layer that takes axial force. Layers inner of this
-        # have zero net axial force, to include CS decoupling.
-        # This configuration JUST HAPPENS to work out because of
-        # the specific i_tf_bucking options; if those are changed,
-        # will need a switch here.
-        nonslip_layer = i_tf_bucking
-
-        if nonslip_layer < 1:
-            nonslip_layer = 1
-
-        # Stiffness tensor factors
-        # Section 3 in the writeup
-        # With Section 12 anisotropic materials properties
-        # ***
-        # Dependent Poisson's ratio: nu-transverse-axial
-        # from nu-axial-transverse and the Young's moduli
-        nu_tz[:] = nu_zt * ey_t / ey_z
-
-        # Effective Young's Moduli and Poisson's ratios
-        # holding strain, not stress, cross-terms constant
-        ey_bar_z[:] = ey_z * (1 - nu_t) / (1 - nu_t - 2 * nu_tz * nu_zt)
-        ey_bar_t[:] = (
-            ey_t * (1 - nu_tz * nu_zt) / (1 - nu_t - 2 * nu_tz * nu_zt) / (1 + nu_t)
-        )
-
-        nu_bar_t[:] = (nu_t + nu_tz * nu_zt) / (1 - nu_tz * nu_zt)
-        nu_bar_tz[:] = nu_tz / (1 - nu_t)
-        nu_bar_zt[:] = nu_zt * (1 + nu_t) / (1 - nu_tz * nu_zt)
-
-        # Lorentz force parameters
-        # Section 13 in the writeup
-        # ***
-        # Currents in each layer [A]
-        currents[:] = (
-            numpy.pi * d_curr * (rad[1 : nlayers + 1] ** 2 - rad[:nlayers] ** 2)
-        )
-        # Currents enclosed by inner radius of each layer [A]
-        currents_enclosed[0] = 0.0e0
-
-        for ii in range(1, nlayers):
-            currents_enclosed[ii] = currents_enclosed[ii - 1] + currents[ii - 1]
-        # Factor that multiplies r linearly in the force density
-        f_lin_fac[:] = RMU0 / 2.0e0 * d_curr**2
-        # Factor that multiplies r reciprocally in the force density
-        f_rec_fac[:] = (
-            RMU0
-            / 2.0e0
-            * (d_curr * currents_enclosed / numpy.pi - d_curr**2 * rad[:nlayers] ** 2)
-        )
-        # Force density integral that adds to Lame parameter A
-        f_int_A[:] = 0.5e0 * f_lin_fac * (
-            rad[1 : nlayers + 1] ** 2 - rad[:nlayers] ** 2
-        ) + f_rec_fac * numpy.log(rad[1 : nlayers + 1] / rad[:nlayers])
-        if f_rec_fac[0] == 0e0:
-            f_int_A[0] = 0.5e0 * f_lin_fac[0] * (rad[1] ** 2 - rad[0] ** 2)
-
-        # Force density integral that adds to Lame parameter B
-        f_int_B[:] = 0.25e0 * f_lin_fac * (
-            rad[1 : nlayers + 1] ** 4 - rad[:nlayers] ** 4
-        ) + 0.5e0 * f_rec_fac * (rad[1 : nlayers + 1] ** 2 - rad[:nlayers] ** 2)
-
-        # Transformation matrix from outer to inner Lame parameters
-        # Section 5 in the writeup
-        # With Section 12 anisotropic materials properties
-        # ***
-        # M_int[kk] multiplies Lame parameter vector of layer kk (A,B,eps_z,1.0,eps_z_slip)
-        # and transforms the values at the outer radius to the values at the inner radius
-        for kk in range(nlayers):
-            M_int[0, 0, kk] = 1.0e0
-            M_int[1, 1, kk] = 1.0e0
-            M_int[2, 2, kk] = 1.0e0
-            M_int[3, 3, kk] = 1.0e0
-            M_int[4, 4, kk] = 1.0e0
-
-            M_int[0, 3, kk] = -0.5e0 / ey_bar_t[kk] * f_int_A[kk]
-            M_int[1, 3, kk] = 0.5e0 / ey_bar_t[kk] * f_int_B[kk]
-
-        # Transformation matrix between layers
-        # Section 6 in the writeup
-        # With Section 12 anisotropic materials properties
-        # With Section 15 inner slip-decoupled layers
-        # ***
-        # M_ext[kk] multiplies Lame parameter vector of layer kk (A,B,eps_z,1.0,eps_z_slip)
-        # and transforms the values at the inner radius to the values at the outer radius
-        # of layer kk-1
-        for kk in range(1, nonslip_layer - 1):
-            ey_fac = ey_bar_t[kk] / ey_bar_t[kk - 1]
-            M_ext[0, 2, kk] = 0.0e0
-            M_ext[0, 4, kk] = 0.5e0 * (ey_fac * nu_bar_zt[kk] - nu_bar_zt[kk - 1])
-
-        if nonslip_layer > 1:
-            ey_fac = ey_bar_t[nonslip_layer - 1] / ey_bar_t[nonslip_layer - 2]
-            M_ext[0, 2, nonslip_layer - 1] = (
-                0.5e0 * ey_fac * nu_bar_zt[nonslip_layer - 1]
-            )
-            M_ext[0, 4, nonslip_layer - 1] = 0.5e0 * (-nu_bar_zt[nonslip_layer - 2])
-
-        for kk in range(nonslip_layer, nlayers):
-            ey_fac = ey_bar_t[kk] / ey_bar_t[kk - 1]
-            M_ext[0, 2, kk] = 0.5e0 * (ey_fac * nu_bar_zt[kk] - nu_bar_zt[kk - 1])
-            M_ext[0, 4, kk] = 0.0e0
-
-        for kk in range(1, nlayers):
-            ey_fac = ey_bar_t[kk] / ey_bar_t[kk - 1]
-            M_ext[0, 0, kk] = 0.5e0 * (
-                ey_fac * (1 + nu_bar_t[kk]) + 1 - nu_bar_t[kk - 1]
-            )
-            if rad[kk] > 0e0:
-                M_ext[0, 1, kk] = (
-                    0.5e0
-                    / rad[kk] ** 2
-                    * (1 - nu_bar_t[kk - 1] - ey_fac * (1 - nu_bar_t[kk]))
-                )
-
-            M_ext[1, 0, kk] = rad[kk] ** 2 * (1 - M_ext[0, 0, kk])
-            M_ext[1, 1, kk] = 1 - rad[kk] ** 2 * M_ext[0, 1, kk]
-            M_ext[1, 2, kk] = -rad[kk] ** 2 * M_ext[0, 2, kk]
-            M_ext[1, 4, kk] = -rad[kk] ** 2 * M_ext[0, 4, kk]
-            M_ext[2, 2, kk] = 1.0e0
-            M_ext[3, 3, kk] = 1.0e0
-            M_ext[4, 4, kk] = 1.0e0
-
-        # Total transformation matrix, from Lame parmeters at outside to
-        # Lame parameters at inside of each layer
-        # Section 7 in the writeup
-        # ***
-        M_tot[:, :, nlayers - 1] = M_int[:, :, nlayers - 1]
-
-        for kk in range(nlayers - 2, -1, -1):
-            M_tot[:, :, kk] = M_int[:, :, kk] @ (
-                M_ext[:, :, kk + 1] @ M_tot[:, :, kk + 1]
-            )
-
-        # Axial force inner product. Dot-product this with the
-        # outermost solution vector, (A,B,eps_z,1.0,eps_z_slip),
-        # to obtain the axial force.
-        # Section 8 in the writeup
-        # ***
-        # Axial stiffness products
-        ey_bar_z_area = numpy.pi * sum(
-            ey_bar_z[nonslip_layer - 1 : nlayers]
-            * (
-                rad[nonslip_layer : nlayers + 1] ** 2
-                - rad[nonslip_layer - 1 : nlayers] ** 2
-            )
-        )
-        ey_bar_z_area_slip = numpy.pi * sum(
-            ey_bar_z[: nonslip_layer - 1]
-            * (rad[1:nonslip_layer] ** 2 - rad[: nonslip_layer - 1] ** 2)
-        )
-
-        # Axial stiffness inner product, for layers which carry axial force
-        rad_row_helper[0, :] = [rad[nlayers] ** 2, 1e0, 0e0, 0e0, 0e0]
-        v_force_row[:, :] = (
-            2e0
-            * numpy.pi
-            * ey_bar_z[nlayers - 1]
-            * nu_bar_tz[nlayers - 1]
-            * rad_row_helper
-        )
-        rad_row_helper[0, :] = [rad[nonslip_layer - 1] ** 2, 1e0, 0e0, 0e0, 0e0]
-        v_force_row[:, :] = v_force_row - 2e0 * numpy.pi * ey_bar_z[
-            nonslip_layer - 1
-        ] * nu_bar_tz[nonslip_layer - 1] * (
-            rad_row_helper @ M_tot[:, :, nonslip_layer - 1]
-        )
-        for kk in range(nonslip_layer, nlayers):
-            rad_row_helper[0, :] = [rad[kk] ** 2, 1e0, 0e0, 0e0, 0e0]
-            v_force_row[:, :] = v_force_row + 2e0 * numpy.pi * (
-                ey_bar_z[kk - 1] * nu_bar_tz[kk - 1] - ey_bar_z[kk] * nu_bar_tz[kk]
-            ) * (rad_row_helper @ M_tot[:, :, kk])
-
-        # Include the effect of axial stiffness
-        v_force_row[0, 2] += ey_bar_z_area
-
-        # Axial stiffness inner product, for layers which DON'T carry force
-        if nonslip_layer > 1:
-            rad_row_helper[0, :] = [rad[nonslip_layer - 1] ** 2, 1e0, 0e0, 0e0, 0e0]
-            v_force_row_slip[:, :] = (
-                2e0
-                * numpy.pi
-                * ey_bar_z[nonslip_layer - 2]
-                * nu_bar_tz[nonslip_layer - 2]
-                * (rad_row_helper @ M_tot[:, :, nonslip_layer - 1])
-            )
-            rad_row_helper[0, :] = [rad[0] ** 2, 1e0, 0e0, 0e0, 0e0]
-            v_force_row_slip[:, :] -= (
-                2e0
-                * numpy.pi
-                * ey_bar_z[0]
-                * nu_bar_tz[0]
-                * (rad_row_helper @ M_tot[:, :, 0])
-            )
-            for kk in range(1, nonslip_layer - 1):
-                rad_row_helper[0, :] = [rad[kk] ** 2, 1e0, 0e0, 0e0, 0e0]
-                v_force_row_slip[:, :] += (
-                    2e0
-                    * numpy.pi
-                    * (
-                        ey_bar_z[kk - 1] * nu_bar_tz[kk - 1]
-                        - ey_bar_z[kk] * nu_bar_tz[kk]
-                    )
-                    * (rad_row_helper @ M_tot[:, :, kk])
-                )
-            # Include the effect of axial stiffness
-            v_force_row_slip[0, 4] += ey_bar_z_area_slip
-        else:
-            # If there's no inner slip layer, still need a finite 5th
-            # element to ensure no singular matrix
-            v_force_row_slip[0, :] = [0e0, 0e0, 0e0, 0e0, 1e0]
-
-        # Boundary condition matrix. Multiply this with the
-        # outermost solution vector, (A,B,eps_z,1.0,eps_z_slip),
-        # to obtain a zero vector.
-        # Solved to get the Lame parameters.
-        # Section 9 in the writeup
-        # ***
-        # Outer boundary condition row, zero radial stress
-        M_bc[0, :] = [
-            (1e0 + nu_bar_t[nlayers - 1]) * rad[nlayers] ** 2,
-            -1e0 + nu_bar_t[nlayers - 1],
-            nu_bar_zt[nlayers - 1] * rad[nlayers] ** 2,
-            0e0,
-            0e0,
-        ]
-        # Inner boundary condition row, zero radial stress
-        # or zero displacement if rad(1)=0
-        if nonslip_layer > 1:
-            M_bc[1, :] = [
-                (1e0 + nu_bar_t[0]) * rad[0] ** 2,
-                -1e0 + nu_bar_t[0],
-                0e0,
-                0e0,
-                nu_bar_zt[0] * rad[0] ** 2,
-            ]
-        else:
-            M_bc[1, :] = [
-                (1e0 + nu_bar_t[0]) * rad[0] ** 2,
-                -1e0 + nu_bar_t[0],
-                nu_bar_zt[0] * rad[0] ** 2,
-                0e0,
-                0e0,
-            ]
-
-        M_bc[1, :] = M_bc[1, :] @ M_tot[:, :, 0]
-        # Axial force boundary condition
-        M_bc[2, :] = v_force_row[0, :]
-        M_bc[2, 3] = M_bc[2, 3] - v_force
-        # Axial force boundary condition of slip layers
-        M_bc[3, :] = v_force_row_slip[0, :]
-
-        # The solution, the outermost Lame parameters A,B
-        # and the axial strains of the force-carrying and
-        # slip layers eps_z and eps_z_slip.
-        # Section 10 in the writeup
-        # ***
-        M_toinv[:, :3] = M_bc[
-            :,
-            :3,
-        ]
-        M_toinv[:, 3] = M_bc[:, 4]
-        RHS_vec[:] = -M_bc[:, 3]
-
-        A_vec_solution[:4] = numpy.linalg.solve(M_toinv, RHS_vec)
-
-        # maths_library.linesolv(M_toinv, RHS_vec, A_vec_solution[:4])
-        A_vec_solution[4] = A_vec_solution[3]
-        A_vec_solution[3] = 1
-
-        # Radial/toroidal/vertical stress radial distribution
-        # ------
-        # Radial displacement, stress and strain distributions
-
-        A_vec_layer[:] = A_vec_solution[:]
-        for ii in range(nlayers - 1, -1, -1):
-            A_layer = A_vec_layer[0]
-            B_layer = A_vec_layer[1]
-
-            dradius = (rad[ii + 1] - rad[ii]) / (n_radial_array - 1)
-
-            for jj in range(ii * n_radial_array, (ii + 1) * n_radial_array):
-
-                rradius[jj] = rad[ii] + dradius * (jj - (n_radial_array * ii))
-
-                f_int_A_plot = 0.5e0 * f_lin_fac[ii] * (
-                    rad[ii + 1] ** 2 - rradius[jj] ** 2
-                ) + f_rec_fac[ii] * numpy.log(rad[ii + 1] / (rradius[jj]))
-                f_int_B_plot = 0.25e0 * f_lin_fac[ii] * (
-                    rad[ii + 1] ** 4 - rradius[jj] ** 4
-                ) + 0.5e0 * f_rec_fac[ii] * (rad[ii + 1] ** 2 - rradius[jj] ** 2)
-                A_plot = A_layer - 0.5e0 / ey_bar_t[ii] * f_int_A_plot
-                B_plot = B_layer + 0.5e0 / ey_bar_t[ii] * f_int_B_plot
-
-                # Radial displacement
-                r_deflect[jj] = A_plot * rradius[jj] + B_plot / rradius[jj]
-
-                # Radial strain
-                str_r[jj] = A_plot - B_plot / rradius[jj] ** 2
-                # Azimuthal strain
-                str_t[jj] = A_plot + B_plot / rradius[jj] ** 2
-                # Axial strain
-                if ii < nonslip_layer - 1:
-                    str_z[jj] = A_vec_solution[4]
-                else:
-                    str_z[jj] = A_vec_solution[2]
-
-                # Radial stress
-                sigr[jj] = ey_bar_t[ii] * (
-                    str_r[jj] + (nu_bar_t[ii] * str_t[jj]) + (nu_bar_zt[ii] * str_z[jj])
-                )
-                # Aximuthal stress
-                sigt[jj] = ey_bar_t[ii] * (
-                    str_t[jj] + (nu_bar_t[ii] * str_r[jj]) + (nu_bar_zt[ii] * str_z[jj])
-                )
-                # Axial stress
-                sigz[jj] = ey_bar_z[ii] * (
-                    str_z[jj] + (nu_bar_tz[ii] * (str_r[jj] + str_t[jj]))
-                )
-
-            A_vec_layer = M_tot[:, :, ii] @ A_vec_solution
-            A_vec_layer = M_ext[:, :, ii] @ A_vec_layer
-        # ------
-
-        return rradius, sigr, sigt, sigz, str_r, str_t, str_z, r_deflect
-
-    def eyoung_parallel(
-        self, eyoung_j_1, a_1, poisson_j_perp_1, eyoung_j_2, a_2, poisson_j_perp_2
-    ):
-        """
-        Author : C. Swanson, PPPL
-        January 2022
-        See Issue #1205 for derivation PDF
-        This subroutine gives the smeared elastic properties of two
-        members that are carrying a force in parallel with each other.
-        The force goes in direction j.
-        Members 1 and 2 are the individual members to be smeared.
-        Member 3 is the effective smeared member (output).
-        This is pretty easy because the smeared properties are simply
-        the average weighted by the cross-sectional areas perpendicular
-        to j.
-        The assumption is that the strains in j are equal.
-        If you're dealing with anisotropy, please pay attention to the
-        fact that the specific Young's Modulus used here is that in
-        the j direction, and the specific Poisson's ratio used here is
-        that between the j and transverse directions in that order.
-        (transverse strain / j strain, under j stress)
-        The smeared Poisson's ratio is computed assuming the transverse
-        dynamics are isotropic, and that the two members are free to
-        shrink/expand under Poisson effects without interference from
-        each other. This may not be true of your case.
-
-        To build up a composite smeared member of any number of
-        individual members, you can pass the same properties for
-        members 2 and 3, and call it successively, using the properties
-        of each member as the first triplet of arguments. This way, the
-        last triplet acts as a "working sum":
-        call eyoung_parallel(triplet1, triplet2, tripletOUT)
-        call eyoung_parallel(triplet3, tripletOUT, tripletOUT)
-        call eyoung_parallel(triplet4, tripletOUT, tripletOUT)
-        ... etc.
-        So that tripletOUT would eventually have the smeared properties
-        of the total composite member.
-        """
-        poisson_j_perp_3 = (poisson_j_perp_1 * a_1 + poisson_j_perp_2 * a_2) / (
-            a_1 + a_2
-        )
-        eyoung_j_3 = (eyoung_j_1 * a_1 + eyoung_j_2 * a_2) / (a_1 + a_2)
-        a_3 = a_1 + a_2
-
-        return eyoung_j_3, a_3, poisson_j_perp_3
-
-    def eyoung_parallel_array(self, n, eyoung_j_in, a_in, poisson_j_perp_in):
-        """
-        Author : C. Swanson, PPPL
-        January 2022
-        See Issue #1205 for derivation PDF
-        This subroutine gives the smeared elastic properties of two
-        members that are carrying a force in parallel with each other.
-        The force goes in direction j.
-        Members 1 and 2 are the individual members to be smeared.
-        Member 3 is the effective smeared member (output).
-        This is pretty easy because the smeared properties are simply
-        the average weighted by the cross-sectional areas perpendicular
-        to j.
-        The assumption is that the strains in j are equal.
-        If you're dealing with anisotropy, please pay attention to the
-        fact that the specific Young's Modulus used here is that in
-        the j direction, and the specific Poisson's ratio used here is
-        that between the j and transverse directions in that order.
-        (transverse strain / j strain, under j stress)
-        The smeared Poisson's ratio is computed assuming the transverse
-        dynamics are isotropic, and that the two members are free to
-        shrink/expand under Poisson effects without interference from
-        each other. This may not be true of your case.
-
-        To build up a composite smeared member of any number of
-        individual members, you can pass the same properties for
-        members 2 and 3, and call it successively, using the properties
-        of each member as the first triplet of arguments. This way, the
-        last triplet acts as a "working sum":
-        call eyoung_parallel(triplet1, triplet2, tripletOUT)
-        call eyoung_parallel(triplet3, tripletOUT, tripletOUT)
-        call eyoung_parallel(triplet4, tripletOUT, tripletOUT)
-        ... etc.
-        So that tripletOUT would eventually have the smeared properties
-        of the total composite member.
-        """
-        eyoung_j_out = 0
-        a_out = 0
-        poisson_j_perp_out = 0
-
-        # Parallel-composite them all together
-        for ii in range(n):
-            eyoung_j_out, a_out, poisson_j_perp_out = self.eyoung_parallel(
-                eyoung_j_in[ii],
-                a_in[ii],
-                poisson_j_perp_in[ii],
-                eyoung_j_out,
-                a_out,
-                poisson_j_perp_out,
-            )
-
-        return eyoung_j_out, a_out, poisson_j_perp_out
-
     def eyoung_series(
         self, eyoung_j_1, l_1, poisson_j_perp_1, eyoung_j_2, l_2, poisson_j_perp_2
     ):
@@ -6817,105 +6135,6 @@ class Sctfcoil:
             l_3 = l_1 + l_2
 
         return eyoung_j_3, l_3, poisson_j_perp_3
-
-    def eyoung_t_nested_squares(self, n, eyoung_j_in, l_in, poisson_j_perp_in):
-        """
-        Author : C. Swanson, PPPL
-        January 2022
-        This subroutine gives the smeared transverse elastic
-        properties of n members whose cross sectional areas are
-        nested squares. It uses the subroutines eyoung_series and
-        eyoung_parallel, above, so please be aware of the assumptions
-        inherent in those subroutines.
-
-        It assumes that each "leg" of the square cross section
-        (vertical slice, as described in Figure 10 of the TF coil
-        documentation) is composed of several layers under stress in
-        series, and each leg is under stress in parallel with every
-        other leg.
-        """
-        eyoung_j_working = numpy.zeros((n,))
-        l_working = numpy.zeros((n,))
-        poisson_j_perp_working = numpy.zeros((n,))
-
-        # First member
-        eyoung_j_working[0] = eyoung_j_in[0]
-        l_working[0] = l_in[0]
-        poisson_j_perp_working[0] = poisson_j_perp_in[0]
-
-        for ii in range(1, n):
-
-            # Initialize the leg of which this is the new member
-            eyoung_j_working[ii] = eyoung_j_in[ii]
-            l_working[ii] = l_working[ii - 1] + l_in[ii]
-            poisson_j_perp_working[ii] = poisson_j_perp_in[ii]
-
-            # Serial-composite the new layer of this member into the previous legs
-            # changed from range(ii-1) because range(0) == []
-            for jj in range(ii):
-                (
-                    eyoung_j_working[jj],
-                    l_working[jj],
-                    poisson_j_perp_working[jj],
-                ) = self.eyoung_series(
-                    eyoung_j_working[ii],
-                    l_in[ii],
-                    poisson_j_perp_working[ii],
-                    eyoung_j_working[jj],
-                    l_working[jj],
-                    poisson_j_perp_working[jj],
-                )
-
-        # Find stiffest leg
-        eyoung_stiffest = max(eyoung_j_working)
-
-        eyoung_j_out = 0
-        l_out = 0
-        poisson_j_perp_out = 0
-
-        # Parallel-composite them all together
-        for ii in range(n):
-            eyoung_j_out, l_out, poisson_j_perp_out = self.eyoung_parallel(
-                eyoung_j_working[ii],
-                l_in[ii],
-                poisson_j_perp_working[ii],
-                eyoung_j_out,
-                l_out,
-                poisson_j_perp_out,
-            )
-
-        return eyoung_j_out, l_out, poisson_j_perp_out, eyoung_stiffest
-
-    def sigvm(
-        self, sx: float, sy: float, sz: float, txy: float, txz: float, tyz: float
-    ) -> float:
-
-        """Calculates Von Mises stress in a TF coil
-        author: P J Knight, CCFE, Culham Science Centre
-        author: B Reimer, FEDC
-        This routine calculates the Von Mises combination of
-        stresses (Pa) in a TF coil.
-        AEA FUS 251: A User's Guide to the PROCESS Systems Code
-
-        :param sx: In-plane stress in X direction [Pa]
-        :param sy: In-plane stress in Y direction [Pa]
-        :param sz: In-plane stress in Z direction [Pa]
-        :param txy: Out-of-plane stress in X-Y plane [Pa]
-        :param txz: Out-of-plane stress in X-Z plane [Pa]
-        :param tyz: Out-of-plane stress in Y-Z plane [Pa]
-
-        :returns: Von Mises combination of stresses (Pa) in a TF coil.
-        """
-
-        return numpy.sqrt(
-            0.5
-            * (
-                (sx - sy) ** 2
-                + (sx - sz) ** 2
-                + (sz - sy) ** 2
-                + 6 * (txy**2 + txz**2 + tyz**2)
-            )
-        )
 
     def tf_averaged_turn_geom(self, jwptf, thwcndut, thicndut, i_tf_sc_mat):
         """
@@ -7021,3 +6240,951 @@ class Sctfcoil:
             acndttf = tfcoil_variables.t_conductor**2 - acstf
 
         return acstf, acndttf, insulation_area, n_tf_turn
+
+
+def eyoung_t_nested_squares(n, eyoung_j_in, l_in, poisson_j_perp_in):
+    """
+    Author : C. Swanson, PPPL
+    January 2022
+    This subroutine gives the smeared transverse elastic
+    properties of n members whose cross sectional areas are
+    nested squares. It uses the subroutines eyoung_series and
+    eyoung_parallel, above, so please be aware of the assumptions
+    inherent in those subroutines.
+
+    It assumes that each "leg" of the square cross section
+    (vertical slice, as described in Figure 10 of the TF coil
+    documentation) is composed of several layers under stress in
+    series, and each leg is under stress in parallel with every
+    other leg.
+    """
+    eyoung_j_working = numpy.zeros((n,))
+    l_working = numpy.zeros((n,))
+    poisson_j_perp_working = numpy.zeros((n,))
+
+    # First member
+    eyoung_j_working[0] = eyoung_j_in[0]
+    l_working[0] = l_in[0]
+    poisson_j_perp_working[0] = poisson_j_perp_in[0]
+
+    for ii in range(1, n):
+
+        # Initialize the leg of which this is the new member
+        eyoung_j_working[ii] = eyoung_j_in[ii]
+        l_working[ii] = l_working[ii - 1] + l_in[ii]
+        poisson_j_perp_working[ii] = poisson_j_perp_in[ii]
+
+        # Serial-composite the new layer of this member into the previous legs
+        # changed from range(ii-1) because range(0) == []
+        for jj in range(ii):
+            (
+                eyoung_j_working[jj],
+                l_working[jj],
+                poisson_j_perp_working[jj],
+            ) = eyoung_series(
+                eyoung_j_working[ii],
+                l_in[ii],
+                poisson_j_perp_working[ii],
+                eyoung_j_working[jj],
+                l_working[jj],
+                poisson_j_perp_working[jj],
+            )
+
+    # Find stiffest leg
+    eyoung_stiffest = max(eyoung_j_working)
+
+    eyoung_j_out = 0
+    l_out = 0
+    poisson_j_perp_out = 0
+
+    # Parallel-composite them all together
+    for ii in range(n):
+        eyoung_j_out, l_out, poisson_j_perp_out = eyoung_parallel(
+            eyoung_j_working[ii],
+            l_in[ii],
+            poisson_j_perp_working[ii],
+            eyoung_j_out,
+            l_out,
+            poisson_j_perp_out,
+        )
+
+    return eyoung_j_out, l_out, poisson_j_perp_out, eyoung_stiffest
+
+
+def eyoung_series(eyoung_j_1, l_1, poisson_j_perp_1, eyoung_j_2, l_2, poisson_j_perp_2):
+    """
+    Author : C. Swanson, PPPL
+    January 2022
+    See Issue #1205 for derivation PDF
+    This subroutine gives the smeared elastic properties of two
+    members that are carrying a force in series with each other.
+    The force goes in direction j.
+    The assumption is that the stresses in j are equal.
+    The smeared Young's modulus is the inverse of the average of
+    the inverse of the Young's moduli, weighted by the length
+    of the members in j.
+    Members 1 and 2 are the individual members to be smeared.
+    Member 3 is the effective smeared member (output).
+    The smeared Poisson's ratio is the averaged of the Poisson's
+    ratios, weighted by the quantity (Young's modulus / length of
+    the members in j).
+
+    If you're dealing with anisotropy, please pay attention to the
+    fact that the specific Young's Modulus used here is that in
+    the j direction, and the specific Poisson's ratio used here is
+    that between the j and transverse directions in that order.
+    (transverse strain / j strain, under j stress)
+    The smeared Poisson's ratio is computed assuming the transverse
+    dynamics are isotropic, and that the two members are free to
+    shrink/expand under Poisson effects without interference from
+    each other. This may not be true of your case.
+
+    To build up a composite smeared member of any number of
+    individual members, you can pass the same properties for
+    members 2 and 3, and call it successively, using the properties
+    of each member as the first triplet of arguments. This way, the
+    last triplet acts as a "working sum":
+    call eyoung_series(triplet1, triplet2, tripletOUT)
+    call eyoung_series(triplet3, tripletOUT, tripletOUT)
+    call eyoung_series(triplet4, tripletOUT, tripletOUT)
+    ... etc.
+    So that tripletOUT would eventually have the smeared properties
+    of the total composite member.
+    """
+    if eyoung_j_1 * eyoung_j_2 == 0:
+        # poisson_j_perp_3 = 0
+        if eyoung_j_1 == 0:
+            poisson_j_perp_3 = poisson_j_perp_1
+        else:
+            poisson_j_perp_3 = poisson_j_perp_2  #
+
+        eyoung_j_3 = 0
+        l_3 = l_1 + l_2
+    else:
+        poisson_j_perp_3 = (
+            poisson_j_perp_1 * l_1 / eyoung_j_1 + poisson_j_perp_2 * l_2 / eyoung_j_2
+        ) / (l_1 / eyoung_j_1 + l_2 / eyoung_j_2)
+        eyoung_j_3 = (l_1 + l_2) / (l_1 / eyoung_j_1 + l_2 / eyoung_j_2)
+        l_3 = l_1 + l_2
+
+    return eyoung_j_3, l_3, poisson_j_perp_3
+
+
+def eyoung_parallel(
+    eyoung_j_1, a_1, poisson_j_perp_1, eyoung_j_2, a_2, poisson_j_perp_2
+):
+    """
+    Author : C. Swanson, PPPL
+    January 2022
+    See Issue #1205 for derivation PDF
+    This subroutine gives the smeared elastic properties of two
+    members that are carrying a force in parallel with each other.
+    The force goes in direction j.
+    Members 1 and 2 are the individual members to be smeared.
+    Member 3 is the effective smeared member (output).
+    This is pretty easy because the smeared properties are simply
+    the average weighted by the cross-sectional areas perpendicular
+    to j.
+    The assumption is that the strains in j are equal.
+    If you're dealing with anisotropy, please pay attention to the
+    fact that the specific Young's Modulus used here is that in
+    the j direction, and the specific Poisson's ratio used here is
+    that between the j and transverse directions in that order.
+    (transverse strain / j strain, under j stress)
+    The smeared Poisson's ratio is computed assuming the transverse
+    dynamics are isotropic, and that the two members are free to
+    shrink/expand under Poisson effects without interference from
+    each other. This may not be true of your case.
+
+    To build up a composite smeared member of any number of
+    individual members, you can pass the same properties for
+    members 2 and 3, and call it successively, using the properties
+    of each member as the first triplet of arguments. This way, the
+    last triplet acts as a "working sum":
+    call eyoung_parallel(triplet1, triplet2, tripletOUT)
+    call eyoung_parallel(triplet3, tripletOUT, tripletOUT)
+    call eyoung_parallel(triplet4, tripletOUT, tripletOUT)
+    ... etc.
+    So that tripletOUT would eventually have the smeared properties
+    of the total composite member.
+    """
+    poisson_j_perp_3 = (poisson_j_perp_1 * a_1 + poisson_j_perp_2 * a_2) / (a_1 + a_2)
+    eyoung_j_3 = (eyoung_j_1 * a_1 + eyoung_j_2 * a_2) / (a_1 + a_2)
+    a_3 = a_1 + a_2
+
+    return eyoung_j_3, a_3, poisson_j_perp_3
+
+
+def sigvm(sx: float, sy: float, sz: float, txy: float, txz: float, tyz: float) -> float:
+
+    """Calculates Von Mises stress in a TF coil
+    author: P J Knight, CCFE, Culham Science Centre
+    author: B Reimer, FEDC
+    This routine calculates the Von Mises combination of
+    stresses (Pa) in a TF coil.
+    AEA FUS 251: A User's Guide to the PROCESS Systems Code
+
+    :param sx: In-plane stress in X direction [Pa]
+    :param sy: In-plane stress in Y direction [Pa]
+    :param sz: In-plane stress in Z direction [Pa]
+    :param txy: Out-of-plane stress in X-Y plane [Pa]
+    :param txz: Out-of-plane stress in X-Z plane [Pa]
+    :param tyz: Out-of-plane stress in Y-Z plane [Pa]
+
+    :returns: Von Mises combination of stresses (Pa) in a TF coil.
+    """
+
+    return numpy.sqrt(
+        0.5
+        * (
+            (sx - sy) ** 2
+            + (sx - sz) ** 2
+            + (sz - sy) ** 2
+            + 6 * (txy**2 + txz**2 + tyz**2)
+        )
+    )
+
+
+@numba.njit(cache=True, error_model="numpy")
+def extended_plane_strain(
+    nu_t,
+    nu_zt,
+    ey_t,
+    ey_z,
+    rad,
+    d_curr,
+    v_force,
+    nlayers,
+    n_radial_array,
+    i_tf_bucking,
+):
+    """Author : C. Swanson, PPPL and S. Kahn, CCFE
+    September 2021
+    There is a writeup of the derivation of this model on the gitlab server.
+    https://git.ccfe.ac.uk/process/process/-/issues/1414
+    This surboutine estimates the radial displacement, stresses, and strains of
+    the inboard midplane of the TF. It assumes that structures are axisymmetric
+    and long in the axial (z) direction, the "axisymmetric extended plane strain"
+    problem. The TF is assumed to be constructed from some number of layers,
+    within which materials properties and current densities are uniform.
+    The 1D radially-resolved solution is reduced to a 0D matrix inversion problem
+    using analytic solutions to Lame's thick cylinder problem. Materials may be
+    transverse-isotropic in Young's modulus and Poisson's ratio. The consraints
+    are: Either zero radial stress or zero radial displacement at the inner
+    surface (depending on whether the inner radius is zero), zero radial stress
+    at the outer surface, total axial force (tension) is equal to the input,
+    and optionally the axial force of an inner subset of cylinders is zero (slip
+    conditions between the inner and outer subset). The matrix inversion / linear
+    solve is always 4x4, no matter how many layers there are.
+    The problem is formulated around a solution vector (A,B,eps_z,1.0,eps_z_slip)
+    where A and B are the parameters in Lame's solution where u = A*r + B/r, u
+    is the radial displacement. eps_z is the axial strain on the outer, force-
+    carrying layers. eps_z_slip is the axial strain on the inner, non-force-
+    carrying layers (optionally). The solution vector is A,B at the outermost
+    radius, and is transformed via matrix multiplication into those A,B
+    values at other radii. The constraints are inner products with this vector,
+    and so when stacked form a matrix to invert.
+    """
+    # outputs
+    sigr = numpy.zeros((n_radial_array * nlayers,))
+    # Stress distribution in the radial direction (r) [Pa]
+
+    sigt = numpy.zeros((n_radial_array * nlayers,))
+    # Stress distribution in the toroidal direction (t) [Pa]
+
+    sigz = numpy.zeros((n_radial_array * nlayers,))
+    # Stress distribution in the vertical direction (z)
+
+    str_r = numpy.zeros((n_radial_array * nlayers,))
+    # Strain distribution in the radial direction (r)
+
+    str_t = numpy.zeros((n_radial_array * nlayers,))
+    # Strain distribution in the toroidal direction (t)
+
+    str_z = numpy.zeros((n_radial_array * nlayers,))
+    # Uniform strain in the vertical direction (z)
+
+    r_deflect = numpy.zeros((n_radial_array * nlayers,))
+    # Radial displacement radial distribution [m]
+
+    rradius = numpy.zeros((n_radial_array * nlayers,))
+    # Radius array [m]
+
+    # local arrays
+    # Stiffness form of compliance tensor
+    nu_tz = numpy.zeros((nlayers,))
+    # Transverse-axial Poisson's ratio
+    # (ratio of axial strain to transverse strain upon transverse stress)
+    ey_bar_z = numpy.zeros((nlayers,))
+    # Axial effective Young's modulus (zero cross-strains, not stresses) [Pa]
+    ey_bar_t = numpy.zeros((nlayers,))
+    # Transverse effective Young's modulus [Pa]
+    nu_bar_t = numpy.zeros((nlayers,))
+    # Transverse effective Poisson's ratio
+    nu_bar_tz = numpy.zeros((nlayers,))
+    # Transverse-axial effective Poisson's ratio
+    nu_bar_zt = numpy.zeros((nlayers,))
+    # Axial-transverse effective Poisson's ratio
+
+    # Lorentz force parameters
+    currents = numpy.zeros((nlayers,))
+    # Currents in each layer [A]
+    currents_enclosed = numpy.zeros((nlayers,))
+    # Currents enclosed by inner radius of each layer [A]
+    f_lin_fac = numpy.zeros((nlayers,))
+    # Factor that multiplies r linearly in the force density
+    f_rec_fac = numpy.zeros((nlayers,))
+    # Factor that multiplies r reciprocally in the force density
+    f_int_A = numpy.zeros((nlayers,))
+    # Force density integral that adds to Lame parameter A
+    f_int_B = numpy.zeros((nlayers,))
+    # Force density integral that adds to Lame parameter B
+
+    # Layer transfer matrices
+    M_int = numpy.zeros(
+        (
+            5,
+            5,
+            nlayers,
+        ),
+    )
+    # Matrix that transforms the Lame parmeter vector from the
+    # outer radius to the inner radius of each layer
+    M_ext = numpy.zeros(
+        (
+            5,
+            5,
+            nlayers,
+        ),
+    )
+    # Matrix that transforms the Lame parmeter vector from the
+    # inner radius of one layer to the outer radius of the
+    # next inner.
+    M_tot = numpy.zeros(
+        (
+            5,
+            5,
+            nlayers,
+        ),
+    )
+    # Matrix that transforms the Lame parmeter vector from the
+    # outer radius of the outer layer to the inner radius of
+    # each.
+
+    # Axial force inner product
+    v_force_row = numpy.zeros(
+        (
+            1,
+            5,
+        ),
+    )
+    # Row vector (matrix multiplication is inner product) to
+    # obtain the axial force from the force-carrying layers
+    v_force_row_slip = numpy.zeros(
+        (
+            1,
+            5,
+        ),
+    )
+    # Row vector (matrix multiplication is inner product) to
+    # obtain the axial force inner slip layers (no net force)
+    rad_row_helper = numpy.zeros(
+        (
+            1,
+            5,
+        ),
+    )
+    # A helper variable to store [radius, 1, 0, 0, 0] in row
+
+    # Boundary condition matrix
+    M_bc = numpy.zeros(
+        (
+            4,
+            5,
+        ),
+    )
+    # Boundary condition matrix. Multiply this with the
+    # outermost solution vector, (A,B,eps_z,1.0,eps_z_slip),
+    # to obtain a zero vector.
+    M_toinv = numpy.zeros(
+        (
+            4,
+            4,
+        ),
+    )
+    # Matrix to invert to get the solution
+    RHS_vec = numpy.zeros((4,))
+    # Right-hand-side vector to divide M_toinv
+    A_vec_solution = numpy.zeros((5,))
+    # Solution vector, Lame parameters at outer radius, strain
+    # of force-carrying layers, and strain of slip layers
+    # (A,B,eps_z,1,eps_z_slip)
+
+    # Constructing the solution everywhere
+    A_vec_layer = numpy.zeros((5,))
+    # Lame parameters and strains vector at outer radius
+    # of each layer
+
+    # The stress calcualtion differential equations is analytically sloved
+    # The final solution is given by the layer boundary conditions on
+    # radial stress and displacement between layers solved
+    # The problem is set as aa.cc = bb, cc being the constant we search
+
+    # Inner slip layers parameters
+    # Section 15 in the writeup
+    # Innermost layer that takes axial force. Layers inner of this
+    # have zero net axial force, to include CS decoupling.
+    # This configuration JUST HAPPENS to work out because of
+    # the specific i_tf_bucking options; if those are changed,
+    # will need a switch here.
+    nonslip_layer = i_tf_bucking
+
+    if nonslip_layer < 1:
+        nonslip_layer = 1
+
+    # Stiffness tensor factors
+    # Section 3 in the writeup
+    # With Section 12 anisotropic materials properties
+    # ***
+    # Dependent Poisson's ratio: nu-transverse-axial
+    # from nu-axial-transverse and the Young's moduli
+    nu_tz[:] = nu_zt * ey_t / ey_z
+
+    # Effective Young's Moduli and Poisson's ratios
+    # holding strain, not stress, cross-terms constant
+    ey_bar_z[:] = ey_z * (1 - nu_t) / (1 - nu_t - 2 * nu_tz * nu_zt)
+    ey_bar_t[:] = (
+        ey_t * (1 - nu_tz * nu_zt) / (1 - nu_t - 2 * nu_tz * nu_zt) / (1 + nu_t)
+    )
+
+    nu_bar_t[:] = (nu_t + nu_tz * nu_zt) / (1 - nu_tz * nu_zt)
+    nu_bar_tz[:] = nu_tz / (1 - nu_t)
+    nu_bar_zt[:] = nu_zt * (1 + nu_t) / (1 - nu_tz * nu_zt)
+
+    # Lorentz force parameters
+    # Section 13 in the writeup
+    # ***
+    # Currents in each layer [A]
+    currents[:] = numpy.pi * d_curr * (rad[1 : nlayers + 1] ** 2 - rad[:nlayers] ** 2)
+    # Currents enclosed by inner radius of each layer [A]
+    currents_enclosed[0] = 0.0e0
+
+    for ii in range(1, nlayers):
+        currents_enclosed[ii] = currents_enclosed[ii - 1] + currents[ii - 1]
+    # Factor that multiplies r linearly in the force density
+    f_lin_fac[:] = RMU0 / 2.0e0 * d_curr**2
+    # Factor that multiplies r reciprocally in the force density
+    f_rec_fac[:] = (
+        RMU0
+        / 2.0e0
+        * (d_curr * currents_enclosed / numpy.pi - d_curr**2 * rad[:nlayers] ** 2)
+    )
+    # Force density integral that adds to Lame parameter A
+    f_int_A[:] = 0.5e0 * f_lin_fac * (
+        rad[1 : nlayers + 1] ** 2 - rad[:nlayers] ** 2
+    ) + f_rec_fac * numpy.log(rad[1 : nlayers + 1] / rad[:nlayers])
+    if f_rec_fac[0] == 0e0:
+        f_int_A[0] = 0.5e0 * f_lin_fac[0] * (rad[1] ** 2 - rad[0] ** 2)
+
+    # Force density integral that adds to Lame parameter B
+    f_int_B[:] = 0.25e0 * f_lin_fac * (
+        rad[1 : nlayers + 1] ** 4 - rad[:nlayers] ** 4
+    ) + 0.5e0 * f_rec_fac * (rad[1 : nlayers + 1] ** 2 - rad[:nlayers] ** 2)
+
+    # Transformation matrix from outer to inner Lame parameters
+    # Section 5 in the writeup
+    # With Section 12 anisotropic materials properties
+    # ***
+    # M_int[kk] multiplies Lame parameter vector of layer kk (A,B,eps_z,1.0,eps_z_slip)
+    # and transforms the values at the outer radius to the values at the inner radius
+    for kk in range(nlayers):
+        M_int[0, 0, kk] = 1.0e0
+        M_int[1, 1, kk] = 1.0e0
+        M_int[2, 2, kk] = 1.0e0
+        M_int[3, 3, kk] = 1.0e0
+        M_int[4, 4, kk] = 1.0e0
+
+        M_int[0, 3, kk] = -0.5e0 / ey_bar_t[kk] * f_int_A[kk]
+        M_int[1, 3, kk] = 0.5e0 / ey_bar_t[kk] * f_int_B[kk]
+
+    # Transformation matrix between layers
+    # Section 6 in the writeup
+    # With Section 12 anisotropic materials properties
+    # With Section 15 inner slip-decoupled layers
+    # ***
+    # M_ext[kk] multiplies Lame parameter vector of layer kk (A,B,eps_z,1.0,eps_z_slip)
+    # and transforms the values at the inner radius to the values at the outer radius
+    # of layer kk-1
+    for kk in range(1, nonslip_layer - 1):
+        ey_fac = ey_bar_t[kk] / ey_bar_t[kk - 1]
+        M_ext[0, 2, kk] = 0.0e0
+        M_ext[0, 4, kk] = 0.5e0 * (ey_fac * nu_bar_zt[kk] - nu_bar_zt[kk - 1])
+
+    if nonslip_layer > 1:
+        ey_fac = ey_bar_t[nonslip_layer - 1] / ey_bar_t[nonslip_layer - 2]
+        M_ext[0, 2, nonslip_layer - 1] = 0.5e0 * ey_fac * nu_bar_zt[nonslip_layer - 1]
+        M_ext[0, 4, nonslip_layer - 1] = 0.5e0 * (-nu_bar_zt[nonslip_layer - 2])
+
+    for kk in range(nonslip_layer, nlayers):
+        ey_fac = ey_bar_t[kk] / ey_bar_t[kk - 1]
+        M_ext[0, 2, kk] = 0.5e0 * (ey_fac * nu_bar_zt[kk] - nu_bar_zt[kk - 1])
+        M_ext[0, 4, kk] = 0.0e0
+
+    for kk in range(1, nlayers):
+        ey_fac = ey_bar_t[kk] / ey_bar_t[kk - 1]
+        M_ext[0, 0, kk] = 0.5e0 * (ey_fac * (1 + nu_bar_t[kk]) + 1 - nu_bar_t[kk - 1])
+        if rad[kk] > 0e0:
+            M_ext[0, 1, kk] = (
+                0.5e0
+                / rad[kk] ** 2
+                * (1 - nu_bar_t[kk - 1] - ey_fac * (1 - nu_bar_t[kk]))
+            )
+
+        M_ext[1, 0, kk] = rad[kk] ** 2 * (1 - M_ext[0, 0, kk])
+        M_ext[1, 1, kk] = 1 - rad[kk] ** 2 * M_ext[0, 1, kk]
+        M_ext[1, 2, kk] = -rad[kk] ** 2 * M_ext[0, 2, kk]
+        M_ext[1, 4, kk] = -rad[kk] ** 2 * M_ext[0, 4, kk]
+        M_ext[2, 2, kk] = 1.0e0
+        M_ext[3, 3, kk] = 1.0e0
+        M_ext[4, 4, kk] = 1.0e0
+
+    # Total transformation matrix, from Lame parmeters at outside to
+    # Lame parameters at inside of each layer
+    # Section 7 in the writeup
+    # ***
+    M_tot[:, :, nlayers - 1] = M_int[:, :, nlayers - 1]
+
+    for kk in range(nlayers - 2, -1, -1):
+        M_tot[:, :, kk] = M_int[:, :, kk] @ (M_ext[:, :, kk + 1] @ M_tot[:, :, kk + 1])
+
+    # Axial force inner product. Dot-product this with the
+    # outermost solution vector, (A,B,eps_z,1.0,eps_z_slip),
+    # to obtain the axial force.
+    # Section 8 in the writeup
+    # ***
+    # Axial stiffness products
+    ey_bar_z_area = numpy.pi * sum(
+        ey_bar_z[nonslip_layer - 1 : nlayers]
+        * (
+            rad[nonslip_layer : nlayers + 1] ** 2
+            - rad[nonslip_layer - 1 : nlayers] ** 2
+        )
+    )
+    ey_bar_z_area_slip = numpy.pi * sum(
+        ey_bar_z[: nonslip_layer - 1]
+        * (rad[1:nonslip_layer] ** 2 - rad[: nonslip_layer - 1] ** 2)
+    )
+
+    # Axial stiffness inner product, for layers which carry axial force
+    rad_row_helper[0, :] = [rad[nlayers] ** 2, 1e0, 0e0, 0e0, 0e0]
+    v_force_row[:, :] = (
+        2e0 * numpy.pi * ey_bar_z[nlayers - 1] * nu_bar_tz[nlayers - 1] * rad_row_helper
+    )
+    rad_row_helper[0, :] = [rad[nonslip_layer - 1] ** 2, 1e0, 0e0, 0e0, 0e0]
+    v_force_row[:, :] = v_force_row - 2e0 * numpy.pi * ey_bar_z[
+        nonslip_layer - 1
+    ] * nu_bar_tz[nonslip_layer - 1] * (rad_row_helper @ M_tot[:, :, nonslip_layer - 1])
+    for kk in range(nonslip_layer, nlayers):
+        rad_row_helper[0, :] = [rad[kk] ** 2, 1e0, 0e0, 0e0, 0e0]
+        v_force_row[:, :] = v_force_row + 2e0 * numpy.pi * (
+            ey_bar_z[kk - 1] * nu_bar_tz[kk - 1] - ey_bar_z[kk] * nu_bar_tz[kk]
+        ) * (rad_row_helper @ M_tot[:, :, kk])
+
+    # Include the effect of axial stiffness
+    v_force_row[0, 2] += ey_bar_z_area
+
+    # Axial stiffness inner product, for layers which DON'T carry force
+    if nonslip_layer > 1:
+        rad_row_helper[0, :] = [rad[nonslip_layer - 1] ** 2, 1e0, 0e0, 0e0, 0e0]
+        v_force_row_slip[:, :] = (
+            2e0
+            * numpy.pi
+            * ey_bar_z[nonslip_layer - 2]
+            * nu_bar_tz[nonslip_layer - 2]
+            * (rad_row_helper @ M_tot[:, :, nonslip_layer - 1])
+        )
+        rad_row_helper[0, :] = [rad[0] ** 2, 1e0, 0e0, 0e0, 0e0]
+        v_force_row_slip[:, :] -= (
+            2e0
+            * numpy.pi
+            * ey_bar_z[0]
+            * nu_bar_tz[0]
+            * (rad_row_helper @ M_tot[:, :, 0])
+        )
+        for kk in range(1, nonslip_layer - 1):
+            rad_row_helper[0, :] = [rad[kk] ** 2, 1e0, 0e0, 0e0, 0e0]
+            v_force_row_slip[:, :] += (
+                2e0
+                * numpy.pi
+                * (ey_bar_z[kk - 1] * nu_bar_tz[kk - 1] - ey_bar_z[kk] * nu_bar_tz[kk])
+                * (rad_row_helper @ M_tot[:, :, kk])
+            )
+        # Include the effect of axial stiffness
+        v_force_row_slip[0, 4] += ey_bar_z_area_slip
+    else:
+        # If there's no inner slip layer, still need a finite 5th
+        # element to ensure no singular matrix
+        v_force_row_slip[0, :] = [0e0, 0e0, 0e0, 0e0, 1e0]
+
+    # Boundary condition matrix. Multiply this with the
+    # outermost solution vector, (A,B,eps_z,1.0,eps_z_slip),
+    # to obtain a zero vector.
+    # Solved to get the Lame parameters.
+    # Section 9 in the writeup
+    # ***
+    # Outer boundary condition row, zero radial stress
+    M_bc[0, :] = [
+        (1e0 + nu_bar_t[nlayers - 1]) * rad[nlayers] ** 2,
+        -1e0 + nu_bar_t[nlayers - 1],
+        nu_bar_zt[nlayers - 1] * rad[nlayers] ** 2,
+        0e0,
+        0e0,
+    ]
+    # Inner boundary condition row, zero radial stress
+    # or zero displacement if rad(1)=0
+    if nonslip_layer > 1:
+        M_bc[1, :] = [
+            (1e0 + nu_bar_t[0]) * rad[0] ** 2,
+            -1e0 + nu_bar_t[0],
+            0e0,
+            0e0,
+            nu_bar_zt[0] * rad[0] ** 2,
+        ]
+    else:
+        M_bc[1, :] = [
+            (1e0 + nu_bar_t[0]) * rad[0] ** 2,
+            -1e0 + nu_bar_t[0],
+            nu_bar_zt[0] * rad[0] ** 2,
+            0e0,
+            0e0,
+        ]
+
+    M_bc[1, :] = M_bc[1, :] @ M_tot[:, :, 0]
+    # Axial force boundary condition
+    M_bc[2, :] = v_force_row[0, :]
+    M_bc[2, 3] = M_bc[2, 3] - v_force
+    # Axial force boundary condition of slip layers
+    M_bc[3, :] = v_force_row_slip[0, :]
+
+    # The solution, the outermost Lame parameters A,B
+    # and the axial strains of the force-carrying and
+    # slip layers eps_z and eps_z_slip.
+    # Section 10 in the writeup
+    # ***
+    M_toinv[:, :3] = M_bc[
+        :,
+        :3,
+    ]
+    M_toinv[:, 3] = M_bc[:, 4]
+    RHS_vec[:] = -M_bc[:, 3]
+
+    A_vec_solution[:4] = numpy.linalg.solve(M_toinv, RHS_vec)
+
+    # maths_library.linesolv(M_toinv, RHS_vec, A_vec_solution[:4])
+    A_vec_solution[4] = A_vec_solution[3]
+    A_vec_solution[3] = 1
+
+    # Radial/toroidal/vertical stress radial distribution
+    # ------
+    # Radial displacement, stress and strain distributions
+
+    A_vec_layer[:] = A_vec_solution[:]
+    for ii in range(nlayers - 1, -1, -1):
+        A_layer = A_vec_layer[0]
+        B_layer = A_vec_layer[1]
+
+        dradius = (rad[ii + 1] - rad[ii]) / (n_radial_array - 1)
+
+        for jj in range(ii * n_radial_array, (ii + 1) * n_radial_array):
+
+            rradius[jj] = rad[ii] + dradius * (jj - (n_radial_array * ii))
+
+            f_int_A_plot = 0.5e0 * f_lin_fac[ii] * (
+                rad[ii + 1] ** 2 - rradius[jj] ** 2
+            ) + f_rec_fac[ii] * numpy.log(rad[ii + 1] / (rradius[jj]))
+            f_int_B_plot = 0.25e0 * f_lin_fac[ii] * (
+                rad[ii + 1] ** 4 - rradius[jj] ** 4
+            ) + 0.5e0 * f_rec_fac[ii] * (rad[ii + 1] ** 2 - rradius[jj] ** 2)
+            A_plot = A_layer - 0.5e0 / ey_bar_t[ii] * f_int_A_plot
+            B_plot = B_layer + 0.5e0 / ey_bar_t[ii] * f_int_B_plot
+
+            # Radial displacement
+            r_deflect[jj] = A_plot * rradius[jj] + B_plot / rradius[jj]
+
+            # Radial strain
+            str_r[jj] = A_plot - B_plot / rradius[jj] ** 2
+            # Azimuthal strain
+            str_t[jj] = A_plot + B_plot / rradius[jj] ** 2
+            # Axial strain
+            if ii < nonslip_layer - 1:
+                str_z[jj] = A_vec_solution[4]
+            else:
+                str_z[jj] = A_vec_solution[2]
+
+            # Radial stress
+            sigr[jj] = ey_bar_t[ii] * (
+                str_r[jj] + (nu_bar_t[ii] * str_t[jj]) + (nu_bar_zt[ii] * str_z[jj])
+            )
+            # Aximuthal stress
+            sigt[jj] = ey_bar_t[ii] * (
+                str_t[jj] + (nu_bar_t[ii] * str_r[jj]) + (nu_bar_zt[ii] * str_z[jj])
+            )
+            # Axial stress
+            sigz[jj] = ey_bar_z[ii] * (
+                str_z[jj] + (nu_bar_tz[ii] * (str_r[jj] + str_t[jj]))
+            )
+
+        A_vec_layer = M_tot[:, :, ii] @ A_vec_solution
+        A_vec_layer = M_ext[:, :, ii] @ A_vec_layer
+    # ------
+
+    return rradius, sigr, sigt, sigz, str_r, str_t, str_z, r_deflect
+
+
+@numba.njit(cache=True)
+def plane_stress(nu, rad, ey, j, nlayers, n_radial_array):
+    """Calculates the stresses in a superconductor TF coil
+    inboard leg at the midplane using the plain stress approximation
+    author: P J Knight, CCFE, Culham Science Centre
+    author: J Morris, CCFE, Culham Science Centre
+    author: S Kahn, CCFE, Culham Science Centre
+    This routine calculates the stresses in a superconductor TF coil
+    inboard leg at midplane.
+    <P>A 2 layer plane stress model developed by CCFE is used. The first layer
+    is the steel case inboard of the winding pack, and the second
+    layer is the winding pack itself.
+    PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
+    """
+    alpha = numpy.zeros((nlayers,))
+    beta = numpy.zeros((nlayers,))
+    # Lorentz body force parametres
+
+    area = numpy.zeros((nlayers,))
+    # Layer area
+
+    aa = numpy.zeros(
+        (
+            2 * nlayers,
+            2 * nlayers,
+        )
+    )
+    # Matrix encoding the integration constant cc coeficients
+
+    bb = numpy.zeros((2 * nlayers,))
+    # Vector encoding the alpha/beta (lorentz forces) contribution
+
+    cc = numpy.zeros((2 * nlayers,))
+    c1 = numpy.zeros((nlayers,))
+    c2 = numpy.zeros((nlayers,))
+    # Integration constants vector (solution)
+
+    rradius = numpy.zeros((nlayers * n_radial_array,))
+    # Radius array [m]
+
+    sigr = numpy.zeros((nlayers * n_radial_array,))
+    # Radial stress radial distribution [Pa]
+
+    sigt = numpy.zeros((nlayers * n_radial_array,))
+    # Toroidal stress radial distribution [Pa]
+
+    r_deflect = numpy.zeros((nlayers * n_radial_array,))
+    # Radial deflection (displacement) radial distribution [m]
+
+    kk = ey / (1 - nu**2)
+
+    # Lorentz forces parametrisation coeficients (array equation)
+    alpha = 0.5e0 * RMU0 * j**2 / kk
+
+    inner_layer_curr = 0.0e0
+    for ii in range(nlayers):
+
+        beta[ii] = (
+            0.5e0
+            * RMU0
+            * j[ii]
+            * (inner_layer_curr - numpy.pi * j[ii] * rad[ii] ** 2)
+            / (numpy.pi * kk[ii])
+        )
+
+        # Layer area
+        area[ii] = numpy.pi * (rad[ii + 1] ** 2 - rad[ii] ** 2)
+
+        # Total current carried by the inners layers
+        inner_layer_curr = inner_layer_curr + area[ii] * j[ii]
+    # ***
+
+    # Null radial stress at R(1)
+    aa[0, 0] = kk[0] * (1.0e0 + nu[0])
+    aa[0, 1] = -kk[0] * (1.0e0 - nu[0]) / (rad[0] ** 2)
+
+    # Inter-layer boundary conditions
+    if nlayers != 1:
+        for ii in range(nlayers - 1):
+
+            # Continuous radial normal stress at R(ii+1)
+            aa[2 * ii + 1, 2 * ii] = kk[ii] * (1.0e0 + nu[ii])
+            aa[2 * ii + 1, 2 * ii + 1] = -kk[ii] * (1.0e0 - nu[ii]) / rad[ii + 1] ** 2
+            aa[2 * ii + 1, 2 * ii + 2] = -kk[ii + 1] * (1.0e0 + nu[ii + 1])
+            aa[2 * ii + 1, 2 * ii + 3] = (
+                kk[ii + 1] * (1.0e0 - nu[ii + 1]) / rad[ii + 1] ** 2
+            )
+
+            # Continuous displacement at R(ii+1)
+            aa[2 * ii + 2, 2 * ii] = rad[ii + 1]
+            aa[2 * ii + 2, 2 * ii + 1] = 1.0e0 / rad[ii + 1]
+            aa[2 * ii + 2, 2 * ii + 2] = -rad[ii + 1]
+            aa[2 * ii + 2, 2 * ii + 3] = -1.0e0 / rad[ii + 1]
+
+    # Radial stress = 0
+    aa[2 * (nlayers - 1) + 1, 2 * (nlayers - 1)] = kk[nlayers - 1] * (
+        1.0e0 + nu[nlayers - 1]
+    )
+    aa[2 * (nlayers - 1) + 1, 2 * (nlayers - 1) + 1] = (
+        -kk[nlayers - 1] * (1.0e0 - nu[nlayers - 1]) / rad[nlayers] ** 2
+    )
+    # ***
+
+    # Right hand side vector bb
+    # ***
+    # Null radial stress at R(1)
+    bb[0] = -kk[0] * (
+        0.125e0 * alpha[0] * (3.0e0 + nu[0]) * rad[0] ** 2
+        + 0.5e0 * beta[0] * (1.0e0 + (1.0e0 + nu[0]) * numpy.log(rad[0]))
+    )
+
+    # Inter-layer boundary conditions
+    if nlayers != 1:
+        for ii in range(nlayers - 1):
+
+            # Continuous radial normal stress at R[ii+1]
+            bb[2 * ii + 1] = -kk[ii] * (
+                0.125e0 * alpha[ii] * (3.0e0 + nu[ii]) * rad[ii + 1] ** 2
+                + 0.5e0 * beta[ii] * (1.0e0 + (1.0e0 + nu[ii]) * numpy.log(rad[ii + 1]))
+            ) + kk[ii + 1] * (
+                0.125e0 * alpha[ii + 1] * (3.0e0 + nu[ii + 1]) * rad[ii + 1] ** 2
+                + 0.5e0
+                * beta[ii + 1]
+                * (1.0e0 + (1.0e0 + nu[ii + 1]) * numpy.log(rad[ii + 1]))
+            )
+
+            # Continuous displacement at R(ii+1)
+            bb[2 * ii + 2] = (
+                -0.125e0 * alpha[ii] * rad[ii + 1] ** 3
+                - 0.5e0 * beta[ii] * rad[ii + 1] * numpy.log(rad[ii + 1])
+                + 0.125e0 * alpha[ii + 1] * rad[ii + 1] ** 3
+                + 0.5e0 * beta[ii + 1] * rad[ii + 1] * numpy.log(rad[ii + 1])
+            )
+
+    # Null radial stress at R(nlayers+1)
+    bb[2 * (nlayers - 1) + 1] = -kk[nlayers - 1] * (
+        0.125e0 * alpha[nlayers - 1] * (3.0e0 + nu[nlayers - 1]) * rad[nlayers] ** 2
+        + 0.5e0
+        * beta[nlayers - 1]
+        * (1.0e0 + (1.0e0 + nu[nlayers - 1]) * numpy.log(rad[nlayers]))
+    )
+    # ***
+
+    #  Find solution vector cc
+    # ***
+    aa = numpy.asfortranarray(aa)
+    cc = numpy.linalg.solve(aa, bb)
+
+    # maths_library.linesolv(aa, bb, cc)
+
+    #  Multiply c by (-1) (John Last, internal CCFE memorandum, 21/05/2013)
+    for ii in range(nlayers):
+        c1[ii] = cc[2 * ii]
+        c2[ii] = cc[2 * ii + 1]
+    # ***
+    # ------
+
+    # Radial/toroidal/vertical stress radial distribution
+    # ------
+
+    for ii in range(nlayers):
+
+        dradius = (rad[ii + 1] - rad[ii]) / n_radial_array
+        for jj in range(ii * n_radial_array, (ii + 1) * n_radial_array):
+
+            rad_c = rad[ii] + dradius * (jj - n_radial_array * ii)
+            rradius[jj] = rad_c
+
+            # Radial stress radial distribution [Pa]
+            sigr[jj] = kk[ii] * (
+                (1.0e0 + nu[ii]) * c1[ii]
+                - ((1.0e0 - nu[ii]) * c2[ii]) / rad_c**2
+                + 0.125e0 * (3.0e0 + nu[ii]) * alpha[ii] * rad_c**2
+                + 0.5e0 * beta[ii] * (1.0e0 + (1.0e0 + nu[ii]) * numpy.log(rad_c))
+            )
+
+            # Radial stress radial distribution [Pa]
+            sigt[jj] = kk[ii] * (
+                (1.0e0 + nu[ii]) * c1[ii]
+                + (1.0e0 - nu[ii]) * c2[ii] / rad_c**2
+                + 0.125e0 * (1.0e0 + 3.0e0 * nu[ii]) * alpha[ii] * rad_c**2
+                + 0.5e0 * beta[ii] * (nu[ii] + (1.0e0 + nu[ii]) * numpy.log(rad_c))
+            )
+
+            #  Deflection [m]
+            r_deflect[jj] = (
+                c1[ii] * rad_c
+                + c2[ii] / rad_c
+                + 0.125e0 * alpha[ii] * rad_c**3
+                + 0.5e0 * beta[ii] * rad_c * numpy.log(rad_c)
+            )
+
+    return sigr, sigt, r_deflect, rradius
+
+
+def eyoung_parallel_array(n, eyoung_j_in, a_in, poisson_j_perp_in):
+    """
+    Author : C. Swanson, PPPL
+    January 2022
+    See Issue #1205 for derivation PDF
+    This subroutine gives the smeared elastic properties of two
+    members that are carrying a force in parallel with each other.
+    The force goes in direction j.
+    Members 1 and 2 are the individual members to be smeared.
+    Member 3 is the effective smeared member (output).
+    This is pretty easy because the smeared properties are simply
+    the average weighted by the cross-sectional areas perpendicular
+    to j.
+    The assumption is that the strains in j are equal.
+    If you're dealing with anisotropy, please pay attention to the
+    fact that the specific Young's Modulus used here is that in
+    the j direction, and the specific Poisson's ratio used here is
+    that between the j and transverse directions in that order.
+    (transverse strain / j strain, under j stress)
+    The smeared Poisson's ratio is computed assuming the transverse
+    dynamics are isotropic, and that the two members are free to
+    shrink/expand under Poisson effects without interference from
+    each other. This may not be true of your case.
+
+    To build up a composite smeared member of any number of
+    individual members, you can pass the same properties for
+    members 2 and 3, and call it successively, using the properties
+    of each member as the first triplet of arguments. This way, the
+    last triplet acts as a "working sum":
+    call eyoung_parallel(triplet1, triplet2, tripletOUT)
+    call eyoung_parallel(triplet3, tripletOUT, tripletOUT)
+    call eyoung_parallel(triplet4, tripletOUT, tripletOUT)
+    ... etc.
+    So that tripletOUT would eventually have the smeared properties
+    of the total composite member.
+    """
+    eyoung_j_out = 0
+    a_out = 0
+    poisson_j_perp_out = 0
+
+    # Parallel-composite them all together
+    for ii in range(n):
+        eyoung_j_out, a_out, poisson_j_perp_out = eyoung_parallel(
+            eyoung_j_in[ii],
+            a_in[ii],
+            poisson_j_perp_in[ii],
+            eyoung_j_out,
+            a_out,
+            poisson_j_perp_out,
+        )
+
+    return eyoung_j_out, a_out, poisson_j_perp_out

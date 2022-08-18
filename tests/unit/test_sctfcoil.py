@@ -3,7 +3,7 @@ import numpy
 from typing import NamedTuple, Any
 
 from process.fortran import sctfcoil_module
-from process.fortran import tfcoil_variables, pfcoil_variables
+from process.fortran import tfcoil_variables
 from process.fortran import global_variables
 from process.fortran import physics_variables
 from process.fortran import build_variables
@@ -3819,223 +3819,116 @@ def test_stresscl(stressclparam, monkeypatch, sctfcoil):
     :type monkeypatch: _pytest.monkeypatch.monkeypatch
     """
 
-    monkeypatch.setattr(build_variables, "tfcth", stressclparam.tfcth)
-
-    monkeypatch.setattr(
-        build_variables, "r_tf_inboard_mid", stressclparam.r_tf_inboard_mid
+    (
+        _,
+        _,
+        _,
+        _,
+        _,
+        _,
+        _,
+        _,
+        _,
+        _,
+        _,
+        _,
+        _,
+        _,
+        _,
+        _,
+        _,
+        _,
+        _,
+        _,
+        _,
+        _,
+        _,
+        _,
+        _,
+        _,
+        _,
+        sig_tf_wp,
+        sig_tf_case,
+        _,
+        str_wp,
+        casestr,
+        insstrain,
+    ) = sctfcoil.stresscl(
+        tfcoil_variables.n_tf_stress_layers,
+        stressclparam.n_rad_per_layer,
+        stressclparam.n_tf_wp_layers,
+        stressclparam.i_tf_bucking,
+        stressclparam.r_tf_inboard_in,
+        stressclparam.bore,
+        stressclparam.hmax,
+        stressclparam.ohhghf,
+        stressclparam.ohcth,
+        stressclparam.ipfres,
+        stressclparam.coheof,
+        stressclparam.cohbop,
+        stressclparam.cptdin,
+        stressclparam.ncls,
+        stressclparam.ld_ratio_cst,
+        stressclparam.r_out_cst,
+        stressclparam.oh_steel_frac,
+        stressclparam.eyoung_steel,
+        stressclparam.poisson_steel,
+        stressclparam.eyoung_cond_axial,
+        stressclparam.poisson_cond_axial,
+        stressclparam.eyoung_cond_trans,
+        stressclparam.poisson_cond_trans,
+        stressclparam.eyoung_ins,
+        stressclparam.poisson_ins,
+        stressclparam.thicndut,
+        stressclparam.eyoung_copper,
+        stressclparam.poisson_copper,
+        stressclparam.i_tf_sup,
+        stressclparam.eyoung_res_tf_buck,
+        stressclparam.r_wp_inner,
+        stressclparam.tan_theta_coil,
+        stressclparam.theta_coil,
+        stressclparam.r_wp_outer,
+        stressclparam.a_tf_steel,
+        stressclparam.a_case_front,
+        stressclparam.a_case_nose,
+        stressclparam.tfinsgap,
+        stressclparam.tinstf,
+        stressclparam.n_tf_turn,
+        stressclparam.i_tf_turns_integer,
+        stressclparam.t_cable,
+        stressclparam.t_cable_radial,
+        stressclparam.dhecoil,
+        stressclparam.fcutfsu,
+        stressclparam.thwcndut,
+        stressclparam.t_lat_case_av,
+        stressclparam.t_wp_toroidal_av,
+        stressclparam.a_tf_ins,
+        stressclparam.aswp,
+        stressclparam.acond,
+        stressclparam.awpc,
+        stressclparam.eyoung_al,
+        stressclparam.poisson_al,
+        stressclparam.fcoolcp,
+        stressclparam.n_tf_graded_layers,
+        stressclparam.ritfc,
+        stressclparam.casthi,
+        stressclparam.i_tf_stress_model,
+        stressclparam.vforce_inboard_tot,
+        stressclparam.i_tf_tresca,
+        stressclparam.acasetf,
+        stressclparam.vforce,
+        stressclparam.acndttf,
     )
 
-    monkeypatch.setattr(build_variables, "bore", stressclparam.bore)
+    assert casestr == pytest.approx(stressclparam.expected_casestr, rel=0.01)
 
-    monkeypatch.setattr(build_variables, "ohcth", stressclparam.ohcth)
+    assert sig_tf_case == pytest.approx(stressclparam.expected_sig_tf_case, rel=0.01)
 
-    monkeypatch.setattr(build_variables, "hmax", stressclparam.hmax)
+    assert sig_tf_wp == pytest.approx(stressclparam.expected_sig_tf_wp, rel=0.01)
 
-    monkeypatch.setattr(
-        build_variables, "r_tf_inboard_in", stressclparam.r_tf_inboard_in
-    )
+    assert insstrain == pytest.approx(stressclparam.expected_insstrain, rel=0.01)
 
-    monkeypatch.setattr(tfcoil_variables, "casestr", stressclparam.casestr)
-
-    monkeypatch.setattr(tfcoil_variables, "n_tf_turn", stressclparam.n_tf_turn)
-
-    monkeypatch.setattr(tfcoil_variables, "dr_tf_wp", stressclparam.dr_tf_wp)
-
-    monkeypatch.setattr(tfcoil_variables, "i_tf_tresca", stressclparam.i_tf_tresca)
-
-    monkeypatch.setattr(tfcoil_variables, "acstf", stressclparam.acstf)
-
-    monkeypatch.setattr(tfcoil_variables, "vforce", stressclparam.vforce)
-
-    monkeypatch.setattr(tfcoil_variables, "ritfc", stressclparam.ritfc)
-
-    monkeypatch.setattr(tfcoil_variables, "jwptf", stressclparam.jwptf)
-
-    monkeypatch.setattr(
-        tfcoil_variables, "sig_tf_cs_bucked", stressclparam.sig_tf_cs_bucked
-    )
-
-    monkeypatch.setattr(tfcoil_variables, "sig_tf_case", stressclparam.sig_tf_case)
-
-    monkeypatch.setattr(tfcoil_variables, "sig_tf_wp", stressclparam.sig_tf_wp)
-
-    monkeypatch.setattr(tfcoil_variables, "thwcndut", stressclparam.thwcndut)
-
-    monkeypatch.setattr(tfcoil_variables, "insstrain", stressclparam.insstrain)
-
-    monkeypatch.setattr(tfcoil_variables, "tinstf", stressclparam.tinstf)
-
-    monkeypatch.setattr(tfcoil_variables, "thicndut", stressclparam.thicndut)
-
-    monkeypatch.setattr(tfcoil_variables, "acndttf", stressclparam.acndttf)
-
-    monkeypatch.setattr(tfcoil_variables, "tfinsgap", stressclparam.tfinsgap)
-
-    monkeypatch.setattr(tfcoil_variables, "acasetf", stressclparam.acasetf)
-
-    monkeypatch.setattr(
-        tfcoil_variables, "sig_tf_case_max", stressclparam.sig_tf_case_max
-    )
-
-    monkeypatch.setattr(tfcoil_variables, "poisson_steel", stressclparam.poisson_steel)
-
-    monkeypatch.setattr(
-        tfcoil_variables, "poisson_copper", stressclparam.poisson_copper
-    )
-
-    monkeypatch.setattr(tfcoil_variables, "poisson_al", stressclparam.poisson_al)
-
-    monkeypatch.setattr(
-        tfcoil_variables, "n_tf_graded_layers", stressclparam.n_tf_graded_layers
-    )
-
-    monkeypatch.setattr(tfcoil_variables, "i_tf_sup", stressclparam.i_tf_sup)
-
-    monkeypatch.setattr(tfcoil_variables, "i_tf_bucking", stressclparam.i_tf_bucking)
-
-    monkeypatch.setattr(tfcoil_variables, "fcoolcp", stressclparam.fcoolcp)
-
-    monkeypatch.setattr(
-        tfcoil_variables, "eyoung_cond_axial", stressclparam.eyoung_cond_axial
-    )
-
-    monkeypatch.setattr(tfcoil_variables, "eyoung_steel", stressclparam.eyoung_steel)
-
-    monkeypatch.setattr(
-        tfcoil_variables, "eyoung_res_tf_buck", stressclparam.eyoung_res_tf_buck
-    )
-
-    monkeypatch.setattr(tfcoil_variables, "eyoung_ins", stressclparam.eyoung_ins)
-
-    monkeypatch.setattr(tfcoil_variables, "eyoung_al", stressclparam.eyoung_al)
-
-    monkeypatch.setattr(tfcoil_variables, "eyoung_copper", stressclparam.eyoung_copper)
-
-    monkeypatch.setattr(tfcoil_variables, "aiwp", stressclparam.aiwp)
-
-    monkeypatch.setattr(tfcoil_variables, "aswp", stressclparam.aswp)
-
-    monkeypatch.setattr(tfcoil_variables, "cpttf", stressclparam.cpttf)
-
-    monkeypatch.setattr(tfcoil_variables, "n_tf", stressclparam.n_tf)
-
-    monkeypatch.setattr(
-        tfcoil_variables, "i_tf_stress_model", stressclparam.i_tf_stress_model
-    )
-
-    monkeypatch.setattr(tfcoil_variables, "sig_tf_wp_max", stressclparam.sig_tf_wp_max)
-
-    monkeypatch.setattr(
-        tfcoil_variables, "i_tf_turns_integer", stressclparam.i_tf_turns_integer
-    )
-
-    monkeypatch.setattr(tfcoil_variables, "casthi", stressclparam.casthi)
-
-    monkeypatch.setattr(tfcoil_variables, "acond", stressclparam.acond)
-
-    monkeypatch.setattr(tfcoil_variables, "avwp", stressclparam.avwp)
-
-    monkeypatch.setattr(tfcoil_variables, "awphec", stressclparam.awphec)
-
-    monkeypatch.setattr(tfcoil_variables, "poisson_ins", stressclparam.poisson_ins)
-
-    monkeypatch.setattr(
-        tfcoil_variables, "eyoung_cond_trans", stressclparam.eyoung_cond_trans
-    )
-
-    monkeypatch.setattr(
-        tfcoil_variables, "poisson_cond_axial", stressclparam.poisson_cond_axial
-    )
-
-    monkeypatch.setattr(
-        tfcoil_variables, "poisson_cond_trans", stressclparam.poisson_cond_trans
-    )
-
-    monkeypatch.setattr(tfcoil_variables, "dhecoil", stressclparam.dhecoil)
-
-    monkeypatch.setattr(tfcoil_variables, "fcutfsu", stressclparam.fcutfsu)
-
-    monkeypatch.setattr(tfcoil_variables, "str_wp", stressclparam.str_wp)
-
-    monkeypatch.setattr(
-        tfcoil_variables, "n_tf_wp_layers", stressclparam.n_tf_wp_layers
-    )
-
-    monkeypatch.setattr(pfcoil_variables, "ipfres", stressclparam.ipfres)
-
-    monkeypatch.setattr(pfcoil_variables, "oh_steel_frac", stressclparam.oh_steel_frac)
-
-    monkeypatch.setattr(pfcoil_variables, "ohhghf", stressclparam.ohhghf)
-
-    monkeypatch.setattr(pfcoil_variables, "coheof", stressclparam.coheof)
-
-    monkeypatch.setattr(pfcoil_variables, "cohbop", stressclparam.cohbop)
-
-    monkeypatch.setattr(pfcoil_variables, "ncls", stressclparam.ncls)
-
-    monkeypatch.setattr(pfcoil_variables, "cptdin", stressclparam.cptdin)
-
-    monkeypatch.setattr(sctfcoil_module, "awpc", stressclparam.awpc)
-
-    monkeypatch.setattr(sctfcoil_module, "a_tf_steel", stressclparam.a_tf_steel)
-
-    monkeypatch.setattr(sctfcoil_module, "a_tf_ins", stressclparam.a_tf_ins)
-
-    monkeypatch.setattr(sctfcoil_module, "r_wp_inner", stressclparam.r_wp_inner)
-
-    monkeypatch.setattr(sctfcoil_module, "r_wp_outer", stressclparam.r_wp_outer)
-
-    monkeypatch.setattr(sctfcoil_module, "t_wp_toroidal", stressclparam.t_wp_toroidal)
-
-    monkeypatch.setattr(
-        sctfcoil_module, "t_wp_toroidal_av", stressclparam.t_wp_toroidal_av
-    )
-
-    monkeypatch.setattr(sctfcoil_module, "t_lat_case_av", stressclparam.t_lat_case_av)
-
-    monkeypatch.setattr(sctfcoil_module, "a_case_front", stressclparam.a_case_front)
-
-    monkeypatch.setattr(sctfcoil_module, "a_case_nose", stressclparam.a_case_nose)
-
-    monkeypatch.setattr(sctfcoil_module, "theta_coil", stressclparam.theta_coil)
-
-    monkeypatch.setattr(sctfcoil_module, "tan_theta_coil", stressclparam.tan_theta_coil)
-
-    monkeypatch.setattr(sctfcoil_module, "t_cable_radial", stressclparam.t_cable_radial)
-
-    monkeypatch.setattr(sctfcoil_module, "t_cable", stressclparam.t_cable)
-
-    monkeypatch.setattr(
-        sctfcoil_module, "vforce_inboard_tot", stressclparam.vforce_inboard_tot
-    )
-
-    sctfcoil.stresscl(
-        # iprint=stressclparam.iprint,
-        # outfile=stressclparam.outfile,
-        n_radial_array=stressclparam.n_radial_array,
-        n_tf_layer=stressclparam.n_tf_layer,
-        output=False,
-    )
-
-    assert tfcoil_variables.casestr == pytest.approx(
-        stressclparam.expected_casestr, rel=0.01
-    )
-
-    assert tfcoil_variables.sig_tf_case == pytest.approx(
-        stressclparam.expected_sig_tf_case, rel=0.01
-    )
-
-    assert tfcoil_variables.sig_tf_wp == pytest.approx(
-        stressclparam.expected_sig_tf_wp, rel=0.01
-    )
-
-    assert tfcoil_variables.insstrain == pytest.approx(
-        stressclparam.expected_insstrain, rel=0.01
-    )
-
-    assert tfcoil_variables.str_wp == pytest.approx(
-        stressclparam.expected_str_wp, rel=0.01
-    )
+    assert str_wp == pytest.approx(stressclparam.expected_str_wp, rel=0.01)
 
 
 class PlaneStressParam(NamedTuple):
