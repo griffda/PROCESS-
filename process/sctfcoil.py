@@ -731,7 +731,7 @@ class Sctfcoil:
                 error_handling.report_error(261)
                 strain = numpy.sign(strain) * 0.7e-2
 
-            jcritsc, bcrit, tcrit = superconductors.GL_REBCO(
+            jcritsc, bcrit, tcrit = superconductors.gl_rebco(
                 thelium, bmax, strain, bc20m, tc0m
             )
             # A0 calculated for tape cross section already
@@ -873,17 +873,17 @@ class Sctfcoil:
                         ttestp, bmax, strain, bc20m, tc0m
                     )
                 elif isumat == 8:
-                    jcrit0, b, t = superconductors.GL_REBCO(
+                    jcrit0, b, t = superconductors.gl_rebco(
                         ttest, bmax, strain, bc20m, tc0m
                     )
                     if (abs(jsc - jcrit0) <= jtol) and (
                         abs((jsc - jcrit0) / jsc) <= 0.01
                     ):
                         break
-                    jcritm, b, t = superconductors.GL_REBCO(
+                    jcritm, b, t = superconductors.gl_rebco(
                         ttestm, bmax, strain, bc20m, tc0m
                     )
-                    jcritp, b, t = superconductors.GL_REBCO(
+                    jcritp, b, t = superconductors.gl_rebco(
                         ttestp, bmax, strain, bc20m, tc0m
                     )
                 elif isumat == 9:
