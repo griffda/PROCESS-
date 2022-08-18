@@ -2,7 +2,7 @@ from typing import List, NamedTuple
 import numpy
 import pytest
 
-from process.fortran import divertor_ode, div_kal_vars, divertor_ode_var
+from process.divertor_ode import DivertorOde
 
 
 class DifferentialContext(NamedTuple):
@@ -12,14 +12,12 @@ class DifferentialContext(NamedTuple):
     area_target: float
     area_omp: float
     mi: float
-    abserr_sol: float
     aplas: float
     eleion: float
     v01: float
     v02: float
     zeff_div: float
     impurity_concs: List[float]
-    impurities_present: List[bool]
 
 
 differntial_context = DifferentialContext(
@@ -29,29 +27,12 @@ differntial_context = DifferentialContext(
     0.15737105872405716,
     0.044567059923323327,
     4.1513473024999996e-27,
-    0.0001,
     2.5,
     2.4032659949999999e-18,
     5541.86350714133,
     55418.6350714133,
     1.8556660323935243,
     [0, 0, 0, 0, 0.04, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [
-        False,
-        True,
-        False,
-        False,
-        True,
-        False,
-        False,
-        False,
-        False,
-        False,
-        False,
-        False,
-        False,
-        False,
-    ],
 )
 
 
@@ -114,30 +95,7 @@ differntial_context = DifferentialContext(
         ),
     ),
 )
-def test_differentail(t, y, expected_yp, monkeypatch):
-    mock_params = [
-        "eightemi48",
-        "lengthofwidesol",
-        "area_target",
-        "area_omp",
-        "mi",
-        "aplas",
-        "eleion",
-        "v01",
-        "v02",
-        "zeff_div",
-        "impurities_present",
-    ]
+def test_differentail(t, y, expected_yp):
+    yp = DivertorOde()._get_differential(**differntial_context._asdict())(t, y)
 
-    for p in mock_params:
-        param = getattr(differntial_context, p)
-        monkeypatch.setattr(divertor_ode, p, param)
-    monkeypatch.setattr(div_kal_vars, "netau_sol", differntial_context.netau_sol)
-    monkeypatch.setattr(div_kal_vars, "abserr_sol", differntial_context.abserr_sol)
-    monkeypatch.setattr(
-        divertor_ode_var, "impurity_concs", differntial_context.impurity_concs
-    )
-
-    yp = divertor_ode.differential(t, y)
-
-    numpy.testing.assert_array_almost_equal(yp, expected_yp)
+    assert yp == pytest.approx(expected_yp)

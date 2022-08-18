@@ -66,6 +66,7 @@ from process.caller import Caller
 from process.power import Power
 from process.cs_fatigue import CsFatigue
 from process.physics import Physics
+from process.divertor_ode import DivertorOde
 
 
 from pathlib import Path
@@ -501,6 +502,7 @@ class Models:
         )
         self.costs_2015 = Costs2015()
         self.physics = Physics()
+        self.divertor_ode = DivertorOde()
 
 
 def main(args=None):

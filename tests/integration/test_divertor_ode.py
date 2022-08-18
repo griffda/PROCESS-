@@ -1,5 +1,6 @@
 import numpy
 import pytest
+from process.divertor_ode import DivertorOde
 
 from process.main import SingleRun
 from process.fortran import (
@@ -7,7 +8,6 @@ from process.fortran import (
     physics_variables,
     div_kal_vars,
     impurity_radiation_module,
-    divertor_ode,
     divertor_variables,
 )
 
@@ -47,29 +47,27 @@ def test_divertor_kallenbach():
     impurity_radiation_module.impurity_arr_frac[4] = 8.0e-3
 
     # Define expected returns
-    expected_psep_kallenbach = pytest.approx(150821564.29063162)
-    expected_teomp = pytest.approx(260.5429755492756)
-    expected_neomp = pytest.approx(4.5484725621268275e19)
-    expected_fmom = pytest.approx(0.5044034672505998)
-    expected_hldiv = pytest.approx(6.982882836407337)
+    # using rel=0.01 because the ODE solver
+    # is an approximation so the result will change
+    # slightly depending on the solver used
+    expected_psep_kallenbach = pytest.approx(150821564.29063162, rel=0.01)
+    expected_teomp = pytest.approx(260.5429755492756, rel=0.01)
+    expected_neomp = pytest.approx(4.5484725621268275e19, rel=0.01)
+    expected_fmom = pytest.approx(0.5044034672505998, rel=0.01)
+    expected_hldiv = pytest.approx(6.982882836407337, rel=0.01)
 
     # Run model
-    psep_kallenbach, teomp, neomp = divertor_ode.divertor_kallenbach(
+    psep_kallenbach, teomp, neomp = DivertorOde().divertor_kallenbach(
         rmajor=rmajor,
         rminor=rminor,
         bt=bt,
         plascur=plascur,
         q=q,
-        verboseset=False,
         ttarget=t_target,
         qtargettotal=q_target_total,
         targetangle=target_angle,
-        unit_test=False,
         bp=b_pol,
-        outfile=constants.nout,
-        iprint=0,
     )
-
     # Compare expected and actual values
 
     assert psep_kallenbach == expected_psep_kallenbach
