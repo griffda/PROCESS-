@@ -1,5 +1,4 @@
 from typing import List, NamedTuple
-import numpy
 import pytest
 
 from process.divertor_ode import DivertorOde
