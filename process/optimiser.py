@@ -1,6 +1,5 @@
-from process.fortran import optimiz_module
 from process.fortran import numerics
-from process.vmcon import Vmcon
+from process import solver
 
 
 class Optimiser:
@@ -18,58 +17,43 @@ class Optimiser:
         :param models: physics and engineering model objects
         :type models: process.main.Models
         """
-        self.vmcon = Vmcon(models)
+        self.models = models
 
     def run(self):
         """Run vmcon solver and retry if it fails in certain ways."""
-        self.vmcon.load_iter_vars()
-        # Write basic info to OPT.DAT, then run vmcon solver
-        optimiz_module.write_out(self.vmcon.n, self.vmcon.m)
-        self.vmcon.run()
+        ifail, x, objf, conf = solver.solve(self.models)
 
         # If fail then alter value of epsfcn - this can be improved
-        if self.vmcon.ifail != 1:
+        if ifail != 1:
             print("Trying again with new epsfcn")
+            # epsfcn is only used in evaluators.Evaluators()
             numerics.epsfcn = numerics.epsfcn * 10  # try new larger value
             print("new epsfcn = ", numerics.epsfcn)
-            self.vmcon.run()
+            ifail, x, objf, conf = solver.solve(self.models)
             numerics.epsfcn = numerics.epsfcn / 10  # reset value
 
-        if self.vmcon.ifail != 1:
+        if ifail != 1:
             print("Trying again with new epsfcn")
             numerics.epsfcn = numerics.epsfcn / 10  # try new smaller value
             print("new epsfcn = ", numerics.epsfcn)
-            self.vmcon.run()
+            ifail, x, objf, conf = solver.solve(self.models)
             numerics.epsfcn = numerics.epsfcn * 10  # reset value
 
         # If VMCON has exited with error code 5 try another run using a multiple
         # of the identity matrix as input for the Hessian b(n,n)
         # Only do this if VMCON has not iterated (nviter=1)
-        if self.vmcon.ifail == 5 and numerics.nviter < 2:
-            self.vmcon.mode = 1
-            self.mod_2nd_derivative()
-            self.vmcon.run()
+        if ifail == 5 and numerics.nviter < 2:
+            print(
+                "VMCON error code = 5.  Rerunning VMCON with a new initial "
+                "estimate of the second derivative matrix."
+            )
+            ifail, x, objf, conf = solver.solve(self.models, b=2.0)
 
-        self.output()
+        self.output(x, conf)
 
-    def mod_2nd_derivative(self):
-        """Rerun vmcon with different second derivative matrix."""
-        self.vmcon.b.fill(0)
-        bfactor = 2.0
-        for i in range(self.vmcon.n):
-            self.vmcon.b[i, i] = bfactor
-            # Re-initialise iteration values
-            self.vmcon.x[i] = numerics.xcm[i]
+        return ifail
 
-        print(
-            "VMCON error code = 5.  Rerunning VMCON with a new initial "
-            "estimate of the second derivative matrix."
-        )
-
-    def output(self):
+    def output(self, x, conf):
         """Store results back in Fortran numerics module."""
-        for i in range(self.vmcon.n):
-            numerics.xcm[i] = self.vmcon.x[i]
-
-        for i in range(self.vmcon.m):
-            numerics.rcm[i] = self.vmcon.conf[i]
+        numerics.xcm[: x.shape[0]] = x
+        numerics.rcm[: conf.shape[0]] = conf

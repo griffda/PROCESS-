@@ -31,8 +31,8 @@ class Scan:
         error_handling.errors_on = False
 
         if scan_module.isweep == 0:
-            self.doopt()
-            final.finalise(self.models, self.optimiser.vmcon.ifail)
+            ifail = self.doopt()
+            final.finalise(self.models, ifail)
             return
 
         if scan_module.isweep > scan_module.ipnscns:
@@ -51,8 +51,10 @@ class Scan:
         if numerics.ioptimz < 0:
             return
 
-        self.optimiser.run()
-        scan_module.post_optimise(self.optimiser.vmcon.ifail)
+        ifail = self.optimiser.run()
+        scan_module.post_optimise(ifail)
+
+        return ifail
 
     def scan_1d(self):
         """Run a 1-D scan."""
@@ -66,14 +68,14 @@ class Scan:
 
         for iscan in range(1, scan_module.isweep + 1):
             scan_module.scan_1d_write_point_header(iscan)
-            self.doopt()
+            ifail = self.doopt()
 
-            final.finalise(self.models, self.optimiser.vmcon.ifail)
+            final.finalise(self.models, ifail)
 
             # outvar is an intent(out) of scan_1d_store_output()
             outvar = scan_module.scan_1d_store_output(
                 iscan,
-                self.optimiser.vmcon.ifail,
+                ifail,
                 scan_module.noutvars,
                 scan_module.ipnscns,
             )
@@ -98,12 +100,12 @@ class Scan:
                 iscan_R = scan_module.scan_2d_write_point_header(
                     iscan, iscan_1, iscan_2
                 )
-                self.doopt()
+                ifail = self.doopt()
 
-                final.finalise(self.models, self.optimiser.vmcon.ifail)
+                final.finalise(self.models, ifail)
 
                 outvar, sweep_1_vals, sweep_2_vals = scan_module.scan_2d_store_output(
-                    self.optimiser.vmcon.ifail,
+                    ifail,
                     iscan_1,
                     iscan_R,
                     iscan,

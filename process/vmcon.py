@@ -3,7 +3,6 @@ from process.fortran import vmcon_module
 from process.fortran import numerics
 from process.fortran import global_variables
 from process.fortran import define_iteration_variables
-from process.evaluators import Evaluators
 import numpy as np
 
 logger = getLogger(__name__)
@@ -12,13 +11,14 @@ logger = getLogger(__name__)
 class Vmcon:
     """Driver for Fortran vmcon module."""
 
-    def __init__(self, models):
+    def __init__(self, evaluators):
         """Initialise vars for input/output with Fortran vmcon module.
 
-        :param models: physics and engineering model objects
-        :type models: process.main.Models
+        :param evaluators: evaluates objective and constraint functions and
+        gradient functions
+        :type evaluators: process.evaluators.Evaluators
         """
-        self.evaluators = Evaluators(models)
+        self.evaluators = evaluators
 
         # Vars for array dimensions
         ipnvars = numerics.ipnvars
