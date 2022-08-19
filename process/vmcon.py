@@ -2,7 +2,6 @@ from logging import getLogger
 from process.fortran import vmcon_module
 from process.fortran import numerics
 from process.fortran import global_variables
-from process.fortran import define_iteration_variables
 import numpy as np
 
 logger = getLogger(__name__)
@@ -11,12 +10,22 @@ logger = getLogger(__name__)
 class Vmcon:
     """Driver for Fortran vmcon module."""
 
-    def __init__(self, evaluators):
+    def __init__(self, evaluators, x, bndl, bndu, ifail, first_call):
         """Initialise vars for input/output with Fortran vmcon module.
 
         :param evaluators: evaluates objective and constraint functions and
         gradient functions
         :type evaluators: process.evaluators.Evaluators
+        :param x: iteration variables
+        :type x: np.ndarray
+        :param bndl: lower bounds for the iteration variables
+        :type bndl: np.ndarray
+        :param bndu: upper bounds for the iteration variables
+        :type bndu: np.ndarray
+        :param ifail: previous exit code for the solver
+        :type ifail: int
+        :param first_call: boolean for running Evaluators.fcnvmc1() the first time,
+        :type first_call: bool
         """
         self.evaluators = evaluators
 
@@ -41,7 +50,7 @@ class Vmcon:
         self.lwa = iplh
         self.liwa = ipliwa
         self.meq = numerics.neqns
-        self.ifail = 0
+        self.ifail = ifail
         # ifail is the returned error code: 1 is OK
         self.f = 0.0
         # f is the value of objective function at the output point
@@ -53,14 +62,14 @@ class Vmcon:
 
         self.cnorm = np.zeros((ippn1, ipeqns), dtype=np.float64, order="F")
 
-        self.x = np.zeros(ipnvars, dtype=np.float64, order="F")
+        self.x = x
         self.fgrd = np.zeros(ipnvars, dtype=np.float64, order="F")
         self.glag = np.zeros(ipnvars, dtype=np.float64, order="F")
         self.glaga = np.zeros(ipnvars, dtype=np.float64, order="F")
         self.gamma = np.zeros(ipnvars, dtype=np.float64, order="F")
         self.bdelta = np.zeros(ipnvars, dtype=np.float64, order="F")
-        self.bndl = np.zeros(self.n, dtype=np.float64, order="F")
-        self.bndu = np.zeros(self.n, dtype=np.float64, order="F")
+        self.bndl = bndl
+        self.bndu = bndu
         self.eta = np.zeros(ipnvars, dtype=np.float64, order="F")
         self.xa = np.zeros(ipnvars, dtype=np.float64, order="F")
         self.iupper = np.zeros(self.n, dtype=np.float64, order="F")
@@ -89,19 +98,7 @@ class Vmcon:
 
         # Counter for fcnvmc1 calls
         self.fcnvmc1_calls = 0
-        self.fcnvmc1_first_call = True
-
-    def load_iter_vars(self):
-        """Load Fortran iteration variables, then initialise Python arrays."""
-        # Set up variables to be iterated
-        define_iteration_variables.loadxc()
-        define_iteration_variables.boundxc()
-
-        # Initialise arrays: relies on arrays in numerics being loaded above
-        for i in range(self.n):
-            self.bndl[i] = numerics.bondl[i]
-            self.bndu[i] = numerics.bondu[i]
-            self.x[i] = numerics.xcm[i]
+        self.fcnvmc1_first_call = first_call
 
     def run(self):
         """Load vars into vmcon, run it and extract results."""

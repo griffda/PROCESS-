@@ -1,5 +1,6 @@
 from process.fortran import numerics
 from process import solver
+from process.fortran import define_iteration_variables
 
 
 class Optimiser:
@@ -21,7 +22,19 @@ class Optimiser:
 
     def run(self):
         """Run vmcon solver and retry if it fails in certain ways."""
-        ifail, x, objf, conf = solver.solve(self.models)
+        # Initialise iteration variables and bounds in Fortran
+        define_iteration_variables.loadxc()
+        define_iteration_variables.boundxc()
+
+        # Initialise iteration variables and bounds in Python: relies on Fortran
+        # iteration variables being defined above
+        # Trim maximum size arrays down to actually used size
+        n = numerics.nvar
+        x = numerics.xcm[:n]
+        bndl = numerics.bondl[:n]
+        bndu = numerics.bondu[:n]
+
+        ifail, x, objf, conf = solver.solve(self.models, x, bndl, bndu)
 
         # If fail then alter value of epsfcn - this can be improved
         if ifail != 1:
@@ -29,14 +42,24 @@ class Optimiser:
             # epsfcn is only used in evaluators.Evaluators()
             numerics.epsfcn = numerics.epsfcn * 10  # try new larger value
             print("new epsfcn = ", numerics.epsfcn)
-            ifail, x, objf, conf = solver.solve(self.models)
+
+            ifail, x, objf, conf = solver.solve(
+                self.models, x, bndl, bndu, ifail=ifail, first_call=False
+            )
+            # First solution attempt failed (ifail != 1): supply ifail value
+            # to next attempt
+            # first_call determines how Evaluators.fcnvmc1() runs the first time
+            # TODO Check if fcnvmc1() could be called before the solver to
+            # remove this dependency
             numerics.epsfcn = numerics.epsfcn / 10  # reset value
 
         if ifail != 1:
             print("Trying again with new epsfcn")
             numerics.epsfcn = numerics.epsfcn / 10  # try new smaller value
             print("new epsfcn = ", numerics.epsfcn)
-            ifail, x, objf, conf = solver.solve(self.models)
+            ifail, x, objf, conf = solver.solve(
+                self.models, x, bndl, bndu, ifail=ifail, first_call=False
+            )
             numerics.epsfcn = numerics.epsfcn * 10  # reset value
 
         # If VMCON has exited with error code 5 try another run using a multiple
@@ -47,7 +70,9 @@ class Optimiser:
                 "VMCON error code = 5.  Rerunning VMCON with a new initial "
                 "estimate of the second derivative matrix."
             )
-            ifail, x, objf, conf = solver.solve(self.models, b=2.0)
+            ifail, x, objf, conf = solver.solve(
+                self.models, ifail=ifail, b=2.0, first_call=False
+            )
 
         self.output(x, conf)
 
