@@ -95,8 +95,8 @@ class Vmcon:
         self.bndu = bndu
         self.eta = np.zeros(ipnvars, dtype=np.float64, order="F")
         self.xa = np.zeros(ipnvars, dtype=np.float64, order="F")
-        self.iupper = np.zeros(self.n, dtype=np.float64, order="F")
-        self.ilower = np.zeros(self.n, dtype=np.float64, order="F")
+        self.iupper = iupper
+        self.ilower = ilower
 
         self.bdl = np.zeros(ippn1, dtype=np.float64, order="F")
         self.bdu = np.zeros(ippn1, dtype=np.float64, order="F")
@@ -114,12 +114,6 @@ class Vmcon:
         self.cm = np.zeros(ipeqns, dtype=np.float64, order="F")
 
         self.iwa = np.zeros(ipliwa, dtype=np.int32, order="F")
-
-        # If lower and upper bounds switches aren't specified, set all bounds
-        # to active
-        if ilower is None and iupper is None:
-            self.ilower[:] = 1
-            self.iupper[:] = 1
 
         # Counter for fcnvmc1 calls
         self.fcnvmc1_calls = 0

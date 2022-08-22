@@ -53,6 +53,14 @@ def solve(
     function value, conf: constraint values
     :rtype: tuple(int, np.ndarray, float, np.ndarray)
     """
+    # TODO Remove ilower/iupper and use finite vs. np.inf values in bndl/bndu
+    # instead to determine active vs. inactive bounds?
+    # If lower and upper bounds switch arrays aren't specified, set all bounds
+    # to active
+    if ilower is None and iupper is None:
+        ilower = np.ones(x.shape[0], dtype=int)
+        iupper = np.ones(x.shape[0], dtype=int)
+
     if method == "legacy-vmcon":
         info, x, objf, conf = run_legacy_vmcon(
             evaluators,
