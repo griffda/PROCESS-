@@ -260,7 +260,8 @@ contains
       step_ucsc, step_ucfnc, step_ucfwa, step_ucfws, step_ucfwps, step91_per, &
       step92_per, step93_per, step_uc_cryo_al, step_mc_cryo_al_per, sitecost, &
       wfbuilding, whole_site_area, site_imp_uc, step_ucoam, step_ucwst, &
-      startupratio, isitetype, isiteaccomm, igridconn, irailaccess
+      startupratio, isitetype, isiteaccomm, igridconn, irailaccess, site_permits, &
+      plant_licensing
     use current_drive_variables, only: pinjfixmw, etaech, pinjalw, etanbi, &
       ftritbm, gamma_ecrh, pheat, rho_ecrh, beamwd, enbeam, pheatfix, bscfmax, &
       forbitloss, nbshield, tbeamin, feffcd, iefrf, iefrffix, irfcd, cboot, &
@@ -2872,6 +2873,13 @@ contains
        case ('irailaccess')
           call parse_int_variable('irailaccess', irailaccess, 0, 1, &
                 'Switch for rail access to site')
+       case ('site_permits')
+          call parse_real_variable('site_permits', site_permits, 0.0D0, 1.0D9, &
+                'Switch for rail access to site')
+       case ('plant_licensing')
+          call parse_real_variable('plant_licensing', plant_licensing, 0.0D0, 1.0D9, &
+                'Switch for rail access to site')
+
 
           !  Unit cost settings
 

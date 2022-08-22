@@ -725,6 +725,12 @@ module cost_variables
   !! - =0 site has no rail access and has to be costed
   !! - =1 site already has rail access
 
+  real(dp) :: site_permits
+  !! fixed value for site permits (2017 US$)
+
+  real (dp) :: plant_licensing
+  !! fixed value for plant licensing (2017 US$)
+
   contains
 
   subroutine init_cost_variables
@@ -934,6 +940,8 @@ module cost_variables
     isiteaccomm = 1
     igridconn = 0
     irailaccess = 0
+    site_permits = 100.0D6
+    plant_licensing = 100.0D6
 
   end subroutine init_cost_variables
 end module cost_variables
