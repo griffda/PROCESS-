@@ -5,13 +5,14 @@ behaviour with different initial guesses for the solution vector x
 Expected answers for tests 1 to 3 are given in
 VMCON documentation ANL-80-64
 """
+from process.evaluators import Evaluators
 from process.fortran import init_module
 from process.fortran import error_handling
-from process.vmcon import Vmcon
 import pytest
 import numpy as np
 import logging
 from abc import ABC, abstractmethod
+from process import solver
 
 # Debug-level terminal output logging
 logger = logging.getLogger(__name__)
@@ -33,7 +34,7 @@ def reinit():
 class Case:
     """A Vmcon test case."""
 
-    def __init__(self, name, vmcon):
+    def __init__(self, name, evaluator):
         """Initialise name, Vmcon and expected result objects.
 
         :param name: name of test case
@@ -42,27 +43,33 @@ class Case:
         :type vmcon: Vmcon
         """
         self.name = name
-        self.vmcon = vmcon
+        self.solver_args = SolverArgs()
+        self.evaluator = evaluator
         self.exp = ExpectedResult()
 
-    def check_result(self):
-        """Assert observed results from Vmcon run equal expected results."""
-        # Assert ifail is expected value (converged: ifail == 1)
-        assert self.vmcon.ifail == self.exp.ifail
 
-        # Assert final objective function value
-        assert self.vmcon.objf == pytest.approx(self.exp.objf)
+class SolverArgs:
+    def __init__(self):
+        """Initialise some common arguments to the solver adapter.
 
-        # Final solution estimate
-        for i in range(self.vmcon.n):
-            assert self.vmcon.x[i] == pytest.approx(self.exp.x[i])
+        These arguments are shared between some of the test cases.
+        """
+        # No bounds on x values set
+        n = 2
+        self.x = np.zeros(n)
+        self.ilower = np.zeros(n)
+        self.iupper = np.zeros(n)
+        self.bndl = np.zeros(n)
+        self.bndu = np.zeros(n)
+        self.xtol = 1.0e-8
 
 
 class ExpectedResult:
-    """Expected result class for comparing an observed Vmcon result against."""
+    """Expected result class for comparing an observed solver result against."""
 
     def __init__(self):
         """Initialise expected attributes."""
+        # TODO Some of these are Vmcon-specific
         self.x = []
         self.c = []
         self.vlam = []
@@ -74,27 +81,21 @@ class ExpectedResult:
         self.ifail = 1
 
 
-class VmconTest(ABC, Vmcon):
-    """Testing class for Vmcon.
+class CustomFunctionEvaluator(ABC, Evaluators):
+    """Abstract function evaluator for different solver test cases to override.
 
     :param ABC: abstract base class
     :type ABC: abc.ABC
-    :param Vmcon: Vmcon class
-    :type Vmcon: Vmcon
+    :param Evaluators: objective and constraint function and gradient evaluator
+    :type Evaluators: process.evaluators.Evaluators
     """
 
     def __init__(self):
-        """Initialise attributes common to Vmcon test sub-classes."""
-        # Instantiate Vmcon without a (physics and engineering) models object
-        super().__init__(None)
+        """Override to prevent Caller() to physics and engineering models being
+        initialised.
+        """
 
-        # No bounds on x values set
-        self.ilower[0:2] = 0.0
-        self.iupper[0:2] = 0.0
-        self.bndl[:] = 0.0
-        self.bndu[:] = 0.0
-
-        self.xtol = 1.0e-8
+        pass
 
     @abstractmethod
     def fcnvmc1(self):
@@ -107,7 +108,7 @@ class VmconTest(ABC, Vmcon):
         pass
 
 
-class Vmcon1(VmconTest):
+class Evaluator1(CustomFunctionEvaluator):
     """Override fcnvmc1 and 2 methods for test case 1.
 
     This allows a test to be run using custom function and gradient function
@@ -117,125 +118,161 @@ class Vmcon1(VmconTest):
     subject to the following constraints:
     c1(x1,x2) = x1 - 2*x2 + 1 = 0
     c2(x1,x2) = -x1**2/4 - x2**2 + 1 >= 0
-    :param VmconTest: testing class for Vmcon
-    :type VmconTest: VmconTest
+    :param CustomFunctionEvaluator: abstract function evaluator
+    :type CustomFunctionEvaluator: CustomFunctionEvaluator
     """
 
-    def fcnvmc1(self):
-        """Function evaluator."""
-        self.objf = (self.x[0] - 2.0) ** 2 + (self.x[1] - 1.0) ** 2
-        self.conf[0] = self.x[0] - 2.0 * self.x[1] + 1.0
-        self.conf[1] = -0.25 * self.x[0] ** 2 - self.x[1] * self.x[1] + 1.0
-
-    def fcnvmc2(self):
-        """Gradient function evaluator."""
-        self.fgrd[0] = 2.0 * (self.x[0] - 2.0)
-        self.fgrd[1] = 2.0 * (self.x[1] - 1.0)
-
-        self.cnorm[0, 0] = 1.0
-        self.cnorm[1, 0] = -2.0
-        self.cnorm[0, 1] = -0.5 * self.x[0]
-        self.cnorm[1, 1] = -2.0 * self.x[1]
+    def fcnvmc1(self, n, m, x, ifail, first_call):
+        """Function evaluator.
 
 
-class Vmcon2(VmconTest):
-    """Override fcnvmc1 and 2 methods for test case 2.
+        Calculates the objective and constraint functions at the
+        n-dimensional point of interest x.
+        :param n: number of variables
+        :type n: int
+        :param m: number of constraints
+        :type m: int
+        :param x: iteration variable array, length n
+        :type x: np.ndarray
+        :param ifail: ifail error flag
+        :type ifail: int
+        :param first_call: first call of fcnvmc1() for this solver run
+        :type first_call: bool
+        :return: tuple containing: objfn objective function, conf(m) constraint
+        functions
+        :rtype: tuple(float, np.ndarray)
+        """
+        objf = (x[0] - 2.0) ** 2 + (x[1] - 1.0) ** 2
+        conf = np.array(
+            [x[0] - 2.0 * x[1] + 1.0, -0.25 * x[0] ** 2 - x[1] * x[1] + 1.0]
+        )
 
-    Minimise f(x1,x2) = (x1 - 2)**2 + (x2 - 1)**2
-    subject to the following constraints:
-    c1(x1,x2) = x1 - 2*x2 + 1 >= 0
-    c2(x1,x2) = -x1**2/4 - x2**2 + 1 >= 0
-    :param VmconTest: testing class for Vmcon
-    :type VmconTest: VmconTest
-    """
+        return objf, conf
 
-    def fcnvmc1(self):
-        """Function evaluator."""
-        self.objf = (self.x[0] - 2.0) ** 2 + (self.x[1] - 1.0) ** 2
-        self.conf[0] = self.x[0] - 2.0 * self.x[1] + 1.0
-        self.conf[1] = -0.25 * self.x[0] ** 2 - self.x[1] * self.x[1] + 1.0
+    def fcnvmc2(self, n, m, x, lcnorm):
+        """Gradient function evaluator.
 
-    def fcnvmc2(self):
-        """Gradient function evaluator."""
-        self.fgrd[0] = 2.0 * (self.x[0] - 2.0)
-        self.fgrd[1] = 2.0 * (self.x[1] - 1.0)
+        Calculates the gradients of the objective and constraint functions at
+        the n-dimensional point of interest x. The constraint gradients or
+        normals are returned as the columns of cnorm.
 
-        self.cnorm[0, 0] = 1.0
-        self.cnorm[1, 0] = -2.0
-        self.cnorm[0, 1] = -0.5 * self.x[0]
-        self.cnorm[1, 1] = -2.0 * self.x[1]
+        :param n: number of iteration variables
+        :type n: int
+        :param m: number of constraints
+        :type m: int
+        :param x: iteration variable array, length n
+        :type x: np.ndarray
+        :param lcnorm: number of columns in cnorm
+        :type lcnorm: int
+        :return: fgrd (np.ndarray (n)) gradient of the objective function
+        cnorm (np.ndarray (lcnorm, m)) constraint gradients, i.e. cnorm[i, j] is
+        the derivative of constraint j w.r.t. variable i
+        :rtype: tuple(np.ndarray, np.ndarray)
+        """
+        fgrd = np.array([2.0 * (x[0] - 2.0), 2.0 * (x[1] - 1.0)])
 
-
-class Vmcon3(VmconTest):
-    """Override fcnvmc1 and 2 methods for test case 3.
-
-    Minimise f(x1,x2) = (x1 - 2)**2 + (x2 - 1)**2
-    subject to the following constraints:
-    c1(x1,x2) = x1 + x2 - 3 = 0
-    c2(x1,x2) = -x1**2/4 - x2**2 + 1 >= 0
-
-    :param VmconTest: testing class for Vmcon
-    :type VmconTest: VmconTest
-    """
-
-    def fcnvmc1(self):
-        """Function evaluator."""
-        self.objf = (self.x[0] - 2.0) ** 2 + (self.x[1] - 1.0) ** 2
-        self.conf[0] = self.x[0] + self.x[1] - 3.0
-        self.conf[1] = -0.25 * self.x[0] ** 2 - self.x[1] * self.x[1] + 1.0
-
-    def fcnvmc2(self):
-        """Gradient function evaluator."""
-        self.fgrd[0] = 2.0
-        self.fgrd[1] = 2.0 * (self.x[1] - 1.0)
-
-        self.cnorm[0, 0] = 1.0
-        self.cnorm[1, 0] = 1.0
-        self.cnorm[0, 1] = -0.5 * self.x[0]
-        self.cnorm[1, 1] = -2.0 * self.x[1]
+        cnorm = np.array([[1.0, -0.5 * x[0]], [-2.0, -2.0 * x[1]]], order="F")
+        return fgrd, cnorm
 
 
-class Vmcon4(VmconTest):
-    """Override fcnvmc1 and 2 methods for test case 4.
+# class Vmcon2(VmconTest):
+#     """Override fcnvmc1 and 2 methods for test case 2.
 
-    From Wikipedia: Lagrange Multiplier article
-    Maximise f(x1,x2) = x1 + x2
-    subject to the following constraint:
-    c1(x1,x2) = x1**2 + x2**2 - 1 = 0
+#     Minimise f(x1,x2) = (x1 - 2)**2 + (x2 - 1)**2
+#     subject to the following constraints:
+#     c1(x1,x2) = x1 - 2*x2 + 1 >= 0
+#     c2(x1,x2) = -x1**2/4 - x2**2 + 1 >= 0
+#     :param VmconTest: testing class for Vmcon
+#     :type VmconTest: VmconTest
+#     """
 
-    :param VmconTest: testing class for Vmcon
-    :type VmconTest: VmconTest
-    """
+#     def fcnvmc1(self):
+#         """Function evaluator."""
+#         self.objf = (self.x[0] - 2.0) ** 2 + (self.x[1] - 1.0) ** 2
+#         self.conf[0] = self.x[0] - 2.0 * self.x[1] + 1.0
+#         self.conf[1] = -0.25 * self.x[0] ** 2 - self.x[1] * self.x[1] + 1.0
 
-    def fcnvmc1(self):
-        """Function evaluator."""
-        self.objf = self.x[0] + self.x[1]
-        self.conf[0] = self.x[0] * self.x[0] + self.x[1] * self.x[1] - 1.0
+#     def fcnvmc2(self):
+#         """Gradient function evaluator."""
+#         self.fgrd[0] = 2.0 * (self.x[0] - 2.0)
+#         self.fgrd[1] = 2.0 * (self.x[1] - 1.0)
 
-    def fcnvmc2(self):
-        """Gradient function evaluator."""
-        self.fgrd[0] = 1.0
-        self.fgrd[1] = 1.0
-        self.cnorm[0, 0] = 2.0 * self.x[0]
-        self.cnorm[1, 0] = 2.0 * self.x[1]
+#         self.cnorm[0, 0] = 1.0
+#         self.cnorm[1, 0] = -2.0
+#         self.cnorm[0, 1] = -0.5 * self.x[0]
+#         self.cnorm[1, 1] = -2.0 * self.x[1]
 
 
-class Vmcon5(VmconTest):
-    """Override fcnvmc1 and 2 methods for test case 5.
+# class Vmcon3(VmconTest):
+#     """Override fcnvmc1 and 2 methods for test case 3.
 
-    :param VmconTest: testing class for Vmcon
-    :type VmconTest: VmconTest
-    """
+#     Minimise f(x1,x2) = (x1 - 2)**2 + (x2 - 1)**2
+#     subject to the following constraints:
+#     c1(x1,x2) = x1 + x2 - 3 = 0
+#     c2(x1,x2) = -x1**2/4 - x2**2 + 1 >= 0
 
-    def fcnvmc1(self):
-        """Function evaluator."""
-        self.objf = self.x[0] ** 2
-        self.conf[0] = self.x[0] ** 2 - 2.0 * self.x[0] - 3.0
+#     :param VmconTest: testing class for Vmcon
+#     :type VmconTest: VmconTest
+#     """
 
-    def fcnvmc2(self):
-        """Gradient function evaluator."""
-        self.fgrd[0] = 2.0 * self.x[0]
-        self.cnorm[0, 0] = 2.0 * self.x[0] - 2.0
+#     def fcnvmc1(self):
+#         """Function evaluator."""
+#         self.objf = (self.x[0] - 2.0) ** 2 + (self.x[1] - 1.0) ** 2
+#         self.conf[0] = self.x[0] + self.x[1] - 3.0
+#         self.conf[1] = -0.25 * self.x[0] ** 2 - self.x[1] * self.x[1] + 1.0
+
+#     def fcnvmc2(self):
+#         """Gradient function evaluator."""
+#         self.fgrd[0] = 2.0
+#         self.fgrd[1] = 2.0 * (self.x[1] - 1.0)
+
+#         self.cnorm[0, 0] = 1.0
+#         self.cnorm[1, 0] = 1.0
+#         self.cnorm[0, 1] = -0.5 * self.x[0]
+#         self.cnorm[1, 1] = -2.0 * self.x[1]
+
+
+# class Vmcon4(VmconTest):
+#     """Override fcnvmc1 and 2 methods for test case 4.
+
+#     From Wikipedia: Lagrange Multiplier article
+#     Maximise f(x1,x2) = x1 + x2
+#     subject to the following constraint:
+#     c1(x1,x2) = x1**2 + x2**2 - 1 = 0
+
+#     :param VmconTest: testing class for Vmcon
+#     :type VmconTest: VmconTest
+#     """
+
+#     def fcnvmc1(self):
+#         """Function evaluator."""
+#         self.objf = self.x[0] + self.x[1]
+#         self.conf[0] = self.x[0] * self.x[0] + self.x[1] * self.x[1] - 1.0
+
+#     def fcnvmc2(self):
+#         """Gradient function evaluator."""
+#         self.fgrd[0] = 1.0
+#         self.fgrd[1] = 1.0
+#         self.cnorm[0, 0] = 2.0 * self.x[0]
+#         self.cnorm[1, 0] = 2.0 * self.x[1]
+
+
+# class Vmcon5(VmconTest):
+#     """Override fcnvmc1 and 2 methods for test case 5.
+
+#     :param VmconTest: testing class for Vmcon
+#     :type VmconTest: VmconTest
+#     """
+
+#     def fcnvmc1(self):
+#         """Function evaluator."""
+#         self.objf = self.x[0] ** 2
+#         self.conf[0] = self.x[0] ** 2 - 2.0 * self.x[0] - 3.0
+
+#     def fcnvmc2(self):
+#         """Gradient function evaluator."""
+#         self.fgrd[0] = 2.0 * self.x[0]
+#         self.cnorm[0, 0] = 2.0 * self.x[0] - 2.0
 
 
 def get_case1():
@@ -251,15 +288,15 @@ def get_case1():
     VMCON documentation ANL-80-64
     """
     # Create a case-specific Vmcon object with overridden fcnvmc1 and 2
-    case = Case("1", Vmcon1())
+    case = Case("1", Evaluator1())
 
     # Set up vmcon values for this case
     neqns = 1
     nineqns = 1
-    case.vmcon.n = 2
-    case.vmcon.m = neqns + nineqns
-    case.vmcon.meq = neqns
-    case.vmcon.x[0:2] = 2.0e0
+    case.solver_args.x[0:2] = 2.0e0
+    case.solver_args.n = 2
+    case.solver_args.m = neqns + nineqns
+    case.solver_args.meq = neqns
 
     # Expected values
     case.exp.x = np.array([8.228756e-1, 9.114378e-1])
@@ -273,147 +310,146 @@ def get_case1():
     return case
 
 
-def get_case2():
-    """Create test case 2 for Vmcon.
+# def get_case2():
+#     """Create test case 2 for Vmcon.
 
-    Set up vmcon for the run and define the expected result.
+#     Set up vmcon for the run and define the expected result.
 
-    Minimise f(x1,x2) = (x1 - 2)**2 + (x2 - 1)**2
-    subject to the following constraints:
-    c1(x1,x2) = x1 - 2*x2 + 1 >= 0
-    c2(x1,x2) = -x1**2/4 - x2**2 + 1 >= 0
+#     Minimise f(x1,x2) = (x1 - 2)**2 + (x2 - 1)**2
+#     subject to the following constraints:
+#     c1(x1,x2) = x1 - 2*x2 + 1 >= 0
+#     c2(x1,x2) = -x1**2/4 - x2**2 + 1 >= 0
 
-    VMCON documentation ANL-80-64
-    """
-    case = Case("2", Vmcon2())
+#     VMCON documentation ANL-80-64
+#     """
+#     case = Case("2", Vmcon2())
 
-    # Vmcon values for this case
-    neqns = 0
-    nineqns = 2
-    case.vmcon.n = 2
-    case.vmcon.m = neqns + nineqns
-    case.vmcon.meq = neqns
-    case.vmcon.x[0:2] = 2.0e0
+#     # Vmcon values for this case
+#     neqns = 0
+#     nineqns = 2
+#     case.vmcon.n = 2
+#     case.vmcon.m = neqns + nineqns
+#     case.vmcon.meq = neqns
+#     case.vmcon.x[0:2] = 2.0e0
 
-    # Expected values
-    case.exp.x = np.array([1.664968, 5.540486e-1])
-    case.exp.objf = 3.111186e-1
-    case.exp.c = np.array([1.556871, -1.021405e-14])
-    case.exp.vlam = np.array([0.0, 8.048955e-1])
-    case.exp.errlg = 2.343333e-11
-    case.exp.errcom = 8.221245e-15
-    case.exp.errcon = 1.021405e-14
+#     # Expected values
+#     case.exp.x = np.array([1.664968, 5.540486e-1])
+#     case.exp.objf = 3.111186e-1
+#     case.exp.c = np.array([1.556871, -1.021405e-14])
+#     case.exp.vlam = np.array([0.0, 8.048955e-1])
+#     case.exp.errlg = 2.343333e-11
+#     case.exp.errcom = 8.221245e-15
+#     case.exp.errcon = 1.021405e-14
 
-    return case
+#     return case
 
+# def get_case3():
+#     """Create test case 3 for Vmcon.
 
-def get_case3():
-    """Create test case 3 for Vmcon.
+#     Set up vmcon for the run and define the expected result.
 
-    Set up vmcon for the run and define the expected result.
+#     Minimise f(x1,x2) = (x1 - 2)**2 + (x2 - 1)**2
+#     subject to the following constraints:
+#     c1(x1,x2) = x1 + x2 - 3 = 0
+#     c2(x1,x2) = -x1**2/4 - x2**2 + 1 >= 0
 
-    Minimise f(x1,x2) = (x1 - 2)**2 + (x2 - 1)**2
-    subject to the following constraints:
-    c1(x1,x2) = x1 + x2 - 3 = 0
-    c2(x1,x2) = -x1**2/4 - x2**2 + 1 >= 0
+#     Note that this test is supposed to fail with ifail=5
+#     as there is no feasible solution
+#     VMCON documentation ANL-80-64
+#     """
+#     # Create a case-specific Vmcon object with overridden fcnvmc1 and 2
+#     case = Case("3", Vmcon3())
 
-    Note that this test is supposed to fail with ifail=5
-    as there is no feasible solution
-    VMCON documentation ANL-80-64
-    """
-    # Create a case-specific Vmcon object with overridden fcnvmc1 and 2
-    case = Case("3", Vmcon3())
+#     # Set up vmcon values for this case
+#     neqns = 1
+#     nineqns = 1
+#     case.vmcon.n = 2
+#     case.vmcon.m = neqns + nineqns
+#     case.vmcon.meq = neqns
+#     case.vmcon.x[0:2] = 2.0e0
 
-    # Set up vmcon values for this case
-    neqns = 1
-    nineqns = 1
-    case.vmcon.n = 2
-    case.vmcon.m = neqns + nineqns
-    case.vmcon.meq = neqns
-    case.vmcon.x[0:2] = 2.0e0
+#     # Expected values
+#     case.exp.x = np.array([2.0, 2.0])
+#     case.exp.objf = 6.203295e-1
+#     case.exp.c = np.array([-6.6613381477509392e-16, -8.000000000004035e-01])
+#     case.exp.vlam = np.array([0.0, 0.0])
+#     case.exp.errlg = 1.599997724349894
+#     case.exp.errcon = 8.0000000000040417e-01
+#     case.exp.ifail = 5
 
-    # Expected values
-    case.exp.x = np.array([2.0, 2.0])
-    case.exp.objf = 6.203295e-1
-    case.exp.c = np.array([-6.6613381477509392e-16, -8.000000000004035e-01])
-    case.exp.vlam = np.array([0.0, 0.0])
-    case.exp.errlg = 1.599997724349894
-    case.exp.errcon = 8.0000000000040417e-01
-    case.exp.ifail = 5
-
-    return case
-
-
-def get_case4():
-    """Create test case 4 for Vmcon.
-
-    Set up vmcon for the run and define the expected result.
-
-    Maximise f(x1,x2) = x1 + x2
-    subject to the following constraint:
-    c1(x1,x2) = x1**2 + x2**2 - 1 = 0
-
-    http://en.wikipedia.org/wiki/Lagrange_multiplier
-    """
-    # Create a case-specific Vmcon object with overridden fcnvmc1 and 2
-    case = Case("4", Vmcon4())
-
-    # Set up vmcon values for this case
-    neqns = 1
-    nineqns = 0
-    case.vmcon.n = 2
-    case.vmcon.m = neqns + nineqns
-    case.vmcon.meq = neqns
-    case.vmcon.xtol = 2.0e-8
-    case.vmcon.x[0:2] = 1.0e0
-    # N.B. results can flip to minimum instead of maximum
-    # if x(1), x(2) are initialised at different points...
-
-    # Expected values
-    case.exp.x = np.array([0.5 * 2.0 ** (1 / 2), 0.5 * 2.0 ** (1 / 2)])
-    case.exp.objf = 2.0 ** (1 / 2)
-    case.exp.c = np.array([0.0])
-    case.exp.vlam = np.array([1.0 * 2.0 ** (1 / 2)])
-
-    return case
+#     return case
 
 
-def get_case5():
-    """Create test case 5 for Vmcon.
+# def get_case4():
+#     """Create test case 4 for Vmcon.
 
-    Set up vmcon for the run and define the expected result.
+#     Set up vmcon for the run and define the expected result.
 
-    Intersection of parabola x^2 with straight line 2x+3
-    Unorthodox (and not recommended) method to find the root
-    of an equation.
+#     Maximise f(x1,x2) = x1 + x2
+#     subject to the following constraint:
+#     c1(x1,x2) = x1**2 + x2**2 - 1 = 0
 
-    Maximise f(x1) = x1**2
-    subject to the following constraint:
-    c1(x1) = x1**2 - 2.0D0*x1 - 3 = 0
+#     http://en.wikipedia.org/wiki/Lagrange_multiplier
+#     """
+#     # Create a case-specific Vmcon object with overridden fcnvmc1 and 2
+#     case = Case("4", Vmcon4())
 
-    Solutions to c1(x1) are x1 = -1 and x1 = 3, and depending on
-    the initial guess for x1 either (or neither...) solution might
-    be found. Since there is one constraint equation with one unknown
-    the code cannot optimise properly.
-    """
-    # Create a case-specific Vmcon object with overridden fcnvmc1 and 2
-    case = Case("5", Vmcon5())
+#     # Set up vmcon values for this case
+#     neqns = 1
+#     nineqns = 0
+#     case.vmcon.n = 2
+#     case.vmcon.m = neqns + nineqns
+#     case.vmcon.meq = neqns
+#     case.vmcon.xtol = 2.0e-8
+#     case.vmcon.x[0:2] = 1.0e0
+#     # N.B. results can flip to minimum instead of maximum
+#     # if x(1), x(2) are initialised at different points...
 
-    # Set up vmcon values for this case
-    neqns = 1
-    nineqns = 0
-    case.vmcon.n = 1
-    case.vmcon.m = neqns + nineqns
-    case.vmcon.meq = neqns
-    case.vmcon.x[0] = 5.0e0  # Try different values, e.g. 5.0, 2.0, 1.0, 0.0...
+#     # Expected values
+#     case.exp.x = np.array([0.5 * 2.0 ** (1 / 2), 0.5 * 2.0 ** (1 / 2)])
+#     case.exp.objf = 2.0 ** (1 / 2)
+#     case.exp.c = np.array([0.0])
+#     case.exp.vlam = np.array([1.0 * 2.0 ** (1 / 2)])
 
-    # Expected values
-    case.exp.x = np.array([3.0])
-    case.exp.objf = 9.0
-    case.exp.c = np.array([0.0])
-    case.exp.vlam = np.array([1.5])
+#     return case
 
-    return case
+
+# def get_case5():
+#     """Create test case 5 for Vmcon.
+
+#     Set up vmcon for the run and define the expected result.
+
+#     Intersection of parabola x^2 with straight line 2x+3
+#     Unorthodox (and not recommended) method to find the root
+#     of an equation.
+
+#     Maximise f(x1) = x1**2
+#     subject to the following constraint:
+#     c1(x1) = x1**2 - 2.0D0*x1 - 3 = 0
+
+#     Solutions to c1(x1) are x1 = -1 and x1 = 3, and depending on
+#     the initial guess for x1 either (or neither...) solution might
+#     be found. Since there is one constraint equation with one unknown
+#     the code cannot optimise properly.
+#     """
+#     # Create a case-specific Vmcon object with overridden fcnvmc1 and 2
+#     case = Case("5", Vmcon5())
+
+#     # Set up vmcon values for this case
+#     neqns = 1
+#     nineqns = 0
+#     case.vmcon.n = 1
+#     case.vmcon.m = neqns + nineqns
+#     case.vmcon.meq = neqns
+#     case.vmcon.x[0] = 5.0e0  # Try different values, e.g. 5.0, 2.0, 1.0, 0.0...
+
+#     # Expected values
+#     case.exp.x = np.array([3.0])
+#     case.exp.objf = 9.0
+#     case.exp.c = np.array([0.0])
+#     case.exp.vlam = np.array([1.5])
+
+#     return case
 
 
 def get_case_fns():
@@ -422,7 +458,9 @@ def get_case_fns():
     :return: list of functions to return individual test cases
     :rtype: list
     """
-    case_fns = [get_case1, get_case2, get_case3, get_case4, get_case5]
+    # case_fns = [get_case1, get_case2, get_case3, get_case4, get_case5]
+    # TODO Re-instate all test cases
+    case_fns = [get_case1]
 
     return case_fns
 
@@ -447,19 +485,37 @@ def test_vmcon(case):
     :type case: test_vmcon.Case
     """
     logger.debug("Initial solution estimate:")
-    for i in range(case.vmcon.n):
-        logger.debug(f"x[{i}] = {case.vmcon.x[i]}")
+    for i in range(case.solver_args.n):
+        logger.debug(f"x[{i}] = {case.solver_args.x[i]}")
 
-    # Run Vmcon for this case
-    case.vmcon.run()
+    # Run solver for this case
+    info, x, objf, conf = solver.solve(
+        case.evaluator,
+        case.solver_args.x,
+        case.solver_args.bndl,
+        case.solver_args.bndu,
+        case.solver_args.m,
+        case.solver_args.meq,
+        ilower=case.solver_args.ilower,
+        iupper=case.solver_args.iupper,
+    )
 
     # Assert result
     try:
-        case.check_result()
-        logger.info(f"Vmcon test {case.name} passed")
+        # Assert ifail is expected value (converged: ifail == 1)
+        assert info == case.exp.ifail
+
+        # Assert final objective function value
+        assert objf == pytest.approx(case.exp.objf)
+
+        # Final solution estimate
+        assert x == pytest.approx(case.exp.x)
+
     except AssertionError:
         logger.exception(f"Vmcon test {case.name} failed")
-        log_failure(case)
+
+        # Detailed debugging only
+        # log_failure(case)
         raise
 
 
@@ -469,6 +525,8 @@ def log_failure(case):
     :param case: a failing test case
     :type case: Case
     """
+    # TODO Reinstate detailed debugging now solver adapter is used rather than
+    # Vmcon() directly
     logger.debug(f"ifail = {case.vmcon.ifail} (expected value = {case.exp.ifail}")
     logger.debug(f"Number of function evaluations = {case.vmcon.fcnvmc1_calls}")
 

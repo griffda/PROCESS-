@@ -1,6 +1,7 @@
 from process.fortran import numerics
-from process import solver
+from process.solver import solve
 from process.fortran import define_iteration_variables
+from process.evaluators import Evaluators
 
 
 class Optimiser:
@@ -34,7 +35,15 @@ class Optimiser:
         bndl = numerics.bondl[:n]
         bndu = numerics.bondu[:n]
 
-        ifail, x, objf, conf = solver.solve(self.models, x, bndl, bndu)
+        # Define total number of constraints and equality constraints
+        m = numerics.neqns + numerics.nineqns
+        meq = numerics.neqns
+
+        # Evaluators() calculates the objective and constraint functions and
+        # their gradients for a given vector x
+        evaluators = Evaluators(self.models)
+
+        ifail, x, objf, conf = solve(evaluators, x, bndl, bndu, m, meq)
 
         # If fail then alter value of epsfcn - this can be improved
         if ifail != 1:
@@ -43,8 +52,8 @@ class Optimiser:
             numerics.epsfcn = numerics.epsfcn * 10  # try new larger value
             print("new epsfcn = ", numerics.epsfcn)
 
-            ifail, x, objf, conf = solver.solve(
-                self.models, x, bndl, bndu, ifail=ifail, first_call=False
+            ifail, x, objf, conf = solve(
+                evaluators, x, bndl, bndu, m, meq, ifail=ifail, first_call=False
             )
             # First solution attempt failed (ifail != 1): supply ifail value
             # to next attempt
@@ -57,8 +66,8 @@ class Optimiser:
             print("Trying again with new epsfcn")
             numerics.epsfcn = numerics.epsfcn / 10  # try new smaller value
             print("new epsfcn = ", numerics.epsfcn)
-            ifail, x, objf, conf = solver.solve(
-                self.models, x, bndl, bndu, ifail=ifail, first_call=False
+            ifail, x, objf, conf = solve(
+                evaluators, x, bndl, bndu, m, meq, ifail=ifail, first_call=False
             )
             numerics.epsfcn = numerics.epsfcn * 10  # reset value
 
@@ -70,8 +79,8 @@ class Optimiser:
                 "VMCON error code = 5.  Rerunning VMCON with a new initial "
                 "estimate of the second derivative matrix."
             )
-            ifail, x, objf, conf = solver.solve(
-                self.models, ifail=ifail, b=2.0, first_call=False
+            ifail, x, objf, conf = solve(
+                evaluators, x, bndl, bndu, m, meq, ifail=ifail, b=2.0, first_call=False
             )
 
         self.output(x, conf)

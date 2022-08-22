@@ -10,7 +10,9 @@ logger = getLogger(__name__)
 class Vmcon:
     """Driver for Fortran vmcon module."""
 
-    def __init__(self, evaluators, x, bndl, bndu, ifail, first_call):
+    def __init__(
+        self, evaluators, x, ilower, iupper, bndl, bndu, m, meq, ifail, first_call
+    ):
         """Initialise vars for input/output with Fortran vmcon module.
 
         :param evaluators: evaluates objective and constraint functions and
@@ -18,10 +20,20 @@ class Vmcon:
         :type evaluators: process.evaluators.Evaluators
         :param x: iteration variables
         :type x: np.ndarray
+        :param ilower: array of 0s and 1s to activate lower bounds on iteration
+        vars in x
+        :type ilower: np.ndarray
+        :param iupper: array of 0s and 1s to activate upper bounds on iteration
+        vars in x
+        :type iupper: np.ndarray
         :param bndl: lower bounds for the iteration variables
         :type bndl: np.ndarray
         :param bndu: upper bounds for the iteration variables
         :type bndu: np.ndarray
+        :param m: number of constraint equations
+        :type m: int
+        :param meq: of the constraint equations, how many are equalities
+        :type meq: int
         :param ifail: previous exit code for the solver
         :type ifail: int
         :param first_call: boolean for running Evaluators.fcnvmc1() the first time,
@@ -30,6 +42,7 @@ class Vmcon:
         self.evaluators = evaluators
 
         # Vars for array dimensions
+        # TODO Turn all of these external dependencies into args?
         ipnvars = numerics.ipnvars
         ippn1 = ipnvars + 1
         ipeqns = numerics.ipeqns
@@ -40,8 +53,8 @@ class Vmcon:
 
         # Attributes used by vmcon
         self.mode = 0
-        self.n = numerics.nvar
-        self.m = numerics.neqns + numerics.nineqns
+        self.n = x.shape[0]
+        self.m = m
         self.xtol = numerics.epsvmc
         self.lb = ippn1
         self.lcnorm = ippn1
@@ -49,7 +62,7 @@ class Vmcon:
         self.lh = iplh
         self.lwa = iplh
         self.liwa = ipliwa
-        self.meq = numerics.neqns
+        self.meq = meq
         self.ifail = ifail
         # ifail is the returned error code: 1 is OK
         self.f = 0.0
@@ -92,9 +105,11 @@ class Vmcon:
 
         self.iwa = np.zeros(ipliwa, dtype=np.int32, order="F")
 
-        for i in range(self.n):
-            self.ilower[i] = 1
-            self.iupper[i] = 1
+        # If lower and upper bounds switches aren't specified, set all bounds
+        # to active
+        if ilower is None and iupper is None:
+            self.ilower[:] = 1
+            self.iupper[:] = 1
 
         # Counter for fcnvmc1 calls
         self.fcnvmc1_calls = 0
@@ -398,7 +413,7 @@ class Vmcon:
 
         See comments on differing array sizes in fcnvmc1_wrapper().
         """
-        (
-            self.fgrd[0 : self.n],
-            self.cnorm[0 : self.lcnorm, 0 : self.m],
-        ) = self.evaluators.fcnvmc2(self.n, self.m, self.x, self.lcnorm)
+        fgrd, cnorm = self.evaluators.fcnvmc2(self.n, self.m, self.x, self.lcnorm)
+
+        self.fgrd[: self.n] = fgrd
+        self.cnorm[: cnorm.shape[0], : self.m] = cnorm

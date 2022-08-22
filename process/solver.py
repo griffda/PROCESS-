@@ -1,6 +1,5 @@
 """An adapter for different solvers."""
 
-from process.evaluators import Evaluators
 from process.vmcon import Vmcon
 from process.fortran import optimiz_module
 from process.fortran import numerics
@@ -10,17 +9,33 @@ import numpy as np
 method = "legacy-vmcon"
 
 
-def solve(models, x, bndl, bndu, ifail=0, first_call=True, b=None):
+def solve(
+    evaluators,
+    x,
+    bndl,
+    bndu,
+    m,
+    meq,
+    ifail=0,
+    first_call=True,
+    b=None,
+    ilower=None,
+    iupper=None,
+):
     """Run a solver.
 
-    :param models: physics and engineering model objects
-    :type models: process.main.Models
+    :param evaluators: objective and constraint function and gradient evaluator
+    :type evaluators: process.evaluators.Evaluators
     :param x: iteration variables
     :type x: np.ndarray
     :param bndl: lower bounds for the iteration variables
     :type bndl: np.ndarray
     :param bndu: upper bounds for the iteration variables
     :type bndu: np.ndarray
+    :param m: number of constraint equations
+    :type m: int
+    :param meq: of the constraint equations, how many are equalities
+    :type meq: int
     :param ifail: previous exit code for the solver, defaults to 0
     :type ifail: int, optional
     :param first_call: boolean for running Evaluators.fcnvmc1() the first time,
@@ -29,15 +44,19 @@ def solve(models, x, bndl, bndu, ifail=0, first_call=True, b=None):
     :param b: multiplier for an identity matrix as input for the Hessian b(n,n),
     defaults to None
     :type b: float, optional
+    :param ilower: array of 0s and 1s to activate lower bounds on iteration vars
+    in x
+    :type ilower: np.ndarray, optional
+    :param iupper: array of 0s and 1s to activate upper bounds on iteration vars
+    in x
+    :type iupper: np.ndarray, optional
     :return: info: solver return code, x: solution vector, objf: objective
     function value, conf: constraint values
     :rtype: tuple(int, np.ndarray, float, np.ndarray)
     """
-    evaluators = Evaluators(models)
-
     if method == "legacy-vmcon":
         info, x, objf, conf = run_legacy_vmcon(
-            evaluators, x, bndl, bndu, ifail, first_call, b
+            evaluators, x, ilower, iupper, bndl, bndu, m, meq, ifail, first_call, b
         )
     elif method == "new-vmcon":
         info, x, objf, conf = run_new_vmcon(evaluators, x, bndl, bndu)
@@ -46,7 +65,9 @@ def solve(models, x, bndl, bndu, ifail=0, first_call=True, b=None):
     return info, x, objf, conf
 
 
-def run_legacy_vmcon(evaluators, x, bndl, bndu, ifail, first_call, b):
+def run_legacy_vmcon(
+    evaluators, x, ilower, iupper, bndl, bndu, m, meq, ifail, first_call, b
+):
     """Run an instance of legacy Vmcon.
 
     :param evaluators: instance to evaluate objective and constraint functions
@@ -68,7 +89,7 @@ def run_legacy_vmcon(evaluators, x, bndl, bndu, ifail, first_call, b):
     function value, conf: constraint values
     :rtype: tuple(int, np.ndarray, float, np.ndarray)
     """
-    vmcon = Vmcon(evaluators, x, bndl, bndu, ifail, first_call)
+    vmcon = Vmcon(evaluators, x, ilower, iupper, bndl, bndu, m, meq, ifail, first_call)
 
     # Write basic info to OPT.DAT, then run vmcon solver
     n = numerics.nvar
