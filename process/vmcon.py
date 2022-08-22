@@ -11,7 +11,18 @@ class Vmcon:
     """Driver for Fortran vmcon module."""
 
     def __init__(
-        self, evaluators, x, ilower, iupper, bndl, bndu, m, meq, ifail, first_call
+        self,
+        evaluators,
+        x,
+        ilower,
+        iupper,
+        bndl,
+        bndu,
+        m,
+        meq,
+        ifail,
+        first_call,
+        tolerance,
     ):
         """Initialise vars for input/output with Fortran vmcon module.
 
@@ -38,6 +49,8 @@ class Vmcon:
         :type ifail: int
         :param first_call: boolean for running Evaluators.fcnvmc1() the first time,
         :type first_call: bool
+        :param tolerance: tolerance for termination of solver
+        :type tolerance: float
         """
         self.evaluators = evaluators
 
@@ -55,7 +68,7 @@ class Vmcon:
         self.mode = 0
         self.n = x.shape[0]
         self.m = m
-        self.xtol = numerics.epsvmc
+        self.xtol = tolerance
         self.lb = ippn1
         self.lcnorm = ippn1
         self.ldel = ipldel

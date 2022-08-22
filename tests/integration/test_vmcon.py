@@ -61,7 +61,7 @@ class SolverArgs:
         self.iupper = np.zeros(n)
         self.bndl = np.zeros(n)
         self.bndu = np.zeros(n)
-        self.xtol = 1.0e-8
+        self.tolerance = 1.0e-8
 
 
 class ExpectedResult:
@@ -498,6 +498,7 @@ def test_vmcon(case):
         case.solver_args.meq,
         ilower=case.solver_args.ilower,
         iupper=case.solver_args.iupper,
+        tolerance=case.solver_args.tolerance,
     )
 
     # Assert result

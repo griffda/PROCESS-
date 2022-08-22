@@ -21,6 +21,7 @@ def solve(
     b=None,
     ilower=None,
     iupper=None,
+    tolerance=None,
 ):
     """Run a solver.
 
@@ -50,13 +51,26 @@ def solve(
     :param iupper: array of 0s and 1s to activate upper bounds on iteration vars
     in x
     :type iupper: np.ndarray, optional
+    :param tolerance: tolerance for solver termination, defaults to None
+    :type tolerance: float, optional
     :return: info: solver return code, x: solution vector, objf: objective
     function value, conf: constraint values
     :rtype: tuple(int, np.ndarray, float, np.ndarray)
     """
     if method == "legacy-vmcon":
         info, x, objf, conf = run_legacy_vmcon(
-            evaluators, x, ilower, iupper, bndl, bndu, m, meq, ifail, first_call, b
+            evaluators,
+            x,
+            ilower,
+            iupper,
+            bndl,
+            bndu,
+            m,
+            meq,
+            ifail,
+            first_call,
+            b,
+            tolerance,
         )
     elif method == "new-vmcon":
         info, x, objf, conf = run_new_vmcon(evaluators, x, bndl, bndu)
@@ -66,7 +80,7 @@ def solve(
 
 
 def run_legacy_vmcon(
-    evaluators, x, ilower, iupper, bndl, bndu, m, meq, ifail, first_call, b
+    evaluators, x, ilower, iupper, bndl, bndu, m, meq, ifail, first_call, b, tolerance
 ):
     """Run an instance of legacy Vmcon.
 
@@ -85,11 +99,18 @@ def run_legacy_vmcon(
     :type first_call: bool
     :param b: multiplier for an identity matrix as input for the Hessian b(n,n)
     :type b: float
+    :param tolerance: tolerance for termination of solver
+    :type tolerance: float
     :return: info: solver return code, x: solution vector, objf: objective
     function value, conf: constraint values
     :rtype: tuple(int, np.ndarray, float, np.ndarray)
     """
-    vmcon = Vmcon(evaluators, x, ilower, iupper, bndl, bndu, m, meq, ifail, first_call)
+    if tolerance is None:
+        tolerance = numerics.epsvmc
+
+    vmcon = Vmcon(
+        evaluators, x, ilower, iupper, bndl, bndu, m, meq, ifail, first_call, tolerance
+    )
 
     # Write basic info to OPT.DAT, then run vmcon solver
     n = numerics.nvar
