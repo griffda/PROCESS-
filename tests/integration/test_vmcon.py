@@ -122,7 +122,7 @@ class Evaluator1(CustomFunctionEvaluator):
     :type CustomFunctionEvaluator: CustomFunctionEvaluator
     """
 
-    def fcnvmc1(self, n, m, x, ifail, first_call):
+    def fcnvmc1(self, n, m, x, ifail):
         """Function evaluator.
 
 
@@ -136,8 +136,6 @@ class Evaluator1(CustomFunctionEvaluator):
         :type x: np.ndarray
         :param ifail: ifail error flag
         :type ifail: int
-        :param first_call: first call of fcnvmc1() for this solver run
-        :type first_call: bool
         :return: tuple containing: objfn objective function, conf(m) constraint
         functions
         :rtype: tuple(float, np.ndarray)
@@ -186,7 +184,7 @@ class Evaluator2(CustomFunctionEvaluator):
     :type CustomFunctionEvaluator: CustomFunctionEvaluator
     """
 
-    def fcnvmc1(self, n, m, x, ifail, first_call):
+    def fcnvmc1(self, n, m, x, ifail):
         """Function evaluator.
 
 
@@ -200,8 +198,6 @@ class Evaluator2(CustomFunctionEvaluator):
         :type x: np.ndarray
         :param ifail: ifail error flag
         :type ifail: int
-        :param first_call: first call of fcnvmc1() for this solver run
-        :type first_call: bool
         :return: tuple containing: objfn objective function, conf(m) constraint
         functions
         :rtype: tuple(float, np.ndarray)
@@ -251,7 +247,7 @@ class Evaluator3(CustomFunctionEvaluator):
     :type CustomFunctionEvaluator: CustomFunctionEvaluator
     """
 
-    def fcnvmc1(self, n, m, x, ifail, first_call):
+    def fcnvmc1(self, n, m, x, ifail):
         """Function evaluator.
 
 
@@ -265,8 +261,6 @@ class Evaluator3(CustomFunctionEvaluator):
         :type x: np.ndarray
         :param ifail: ifail error flag
         :type ifail: int
-        :param first_call: first call of fcnvmc1() for this solver run
-        :type first_call: bool
         :return: tuple containing: objfn objective function, conf(m) constraint
         functions
         :rtype: tuple(float, np.ndarray)
@@ -314,7 +308,7 @@ class Evaluator4(CustomFunctionEvaluator):
     :type CustomFunctionEvaluator: CustomFunctionEvaluator
     """
 
-    def fcnvmc1(self, n, m, x, ifail, first_call):
+    def fcnvmc1(self, n, m, x, ifail):
         """Function evaluator.
 
         Calculates the objective and constraint functions at the
@@ -327,8 +321,6 @@ class Evaluator4(CustomFunctionEvaluator):
         :type x: np.ndarray
         :param ifail: ifail error flag
         :type ifail: int
-        :param first_call: first call of fcnvmc1() for this solver run
-        :type first_call: bool
         :return: tuple containing: objfn objective function, conf(m) constraint
         functions
         :rtype: tuple(float, np.ndarray)
@@ -371,7 +363,7 @@ class Evaluator5(CustomFunctionEvaluator):
     :type CustomFunctionEvaluator: CustomFunctionEvaluator
     """
 
-    def fcnvmc1(self, n, m, x, ifail, first_call):
+    def fcnvmc1(self, n, m, x, ifail):
         """Function evaluator.
 
         Calculates the objective and constraint functions at the
@@ -384,8 +376,6 @@ class Evaluator5(CustomFunctionEvaluator):
         :type x: np.ndarray
         :param ifail: ifail error flag
         :type ifail: int
-        :param first_call: first call of fcnvmc1() for this solver run
-        :type first_call: bool
         :return: tuple containing: objfn objective function, conf(m) constraint
         functions
         :rtype: tuple(float, np.ndarray)

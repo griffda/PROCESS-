@@ -41,7 +41,7 @@ class Optimiser:
 
         # Evaluators() calculates the objective and constraint functions and
         # their gradients for a given vector x
-        evaluators = Evaluators(self.models)
+        evaluators = Evaluators(self.models, x)
 
         ifail, x, objf, conf = solve(evaluators, x, bndl, bndu, m, meq)
 
@@ -53,13 +53,16 @@ class Optimiser:
             print("new epsfcn = ", numerics.epsfcn)
 
             ifail, x, objf, conf = solve(
-                evaluators, x, bndl, bndu, m, meq, ifail=ifail, first_call=False
+                evaluators,
+                x,
+                bndl,
+                bndu,
+                m,
+                meq,
+                ifail=ifail,
             )
             # First solution attempt failed (ifail != 1): supply ifail value
             # to next attempt
-            # first_call determines how Evaluators.fcnvmc1() runs the first time
-            # TODO Check if fcnvmc1() could be called before the solver to
-            # remove this dependency
             numerics.epsfcn = numerics.epsfcn / 10  # reset value
 
         if ifail != 1:
@@ -67,7 +70,13 @@ class Optimiser:
             numerics.epsfcn = numerics.epsfcn / 10  # try new smaller value
             print("new epsfcn = ", numerics.epsfcn)
             ifail, x, objf, conf = solve(
-                evaluators, x, bndl, bndu, m, meq, ifail=ifail, first_call=False
+                evaluators,
+                x,
+                bndl,
+                bndu,
+                m,
+                meq,
+                ifail=ifail,
             )
             numerics.epsfcn = numerics.epsfcn * 10  # reset value
 
@@ -80,7 +89,14 @@ class Optimiser:
                 "estimate of the second derivative matrix."
             )
             ifail, x, objf, conf = solve(
-                evaluators, x, bndl, bndu, m, meq, ifail=ifail, b=2.0, first_call=False
+                evaluators,
+                x,
+                bndl,
+                bndu,
+                m,
+                meq,
+                ifail=ifail,
+                b=2.0,
             )
 
         self.output(x, conf)

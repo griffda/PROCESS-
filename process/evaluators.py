@@ -20,15 +20,17 @@ logger.addHandler(f_handler)
 class Evaluators:
     """Calls models to evaluate function and gradient functions."""
 
-    def __init__(self, models):
+    def __init__(self, models, x):
         """Instantiate Caller with model objects.
 
         :param models: physics and engineering model objects
         :type models: process.main.Models
+        :param x: optimisation parameters
+        :type x: np.ndarray
         """
-        self.caller = Caller(models)
+        self.caller = Caller(models, x)
 
-    def fcnvmc1(self, n, m, xv, ifail, first_call):
+    def fcnvmc1(self, n, m, xv, ifail):
         """Function evaluator for VMCON.
 
         This routine is the function evaluator for the VMCON
@@ -47,8 +49,6 @@ class Evaluators:
         :type xv: numpy.array
         :param ifail: ifail error flag
         :type ifail: int
-        :param first_call: first call of fcnvmc1() for this Vmcon run
-        :type first_call: bool
         :return: tuple containing: objfn objective function, conf(m) constraint
         functions
         :rtype: tuple
@@ -57,13 +57,7 @@ class Evaluators:
         conf = np.zeros(m, dtype=np.float64, order="F")
 
         # Evaluate machine parameters at xv
-        self.caller.call_models(xv, n)
-
-        # To ensure that, at the start of a run, all physics/engineering
-        # variables are fully initialised with consistent values, we perform
-        # a second evaluation call here
-        if first_call:
-            self.caller.call_models(xv, n)
+        self.caller.call_models(xv)
 
         # Convergence loop to ensure burn time consistency
         if sv.istell == 0:
@@ -72,7 +66,7 @@ class Evaluators:
                 abs((tv.tburn - tv.tburn0) / max(tv.tburn, 0.01)) > 0.001
             ):
                 loop += 1
-                self.caller.call_models(xv, n)
+                self.caller.call_models(xv)
                 if gv.verbose == 1:
                     print("Internal tburn consistency check: ", tv.tburn, tv.tburn0)
 
@@ -136,10 +130,10 @@ class Evaluators:
         the derivative of constraint j w.r.t. variable i
         :rtype: tuple
         """
-        xfor = np.zeros(numerics.ipnvars, dtype=np.float64, order="F")
-        xbac = np.zeros(numerics.ipnvars, dtype=np.float64, order="F")
-        cfor = np.zeros(numerics.ipnvars, dtype=np.float64, order="F")
-        cbac = np.zeros(numerics.ipnvars, dtype=np.float64, order="F")
+        xfor = np.zeros(n, dtype=np.float64, order="F")
+        xbac = np.zeros(n, dtype=np.float64, order="F")
+        cfor = np.zeros(m, dtype=np.float64, order="F")
+        cbac = np.zeros(m, dtype=np.float64, order="F")
         fgrd = np.zeros(n, dtype=np.float64, order="F")
         cnorm = np.zeros((lcnorm, m), dtype=np.float64, order="F")
 
@@ -155,12 +149,12 @@ class Evaluators:
                     xbac[i] = xv[j] * (1.0 - numerics.epsfcn)
 
             # Evaluate at (x+dx)
-            self.caller.call_models(xfor, n)
+            self.caller.call_models(xfor)
             ffor = function_evaluator.funfom()
             cfor, _, _, _, _ = constraints.constraint_eqns(m, -1)
 
             # Evaluate at (x-dx)
-            self.caller.call_models(xbac, n)
+            self.caller.call_models(xbac)
             fbac = function_evaluator.funfom()
             cbac, _, _, _, _ = constraints.constraint_eqns(m, -1)
 
@@ -176,6 +170,6 @@ class Evaluators:
         # variable in the solution vector is inconsistent with its value
         # shown elsewhere in the output file, which is a factor (1-epsfcn)
         # smaller (i.e. its xbac value above).
-        self.caller.call_models(xv, n)
+        self.caller.call_models(xv)
 
         return fgrd, cnorm

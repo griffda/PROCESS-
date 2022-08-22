@@ -17,7 +17,6 @@ def solve(
     m,
     meq,
     ifail=0,
-    first_call=True,
     b=None,
     ilower=None,
     iupper=None,
@@ -39,9 +38,6 @@ def solve(
     :type meq: int
     :param ifail: previous exit code for the solver, defaults to 0
     :type ifail: int, optional
-    :param first_call: boolean for running Evaluators.fcnvmc1() the first time,
-    defaults to True
-    :type first_call: bool, optional
     :param b: multiplier for an identity matrix as input for the Hessian b(n,n),
     defaults to None
     :type b: float, optional
@@ -68,7 +64,6 @@ def solve(
             m,
             meq,
             ifail,
-            first_call,
             b,
             tolerance,
         )
@@ -80,7 +75,7 @@ def solve(
 
 
 def run_legacy_vmcon(
-    evaluators, x, ilower, iupper, bndl, bndu, m, meq, ifail, first_call, b, tolerance
+    evaluators, x, ilower, iupper, bndl, bndu, m, meq, ifail, b, tolerance
 ):
     """Run an instance of legacy Vmcon.
 
@@ -95,8 +90,6 @@ def run_legacy_vmcon(
     :type bndu: np.ndarray
     :param ifail: previous exit code for the solver
     :type ifail: int
-    :param first_call: boolean for running Evaluators.fcnvmc1() the first time,
-    :type first_call: bool
     :param b: multiplier for an identity matrix as input for the Hessian b(n,n)
     :type b: float
     :param tolerance: tolerance for termination of solver
@@ -108,9 +101,7 @@ def run_legacy_vmcon(
     if tolerance is None:
         tolerance = numerics.epsvmc
 
-    vmcon = Vmcon(
-        evaluators, x, ilower, iupper, bndl, bndu, m, meq, ifail, first_call, tolerance
-    )
+    vmcon = Vmcon(evaluators, x, ilower, iupper, bndl, bndu, m, meq, ifail, tolerance)
 
     # Write basic info to OPT.DAT, then run vmcon solver
     n = numerics.nvar

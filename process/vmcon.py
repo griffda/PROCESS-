@@ -21,7 +21,6 @@ class Vmcon:
         m,
         meq,
         ifail,
-        first_call,
         tolerance,
     ):
         """Initialise vars for input/output with Fortran vmcon module.
@@ -47,8 +46,6 @@ class Vmcon:
         :type meq: int
         :param ifail: previous exit code for the solver
         :type ifail: int
-        :param first_call: boolean for running Evaluators.fcnvmc1() the first time,
-        :type first_call: bool
         :param tolerance: tolerance for termination of solver
         :type tolerance: float
         """
@@ -126,7 +123,6 @@ class Vmcon:
 
         # Counter for fcnvmc1 calls
         self.fcnvmc1_calls = 0
-        self.fcnvmc1_first_call = first_call
 
     def run(self):
         """Load vars into vmcon, run it and extract results."""
@@ -371,11 +367,8 @@ class Vmcon:
         See comments on differing array sizes in fcnvmc1_wrapper().
         """
         self.objf, self.conf[0 : self.m] = self.evaluators.fcnvmc1(
-            self.n, self.m, self.x, self.ifail, self.fcnvmc1_first_call
+            self.n, self.m, self.x, self.ifail
         )
-
-        if self.fcnvmc1_first_call is True:
-            self.fcnvmc1_first_call = False
 
     def fcnvmc2_wrapper(self):
         """Call fcnvmc2, synchronising variables before and after.
