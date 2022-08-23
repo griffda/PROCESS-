@@ -14,12 +14,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.4.0-489-g95ce7430c
+   Tag No. : v2.4.0-492-g90f31fd27
     Branch : HEAD
-   Git log : Merge branch |1602-add-documentation-for-pdb-to-development-debugging-md| into |develop|
- Date/time : 18 Aug 2022 10:43:49 +00:00(hh:mm) UTC
+   Git log : Merge branch |1695-cs-coil-outputs-have-module-names-in-variable-names| into |develop|
+ Date/time : 23 Aug 2022 12:38:06 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-8a63d9a8-project-20-concurrent-0
+  Computer : runner-c55928e9-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_stellarator_0/IN.DAT
  Run title : HELIAS-5B

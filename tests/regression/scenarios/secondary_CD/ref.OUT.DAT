@@ -6,12 +6,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.4.0-489-g95ce7430c
+   Tag No. : v2.4.0-492-g90f31fd27
     Branch : HEAD
-   Git log : Merge branch |1602-add-documentation-for-pdb-to-development-debugging-md| into |develop|
- Date/time : 18 Aug 2022 10:42:46 +00:00(hh:mm) UTC
+   Git log : Merge branch |1695-cs-coil-outputs-have-module-names-in-variable-names| into |develop|
+ Date/time : 23 Aug 2022 12:37:01 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-8a63d9a8-project-20-concurrent-0
+  Computer : runner-c55928e9-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_secondary_CD_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
@@ -849,9 +849,9 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Allowable overall current density at EOF (A/m2)                          (rjohc)                   3.477E+07  OP 
  Actual overall current density at EOF (A/m2)                             (coheof)                  1.956E+07  ITV
  
- CS inside radius (m)                                                     (bv.bore.)                2.321E+00     
- CS thickness (m)                                                         (bv.ohcth.)               5.986E-01     
- Gap between central solenoid and TF coil (m)                             (bv.gapoh)                5.000E-02  ITV
+ CS inside radius (m)                                                     (bore)                    2.321E+00  ITV
+ CS thickness (m)                                                         (ohcth)                   5.986E-01  ITV
+ Gap between central solenoid and TF coil (m)                             (gapoh)                   5.000E-02  ITV
  CS overall cross-sectional area (m2)                                     (areaoh)                  9.813E+00  OP 
  CS conductor+void cross-sectional area (m2)                              (awpoh)                   4.287E+00  OP 
     CS conductor cross-sectional area (m2)                                (awpoh*(1-vfohc))         3.001E+00  OP 
@@ -868,21 +868,21 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Residual manufacturing strain in CS superconductor material              (tfcoil_variables.str_cs_-5.000E-03     
  Copper fraction in strand                                                (fcuohsu)                 7.000E-01     
  Void (coolant) fraction in conductor                                     (vfohc)                   3.000E-01     
- Helium coolant temperature (K)                                           (tfv.tftmp)               4.750E+00     
+ Helium coolant temperature (K)                                           (tftmp)                   4.750E+00     
  CS temperature margin (K)                                                (tmargoh)                 1.500E+00  OP 
- Minimum permitted temperature margin (K)                                 (tfv.tmargmin_cs)         1.500E+00     
- Residual hoop stress in CS Steel (Pa)                                    (csfv.residual_sig_hoop)  2.400E+08     
- Minimum burn time (s)                                                    (ctv.tbrnmn)              7.200E+03     
- Initial vertical crack size (m)                                          (csfv.t_crack_vertical)   8.900E-04     
- Initial radial crack size (m)                                            (csfv.t_crack_radial)     2.670E-03     
- CS turn area (m)                                                         (pfv.a_oh_turn)           2.198E-03     
- CS turn length (m)                                                       (pfv.l_cond_cst)          8.121E-02     
- CS turn internal cable space radius (m)                                  (pfv.r_in_cst)            7.266E-03     
- CS turn width (m)                                                        (pfv.d_cond_cst)          2.707E-02     
- CS structural vertical thickness (m)                                     (csfv.t_structural_vertic 6.269E-03     
- CS structural radial thickness (m)                                       (csfv.t_structural_radial 6.269E-03     
- Allowable number of cycles till CS fracture                              (csfv.n_cycle)            1.637E+03  OP 
- Minimum number of cycles required till CS fracture                       (csfv.n_cycle_min)        2.000E+04  OP 
+ Minimum permitted temperature margin (K)                                 (tmargmin_cs)             1.500E+00     
+ Residual hoop stress in CS Steel (Pa)                                    (residual_sig_hoop)       2.400E+08     
+ Minimum burn time (s)                                                    (tbrnmn)                  7.200E+03     
+ Initial vertical crack size (m)                                          (t_crack_vertical)        8.900E-04     
+ Initial radial crack size (m)                                            (t_crack_radial)          2.670E-03     
+ CS turn area (m)                                                         (a_oh_turn)               2.198E-03     
+ CS turn length (m)                                                       (l_cond_cst)              8.121E-02     
+ CS turn internal cable space radius (m)                                  (r_in_cst)                7.266E-03     
+ CS turn width (m)                                                        (d_cond_cst)              2.707E-02     
+ CS structural vertical thickness (m)                                     (t_structural_vertical)   6.269E-03     
+ CS structural radial thickness (m)                                       (t_structural_radial)     6.269E-03     
+ Allowable number of cycles till CS fracture                              (n_cycle)                 1.637E+03  OP 
+ Minimum number of cycles required till CS fracture                       (n_cycle_min)             2.000E+04  OP 
  
  Superconducting PF coils
  PF coil superconductor material                                          (isumatpf)                        3     
