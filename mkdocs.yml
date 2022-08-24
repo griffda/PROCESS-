@@ -28,6 +28,7 @@ nav:
           - Debugging: development/debugging.md
           - Tools: development/tools.md
           - Versioning: development/versioning.md
+          - Python Optimisation and Numba: development/numba.md
     - Engineering Models:
           - Machine Build: eng-models/machine-build.md
           - Structural Components: eng-models/structural-components.md
@@ -76,7 +77,7 @@ nav:
 repo_url: https://git.ccfe.ac.uk/process/process.git
 
 theme:
-    #name: material
+      #name: material
     name: readthedocs
 
 extra_javascript:
