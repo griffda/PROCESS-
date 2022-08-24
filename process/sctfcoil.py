@@ -1292,11 +1292,11 @@ class Sctfcoil:
                 casestr,
                 insstrain,
             ) = self.stresscl(
-                tfcoil_variables.n_tf_stress_layers,
-                tfcoil_variables.n_rad_per_layer,
-                tfcoil_variables.n_tf_wp_layers,
-                tfcoil_variables.i_tf_bucking,
-                build_variables.r_tf_inboard_in,
+                int(tfcoil_variables.n_tf_stress_layers),
+                int(tfcoil_variables.n_rad_per_layer),
+                int(tfcoil_variables.n_tf_wp_layers),
+                int(tfcoil_variables.i_tf_bucking),
+                float(build_variables.r_tf_inboard_in),
                 build_variables.bore,
                 build_variables.hmax,
                 pfcoil_variables.ohhghf,
@@ -1332,7 +1332,7 @@ class Sctfcoil:
                 tfcoil_variables.tfinsgap,
                 tfcoil_variables.tinstf,
                 tfcoil_variables.n_tf_turn,
-                tfcoil_variables.i_tf_turns_integer,
+                int(tfcoil_variables.i_tf_turns_integer),
                 sctfcoil_module.t_cable,
                 sctfcoil_module.t_cable_radial,
                 tfcoil_variables.dhecoil,
@@ -3614,7 +3614,9 @@ class Sctfcoil:
         # transverse (radial/toroidal) direction. Used in the stress
         # models [Pa]
 
-        poisson_trans = numpy.zeros((n_tf_layer,), order="F")
+        poisson_trans = numpy.zeros(
+            (n_tf_layer,),
+        )
         # Poisson's ratios (one per layer) of the TF coil between the
         # two transverse directions (radial and toroidal). Used in the
         # stress models.
@@ -3676,9 +3678,9 @@ class Sctfcoil:
         fac_sig_z_wp_av = 0.0
         # WP averaged vertical stress unsmearing factor
 
-        str_tf_r = 0
-        str_tf_t = 0
-        str_tf_z = 0
+        str_tf_r = numpy.zeros((n_radial_array * n_tf_layer,))
+        str_tf_t = numpy.zeros((n_radial_array * n_tf_layer,))
+        str_tf_z = numpy.zeros((n_radial_array * n_tf_layer,))
 
         sig_tf_case = None
         sig_tf_cs_bucked = None
@@ -3688,7 +3690,7 @@ class Sctfcoil:
 
         if abs(r_tf_inboard_in) < numpy.finfo(float(r_tf_inboard_in)).eps:
             # New extended plane strain model can handle it
-            if tfcoil_variables.i_tf_stress_model != 2:
+            if i_tf_stress_model != 2:
                 raise ValueError("r_tf_inboard_in is ~= 0", 245)
 
         # TODO: following is no longer used/needed?
@@ -3700,7 +3702,7 @@ class Sctfcoil:
         # LAYER ELASTIC PROPERTIES
         # ------------------------
         # Number of bucking layers
-        n_tf_bucking = copy.copy(i_tf_bucking)
+        n_tf_bucking = i_tf_bucking
 
         # CS properties (bucked and wedged)
         # ---
@@ -3724,7 +3726,7 @@ class Sctfcoil:
 
                 # Maximum current in Central Solenoid, at either BOP or EOF [MA-turns]
                 # Absolute value
-                curr_oh_max = 1.0e-6 * max(coheof, cohbop) * a_oh
+                curr_oh_max = 1.0e-6 * numpy.maximum(coheof, cohbop) * a_oh
 
                 #  Number of turns
                 n_oh_turns = 1.0e6 * curr_oh_max / cptdin[sum(ncls)]
@@ -3904,12 +3906,12 @@ class Sctfcoil:
                 l_member_array[1],
                 poisson_member_array[1],
             ) = eyoung_series(
-                eyoung_cond_trans,
+                numpy.double(eyoung_cond_trans),
                 (t_cable_eyng - dhecoil) * (1.0e0 - fcutfsu),
-                poisson_cond_trans,
-                eyoung_copper,
+                numpy.double(poisson_cond_trans),
+                numpy.double(eyoung_copper),
                 (t_cable_eyng - dhecoil) * fcutfsu,
-                poisson_copper,
+                numpy.double(poisson_copper),
             )
             # Steel conduit
             eyoung_member_array[2] = eyoung_steel
@@ -3936,11 +3938,11 @@ class Sctfcoil:
             # Lateral casing correction (series-composition)
             (eyoung_wp_trans_eff, a_working, poisson_wp_trans_eff,) = eyoung_series(
                 eyoung_wp_trans,
-                t_wp_toroidal_av,
+                numpy.double(t_wp_toroidal_av),
                 poisson_wp_trans,
-                eyoung_steel,
+                numpy.double(eyoung_steel),
                 2.0e0 * t_lat_case_av,
-                poisson_steel,
+                numpy.double(poisson_steel),
             )
 
             # Average WP Young's modulus in the vertical direction
@@ -4000,9 +4002,9 @@ class Sctfcoil:
             # Rem : effect of cooling pipes and insulation not taken into account
             #       for now as it needs a radially dependent Young modulus
             eyoung_wp_trans_eff = eyoung_cond
-            eyoung_wp_trans = eyoung_cond
+            eyoung_wp_trans = numpy.double(eyoung_cond)
             poisson_wp_trans_eff = poisson_cond
-            poisson_wp_trans = poisson_cond
+            poisson_wp_trans = numpy.double(poisson_cond)
 
             # WP area using the stress model circular geometry (per coil) [m2]
             a_wp_eff = (r_wp_outer**2 - r_wp_inner**2) * theta_coil
@@ -4032,8 +4034,8 @@ class Sctfcoil:
             poisson_wp_axial_eff = poisson_wp_axial
 
             # Effect conductor layer inner/outer radius
-            r_wp_inner_eff = r_wp_inner
-            r_wp_outer_eff = r_wp_outer
+            r_wp_inner_eff = numpy.double(r_wp_inner)
+            r_wp_outer_eff = numpy.double(r_wp_outer)
 
         # Thickness of the layer representing the WP in stress calcualtions [m]
         dr_tf_wp_eff = r_wp_outer_eff - r_wp_outer_eff
@@ -4041,7 +4043,7 @@ class Sctfcoil:
         # Thickness of WP with homogeneous stress property [m]
         dr_wp_layer = dr_tf_wp_eff / n_tf_graded_layers
 
-        for ii in range(n_tf_graded_layers):
+        for ii in range(numpy.intc(n_tf_graded_layers)):
             # Homogeneous current in (super)conductor
             jeff[n_tf_bucking + ii] = ritfc / (
                 numpy.pi * (r_wp_outer_eff**2 - r_wp_inner_eff**2)
@@ -4100,12 +4102,12 @@ class Sctfcoil:
             if i_tf_stress_model != 2:
                 # error_handling.report_error(245)
                 radtf[0] = 1.0e-9
-            elif abs(radtf[1]) < numpy.finfo(float(radtf[0])).eps:
-                logger.error(
-                    """ERROR: First TF layer has zero thickness.
-                Perhaps you meant to have thkcas nonzero or tfcoil_variables.i_tf_bucking = 0?
-                """
-                )
+            # elif abs(radtf[1]) < numpy.finfo(float(radtf[0])).eps:
+            #     logger.error(
+            #         """ERROR: First TF layer has zero thickness.
+            #     Perhaps you meant to have thkcas nonzero or tfcoil_variables.i_tf_bucking = 0?
+            #     """
+            #     )
 
         # ---
 
@@ -4195,9 +4197,7 @@ class Sctfcoil:
             # Central Solenoid (OH) steel conduit stress unsmearing factors
             for ii in range(n_radial_array):
                 sig_tf_r[ii] = sig_tf_r[ii] * eyoung_cs_stiffest_leg / eyoung_axial[0]
-                sig_tf_t[ii] = (
-                    sig_tf_t[ii] * tfcoil_variables.eyoung_steel / eyoung_trans[0]
-                )
+                sig_tf_t[ii] = sig_tf_t[ii] * eyoung_steel / eyoung_trans[0]
                 sig_tf_z[ii] = sig_tf_z[ii] * eyoung_cs_stiffest_leg / eyoung_axial[0]
 
         # ---
@@ -4283,9 +4283,11 @@ class Sctfcoil:
         # -----------------------------
         # Array equation
         sig_tf_tresca_tmp1 = numpy.maximum(
-            abs(sig_tf_r - sig_tf_t), abs(sig_tf_r - sig_tf_z)
+            numpy.absolute(sig_tf_r - sig_tf_t), numpy.absolute(sig_tf_r - sig_tf_z)
         )
-        sig_tf_tresca = numpy.maximum(sig_tf_tresca_tmp1, abs(sig_tf_z - sig_tf_t))
+        sig_tf_tresca = numpy.maximum(
+            sig_tf_tresca_tmp1, numpy.absolute(sig_tf_z - sig_tf_t)
+        )
 
         # Array equation
 
@@ -4299,7 +4301,7 @@ class Sctfcoil:
         )
 
         # Array equation
-        s_tresca_cond_cea = copy.copy(sig_tf_tresca)
+        s_tresca_cond_cea = sig_tf_tresca.copy()
 
         # SC conducting layer stress distribution corrections
         # ---
@@ -6075,67 +6077,6 @@ class Sctfcoil:
                 "OP ",
             )
 
-    def eyoung_series(
-        self, eyoung_j_1, l_1, poisson_j_perp_1, eyoung_j_2, l_2, poisson_j_perp_2
-    ):
-        """
-        Author : C. Swanson, PPPL
-        January 2022
-        See Issue #1205 for derivation PDF
-        This subroutine gives the smeared elastic properties of two
-        members that are carrying a force in series with each other.
-        The force goes in direction j.
-        The assumption is that the stresses in j are equal.
-        The smeared Young's modulus is the inverse of the average of
-        the inverse of the Young's moduli, weighted by the length
-        of the members in j.
-        Members 1 and 2 are the individual members to be smeared.
-        Member 3 is the effective smeared member (output).
-        The smeared Poisson's ratio is the averaged of the Poisson's
-        ratios, weighted by the quantity (Young's modulus / length of
-        the members in j).
-
-        If you're dealing with anisotropy, please pay attention to the
-        fact that the specific Young's Modulus used here is that in
-        the j direction, and the specific Poisson's ratio used here is
-        that between the j and transverse directions in that order.
-        (transverse strain / j strain, under j stress)
-        The smeared Poisson's ratio is computed assuming the transverse
-        dynamics are isotropic, and that the two members are free to
-        shrink/expand under Poisson effects without interference from
-        each other. This may not be true of your case.
-
-        To build up a composite smeared member of any number of
-        individual members, you can pass the same properties for
-        members 2 and 3, and call it successively, using the properties
-        of each member as the first triplet of arguments. This way, the
-        last triplet acts as a "working sum":
-        call eyoung_series(triplet1, triplet2, tripletOUT)
-        call eyoung_series(triplet3, tripletOUT, tripletOUT)
-        call eyoung_series(triplet4, tripletOUT, tripletOUT)
-        ... etc.
-        So that tripletOUT would eventually have the smeared properties
-        of the total composite member.
-        """
-        if eyoung_j_1 * eyoung_j_2 == 0:
-            # poisson_j_perp_3 = 0
-            if eyoung_j_1 == 0:
-                poisson_j_perp_3 = poisson_j_perp_1
-            else:
-                poisson_j_perp_3 = poisson_j_perp_2  #
-
-            eyoung_j_3 = 0
-            l_3 = l_1 + l_2
-        else:
-            poisson_j_perp_3 = (
-                poisson_j_perp_1 * l_1 / eyoung_j_1
-                + poisson_j_perp_2 * l_2 / eyoung_j_2
-            ) / (l_1 / eyoung_j_1 + l_2 / eyoung_j_2)
-            eyoung_j_3 = (l_1 + l_2) / (l_1 / eyoung_j_1 + l_2 / eyoung_j_2)
-            l_3 = l_1 + l_2
-
-        return eyoung_j_3, l_3, poisson_j_perp_3
-
     def tf_averaged_turn_geom(self, jwptf, thwcndut, thicndut, i_tf_sc_mat):
         """
         TN: This subroutine has not yet been converted into Python
@@ -6242,6 +6183,7 @@ class Sctfcoil:
         return acstf, acndttf, insulation_area, n_tf_turn
 
 
+@numba.njit(cache=True)
 def eyoung_t_nested_squares(n, eyoung_j_in, l_in, poisson_j_perp_in):
     """
     Author : C. Swanson, PPPL
@@ -6311,6 +6253,7 @@ def eyoung_t_nested_squares(n, eyoung_j_in, l_in, poisson_j_perp_in):
     return eyoung_j_out, l_out, poisson_j_perp_out, eyoung_stiffest
 
 
+@numba.jit(cache=True)
 def eyoung_series(eyoung_j_1, l_1, poisson_j_perp_1, eyoung_j_2, l_2, poisson_j_perp_2):
     """
     Author : C. Swanson, PPPL
@@ -6351,14 +6294,15 @@ def eyoung_series(eyoung_j_1, l_1, poisson_j_perp_1, eyoung_j_2, l_2, poisson_j_
     So that tripletOUT would eventually have the smeared properties
     of the total composite member.
     """
+
     if eyoung_j_1 * eyoung_j_2 == 0:
         # poisson_j_perp_3 = 0
         if eyoung_j_1 == 0:
             poisson_j_perp_3 = poisson_j_perp_1
         else:
-            poisson_j_perp_3 = poisson_j_perp_2  #
+            poisson_j_perp_3 = poisson_j_perp_2
 
-        eyoung_j_3 = 0
+        eyoung_j_3 = 0.0
         l_3 = l_1 + l_2
     else:
         poisson_j_perp_3 = (
@@ -6367,9 +6311,13 @@ def eyoung_series(eyoung_j_1, l_1, poisson_j_perp_1, eyoung_j_2, l_2, poisson_j_
         eyoung_j_3 = (l_1 + l_2) / (l_1 / eyoung_j_1 + l_2 / eyoung_j_2)
         l_3 = l_1 + l_2
 
+    eyoung_j_3 = numpy.array(eyoung_j_3)
+    poisson_j_perp_3 = numpy.array(poisson_j_perp_3)
+
     return eyoung_j_3, l_3, poisson_j_perp_3
 
 
+@numba.njit(cache=True)
 def eyoung_parallel(
     eyoung_j_1, a_1, poisson_j_perp_1, eyoung_j_2, a_2, poisson_j_perp_2
 ):
@@ -6415,6 +6363,7 @@ def eyoung_parallel(
     return eyoung_j_3, a_3, poisson_j_perp_3
 
 
+@numba.njit(cache=True)
 def sigvm(sx: float, sy: float, sz: float, txy: float, txz: float, tyz: float) -> float:
 
     """Calculates Von Mises stress in a TF coil
@@ -7136,6 +7085,7 @@ def plane_stress(nu, rad, ey, j, nlayers, n_radial_array):
     return sigr, sigt, r_deflect, rradius
 
 
+@numba.njit(cache=True)
 def eyoung_parallel_array(n, eyoung_j_in, a_in, poisson_j_perp_in):
     """
     Author : C. Swanson, PPPL

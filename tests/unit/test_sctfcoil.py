@@ -9,6 +9,7 @@ from process.fortran import physics_variables
 from process.fortran import build_variables
 from process.fortran import fwbs_variables
 from process.sctfcoil import Sctfcoil
+from process import sctfcoil as sctf
 
 
 @pytest.fixture
@@ -3854,8 +3855,8 @@ def test_stresscl(stressclparam, monkeypatch, sctfcoil):
         casestr,
         insstrain,
     ) = sctfcoil.stresscl(
-        tfcoil_variables.n_tf_stress_layers,
-        stressclparam.n_rad_per_layer,
+        stressclparam.n_tf_layer,
+        stressclparam.n_radial_array,
         stressclparam.n_tf_wp_layers,
         stressclparam.i_tf_bucking,
         stressclparam.r_tf_inboard_in,
@@ -3868,8 +3869,8 @@ def test_stresscl(stressclparam, monkeypatch, sctfcoil):
         stressclparam.cohbop,
         stressclparam.cptdin,
         stressclparam.ncls,
-        stressclparam.ld_ratio_cst,
-        stressclparam.r_out_cst,
+        70 / 22,
+        3e-3,
         stressclparam.oh_steel_frac,
         stressclparam.eyoung_steel,
         stressclparam.poisson_steel,
@@ -7678,7 +7679,7 @@ def test_plane_stress(planestressparam, monkeypatch, sctfcoil):
     :type monkeypatch: _pytest.monkeypatch.monkeypatch
     """
 
-    sigr, sigt, r_deflect, rradius = sctfcoil.plane_stress(
+    sigr, sigt, r_deflect, rradius = sctf.plane_stress(
         n_radial_array=planestressparam.n_radial_array,
         nlayers=planestressparam.nlayers,
         nu=planestressparam.nu,
@@ -13494,7 +13495,7 @@ def test_extended_plane_strain(extendedplanestrainparam, monkeypatch, sctfcoil):
         str_t,
         str_z,
         r_deflect,
-    ) = sctfcoil.extended_plane_strain(
+    ) = sctf.extended_plane_strain(
         n_radial_array=extendedplanestrainparam.n_radial_array,
         nlayers=extendedplanestrainparam.nlayers,
         i_tf_bucking=extendedplanestrainparam.i_tf_bucking,
@@ -13603,7 +13604,7 @@ def test_eyoung_parallel(eyoungparallelparam, monkeypatch, sctfcoil):
     :type monkeypatch: _pytest.monkeypatch.monkeypatch
     """
 
-    eyoung_j_3, a_3, poisson_j_perp_3 = sctfcoil.eyoung_parallel(
+    eyoung_j_3, a_3, poisson_j_perp_3 = sctf.eyoung_parallel(
         eyoung_j_1=eyoungparallelparam.eyoung_j_1,
         eyoung_j_2=eyoungparallelparam.eyoung_j_2,
         a_1=eyoungparallelparam.a_1,
@@ -13773,7 +13774,7 @@ def test_eyoung_t_nested_squares(eyoungtnestedsquaresparam, monkeypatch, sctfcoi
         l_out,
         poisson_j_perp_out,
         eyoung_stiffest,
-    ) = sctfcoil.eyoung_t_nested_squares(
+    ) = sctf.eyoung_t_nested_squares(
         n=eyoungtnestedsquaresparam.n,
         eyoung_j_in=eyoungtnestedsquaresparam.eyoung_j_in,
         l_in=eyoungtnestedsquaresparam.l_in,
@@ -13835,7 +13836,7 @@ def test_eyoung_series(eyoungseriesparam, monkeypatch, sctfcoil):
     :type monkeypatch: _pytest.monkeypatch.monkeypatch
     """
 
-    eyoung_j_3, l_3, poisson_j_perp_3 = sctfcoil.eyoung_series(
+    eyoung_j_3, l_3, poisson_j_perp_3 = sctf.eyoung_series(
         eyoung_j_1=eyoungseriesparam.eyoung_j_1,
         eyoung_j_2=eyoungseriesparam.eyoung_j_2,
         l_1=eyoungseriesparam.l_1,
@@ -13943,7 +13944,7 @@ def test_eyoung_parallel_array(eyoungparallelarrayparam, monkeypatch, sctfcoil):
     :type monkeypatch: _pytest.monkeypatch.monkeypatch
     """
 
-    eyoung_j_out, a_out, poisson_j_perp_out = sctfcoil.eyoung_parallel_array(
+    eyoung_j_out, a_out, poisson_j_perp_out = sctf.eyoung_parallel_array(
         n=eyoungparallelarrayparam.n,
         eyoung_j_in=eyoungparallelarrayparam.eyoung_j_in,
         a_in=eyoungparallelarrayparam.a_in,
@@ -13969,6 +13970,6 @@ def test_eyoung_parallel_array(eyoungparallelarrayparam, monkeypatch, sctfcoil):
 def test_sigvm(sx, sy, sz, expected, sctfcoil):
     # could not find an example of a use in PROCESS where
     # tx, ty, or tz were anything other than 0
-    ret = sctfcoil.sigvm(sx, sy, sz, 0, 0, 0)
+    ret = sctf.sigvm(sx, sy, sz, 0, 0, 0)
 
     assert ret == pytest.approx(expected)
