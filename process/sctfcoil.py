@@ -3945,6 +3945,8 @@ class Sctfcoil:
                 numpy.double(poisson_steel),
             )
 
+            poisson_wp_trans_eff = numpy.double(poisson_wp_trans_eff)
+
             # Average WP Young's modulus in the vertical direction
             # Split up into "members", concentric squares in cross section
             # (described in Figure 10 of the TF coil documentation)
@@ -4003,7 +4005,7 @@ class Sctfcoil:
             #       for now as it needs a radially dependent Young modulus
             eyoung_wp_trans_eff = eyoung_cond
             eyoung_wp_trans = numpy.double(eyoung_cond)
-            poisson_wp_trans_eff = poisson_cond
+            poisson_wp_trans_eff = numpy.double(poisson_cond)
             poisson_wp_trans = numpy.double(poisson_cond)
 
             # WP area using the stress model circular geometry (per coil) [m2]
