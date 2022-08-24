@@ -1980,12 +1980,12 @@ class PFCoil:
                 )
                 op.oblnkl(self.outfile)
                 # MDK add bv.ohcth, bv.bore and bv.gapoh as they can be iteration variables
-                op.ovarre(self.outfile, "CS inside radius (m)", "(bv.bore.)", bv.bore)
-                op.ovarre(self.outfile, "CS thickness (m)", "(bv.ohcth.)", bv.ohcth)
+                op.ovarre(self.outfile, "CS inside radius (m)", "(bore)", bv.bore)
+                op.ovarre(self.outfile, "CS thickness (m)", "(ohcth)", bv.ohcth)
                 op.ovarre(
                     self.outfile,
                     "Gap between central solenoid and TF coil (m)",
-                    "(bv.gapoh)",
+                    "(gapoh)",
                     bv.gapoh,
                 )
                 op.ovarre(
@@ -2110,7 +2110,7 @@ class PFCoil:
                 op.ovarre(
                     self.outfile,
                     "Helium coolant temperature (K)",
-                    "(tfv.tftmp)",
+                    "(tftmp)",
                     tfv.tftmp,
                 )
                 op.ovarre(
@@ -2123,7 +2123,7 @@ class PFCoil:
                 op.ovarre(
                     self.outfile,
                     "Minimum permitted temperature margin (K)",
-                    "(tfv.tmargmin_cs)",
+                    "(tmargmin_cs)",
                     tfv.tmargmin_cs,
                 )
                 # only output CS fatigue model for pulsed reactor design
@@ -2131,74 +2131,74 @@ class PFCoil:
                     op.ovarre(
                         self.outfile,
                         "Residual hoop stress in CS Steel (Pa)",
-                        "(csfv.residual_sig_hoop)",
+                        "(residual_sig_hoop)",
                         csfv.residual_sig_hoop,
                     )
                     op.ovarre(
                         self.outfile,
                         "Minimum burn time (s)",
-                        "(ctv.tbrnmn)",
+                        "(tbrnmn)",
                         ctv.tbrnmn,
                     )
                     op.ovarre(
                         self.outfile,
                         "Initial vertical crack size (m)",
-                        "(csfv.t_crack_vertical)",
+                        "(t_crack_vertical)",
                         csfv.t_crack_vertical,
                     )
                     op.ovarre(
                         self.outfile,
                         "Initial radial crack size (m)",
-                        "(csfv.t_crack_radial)",
+                        "(t_crack_radial)",
                         csfv.t_crack_radial,
                     )
                     op.ovarre(
                         self.outfile,
                         "CS turn area (m)",
-                        "(pfv.a_oh_turn)",
+                        "(a_oh_turn)",
                         pfv.a_oh_turn,
                     )
                     op.ovarre(
                         self.outfile,
                         "CS turn length (m)",
-                        "(pfv.l_cond_cst)",
+                        "(l_cond_cst)",
                         pfv.l_cond_cst,
                     )
                     op.ovarre(
                         self.outfile,
                         "CS turn internal cable space radius (m)",
-                        "(pfv.r_in_cst)",
+                        "(r_in_cst)",
                         pfv.r_in_cst,
                     )
                     op.ovarre(
                         self.outfile,
                         "CS turn width (m)",
-                        "(pfv.d_cond_cst)",
+                        "(d_cond_cst)",
                         pfv.d_cond_cst,
                     )
                     op.ovarre(
                         self.outfile,
                         "CS structural vertical thickness (m)",
-                        "(csfv.t_structural_vertical)",
+                        "(t_structural_vertical)",
                         csfv.t_structural_vertical,
                     )
                     op.ovarre(
                         self.outfile,
                         "CS structural radial thickness (m)",
-                        "(csfv.t_structural_radial)",
+                        "(t_structural_radial)",
                         csfv.t_structural_radial,
                     )
                     op.ovarre(
                         self.outfile,
                         "Allowable number of cycles till CS fracture",
-                        "(csfv.n_cycle)",
+                        "(n_cycle)",
                         csfv.n_cycle,
                         "OP ",
                     )
                     op.ovarre(
                         self.outfile,
                         "Minimum number of cycles required till CS fracture",
-                        "(csfv.n_cycle_min)",
+                        "(n_cycle_min)",
                         csfv.n_cycle_min,
                         "OP ",
                     )
