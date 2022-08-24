@@ -47,7 +47,7 @@ contains
     use physics_variables, only: dene, te, rmajor, ten, zeff, dlamee, beta, &
       rhopedt, rhopedn, te0, teped, tesep, alphat, alphan, ne0, nesep, neped, &
       bt, rminor, tbeta, plascur, ipedestal, faccd, ignite, pohmmw, powfmw, &
-      facoh, fvsbrnni, itart
+      facoh, fvsbrnni
     use constants, only: nout, echarge, emass, pi, epsilon0
     use hare, only: hare_calc
 
@@ -198,9 +198,6 @@ contains
        ! Ref : PROCESS issue 1262
 
           !  Normalised current drive efficiency gamma
-          if (itart == 1) then
-            xi_ebw = 0.8  ! New scaling value for ST from Simon Freethy, May 2022
-          end if
           gamcd = (xi_ebw/32.7D0) * te
 
           ! Absolute current drive efficiency
@@ -389,9 +386,6 @@ contains
        ! Ref : PROCESS issue 1262
 
           !  Normalised current drive efficiency gamma
-          if (itart == 1) then
-            xi_ebw = 0.8  ! New scaling value for ST from Simon Freethy, May 2022
-          end if
           gamcd = (xi_ebw/32.7D0) * te
 
           ! Absolute current drive efficiency
