@@ -1,3 +1,4 @@
+from typing import Callable
 import numpy as np
 from scipy.integrate import solve_ivp
 
@@ -378,7 +379,7 @@ class DivertorOde:
         # Total power on target [W]
         # powertargettotal = Power0 + ptarget_recomb
 
-        y = [
+        y0 = [
             n010 * 1.0e-20,  # y(1) = neutral density (group 1) [1e20 m-3]
             n020 * 1.0e-20,  # y(2) = neutral density (group 2) [1e20 m-3]
             te0,  # y(3) = temperature [eV]
@@ -392,7 +393,7 @@ class DivertorOde:
         ]
         # Use logarithmic spacing for the x values along the SOL
         factor = 10.0e0 ** (np.log10(lcon / step0) / STEP_NUM)
-        # time_steps = [step0 * factor**i for i in range(STEP_NUM + 2)]
+        time_steps = [step0 * factor**i for i in range(STEP_NUM + 1)]
         f = self._get_differential(
             divertor_ode.eightemi48,
             div_kal_vars.netau_sol,
@@ -408,7 +409,23 @@ class DivertorOde:
             divertor_ode_var.impurity_concs,
         )
 
-        ode_solution = solve_ivp(f, (0, step0 * factor**STEP_NUM), y, method="Radau")
+        # Radau algorithm chosen because it provides the closest values
+        # to the Fortran ODE solver. This tracks with the fact Radau is
+        # appropriate for stiff problems, of which this is.
+        # BDF is another algorithm that appears to work equally as well.
+        # However, Radau is marginally quicker in my testing.
+
+        # Allowing the solver to choose its own "method", again, works
+        # but slows the solving process down by about 3x.
+        ode_solution = solve_ivp(
+            f,
+            (0, time_steps[-1]),
+            y0,
+            t_eval=time_steps,
+            method="Radau",
+            rtol=1e-4,
+            atol=1e-4,
+        )
 
         # we want the following variables to be set within the loop
         # and be available after the loop as their value in the last
@@ -1037,7 +1054,40 @@ class DivertorOde:
         v02,
         zeff_div,
         impurity_concs,
-    ):
+    ) -> Callable[[np.floating, np.ndarray], np.ndarray]:
+        """Creates the differential equation to solve.
+
+        It does this by taking parameters as inputs to this function
+        and injecting them into the nested `differential`. This means
+        the differential only has to take `t` and `y` as inputs, as
+        stipulated by the SciPy ODE solver API.
+
+        :param eightemi48: 8 * electron charge * mi * 10^48
+        :type eightemi48: float
+        :param netau_sol: Parameter describing the departure from local ionisation equilibrium in the SOL.
+        :type netau_sol: float
+        :param lengthofwidesol: Length of broadened downstream part of SOL [m]
+        :type lengthofwidesol: float
+        :param area_target: SOL area (normal to B) at target [m2]
+        :type area_target: float
+        :param area_omp: SOL area (normal to B) at outer midplane [m2]
+        :type area_omp: float
+        :param mi: ion mass [kg]
+        :type mi: float
+        :param aplas: relative ion mass
+        :type aplas: float
+        :param eleion: Eion (electron energy loss due to ionization) * electron charge
+        :type eleion: float
+        :param v01: eutral velocity along the flux bundle for group 1
+        :type v01: float
+        :param v02: eutral velocity along the flux bundle for group 2
+        :type v02: float
+        :param zeff_div: Zeff for divertor region
+        :type zeff_div: float
+        :param impurity_concs: The concentrations of each impurity in the divertor region
+        :type impurity_concs: ndarray[float]
+        """
+
         def differential(t, y):
             # output vector
             yp = np.zeros((len(y),))

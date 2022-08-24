@@ -15,6 +15,8 @@ from process.fortran import (
 def test_divertor_kallenbach():
     """An integration test for the Kallenbach Divertor
     using inputs from the original 2016 paper.
+
+    A Kallenbach et al 2016 Plasma Phys. Control. Fusion 58 045013
     """
 
     # Sets the PROCESS default values
