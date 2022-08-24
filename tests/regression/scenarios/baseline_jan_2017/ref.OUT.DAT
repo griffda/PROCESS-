@@ -7,12 +7,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.4.0-492-g90f31fd27
+   Tag No. : v2.4.0-496-g2b23b97d0
     Branch : HEAD
-   Git log : Merge branch |1695-cs-coil-outputs-have-module-names-in-variable-names| into |develop|
- Date/time : 23 Aug 2022 12:25:30 +00:00(hh:mm) UTC
+   Git log : Merge branch |1641-update-to-ebw-coupling-efficiency-xi_ebw-2| into |develop|
+ Date/time : 24 Aug 2022 13:56:31 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-c55928e9-project-20-concurrent-0
+  Computer : runner-ueya2eyb-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_baseline_jan_2010/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
