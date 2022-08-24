@@ -264,7 +264,7 @@ module current_drive_variables
     gamcd = 0.0D0
     gamma_ecrh = 0.35D0
     rho_ecrh = 0.1D0
-    xi_ebw = 0.43D0
+    xi_ebw = 0.8D0
     iefrf = 5
     iefrffix = 0
     irfcd = 1
