@@ -6,12 +6,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.4.0-499-g007c4838b
+   Tag No. : v2.4.0-502-g24bc5c115
     Branch : HEAD
-   Git log : Merge branch |948-diagnose_uncertainties-py-not-working| into |develop|
- Date/time : 25 Aug 2022  9:51:13 +00:00(hh:mm) UTC
+   Git log : Merge branch |1742-removal-of-unused-utilities-in-process| into |develop|
+ Date/time : 31 Aug 2022 11:01:44 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-c55928e9-project-20-concurrent-0
+  Computer : runner-7084ce6e-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_QH_mode_0/IN.DAT
  Run title : Example QH-mode plasma scenario
