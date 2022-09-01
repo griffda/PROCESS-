@@ -84,6 +84,9 @@ module physics_variables
   real(dp) :: burnup
   !! fractional plasma burnup
 
+  real(dp) :: burnup_in
+  !! fractional plasma burnup user input
+
   real(dp) :: bvert
   !! vertical field at plasma (T)
 
@@ -929,6 +932,7 @@ module physics_variables
     bt = 5.68D0
     btot = 0.0D0
     burnup = 0.0D0
+    burnup_in = 0.0D0
     bvert = 0.0D0
     csawth = 1.0D0
     cvol = 1.0D0

@@ -320,7 +320,7 @@ contains
       teped, fhe3, iwalld, gamma, falpha, fgwped, gtscale, tbeta, ibss, &
       iradloss, te, alphan, rmajor, kappa, ifispact, iinvqd, fkzohm, beamfus0, &
       tauratio, idensl, ieped, bt, iscrp, ipnlaws, betalim, betalim_lower, &
-      idia, ips, m_s_limit
+      idia, ips, m_s_limit, burnup_in
     use pf_power_variables, only: iscenr, maxpoloidalpower
     use plasmod_variables, only: plasmod_x_control, plasmod_i_modeltype, &
       plasmod_nx, plasmod_chisaw, plasmod_contrpovr, plasmod_dtmax, &
@@ -564,6 +564,9 @@ contains
        case ('bt')
           call parse_real_variable('bt', bt, 0.0D0, 30.0D0, &
                'Toroidal field on axis (T)')
+       case ('burnup_in')
+          call parse_real_variable('burnup_in', burnup_in, 0.0D0, 1.0D0, &
+               'User input plasma fuel burnup fraction')
        case ('coreradius')
           call parse_real_variable('coreradius', coreradius, 0.0D0, 1.0D0, &
                'Normalised core radius')

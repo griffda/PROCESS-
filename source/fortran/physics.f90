@@ -2938,7 +2938,7 @@ module physics_module
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-		use physics_variables, only: tauratio
+		use physics_variables, only: tauratio,burnup_in
     implicit none
 
     !  Arguments
@@ -2981,9 +2981,11 @@ module physics_module
     !  fuel ion-pairs burned/m3 = alpha particles/m3 (for both D-T and D-He3 reactions)
     !  initial fuel ion-pairs/m3 = burnt fuel ion-pairs/m3 + unburnt fuel-ion pairs/m3
     !  Remember that unburnt fuel-ion pairs/m3 = 0.5 * unburnt fuel-ions/m3
-
+    if (burnup_in == 0.0D0) then
     burnup = dnalp / (dnalp + 0.5D0*deni) / tauratio
-
+    else
+       burnup = burnup_in
+    end if
     !  Fuel burnup rate (reactions/second) (previously Amps)
 
     rndfuel = fusrat
