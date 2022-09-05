@@ -193,7 +193,8 @@ unit-py38:
 integration-py38:
     extends: .test_template
     script:
-        - pytest tests/integration/ -vs | tee tests/integration/pytest.log
+        - pip install pytest-xdist
+        - pytest tests/integration/ -vs -n auto | tee tests/integration/pytest.log
     artifacts:
         when: on_failure
         paths:
