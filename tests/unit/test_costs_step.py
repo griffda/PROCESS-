@@ -187,14 +187,56 @@ def test_costs_step(monkeypatch, costs_step):
     assert costs_step.rminor_star == 7.0 / 3.6
 
     # Total plant direct cost with remote handling
-    exp = 6935.8739399
+    exp = 7150.8739399
     obs = cv.cdirt
     assert pytest.approx(obs) == exp
 
     # Constructed cost
-    exp_concost = 12311.1762433
+    exp_concost = 12692.8012433
     obs_concost = cv.concost
     assert pytest.approx(obs_concost) == exp_concost
+
+
+def test_step_12(monkeypatch, costs_step):
+    """Validate sum of cost accounjt 12.
+
+    :param: monkeypatch: mocking fixture
+    :type monkeypatch: MonkeyPatch
+    :para costs_step: fixture to mock commonly-used cost vars
+    :type costs_step: process.costs_step.CostsStep
+    """
+    costs_step = CostsStep()
+
+    # Mock module vars
+    monkeypatch.setattr(costs_step, "step12", 0.0)
+    monkeypatch.setattr(cv, "site_permits", 1e8)
+
+    # Run and assert result in M$
+    costs_step.step_a12()
+    exp = 1.0e2
+    obs = costs_step.step12
+    assert pytest.approx(obs) == exp
+
+
+def test_step_13(monkeypatch, costs_step):
+    """Validate sum of cost accounjt 12.
+
+    :param: monkeypatch: mocking fixture
+    :type monkeypatch: MonkeyPatch
+    :para costs_step: fixture to mock commonly-used cost vars
+    :type costs_step: process.costs_step.CostsStep
+    """
+    costs_step = CostsStep()
+
+    # Mock module vars
+    monkeypatch.setattr(costs_step, "step13", 0.0)
+    monkeypatch.setattr(cv, "plant_licensing", 1e8)
+
+    # Run and assert result in M$
+    costs_step.step_a13()
+    exp = 1.0e2
+    obs = costs_step.step13
+    assert pytest.approx(obs) == exp
 
 
 def test_step_a20(monkeypatch, costs_step):

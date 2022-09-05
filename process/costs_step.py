@@ -38,6 +38,12 @@ class CostsStep:
         self.iprint = 0  # switch for writing to output file (1=yes)
 
         # Various cost account values (M$)
+        self.step12 = AnnotatedVariable(
+            float, 0.0, docstring="step12 account cost", units="M$"
+        )
+        self.step13 = AnnotatedVariable(
+            float, 0.0, docstring="step13 account cost", units="M$"
+        )
         self.step20 = AnnotatedVariable(
             float, 0.0, docstring="step20 account cost", units="M$"
         )
@@ -126,6 +132,12 @@ class CostsStep:
             )
             po.oheadr(self.outfile, title.strip())
 
+        # Account 12 : Site Permits
+        self.step_a12()
+
+        # Account 13 : Plant Licensing
+        self.step_a13()
+
         # Account 20 : Land and Rights
         self.step_a20()
 
@@ -146,7 +158,9 @@ class CostsStep:
 
         # Total plant direct cost without remote handling
         cv.cdirt = (
-            self.step20
+            self.step12
+            + self.step13
+            + self.step20
             + self.step21
             + self.step22
             + self.step23
@@ -175,6 +189,34 @@ class CostsStep:
         # Cost of electricity
         if cv.ireactor == 1 and cv.ipnet == 0:
             self.coelc_step()
+
+    def step_a12(self):
+        """Account 12 : Site Permits
+        author: J A Foster, CCFE, Culham Science Centre
+        This method evaluates the Account 12 (Site Permits) costs.
+        """
+        # 12 Site Permits
+        # Fixed cost (2017 M$), read from input, default = 100 M$
+        self.step12 = cv.site_permits / 1e6
+
+        # Write output
+        if self.iprint == 1 and cv.output_costs == 1:
+            po.oshead(self.outfile, "12. Site Permits")
+            po.ocosts(self.outfile, "(step12)", "Site Permits (M$)", self.step12)
+
+    def step_a13(self):
+        """Account 13 : Plant Licensing
+        author: J A Foster, CCFE, Culham Science Centre
+        This method evaluates the Account 13 (Plant Licensing) costs.
+        """
+        # 13 Plant Licensing
+        # Fixed cost (2017 M$), read from input, default = 100 M$
+        self.step13 = cv.plant_licensing / 1e6
+
+        # Write output
+        if self.iprint == 1 and cv.output_costs == 1:
+            po.oshead(self.outfile, "13. Plant Licensing")
+            po.ocosts(self.outfile, "(step13)", "Plant Licensing (M$)", self.step13)
 
     def step_a20(self):
         """Account 20 : Land and Rights
