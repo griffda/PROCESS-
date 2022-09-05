@@ -7,12 +7,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.4.0-505-g0067fc43a
+   Tag No. : v2.4.0-508-g4ca7c0e13
     Branch : HEAD
-   Git log : Merge branch |1736-site-permits-and-plant-licensing-costs| into |develop|
- Date/time :  5 Sep 2022 12:42:47 +00:00(hh:mm) UTC
+   Git log : Merge branch |test_xdist_integration| into |develop|
+ Date/time :  5 Sep 2022 14:44:08 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-9dc50af2-project-20-concurrent-0
+  Computer : runner-ueya2eyb-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_2D_scan_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
