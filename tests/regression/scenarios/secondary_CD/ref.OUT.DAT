@@ -6,12 +6,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.4.0-502-g24bc5c115
+   Tag No. : v2.4.0-505-g0067fc43a
     Branch : HEAD
-   Git log : Merge branch |1742-removal-of-unused-utilities-in-process| into |develop|
- Date/time : 31 Aug 2022 11:02:04 +00:00(hh:mm) UTC
+   Git log : Merge branch |1736-site-permits-and-plant-licensing-costs| into |develop|
+ Date/time :  5 Sep 2022 12:55:43 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-7084ce6e-project-20-concurrent-0
+  Computer : runner-9dc50af2-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_secondary_CD_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')

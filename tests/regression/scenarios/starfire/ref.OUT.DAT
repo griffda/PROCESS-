@@ -6,12 +6,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.4.0-502-g24bc5c115
+   Tag No. : v2.4.0-505-g0067fc43a
     Branch : HEAD
-   Git log : Merge branch |1742-removal-of-unused-utilities-in-process| into |develop|
- Date/time : 31 Aug 2022 11:02:30 +00:00(hh:mm) UTC
+   Git log : Merge branch |1736-site-permits-and-plant-licensing-costs| into |develop|
+ Date/time :  5 Sep 2022 12:56:09 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-7084ce6e-project-20-concurrent-0
+  Computer : runner-9dc50af2-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_starfire_0/IN.DAT
  Run title : starfire
@@ -122,6 +122,14 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  *************************************** STEP Costing Model (2017 US$) ****************************************
  
+ 
+ ******************************* 12. Site Permits *******************************
+ 
+ (step12)            Site Permits (M$)                                                                           100.00
+ 
+ ***************************** 13. Plant Licensing ******************************
+ 
+ (step13)            Plant Licensing (M$)                                                                        100.00
  
  ***************************** 20. Land and Rights ******************************
  
@@ -261,44 +269,44 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  ***************************** 27. Remote Handling ******************************
  
- (step2701)          Remote Handing (M$)                                                                        1486.69
+ (step2701)          Remote Handing (M$)                                                                        1501.69
  
- (step27)            Total Account 27 Cost (M$)                                                                 1486.69
+ (step27)            Total Account 27 Cost (M$)                                                                 1501.69
  
  ****************************** Plant Direct Cost *******************************
  
- (cdirt)             Plant direct cost (M$)                                                                    21309.18
+ (cdirt)             Plant direct cost (M$)                                                                    21524.18
  
  ******************************** Indirect Cost *********************************
  
- (step91)            Construction Facilities, Equipment and Services (M$)                                       6392.75
- (step92)            Engineering and Costruction Management Services (M$)                                       6925.48
- (step93)            Other Costs (M$)                                                                           3196.38
+ (step91)            Construction Facilities, Equipment and Services (M$)                                       6457.25
+ (step92)            Engineering and Costruction Management Services (M$)                                       6995.36
+ (step93)            Other Costs (M$)                                                                           3228.63
  
  ******************************* Constructed Cost *******************************
  
- (concost)           Constructed Cost (M$)                                                                     37823.79
+ (concost)           Constructed Cost (M$)                                                                     38205.41
  
  ************************* Interest during Construction *************************
  
- (moneyint)          Interest during construction (M$)                                                          5673.57
+ (moneyint)          Interest during construction (M$)                                                          5730.81
  
  *************************** Total Capital Investment ***************************
  
- (capcost)           Total capital investment (M$)                                                             43497.36
+ (capcost)           Total capital investment (M$)                                                             43936.23
  
  *************************************** Cost of Electricity, 2017 US$ ****************************************
  
  First wall / blanket life (years)                                        (fwbllife)                    5.343     
  Divertor life (years)                                                    (divlife.)                    0.286     
- Cost of electricity (m$/kWh)                                             (coe)                       384.260     
+ Cost of electricity (m$/kWh)                                             (coe)                       388.025     
  
  Power Generation Costs :
  
  									Annual Costs, M$	    COE, m$/kWh
- Capital Investment                                                          2827.33                   370.04
+ Capital Investment                                                          2855.85                   373.77
  Operation & Maintenance                                                       73.58                     9.63
- Decommissioning Fund                                                          23.90                     3.13
+ Decommissioning Fund                                                          24.14                     3.16
  Fuel Charge Breakdown
  	Blanket & first wall                                                          0.00                     0.00
  	Divertors                                                                     0.00                     0.00
@@ -307,7 +315,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  	Actual Fuel                                                                   3.37                     0.44
  	Waste Disposal                                                                7.79                     1.02
  Total Fuel Cost                                                               11.17                     1.46
- Total Cost                                                                  2935.98                   384.26
+ Total Cost                                                                  2964.75                   388.03
  
  ********************************************* Plant Availability *********************************************
  
