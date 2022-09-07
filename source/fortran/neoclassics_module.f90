@@ -19,14 +19,8 @@ module neoclassics_module
 
     public :: init_neoclassics
 
-    type :: gauss_laguerre
-        real(dp), dimension(no_roots) :: roots
-        !  Gauss Laguerre Roots
-        real(dp), dimension(no_roots) :: weights
-        !  Gauss Laguerre Weights
-    end type gauss_laguerre
 
-    type, public :: profile_values
+    type, public :: neoclassics
         character, dimension(4) :: species = (/"e","D","T","a"/)
         !  Species that are considered
         real(dp), dimension(4) :: densities
@@ -37,11 +31,10 @@ module neoclassics_module
         !  Radial derivative of the density of the species [/m3]
         real(dp), dimension(4) :: dr_temperatures
         !  Radial derivative of the temperature of the species [J]
-    end type profile_values
-
-    type, public :: neoclassics
-        type(gauss_laguerre) :: gauss_laguerre
-        !  Gauss Laguerre object
+        real(dp), dimension(no_roots) :: roots = 0
+        !  Gauss Laguerre Roots
+        real(dp), dimension(no_roots) :: weights = 0
+        !  Gauss Laguerre Weights
         real(dp), dimension(4,no_roots) :: nu = 0
         !  90-degree deflection frequency on GL roots
         real(dp), dimension(4,no_roots) :: nu_star = 0
@@ -87,8 +80,6 @@ module neoclassics_module
         character, dimension(4) :: species = (/"e","D","T","a"/)
         !  Species that are considered (not used right now but keep it for now)
 
-        type(profile_values) :: profiles
-        !  Profile values
 
     contains
         procedure :: calc_KT => neoclassics_calc_KT
@@ -124,10 +115,11 @@ contains
         real(dp), dimension(4,no_roots) :: mynu
 
         !! This should be called as the standard constructor
-        myneo = neoclassics(gauss_laguerre = gauss_laguerre_30(), &
-                            profiles = init_profile_values_from_PROCESS(r_eff), &
-                            eps_eff = eps_eff, iota = iota)
-
+        myneo = neoclassics(eps_eff = eps_eff, iota = iota)
+        call init_profile_values_from_PROCESS(myneo%r_eff)
+        call gauss_laguerre_30_roots(myneo%roots)
+        call gauss_laguerre_30_weights(myneo%weights)
+        
         mynu = neoclassics_calc_nu(myneo)
 
         myneo%KT = myneo%calc_KT()
@@ -164,12 +156,12 @@ contains
         real(dp), dimension(no_roots) ::  K
         real(dp), dimension(4,no_roots) :: KK
 
-        K = self%gauss_laguerre%roots/keV_
+        K = self%roots/keV_
 
-        KK(1,:) = K * self%profiles%temperatures(1) ! electrons
-        KK(2,:) = K * self%profiles%temperatures(2) ! deuterium
-        KK(3,:) = K * self%profiles%temperatures(3) ! tritium
-        KK(4,:) = K * self%profiles%temperatures(4) ! helium
+        KK(1,:) = K * self%temperatures(1) ! electrons
+        KK(2,:) = K * self%temperatures(2) ! deuterium
+        KK(3,:) = K * self%temperatures(3) ! tritium
+        KK(4,:) = K * self%temperatures(4) ! helium
 
     end function neoclassics_calc_KT
 
@@ -182,10 +174,10 @@ contains
         
         real(dp),dimension(4) :: neoclassics_calc_Gamma_flux,densities, temps, dr_temps, dr_densities, z
 
-        densities = self%profiles%densities
-        temps = self%profiles%temperatures
-        dr_densities = self%profiles%dr_densities
-        dr_temps = self%profiles%dr_temperatures
+        densities = self%densities
+        temps = self%temperatures
+        dr_densities = self%dr_densities
+        dr_temps = self%dr_temperatures
 
         z = (/-1.0,1.0,1.0,2.0/)
 
@@ -203,10 +195,10 @@ contains
         real(dp),dimension(4) :: q_flux, densities, temps, dr_temps, dr_densities, z, neoclassics_calc_q_flux
 
 
-        densities = self%profiles%densities
-        temps = self%profiles%temperatures
-        dr_densities = self%profiles%dr_densities
-        dr_temps = self%profiles%dr_temperatures
+        densities = self%densities
+        temps = self%temperatures
+        dr_densities = self%dr_densities
+        dr_temps = self%dr_temperatures
 
         z = (/-1.0,1.0,1.0,2.0/)
 
@@ -289,12 +281,12 @@ contains
         real(dp), dimension(no_roots) :: vde,vdT,vdD,vda, K
         real(dp), dimension(4,no_roots) :: vd,neoclassics_calc_vd
 
-        K = self%gauss_laguerre%roots
+        K = self%roots
 
-        vde = K * self%profiles%temperatures(1)/(e_ * rmajor * bt)
-        vdD = K * self%profiles%temperatures(2)/(e_ * rmajor * bt)
-        vdT = K * self%profiles%temperatures(3)/(e_ * rmajor * bt)
-        vda = K * self%profiles%temperatures(4)/(2.0*e_ * rmajor * bt)
+        vde = K * self%temperatures(1)/(e_ * rmajor * bt)
+        vdD = K * self%temperatures(2)/(e_ * rmajor * bt)
+        vdT = K * self%temperatures(3)/(e_ * rmajor * bt)
+        vda = K * self%temperatures(4)/(2.0*e_ * rmajor * bt)
 
         vd(1,:) = vde
         vd(2,:) = vdD
@@ -317,12 +309,12 @@ contains
         real(dp), dimension(4,no_roots) :: v,nu_star,KK
         real(dp), dimension(4) :: mass
 
-        K = self%gauss_laguerre%roots
+        K = self%roots
 
-        KK(1,:) = K * self%profiles%temperatures(1)
-        KK(2,:) = K * self%profiles%temperatures(2)
-        KK(3,:) = K * self%profiles%temperatures(3)
-        KK(4,:) = K * self%profiles%temperatures(4)
+        KK(1,:) = K * self%temperatures(1)
+        KK(2,:) = K * self%temperatures(2)
+        KK(3,:) = K * self%temperatures(3)
+        KK(4,:) = K * self%temperatures(4)
 
         mass = (/me_,mp_*2.0d0,mp_*3.0d0,mp_*4.0d0/)
 
@@ -399,8 +391,8 @@ contains
 
         real(dp),dimension(no_roots) :: xi,wi
 
-        xi = self%gauss_laguerre%roots
-        wi = self%gauss_laguerre%weights
+        xi = self%roots
+        wi = self%weights
      
         D111(1) = sum(2.0d0/sqrt(pi) * self%D11_mono(1,:) * xi**(1.0d0-0.5d0) * wi)
         D111(2) = sum(2.0d0/sqrt(pi) * self%D11_mono(2,:) * xi**(1.0d0-0.5d0) * wi)
@@ -424,8 +416,8 @@ contains
 
         real(dp),dimension(no_roots) :: xi,wi
 
-        xi = self%gauss_laguerre%roots
-        wi = self%gauss_laguerre%weights
+        xi = self%roots
+        wi = self%weights
      
         D112(1) = sum(2.0d0/sqrt(pi) * self%D11_mono(1,:) * xi**(2.0d0-0.5d0) * wi)
         D112(2) = sum(2.0d0/sqrt(pi) * self%D11_mono(2,:) * xi**(2.0d0-0.5d0) * wi)
@@ -449,8 +441,8 @@ contains
 
         real(dp),dimension(no_roots) :: xi,wi
 
-        xi = self%gauss_laguerre%roots
-        wi = self%gauss_laguerre%weights
+        xi = self%roots
+        wi = self%weights
      
         D113(1) = sum(2.0d0/sqrt(pi) * self%D11_mono(1,:) * xi**(3.0d0-0.5d0) * wi)
         D113(2) = sum(2.0d0/sqrt(pi) * self%D11_mono(2,:) * xi**(3.0d0-0.5d0) * wi)
@@ -473,8 +465,8 @@ contains
 
         integer :: jj,ii,kk
 
-        temp = self%profiles%temperatures
-        density = self%profiles%densities
+        temp = self%temperatures
+        density = self%densities
 
         !          e      D      T         a (He)
         mass = (/me_,mp_*2.0d0,mp_*3.0d0,mp_*4.0d0/)
@@ -488,7 +480,7 @@ contains
 
         do jj = 1, 4
            do ii = 1, no_roots
-              x = self%gauss_laguerre%roots(ii) 
+              x = self%roots(ii) 
               do kk = 1,4
                  xk = (mass(kk)/mass(jj))*(temp(jj)/temp(kk))*x
                  expxk = exp(-xk)
@@ -505,7 +497,7 @@ contains
 
     end function neoclassics_calc_nu
 
-    type(profile_values) function init_profile_values_from_PROCESS(rho)
+    subroutine init_profile_values_from_PROCESS(rho, densities, temperatures, dr_densities, dr_temperatures)
         !! Initializes the profile_values object from PROCESS' parabolic profiles
         !
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -521,7 +513,10 @@ contains
                     tempD,tempT,tempa,tempe, &
                     dr_tempe, dr_tempT, dr_tempD, dr_tempa,&
                     dr_dense, dr_densT, dr_densD, dr_densa, r
-
+        real(dp), dimension(4), intent(out):: densities 
+        real(dp), dimension(4), intent(out):: temperatures
+        real(dp), dimension(4), intent(out):: dr_densities 
+        real(dp), dimension(4), intent(out):: dr_temperatures
         
         r = rho * rminor
 
@@ -566,20 +561,23 @@ contains
         dr_temp(3) = dr_tempT
         dr_temp(4) = dr_tempa
 
-        init_profile_values_from_PROCESS%densities = dens
-        init_profile_values_from_PROCESS%temperatures = temp
-        init_profile_values_from_PROCESS%dr_densities = dr_dens
-        init_profile_values_from_PROCESS%dr_temperatures = dr_temp
+        densities = dens
+        temperatures = temp
+        dr_densities = dr_dens
+        dr_temperatures = dr_temp
 
-    end function init_profile_values_from_PROCESS
+    end subroutine init_profile_values_from_PROCESS
 
-    type(gauss_laguerre) function gauss_laguerre_30()
+    subroutine gauss_laguerre_30_roots(roots)
+
         !! Sets the gauss Laguerre roots and weights for 30 
         !! discretization points. Used for integration in this module.
+        !! roots
         !
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    
-        gauss_laguerre_30%roots = (/4.740718054080526184d-02,&
+        
+        real(dp), dimension(no_roots), intent(out):: roots 
+        roots= (/4.740718054080526184d-02,&
                                     2.499239167531593919d-01,&
                                     6.148334543927683749d-01,&
                                     1.143195825666101451d+00,&
@@ -610,8 +608,12 @@ contains
                                     9.155646652253683726d+01,&
                                     1.041575244310588886d+02/)
 
+    end subroutine gauss_laguerre_30_roots
 
-        gauss_laguerre_30%weights = (/1.160440860204388913d-01,&
+    subroutine gauss_laguerre_30_weights(weights)
+    
+        real(dp), dimension(no_roots), intent(out):: weights 
+        weights = (/1.160440860204388913d-01,&
                                       2.208511247506771413d-01,&
                                       2.413998275878537214d-01,&
                                       1.946367684464170855d-01,&
@@ -643,7 +645,7 @@ contains
                                       8.745980440465011553d-45/)
                             
 
-    end function gauss_laguerre_30
+    end subroutine gauss_laguerre_30_weights
 
 
 end module neoclassics_module
