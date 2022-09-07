@@ -23,13 +23,13 @@ module neoclassics_module
     type, public :: neoclassics
         character, dimension(4) :: species = (/"e","D","T","a"/)
         !  Species that are considered
-        real(dp), dimension(4) :: densities
+        real(dp), dimension(4) :: densities = 0
         !  Densities of the species that are considered [/m3]
-        real(dp), dimension(4) :: temperatures
+        real(dp), dimension(4) :: temperatures = 0
         !  Temperature of the species that are considered [J]
-        real(dp), dimension(4) :: dr_densities
+        real(dp), dimension(4) :: dr_densities = 0
         !  Radial derivative of the density of the species [/m3]
-        real(dp), dimension(4) :: dr_temperatures
+        real(dp), dimension(4) :: dr_temperatures =0
         !  Radial derivative of the temperature of the species [J]
         real(dp), dimension(no_roots) :: roots = 0
         !  Gauss Laguerre Roots
@@ -77,8 +77,7 @@ module neoclassics_module
         real(dp) :: eps_eff = 1d-5
         !  Epsilon effective (used in neoclassics_calc_D11_mono)
 
-        character, dimension(4) :: species = (/"e","D","T","a"/)
-        !  Species that are considered (not used right now but keep it for now)
+
 
 
     contains
@@ -97,7 +96,7 @@ module neoclassics_module
         procedure :: interpolate_D11_mono => neoclassics_interpolate_D11_mono
 
     end type neoclassics
- 
+
 
 
 
@@ -116,10 +115,10 @@ contains
 
         !! This should be called as the standard constructor
         myneo = neoclassics(eps_eff = eps_eff, iota = iota)
-        call init_profile_values_from_PROCESS(myneo%r_eff)
+        call init_profile_values_from_PROCESS(r_eff, myneo%densities, myneo%temperatures, myneo%dr_densities, myneo%dr_temperatures)
         call gauss_laguerre_30_roots(myneo%roots)
         call gauss_laguerre_30_weights(myneo%weights)
-        
+
         mynu = neoclassics_calc_nu(myneo)
 
         myneo%KT = myneo%calc_KT()
@@ -171,7 +170,7 @@ contains
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         class(neoclassics), intent(in) :: self
-        
+
         real(dp),dimension(4) :: neoclassics_calc_Gamma_flux,densities, temps, dr_temps, dr_densities, z
 
         densities = self%densities
@@ -183,7 +182,7 @@ contains
 
         neoclassics_calc_Gamma_flux = - densities * self%D111 * ((dr_densities/densities - z * self%Er/temps)+ &
                         (self%D112/self%D111-3.0/2.0) * dr_temps/temps )
-        
+
     end function neoclassics_calc_Gamma_flux
 
     function neoclassics_calc_q_flux(self)
@@ -360,7 +359,7 @@ contains
             v = sqrt(2d0 * temp(jj)/mass(jj))
             do kk = 1,4
                 xk = (mass(kk)/mass(jj))*(temp(jj)/temp(kk))
-                
+
                 if (xk < 200.d0) then
                     expxk = exp(-xk)
                 else
@@ -393,7 +392,7 @@ contains
 
         xi = self%roots
         wi = self%weights
-     
+
         D111(1) = sum(2.0d0/sqrt(pi) * self%D11_mono(1,:) * xi**(1.0d0-0.5d0) * wi)
         D111(2) = sum(2.0d0/sqrt(pi) * self%D11_mono(2,:) * xi**(1.0d0-0.5d0) * wi)
         D111(3) = sum(2.0d0/sqrt(pi) * self%D11_mono(3,:) * xi**(1.0d0-0.5d0) * wi)
@@ -418,7 +417,7 @@ contains
 
         xi = self%roots
         wi = self%weights
-     
+
         D112(1) = sum(2.0d0/sqrt(pi) * self%D11_mono(1,:) * xi**(2.0d0-0.5d0) * wi)
         D112(2) = sum(2.0d0/sqrt(pi) * self%D11_mono(2,:) * xi**(2.0d0-0.5d0) * wi)
         D112(3) = sum(2.0d0/sqrt(pi) * self%D11_mono(3,:) * xi**(2.0d0-0.5d0) * wi)
@@ -443,7 +442,7 @@ contains
 
         xi = self%roots
         wi = self%weights
-     
+
         D113(1) = sum(2.0d0/sqrt(pi) * self%D11_mono(1,:) * xi**(3.0d0-0.5d0) * wi)
         D113(2) = sum(2.0d0/sqrt(pi) * self%D11_mono(2,:) * xi**(3.0d0-0.5d0) * wi)
         D113(3) = sum(2.0d0/sqrt(pi) * self%D11_mono(3,:) * xi**(3.0d0-0.5d0) * wi)
@@ -480,7 +479,7 @@ contains
 
         do jj = 1, 4
            do ii = 1, no_roots
-              x = self%roots(ii) 
+              x = self%roots(ii)
               do kk = 1,4
                  xk = (mass(kk)/mass(jj))*(temp(jj)/temp(kk))*x
                  expxk = exp(-xk)
@@ -501,7 +500,7 @@ contains
         !! Initializes the profile_values object from PROCESS' parabolic profiles
         !
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    
+
         use physics_variables, only: ne0,te0,alphan,&
                                      alphat,ti0,ni0,fdeut, dnalp, rminor
         use const_and_precisions, only: keV_
@@ -513,11 +512,11 @@ contains
                     tempD,tempT,tempa,tempe, &
                     dr_tempe, dr_tempT, dr_tempD, dr_tempa,&
                     dr_dense, dr_densT, dr_densD, dr_densa, r
-        real(dp), dimension(4), intent(out):: densities 
+        real(dp), dimension(4), intent(out):: densities
         real(dp), dimension(4), intent(out):: temperatures
-        real(dp), dimension(4), intent(out):: dr_densities 
+        real(dp), dimension(4), intent(out):: dr_densities
         real(dp), dimension(4), intent(out):: dr_temperatures
-        
+
         r = rho * rminor
 
         tempe = te0 * (1-rho**2)**alphat * keV_ ! To SI units bc.. convenience I guess?
@@ -570,13 +569,13 @@ contains
 
     subroutine gauss_laguerre_30_roots(roots)
 
-        !! Sets the gauss Laguerre roots and weights for 30 
+        !! Sets the gauss Laguerre roots and weights for 30
         !! discretization points. Used for integration in this module.
         !! roots
         !
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        
-        real(dp), dimension(no_roots), intent(out):: roots 
+
+        real(dp), dimension(no_roots), intent(out):: roots
         roots= (/4.740718054080526184d-02,&
                                     2.499239167531593919d-01,&
                                     6.148334543927683749d-01,&
@@ -611,8 +610,8 @@ contains
     end subroutine gauss_laguerre_30_roots
 
     subroutine gauss_laguerre_30_weights(weights)
-    
-        real(dp), dimension(no_roots), intent(out):: weights 
+
+        real(dp), dimension(no_roots), intent(out):: weights
         weights = (/1.160440860204388913d-01,&
                                       2.208511247506771413d-01,&
                                       2.413998275878537214d-01,&
@@ -643,7 +642,7 @@ contains
                                       2.842323553402700938d-35,&
                                       1.878608031749515392d-39,&
                                       8.745980440465011553d-45/)
-                            
+
 
     end subroutine gauss_laguerre_30_weights
 

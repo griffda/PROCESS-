@@ -102,7 +102,7 @@ contains
 
     !  These lines switch off tokamak specifics (solenoid, pf coils, pulses etc.).
     !  Are they still up to date? (26/07/22 JL)
-    
+
     !  Build quantities
 
     ohcth = 0.0D0
@@ -501,7 +501,7 @@ contains
     real(dp) :: ne0_max_ECRH, bt_ecrh, powerht_local,pscalingmw_local
 
     ! Calculate sudo density (this limit should be modelled by PROCESS'
-    ! radiation module already and this limit should only be used if no 
+    ! radiation module already and this limit should only be used if no
     ! realistic radiation model is imposed)
     call stdlim(bt,powerht,rmajor,rminor,dnelimt)
 
@@ -895,23 +895,23 @@ contains
 
 
          q_neo = sum(neo_at_rhocore%q_flux*1e-6)
-         gamma_neo =  sum(neo_at_rhocore%Gamma_flux * neo_at_rhocore%profiles%temperatures*1e-6)
+         gamma_neo =  sum(neo_at_rhocore%Gamma_flux * neo_at_rhocore%temperatures*1e-6)
 
-         total_q_neo = sum(neo_at_rhocore%q_flux*1e-6 + neo_at_rhocore%Gamma_flux * neo_at_rhocore%profiles%temperatures*1e-6)
+         total_q_neo = sum(neo_at_rhocore%q_flux*1e-6 + neo_at_rhocore%Gamma_flux * neo_at_rhocore%temperatures*1e-6)
 
          !               Factor 4 to encounter for ion contribution and Er effects
          total_q_neo_e = 2.0d0*2.0d0* (neo_at_rhocore%q_flux(1)*1e-6 + neo_at_rhocore%Gamma_flux(1)* &
-                         neo_at_rhocore%profiles%temperatures(1)*1e-6)
+                         neo_at_rhocore%temperatures(1)*1e-6)
 
          q_neo_e = neo_at_rhocore%q_flux(1)*1e-6
          q_neo_D = neo_at_rhocore%q_flux(2)*1e-6
          q_neo_a = neo_at_rhocore%q_flux(4)*1e-6
          q_neo_T = neo_at_rhocore%q_flux(3)*1e-6
 
-         g_neo_e = neo_at_rhocore%Gamma_flux(1)*1e-6 * neo_at_rhocore%profiles%temperatures(1)
-         g_neo_D = neo_at_rhocore%Gamma_flux(2)*1e-6 * neo_at_rhocore%profiles%temperatures(2)
-         g_neo_a = neo_at_rhocore%Gamma_flux(4)*1e-6 * neo_at_rhocore%profiles%temperatures(4)
-         g_neo_T = neo_at_rhocore%Gamma_flux(3)*1e-6 * neo_at_rhocore%profiles%temperatures(3)
+         g_neo_e = neo_at_rhocore%Gamma_flux(1)*1e-6 * neo_at_rhocore%temperatures(1)
+         g_neo_D = neo_at_rhocore%Gamma_flux(2)*1e-6 * neo_at_rhocore%temperatures(2)
+         g_neo_a = neo_at_rhocore%Gamma_flux(4)*1e-6 * neo_at_rhocore%temperatures(4)
+         g_neo_T = neo_at_rhocore%Gamma_flux(3)*1e-6 * neo_at_rhocore%temperatures(3)
 
          dndt_neo_e = neo_at_rhocore%Gamma_flux(1)
          dndt_neo_D = neo_at_rhocore%Gamma_flux(2)
@@ -922,10 +922,10 @@ contains
          dmdt_neo_fuel = dndt_neo_fuel * afuel * mp_ * 1.0d6 ! mg
          dmdt_neo_fuel_from_e = 4 * dndt_neo_e * sarea * coreradius * afuel * mp_ * 1.0d6  ! kg
 
-         chi_neo_e =  -(neo_at_rhocore%q_flux(1)+neo_at_rhocore%Gamma_flux(1)*neo_at_rhocore%profiles%temperatures(1))/ &
-                     (neo_at_rhocore%profiles%densities(1)* &
-                     neo_at_rhocore%profiles%dr_temperatures(1) + neo_at_rhocore%profiles%temperatures(1)* &
-                     neo_at_rhocore%profiles%dr_densities(1))
+         chi_neo_e =  -(neo_at_rhocore%q_flux(1)+neo_at_rhocore%Gamma_flux(1)*neo_at_rhocore%temperatures(1))/ &
+                     (neo_at_rhocore%densities(1)* &
+                     neo_at_rhocore%dr_temperatures(1) + neo_at_rhocore%temperatures(1)* &
+                     neo_at_rhocore%dr_densities(1))
 
          chi_PROCESS_e = st_calc_eff_chi()
 
