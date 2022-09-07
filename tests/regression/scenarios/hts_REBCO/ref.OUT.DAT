@@ -13,12 +13,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.4.0-508-g4ca7c0e13
+   Tag No. : v2.4.0-526-g5c49d27ce
     Branch : HEAD
-   Git log : Merge branch |test_xdist_integration| into |develop|
- Date/time :  5 Sep 2022 14:51:50 +00:00(hh:mm) UTC
+   Git log : Merge branch |1606-convert-divertor_ode-f90-to-python| into |develop|
+ Date/time :  7 Sep 2022  8:17:38 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-ueya2eyb-project-20-concurrent-0
+  Computer : runner-8r7le1vq-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_hts_REBCO_0/IN.DAT
  Run title : hts model using "croco" conductor based on kit design
