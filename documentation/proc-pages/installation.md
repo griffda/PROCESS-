@@ -171,10 +171,38 @@ Singularity can convert OCI compliant containers into the Singularity Image Form
  
 Singularity will write the container into your current directory, it can then be moved or copied like any file.
  
-Running `singularity shell process.sif` will load a Singularity shell with the dependencies for PROCESS installed. Singularity will automatically mount your home (`$HOME`) directory into the container. Therefore, if PROCESS lives in `~/process` on your system, it will also live inside of `~/process` in the shell environment.
+Running `singularity shell process.sif` will load a Singularity shell with the dependencies for PROCESS installed. Singularity will automatically mount your home (`$HOME`) directory into the container. Therefore, if PROCESS lives in `~/process` on your system, it will also live inside of `~/process` in the shell environment. 
  
 It should also be noted that while the Singularity container has a Python 3.8 by default, it will be impossible to pip install any packages without getting a `Read-only file system` error. This is because you are treated as a non-admin user within the container, and, as such, you cannot update the system Python. For this reason, it is recommended that you still use a virtual environment within the Singularity container (as described above). `pip install <package> --user` will work; however, it will cause conflicts with existing Python packages you have installed outside of your container.
 
+### Steps to use Singularity to install PROCESS on Freia: 
+
+Log onto Freia and make sure the Singularity module is loaded 
+```
+module load singularity/3.7.1
+```
+Pull the Singularity image and enter your git username and password when prompted:
+
+``` 
+singularity pull --docker-login process.sif docker://git.ccfe.ac.uk:4567/process/process/dev:latest 
+``` 
+Make sure you have created [ssh keys](https://docs.gitlab.com/ee/ssh/) and open the Singularity shell:
+
+```
+singularity shell process.sif
+```
+Singularity is an environment which allows you to use dependencies not available on Freia, like the correct versions of Python and cmake. With the shell open, the installation of PROCESS can proceed as usual:
+
+```
+git clone git@git.ccfe.ac.uk:process/process.git
+cd process
+python3 -m venv env --without-pip --system-site-packages
+source env/bin/activate
+export PATH=$PATH:~USERNAME/.local/bin/
+cmake -S . -B build
+cmake --build build
+```
+Now you can run commands within the shell like `process -i tracking/baseline_2018/baseline_2018_IN.DAT` to verify installation and create [batch jobs](http://process.gitpages.ccfe.ac.uk/process/io/utilities-guide/).
 ## Testing
 ### Check for a successful installation
 As a first basic test that the setup has been successful try importing the package from outside of the repository folder in a Python interactive interpreter:
