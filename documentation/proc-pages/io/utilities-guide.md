@@ -29,33 +29,66 @@ The convention for the PREFIX is to use the following format e.g. DEMO1_detailed
 
 ## Batch Jobs
 
-As PROCESS typically runs very fast and does not produce much data output, it is not typically necessary to submit PROCESS runs or any python executables as a batch job to the fusion linux machines. However, the `evaluate_uncertainties.py` tool is one example of a python tool for PROCESS that does run for a long time and does create a lot of output. As the CPU time limit for any non-batch jobs on the fuslw machines is 30 minutes, any decent sampled `evaluate_uncertainties.py` run will need to be submitted as a batch job. (Please note, that if you have forgotten to ubmit you job as a batch job, your job will be terminated after 30 CPU minutes, but as the output is written to file continuously, you should not loose any of the output that has been produced until then.)
+It may be necessary to compute 1000s of PROCESS runs while using the `evaluate_uncertainties.py` tool and this can be achieved by submitting the task as a batch job to [Freia](http://w3.freia.hpc.l/documentation.html). To submit a batch job, first register for a Freia account by contacting your group's administrator. Log onto Freia via the terminal: 
+```
+ssh freia_username@freia021.hpc.L 
+``` 
+[Install PROCESS via the Singularity Container](http://process.gitpages.ccfe.ac.uk/process/installation/). You need to load the Singularity 3.7.1 module within Freia 'module load singularity/3.7.1' and [add it to your environment](http://w3.freia.hpc.l/faq.html#modules) so that it is automatically loaded each time you log in. Create and/or use the '`common/scratch/`' directories in your Freia environment to contain the job files. To execute the `evaluate_uncertainties.py` script from within the Singularity shell, create two files: `primary.sh` and `secondary.sh`. 
 
-To submit a batch job, first create a file called e.g. `myjob.cmd`. It should contain the following content
+The first script, `primary.sh`, is used to launch the Singularity image and execute the second script, `secondary.sh`, within it. `primary.sh` should contain the following:
+
+``` 
+#!/bin/sh                                                                                                
+singularity exec /home/freia_username/path_to_process_sif/process.sif bash secondary.sh
+```
+
+ `secondary.sh` should contain the commands you wish to execute within the Singularity shell (the CLI commands required to execute PROCESS and utilities scripts). For example, it could contain:
+```
+#!bin/sh                                                                                                 
+source /home/freia_username/path_to_process/env/bin/activate
+python /home/freia_username/path_to_process/process/uncertainties/evaluate_uncertainties.py -f /home/freia_username/path_to_uncertainty_data/config_evaluate_uncertainties.json
+```
+`primary.sh` may require permissions before you can execute it and this can be done by entering the following command from within the containing directory:
+```
+chmod +x primary.sh
+```
+You can test these files by executing `primary.sh` in the terminal:
+ ```
+ ./primary.sh
+ ```
+  and observing the output.
+
+Now you can create a job file '`common/scratch/main.job`'. This file contains instructions for Freia to execute `primary.sh` and it should include:
 
 ```
-# @ executable = evaluate_uncertainties.py
-# @ arguments
+# @ jobtype = evaluate_uncertainties.py
+# @ max_processors = 2
+# @ min_processors = 1
+# @ executable = primary.sh
 # @ input = /dev/null
-# @ output = /ABSOLUTE_PATH_TO_WORK_DIR/ll.out
-# @ error = /ABSOLUTE_PATH_TO_WORK_DIR/ll.err
-# @ initialdir = /ABSOLUTE_PATH_TO_WORK_DIR/
-# @ notify_user = USERNAME
+# @ output = /home/freia_username/common/scratch/ll.out
+# @ error = /home/freia_username/common/scratch/ll.err
+# @ initialdir = /home/freia_username/path_to_work_dir
+# @ notify_user = freia_username
 # @ notification = complete
 # @ queue
-module use /home/PROCESS/modules
-module unload python
-module load python/3.3
-module load process/master
 ```
 
-Once you have created the file you can submit a patch job by typing
-
-`llsubmit myjob.cmd`
+Finally, you can submit the batch job by entering the following command in the Freia terminal:
+```
+llsubmit main.job
+``` 
+Note - it may be necessary to first manually create the `ll.out` and `ll.err` files in the appropriate directory or the job will fail.
 
 While your job is running you can keep track of its progress by typing `llq` or `xloadl`. More information and help with troubleshooting can be found under http://fusweb1.fusion.ccfe.ac.uk/computing/funfaq/ll/.
 
-As the `uncertainties.nc` output file can get quite large, it might by indicated to write the output to the `/sratch` or `/tmp` directories as they have faster I/O. Please remember to copy your results into your home directory afterwards, as these directories are not backed up and will be frequently cleaned.
+As the `uncertainties_data.h5` output file can get quite large, it may be best practice to write the output to the `/sratch` or `/tmp` directories as they have faster I/O. Please remember to copy your results into your home directory afterwards, as these directories are not backed up and will be frequently cleaned. 
+
+You can copy directories and files from Freia to your local machine, and vice-versa, using the 'secure copy' command:
+
+```
+scp freia_username@freia021.hpc.L:/home/freia_username/path_to_file/uncertainties_data.h5 /home/username/path_to_destination/uncertainties_data.h5
+```
 
 ## Compare Input Files
 
@@ -1359,107 +1392,119 @@ The output can be defined in any visual data format supported by pyplot, the lab
 
 # Uncertainty Tools
 
-In this section, we explain the usage of the PROCESS tools to both evaluate the uncertainties of a design point as well as display tham using a simple plotting facility.
+In this section, we explain the usage of the PROCESS tools to both evaluate the uncertainties of a design point and display them using a simple plotting facility.
 
-Note that the uncertainty evaluation tool has a significantly longer run time than typical evaluations of PROCESS design points and therefore should only be used once a suitable design point has been found. As only user selected output data is kept, the user is recommended to put careful thought into the list of needed output variables.
+The uncertainty evaluation tool has a significantly longer run time than typical evaluations of PROCESS design points and therefore should only be used once a suitable design point has been found. As only user selected output data is kept, the user is recommended to put careful thought into the list of needed output variables.
 
 ## `evaluate_uncertainties.py`
 
-This program evaluates the uncertainties of a single PROCESS design point by use of Monte Carlo method as described in[^5]. It takes a set of uncertain parameters as input, each of which can have either Guassian or a flat ('top-hat') probability distribution. These are specified together with optional details about the PRoCESS run in a configuration file. Additionally, and `IN.DAT` file desribing the relevant design point needs to be present. (If necessary this can be created from an `MFILE.DAT` by using the `write_new_indat.py` tool.)
+This program evaluates the uncertainties of a single PROCESS design point by use of Monte Carlo method as described in[^5]. It is recommended to submit this script as a [batch job](#batch-jobs) to Freia when 1000s of sample points are required.
 
-When running the `evaluate_uncetainties.py` tool, optional arguments are:
+### Input
 
-```
-#to specify another location/name for the configfile
-evaluate_uncertainties.py -f CONFIGFILE
+This script requires two files to run:
 
-Use -h or --help for help
-```
+* `config_evaluate_uncertainties.json`: A configuration file which details the uncertain parameters under investigation. These are described by probability distributions such as Gaussian, lower half Gaussian, flat top, etc.
 
-**Input**: `evaluate_uncertainties.json`, `IN.DAT` (or an alterantive input file as specified in the config file)
+* `IN.DAT`: A PROCESS input file which describes the relevant design point. The path to this file should be specified in the `config_evaluate_uncertainties.json` file.
 
-**Output**: `uncertainties.nc` (This file (NetCDF format) can be visualised using the `display_uncertainties.py` tool), `Readme.txt`, `process.log`, `UQ_error_summary.txt`, PROCESS otput from th elast run.
-
-The configuration file `evaluate_uncertainties.json` uses the JSON format (www.json.org), and has the following style
+The configuration file `config_evaluate_uncertainties.json` uses the [JSON format](https://www.json.org), and has the following style:
 
 ```
 {
-	"_description": "Config file for uncertainties evaluation",
-	"_author": "Hanni Lux",
+    "_description": "Configuration file for uncertainties evaluation in PROCESS",
+    "_author": "Process McCoder",
+    "config": {
+        "runtitle": "testrun for uncertainty tool",
+        "IN.DAT_path": "path_to_input_file/IN.DAT",
+        "working_directory": "path_to_output_folder/",
+        "pseudorandom_seed": 16,
+        "no_iter": 1
+    },
+    "uncertainties": [
+        {
+            "Varname": "boundu(9)",
+            "Errortype": "LowerHalfGaussian",
+            "Mean": 1.2,
+            "Std": 0.1
+        },
+        {
+            "Varname": "boundu(10)",
+            "Errortype": "LowerHalfGaussian",
+            "Mean": 1.2,
+            "Std": 0.1
+        },
+        {
+            "Varname": "coreradius",
+            "Errortype": "Gaussian",
+            "Mean": 0.6,
+            "Std": 0.15
+        }
+    ],
+    "output_vars": [],
+    "no_scans": 1,
+    "no_samples": 100,
+    "output_mean": 8056.98,
+    "figure_of_merit": "rmajor",
+    "vary_iteration_variables": false,
+    "latin_hypercube_level": 4
+    ...
 
-	"config": {
-		  "runtitle": "testrun for uncertainty tool on DEMO2",
-		  "IN.DAT_path": "IN.DAT_demo2",
-		  "process_bin": "~PROCESS/master/process.exe",
-		  "working_directory": "Run1",
-		  "pseudorandom_seed": 2
-		  },
-	"uncertainties": [
-          	     {
-               	     "Varname":"flhthresh",
-               	     "Errortype":"Gaussian",
-               	     "Mean":1.0,
-               	     "Std":0.05
-          	     },
-          	     {
-               	     "Varname":"coreradius",
-               	     "Errortype":"Uniform",
-               	     "Lowerbound":0.6,
-               	     "Upperbound":0.9
-          	     },
-          	     {
-               	     "Varname":"etanbi",
-               	     "Errortype":"Relative",
-               	     "Mean":0.3,
-               	     "Percentage":10.0
-          	     },
-          	     {
-               	     "Varname":"boundu(9)",
-               	     "Errortype":"LowerHalfGaussian",
-               	     "Mean":1.2,
-               	     "Std":0.1
-          	     },
-          	     {
-               	     "Varname":"boundl(103)",
-               	     "Errortype":"UpperHalfGaussian",
-               	     "Mean":1.0,
-               	     "Std":0.25
-          	     }
-	     	],
-     "output_vars": [ "rmajor", "dene", "te", "bt"],
-     "no_samples": 1000
-}
 ```
+By convention, we have designated metadata about the PROCESS runs as having a preceding underscore to distinguish these values from the other configuration data used directly by the tools or PROCESS itself. Furthermore, all the optional attributes that can be changed when running PROCESS from most Python utilities, e.g. `run_process.py`, can be specified in the "config" section. All these values have default values and do not need to be set.
 
-By convention, we have designated metadata about the PROCESS runs as having a preceding underscore to distinguish these values from the other configuration data used directly by the tools or PROCESS itself. Furthermore, all the optional attributes that can be changed when running PROCESS from most Python utilities, like e.g. `run_process.py`, can be specified in the "config" section. All these values have default values and do not need to be set.
+- `runtitle`: is a one line description of the purpose of the run to be saved in `README.txt` in the working directory as well as the `runtitle` parameter in the `OUT.DAT` and `MFILE.DAT` files. Per default it is empty.
 
-`runtitle` is a one line description of the purpose of the run to be saved in `Readme.txt` in the working directory as well as the `runtitle` parameter in the `OUT.DAT` and `MFILE.DAT` files. Per default it is empty.
+- `IN.DAT_path:` is the name/path of the `IN.DAT` file describing the design point. If not specified it is assumed to be `IN.DAT`.
 
-`IN.DAT_path` is the name/path of the `IN.DAT` file describing the design point. If not specified it is assumed to be `IN.DAT`.
+- `working_directory`: directs to the working directory in which PROCESS will be executed. It is recommended to create a directory for each run as this can aide organisation while several runs are executed with slightly different configs.
 
-`process_bin` is the process binary that should be used. The default assummes that the user works on the CCFE Fusion Linux machines and has executed the module commends for PROCESS as described in the Userguide. Then either the master or development branch of process is being used depending on which module has been loaded.
+- `pseudorandom_seed`: is the value of the seed for the random number generator. It can be any integer value. If it is not specified, its default value is taken from the system clock.
 
-`working_directory` represents the working directory, in which PROCESS will be executed, in case this is supposed to be different to the current directory which can be helpfule when executing several runs with slightly different setups.
+- `no_iter`: sets `Niter`, the maximum number of retries that the tool will attempt if PROCESS fails to find a feasible solution. The default value is 10, but this can be changed depending on the user's preference for speed and solutions. 
 
-`pseudorandom_seed` is the value of the seed for the random number generator. It can be any integer value. If it is not specified, its default value is taken from the system clock.
+- `factor`: varies the start values of the iteration variables by a `factor` of the original values. This does not change the physical meaning of the input file, but can help the solver to find a better starting point for its iteration. The default value is `factor=1.5`.
 
-Other parameters that can be specified in the config section are `Niter` and `factor`. Both do not typically need t be changed by the user. `Niter` is the maximum number of retires that the tool will attpempt, if PROCESS fails o find a feasible solution. This means that the tool varies the start values of the iteration variables within a factor given by `factor` of the original values as this does not change the physical meaning of the input file, but can help the solver to find a better starting point for its iteration. Their default values are `Niter=10` and `factor=1.5`.
+- `uncertainties`: any uncertain parameters should be specified in the `uncertainties` section. Each parameter is specified in its own sub-directory in the config file example above. For each entry, the `Varname` and `Errortype` need to be specified and each `Errorrtype` must be include the appropriate boundaries, listed below:
+ - `Errortype` :
+    - `Gaussian` (`Mean` and `Std`)
+    - `LowerHalfGaussian` (`Mean` and `Std`)
+    - `UpperHalfGaussian` (`Mean` and `Std`)
+    - `Uniform` (`Lowerbound` and `Upperbound`)
+    - `Relative` (`Mean` and `Percentage`)
 
-Any uncertain parameters should be specified in the "uncertainties" section. Each parameter is specified in its own sub-directory as shown in the example. For each, the `Varname` and `Errortype` need to be specified as well as the `Mean` and standard deviation `Std` for Gaussian type errors as well as `Lowerbound` and `Upperbound` for Uniform or `Mean` and a `Percentage` for Relative errors. Apart from a standard Gaussian distribution, also a lower and an upper half Gaussian distribution are available that have a sharp but off at the mean. Please note, that *all distributions are being cut off at the boundaries for the input alues for PROCESS!* At least one uncertain parameter has to be specified for the program to run and technically there is no uppoer limit as to how many uncertain parameters can be used. However, for large numbers of uncertain parameters it is recommended to increase the number of sampling points.
 
-There are a number of other parameters in the configuration file that can be specified:
+    Please note that *all distributions are cut off at the boundaries for the input values for PROCESS*! At least one uncertain parameter has to be specified for the program to run and there is no upper limit to how many uncertain parameters can be used. However, for large numbers of uncertain parameters it is recommended to increase the number of sampling points.
 
-`output_vars` is a list of strings of output variable names in the `MFILE.DAT`. These are the variables saved. This list is empty by default and it is therefore crucial for the user to specify the variables of interest because otherwise the tool will not run.
 
-`no_samples` sets the number of sample points in the Monte Carlo method. It is by default set to its recommended minimum value of 1000, but the user should contemplate higher values especially if a large number of uncertain parameters is involved.
+- `no_samples`: sets the number of sample points in the Monte Carlo method. It is by default set to its recommended minimum value of 1000, but the user should contemplate higher values especially if a large number of uncertain parameters are involved.
 
-Two parameters that ca be further set in the config file (but are not recommended to be changed) are the number of scan point `no_scans` which is by default 5 and the number of allowed unfeasible points in a scan `no_allowed_unfeasible` which is 2 as recommended in [^5].
+- `no_scans`: can be used to set the number of scan runs in each MC sample point. Only the last scan point is stored in the data ouput. Older versions of the code made more use of this feature and it is recommended to set this to 1.
 
-As the distributions of the uncertainties do not have to be represented by a simple Gaussian, reducing the output of two simple numbers like a mean and a standard deviation is not typically possible. Therefore, we have decided to keep all sampled points in the output files. However, to reduce the amount of data we have decided to only store the user specified parameters in the form of a NetCDF binary file. Given that a scan is performed at each sample points, only the last of these scan points is ever kept for evaluation. (there is an option for developers to keep all the data for debugging purposes. However, this should typically not be sued in production runs.) These files can be visualised using the `display_uncertainties.py` tool.
+- `no_allowed_unfeasible`: is the number of allowed unfeasible points in a run which is set as 2  by default as recommended in [^5].
 
-The `UQ_error_summary.txt` file is an ascii text file summarising all values of the uncertain parameter inputs, the normalised values of iteration variables (labelled "n_"variable name) and whether their runs have found a feasible solution (`ifail=1`), have encountered any process erros (`ifail=-1`, `error_status=3`) or whether they have not found a feasible solution. This file can be used to analyse parameter spaces prone to errors.
+- `vary_iteration_variables`: This enables a shuffle of the iteration variables in the Monte Carlo method. By default it is set to false and may be set to true to recreate old runs of the MC code.
+
+### Output 
+
+- `uncertainties_data.h5`: This file contains the output variables of each successfully converged PROCESS run generated by the `evaluate_uncertainties.py` script. PROCESS output variables can be plotted using using the `hdf_to_scatter_plot.py` script. This file uses the [HDF format](https://www.hdfgroup.org/solutions/hdf5/) and requires [software](https://www.hdfgroup.org/downloads/hdfview/) to view its contents in a human legible format.
+
+- `UQ_error_summary.txt`: This file is an ascii text file summarising all values of the uncertain parameter inputs, the normalised values of iteration variables (labelled "n_"variable name) and whether their runs have found a feasible solution (`ifail=1`), have encountered any process erros (`ifail=-1`, `error_status=3`) or whether they have not found a feasible solution. This file can be used to analyse parameter spaces prone to errors.
+
+- `README.txt`, `process.log`, `MFILE.DAT`, `OUT.DAT`, `SIG_TF.DAT`, `OPT.DAT`, `PLOT.DAT`: Typical PROCESS output generated by the last run.
+
+### Running the script
+
+The `evaluate_uncertainties.py` script is run with with the option `-f` to specify the path to the `config_evaluate_uncertainties.json` file:
+
+```
+python3 process/uncertainties/evaluate_uncertainties.py -f process/uncertainties/config_evaluate_uncertainties.json
+```
+The uncertainty analysis technique used can be specified using '`-m monte_carlo/sobol_method/morris_method`' but the default is Monte Carlo. Use `-h` or `--help` for help.
 
 ## `display_uncertainties.py`
+
+Note: The untertainties tool no longer produces an .nc file as output and this script has not been updated to reflect this change.
 
 This is a utility to display the output file `uncertainties.nc` created by the `evaluate_uncertainties.py` tool described above.
 
