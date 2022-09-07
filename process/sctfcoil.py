@@ -6081,8 +6081,6 @@ class Sctfcoil:
 
     def tf_averaged_turn_geom(self, jwptf, thwcndut, thicndut, i_tf_sc_mat):
         """
-        TN: This subroutine has not yet been converted into Python
-        due to numerical funny business observed even when calling thus
         subroutine straight from Python, see comments in tf_averaged_turn_geom_wrapper
         Authors : J. Morris, CCFE
         Authors : S. Kahn, CCFE
