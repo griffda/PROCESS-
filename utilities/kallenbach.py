@@ -13,8 +13,10 @@ from process.fortran import physics_variables
 from process.fortran import div_kal_vars
 from process.fortran import impurity_radiation_module
 from process.fortran import divertor_ode
+
 from process.fortran import read_and_get_atomic_data
-from process.fortran import read_radiation
+from process.fortran import plot_radiation
+
 from process.fortran import global_variables
 from process.utilities import f2py_string_patch
 from process.main import SingleRun
@@ -99,13 +101,13 @@ def kallenbach_paper():
     Compare to Figure 2 in Kallenbach 2016"""
     )
 
-    read_radiation.plot_lz()
+    plot_radiation.plot_lz()
     logger.info(
         """Radiative loss functions - saved in "radiative_loss_functions.txt"
     Compare to Figure 3 in Kallenbach 2016."""
     )
 
-    read_radiation.plot_z()
+    plot_radiation.plot_z()
     logger.info(
         """Reads mean Z and mean Z^2 - saved in "mean_Z.tx"
     Compare to plots such as He_z.ps etc in /home/mkovari/sol/kallenbach/divertor_ode/LZ_NON_CORONA."""

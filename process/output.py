@@ -62,12 +62,6 @@ def write(models, outfile):
     models.pulse.run(output=True)
     ft.physics_module.outtim(outfile)
 
-    # Divertor Model
-    if ft.global_variables.verbose == 1:
-        verbose_logical = True
-    else:
-        verbose_logical = False
-
     ft.process_output.ovarin(
         ft.constants.mfile,
         "kallenbach_switch",
@@ -75,25 +69,7 @@ def write(models, outfile):
         ft.div_kal_vars.kallenbach_switch,
     )
     if ft.div_kal_vars.kallenbach_switch == 1:
-        (
-            ft.div_kal_vars.psep_kallenbach,
-            ft.div_kal_vars.teomp,
-            ft.div_kal_vars.neomp,
-        ) = ft.divertor_ode.divertor_kallenbach(
-            rmajor=ft.physics_variables.rmajor,
-            rminor=ft.physics_variables.rminor,
-            bt=ft.physics_variables.bt,
-            plascur=ft.physics_variables.plascur,
-            q=ft.physics_variables.q,
-            verboseset=verbose_logical,
-            ttarget=ft.div_kal_vars.ttarget,
-            qtargettotal=ft.div_kal_vars.qtargettotal,
-            targetangle=ft.div_kal_vars.targetangle,
-            unit_test=False,
-            bp=ft.physics_variables.bp,
-            outfile=ft.constants.nout,
-            iprint=1,
-        )
+        models.divertor_ode.run(output=True)
 
     else:
         # Old Divertor Model: Comment this out MDK 30/11/16

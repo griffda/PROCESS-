@@ -36,13 +36,14 @@ setup_kwargs = {
     "test_suite": "pytest",
     "install_requires": [
         "numpy>=1.19.0,<1.22.1",
+        "scipy>=0.19.1",
         "importlib-resources ; python_version<'3.7'",
         "pandas",
         "tables",
         "SALib",
         "numba>=0.55.2",
     ],
-    "extras_require": {"test": ["pytest", "scipy"]},
+    "extras_require": {"test": ["pytest"]},
     "entry_points": {
         "console_scripts": [
             "process_script=process.process_script_advanced:main",

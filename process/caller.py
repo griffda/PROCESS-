@@ -108,34 +108,9 @@ class Caller:
             # KIT HCLL model
             ft.kit_hcll_module.kit_hcll(ft.constants.nout, 0)
 
-        # Divertor Model
-        if ft.global_variables.verbose == 1:
-            verbose_logical = True
-        else:
-            verbose_logical = False
-            # TODO These aren't used
-
         # New divertor model
         if ft.div_kal_vars.kallenbach_switch == 1:
-            (
-                ft.div_kal_vars.psep_kallenbach,
-                ft.div_kal_vars.teomp,
-                ft.div_kal_vars.neomp,
-            ) = ft.divertor_ode.divertor_kallenbach(
-                rmajor=ft.physics_variables.rmajor,
-                rminor=ft.physics_variables.rminor,
-                bt=ft.physics_variables.bt,
-                plascur=ft.physics_variables.plascur,
-                q=ft.physics_variables.q,
-                verboseset=verbose_logical,
-                ttarget=ft.div_kal_vars.ttarget,
-                qtargettotal=ft.div_kal_vars.qtargettotal,
-                targetangle=ft.div_kal_vars.targetangle,
-                unit_test=False,
-                bp=ft.physics_variables.bp,
-                outfile=ft.constants.nout,
-                iprint=0,
-            )
+            self.models.divertor_ode.run(output=False)
         elif ft.div_kal_vars.kallenbach_switch == 0:
             # Old Divertor Model ! Comment this out MDK 30/11/16
             self.models.divertor.run(output=False)

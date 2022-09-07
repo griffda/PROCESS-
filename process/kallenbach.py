@@ -7,13 +7,13 @@ Process run (ie VMCON won't run).
 
 import logging
 import numpy
+from process.divertor_ode import DivertorOde
 from process.fortran import (
     physics_variables,
     constants,
     physics_module,
     process_output as po,
     div_kal_vars,
-    divertor_ode,
 )
 
 logger = logging.getLogger(__name__)
@@ -62,7 +62,7 @@ def kallenbach_scan(plasma_geom):
         1.33542 * (2 * numpy.pi * physics_variables.rminor) / constants.rmu0
     )
 
-    b_pol = physics_module.bpol(
+    physics_variables.bp = physics_module.bpol(
         physics_variables.itart,
         physics_variables.plascur,
         physics_variables.q,
@@ -155,21 +155,7 @@ def kallenbach_scan(plasma_geom):
         po.oblnkl(constants.nout)
         po.ovarin(constants.nout, "Scan point number", "(iscan)", i + 1)
 
-        divertor_ode.divertor_kallenbach(
-            rmajor=physics_variables.rmajor,
-            rminor=physics_variables.rminor,
-            bt=physics_variables.bt,
-            plascur=physics_variables.plascur,
-            q=physics_variables.q,
-            verboseset=False,
-            ttarget=div_kal_vars.ttarget,
-            qtargettotal=div_kal_vars.qtargettotal,
-            targetangle=div_kal_vars.targetangle,
-            unit_test=False,
-            bp=b_pol,
-            outfile=constants.nout,
-            iprint=1,
-        )
+        DivertorOde().run()
 
         if div_kal_vars.kallenbach_scan_var == 0:
             div_kal_vars.ttarget += step
