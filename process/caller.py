@@ -67,11 +67,12 @@ class Caller:
         # call startup(ft.constants.nout,0)  !  commented-out for speed reasons
 
         # Toroidal field coil model
+
         self.models.tfcoil.run()
 
         # Toroidal field coil superconductor model
         if ft.tfcoil_variables.i_tf_sup == 1:
-            ft.sctfcoil_module.tfspcall(ft.constants.nout, 0)
+            self.models.sctfcoil.run(output=False)
 
         # Poloidal field and central solenoid model
         self.models.pfcoil.run()

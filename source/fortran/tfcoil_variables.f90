@@ -169,9 +169,9 @@ module tfcoil_variables
   !! upper critical field of GL_nbti
   real(dp) :: t_crit_nbti
   !! critical temperature of GL_nbti
-  real(kind(1.0D0)) :: max_force_density
+  real(dp) :: max_force_density
   !! Maximal (WP averaged) force density in TF coils at 1 point. (MN/m3)
-  real(kind(1.0D0)) :: fcutfsu
+  real(dp) :: fcutfsu
   !! copper fraction of cable conductor (TF coils)
   !! (iteration variable 59)
   real(dp) :: fhts

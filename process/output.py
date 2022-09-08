@@ -87,7 +87,7 @@ def write(models, outfile):
 
     # Toroidal field coil superconductor model
     if ft.tfcoil_variables.i_tf_sup == 1:
-        ft.sctfcoil_module.tfspcall(outfile, 1)
+        models.sctfcoil.run(output=True)
 
     # Tight aspect ratio machine model
     if ft.physics_variables.itart == 1 and ft.tfcoil_variables.i_tf_sup != 1:

@@ -87,6 +87,7 @@ from process.io.process_funcs import (
 )
 from process.vacuum import Vacuum
 from process.water_use import WaterUse
+from process.sctfcoil import Sctfcoil
 
 os.environ["PYTHON_PROCESS_ROOT"] = os.path.join(os.path.dirname(__file__))
 
@@ -482,7 +483,8 @@ class Models:
         self.pfcoil = PFCoil(cs_fatigue=self.cs_fatigue)
         self.power = Power()
         self.build = Build()
-        self.tfcoil = TFcoil(build=self.build)
+        self.sctfcoil = Sctfcoil()
+        self.tfcoil = TFcoil(build=self.build, sctfcoil=self.sctfcoil)
         self.divertor = Divertor()
         self.structure = Structure()
         self.plasma_geom = PlasmaGeom()

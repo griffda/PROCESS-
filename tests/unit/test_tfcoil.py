@@ -1,6 +1,7 @@
 """Unit and Integration tests for tfcoil.f90."""
 
 from typing import NamedTuple
+from process.sctfcoil import Sctfcoil
 import pytest
 
 from process.tfcoil import TFcoil
@@ -21,7 +22,7 @@ def tfcoil():
     :return tfcoil: initialised TFcoil object
     :type tfcoil: process.tfcoil.TFcoil
     """
-    return TFcoil(build=Build())
+    return TFcoil(build=Build(), sctfcoil=Sctfcoil())
 
 
 @pytest.mark.parametrize(
