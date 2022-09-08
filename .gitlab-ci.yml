@@ -262,7 +262,9 @@ baseline_2019-py38:
     extends: .test_template
     stage: testing
     script:
-        - process -i tracking/baseline_2019/baseline_2019_IN.DAT
+        # - process -i tracking/baseline_2019/baseline_2019_IN.DAT
+        # Disable baseline 2019 as part of hotfix #1748
+        - touch tracking/baseline_2019/baseline_2019_MFILE.DAT
     artifacts:
         paths:
             - tracking/baseline_2019/baseline_2019_MFILE.DAT
@@ -350,7 +352,7 @@ tracking_rtv:
         - git clone git@git.ccfe.ac.uk:tnunn/process-tracking-database.git ${CI_PROJECT_DIR}/process_rtv_data/
     # write new tracking json files for each of our baseline tracking jobs
         - python ${CI_PROJECT_DIR}/tracking/tracking_data.py track ${CI_PROJECT_DIR}/process_rtv_data/ --mfile ${CI_PROJECT_DIR}/tracking/baseline_2018/baseline_2018_MFILE.DAT
-        - python ${CI_PROJECT_DIR}/tracking/tracking_data.py track ${CI_PROJECT_DIR}/process_rtv_data/ --mfile ${CI_PROJECT_DIR}/tracking/baseline_2019/baseline_2019_MFILE.DAT
+        # - python ${CI_PROJECT_DIR}/tracking/tracking_data.py track ${CI_PROJECT_DIR}/process_rtv_data/ --mfile ${CI_PROJECT_DIR}/tracking/baseline_2019/baseline_2019_MFILE.DAT
         - python ${CI_PROJECT_DIR}/tracking/tracking_data.py track ${CI_PROJECT_DIR}/process_rtv_data/ --mfile ${CI_PROJECT_DIR}/tracking/starfire_MFILE.DAT
     # create the new tracking dashboard
         - python ${CI_PROJECT_DIR}/tracking/tracking_data.py plot ${CI_PROJECT_DIR}/process_rtv_data/ --out ${CI_PROJECT_DIR}/tracking.html
