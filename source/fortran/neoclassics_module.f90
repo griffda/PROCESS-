@@ -14,237 +14,235 @@ module neoclassics_module
 
     implicit none
 
-    private
+    public
     integer, parameter :: no_roots = 30 ! Number of Gauss laguerre roots
+    
+    character, dimension(4) :: species = (/"e","D","T","a"/)
+    !  Species that are considered
+    real(dp), dimension(4) :: densities 
+    !  Densities of the species that are considered [/m3]
+    real(dp), dimension(4) :: temperatures
+    !  Temperature of the species that are considered [J]
+    real(dp), dimension(4) :: dr_densities 
+    !  Radial derivative of the density of the species [/m3]
+    real(dp), dimension(4) :: dr_temperatures
+    !  Radial derivative of the temperature of the species [J]
+    real(dp), dimension(no_roots) :: roots = 0
+    !  Gauss Laguerre Roots
+    real(dp), dimension(no_roots) :: weights = 0
+    !  Gauss Laguerre Weights
+    real(dp), dimension(4,no_roots) :: nu = 0
+    !  90-degree deflection frequency on GL roots
+    real(dp), dimension(4,no_roots) :: nu_star = 0
+    !  Dimensionless deflection frequency
+    real(dp), dimension(4) :: nu_star_averaged = 0
+    !  Maxwellian averaged dimensionless 90-degree deflection frequency for electrons (index 1) and ions (index 2)
+    real(dp), dimension(4,no_roots) :: vd = 0
+    !  Drift velocity on GL roots
+    real(dp), dimension(4,no_roots) :: KT = 0
+    !  Thermal energy on GL roots
+    real(dp) :: Er = 0.0
+    !  Radial electrical field [V/m]
+    real(dp) :: iota = 1.0d0
+    !  Iota (1/safety factor)
+    real(dp), dimension(4,no_roots) :: D11_mono = 0
+    !  Radial monoenergetic transport coefficient on GL roots (species dependent)
+    real(dp), dimension(4,no_roots) :: D11_plateau = 0
+    !  Radial monoenergetic transport coefficient on GL roots (species dependent)
+    real(dp), dimension(:), allocatable :: nu_star_mono_input
+    !  Radial monoenergetic transport coefficient as given by the stellarator input json
+    !  on GL roots (species dependent)
+    real(dp), dimension(:), allocatable :: D11_star_mono_input
+    !  Radial monoenergetic transport coefficient as given by the stellarator input json
+    !  as function of nu_star, normalized by the plateau value.
+    real(dp), dimension(:), allocatable :: D13_star_mono_input
+    !  Toroidal monoenergetic transport coefficient as given by the stellarator
+    !  input json file as function of nu_star, normalized by the banana value.
+    real(dp), dimension(4) :: D111 = 0
+    !  Radial integrated transport coefficient (n=1) (species dependent)
+    real(dp), dimension(4) :: D112 = 0
+    !  Radial integrated transport coefficient (n=2) (species dependent)
+    real(dp), dimension(4) :: D113 = 0
+    !  Radial integrated transport coefficient (n=3) (species dependent)
+    real(dp), dimension(4) :: q_flux = 0
+    !  energy transport flux (J/m2)
+    real(dp), dimension(4) :: Gamma_flux = 0
+    !  energy flux from particle transport
+    real(dp), dimension(no_roots) :: D31_mono = 0
+    !  Toroidal monoenergetic transport coefficient
+    real(dp) :: eps_eff = 1d-5
+    !  Epsilon effective (used in neoclassics_calc_D11_mono)
+    real(dp) :: r_eff = 0
 
-    public :: init_neoclassics
-
-
-    type, public :: neoclassics
-        character, dimension(4) :: species = (/"e","D","T","a"/)
-        !  Species that are considered
-        real(dp), dimension(4) :: densities = 0
-        !  Densities of the species that are considered [/m3]
-        real(dp), dimension(4) :: temperatures = 0
-        !  Temperature of the species that are considered [J]
-        real(dp), dimension(4) :: dr_densities = 0
-        !  Radial derivative of the density of the species [/m3]
-        real(dp), dimension(4) :: dr_temperatures =0
-        !  Radial derivative of the temperature of the species [J]
-        real(dp), dimension(no_roots) :: roots = 0
-        !  Gauss Laguerre Roots
-        real(dp), dimension(no_roots) :: weights = 0
-        !  Gauss Laguerre Weights
-        real(dp), dimension(4,no_roots) :: nu = 0
-        !  90-degree deflection frequency on GL roots
-        real(dp), dimension(4,no_roots) :: nu_star = 0
-        !  Dimensionless deflection frequency
-        real(dp), dimension(4) :: nu_star_averaged = 0
-        !  Maxwellian averaged dimensionless 90-degree deflection frequency for electrons (index 1) and ions (index 2)
-        real(dp), dimension(4,no_roots) :: vd = 0
-        !  Drift velocity on GL roots
-        real(dp), dimension(4,no_roots) :: KT = 0
-        !  Thermal energy on GL roots
-        real(dp) :: Er = 0.0
-        !  Radial electrical field [V/m]
-        real(dp) :: iota = 1.0d0
-        !  Iota (1/safety factor)
-        real(dp), dimension(4,no_roots) :: D11_mono = 0
-        !  Radial monoenergetic transport coefficient on GL roots (species dependent)
-        real(dp), dimension(4,no_roots) :: D11_plateau = 0
-        !  Radial monoenergetic transport coefficient on GL roots (species dependent)
-        real(dp), dimension(:), allocatable :: nu_star_mono_input
-        !  Radial monoenergetic transport coefficient as given by the stellarator input json
-        !  on GL roots (species dependent)
-        real(dp), dimension(:), allocatable :: D11_star_mono_input
-        !  Radial monoenergetic transport coefficient as given by the stellarator input json
-        !  as function of nu_star, normalized by the plateau value.
-        real(dp), dimension(:), allocatable :: D13_star_mono_input
-        !  Toroidal monoenergetic transport coefficient as given by the stellarator
-        !  input json file as function of nu_star, normalized by the banana value.
-        real(dp), dimension(4) :: D111 = 0
-        !  Radial integrated transport coefficient (n=1) (species dependent)
-        real(dp), dimension(4) :: D112 = 0
-        !  Radial integrated transport coefficient (n=2) (species dependent)
-        real(dp), dimension(4) :: D113 = 0
-        !  Radial integrated transport coefficient (n=3) (species dependent)
-        real(dp), dimension(4) :: q_flux = 0
-        !  energy transport flux (J/m2)
-        real(dp), dimension(4) :: Gamma_flux = 0
-        !  energy flux from particle transport
-        real(dp), dimension(no_roots) :: D31_mono = 0
-        !  Toroidal monoenergetic transport coefficient
-        real(dp) :: eps_eff = 1d-5
-        !  Epsilon effective (used in neoclassics_calc_D11_mono)
-
+    
 
 
+contains 
+    subroutine init_neoclassics_module
+        !! Initialise module variables
+        implicit none
+        species = (/"e","D","T","a"/)
+        densities = 0
+        temperatures = 0
+        dr_densities = 0
+        dr_temperatures =0
+        roots = 0
+        weights = 0
+        nu = 0
+        nu_star = 0
+        nu_star_averaged = 0
+        vd = 0
+        KT = 0
+        Er = 0.0
+        iota = 1.0d0
+        D11_mono = 0
+        D11_plateau = 0
+        nu_star_mono_input = 0
+        D11_star_mono_input = 0
+        D13_star_mono_input = 0
+        D111 = 0
+        D112 = 0
+        D113 = 0
+        q_flux = 0
+        Gamma_flux = 0
+        D31_mono = 0
+        eps_eff = 1d-5
+    end subroutine init_neoclassics_module
 
-    contains
-        procedure :: calc_KT => neoclassics_calc_KT
-        procedure :: calc_nu => neoclassics_calc_nu
-        procedure :: calc_nu_star => neoclassics_calc_nu_star
-        procedure :: avg_nu_star => neoclassics_calc_nu_star_fromT
-        procedure :: calc_D11_mono => neoclassics_calc_D11_mono
-        procedure :: calc_vd => neoclassics_calc_vd
-        procedure :: calc_D111 => neoclassics_calc_D111
-        procedure :: calc_D112 => neoclassics_calc_D112
-        procedure :: calc_D113 => neoclassics_calc_D113
-        procedure :: calc_gamma_flux => neoclassics_calc_gamma_flux
-        procedure :: calc_q_flux => neoclassics_calc_q_flux
-        procedure :: calc_D11_plateau => neoclassics_calc_D11_plateau
-        procedure :: interpolate_D11_mono => neoclassics_interpolate_D11_mono
+    subroutine init_neoclassics(r_eff)
+    !! Constructor of the neoclassics object from the effective radius,
+    !! epsilon effective and iota only.
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    end type neoclassics
+    real(dp), intent(in) :: r_eff
+    real(dp), dimension(4,no_roots) :: mynu
+
+    !! This should be called as the standard constructor
+    call init_profile_values_from_PROCESS(r_eff, densities, temperatures, dr_densities, dr_temperatures)
+    call gauss_laguerre_30_roots(roots)
+    call gauss_laguerre_30_weights(weights)
 
 
+    KT = neoclassics_calc_KT()
+    nu = neoclassics_calc_nu()
+    nu_star = neoclassics_calc_nu_star()
+    nu_star_averaged = neoclassics_calc_nu_star_fromT()
+    vd = neoclassics_calc_vd()
 
+    D11_plateau = neoclassics_calc_D11_plateau()
 
-contains
+    D11_mono = neoclassics_calc_D11_mono() !for using epseff
+    !alternatively use:  = myneo%interpolate_D11_mono() !
 
+    D111 = neoclassics_calc_D111()
 
-    type(neoclassics) function init_neoclassics(r_eff,eps_eff,iota)
-        !! Constructor of the neoclassics object from the effective radius,
-        !! epsilon effective and iota only.
-        !
-        ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    D112 = neoclassics_calc_D112()
+    D113 = neoclassics_calc_D113()
 
-        real(dp), intent(in) :: r_eff,eps_eff,iota
-        type(neoclassics) :: myneo
-        real(dp), dimension(4,no_roots) :: mynu
+    Gamma_flux = neoclassics_calc_Gamma_flux()
+    q_flux = neoclassics_calc_q_flux()
 
-        !! This should be called as the standard constructor
-        myneo = neoclassics(eps_eff = eps_eff, iota = iota)
-        call init_profile_values_from_PROCESS(r_eff, myneo%densities, myneo%temperatures, myneo%dr_densities, myneo%dr_temperatures)
-        call gauss_laguerre_30_roots(myneo%roots)
-        call gauss_laguerre_30_weights(myneo%weights)
+    ! Return:
 
-        mynu = neoclassics_calc_nu(myneo)
+    end subroutine init_neoclassics
+   
 
-        myneo%KT = myneo%calc_KT()
-        myneo%nu = myneo%calc_nu()
-        myneo%nu_star = myneo%calc_nu_star()
-        myneo%nu_star_averaged = myneo%avg_nu_star()
-        myneo%vd = myneo%calc_vd()
-
-        myneo%D11_plateau = myneo%calc_D11_plateau()
-
-        myneo%D11_mono = myneo%calc_D11_mono() !for using epseff
-        !alternatively use:  = myneo%interpolate_D11_mono() !
-
-        myneo%D111 = myneo%calc_D111()
-
-        myneo%D112 = myneo%calc_D112()
-        myneo%D113 = myneo%calc_D113()
-
-        myneo%Gamma_flux = myneo%calc_Gamma_flux()
-        myneo%q_flux = myneo%calc_q_flux()
-
-        ! Return:
-        init_neoclassics = myneo
-    end function init_neoclassics
-
-    function neoclassics_calc_KT(self) result(KK)
+    function neoclassics_calc_KT() result(KK)
         !! Calculates the energy on the given grid
         !! which is given by the gauss laguerre roots.
         !
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         use const_and_precisions, only: e_,c_,me_,mp_,keV_
 
-        class(neoclassics), intent(in) :: self
         real(dp), dimension(no_roots) ::  K
         real(dp), dimension(4,no_roots) :: KK
 
-        K = self%roots/keV_
+        K = roots/keV_
 
-        KK(1,:) = K * self%temperatures(1) ! electrons
-        KK(2,:) = K * self%temperatures(2) ! deuterium
-        KK(3,:) = K * self%temperatures(3) ! tritium
-        KK(4,:) = K * self%temperatures(4) ! helium
+        KK(1,:) = K * temperatures(1) ! electrons
+        KK(2,:) = K * temperatures(2) ! deuterium
+        KK(3,:) = K * temperatures(3) ! tritium
+        KK(4,:) = K * temperatures(4) ! helium
 
     end function neoclassics_calc_KT
 
-    function neoclassics_calc_Gamma_flux(self)
+    function neoclassics_calc_Gamma_flux()
         !! Calculates the Energy flux by neoclassical particle transport
         !
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-        class(neoclassics), intent(in) :: self
+        real(dp),dimension(4) :: neoclassics_calc_Gamma_flux, densities, temps, dr_temps, dr_densities, z
 
-        real(dp),dimension(4) :: neoclassics_calc_Gamma_flux,densities, temps, dr_temps, dr_densities, z
-
-        densities = self%densities
-        temps = self%temperatures
-        dr_densities = self%dr_densities
-        dr_temps = self%dr_temperatures
+        densities = densities
+        temps = temperatures
+        dr_densities = dr_densities
+        dr_temps = dr_temperatures
 
         z = (/-1.0,1.0,1.0,2.0/)
 
-        neoclassics_calc_Gamma_flux = - densities * self%D111 * ((dr_densities/densities - z * self%Er/temps)+ &
-                        (self%D112/self%D111-3.0/2.0) * dr_temps/temps )
+        neoclassics_calc_Gamma_flux = - densities * D111 * ((dr_densities/densities - z * Er/temps)+ &
+                        (D112/D111-3.0/2.0) * dr_temps/temps )
 
     end function neoclassics_calc_Gamma_flux
 
-    function neoclassics_calc_q_flux(self)
+    function neoclassics_calc_q_flux() 
         !! Calculates the Energy flux by neoclassicsal energy transport
         !
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-        class(neoclassics), intent(in) :: self
-        real(dp),dimension(4) :: q_flux, densities, temps, dr_temps, dr_densities, z, neoclassics_calc_q_flux
+        real(dp),dimension(4) ::  z, neoclassics_calc_q_flux
 
 
-        densities = self%densities
-        temps = self%temperatures
-        dr_densities = self%dr_densities
-        dr_temps = self%dr_temperatures
+        ! densities = densities
+        ! temps = temperatures
+        ! dr_densities = dr_densities
+        ! dr_temps = dr_temperatures
 
         z = (/-1.0,1.0,1.0,2.0/)
 
-        q_flux = - densities * temps * self%D112 * ((dr_densities/densities - z * self%Er/temps) + &
-                        (self%D113/self%D112-3.0/2.0) * dr_temps/temps )
+        q_flux = - densities * temperatures * D112 * ((dr_densities/densities - z * Er/temperatures) + &
+                        (D113/D112-3.0/2.0) * dr_temperatures/temperatures )
 
         neoclassics_calc_q_flux = q_flux
     end function neoclassics_calc_q_flux
 
-    function neoclassics_calc_D11_mono(self) result(D11_mono)
+    function neoclassics_calc_D11_mono() result(D11_mono)
         !! Calculates the monoenergetic radial transport coefficients
         !! using epsilon effective.
         !
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         use const_and_precisions, only: pi
 
-        class(neoclassics), intent(in) :: self
         real(dp),dimension(4,no_roots) :: D11_mono
 
-        D11_mono = 4.0d0/(9.0d0*pi) * (2.0d0 * self%eps_eff)**(3.0d0/2.0d0) &
-                    * self%vd**2/self%nu
+        D11_mono = 4.0d0/(9.0d0*pi) * (2.0d0 * eps_eff)**(3.0d0/2.0d0) &
+                    * vd**2/nu
 
     end function neoclassics_calc_D11_mono
 
-    function neoclassics_calc_D11_plateau(self) result(D11_plateau)
+    function neoclassics_calc_D11_plateau() result(D11_plateau)
         !! Calculates the plateau transport coefficients (D11_star sometimes)
         !
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         use const_and_precisions, only: pi, me_, mp_, c_
         use physics_variables, only: rmajor
 
-        class(neoclassics), intent(in) :: self
         real(dp),dimension(4,no_roots) :: D11_plateau, v
         real(dp),dimension(4) :: mass
 
         mass = (/me_,mp_*2.0d0,mp_*3.0d0,mp_*4.0d0/)
 
-        v(1,:) = c_ * sqrt(1.0d0-(self%KT(1,:)/(mass(1) * c_**2)+1)**(-1))
-        v(2,:) = c_ * sqrt(1.0d0-(self%KT(2,:)/(mass(2) * c_**2)+1)**(-1))
-        v(3,:) = c_ * sqrt(1.0d0-(self%KT(3,:)/(mass(3) * c_**2)+1)**(-1))
-        v(4,:) = c_ * sqrt(1.0d0-(self%KT(4,:)/(mass(4) * c_**2)+1)**(-1))
+        v(1,:) = c_ * sqrt(1.0d0-(KT(1,:)/(mass(1) * c_**2)+1)**(-1))
+        v(2,:) = c_ * sqrt(1.0d0-(KT(2,:)/(mass(2) * c_**2)+1)**(-1))
+        v(3,:) = c_ * sqrt(1.0d0-(KT(3,:)/(mass(3) * c_**2)+1)**(-1))
+        v(4,:) = c_ * sqrt(1.0d0-(KT(4,:)/(mass(4) * c_**2)+1)**(-1))
 
-        D11_plateau = pi/4.0 * self%vd**2 * rmajor/ self%iota / v
+        D11_plateau = pi/4.0 * vd**2 * rmajor/ iota / v
 
     end function neoclassics_calc_D11_plateau
 
-    function neoclassics_interpolate_D11_mono(self) result(D11_mono)
+    function neoclassics_interpolate_D11_mono() result(D11_mono)
         !! Interpolates the D11 coefficients on the Gauss laguerre grid
         !! (This method is unused as of now, but is needed when taking D11 explicitely as input)
         !
@@ -254,21 +252,20 @@ contains
         use maths_library, only: find_y_nonuniform_x
         ! use grad_func, only: interp1_ef
 
-        class(neoclassics), intent(in) :: self
         real(dp),dimension(4,no_roots) :: D11_mono
         integer :: ii,jj
 
         do ii = 1,4
             do jj = 1,no_roots
-                D11_mono(ii,jj) = find_y_nonuniform_x(self%nu_star(ii,jj),self%nu_star_mono_input, &
-                                                      self%D11_star_mono_input,size(self%nu_star_mono_input)) * &
-                                  self%D11_plateau(ii,jj)
+                D11_mono(ii,jj) = find_y_nonuniform_x(nu_star(ii,jj),nu_star_mono_input, &
+                                                      D11_star_mono_input,size(nu_star_mono_input)) * &
+                                  D11_plateau(ii,jj)
             end do
         end do
 
     end function neoclassics_interpolate_D11_mono
 
-    function neoclassics_calc_vd(self)
+    function neoclassics_calc_vd()
         !! Calculates the drift velocities
         !
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -276,16 +273,15 @@ contains
         use const_and_precisions, only: e_
         use physics_variables, only: rmajor, bt
 
-        class(neoclassics), intent(in) :: self
         real(dp), dimension(no_roots) :: vde,vdT,vdD,vda, K
         real(dp), dimension(4,no_roots) :: vd,neoclassics_calc_vd
 
-        K = self%roots
+        K = roots
 
-        vde = K * self%temperatures(1)/(e_ * rmajor * bt)
-        vdD = K * self%temperatures(2)/(e_ * rmajor * bt)
-        vdT = K * self%temperatures(3)/(e_ * rmajor * bt)
-        vda = K * self%temperatures(4)/(2.0*e_ * rmajor * bt)
+        vde = K * temperatures(1)/(e_ * rmajor * bt)
+        vdD = K * temperatures(2)/(e_ * rmajor * bt)
+        vdT = K * temperatures(3)/(e_ * rmajor * bt)
+        vda = K * temperatures(4)/(2.0*e_ * rmajor * bt)
 
         vd(1,:) = vde
         vd(2,:) = vdD
@@ -295,7 +291,7 @@ contains
         neoclassics_calc_vd = vd
     end function neoclassics_calc_vd
 
-    function neoclassics_calc_nu_star(self) result(nu_star)
+    function neoclassics_calc_nu_star() result(nu_star)
         !! Calculates the normalized collision frequency
         !
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -303,17 +299,16 @@ contains
         use const_and_precisions, only: e_,c_,me_,mp_
         use physics_variables, only: rmajor
 
-        class(neoclassics), intent(in) :: self
         real(dp), dimension(no_roots) ::  K
         real(dp), dimension(4,no_roots) :: v,nu_star,KK
         real(dp), dimension(4) :: mass
 
-        K = self%roots
+        K = roots
 
-        KK(1,:) = K * self%temperatures(1)
-        KK(2,:) = K * self%temperatures(2)
-        KK(3,:) = K * self%temperatures(3)
-        KK(4,:) = K * self%temperatures(4)
+        KK(1,:) = K * temperatures(1)
+        KK(2,:) = K * temperatures(2)
+        KK(3,:) = K * temperatures(3)
+        KK(4,:) = K * temperatures(4)
 
         mass = (/me_,mp_*2.0d0,mp_*3.0d0,mp_*4.0d0/)
 
@@ -322,12 +317,12 @@ contains
         v(3,:) = c_ * sqrt(1.0d0-(KK(3,:)/(mass(3) * c_**2)+1)**(-1))
         v(4,:) = c_ * sqrt(1.0d0-(KK(4,:)/(mass(4) * c_**2)+1)**(-1))
 
-        nu_star = rmajor * self%nu/(self%iota*v)
+        nu_star = rmajor * nu/(iota*v)
 
     end function neoclassics_calc_nu_star
 
 
-    function neoclassics_calc_nu_star_fromT(self)
+    function neoclassics_calc_nu_star_fromT()
         !! Calculates the collision frequency
         !
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -335,7 +330,6 @@ contains
         use physics_variables, only: rmajor, te,ti, dene,deni, dnalp, fdeut
 
         real(dp),dimension(4) :: neoclassics_calc_nu_star_fromT
-        class(neoclassics), intent(in) :: self
         real(dp) :: t,erfn,phixmgx,expxk,xk, lnlambda,x,v
         real(dp),dimension(4) :: temp, mass,density,z
 
@@ -371,13 +365,13 @@ contains
                         + t*(-1.453152027d0 +t*1.061405429d0))))*expxk
                 phixmgx = (1.0d0-0.5d0/xk)*erfn + expxk/sqrt(pi*xk)
                 neoclassics_calc_nu_star_fromT(jj) = neoclassics_calc_nu_star_fromT(jj) + density(kk)*(z(jj)*z(kk))**2 &
-                            *lnlambda*phixmgx/(4.0d0*pi*eps0_**2*mass(jj)**2*v**4) * rmajor/self%iota
+                            *lnlambda*phixmgx/(4.0d0*pi*eps0_**2*mass(jj)**2*v**4) * rmajor/iota
             enddo
         enddo
 
     end function neoclassics_calc_nu_star_fromT
 
-    function neoclassics_calc_D111(self)
+    function neoclassics_calc_D111()
         !! Calculates the integrated radial transport coefficients (index 1)
         !! It uses Gauss laguerre integration
         !! https://en.wikipedia.org/wiki/Gauss%E2%80%93Laguerre_quadrature
@@ -385,24 +379,23 @@ contains
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         use const_and_precisions, only: pi
 
-        class(neoclassics), intent(in) :: self
         real(dp),dimension(4) :: D111, neoclassics_calc_D111
 
         real(dp),dimension(no_roots) :: xi,wi
 
-        xi = self%roots
-        wi = self%weights
+        xi = roots
+        wi = weights
 
-        D111(1) = sum(2.0d0/sqrt(pi) * self%D11_mono(1,:) * xi**(1.0d0-0.5d0) * wi)
-        D111(2) = sum(2.0d0/sqrt(pi) * self%D11_mono(2,:) * xi**(1.0d0-0.5d0) * wi)
-        D111(3) = sum(2.0d0/sqrt(pi) * self%D11_mono(3,:) * xi**(1.0d0-0.5d0) * wi)
-        D111(4) = sum(2.0d0/sqrt(pi) * self%D11_mono(4,:) * xi**(1.0d0-0.5d0) * wi)
+        D111(1) = sum(2.0d0/sqrt(pi) * D11_mono(1,:) * xi**(1.0d0-0.5d0) * wi)
+        D111(2) = sum(2.0d0/sqrt(pi) * D11_mono(2,:) * xi**(1.0d0-0.5d0) * wi)
+        D111(3) = sum(2.0d0/sqrt(pi) * D11_mono(3,:) * xi**(1.0d0-0.5d0) * wi)
+        D111(4) = sum(2.0d0/sqrt(pi) * D11_mono(4,:) * xi**(1.0d0-0.5d0) * wi)
 
         neoclassics_calc_D111 = D111
 
     end function neoclassics_calc_D111
 
-    function neoclassics_calc_D112(self)
+    function neoclassics_calc_D112()
         !! Calculates the integrated radial transport coefficients (index 2)
         !! It uses Gauss laguerre integration
         !! https://en.wikipedia.org/wiki/Gauss%E2%80%93Laguerre_quadrature
@@ -410,24 +403,23 @@ contains
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         use const_and_precisions, only: pi
 
-        class(neoclassics), intent(in) :: self
         real(dp),dimension(4) :: D112, neoclassics_calc_D112
 
         real(dp),dimension(no_roots) :: xi,wi
 
-        xi = self%roots
-        wi = self%weights
+        xi = roots
+        wi = weights
 
-        D112(1) = sum(2.0d0/sqrt(pi) * self%D11_mono(1,:) * xi**(2.0d0-0.5d0) * wi)
-        D112(2) = sum(2.0d0/sqrt(pi) * self%D11_mono(2,:) * xi**(2.0d0-0.5d0) * wi)
-        D112(3) = sum(2.0d0/sqrt(pi) * self%D11_mono(3,:) * xi**(2.0d0-0.5d0) * wi)
-        D112(4) = sum(2.0d0/sqrt(pi) * self%D11_mono(4,:) * xi**(2.0d0-0.5d0) * wi)
+        D112(1) = sum(2.0d0/sqrt(pi) * D11_mono(1,:) * xi**(2.0d0-0.5d0) * wi)
+        D112(2) = sum(2.0d0/sqrt(pi) * D11_mono(2,:) * xi**(2.0d0-0.5d0) * wi)
+        D112(3) = sum(2.0d0/sqrt(pi) * D11_mono(3,:) * xi**(2.0d0-0.5d0) * wi)
+        D112(4) = sum(2.0d0/sqrt(pi) * D11_mono(4,:) * xi**(2.0d0-0.5d0) * wi)
 
         neoclassics_calc_D112 = D112
 
     end function neoclassics_calc_D112
 
-    function neoclassics_calc_D113(self)
+    function neoclassics_calc_D113()
         !! Calculates the integrated radial transport coefficients (index 3)
         !! It uses Gauss laguerre integration
         !! https://en.wikipedia.org/wiki/Gauss%E2%80%93Laguerre_quadrature
@@ -435,37 +427,35 @@ contains
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         use const_and_precisions, only: pi
 
-        class(neoclassics), intent(in) :: self
         real(dp),dimension(4) :: D113, neoclassics_calc_D113
 
         real(dp),dimension(no_roots) :: xi,wi
 
-        xi = self%roots
-        wi = self%weights
+        xi = roots
+        wi = weights
 
-        D113(1) = sum(2.0d0/sqrt(pi) * self%D11_mono(1,:) * xi**(3.0d0-0.5d0) * wi)
-        D113(2) = sum(2.0d0/sqrt(pi) * self%D11_mono(2,:) * xi**(3.0d0-0.5d0) * wi)
-        D113(3) = sum(2.0d0/sqrt(pi) * self%D11_mono(3,:) * xi**(3.0d0-0.5d0) * wi)
-        D113(4) = sum(2.0d0/sqrt(pi) * self%D11_mono(4,:) * xi**(3.0d0-0.5d0) * wi)
+        D113(1) = sum(2.0d0/sqrt(pi) * D11_mono(1,:) * xi**(3.0d0-0.5d0) * wi)
+        D113(2) = sum(2.0d0/sqrt(pi) * D11_mono(2,:) * xi**(3.0d0-0.5d0) * wi)
+        D113(3) = sum(2.0d0/sqrt(pi) * D11_mono(3,:) * xi**(3.0d0-0.5d0) * wi)
+        D113(4) = sum(2.0d0/sqrt(pi) * D11_mono(4,:) * xi**(3.0d0-0.5d0) * wi)
 
         neoclassics_calc_D113 = D113
     end function neoclassics_calc_D113
 
-    function neoclassics_calc_nu(self)
+    function neoclassics_calc_nu()
         !! Calculates the collision frequency
         !
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         use const_and_precisions, only: pi, me_, mp_, eps0_,e_
 
         real(dp),dimension(4,no_roots) :: neoclassics_calc_nu
-        class(neoclassics), intent(in) :: self
         real(dp) :: t,erfn,phixmgx,expxk,xk, lnlambda,x,v
         real(dp),dimension(4) :: temp, mass,density,z
 
         integer :: jj,ii,kk
 
-        temp = self%temperatures
-        density = self%densities
+        temp = temperatures
+        density = densities
 
         !          e      D      T         a (He)
         mass = (/me_,mp_*2.0d0,mp_*3.0d0,mp_*4.0d0/)
@@ -479,7 +469,7 @@ contains
 
         do jj = 1, 4
            do ii = 1, no_roots
-              x = self%roots(ii)
+              x = roots(ii)
               do kk = 1,4
                  xk = (mass(kk)/mass(jj))*(temp(jj)/temp(kk))*x
                  expxk = exp(-xk)
