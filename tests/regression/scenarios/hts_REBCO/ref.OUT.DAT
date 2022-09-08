@@ -13,12 +13,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.4.0-529-g03748b62b
+   Tag No. : v2.4.0-618-ge9c116790
     Branch : HEAD
-   Git log : Merge branch |1681-update-uncertainty-quantification-tools-documentation| into |develop|
- Date/time :  7 Sep 2022  8:53:09 +00:00(hh:mm) UTC
+   Git log : Merge branch |1467-convert-sctfcoil-f90-to-python| into |develop|
+ Date/time :  8 Sep 2022  8:35:44 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-nkpubsxk-project-20-concurrent-0
+  Computer : runner-sn2siqxv-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_hts_REBCO_0/IN.DAT
  Run title : hts model using "croco" conductor based on kit design
@@ -57,9 +57,9 @@
  Number of constraints (total)                                            (neqns+nineqns)                  20     
  Optimisation switch                                                      (ioptimz)                         1     
  Figure of merit switch                                                   (minmax)                          1     
- Square root of the sum of squares of the constraint residuals            (sqsumsq)                 3.921E-06  OP 
- VMCON convergence parameter                                              (convergence_parameter)   1.644E-06  OP 
- Number of VMCON iterations                                               (nviter)                        102  OP 
+ Square root of the sum of squares of the constraint residuals            (sqsumsq)                 4.256E-06  OP 
+ VMCON convergence parameter                                              (convergence_parameter)   1.155E-06  OP 
+ Number of VMCON iterations                                               (nviter)                         90  OP 
  
 PROCESS has successfully optimised the iteration variables to minimise the figure of merit          MAJOR RADIUS.
  
@@ -94,7 +94,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
     6                  fdene            1.2000E+00     1.1241
     7                  hfact            1.1000E+00     1.2812
     8                  fwalld           6.1164E-01     1.0776
-    9                  ohcth            5.5981E-01     1.0399
+    9                  ohcth            5.5980E-01     1.0399
    10                  q                3.0000E+00     0.8208
    11                  bore             2.5533E+00     0.7858
    12                  fbetatry         5.4573E-01     1.0180
@@ -106,13 +106,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    18                  fstrcase         1.0000E+00     2.4578
    19                  fstrcond         8.3534E-01    29.6480
    20                  fiooic           7.3690E-01     2.9722
-   21                  fvdump           3.0768E-01     4.5195
+   21                  fvdump           3.0767E-01     4.5195
    22                  ftmargtf         1.0000E+00     1.0062
    23                  tdmptf           7.3460E+01     2.1310
    24                  thkcas           5.0760E-01     0.7778
    25                  thwcndut         5.0000E-03     0.5350
    26                  cpttf            9.0000E+04     1.4377
-   27                  gapds            2.8170E-02     1.2986
+   27                  gapds            2.8169E-02     1.2986
    28                  flhthresh        1.1645E+00     0.3202
    29                  ftmargoh         1.0000E+00     1.9064
    30                  ftaucq           3.3913E-01     0.9492
@@ -129,26 +129,26 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  3.4956E-02              2.0509E-12                -5.8672E-11
-    2  Global power balance consistency      =  2.0671E-01 MW/m3       -2.3374E-11 MW/m3           1.1308E-10
-    3  Density upper limit                   <  9.3302E+19 /m3          4.4034E+08 /m3             4.7196E-12
-    4  Neutron wall load upper limit         <  1.2233E+00 MW/m2        4.6852E-10 MW/m2           3.8301E-10
-    5  Radial build consistency              =  8.8758E+00 m           -1.1224E-11 m               1.2645E-12
-    6  Burn time lower limit                 >  7.2000E+03 sec         -1.0392E-02 sec             1.4433E-06
-    7  L-H power threshold limit             >  1.1797E+02 MW           1.7230E-07 MW             -1.4606E-09
-    8  Net electric power lower limit        >  5.0000E+02 MW          -6.3074E-05 MW             -1.2615E-07
-    9  Beta upper limit                      <  5.6067E-02             -3.2334E-12                -5.7671E-11
-   10  Injection power upper limit           <  5.0000E+01 MW          -1.0647E-09 MW              2.1294E-11
-   11  TF coil case stress upper limit       <  6.0000E+08 Pa           1.3975E+03 Pa              2.3292E-06
-   12  TF coil conduit stress upper lim      <  6.0000E+08 Pa           1.6731E+03 Pa              2.7886E-06
-   13  I_op / I_critical (TF coil)           <  3.7853E+07 A/m2         4.2553E-04 A/m2           -1.5255E-11
-   14  Dump voltage upper limit              <  1.0000E+01 V            6.9232E+00 V              -6.7195E-10
-   15  TF coil temp. margin lower limit      >  1.0000E+01 K            1.5914E-10 K              -1.5914E-11
-   16  CS temperature margin lower limit     >  1.5000E+00 K           -2.1307E-07 K               1.4205E-07
-   17  Dump time set by VV stress            >  2.4913E+01 s           -4.8547E+01 s              -6.1908E-10
-   18  Upper Lim. on Psep * Bt / q A R       <  9.1000E+00 MWT/m       -1.2525E-08 MWT/m           1.3763E-09
-   19  CS Tresca yield criterion             <  6.0000E+08 Pa           1.3170E+02 Pa              2.1949E-07
-   20  TFC current/copper area < Max         <  1.0000E+08 A/m2         9.4159E-04 A/m2           -9.4159E-12
+    1  Beta consistency                      =  3.4956E-02              9.0467E-13                -2.5880E-11
+    2  Global power balance consistency      =  2.0671E-01 MW/m3       -1.0297E-11 MW/m3           4.9815E-11
+    3  Density upper limit                   <  9.3302E+19 /m3          7.9593E+07 /m3             8.5310E-13
+    4  Neutron wall load upper limit         <  1.2233E+00 MW/m2        2.0155E-10 MW/m2           1.6476E-10
+    5  Radial build consistency              =  8.8758E+00 m           -5.9460E-12 m               6.6991E-13
+    6  Burn time lower limit                 >  7.2000E+03 sec         -4.9434E-03 sec             6.8658E-07
+    7  L-H power threshold limit             >  1.1797E+02 MW           7.6296E-08 MW             -6.4675E-10
+    8  Net electric power lower limit        >  5.0000E+02 MW          -3.1122E-05 MW             -6.2245E-08
+    9  Beta upper limit                      <  5.6067E-02             -1.4304E-12                -2.5513E-11
+   10  Injection power upper limit           <  5.0000E+01 MW          -3.9203E-10 MW              7.8406E-12
+   11  TF coil case stress upper limit       <  6.0000E+08 Pa           1.1992E+03 Pa              1.9987E-06
+   12  TF coil conduit stress upper lim      <  6.0000E+08 Pa           1.4357E+03 Pa              2.3928E-06
+   13  I_op / I_critical (TF coil)           <  3.7853E+07 A/m2         1.3700E-04 A/m2           -4.9115E-12
+   14  Dump voltage upper limit              <  1.0000E+01 V            6.9233E+00 V              -1.3123E-10
+   15  TF coil temp. margin lower limit      >  1.0000E+01 K           -5.1234E-11 K               5.1235E-12
+   16  CS temperature margin lower limit     >  1.5000E+00 K            4.2159E-06 K              -2.8106E-06
+   17  Dump time set by VV stress            >  2.4913E+01 s           -4.8547E+01 s              -1.2627E-10
+   18  Upper Lim. on Psep * Bt / q A R       <  9.1000E+00 MWT/m       -5.5343E-09 MWT/m           6.0817E-10
+   19  CS Tresca yield criterion             <  6.0000E+08 Pa           7.9041E+01 Pa              1.3173E-07
+   20  TFC current/copper area < Max         <  1.0000E+08 A/m2         3.2240E-04 A/m2           -3.2240E-12
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -627,19 +627,19 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa (sig_tf_wp_max)           6.000E+08     
  Materal stress of the point of maximum shear stress (Tresca criterion) for each layer
  Please use utilities/plot_stress_tf.py for radial plots plots summary
- Layers                             Steel case            WP    Outer case
- Radial stress               (MPa)       0.000      -256.487         4.289
- toroidal stress             (MPa)    -388.734      -289.936      -300.967
- Vertical stress             (MPa)     211.265       211.265       109.009
- Von-Mises stress            (MPa)     527.136       435.831       367.794
- Shear (Tresca) stress       (MPa)     599.999       501.201       409.976
+   Layers 				 Steel case 		 WP 		 Outer case
+   Radial stress 			 (MPa) 		 -2.442433465489323e-14		-256.4873918438944		4.289171748625242
+   Toroidal stress 			 (MPa) 		 -388.7341583496174		-289.9360154315166		-300.9669136177122
+   Vertical stress 			 (MPa) 		 211.26464241101306		211.26464241101306		109.00908489943899
+   Von-Mises stress 			 (MPa) 		 527.1363940741682		435.83124119270195		367.79368064399887
+   Shear (Tresca) 			 (MPa) 		 599.9988007606305		501.2006578425296		409.97599851715114
  
- Toroidal modulus            (GPa)     205.000        26.913       205.000
- Vertical modulus            (GPa)     205.000       112.545       397.300
+   Toroidal modulus 			 (GPa) 		 205.0		26.912576502046466		205.0
+   Vertical modulus 			 (GPa) 		 205.0		112.54524956620916		397.2994703534161
  
- WP transverse modulus (GPa)                                              (eyoung_wp_trans*1.0D-9)  2.476E+01  OP 
- WP vertical modulus (GPa)                                                (eyoung_wp_axial*1.0D-9)  1.033E+02  OP 
- WP transverse Poisson's ratio                                            (poisson_wp_trans)        3.049E-01  OP 
+ WP transverse modulus (GPa)                                              (eyoung_wp_trans*1.0d-9)  2.476E+01  OP 
+ WP vertical modulus (GPa)                                                (eyoung_wp_axial*1.0d-9)  1.033E+02  OP 
+ WP transverse Poissons ratio                                             (poisson_wp_trans)        3.049E-01  OP 
  WP vertical-transverse Pois. rat.                                        (poisson_wp_axial)        3.149E-01  OP 
  Maximum radial deflection at midplane (m)                                (deflect)                -5.892E-03  OP 
  Vertical strain on casing                                                (casestr)                 1.031E-03  OP 
@@ -671,12 +671,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  D-shape coil, inner surface shape approximated by
  by a straight segment and elliptical arcs between the following points:
  
- point         x(m)           y(m)
-   1          4.295          5.106
-   2          8.303          8.510
-   3         15.937          0.000
-   4          8.303         -8.510
-   5          4.295         -5.106
+   point              x(m)              y(m)
+   0              4.295447535180704              5.106210485672908
+   1              8.30313655965289              8.510350809454847
+   2              15.937228139240107              0.0
+   3              8.30313655965289              -8.510350809454847
+   4              4.295447535180704              -5.106210485672908
  
  Global material area/fractions:
  
@@ -752,7 +752,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Ripple information:
  
- Max allowed ripple amplitude at plasma outboard midplane (%)             (ripmax)                  6.000E-01     
+ Max allowed tfcoil_variables.ripple amplitude at plasma outboard midplan (ripmax)                  6.000E-01     
  Ripple amplitude at plasma outboard midplane (%)                         (ripple)                  6.000E-01  OP 
  
  Quench information :
@@ -762,13 +762,9 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Actual quench time (or time constant) (s)                                (tdmptf)                  7.346E+01  ITV
  Maximum allowed voltage during quench due to insulation (kV)             (vdalw)                   1.000E+01     
  Actual quench voltage (kV)                                               (vtfskv)                  3.077E+00  OP 
- CroCo cable with jacket:
- Maximum permitted TF coil current / copper area (A/m2)                   (copperA_m2_max)          1.000E+08     
- Actual TF coil current / copper area (A/m2)                              (copperA_m2)              1.000E+08     
  
  Radial build of TF coil centre-line :
  
-                                          Thickness (m)    Outer radius (m)
  Innermost edge of TF coil                    3.218           3.218                       
  Coil case ("nose")                           0.508           3.725   (thkcas)            
  Insertion gap for winding pack               0.010           3.735   (tfinsgap)          
@@ -793,8 +789,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Inner diameter of CroCo copper tube (m)                                  (croco_id)                9.601E-03  OP 
  Thickness of CroCo copper tube (m)                                       (croco_thick)             2.500E-03     
  Thickness of each HTS tape                                               (tape_thickness)          1.244E-04  OP 
- Thickness of stack of tapes (m)                                          (stack_thickness)         6.908E-03  OP 
- Number of tapes in strand                                                (tapes)                   5.553E+01  OP 
+ Thickness of stack of rebco_variables.tapes (m)                          (stack_thickness)         6.908E-03  OP 
+ Number of rebco_variables.tapes in strand                                (tapes)                   5.553E+01  OP 
  
  Area of REBCO in strand (m2)                                             (rebco_area)              4.924E-07  OP 
  Area of copper in strand (m2)                                            (copper_area)             1.221E-04  OP 
@@ -847,7 +843,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Maximum field at End Of Flattop (T)                                      (bmaxoh)                  1.221E+01  OP 
  Critical superconductor current density at EOF (A/m2)                    (jscoh_eof)               3.812E+08  OP 
- Critical strand current density at EOF (A/m2)                            (jstrandoh_eof)           1.143E+08  OP 
+ Critical strand current density at EOF (A/m2)                            (jstrandoh_eof)           1.144E+08  OP 
  Allowable overall current density at EOF (A/m2)                          (rjohc)                   3.522E+07  OP 
  Actual overall current density at EOF (A/m2)                             (coheof)                  1.915E+07  ITV
  
@@ -946,8 +942,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  	0			45.109			47.724		-8.043
  	1			45.109			47.724		-8.043
- 	2			11.106			-70.566		-84.297
- 	3			11.106			-70.566		-84.297
+ 	2			11.106			-70.566		-84.296
+ 	3			11.106			-70.566		-84.296
  	4			-6.235			-38.320		-30.612
  	5			-6.235			-38.320		-30.612
  	CS coil			205.657			28.732		-225.517
@@ -957,7 +953,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Currents (Amps/coil) as a function of time:
  
  								time (sec)
- 				0.00		500.00		700.24		710.24		7910.25		8110.49
+ 				0.00		500.00		700.24		710.24		7910.24		8110.48
  				Start		BOP		EOR		BOF		EOF		EOP
  circuit
  	0			0.000e+00	2.233e+07	2.363e+07	2.363e+07	-3.982e+06	0.000e+00
@@ -985,7 +981,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  3			0.000e+00	0.000e+00	-8.107e+06	-8.107e+06	-8.107e+06	0.0e0
  4			0.000e+00	0.000e+00	-5.533e+06	-5.533e+06	-5.533e+06	0.0e0
  5			0.000e+00	0.000e+00	-5.533e+06	-5.533e+06	-5.533e+06	0.0e0
- 6			0.000e+00	0.000e+00	-3.473e-09	-3.473e-09	2.779e-08	0.0e0
+ 6			0.000e+00	0.000e+00	3.473e-09	3.473e-09	0.000e+00	0.0e0
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.119E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -1.274E-01  OP 
@@ -1078,16 +1074,16 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Component Volumes :
  
- First Wall Armour Volume (m3)                                            (fw_armour_vol)               6.834  OP 
+ First Wall Armour Volume (m3)                                            (fw_armour_vol)               6.833  OP 
  First Wall Volume (m3)                                                   (volfw)                      19.712  OP 
- Blanket Volume (m3)                                                      (volblkt)                  1717.037  OP 
+ Blanket Volume (m3)                                                      (volblkt)                  1717.036  OP 
  Shield Volume (m3)                                                       (volshld)                  1002.512  OP 
- Vacuum vessel volume (m3)                                                (vdewin)                   1223.672  OP 
+ Vacuum vessel volume (m3)                                                (vdewin)                   1223.671  OP 
  
  Component Masses :
  
  First Wall Armour Mass (kg)                                              (fw_armour_mass)          1.315E+05  OP 
- First Wall Mass, excluding armour (kg)                                   (fwmass)                  1.538E+05  OP 
+ First Wall Mass, excluding armour (kg)                                   (fwmass)                  1.537E+05  OP 
  Blanket Mass - Total(kg)                                                 (whtblkt)                 4.300E+06  OP 
      Blanket Mass - TiBe12 (kg)                                           (whtbltibe12)             1.455E+06  OP 
      Blanket Mass - Li4SiO4 (kg)                                          (whtblli4sio4)            1.545E+06  OP 
@@ -1325,15 +1321,15 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  htpmw_blkt                                                                     0.00                     0.00
  
  Shield:
- 0.7155421330463763 0.0 0.7155421330463763
+ 0.715541725422702 0.0 0.715541725422702
  0.0e0 0.0e0 0.0e0
  0.0e0 0.0e0 0.0e0
  0.0 0.0 0.0
  
  Divertor:
- 0.0 418.25512705905504 418.25512705905504
- 0.0 137.37621576857873 137.37621576857873
- 0.0 79.78017723519375 79.78017723519375
+ 0.0 418.25510467392047 418.25510467392047
+ 0.0 137.3761332445793 137.3761332445793
+ 0.0 79.78019094202708 79.78019094202708
  0.0 0.0 0.0
  
  TF coil:
@@ -1348,7 +1344,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  pradhcd                                                                        0.00                     0.00
  0.0e0 0.0e0 0.0e0
  
- 2220.443197168829 635.4270580939366 2855.8702552627656
+ 2220.443146887499 635.4269668789791 2855.8701137664784
  
  Total power leaving reactor (across vacuum vessel boundary) (MW)                                    2855.886  OP 
  
@@ -1393,7 +1389,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Heat extracted from first wall and blanket (MW)                          (pthermfw_blkt)            2219.728  OP 
  Heat extracted from shield  (MW)                                         (pthermshld)                  0.716  OP 
- Heat extracted from divertor (MW)                                        (pthermdiv)                 635.412  OP 
+ Heat extracted from divertor (MW)                                        (pthermdiv)                 635.411  OP 
  Nuclear and photon power lost to H/CD system (MW)                        (psechcd)                     0.000  OP 
  Nuclear power lost to TF (MW)                                            (ptfnuc)                      0.016  OP 
  Total (MW)                                                                                          2855.870  OP 
@@ -1442,7 +1438,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  tramp tohs theat tburn tqnch tdwell
  ----- ---- ----- ----- ----- ------
- Duration 500.0 200.23872094443635 10.0 7200.010392089191 200.23872094443635 0.0
+ Duration 500.0 200.23869388316083 10.0 7200.004943392778 200.23869388316083 0.0
  ------ ----- ---- ----- ----- ----- ------
  
  Continous power usage [MWe]:
@@ -1450,31 +1446,31 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  System tramp tohs theat tburn tqnch tdwell
  ------ ----- ---- ----- ----- ----- ------
  Primary cooling 155.0 155.0 155.0 155.0 155.0 155.0
- Cryoplant 43.50743281064352 43.50743281064352 43.50743281064352 43.50743281064352 43.50743281064352 43.50743281064352
+ Cryoplant 43.50741075968458 43.50741075968458 43.50741075968458 43.50741075968458 43.50741075968458 43.50741075968458
  Vacuum 0.5 0.5 0.5 0.5 0.5 0.5
  Tritium 15.0 15.0 15.0 15.0 15.0 15.0
- TF 11.114464099456194 11.114464099456194 11.114464099456194 11.114464099456194 11.114464099456194 11.114464099456194
- Facilities 60.83536387521822 60.83536387521822 60.83536387521822 60.83536387521822 60.83536387521822 60.83536387521822
+ TF 11.114461646311998 11.114461646311998 11.114461646311998 11.114461646311998 11.114461646311998 11.114461646311998
+ Facilities 60.83533717648633 60.83533717648633 60.83533717648633 60.83533717648633 60.83533717648633 60.83533717648633
  ------ ----- ---- ----- ----- ----- ------
- Total 285.95726078531794 285.95726078531794 285.95726078531794 285.95726078531794 285.95726078531794 285.95726078531794
+ Total 285.9572095824829 285.9572095824829 285.9572095824829 285.9572095824829 285.9572095824829 285.9572095824829
  ------ ----- ---- ----- ----- ----- ------
  
  Intermittent power usage [MWe]:
  
  System tramp tohs theat tburn tqnch tdwell
  ------ ----- ---- ----- ----- ----- ------
- H & CD 0.0 300.0 300.0 125.00000000266179 300.0 0.0
- PF 63.213736552593716 -56.870110910078665 0.0 2.4878104266174033 -190.43035609216008 0.0
+ H & CD 0.0 300.0 300.0 125.00000000098007 300.0 0.0
+ PF 63.21366378569107 -56.86993921225799 0.0 2.487805636728388 -190.430139584624 0.0
  ------ ----- ---- ----- ----- ----- ------
- Total 63.213736552593716 243.12988908992133 300.0 127.4878104292792 109.56964390783992 0.0
+ Total 63.21366378569107 243.13006078774202 300.0 127.48780563770845 109.56986041537601 0.0
  ------ ----- ---- ----- ----- ----- ------
  
  Power production [MWe]:
  
   tramp tohs theat tburn tqnch tdwell avg
   ----- ---- ----- ----- ----- ------ ---
- Gross power 0.0 0.0 0.0 912.6021540363887 0.0 0.0
- Net power -349.1709973379117 -529.0871498752392 -585.9572607853179 499.15708282179156 -395.52690469315786 -285.95726078531794
+ Gross power 0.0 0.0 0.0 912.6021333707619 0.0 0.0
+ Net power -349.17087336817394 -529.0872703702249 -585.9572095824828 499.15711815057045 -395.5270699978589 -285.9572095824829
  ------ ----- ---- ----- ----- ----- ------
  
  

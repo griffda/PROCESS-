@@ -14,12 +14,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.4.0-529-g03748b62b
+   Tag No. : v2.4.0-618-ge9c116790
     Branch : HEAD
-   Git log : Merge branch |1681-update-uncertainty-quantification-tools-documentation| into |develop|
- Date/time :  7 Sep 2022  8:51:29 +00:00(hh:mm) UTC
+   Git log : Merge branch |1467-convert-sctfcoil-f90-to-python| into |develop|
+ Date/time :  8 Sep 2022  8:33:51 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-nkpubsxk-project-20-concurrent-0
+  Computer : runner-sn2siqxv-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_FNSF_0/IN.DAT
  Run title : FNSF (Menard et al. 2016)
@@ -567,19 +567,19 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Allowable maximum shear stress in TF coil conduit (Tresca criterion) (Pa (sig_tf_wp_max)           6.000E+08     
  Materal stress of the point of maximum shear stress (Tresca criterion) for each layer
  Please use utilities/plot_stress_tf.py for radial plots plots summary
- Layers                              conductor    Outer case
- Radial stress               (MPa)     -68.437         1.770
- toroidal stress             (MPa)     -68.438       -34.535
- Vertical stress             (MPa)      39.935       159.270
- Von-Mises stress            (MPa)     108.373       178.444
- Shear (Tresca) stress       (MPa)     108.373       193.805
+   Layers 				 conductor 		 Outer case
+   Radial stress 			 (MPa) 		 -68.437433807528		1.7698812375694648
+   Toroidal stress 			 (MPa) 		 -68.4375002792337		-34.53537491770149
+   Vertical stress 			 (MPa) 		 39.935102604549876		159.26989586951987
+   Von-Mises stress 			 (MPa) 		 108.372569647946		178.44440201148456
+   Shear (Tresca) 			 (MPa) 		 108.37260288378357		193.80527078722136
  
- Toroidal modulus            (GPa)     117.000       205.000
- Vertical modulus            (GPa)      99.029       205.000
+   Toroidal modulus 			 (GPa) 		 117.00000000000001		205.0
+   Vertical modulus 			 (GPa) 		 99.02948628391863		205.0
  
- WP transverse modulus (GPa)                                              (eyoung_wp_trans*1.0D-9)  1.170E+02  OP 
- WP vertical modulus (GPa)                                                (eyoung_wp_axial*1.0D-9)  9.903E+01  OP 
- WP transverse Poisson's ratio                                            (poisson_wp_trans)        3.500E-01  OP 
+ WP transverse modulus (GPa)                                              (eyoung_wp_trans*1.0d-9)  1.170E+02  OP 
+ WP vertical modulus (GPa)                                                (eyoung_wp_axial*1.0d-9)  9.903E+01  OP 
+ WP transverse Poissons ratio                                             (poisson_wp_trans)        3.500E-01  OP 
  WP vertical-transverse Pois. rat.                                        (poisson_wp_axial)        3.499E-01  OP 
  
  TF design
@@ -608,12 +608,12 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Picture frame coil, inner surface approximated by
  by a straight segment between the following points:
  
- point         x(m)           y(m)
-   1          0.786          4.421
-   2          4.109          4.421
-   3          4.109          0.000
-   4          4.109         -4.421
-   5          0.786         -4.421
+   point              x(m)              y(m)
+   0              0.7862857142857144              4.421428571428572
+   1              4.109428571428571              4.421428571428572
+   2              4.109428571428571              0.0
+   3              4.109428571428571              -4.421428571428572
+   4              0.7862857142857144              -4.421428571428572
  
  Tapered Centrepost TF coil Dimensions:
  
@@ -631,7 +631,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  Inboard TFC conductor sector geometry:
  
- Inboard TFC conductor sector area with gr insulation (per leg) (m2)      (awpc))                   6.904E-02     
+ Inboard TFC conductor sector area with gr insulation (per leg) (m2)      (awpc)                    6.904E-02     
  Inboard TFC conductor sector area, NO ground & gap (per leg) (m2)        (awptf)                   6.904E-02     
  Inboard conductor sector radial thickness (m)                            (dr_tf_wp)                5.135E-01     
  Central collumn top conductor sector radial thickness (m)                (dr_tf_wp_top)            7.593E-01     
@@ -687,25 +687,23 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  Ripple information:
  
- Max allowed ripple amplitude at plasma (%)                               (ripmax)                  1.000E+00     
+ Max allowed tfcoil_variables.ripple amplitude at plasma (%)              (ripmax)                  1.000E+00     
  Ripple at plasma edge (%)                                                (ripple)                  4.899E-01     
    Ripple calculation to be re-defined for picure frame coils
  
  Radial build of TF coil centre-line :
  
-                                          Thickness (m)    Outer radius (m)
  Innermost edge of TF coil                    0.000           0.000                       
  Coil bucking cylindre                        0.000           0.000   (thkcas)            
  Conductor ground insulation                  0.000           0.000   (tinstf)            
- Conductor - first half                       0.257           0.257   (dr_tf_wp/2-tinstf) 
- Conductor - second half                      0.257           0.514   (dr_tf_wp/2-tinstf) 
+ Conductor - first half                       0.257           0.257   (tfcoil_variables.dr
+ Conductor - second half                      0.257           0.514   (tfcoil_variables.dr
  Conductor ground insulation                  0.000           0.514   (tinstf)            
  Plasma side TF coil support                  0.027           0.541   (casthi)            
  TF coil dimensions are consistent
  
  Radial build of TF coil at central collumn top :
  
-                                          Thickness (m)    Outer radius (m)
  Innermost edge of TF coil                    0.000           0.000                       
  Coil bucking cylindre                        0.000           0.000   (thkcas)            
  Conductor ground insulation                  0.000           0.000   (tinstf)            
