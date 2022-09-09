@@ -16,14 +16,14 @@ module neoclassics_module
 
     public
     integer, parameter :: no_roots = 30 ! Number of Gauss laguerre roots
-    
+
     character, dimension(4) :: species = (/"e","D","T","a"/)
     !  Species that are considered
-    real(dp), dimension(4) :: densities 
+    real(dp), dimension(4) :: densities
     !  Densities of the species that are considered [/m3]
     real(dp), dimension(4) :: temperatures
     !  Temperature of the species that are considered [J]
-    real(dp), dimension(4) :: dr_densities 
+    real(dp), dimension(4) :: dr_densities
     !  Radial derivative of the density of the species [/m3]
     real(dp), dimension(4) :: dr_temperatures
     !  Radial derivative of the temperature of the species [J]
@@ -74,10 +74,10 @@ module neoclassics_module
     !  Epsilon effective (used in neoclassics_calc_D11_mono)
     real(dp) :: r_eff = 0
 
-    
 
 
-contains 
+
+contains
     subroutine init_neoclassics_module
         !! Initialise module variables
         implicit none
@@ -109,7 +109,7 @@ contains
         eps_eff = 1d-5
     end subroutine init_neoclassics_module
 
-    subroutine init_neoclassics(r_eff)
+    subroutine init_neoclassics(r_eff, eps_eff, iota)
     !! Constructor of the neoclassics object from the effective radius,
     !! epsilon effective and iota only.
     !
@@ -117,6 +117,7 @@ contains
 
     real(dp), intent(in) :: r_eff
     real(dp), dimension(4,no_roots) :: mynu
+    real(dp), intent(in)::eps_eff, iota
 
     !! This should be called as the standard constructor
     call init_profile_values_from_PROCESS(r_eff, densities, temperatures, dr_densities, dr_temperatures)
@@ -127,12 +128,13 @@ contains
     KT = neoclassics_calc_KT()
     nu = neoclassics_calc_nu()
     nu_star = neoclassics_calc_nu_star()
-    nu_star_averaged = neoclassics_calc_nu_star_fromT()
+    nu_star_averaged = neoclassics_calc_nu_star_fromT(iota)
     vd = neoclassics_calc_vd()
 
     D11_plateau = neoclassics_calc_D11_plateau()
 
-    D11_mono = neoclassics_calc_D11_mono() !for using epseff
+    D11_mono = neoclassics_calc_D11_mono(eps_eff) !for using epseff
+
     !alternatively use:  = myneo%interpolate_D11_mono() !
 
     D111 = neoclassics_calc_D111()
@@ -140,13 +142,13 @@ contains
     D112 = neoclassics_calc_D112()
     D113 = neoclassics_calc_D113()
 
-    Gamma_flux = neoclassics_calc_Gamma_flux()
+    Gamma_flux = neoclassics_calc_Gamma_flux(densities, temperatures, dr_densities, dr_temperatures)
     q_flux = neoclassics_calc_q_flux()
 
     ! Return:
 
     end subroutine init_neoclassics
-   
+
 
     function neoclassics_calc_KT() result(KK)
         !! Calculates the energy on the given grid
@@ -167,26 +169,22 @@ contains
 
     end function neoclassics_calc_KT
 
-    function neoclassics_calc_Gamma_flux()
+    function neoclassics_calc_Gamma_flux(densities, temperatures, dr_densities, dr_temperatures)
         !! Calculates the Energy flux by neoclassical particle transport
         !
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-        real(dp),dimension(4) :: neoclassics_calc_Gamma_flux, densities, temps, dr_temps, dr_densities, z
+        real(dp),dimension(4) :: neoclassics_calc_Gamma_flux, densities, dr_densities, z, temperatures, dr_temperatures
 
-        densities = densities
-        temps = temperatures
-        dr_densities = dr_densities
-        dr_temps = dr_temperatures
 
         z = (/-1.0,1.0,1.0,2.0/)
 
-        neoclassics_calc_Gamma_flux = - densities * D111 * ((dr_densities/densities - z * Er/temps)+ &
-                        (D112/D111-3.0/2.0) * dr_temps/temps )
+        neoclassics_calc_Gamma_flux = - densities * D111 * ((dr_densities/densities - z * Er/temperatures)+ &
+                        (D112/D111-3.0/2.0) * dr_temperatures/temperatures )
 
     end function neoclassics_calc_Gamma_flux
 
-    function neoclassics_calc_q_flux() 
+    function neoclassics_calc_q_flux()
         !! Calculates the Energy flux by neoclassicsal energy transport
         !
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -207,7 +205,7 @@ contains
         neoclassics_calc_q_flux = q_flux
     end function neoclassics_calc_q_flux
 
-    function neoclassics_calc_D11_mono() result(D11_mono)
+    function neoclassics_calc_D11_mono(eps_eff) result(D11_mono)
         !! Calculates the monoenergetic radial transport coefficients
         !! using epsilon effective.
         !
@@ -215,6 +213,7 @@ contains
         use const_and_precisions, only: pi
 
         real(dp),dimension(4,no_roots) :: D11_mono
+        real(dp), intent(in):: eps_eff
 
         D11_mono = 4.0d0/(9.0d0*pi) * (2.0d0 * eps_eff)**(3.0d0/2.0d0) &
                     * vd**2/nu
@@ -322,7 +321,7 @@ contains
     end function neoclassics_calc_nu_star
 
 
-    function neoclassics_calc_nu_star_fromT()
+    function neoclassics_calc_nu_star_fromT(iota)
         !! Calculates the collision frequency
         !
         ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -332,7 +331,7 @@ contains
         real(dp),dimension(4) :: neoclassics_calc_nu_star_fromT
         real(dp) :: t,erfn,phixmgx,expxk,xk, lnlambda,x,v
         real(dp),dimension(4) :: temp, mass,density,z
-
+        real(dp) :: iota
 
         integer :: jj,kk
 

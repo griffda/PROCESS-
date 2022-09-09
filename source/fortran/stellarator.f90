@@ -872,7 +872,7 @@ contains
          use const_and_precisions, only: keV_, pi, mp_
          use neoclassics_module, only: q_flux, Gamma_flux, temperatures, densities, dr_temperatures, dr_densities, nu_star_averaged, init_neoclassics, r_eff
          use stellarator_variables, only: iotabar
-         
+
 
          implicit none
 
@@ -885,7 +885,7 @@ contains
                            !D11_star_mono_input = config%D11_star_mono_input, nu_star_mono_input = config%nu_star_mono_input, &
                            !D13_star_mono_input = config%D11_star_mono_input)
          ! The commented out lines above are useful once we can pass monoenergetic D11 components to PROCESS. This is a placeholder for now.
-         call init_neoclassics(0.6d0)
+         call init_neoclassics(0.6d0, config%epseff, iotabar)
 
 
          q_PROCESS = (falpha*palppv - pcoreradpv) * vol/sarea * coreradius
