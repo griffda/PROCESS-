@@ -881,10 +881,7 @@ contains
          !  Local variables
 
 
-         ! init_neoclassics(r_eff=0.6d0,eps_eff=config%epseff,iota = iotabar)!, &
-                           !D11_star_mono_input = config%D11_star_mono_input, nu_star_mono_input = config%nu_star_mono_input, &
-                           !D13_star_mono_input = config%D11_star_mono_input)
-         ! The commented out lines above are useful once we can pass monoenergetic D11 components to PROCESS. This is a placeholder for now.
+
          call init_neoclassics(0.6d0, config%epseff, iotabar)
 
 

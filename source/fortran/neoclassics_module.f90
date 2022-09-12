@@ -17,6 +17,13 @@ module neoclassics_module
     public
     integer, parameter :: no_roots = 30 ! Number of Gauss laguerre roots
 
+
+
+    ! These module variables were taken from the previous Neoclassics derived type. This derived type contained
+    ! nested derived types 'Gauss_leguerre' and 'Profile_values'. They were made module variables for ease
+    ! of import into the stellarator module such that Python conversion could take place.
+    ! S Gubbins 12/09/2022
+
     character, dimension(4) :: species = (/"e","D","T","a"/)
     !  Species that are considered
     real(dp), dimension(4) :: densities
