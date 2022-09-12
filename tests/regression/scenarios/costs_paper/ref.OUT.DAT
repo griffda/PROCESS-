@@ -8,12 +8,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.4.0-624-gb798d6793
+   Tag No. : v2.4.0-631-g79a51227e
     Branch : HEAD
-   Git log : Merge branch |1728-stop-in-dat-files-from-containing-obsolete_vars| into |develop|
- Date/time : 12 Sep 2022  9:36:05 +00:00(hh:mm) UTC
+   Git log : Merge branch |1746-removing-derived-types-from-neoclassics-module| into |develop|
+ Date/time : 12 Sep 2022 11:54:49 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-9dc50af2-project-20-concurrent-0
+  Computer : runner-ueya2eyb-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_costs_paper_0/IN.DAT
  Run title : demo 1 model for cost paper
