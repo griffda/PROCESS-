@@ -66,6 +66,7 @@ from process.caller import Caller
 from process.power import Power
 from process.cs_fatigue import CsFatigue
 from process.physics import Physics
+from process.io import obsolete_vars as ov
 from process.divertor_ode import DivertorOde
 
 
@@ -321,6 +322,7 @@ class SingleRun:
         :type input_file: str
         """
         self.input_file = input_file
+        self.validate_input()
         self.init_module_vars()
         self.models = Models()
         self.set_filenames()
@@ -464,6 +466,44 @@ class SingleRun:
         with open(self.mfile_path, "a", encoding="utf-8") as mfile_file:
             mfile_file.write("***********************************************")
             mfile_file.writelines(input_lines)
+
+    def validate_input(self):
+        """Checks the input IN.DAT file for any obsolete variables in the OBS_VARS dict contained
+        within obsolete_variables.py.
+        Then will print out what the used obsolete variables are (if any) before continuing the proces run.
+        #TODO: add a feature to stop 1 and force the variable to be updated if it is now obsolete.
+        """
+
+        obsolete_variables = ov.OBS_VARS
+
+        filename = self.input_file
+
+        variables_in_in_dat = []
+        with open(filename, "r") as file:
+            for line in file:
+                if line[0] == "*" or "=" not in line:
+                    continue
+
+                else:
+                    sep = " "
+                    variables = line.strip().split(sep, 1)[0]
+                    variables_in_in_dat.append(variables)
+
+        obs_vars_keys = []
+        for k in obsolete_variables:
+            obs_vars_keys.append(k)
+
+        variable_check = any(i in variables_in_in_dat for i in obs_vars_keys)
+
+        if variable_check:
+            print(
+                "The IN.DAT file contains obsolete variables from the OBS_VARS dictionary."
+            )
+            print(
+                f"The obsolete variables in your IN.DAT file are: {set(obs_vars_keys) & set(variables_in_in_dat)}. Please change them to the corresponding new variable(s) before continuing."
+            )
+        else:
+            print("The IN.DAT file does not contain any obsolete variables.")
 
 
 class Models:
