@@ -102,7 +102,7 @@ contains
 
     !  These lines switch off tokamak specifics (solenoid, pf coils, pulses etc.).
     !  Are they still up to date? (26/07/22 JL)
-    
+
     !  Build quantities
 
     ohcth = 0.0D0
@@ -501,7 +501,7 @@ contains
     real(dp) :: ne0_max_ECRH, bt_ecrh, powerht_local,pscalingmw_local
 
     ! Calculate sudo density (this limit should be modelled by PROCESS'
-    ! radiation module already and this limit should only be used if no 
+    ! radiation module already and this limit should only be used if no
     ! realistic radiation model is imposed)
     call stdlim(bt,powerht,rmajor,rminor,dnelimt)
 
@@ -870,22 +870,19 @@ contains
          use physics_variables, only: falpha,palppv,pcoreradpv,vol,sarea,rminor,te,powerht,afuel
          use impurity_radiation_module, only: coreradius
          use const_and_precisions, only: keV_, pi, mp_
-         use neoclassics_module, only: neoclassics,init_neoclassics
+         use neoclassics_module, only: q_flux, Gamma_flux, temperatures, densities, dr_temperatures, dr_densities, nu_star_averaged, init_neoclassics, r_eff
          use stellarator_variables, only: iotabar
+
 
          implicit none
 
          !  Arguments
 
          !  Local variables
-         type(neoclassics) :: neo_at_rhocore
 
 
-         neo_at_rhocore = init_neoclassics(r_eff=0.6d0,eps_eff=config%epseff,iota = iotabar)!, &
-                           !D11_star_mono_input = config%D11_star_mono_input, nu_star_mono_input = config%nu_star_mono_input, &
-                           !D13_star_mono_input = config%D11_star_mono_input)
-         ! The commented out lines above are useful once we can pass monoenergetic D11 components to PROCESS. This is a placeholder for now.
 
+         call init_neoclassics(0.6d0, config%epseff, iotabar)
 
 
          q_PROCESS = (falpha*palppv - pcoreradpv) * vol/sarea * coreradius
@@ -894,45 +891,45 @@ contains
 
 
 
-         q_neo = sum(neo_at_rhocore%q_flux*1e-6)
-         gamma_neo =  sum(neo_at_rhocore%Gamma_flux * neo_at_rhocore%profiles%temperatures*1e-6)
+         q_neo = sum(q_flux*1e-6)
+         gamma_neo =  sum(Gamma_flux * temperatures*1e-6)
 
-         total_q_neo = sum(neo_at_rhocore%q_flux*1e-6 + neo_at_rhocore%Gamma_flux * neo_at_rhocore%profiles%temperatures*1e-6)
+         total_q_neo = sum(q_flux*1e-6 + Gamma_flux * temperatures*1e-6)
 
          !               Factor 4 to encounter for ion contribution and Er effects
-         total_q_neo_e = 2.0d0*2.0d0* (neo_at_rhocore%q_flux(1)*1e-6 + neo_at_rhocore%Gamma_flux(1)* &
-                         neo_at_rhocore%profiles%temperatures(1)*1e-6)
+         total_q_neo_e = 2.0d0*2.0d0* (q_flux(1)*1e-6 + Gamma_flux(1)* &
+                         temperatures(1)*1e-6)
 
-         q_neo_e = neo_at_rhocore%q_flux(1)*1e-6
-         q_neo_D = neo_at_rhocore%q_flux(2)*1e-6
-         q_neo_a = neo_at_rhocore%q_flux(4)*1e-6
-         q_neo_T = neo_at_rhocore%q_flux(3)*1e-6
+         q_neo_e = q_flux(1)*1e-6
+         q_neo_D = q_flux(2)*1e-6
+         q_neo_a = q_flux(4)*1e-6
+         q_neo_T = q_flux(3)*1e-6
 
-         g_neo_e = neo_at_rhocore%Gamma_flux(1)*1e-6 * neo_at_rhocore%profiles%temperatures(1)
-         g_neo_D = neo_at_rhocore%Gamma_flux(2)*1e-6 * neo_at_rhocore%profiles%temperatures(2)
-         g_neo_a = neo_at_rhocore%Gamma_flux(4)*1e-6 * neo_at_rhocore%profiles%temperatures(4)
-         g_neo_T = neo_at_rhocore%Gamma_flux(3)*1e-6 * neo_at_rhocore%profiles%temperatures(3)
+         g_neo_e = Gamma_flux(1)*1e-6 * temperatures(1)
+         g_neo_D = Gamma_flux(2)*1e-6 * temperatures(2)
+         g_neo_a = Gamma_flux(4)*1e-6 * temperatures(4)
+         g_neo_T = Gamma_flux(3)*1e-6 * temperatures(3)
 
-         dndt_neo_e = neo_at_rhocore%Gamma_flux(1)
-         dndt_neo_D = neo_at_rhocore%Gamma_flux(2)
-         dndt_neo_a = neo_at_rhocore%Gamma_flux(4)
-         dndt_neo_T = neo_at_rhocore%Gamma_flux(3)
+         dndt_neo_e = Gamma_flux(1)
+         dndt_neo_D = Gamma_flux(2)
+         dndt_neo_a = Gamma_flux(4)
+         dndt_neo_T = Gamma_flux(3)
 
          dndt_neo_fuel = (dndt_neo_D + dndt_neo_T) * sarea * coreradius
          dmdt_neo_fuel = dndt_neo_fuel * afuel * mp_ * 1.0d6 ! mg
          dmdt_neo_fuel_from_e = 4 * dndt_neo_e * sarea * coreradius * afuel * mp_ * 1.0d6  ! kg
 
-         chi_neo_e =  -(neo_at_rhocore%q_flux(1)+neo_at_rhocore%Gamma_flux(1)*neo_at_rhocore%profiles%temperatures(1))/ &
-                     (neo_at_rhocore%profiles%densities(1)* &
-                     neo_at_rhocore%profiles%dr_temperatures(1) + neo_at_rhocore%profiles%temperatures(1)* &
-                     neo_at_rhocore%profiles%dr_densities(1))
+         chi_neo_e =  -(q_flux(1)+Gamma_flux(1)*temperatures(1))/ &
+                     (densities(1)* &
+                     dr_temperatures(1) + temperatures(1)* &
+                     dr_densities(1))
 
          chi_PROCESS_e = st_calc_eff_chi()
 
-         nu_star_e = neo_at_rhocore%nu_star_averaged(1)
-         nu_star_d = neo_at_rhocore%nu_star_averaged(2)
-         nu_star_T = neo_at_rhocore%nu_star_averaged(3)
-         nu_star_He = neo_at_rhocore%nu_star_averaged(4)
+         nu_star_e = nu_star_averaged(1)
+         nu_star_d = nu_star_averaged(2)
+         nu_star_T = nu_star_averaged(3)
+         nu_star_He = nu_star_averaged(4)
 
 
 
@@ -951,7 +948,6 @@ contains
          use physics_variables, only: powerht,alphan,rminor,te0,ne0
          use impurity_radiation_module, only: coreradius
          use const_and_precisions, only: keV_, pi, mp_
-         use neoclassics_module, only: neoclassics,init_neoclassics
          use stellarator_variables, only: iotabar
 
          implicit none
@@ -959,7 +955,6 @@ contains
          !  Arguments
 
          !  Local variables
-         type(neoclassics) :: neo_at_rhocore
          real(dp) :: drte
 
          chi_turb = 0.035d0 * powerht**0.75/(((1+alphan) * (1-coreradius**2))**alphan) ! m^2/s
