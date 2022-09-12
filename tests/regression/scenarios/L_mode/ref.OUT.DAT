@@ -6,12 +6,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.4.0-621-g0b4e641cd
+   Tag No. : v2.4.0-624-gb798d6793
     Branch : HEAD
-   Git log : Merge branch |disable_baseline_2019| into |develop|
- Date/time :  8 Sep 2022 13:37:50 +00:00(hh:mm) UTC
+   Git log : Merge branch |1728-stop-in-dat-files-from-containing-obsolete_vars| into |develop|
+ Date/time : 12 Sep 2022 10:08:52 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-nkpubsxk-project-20-concurrent-0
+  Computer : runner-9dc50af2-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_L_mode_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
