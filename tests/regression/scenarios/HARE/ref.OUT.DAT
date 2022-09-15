@@ -7,12 +7,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.4.0-634-g3d4ccf390
+   Tag No. : v2.4.0-637-g048721271
     Branch : HEAD
-   Git log : Merge branch |Documentation_DEMOcost| into |develop|
- Date/time : 15 Sep 2022  8:50:03 +00:00(hh:mm) UTC
+   Git log : Merge branch |1749-variables-which-have-brackets-are-being-stripped-incorrectly-when-parsing-mfiles-in| into |develop|
+ Date/time : 15 Sep 2022 14:33:50 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-8a63d9a8-project-20-concurrent-0
+  Computer : runner-sn2siqxv-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_HARE_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
@@ -243,20 +243,20 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Impurities
  
  Plasma ion densities / electron density:
- H_ concentration                                                         (fimp(01)                 7.234E-01  OP 
- He concentration                                                         (fimp(02)                 1.000E-01     
- Be concentration                                                         (fimp(03)                 0.000E+00     
- C_ concentration                                                         (fimp(04)                 0.000E+00     
- N_ concentration                                                         (fimp(05)                 0.000E+00     
- O_ concentration                                                         (fimp(06)                 0.000E+00     
- Ne concentration                                                         (fimp(07)                 0.000E+00     
- Si concentration                                                         (fimp(08)                 0.000E+00     
- Ar concentration                                                         (fimp(09)                 4.119E-03     
- Fe concentration                                                         (fimp(10)                 0.000E+00     
- Ni concentration                                                         (fimp(11)                 0.000E+00     
- Kr concentration                                                         (fimp(12)                 0.000E+00     
- Xe concentration                                                         (fimp(13)                 0.000E+00     
- W_ concentration                                                         (fimp(14)                 5.000E-05     
+ H_ concentration                                                         (fimp(01))                7.234E-01  OP 
+ He concentration                                                         (fimp(02))                1.000E-01     
+ Be concentration                                                         (fimp(03))                0.000E+00     
+ C_ concentration                                                         (fimp(04))                0.000E+00     
+ N_ concentration                                                         (fimp(05))                0.000E+00     
+ O_ concentration                                                         (fimp(06))                0.000E+00     
+ Ne concentration                                                         (fimp(07))                0.000E+00     
+ Si concentration                                                         (fimp(08))                0.000E+00     
+ Ar concentration                                                         (fimp(09))                4.119E-03     
+ Fe concentration                                                         (fimp(10))                0.000E+00     
+ Ni concentration                                                         (fimp(11))                0.000E+00     
+ Kr concentration                                                         (fimp(12))                0.000E+00     
+ Xe concentration                                                         (fimp(13))                0.000E+00     
+ W_ concentration                                                         (fimp(14))                5.000E-05     
  Average mass of all ions (amu)                                           (aion)                    2.878E+00  OP 
  
  Effective charge                                                         (zeff)                        2.613  OP 
@@ -1665,20 +1665,20 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Impurities
  
  Plasma ion densities / electron density:
- H_ concentration                                                         (fimp(01)                 7.234E-01  OP 
- He concentration                                                         (fimp(02)                 1.000E-01     
- Be concentration                                                         (fimp(03)                 0.000E+00     
- C_ concentration                                                         (fimp(04)                 0.000E+00     
- N_ concentration                                                         (fimp(05)                 0.000E+00     
- O_ concentration                                                         (fimp(06)                 0.000E+00     
- Ne concentration                                                         (fimp(07)                 0.000E+00     
- Si concentration                                                         (fimp(08)                 0.000E+00     
- Ar concentration                                                         (fimp(09)                 4.115E-03     
- Fe concentration                                                         (fimp(10)                 0.000E+00     
- Ni concentration                                                         (fimp(11)                 0.000E+00     
- Kr concentration                                                         (fimp(12)                 0.000E+00     
- Xe concentration                                                         (fimp(13)                 0.000E+00     
- W_ concentration                                                         (fimp(14)                 5.000E-05     
+ H_ concentration                                                         (fimp(01))                7.234E-01  OP 
+ He concentration                                                         (fimp(02))                1.000E-01     
+ Be concentration                                                         (fimp(03))                0.000E+00     
+ C_ concentration                                                         (fimp(04))                0.000E+00     
+ N_ concentration                                                         (fimp(05))                0.000E+00     
+ O_ concentration                                                         (fimp(06))                0.000E+00     
+ Ne concentration                                                         (fimp(07))                0.000E+00     
+ Si concentration                                                         (fimp(08))                0.000E+00     
+ Ar concentration                                                         (fimp(09))                4.115E-03     
+ Fe concentration                                                         (fimp(10))                0.000E+00     
+ Ni concentration                                                         (fimp(11))                0.000E+00     
+ Kr concentration                                                         (fimp(12))                0.000E+00     
+ Xe concentration                                                         (fimp(13))                0.000E+00     
+ W_ concentration                                                         (fimp(14))                5.000E-05     
  Average mass of all ions (amu)                                           (aion)                    2.878E+00  OP 
  
  Effective charge                                                         (zeff)                        2.612  OP 
@@ -3087,20 +3087,20 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Impurities
  
  Plasma ion densities / electron density:
- H_ concentration                                                         (fimp(01)                 7.235E-01  OP 
- He concentration                                                         (fimp(02)                 1.000E-01     
- Be concentration                                                         (fimp(03)                 0.000E+00     
- C_ concentration                                                         (fimp(04)                 0.000E+00     
- N_ concentration                                                         (fimp(05)                 0.000E+00     
- O_ concentration                                                         (fimp(06)                 0.000E+00     
- Ne concentration                                                         (fimp(07)                 0.000E+00     
- Si concentration                                                         (fimp(08)                 0.000E+00     
- Ar concentration                                                         (fimp(09)                 4.112E-03     
- Fe concentration                                                         (fimp(10)                 0.000E+00     
- Ni concentration                                                         (fimp(11)                 0.000E+00     
- Kr concentration                                                         (fimp(12)                 0.000E+00     
- Xe concentration                                                         (fimp(13)                 0.000E+00     
- W_ concentration                                                         (fimp(14)                 5.000E-05     
+ H_ concentration                                                         (fimp(01))                7.235E-01  OP 
+ He concentration                                                         (fimp(02))                1.000E-01     
+ Be concentration                                                         (fimp(03))                0.000E+00     
+ C_ concentration                                                         (fimp(04))                0.000E+00     
+ N_ concentration                                                         (fimp(05))                0.000E+00     
+ O_ concentration                                                         (fimp(06))                0.000E+00     
+ Ne concentration                                                         (fimp(07))                0.000E+00     
+ Si concentration                                                         (fimp(08))                0.000E+00     
+ Ar concentration                                                         (fimp(09))                4.112E-03     
+ Fe concentration                                                         (fimp(10))                0.000E+00     
+ Ni concentration                                                         (fimp(11))                0.000E+00     
+ Kr concentration                                                         (fimp(12))                0.000E+00     
+ Xe concentration                                                         (fimp(13))                0.000E+00     
+ W_ concentration                                                         (fimp(14))                5.000E-05     
  Average mass of all ions (amu)                                           (aion)                    2.878E+00  OP 
  
  Effective charge                                                         (zeff)                        2.611  OP 
@@ -4509,20 +4509,20 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Impurities
  
  Plasma ion densities / electron density:
- H_ concentration                                                         (fimp(01)                 7.236E-01  OP 
- He concentration                                                         (fimp(02)                 1.000E-01     
- Be concentration                                                         (fimp(03)                 0.000E+00     
- C_ concentration                                                         (fimp(04)                 0.000E+00     
- N_ concentration                                                         (fimp(05)                 0.000E+00     
- O_ concentration                                                         (fimp(06)                 0.000E+00     
- Ne concentration                                                         (fimp(07)                 0.000E+00     
- Si concentration                                                         (fimp(08)                 0.000E+00     
- Ar concentration                                                         (fimp(09)                 4.107E-03     
- Fe concentration                                                         (fimp(10)                 0.000E+00     
- Ni concentration                                                         (fimp(11)                 0.000E+00     
- Kr concentration                                                         (fimp(12)                 0.000E+00     
- Xe concentration                                                         (fimp(13)                 0.000E+00     
- W_ concentration                                                         (fimp(14)                 5.000E-05     
+ H_ concentration                                                         (fimp(01))                7.236E-01  OP 
+ He concentration                                                         (fimp(02))                1.000E-01     
+ Be concentration                                                         (fimp(03))                0.000E+00     
+ C_ concentration                                                         (fimp(04))                0.000E+00     
+ N_ concentration                                                         (fimp(05))                0.000E+00     
+ O_ concentration                                                         (fimp(06))                0.000E+00     
+ Ne concentration                                                         (fimp(07))                0.000E+00     
+ Si concentration                                                         (fimp(08))                0.000E+00     
+ Ar concentration                                                         (fimp(09))                4.107E-03     
+ Fe concentration                                                         (fimp(10))                0.000E+00     
+ Ni concentration                                                         (fimp(11))                0.000E+00     
+ Kr concentration                                                         (fimp(12))                0.000E+00     
+ Xe concentration                                                         (fimp(13))                0.000E+00     
+ W_ concentration                                                         (fimp(14))                5.000E-05     
  Average mass of all ions (amu)                                           (aion)                    2.877E+00  OP 
  
  Effective charge                                                         (zeff)                        2.610  OP 
@@ -5931,20 +5931,20 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Impurities
  
  Plasma ion densities / electron density:
- H_ concentration                                                         (fimp(01)                 7.237E-01  OP 
- He concentration                                                         (fimp(02)                 1.000E-01     
- Be concentration                                                         (fimp(03)                 0.000E+00     
- C_ concentration                                                         (fimp(04)                 0.000E+00     
- N_ concentration                                                         (fimp(05)                 0.000E+00     
- O_ concentration                                                         (fimp(06)                 0.000E+00     
- Ne concentration                                                         (fimp(07)                 0.000E+00     
- Si concentration                                                         (fimp(08)                 0.000E+00     
- Ar concentration                                                         (fimp(09)                 4.101E-03     
- Fe concentration                                                         (fimp(10)                 0.000E+00     
- Ni concentration                                                         (fimp(11)                 0.000E+00     
- Kr concentration                                                         (fimp(12)                 0.000E+00     
- Xe concentration                                                         (fimp(13)                 0.000E+00     
- W_ concentration                                                         (fimp(14)                 5.000E-05     
+ H_ concentration                                                         (fimp(01))                7.237E-01  OP 
+ He concentration                                                         (fimp(02))                1.000E-01     
+ Be concentration                                                         (fimp(03))                0.000E+00     
+ C_ concentration                                                         (fimp(04))                0.000E+00     
+ N_ concentration                                                         (fimp(05))                0.000E+00     
+ O_ concentration                                                         (fimp(06))                0.000E+00     
+ Ne concentration                                                         (fimp(07))                0.000E+00     
+ Si concentration                                                         (fimp(08))                0.000E+00     
+ Ar concentration                                                         (fimp(09))                4.101E-03     
+ Fe concentration                                                         (fimp(10))                0.000E+00     
+ Ni concentration                                                         (fimp(11))                0.000E+00     
+ Kr concentration                                                         (fimp(12))                0.000E+00     
+ Xe concentration                                                         (fimp(13))                0.000E+00     
+ W_ concentration                                                         (fimp(14))                5.000E-05     
  Average mass of all ions (amu)                                           (aion)                    2.877E+00  OP 
  
  Effective charge                                                         (zeff)                        2.608  OP 
@@ -7353,20 +7353,20 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Impurities
  
  Plasma ion densities / electron density:
- H_ concentration                                                         (fimp(01)                 7.238E-01  OP 
- He concentration                                                         (fimp(02)                 1.000E-01     
- Be concentration                                                         (fimp(03)                 0.000E+00     
- C_ concentration                                                         (fimp(04)                 0.000E+00     
- N_ concentration                                                         (fimp(05)                 0.000E+00     
- O_ concentration                                                         (fimp(06)                 0.000E+00     
- Ne concentration                                                         (fimp(07)                 0.000E+00     
- Si concentration                                                         (fimp(08)                 0.000E+00     
- Ar concentration                                                         (fimp(09)                 4.095E-03     
- Fe concentration                                                         (fimp(10)                 0.000E+00     
- Ni concentration                                                         (fimp(11)                 0.000E+00     
- Kr concentration                                                         (fimp(12)                 0.000E+00     
- Xe concentration                                                         (fimp(13)                 0.000E+00     
- W_ concentration                                                         (fimp(14)                 5.000E-05     
+ H_ concentration                                                         (fimp(01))                7.238E-01  OP 
+ He concentration                                                         (fimp(02))                1.000E-01     
+ Be concentration                                                         (fimp(03))                0.000E+00     
+ C_ concentration                                                         (fimp(04))                0.000E+00     
+ N_ concentration                                                         (fimp(05))                0.000E+00     
+ O_ concentration                                                         (fimp(06))                0.000E+00     
+ Ne concentration                                                         (fimp(07))                0.000E+00     
+ Si concentration                                                         (fimp(08))                0.000E+00     
+ Ar concentration                                                         (fimp(09))                4.095E-03     
+ Fe concentration                                                         (fimp(10))                0.000E+00     
+ Ni concentration                                                         (fimp(11))                0.000E+00     
+ Kr concentration                                                         (fimp(12))                0.000E+00     
+ Xe concentration                                                         (fimp(13))                0.000E+00     
+ W_ concentration                                                         (fimp(14))                5.000E-05     
  Average mass of all ions (amu)                                           (aion)                    2.877E+00  OP 
  
  Effective charge                                                         (zeff)                        2.606  OP 
@@ -8775,20 +8775,20 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Impurities
  
  Plasma ion densities / electron density:
- H_ concentration                                                         (fimp(01)                 7.239E-01  OP 
- He concentration                                                         (fimp(02)                 1.000E-01     
- Be concentration                                                         (fimp(03)                 0.000E+00     
- C_ concentration                                                         (fimp(04)                 0.000E+00     
- N_ concentration                                                         (fimp(05)                 0.000E+00     
- O_ concentration                                                         (fimp(06)                 0.000E+00     
- Ne concentration                                                         (fimp(07)                 0.000E+00     
- Si concentration                                                         (fimp(08)                 0.000E+00     
- Ar concentration                                                         (fimp(09)                 4.089E-03     
- Fe concentration                                                         (fimp(10)                 0.000E+00     
- Ni concentration                                                         (fimp(11)                 0.000E+00     
- Kr concentration                                                         (fimp(12)                 0.000E+00     
- Xe concentration                                                         (fimp(13)                 0.000E+00     
- W_ concentration                                                         (fimp(14)                 5.000E-05     
+ H_ concentration                                                         (fimp(01))                7.239E-01  OP 
+ He concentration                                                         (fimp(02))                1.000E-01     
+ Be concentration                                                         (fimp(03))                0.000E+00     
+ C_ concentration                                                         (fimp(04))                0.000E+00     
+ N_ concentration                                                         (fimp(05))                0.000E+00     
+ O_ concentration                                                         (fimp(06))                0.000E+00     
+ Ne concentration                                                         (fimp(07))                0.000E+00     
+ Si concentration                                                         (fimp(08))                0.000E+00     
+ Ar concentration                                                         (fimp(09))                4.089E-03     
+ Fe concentration                                                         (fimp(10))                0.000E+00     
+ Ni concentration                                                         (fimp(11))                0.000E+00     
+ Kr concentration                                                         (fimp(12))                0.000E+00     
+ Xe concentration                                                         (fimp(13))                0.000E+00     
+ W_ concentration                                                         (fimp(14))                5.000E-05     
  Average mass of all ions (amu)                                           (aion)                    2.877E+00  OP 
  
  Effective charge                                                         (zeff)                        2.605  OP 

@@ -12,12 +12,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.4.0-634-g3d4ccf390
+   Tag No. : v2.4.0-637-g048721271
     Branch : HEAD
-   Git log : Merge branch |Documentation_DEMOcost| into |develop|
- Date/time : 15 Sep 2022  9:19:02 +00:00(hh:mm) UTC
+   Git log : Merge branch |1749-variables-which-have-brackets-are-being-stripped-incorrectly-when-parsing-mfiles-in| into |develop|
+ Date/time : 15 Sep 2022 15:06:07 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-8a63d9a8-project-20-concurrent-0
+  Computer : runner-sn2siqxv-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_Menard_HTS_PP_0/IN.DAT
  Run title : Pilot Plant Menard et al. 2016, Section 5
@@ -400,20 +400,20 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Impurities
  
  Plasma ion densities / electron density:
- H_ concentration                                                         (fimp(01)                 8.325E-01  OP 
- He concentration                                                         (fimp(02)                 8.000E-02     
- Be concentration                                                         (fimp(03)                 0.000E+00     
- C_ concentration                                                         (fimp(04)                 0.000E+00     
- N_ concentration                                                         (fimp(05)                 0.000E+00     
- O_ concentration                                                         (fimp(06)                 0.000E+00     
- Ne concentration                                                         (fimp(07)                 0.000E+00     
- Si concentration                                                         (fimp(08)                 0.000E+00     
- Ar concentration                                                         (fimp(09)                 0.000E+00     
- Fe concentration                                                         (fimp(10)                 0.000E+00     
- Ni concentration                                                         (fimp(11)                 0.000E+00     
- Kr concentration                                                         (fimp(12)                 0.000E+00     
- Xe concentration                                                         (fimp(13)                 1.121E-04  ITV
- W_ concentration                                                         (fimp(14)                 5.000E-05     
+ H_ concentration                                                         (fimp(01))                8.325E-01  OP 
+ He concentration                                                         (fimp(02))                8.000E-02     
+ Be concentration                                                         (fimp(03))                0.000E+00     
+ C_ concentration                                                         (fimp(04))                0.000E+00     
+ N_ concentration                                                         (fimp(05))                0.000E+00     
+ O_ concentration                                                         (fimp(06))                0.000E+00     
+ Ne concentration                                                         (fimp(07))                0.000E+00     
+ Si concentration                                                         (fimp(08))                0.000E+00     
+ Ar concentration                                                         (fimp(09))                0.000E+00     
+ Fe concentration                                                         (fimp(10))                0.000E+00     
+ Ni concentration                                                         (fimp(11))                0.000E+00     
+ Kr concentration                                                         (fimp(12))                0.000E+00     
+ Xe concentration                                                         (fimp(13))                1.121E-04     
+ W_ concentration                                                         (fimp(14))                5.000E-05     
  Average mass of all ions (amu)                                           (aion)                    2.655E+00  OP 
  
  Effective charge                                                         (zeff)                        1.503  OP 
