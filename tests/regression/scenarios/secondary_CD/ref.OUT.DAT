@@ -6,12 +6,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.4.0-631-g79a51227e
+   Tag No. : v2.4.0-634-g3d4ccf390
     Branch : HEAD
-   Git log : Merge branch |1746-removing-derived-types-from-neoclassics-module| into |develop|
- Date/time : 12 Sep 2022 12:28:54 +00:00(hh:mm) UTC
+   Git log : Merge branch |Documentation_DEMOcost| into |develop|
+ Date/time : 15 Sep 2022  9:19:30 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-ueya2eyb-project-20-concurrent-0
+  Computer : runner-8a63d9a8-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_secondary_CD_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
