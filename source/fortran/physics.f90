@@ -3590,8 +3590,8 @@ module physics_module
       ! MDK Update fimp, as this will make the ITV output work correctly.
       fimp(imp) = impurity_arr_frac(imp)
       str1 = impurity_arr_Label(imp) // ' concentration'
-      str2 = '(fimp('//int_to_string2(imp)//')'
-      ! MDK Add output flag for H which is calculated
+      str2 = '(fimp('//int_to_string2(imp)//'))'
+      ! MDK Add output flag for H which is calculated.
       if (imp==1) then
         !call ovarre(outfile,str1,str2,impurity_arr_frac(imp), 'OP ')
         call ovarre(outfile,str1,str2,fimp(imp), 'OP ')
