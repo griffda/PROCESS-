@@ -8,6 +8,10 @@ Below is a list of publications using or citing PROCESS by year:
 
 ## 2022
 
+[Sensitivity analysis of capital cost of European DEMO design](https://ieeexplore.ieee.org/document/9889116)   
+A.J. Pearce, S. Kahn, J. Morris, S.I. Muldrew   
+IEEE Transactions on Plasma Science (Early Access)   
+
 [Validation and results of an approximate model for the stress of a tokamak toroidal field coil at the inboard midplane](https://arxiv.org/abs/2206.14699)   
 C.P.S. Swanson, S. Kahn, C. Rana, P.H. Titus, A.W. Brooks, W. Guttenfelder, Y. Zhai, T.G. Brown, J.E. Menard   
 arXiv:2206.14699 (2022) 
