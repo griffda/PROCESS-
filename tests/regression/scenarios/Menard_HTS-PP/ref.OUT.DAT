@@ -12,12 +12,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.4.0-637-g048721271
+   Tag No. : v2.4.0-641-g100b40032
     Branch : HEAD
-   Git log : Merge branch |1749-variables-which-have-brackets-are-being-stripped-incorrectly-when-parsing-mfiles-in| into |develop|
- Date/time : 15 Sep 2022 15:06:07 +00:00(hh:mm) UTC
+   Git log : Merge branch |1745-allow-user-input-for-burnup| into |develop|
+ Date/time : 22 Sep 2022 10:57:30 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-sn2siqxv-project-20-concurrent-0
+  Computer : runner-9dc50af2-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_Menard_HTS_PP_0/IN.DAT
  Run title : Pilot Plant Menard et al. 2016, Section 5
