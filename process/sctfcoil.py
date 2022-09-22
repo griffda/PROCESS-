@@ -753,7 +753,7 @@ class Sctfcoil:
             # 'high current density' as per parameterisation described in Wolf,
             #  and based on Hazelton experimental data and Zhai conceptual model;
             #  see subroutine for full references
-            jcritsc, bcrit, tcrit = superconductors.HIJC_REBCO(
+            jcritsc, bcrit, tcrit = superconductors.hijc_rebco(
                 thelium, bmax, strain, bc20m, tc0m
             )
 
@@ -887,17 +887,17 @@ class Sctfcoil:
                         ttestp, bmax, strain, bc20m, tc0m
                     )
                 elif isumat == 9:
-                    jcrit0, b, t = superconductors.HIJC_REBCO(
+                    jcrit0, b, t = superconductors.hijc_rebco(
                         ttest, bmax, strain, bc20m, tc0m
                     )
                     if (abs(jsc - jcrit0) <= jtol) and (
                         abs((jsc - jcrit0) / jsc) <= 0.01
                     ):
                         break
-                    jcritm, b, t = superconductors.HIJC_REBCO(
+                    jcritm, b, t = superconductors.hijc_rebco(
                         ttestm, bmax, strain, bc20m, tc0m
                     )
-                    jcritp, b, t = superconductors.HIJC_REBCO(
+                    jcritp, b, t = superconductors.hijc_rebco(
                         ttestp, bmax, strain, bc20m, tc0m
                     )
 
