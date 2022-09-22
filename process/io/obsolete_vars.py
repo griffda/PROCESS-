@@ -39,7 +39,7 @@ OBS_VARS = {
     "isumattf": "i_tf_sc_mat",
     "turnstf": "n_tf_turn",
     "awptf": "a_tf_wp",
-    "thkcas": "dr_tf_case_in",
+    "dr_tf_case_in": "thkcas",
     "casthi_fraction": "f_tf_case_out",
     "casthi": "dr_tf_case_out",
     "eyoung_reinforced_al": "eyoung_nibron",
