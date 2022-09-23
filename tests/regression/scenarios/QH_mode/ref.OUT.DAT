@@ -6,12 +6,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.4.0-641-g100b40032
+   Tag No. : v2.4.0-648-g0b011e1a9
     Branch : HEAD
-   Git log : Merge branch |1745-allow-user-input-for-burnup| into |develop|
- Date/time : 22 Sep 2022 10:57:37 +00:00(hh:mm) UTC
+   Git log : Merge branch |1757-setting-kallenbach-test-to-be-skipped-as-currently-breaking| into |develop|
+ Date/time : 23 Sep 2022 14:28:38 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-9dc50af2-project-20-concurrent-0
+  Computer : runner-sn2siqxv-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_QH_mode_0/IN.DAT
  Run title : Example QH-mode plasma scenario
