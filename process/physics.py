@@ -11,7 +11,6 @@ from process.fortran import constants
 from process.fortran import physics_functions_module
 from process.fortran import physics_variables
 from process.fortran import physics_module
-from process.fortran import profiles_module
 from process.fortran import pulse_variables
 from process.fortran import times_variables
 from process.fortran import current_drive_variables
@@ -21,6 +20,8 @@ from process.fortran import build_variables
 from process.fortran import divertor_variables
 from process.fortran import numerics
 from process.fortran import process_output as po
+
+from process.plasma_profiles import plasma_profiles
 
 
 class Physics:
@@ -148,8 +149,7 @@ class Physics:
             physics_variables.teped = physics_functions_module.t_eped_scaling()
 
         if physics_variables.ipedestal != 3:
-
-            profiles_module.plasma_profiles()
+            plasma_profiles()
 
         else:  # Run PLASMOD
 
