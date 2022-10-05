@@ -1,4 +1,4 @@
 from process.main import main
 from pathlib import Path
-file = Path("tests/regression/scenarios/Menard_HTS-PP/IN.DAT").resolve()
-main(["-i", str(file)])
+file = Path("/home/griff/process/process/uncertainties/config_evaluate_uncertainties.json").resolve()
+main(["-v", "-c", str(file)])

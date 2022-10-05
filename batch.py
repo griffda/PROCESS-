@@ -1,6 +1,6 @@
 from process.io.process_config import RunProcessConfig
 
-config = RunProcessConfig(self.run_process.conf)
+config = RunProcessConfig("run_process.conf")
 
 config.setup()
 
