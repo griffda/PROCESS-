@@ -14,12 +14,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.4.0-657-g00fd9c6bc
+   Tag No. : v2.4.0-660-g4c1b92cc5
     Branch : HEAD
-   Git log : Merge branch |1747-mac-md5sum-alternative| into |develop|
- Date/time : 29 Sep 2022 17:33:14 +00:00(hh:mm) UTC
+   Git log : Merge branch |1762-fix-radiation-profile-in-plot_proc-py| into |develop|
+ Date/time :  7 Oct 2022  8:09:00 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-8a63d9a8-project-20-concurrent-0
+  Computer : runner-91be33e7-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_FNSF_0/IN.DAT
  Run title : FNSF (Menard et al. 2016)
