@@ -3,14 +3,14 @@
  # PROCESS #
  # Power Reactor Optimisation Code #
  PROCESS_version_number__________________________________________________ (procver)_____________________     "2.4.0   R"
- Date_of_run_____________________________________________________________ (date)________________________     "07/10/2022"
- Time_of_run_____________________________________________________________ (time)________________________     "08:09"
- User____________________________________________________________________ (username)____________________     "root"    
+ Date_of_run_____________________________________________________________ (date)________________________     "12/10/2022"
+ Time_of_run_____________________________________________________________ (time)________________________     "09:26"
+ User____________________________________________________________________ (username)____________________     "mn3981"  
  PROCESS_run_title_______________________________________________________ (runtitle)____________________     "FNSF (Menard et al. 2016)                                                                          
- PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.4.0-660-g4c1b92cc5"                                                                             
- PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "HEAD"                                                                                              
- PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Merge branch |1762-fix-radiation-profile-in-plot_proc-py| into |develop|"                          
- Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-root/pytest-0/test_scenario_FNSF_0/IN.DAT                                                                                                                                                "
+ PROCESS_tag_number______________________________________________________ (tagno)_______________________     "v2.4.0-662-g3394bfb7"                                                                              
+ PROCESS_git_branch_name_________________________________________________ (branch_name)_________________     "1763-implement-new-ripple-calculation-model-for-picture-frame-coils"                               
+ PROCESS_last_commit_message_____________________________________________ (commsg)______________________     "Added in McClements ripple model"                                                                  
+ Input_filename__________________________________________________________ (fileprefix)__________________     "/tmp/pytest-of-mn3981/pytest-83/popen-gw2/test_scenario_FNSF_0/IN.DAT                                                                                                                                   "
  # Numerics #
  VMCON_error_flag________________________________________________________ (ifail)_______________________              1    
  # PROCESS found a feasible solution #
@@ -497,7 +497,7 @@
  Average_CP_temperature_(K)______________________________________________ (tcpav)_______________________      3.4659E+02 ITV
  Average_leg_temperature_(K)_____________________________________________ (tlegav)______________________     -1.0000E+00    
  Max_allowed_tfcoil_variables.ripple_amplitude_at_plasma_(%)_____________ (ripmax)______________________      1.0000E+00    
- Ripple_at_plasma_edge_(%)_______________________________________________ (ripple)______________________      4.8992E-01    
+ Ripple_at_plasma_edge_(%)_______________________________________________ (ripple)______________________      2.6520E-01    
  # Centrepost Coolant Parameters #
  Centrepost_coolant_fraction_____________________________________________ (fcoolcp)_____________________      1.4332E-01 ITV
  Average_coolant_channel_diameter_(m)____________________________________ (dcool)_______________________      6.0000E-03    
