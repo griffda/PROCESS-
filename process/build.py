@@ -894,7 +894,8 @@ class Build:
 
             # Calculated maximum toroidal WP toroidal thickness [m]
             t_wp_max = 2.0e0 * r_wp_max * numpy.tan(numpy.pi / n)
-
+        
+        flag = 0
         if tfcoil_variables.i_tf_shape == 2:
             # Ken McClements ST picture frame coil analytical ripple calc
             # Calculated ripple for coil at r_tf_outboard_mid (%)
