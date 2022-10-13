@@ -107,10 +107,6 @@ def test_scenario(scenario, tmp_path, reg_tolerance, overwrite_refs_opt):
             "IFE currently uses the hybrd non-optimising solver, which "
             "is currently not implemented"
         )
-    if scenario.name == "kallenbach":
-        pytest.skip(
-            "Changes to the ODE solver are causing Kallenbach to fail currently."
-        )
 
     logger.info(f"Starting test for {scenario.name}")
 
