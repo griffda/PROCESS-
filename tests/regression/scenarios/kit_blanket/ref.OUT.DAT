@@ -7,12 +7,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.4.0-666-ga10ae3496
+   Tag No. : v2.4.0-668-g095806b5d
     Branch : HEAD
-   Git log : Merge branch |1764-conflicting-names-of-tests| into |develop|
- Date/time : 12 Oct 2022 14:41:47 +00:00(hh:mm) UTC
+   Git log : Added Lux et al. (2022) to publications.md
+ Date/time : 14 Oct 2022 13:54:46 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-c55928e9-project-20-concurrent-0
+  Computer : runner-9dc50af2-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_kit_blanket_0/IN.DAT
  Run title : Michael's test file
