@@ -14,14 +14,14 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.4.0-662-g3394bfb7 code contains untracked changes
-    Branch : 1763-implement-new-ripple-calculation-model-for-picture-frame-coils
-   Git log : Added in McClements ripple model
- Date/time : 12 Oct 2022  9:26:49 +01:00(hh:mm) UTC
-      User : mn3981
-  Computer : L2036
- Directory : /home/mn3981/process
-     Input : /tmp/pytest-of-mn3981/pytest-83/popen-gw2/test_scenario_FNSF_0/IN.DAT
+   Tag No. : v2.4.0-660-g4c1b92cc5
+    Branch : HEAD
+   Git log : Merge branch |1762-fix-radiation-profile-in-plot_proc-py| into |develop|
+ Date/time :  7 Oct 2022  8:09:00 +00:00(hh:mm) UTC
+      User : root
+  Computer : runner-91be33e7-project-20-concurrent-0
+ Directory : /builds/process/process
+     Input : /tmp/pytest-of-root/pytest-0/test_scenario_FNSF_0/IN.DAT
  Run title : FNSF (Menard et al. 2016)
   Run type : Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
  
@@ -507,6 +507,9 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  
  ************************************************ Radial Build ************************************************
  
+ (Ripple result may not be accurate, as the fit was outside
+  its range of applicability.)
+ 
  Device centreline                            0.000           0.000                       
  Machine bore                                 0.000           0.000   (bore)              
  Central solenoid                             0.000           0.000   (ohcth)             
@@ -685,7 +688,7 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
  Ripple information:
  
  Max allowed tfcoil_variables.ripple amplitude at plasma (%)              (ripmax)                  1.000E+00     
- Ripple at plasma edge (%)                                                (ripple)                  2.652E-01     
+ Ripple at plasma edge (%)                                                (ripple)                  4.899E-01     
    Ripple calculation to be re-defined for picure frame coils
  
  Radial build of TF coil centre-line :
@@ -1434,6 +1437,8 @@ PROCESS has successfully optimised the iteration variables to maximise the figur
 155     2   CHECK: dene used as iteration variable without constraint 81 (neped<ne0)        
 272     2   Double-null: Upper vertical build forced to match lower                         
  39     1   CHECK: Operating with a single null in a double null machine                    
+ 62     1   RADIALB: Ripple result may be inaccurate, as the fit has been extrapolated      
+143     1   RADIALB: (TF coil ripple calculation) (R+a)/rtot out of fitted range            
 277     2   CHECK: One or more collision between TF and PF coils. Check PF placement.       
  Final error identifier                                                   (error_id)                      277     
  
