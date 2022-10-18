@@ -99,7 +99,7 @@ subroutine run_summary
   use global_variables, only: maxcal, fileprefix, icase, runtitle
   use numerics, only: nvar, neqns, ioptimz, nineqns, epsvmc, minmax, icc, &
     lablcc, lablmm
-  use process_output, only: ocentr, oblnkl, ocmmnt, ostars, ovarst
+  use process_output, only: ocentr, oblnkl, ocmmnt, ostars, ovarst, ovarin
   use physics_variables, only: te
   implicit none
 
@@ -233,6 +233,11 @@ subroutine run_summary
   call ovarst(mfile,'PROCESS last commit message','(commsg)',rstring)
 
   call ovarst(mfile,'Input filename','(fileprefix)','"'//trim(fileprefix//'"'))
+
+  if (ioptimz == -2) then
+     call ovarin(mfile,'Optimisation switch','(ioptimz)',ioptimz)
+     call ovarin(mfile,'Figure of merit switch','(minmax)',minmax)
+  end if
 
 #ifndef unit_test
 

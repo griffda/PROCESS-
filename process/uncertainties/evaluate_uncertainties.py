@@ -91,6 +91,8 @@ def run_monte_carlo(args):
 
     NEQNS, itervars = get_neqns_itervars()
 
+    config.factor = 1.0
+
     LBS, UBS = get_variable_range(itervars, config.factor)
 
     config.checks_before_run()
