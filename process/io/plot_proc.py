@@ -1027,7 +1027,7 @@ def synchrotron_rad():
     return psyncpv
 
 
-def plot_radprofile(prof, mfile_data, scan, impp, demo_ranges):
+def plot_radprofile(prof, mfile_data, scan, impp, demo_ranges) -> float:
     """Function to plot radiation profile, formula taken from ???.
 
     Arguments:
@@ -1953,6 +1953,7 @@ def plot_geometry_info(axis, mfile_data, scan):
         (in_blanket_thk, "inboard blanket+shield", "m"),
         (out_blanket_thk, "ouboard blanket+shield", "m"),
         ("powfmw", "Fusion power", "MW"),
+        ("bigq", "$Q$", ""),
         ("", "", ""),
     ]
 
