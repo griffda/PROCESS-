@@ -1,44 +1,55 @@
 {
-	"_description": "Configuration file for uncertainties evaluation in PROCESS",
-	"_author": "Hanni Lux",
-	"config": {
-		  "runtitle": "testrun for uncertainty tool",
-		  "IN.DAT_path": "/home/griff/process/process/uncertainties/ref_IN.DAT",
-		  "working_directory": "Run2",
-		  "pseudorandom_seed": 2
-		  },
-	"uncertainties": [
-		{
-               	"Varname":"coreradius",
-               	"Errortype":"Uniform",
-               	"Lowerbound":0.6,
-               	"Upperbound":0.9
-          	},
-          	{
-               	"Varname":"cboot",
-               	"Errortype":"Relative",
-               	"Mean":1.0,
-               	"Percentage":10.0
-          	},
-			{
-				"Varname": "boundu(9)",
-				"Errortype": "LowerHalfGaussian",
-				"Mean": 1.2,
-				"Std": 0.1
-			},
-			{
-				"Varname": "boundl(103)",
-				"Errortype": "UpperHalfGaussian",
-				"Mean": 1.0,
-			"std":0.25
-			}
-	     	],
-     "output_vars": [ "rmajor", "dene", "te", "bt"],
-	 "no_samples": 5,
-	 "output_mean": 8056.98,
-	 "figure_of_merit": "rmajor",
-	 "latin_hypercube_level": 4,
-	 "sobol_uncertainties": {
+    "_description": "Configuration file for uncertainties evaluation in PROCESS",
+    "_author": "Hanni Lux",
+    "config": {
+        "runtitle": "testrun for uncertainty tool",
+        "IN.DAT_path": "inputs/base_IN.DAT",
+        "working_directory": "inputs",
+        "pseudorandom_seed": 2
+    },
+    "uncertainties": [
+        {
+            "Varname": "flhthresh",
+            "Errortype": "Gaussian",
+            "Mean": 1.0,
+            "Std": 0.05
+        },
+        {
+            "Varname": "coreradius",
+            "Errortype": "Uniform",
+            "Lowerbound": 0.6,
+            "Upperbound": 0.9
+        },
+        {
+            "Varname": "cboot",
+            "Errortype": "Relative",
+            "Mean": 1.0,
+            "Percentage": 10.0
+        },
+        {
+            "Varname": "boundu(9)",
+            "Errortype": "LowerHalfGaussian",
+            "Mean": 1.2,
+            "Std": 0.1
+        },
+        {
+            "Varname": "boundl(103)",
+            "Errortype": "UpperHalfGaussian",
+            "Mean": 1.0,
+            "std": 0.25
+        }
+    ],
+    "output_vars": [
+        "rmajor",
+        "dene",
+        "te",
+        "bt"
+    ],
+    "no_samples": 5,
+    "output_mean": 8056.98,
+    "figure_of_merit": "rmajor",
+    "latin_hypercube_level": 4,
+    "sobol_uncertainties": {
         "bounds": [
             [
                 1.1,
@@ -84,8 +95,8 @@
             "triang"
         ],
         "num_vars": 8
-	},
-	"morris_uncertainties": {
+    },
+    "morris_uncertainties": {
         "bounds": [
             [
                 1.1,

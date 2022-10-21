@@ -821,10 +821,10 @@ class Build:
                 )
         return divht
 
-    def ripple_amplitude(self, ripmax, r_tf_outboard_mid):
+    def ripple_amplitude(self, ripmax: float, r_tf_outboard_mid: float) -> float:
         """
-                TF ripple calculation
-        author: P J Knight, CCFE, Culham Science Centre
+        TF ripple calculation
+        author: P J Knight and C W Ashe, CCFE, Culham Science Centre
         ripmax : input real  : maximum allowed ripple at plasma edge (%)
         ripple : output real : actual ripple at plasma edge (%)
         rtot   : input real  : radius to the centre of the outboard
@@ -842,6 +842,12 @@ class Build:
         to produce the maximum allowed ripple is also calculated.
         M. Kovari, Toroidal Field Coils - Maximum Field and Ripple -
         Parametric Calculation, July 2014
+        ##############################################################
+
+        Picture frame coil model by Ken McClements 2022 gives analytical
+        solutions within 10% agreement with numerical models.
+        Activated when i_tf_shape == 2 (picture frame)
+
         """
         n = float(tfcoil_variables.n_tf)
         if tfcoil_variables.i_tf_sup == 1:
@@ -889,43 +895,59 @@ class Build:
             # Calculated maximum toroidal WP toroidal thickness [m]
             t_wp_max = 2.0e0 * r_wp_max * numpy.tan(numpy.pi / n)
 
-        # Winding pack to iter-coil at plasma centre toroidal lenth ratio
-        x = t_wp_max * n / physics_variables.rmajor
-
-        # Fitting parameters
-        c1 = 0.875e0 - 0.0557e0 * x
-        c2 = 1.617e0 + 0.0832e0 * x
-
-        #  Calculated ripple for coil at r_tf_outboard_mid (%)
-        ripple = (
-            100.0e0
-            * c1
-            * (
+        flag = 0
+        if tfcoil_variables.i_tf_shape == 2:
+            # Ken McClements ST picture frame coil analytical ripple calc
+            # Calculated ripple for coil at r_tf_outboard_mid (%)
+            ripple = 100.0e0 * (
                 (physics_variables.rmajor + physics_variables.rminor)
                 / r_tf_outboard_mid
+            ) ** (n)
+            #  Calculated r_tf_outboard_mid to produce a ripple of amplitude ripmax
+            r_tf_outboard_midmin = (
+                physics_variables.rmajor + physics_variables.rminor
+            ) / ((0.01e0 * ripmax) ** (1.0e0 / n))
+        else:
+
+            # Winding pack to iter-coil at plasma centre toroidal lenth ratio
+            x = t_wp_max * n / physics_variables.rmajor
+
+            # Fitting parameters
+            c1 = 0.875e0 - 0.0557e0 * x
+            c2 = 1.617e0 + 0.0832e0 * x
+
+            #  Calculated ripple for coil at r_tf_outboard_mid (%)
+            ripple = (
+                100.0e0
+                * c1
+                * (
+                    (physics_variables.rmajor + physics_variables.rminor)
+                    / r_tf_outboard_mid
+                )
+                ** (n - c2)
             )
-            ** (n - c2)
-        )
 
-        #  Calculated r_tf_outboard_mid to produce a ripple of amplitude ripmax
-        r_tf_outboard_midmin = (physics_variables.rmajor + physics_variables.rminor) / (
-            (0.01e0 * ripmax / c1) ** (1.0e0 / (n - c2))
-        )
+            #  Calculated r_tf_outboard_mid to produce a ripple of amplitude ripmax
+            r_tf_outboard_midmin = (
+                physics_variables.rmajor + physics_variables.rminor
+            ) / ((0.01e0 * ripmax / c1) ** (1.0e0 / (n - c2)))
 
-        #  Notify via flag if a range of applicability is violated
-        flag = 0
-        if (x < 0.737e0) or (x > 2.95e0):
-            flag = 1
-        if (tfcoil_variables.n_tf < 16) or (tfcoil_variables.n_tf > 20):
-            flag = 2
-        if (
-            (physics_variables.rmajor + physics_variables.rminor) / r_tf_outboard_mid
-            < 0.7e0
-        ) or (
-            (physics_variables.rmajor + physics_variables.rminor) / r_tf_outboard_mid
-            > 0.8e0
-        ):
-            flag = 3
+            #  Notify via flag if a range of applicability is violated
+            flag = 0
+            if (x < 0.737e0) or (x > 2.95e0):
+                flag = 1
+            if (tfcoil_variables.n_tf < 16) or (tfcoil_variables.n_tf > 20):
+                flag = 2
+            if (
+                (physics_variables.rmajor + physics_variables.rminor)
+                / r_tf_outboard_mid
+                < 0.7e0
+            ) or (
+                (physics_variables.rmajor + physics_variables.rminor)
+                / r_tf_outboard_mid
+                > 0.8e0
+            ):
+                flag = 3
 
         return ripple, r_tf_outboard_midmin, flag
 

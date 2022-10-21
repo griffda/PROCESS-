@@ -1027,7 +1027,7 @@ def synchrotron_rad():
     return psyncpv
 
 
-def plot_radprofile(prof, mfile_data, scan, impp, demo_ranges):
+def plot_radprofile(prof, mfile_data, scan, impp, demo_ranges) -> float:
     """Function to plot radiation profile, formula taken from ???.
 
     Arguments:
@@ -1047,20 +1047,20 @@ def plot_radprofile(prof, mfile_data, scan, impp, demo_ranges):
     # find impurity densities
     imp_frac = np.array(
         [
-            mfile_data.data["fimp(01"].get_scan(scan),
-            mfile_data.data["fimp(02"].get_scan(scan),
-            mfile_data.data["fimp(03"].get_scan(scan),
-            mfile_data.data["fimp(04"].get_scan(scan),
-            mfile_data.data["fimp(05"].get_scan(scan),
-            mfile_data.data["fimp(06"].get_scan(scan),
-            mfile_data.data["fimp(07"].get_scan(scan),
-            mfile_data.data["fimp(08"].get_scan(scan),
-            mfile_data.data["fimp(09"].get_scan(scan),
-            mfile_data.data["fimp(10"].get_scan(scan),
-            mfile_data.data["fimp(11"].get_scan(scan),
-            mfile_data.data["fimp(12"].get_scan(scan),
-            mfile_data.data["fimp(13"].get_scan(scan),
-            mfile_data.data["fimp(14"].get_scan(scan),
+            mfile_data.data["fimp(01)"].get_scan(scan),
+            mfile_data.data["fimp(02)"].get_scan(scan),
+            mfile_data.data["fimp(03)"].get_scan(scan),
+            mfile_data.data["fimp(04)"].get_scan(scan),
+            mfile_data.data["fimp(05)"].get_scan(scan),
+            mfile_data.data["fimp(06)"].get_scan(scan),
+            mfile_data.data["fimp(07)"].get_scan(scan),
+            mfile_data.data["fimp(08)"].get_scan(scan),
+            mfile_data.data["fimp(09)"].get_scan(scan),
+            mfile_data.data["fimp(10)"].get_scan(scan),
+            mfile_data.data["fimp(11)"].get_scan(scan),
+            mfile_data.data["fimp(12)"].get_scan(scan),
+            mfile_data.data["fimp(13)"].get_scan(scan),
+            mfile_data.data["fimp(14)"].get_scan(scan),
         ]
     )
 
@@ -1953,6 +1953,7 @@ def plot_geometry_info(axis, mfile_data, scan):
         (in_blanket_thk, "inboard blanket+shield", "m"),
         (out_blanket_thk, "ouboard blanket+shield", "m"),
         ("powfmw", "Fusion power", "MW"),
+        ("bigq", "$Q$", ""),
         ("", "", ""),
     ]
 

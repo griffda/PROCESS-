@@ -8,7 +8,7 @@ from process.uncertainties import hdf_to_scatter_plot
 
 
 def test_evaluate_uncertainties_monte_carlo(temp_data):
-    """Run evaluate uncerainties with a configfile argument
+    """Run evaluate uncertainties with a config file argument
        and with the monte carlo technique flag and check for output .h5 file.
 
     :param temp_data: temporary data dir
@@ -16,6 +16,44 @@ def test_evaluate_uncertainties_monte_carlo(temp_data):
     """
     # Rename the configfile to something custom
     old_config_path = temp_data / "config_evaluate_uncertainties.json"
+    new_config_path = temp_data / "customconfig.json"
+    move(old_config_path, new_config_path)
+
+    # Set temp_data dir as working dir, and use input file in it
+    # Change input file and working dir paths in config file to the temp_data
+    # dir path, only known at runtime
+    with open(new_config_path) as config_file:
+        config_obj = json.load(config_file)
+        config_obj["config"]["IN.DAT_path"] = str(
+            temp_data / config_obj["config"]["IN.DAT_path"]
+        )
+        config_obj["config"]["working_directory"] = str(
+            temp_data / config_obj["config"]["working_directory"]
+        )
+
+    with open(new_config_path, "w") as config_file:
+        json.dump(config_obj, config_file)
+
+    # Run with custom config file path (custom input file path in config file)
+    config_path_str = str(new_config_path)
+    evaluate_uncertainties.main(
+        args=["--configfile", config_path_str, "--method", "monte_carlo"]
+    )
+
+    # assert uncertainties_data.h5 file has been created
+    assert len(list(temp_data.glob("*.h5")))  # can assert the created text file?
+
+
+def test_evaluate_uncertainties_monte_carlo_non_optimised(temp_data):
+    """Run evaluate uncertainties with a config file argument
+       and with the monte carlo technique flag and check for output .h5 file
+       where input file is for a non optimised run
+
+    :param temp_data: temporary data dir
+    :type temp_data: Path
+    """
+    # Rename the configfile to something custom
+    old_config_path = temp_data / "config_evaluate_uncertainties_nonopt.json"
     new_config_path = temp_data / "customconfig.json"
     move(old_config_path, new_config_path)
 

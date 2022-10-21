@@ -77,7 +77,11 @@ def main(args=None):
     # TO DO make separate list of converged and failed runs
     # find way to display both to look at margins
     # we want to colour red for ifail = 2-6 and blue for ifail = 1
-    data_set_converge = data_set[data_set["ifail"] == 1.0]
+    ioptimz = data_set["ioptimz"][0]
+    if ioptimz == -2:
+        data_set_converge = data_set
+    else:
+        data_set_converge = data_set[data_set["ifail"] == 1.0]
 
     figsize = (8, 8)
     figure(figsize=figsize)
