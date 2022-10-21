@@ -3,7 +3,7 @@
 	"_author": "Hanni Lux",
 	"config": {
 		  "runtitle": "testrun for uncertainty tool",
-		  "IN.DAT_path": "uncertainties_ref_IN.DAT",
+		  "IN.DAT_path": "/home/griff/process/process/uncertainties/ref_IN.DAT",
 		  "working_directory": "Run2",
 		  "pseudorandom_seed": 2
 		  },
