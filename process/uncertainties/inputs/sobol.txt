@@ -1,0 +1,9 @@
+Parameter S1 S1_conf ST ST_conf
+hfact nan nan nan nan
+coreradius nan nan nan nan
+kappa nan nan nan nan
+etaech nan nan nan nan
+etath nan nan nan nan
+boundl(18) nan nan nan nan
+alstrtf nan nan nan nan
+triang nan nan nan nan
