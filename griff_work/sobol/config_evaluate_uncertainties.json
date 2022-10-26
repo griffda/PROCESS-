@@ -1,10 +1,10 @@
 {
     "_description": "Configuration file for uncertainties evaluation in PROCESS",
-    "_author": "Hanni Lux",
+    "_author": "Tom Griffiths",
     "config": {
-        "runtitle": "testrun for uncertainty tool",
-        "IN.DAT_path": "/home/griff/process/process/uncertainties/ref_IN.DAT",
-        "working_directory": "inputs",
+        "runtitle": "testrun for sobol uncertainty tool",
+        "IN.DAT_path": "/home/griff/process/griff_work/ref_IN.DAT",
+        "working_directory": "/home/griff/process/griff_work/sobol/sobol_output",
         "pseudorandom_seed": 2
     },
     "uncertainties": [
