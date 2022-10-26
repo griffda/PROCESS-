@@ -218,7 +218,7 @@ blkttype = 3 * Switch for blanket type;
 
 *-----------------Global Variables-----------------*
 
-runtitle = pilot plant menard et al. 2016, section 5 * short descriptive title for the run
+runtitle = testrun for monte carlo uncertainty tool * short descriptive title for the run
 maxcal   = 400 * maximum number of VMCON iterations
 
 *------------------Green Func Ext------------------*
@@ -294,7 +294,7 @@ fimp(14) = 5e-05
 
 ioptimz  = 1 * for optimisation VMCON only
 minmax   = -17 * 
-epsvmc   = 1.0e-7 * epsvmc /1;0e-6/ ; error tolerance for VMCON
+epsvmc   = 1e-08 * epsvmc /1;0e-6/ ; error tolerance for VMCON
 
 *------------------Optimiz Module------------------*
 
@@ -436,6 +436,9 @@ triang   = 0.5 * plasma separatrix triangularity (calculated if `ishape = 1; 3-5
 
 *-------------------Scan Module--------------------*
 
+isweep   = 5 * Number of scan points to calculate
+nsweep   = 3 * Switch denoting quantity to scan;<UL>
+sweep    = 1000.0, 1000.0, 1000.0, 1000.0, 1000.0 * sweep(ipnscns) /;;/; actual values to use in scan
 
 *-----------------Sctfcoil Module------------------*
 

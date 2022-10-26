@@ -2,11 +2,12 @@
     "_description": "Configuration file for uncertainties evaluation in PROCESS",
     "_author": "Tom Griffiths",
     "config": {
-        "runtitle": "testrun for uncertainty tool",
-        "IN.DAT_path": "//home/griff/process/griff_work/ref_IN.DAT",
-        "working_directory": "/home/griff/process/griff_work/output1",
+        "runtitle": "testrun for morris uncertainty tool",
+        "IN.DAT_path": "/home/griff/process/griff_work/morris/ref_IN.DAT",
+        "working_directory": "/home/griff/process/griff_work/morris/morris_output",
         "pseudorandom_seed": 2
     },
+    "vary_iteration_variables": "True",
     "uncertainties": [
         {
             "Varname": "flhthresh",
