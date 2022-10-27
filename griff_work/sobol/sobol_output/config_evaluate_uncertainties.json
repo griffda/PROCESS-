@@ -3,17 +3,13 @@
     "_author": "Tom Griffiths",
     "config": {
         "runtitle": "testrun for sobol uncertainty tool",
-        "IN.DAT_path": "/home/griff/process/griff_work/ref_IN.DAT",
-        "working_directory": "/home/griff/process/griff_work/sobol_output",
-        "pseudorandom_seed": 2
+        "IN.DAT_path": "/home/griff/process/griff_work/sobol/ref_IN.DAT",
+        "working_directory": "/home/griff/process/griff_work/sobol/sobol_output",
+        "pseudorandom_seed": 2,
+        "no_iter": 1
     },
+    "vary_iteration_variables": false,
     "uncertainties": [
-        {
-            "Varname": "flhthresh",
-            "Errortype": "Gaussian",
-            "Mean": 1.0,
-            "Std": 0.05
-        },
         {
             "Varname": "coreradius",
             "Errortype": "Uniform",
@@ -39,12 +35,7 @@
             "std": 0.25
         }
     ],
-    "output_vars": [
-        "rmajor",
-        "dene",
-        "te",
-        "bt"
-    ],
+    "output_vars": [],
     "no_samples": 5,
     "output_mean": 8056.98,
     "figure_of_merit": "rmajor",
@@ -76,10 +67,6 @@
                 3.6
             ],
             [
-                520000000.0,
-                640000000.0
-            ],
-            [
                 0.475,
                 0.525
             ]
@@ -91,37 +78,8 @@
             "etaech",
             "etath",
             "boundl(18)",
-            "alstrtf",
             "triang"
         ],
-        "num_vars": 8
-    },
-    "morris_uncertainties": {
-        
-        "bounds": [
-            [
-                1.1,
-                1.3
-            ],
-            [
-                1.0,
-                1.2
-            ],
-            [
-                0.45,
-                0.75
-            ],
-            [
-                0.085,
-                0.115
-            ]
-        ],
-        "names": [
-            "boundu(9)",
-            "hfact",
-            "coreradius",
-            "fimp(2)"
-        ],
-        "num_vars": 4
+        "num_vars": 7
     }
 }

@@ -5,5 +5,4 @@ kappa nan nan nan nan
 etaech nan nan nan nan
 etath nan nan nan nan
 boundl(18) nan nan nan nan
-alstrtf nan nan nan nan
 triang nan nan nan nan

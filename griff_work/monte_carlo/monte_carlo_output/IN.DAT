@@ -42,7 +42,7 @@ ixc = 97 * fpsepr
 boundl(97) = 0.001
 boundu(97) = 1.0
 ixc = 103 * flhthresh
-boundl(103) = 1.0
+boundl(103) = 1.3669195026433532
 ixc = 135 * fimp(13)
 boundl(135) = 1d-6
 
@@ -155,7 +155,7 @@ ucme     = 3.0e8 * cost of maintenance equipment ($)
 
 beamwd   = 0.31 * width of neutral beam duct where it passes between the TF coils (m)
 bscfmax  = 0.88 * maximum fraction of plasma current from bootstrap; if `bscfmax < 0`;
-cboot    = 1.37 * bootstrap current fraction multiplier (`ibss=1`)
+cboot    = 0.9988473674763856 * bootstrap current fraction multiplier (`ibss=1`)
 enbeam   = 500.0 * neutral beam energy (keV) (`iteration variable 19`)
 etanbi   = 0.3 * neutral beam wall plug to injector efficiency
 feffcd   = 1.0 * current drive efficiency fudge factor (`iteration variable 47`)
@@ -240,7 +240,7 @@ ipowerflow = 0 * switch for power flow model;
 
 *------------Impurity Radiation Module-------------*
 
-coreradius = 0.75 * coreradius /0;6/ ; normalised radius defining the 'core' region
+coreradius = 0.7857812899051991 * coreradius /0;6/ ; normalised radius defining the 'core' region
 coreradiationfraction = 0.6 * coreradiationfraction /1;0/ ; fraction of radiation from 'core' region that is subtracted from the loss power
 fimp(1) = 1.0
 fimp(2) = 0.1
@@ -436,9 +436,9 @@ triang   = 0.5 * plasma separatrix triangularity (calculated if `ishape = 1; 3-5
 
 *-------------------Scan Module--------------------*
 
-isweep   = 5 * Number of scan points to calculate
+isweep   = 1 * Number of scan points to calculate
 nsweep   = 3 * Switch denoting quantity to scan;<UL>
-sweep    = 1000.0, 1000.0, 1000.0, 1000.0, 1000.0 * sweep(ipnscns) /;;/; actual values to use in scan
+sweep    = 1000.0 * sweep(ipnscns) /;;/; actual values to use in scan
 
 *-----------------Sctfcoil Module------------------*
 
