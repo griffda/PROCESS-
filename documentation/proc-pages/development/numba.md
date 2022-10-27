@@ -3,9 +3,9 @@ PROCESS was originally written in Fortran, a very fast, compiled code. Python is
 
 
 ## Numba
-Our policy for dealing with slow code revolves around Numba -- a project that just-in-time compiles Python code down into machine code, just as Fortran was compiled.
+Our policy for dealing with slow code revolves around [Numba](https://numba.readthedocs.io/en/stable/index.html) -- a project that just-in-time (jit) compiles Python code into machine code, just as Fortran was compiled.
 
-This allows us to achieve near-Fortran speed while still writing Python code. The caveat is that our code must be compilable. Essentially, a function must be called with Numba-compliant types **only**.
+This allows us to achieve near-Fortran speed while still writing Python code. The caveat is that our code must be compilable. Essentially, a function must be called with Numba-compliant types **only**. Further, Numba does not support all Python code, see [here](https://numba.readthedocs.io/en/stable/reference/pysupported.html) for more information.
 
 !!! note "First-run compilation"
     Because Numba is JIT compiled, it does not compile when PROCESS is installed, it is instead compiled when that function is first called. This means that the run after a fresh installation of PROCESS will be rather slow. Subsequent runs of PROCESS will use the cached compilation and so will be much faster. This will also happen if you make a change to a Numba'd function while in an editable install.
@@ -14,6 +14,7 @@ This allows us to achieve near-Fortran speed while still writing Python code. Th
 
 ```python
 from numba import njit
+import numpy as np
 
 @njit
 def my_function(a, b):
@@ -21,18 +22,13 @@ def my_function(a, b):
 
     return c + b
 ```
-Here, it is obvious that `a` is a `list` or Numpy `ndarray` while `b` is a `float`. This means that we can call this function as follows:
+Here, it is obvious that `a` is a `list` or Numpy `ndarray` while `b` is a `float` (could also be an `int`, both can be used interoperably). This means that we can call this function as follows:
 
 ```python
-my_function([1, 2], 3.0)
+my_function(np.array([1, 2]), 3.0)
 ```
-but cannot call it like
-```python
-my_function([1, 2], 3)
-```
-because `3` is of type `int`. 
 
-We also **cannot** do the following:
+But, also **cannot** do the following:
 
 ```python
 from numba import njit
