@@ -18,6 +18,13 @@ MACRO(F2PY)
     SET(F2PY_SIGNATURE_TARGET ${CMAKE_BINARY_DIR}/${F2PY_MODULE_NAME}.pyf)
     SET(F2PY_TARGET ${CMAKE_BINARY_DIR}/${F2PY_MODULE_NAME}${CMAKE_PYTHON_ABI_VERSION})
     SET(F2PY_OUTPUT ${PYTHON_MODULE_DIR}/${F2PY_MODULE_NAME}${CMAKE_PYTHON_ABI_VERSION})
+
+    IF(CMAKE_HOST_APPLE)
+        SET(MD5_COMMAND "md5 -r")
+    ELSE()
+        SET(MD5_COMMAND "md5sum")
+    ENDIF()
+
     MESSAGE(STATUS "[f2py]: ")
     MESSAGE(STATUS "\tTarget: ${F2PY_TARGET}")
     MESSAGE(STATUS "\tSignature File: ${F2PY_SIGNATURE_TARGET}")
@@ -30,7 +37,7 @@ MACRO(F2PY)
     ADD_CUSTOM_COMMAND(
         OUTPUT ${F2PY_SIGNATURE_TARGET}
         COMMAND ${F2PY_NAME} ${PREPROCESSED_SOURCE_FILES_PATH} --build-dir ${CMAKE_BINARY_DIR} -m ${F2PY_MODULE_NAME} -h ${F2PY_SIGNATURE_TARGET}.temp --overwrite-signature
-        COMMAND /bin/bash -c "if [ -f ${F2PY_SIGNATURE_TARGET} ]; then temp_hash=($(md5sum ${F2PY_SIGNATURE_TARGET}.temp)); current_hash=($(md5sum ${F2PY_SIGNATURE_TARGET})); if [ \"$temp_hash\" != \"$current_hash\" ]; then echo \"Hashes are different: $temp_hash vs $current_hash\"; mv ${F2PY_SIGNATURE_TARGET}.temp ${F2PY_SIGNATURE_TARGET}; fi; else echo 'Generating definitions file for the first time'; mv ${F2PY_SIGNATURE_TARGET}.temp ${F2PY_SIGNATURE_TARGET}; fi"
+        COMMAND /bin/bash -c "if [ -f ${F2PY_SIGNATURE_TARGET} ]; then temp_hash=($(${MD5_COMMAND} ${F2PY_SIGNATURE_TARGET}.temp)); current_hash=($(${MD5_COMMAND} ${F2PY_SIGNATURE_TARGET})); if [ \"$temp_hash\" != \"$current_hash\" ]; then echo \"Hashes are different: $temp_hash vs $current_hash\"; mv ${F2PY_SIGNATURE_TARGET}.temp ${F2PY_SIGNATURE_TARGET}; fi; else echo 'Generating definitions file for the first time'; mv ${F2PY_SIGNATURE_TARGET}.temp ${F2PY_SIGNATURE_TARGET}; fi"
 
         # the above is run as a bash command as if it were a shell script
         # here, we compare the hash of the existing  definitions file and new file
