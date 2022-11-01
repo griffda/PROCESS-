@@ -11,7 +11,7 @@ from process.fortran import (
 logger = logging.getLogger(__name__)
 # Logging handler for console output
 s_handler = logging.StreamHandler()
-s_handler.setLevel(logging.INFO)
+s_handler.setLevel(logging.ERROR)
 logger.addHandler(s_handler)
 
 
