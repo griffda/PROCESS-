@@ -27,6 +27,8 @@ input_name = Path(prefix + "IN.DAT")
 # Perform a SingleRun on a scan-enabled input file
 single_run = SingleRun(str(input_name))
 
+single_run.run()
+
 
 # %% [markdown]
 # ## Plot scan results

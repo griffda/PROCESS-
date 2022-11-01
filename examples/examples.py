@@ -70,6 +70,8 @@ temp_dir, temp_input_path = copy_to_temp_dir(input_rel)
 # Run process on an input file in a temporary directory
 single_run = SingleRun(str(temp_input_path))
 
+single_run.run()
+
 
 # %% [markdown]
 # ## Plot summary
