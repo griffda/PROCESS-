@@ -48,6 +48,10 @@ def mock_init(*args, **kwargs):
     return None
 
 
+def mock_run(*args, **kwargs):
+    pass
+
+
 @pytest.fixture
 def process_obj(monkeypatch):
     """Fixture to create a Process object.
@@ -115,6 +119,7 @@ def test_run_mode(process_obj, monkeypatch):
     monkeypatch.setattr(process_obj.args, "varyiterparams", False)
     monkeypatch.setattr(process_obj.args, "input", "aFile", raising=False)
     monkeypatch.setattr(SingleRun, "__init__", mock_init)
+    monkeypatch.setattr(SingleRun, "run", mock_run)
     process_obj.run_mode()
     assert type(process_obj.run) == SingleRun
 

@@ -197,6 +197,7 @@ class Process:
             self.run = VaryRun(self.args.varyiterparamsconfig)
         else:
             self.run = SingleRun(self.args.input)
+            self.run.run()
 
     def post_process(self):
         """Perform post-run actions, like plotting the mfile."""
@@ -316,7 +317,7 @@ class SingleRun:
     """Perform a single run of PROCESS."""
 
     def __init__(self, input_file):
-        """Read input file, initialise variables and run PROCESS.
+        """Read input file and initialise variables.
 
         :param input_file: input file named <optional_name>IN.DAT
         :type input_file: str
@@ -325,6 +326,9 @@ class SingleRun:
         self.validate_input()
         self.init_module_vars()
         self.models = Models()
+
+    def run(self):
+        """Run PROCESS"""
         self.set_filenames()
         self.initialise()
         self.run_hare_tests()
