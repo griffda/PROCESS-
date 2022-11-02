@@ -7,44 +7,91 @@
 icc = 1 * Beta
 icc = 2 * Global power balance
 icc = 5 * Density upper limit
-icc = 7 * Beam ion density
 icc = 8 * Neutron wall load upper limit
 icc = 11 * Radial build
+icc = 13 * Burn time lower limit
 icc = 15 * LH power threshold limit
-icc = 17 * Radiation fraction upper limit
+icc = 16 * Net electric power lower limit
 icc = 24 * Beta upper limit
+icc = 25 * Peak toroidal field upper limit
+icc = 26 * Central solenoid EOF current density upper limit
+icc = 27 * Central solenoid BOP current density upper limit
 icc = 30 * Injection power upper limit
 icc = 31 * TF coil case stress upper limit
 icc = 32 * TF coil conduit stress upper limit
 icc = 33 * I_op
-icc = 56 * Pseparatrix
+icc = 34 * Dump voltage upper limit
+icc = 35 * J_winding pack
+icc = 36 * TF coil temperature margin lower limit
+icc = 60 * Central solenoid temperature margin lower limit
+icc = 62 * taup
+icc = 65 * Dump time set by VV loads
+icc = 68 * Psep
+icc = 72 * central solenoid shear stress limit
 
 *---------------Iteration Variables----------------*
 
+ixc = 2 * bt
+boundu(2) = 20.0
+ixc = 3 * rmajor
+boundu(3) = 13
 ixc = 4 * te
-boundl(4) = 3.0
+boundu(4) = 150.0
 ixc = 5 * beta
 ixc = 6 * dene
-ixc = 7 * rnbeam
-ixc = 10 * hfact
+ixc = 9 * fdene
+boundu(9) = 1.2
 ixc = 13 * tfcth
+boundl(13) = 1.4
 ixc = 14 * fwalld
+ixc = 16 * ohcth
+boundl(16) = 0.5
 ixc = 18 * q
-boundl(18) = 3.55625
-ixc = 28 * fradpwr
-boundu(28) = 0.99
+boundl(18) = 3.5
+ixc = 29 * bore
+boundl(29) = 0.1
+ixc = 36 * fbetatry
+ixc = 37 * coheof
+ixc = 38 * fjohc
+boundu(38) = 1.0
+ixc = 39 * fjohc0
+boundu(39) = 1.0
+ixc = 41 * fcohbop
+ixc = 42 * gapoh
+boundl(42) = 0.05
+boundu(42) = 0.1
+ixc = 44 * fvsbrnni
 ixc = 48 * fstrcase
 ixc = 49 * fstrcond
 ixc = 50 * fiooic
-boundl(50) = 1d-2
-boundu(50) = 0.9
-ixc = 97 * fpsepr
-boundl(97) = 0.001
-boundu(97) = 1.0
+boundu(50) = 1.0
+ixc = 51 * fvdump
+ixc = 52 * vdalw
+boundu(52) = 100.0
+ixc = 53 * fjprot
+ixc = 54 * ftmargtf
+ixc = 56 * tdmptf
+ixc = 57 * thkcas
+ixc = 58 * thwcndut
+boundl(58) = 8.0d-3
+ixc = 59 * fcutfsu
+boundl(59) = 0.50
+boundu(59) = 0.94
+ixc = 60 * cpttf
+boundl(60) = 6.0d4
+boundu(60) = 9.0d4
+ixc = 61 * gapds
+boundl(61) = 0.02
+ixc = 102 * fimpvar
 ixc = 103 * flhthresh
-boundl(103) = 1.0
-ixc = 135 * fimp(13)
-boundl(135) = 1d-6
+boundu(103) = 10.0
+ixc = 106 * ftmargoh
+ixc = 109 * ralpne
+ixc = 110 * ftaulimit
+ixc = 113 * ftaucq
+ixc = 117 * fpsepbqar
+ixc = 122 * oh_steel_frac
+ixc = 123 * foh_stress
 
 *---------------Cs Fatigue Variables---------------*
 
@@ -60,32 +107,28 @@ boundl(135) = 1d-6
 
 *-----------------Build Variables------------------*
 
-blnkith  = 0.0 * inboard blanket thickness (m); (calculated if `blktmodel>0`) (=0;0 if `iblnkith=0`)
-blnkoth  = 1.0 * outboard blanket thickness (m); calculated if `blktmodel>0`
-bore     = 0.02 * central solenoid inboard radius (m) (`iteration variable 29`)
-d_vv_in  = 0.024 * vacuum vessel inboard thickness (TF coil / shield) (m)
-d_vv_out = 0.024 * vacuum vessel outboard thickness (TF coil / shield) (m)
-d_vv_top = 0.024 * vacuum vessel topside thickness (TF coil / shield) (m) (= d_vv_bot if double-null)
-d_vv_bot = 0.024 * vacuum vessel underside thickness (TF coil / shield) (m)
-gapds    = 0.0 * gap between inboard vacuum vessel and thermal shield (m) (`iteration variable 61`)
-gapoh    = 0.01 * gap between central solenoid and TF coil (m) (`iteration variable 42`)
-gapomin  = 0.0 * minimum gap between outboard vacuum vessel and TF coil (m) (`iteration variable 31`)
+blnkith  = 0.755 * inboard blanket thickness (m); (calculated if `blktmodel>0`) (=0;0 if `iblnkith=0`)
+blnkoth  = 0.982 * outboard blanket thickness (m); calculated if `blktmodel>0`
+bore     = 2.3322e+00 * central solenoid inboard radius (m) (`iteration variable 29`)
+ddwex    = 0.15 * cryostat thickness (m)
+d_vv_in  = 0.30 * vacuum vessel inboard thickness (TF coil / shield) (m)
+d_vv_out = 0.30 * vacuum vessel outboard thickness (TF coil / shield) (m)
+d_vv_top = 0.30 * vacuum vessel topside thickness (TF coil / shield) (m) (= d_vv_bot if double-null)
+d_vv_bot = 0.30 * vacuum vessel underside thickness (TF coil / shield) (m)
+gapds    = 2.0000e-02 * gap between inboard vacuum vessel and thermal shield (m) (`iteration variable 61`)
+gapoh    = 5.0000e-02 * gap between central solenoid and TF coil (m) (`iteration variable 42`)
+gapomin  = 0.20 * minimum gap between outboard vacuum vessel and TF coil (m) (`iteration variable 31`)
 iohcl    = 1 * Switch for existence of central solenoid;
-iprecomp = 0 * Switch for existence of central solenoid pre-compression structure;
-ohcth    = 0.213 * Central solenoid thickness (m) (`iteration variable 16`)
-scrapli  = 7.8e-02 * Gap between plasma and first wall; inboard side (m) (if `iscrp=1`)
-scraplo  = 0.12 * Gap between plasma and first wall; outboard side (m) (if `iscrp=1`)
-shldith  = 0.60 * inboard shield thickness (m) (`iteration variable 93`)
-shldoth  = 0.45 * outboard shield thickness (m) (`iteration variable 94`)
-shldtth  = 0.2 * upper/lower shield thickness (m); calculated if `blktmodel > 0` (= shldlth if double-null)
-tfcth    = 0.487 * inboard TF coil thickness; (centrepost for ST) (m)
-tfootfi  = 1.0 * TF coil outboard leg / inboard leg radial thickness
-thshield_ib = 0.0 * TF-VV thermal shield thickness; inboard (m)
-thshield_ob = 0.0 * TF-VV thermal shield thickness; outboard (m)
-thshield_vb = 0.0 * TF-VV thermal shield thickness; vertical build (m)
-vgap2    = 0.0 * vertical gap between vacuum vessel and thermal shields (m)
-vgap     = 0.5 * vertical gap between x-point and divertor (m) (if = 0; it is calculated)
-vvblgap  = 0.0 * gap between vacuum vessel and blanket (m)
+ohcth    = 5.5242e-01 * Central solenoid thickness (m) (`iteration variable 16`)
+scrapli  = 0.225 * Gap between plasma and first wall; inboard side (m) (if `iscrp=1`)
+scraplo  = 0.225 * Gap between plasma and first wall; outboard side (m) (if `iscrp=1`)
+shldith  = 0.30 * inboard shield thickness (m) (`iteration variable 93`)
+shldoth  = 0.80 * outboard shield thickness (m) (`iteration variable 94`)
+shldtth  = 0.30 * upper/lower shield thickness (m); calculated if `blktmodel > 0` (= shldlth if double-null)
+tfcth    = 1.2080e+00 * inboard TF coil thickness; (centrepost for ST) (m)
+tftsgap  = 0.05 * Minimum metal-to-metal gap between TF coil and thermal shield (m)
+vgap2    = 0.05 * vertical gap between vacuum vessel and thermal shields (m)
+vvblgap  = 0.02 * gap between vacuum vessel and blanket (m)
 
 *---------------Buildings Variables----------------*
 
@@ -101,43 +144,58 @@ vvblgap  = 0.0 * gap between vacuum vessel and blanket (m)
 
 *---------------Constraint Variables---------------*
 
-fbetatry = 0.84 * f-value for beta limit (`constraint equation 24`; `iteration variable 36`)
-fdene    = 0.95 * f-value for density limit (`constraint equation 5`; `iteration variable 9`)
-fiooic   = 6.1777e-01 * f-value for TF coil operating current / critical current ratio
-flhthresh = 1.6248e+00 * f-value for L-H power threshold (`constraint equation 15`; `iteration variable 103`)
+bmxlim   = 11.2 * maximum peak toroidal field (T) (`constraint equation 25`)
+fbetatry = 4.8251e-01 * f-value for beta limit (`constraint equation 24`; `iteration variable 36`)
+fdene    = 1.2000e+00 * f-value for density limit (`constraint equation 5`; `iteration variable 9`)
+ffuspow  = 1 * f-value for maximum fusion power (`constraint equation 9`; `iteration variable 26`)
+fiooic   = 6.3437e-01 * f-value for TF coil operating current / critical current ratio
+fjohc    = 5.7941e-01 * f-value for central solenoid current at end-of-flattop
+fjohc0   = 5.3923e-01 * f-value for central solenoid current at beginning of pulse
+fjprot   = 1.0000e+00 * f-value for TF coil winding pack current density
+flhthresh = 1.4972e+00 * f-value for L-H power threshold (`constraint equation 15`; `iteration variable 103`)
+foh_stress = 1.0000e+00 * f-value for Tresca yield criterion in Central Solenoid
+fpeakb   = 1.0 * f-value for maximum toroidal field (`constraint equation 25`; `iteration variable 35`)
 fpinj    = 1.0 * f-value for injection power (`constraint equation 30`; `iteration variable 46`)
-fpsepr   = 1 * f-value for maximum Psep/R limit (`constraint equation 56`; `iteration variable 97`)
-fradpwr  = 5.9465e-01 * f-value for core radiation power limit (`constraint equation 17`; `iteration variable 28`)
-fstrcase = 9.5240e-01 * f-value for maximum TF coil case Tresca yield criterion
-fstrcond = 7.8569e-01 * f-value for maxiumum TF coil conduit Tresca yield criterion
-fwalld   = 1.2684e-01 * f-value for maximum wall load (`constraint equation 8`; `iteration variable 14`)
-powfmax  = 480.0 * maximum fusion power (MW) (`constraint equation 9`)
-pseprmax = 20.0 * maximum ratio of power crossing the separatrix to plasma major radius (Psep/R) (MW/m)
-walalw   = 10.0 * allowable neutron wall-load (MW/m2) (`constraint equation 8`)
+fpnetel  = 1.0 * f-value for net electric power (`constraint equation 16`; `iteration variable 25`)
+fpsepbqar = 1.0000e+00 * f-value for maximum Psep*Bt/qAR limit (`constraint equation 68`; `iteration variable 117`)
+fstrcase = 1.0000e+00 * f-value for maximum TF coil case Tresca yield criterion
+fstrcond = 9.2007e-01 * f-value for maxiumum TF coil conduit Tresca yield criterion
+ftaucq   = 9.1874e-01 * f-value for calculated minimum TF quench time
+ftburn   = 1.00e+00 * f-value for minimum burn time (`constraint equation 13`; `iteration variable 21`)
+ftmargoh = 1.0000e+00 * f-value for central solenoid temperature margin
+ftmargtf = 1.0000e+00 * f-value for TF coil temperature margin (`constraint equation 36`; `iteration variable 54`)
+fvdump   = 1.0000e+00 * f-value for dump voltage (`constraint equation 34`; `iteration variable 51`)
+fwalld   = 1.3100e-01 * f-value for maximum wall load (`constraint equation 8`; `iteration variable 14`)
+pnetelin = 500.0 * required net electric power (MW) (`constraint equation 16`)
+psepbqarmax = 9.2 * maximum ratio of Psep*Bt/qAR (MWT/m) (`constraint equation 68`)
+tbrnmn   = 7.2e3 * minimum burn time (s) (KE - no longer itv;; see issue #706)
+walalw   = 8.0 * allowable neutron wall-load (MW/m2) (`constraint equation 8`)
+ftaulimit = 1.0000e+00 * f-value for lower limit on taup/taueff the ratio of alpha particle to energy
 
 *-------------------Constraints--------------------*
 
 
 *------------------Cost Variables------------------*
 
-abktflnc = 20.0 * allowable first wall/blanket neutron fluence (MW-yr/m2) (`blktmodel=0`)
-adivflnc = 25.0 * allowable divertor heat fluence (MW-yr/m2)
+abktflnc = 15 * allowable first wall/blanket neutron fluence (MW-yr/m2) (`blktmodel=0`)
+adivflnc = 20.0 * allowable divertor heat fluence (MW-yr/m2)
+cfactr   = 0.75 * Total plant availability fraction; input if `iavail=0`
 cost_model = 0 * Switch for cost model;
-cpstflnc = 20.0 * allowable ST centrepost neutron fluence (MW-yr/m2)
-dintrt   = 0.02 * diff between borrowing and saving interest rates
-fcap0    = 1.1845 * average cost of money for construction of plant assuming design/construction time of six years
-fcap0cp  = 1.08 * average cost of money for replaceable components assuming lead time for these of two years
+dintrt   = 0.00 * diff between borrowing and saving interest rates
+fcap0    = 1.15 * average cost of money for construction of plant assuming design/construction time of six years
+fcap0cp  = 1.06 * average cost of money for replaceable components assuming lead time for these of two years
 fcontng  = 0.15 * project contingency factor
-fcr0     = 0.089 * fixed charge rate during construction
+fcr0     = 0.065 * fixed charge rate during construction
 fkind    = 1.0 * multiplier for Nth of a kind costs
 iavail   = 0 * Switch for plant availability model;
 ifueltyp = 1 * Switch for fuel type;
 lsa      = 2 * Level of safety assurance switch (generally; use 3 or 4);
-output_costs = 1 * Switch for costs output;
-discount_rate = 0.08 * effective cost of money in constant dollars
+output_costs = 0 * Switch for costs output;
+discount_rate = 0.06 * effective cost of money in constant dollars
+tlife    = 40 * Full power year plant lifetime (years)
 ucblvd   = 280.0 * unit cost for blanket vanadium ($/kg)
-ucdiv    = 5.0e5 * cost of divertor blade ($)
-ucme     = 3.0e8 * cost of maintenance equipment ($)
+ucdiv    = 5.0d5 * cost of divertor blade ($)
+ucme     = 3.0d8 * cost of maintenance equipment ($)
 
 *----------------------Costs-----------------------*
 
@@ -153,17 +211,12 @@ ucme     = 3.0e8 * cost of maintenance equipment ($)
 
 *-------------Current Drive Variables--------------*
 
-beamwd   = 0.31 * width of neutral beam duct where it passes between the TF coils (m)
-bscfmax  = 0.88 * maximum fraction of plasma current from bootstrap; if `bscfmax < 0`;
-cboot    = 1.37 * bootstrap current fraction multiplier (`ibss=1`)
-enbeam   = 500.0 * neutral beam energy (keV) (`iteration variable 19`)
-etaech   = 0.49375 * ECH wall plug to injector efficiency
-etanbi   = 0.3 * neutral beam wall plug to injector efficiency
-feffcd   = 1.0 * current drive efficiency fudge factor (`iteration variable 47`)
-iefrf    = 8 * Switch for current drive efficiency model;
-nbshield = 0.1 * neutral beam duct shielding thickness (m)
-pinjalw  = 50.0 * maximum allowable value for injected power (MW) (`constraint equation 30`)
-tbeamin  = 2.3 * permitted neutral beam e-decay lengths to plasma centre
+bscfmax  = 0.99 * maximum fraction of plasma current from bootstrap; if `bscfmax < 0`;
+etaech   = 0.4 * ECH wall plug to injector efficiency
+gamma_ecrh = 0.30 * User input ECRH gamma (1;0e20 A/(W m^2))
+iefrf    = 10 * Switch for current drive efficiency model;
+pheat    = 50.0 * heating power not used for current drive (MW) (`iteration variable 11`)
+pinjalw  = 51.0 * maximum allowable value for injected power (MW) (`constraint equation 30`)
 
 *------------Define Iteration Variables------------*
 
@@ -179,6 +232,12 @@ tbeamin  = 2.3 * permitted neutral beam e-decay lengths to plasma centre
 
 *----------------Divertor Variables----------------*
 
+divdum   = 1 * switch for divertor Zeff model;
+divfix   = 0.621 * divertor structure vertical thickness (m)
+hldivlim = 10 * heat load limit (MW/m2)
+ksic     = 1.4 * power fraction for outboard double-null scrape-off plasma
+prn1     = 0.4 * n-scrape-off / n-average plasma; (input for `ipedestal=0`; = nesep/dene if `ipedestal>=1`)
+zeffdiv  = 3.5 * Zeff in the divertor region (if `divdum/=0`)
 
 *------------------Error Handling------------------*
 
@@ -212,15 +271,17 @@ tbeamin  = 2.3 * permitted neutral beam e-decay lengths to plasma centre
 
 *------------------Fwbs Variables------------------*
 
-fwbsshape = 1 * switch for first wall; blanket; shield and vacuum vessel shape;
-iblanket = 1 * switch for blanket model;
+inuclear = 1 * switch for nuclear heating in the coils;
+qnuc     = 1.292e4 * nuclear heating in the coils (W) (`inuclear=1`)
+primary_pumping = 3 * Switch for pumping power for primary coolant (mechanical power only and peak first wall
 secondary_cycle = 2 * Switch for power conversion cycle;
-blkttype = 3 * Switch for blanket type;
+vfshld   = 0.60 * coolant void fraction in shield
+etaiso   = 0.9 * isentropic efficiency of FW and blanket coolant pumps
+etahtp   = 0.87 * electrical efficiency of primary coolant pumps
 
 *-----------------Global Variables-----------------*
 
-runtitle = testrun for sobol uncertainty tool * short descriptive title for the run
-maxcal   = 400 * maximum number of VMCON iterations
+runtitle = testrun for uncertainty tool * short descriptive title for the run
 
 *------------------Green Func Ext------------------*
 
@@ -230,8 +291,9 @@ maxcal   = 400 * maximum number of VMCON iterations
 
 *-------------Heat Transport Variables-------------*
 
-etath    = 0.36124999999999996 * thermal to electric conversion efficiency if `secondary_cycle=2`; otherwise calculated;
+etath    = 0.375d0 * thermal to electric conversion efficiency if `secondary_cycle=2`; otherwise calculated;
 ipowerflow = 0 * switch for power flow model;
+iprimshld = 1 * Switch for shield thermal power destiny;
 
 *--------------------Ife Module--------------------*
 
@@ -241,7 +303,7 @@ ipowerflow = 0 * switch for power flow model;
 
 *------------Impurity Radiation Module-------------*
 
-coreradius = 0.628125 * coreradius /0;6/ ; normalised radius defining the 'core' region
+coreradius = 0.75 * coreradius /0;6/ ; normalised radius defining the 'core' region
 coreradiationfraction = 0.6 * coreradiationfraction /1;0/ ; fraction of radiation from 'core' region that is subtracted from the loss power
 fimp(1) = 1.0
 fimp(2) = 0.1
@@ -255,8 +317,10 @@ fimp(9) = 0.0
 fimp(10) = 0.0
 fimp(11) = 0.0
 fimp(12) = 0.0
-fimp(13) = 0.00011214
+fimp(13) = 0.00044
 fimp(14) = 5e-05
+fimpvar  = 3.7786e-04 * impvar ; impurity to be iterated (deprecated)
+impvar   = 13 * 
 
 *-------------------Init Module--------------------*
 
@@ -294,7 +358,7 @@ fimp(14) = 5e-05
 *---------------------Numerics---------------------*
 
 ioptimz  = 1 * for optimisation VMCON only
-minmax   = -17 * 
+minmax   = 1 * 
 epsvmc   = 1e-08 * epsvmc /1;0e-6/ ; error tolerance for VMCON
 
 *------------------Optimiz Module------------------*
@@ -311,28 +375,29 @@ epsvmc   = 1e-08 * epsvmc /1;0e-6/ ; error tolerance for VMCON
 
 *-----------------Pfcoil Variables-----------------*
 
-ccl0_ma  = 0,0,0,0,0,0,0,0,0 * PF group current array; flux-swing cancellation current (MA)
-ccls_ma  = 1.2,1.6,5.404095692,-3,19.575664452,-22.400782443,-16.269595554,16.785993579,0 * PF group current array; equilibrium current (MA)
-coheof   = 7.9e7 * Central solenoid overall current density at end of flat-top (A/m2) (`iteration variable 37`) (`sweep variable 62`)
-cptdin   = 4.2e4,4.2e4,4.2e4,4.2e4,4.2e4,4.2e4,4.2e4,4.2e4,4.2e4,4.2e4,4.2e4,4.2e4,4.2e4,4.2e4,4.2e4,4.2e4,4.2e4,4.2e4 * peak current per turn input for PF coil i (A)
-ipfloc   = 4,4,4,4,4,4,4,4,4 * Switch for location of PF coil group i;
-ipfres   = 0 * switch for PF coil type;
-isumatpf = 8 * switch for superconductor material in PF coils;
-i_pf_current = 0 * Switch for controlling the current of the PF coils;
-i_sup_pf_shape = 1 * Switch for the placement of Location 3 (outboard) PF coils
-ncls     = 2,2,2,2,2,2,2,2 * number of PF coils in group j
-ngrp     = 9 * number of groups of PF coils; Symmetric coil pairs should all be in the same group
-ohhghf   = 0.5 * Central solenoid height / TF coil internal height
-rref     = -1.5552, -1.40173333333333, -1.14586666666667, -0.1866, 1.53333333333333, 4.2262, 4.2262, 4.2262, 1.89826666666667, 7.0d0 * PF coil radial positioning adjuster;
-zref(1) = 2.48373333333333
-zref(2) = 3.09093333333333
-zref(3) = 3.69806666666667
-zref(4) = 4.82666666666667
-zref(5) = 4.82666666666667
-zref(6) = 3.33333333333333
-zref(7) = 2.4
-zref(8) = 1.46666666666667
-zref(9) = 2.11946666666667
+alstroh  = 6.6d8 * allowable hoop stress in Central Solenoid structural material (Pa)
+coheof   = 2.0726e+07 * Central solenoid overall current density at end of flat-top (A/m2) (`iteration variable 37`) (`sweep variable 62`)
+cptdin   = 4.22d4, 4.22d4, 4.22d4, 4.22d4, 4.3d4, 4.3d4,  4.3d4, 4.3d4, * peak current per turn input for PF coil i (A)
+fcohbop  = 9.3176e-01 * ratio of central solenoid overall current density at beginning of pulse / end of flat-top
+fcuohsu  = 0.70 * copper fraction of strand in central solenoid
+ipfloc   = 2,2,3,3 * Switch for location of PF coil group i;
+isumatoh = 5 * switch for superconductor material in central solenoid;
+isumatpf = 3 * switch for superconductor material in PF coils;
+ncls     = 1,1,2,2, * number of PF coils in group j
+ngrp     = 4 * number of groups of PF coils; Symmetric coil pairs should all be in the same group
+ohhghf   = 0.9 * Central solenoid height / TF coil internal height
+oh_steel_frac = 5.7875e-01 * central solenoid steel fraction (`iteration variable 122`)
+rjconpf  = 1.1d7, 1.1d7, 6.d6, 6.d6, 8.d6, 8.0d6, 8.0d6, 8.0d6, * average winding pack current density of PF coil i (A/m2) at time of peak
+rpf2     = -1.825 * offset (m) of radial position of `ipfloc=2` PF coils from being at
+zref(1) = 3.6
+zref(2) = 1.2
+zref(3) = 1.0
+zref(4) = 2.8
+zref(5) = 1.0
+zref(6) = 1.0
+zref(7) = 1.0
+zref(8) = 1.0
+zref(9) = 1.0
 zref(10) = 1.0
 
 *-------------Physics Functions Module-------------*
@@ -343,47 +408,47 @@ zref(10) = 1.0
 
 *----------------Physics Variables-----------------*
 
-alphaj   = 1.0 * current profile index (calculated from q_0; q if `iprofile=1`)
-alphan   = 0.25 * density profile index
-alphat   = 0.5 * temperature profile index
-aspect   = 2.0 * aspect ratio (`iteration variable 1`)
-beta     = 7.2750e-02 * total plasma beta (`iteration variable 5`) (calculated if `ipedestal=3` or stellarator)
-bt       = 4.0154 * toroidal field on axis (T) (`iteration variable 2`)
-dene     = 1.4993e+20 * electron density (/m3) (`iteration variable 6`) (calculated if `ipedestal=3`)
-epbetmax = 10.0 * maximum (eps*beta_poloidal) (`constraint equation 6`); Note; revised issue #346
-fgwped   = 0.3 * fraction of Greenwald density to set as pedestal-top density; If `<0`; pedestal-top
-fgwsep   = 0.1 * fraction of Greenwald density to set as separatrix density; If `<0`; separatrix
-gtscale  = 2 * switch for a/R scaling of dnbeta (`iprofile=0` only);
-hfact    = 1.14375 * H factor on energy confinement times; radiation corrected (`iteration variable 10`); If
-ibss     = 3 * switch for bootstrap current scaling
-iculbl   = 0 * switch for beta limit scaling (`constraint equation 24`)
-icurr    = 9 * switch for plasma current scaling to use
-idia     = 2 * switch for diamagnetic current scaling
+alphan   = 1.00 * density profile index
+alphat   = 1.45 * temperature profile index
+aspect   = 3.1 * aspect ratio (`iteration variable 1`)
+beta     = 3.1421e-02 * total plasma beta (`iteration variable 5`) (calculated if `ipedestal=3` or stellarator)
+bt       = 5.3292e+00 * toroidal field on axis (T) (`iteration variable 2`)
+dene     = 7.4321e+19 * electron density (/m3) (`iteration variable 6`) (calculated if `ipedestal=3`)
+dnbeta   = 3.0 * Troyon-like coefficient for beta scaling calculated
+fgwped   = 0.85 * fraction of Greenwald density to set as pedestal-top density; If `<0`; pedestal-top
+fkzohm   = 1.0245 * Zohm elongation scaling adjustment factor (`ishape=2; 3`)
+fvsbrnni = 3.9566e-01 * fraction of the plasma current produced by non-inductive means (`iteration variable 44`)
+gamma    = 0.3 * Ejima coefficient for resistive startup V-s formula
+hfact    = 1.19375 * H factor on energy confinement times; radiation corrected (`iteration variable 10`); If
+ibss     = 4 * switch for bootstrap current scaling
+iculbl   = 1 * switch for beta limit scaling (`constraint equation 24`)
+icurr    = 4 * switch for plasma current scaling to use
 idensl   = 7 * switch for density limit to enforce (`constraint equation 5`)
-igeom    = 0 * switch for plasma geometry calculation;
+ifalphap = 1 * switch for fast alpha pressure calculation
+ifispact = 0 * switch for neutronics calculations;
+iinvqd   = 1 * switch for inverse quadrature in L-mode scaling laws 5 and 9;
 ipedestal = 1 * switch for pedestal profiles;
-ips      = 1 * switch for Pfirsch-Schlüter current scaling (issue #413);
+ieped    = 1 * switch for scaling pedestal-top temperature with plasma parameters (issue #730);
+neped    = 0.678e20 * electron density of pedestal [m-3] (`ipedestal=1;2; calculated if 3`)
+nesep    = 0.2e20 * electron density at separatrix [m-3] (`ipedestal=1;2; calculated if 3`)
+plasma_res_factor = 0.66 * plasma resistivity pre-factor
 rhopedn  = 0.94 * r/a of density pedestal (`ipedestal>=1`)
 rhopedt  = 0.94 * r/a of temperature pedestal (`ipedestal>=1`)
 tbeta    = 2.0 * temperature profile index beta  (`ipedestal=1;2`)
-teped    = 0.3 * electron temperature of pedestal (keV) (`ipedestal>=1; ieped=0; calculated for ieped=1`)
+teped    = 5.5 * electron temperature of pedestal (keV) (`ipedestal>=1; ieped=0; calculated for ieped=1`)
 tesep    = 0.1 * electron temperature at separatrix (keV) (`ipedestal>=1`) calculated if reinke
-iprofile = 0 * switch for current profile consistency;
-ishape   = 11 * switch for plasma cross-sectional shape calculation;
-itart    = 1 * switch for spherical tokamak (ST) models;
-itartpf  = 1 * switch for Spherical Tokamak PF models;
-kappa    = 1.8459375 * plasma separatrix elongation (calculated if `ishape = 1-5, 7 or 9-10`)
-q        = 6.0901e+00 * safety factor 'near' plasma edge (`iteration variable 18`) equal to q95
-q0       = 2.0 * safety factor on axis
-ralpne   = 0.08 * thermal alpha density/electron density (`iteration variable 109`) (calculated if `ipedestal=3`)
-rli      = 0.65 * plasma normalised internal inductance (calculated from alphaj if `iprofile=1`)
-rmajor   = 3.0 * plasma major radius (m) (`iteration variable 3`)
-rnbeam   = 3.3713e-03 * hot beam density / n_e (`iteration variable 7`)
-i_single_null = 0 * switch for single null / double null plasma;
-ssync    = 0.7 * synchrotron wall reflectivity factor
-te       = 7.6110e+00 * volume averaged electron temperature (keV) (`iteration variable 4`)
-tratio   = 1.14 * ion temperature / electron temperature(used to calculate ti if `tratio > 0;0`
-triang   = 0.4765625 * plasma separatrix triangularity (calculated if `ishape = 1; 3-5 or 7`)
+iprofile = 1 * switch for current profile consistency;
+isc      = 34 * switch for energy confinement time scaling law (see description in `tauscl`)
+ishape   = 0 * switch for plasma cross-sectional shape calculation;
+kappa    = 1.848 * plasma separatrix elongation (calculated if `ishape = 1-5; 7 or 9-10`)
+q        = 3.5000e+00 * safety factor 'near' plasma edge (`iteration variable 18`) equal to q95
+q0       = 1.0 * safety factor on axis
+ralpne   = 6.8940e-02 * thermal alpha density/electron density (`iteration variable 109`) (calculated if `ipedestal=3`)
+rmajor   = 8.8901e+00 * plasma major radius (m) (`iteration variable 3`)
+i_single_null = 1 * switch for single null / double null plasma;
+ssync    = 0.6 * synchrotron wall reflectivity factor
+te       = 1.2330e+01 * volume averaged electron temperature (keV) (`iteration variable 4`)
+triang   = 0.5 * plasma separatrix triangularity (calculated if `ishape = 1; 3-5 or 7`)
 
 *------------------Plasmod Module------------------*
 
@@ -414,6 +479,7 @@ triang   = 0.4765625 * plasma separatrix triangularity (calculated if `ishape = 
 
 *-----------------Pulse Variables------------------*
 
+lpulse   = 1 * Switch for reactor model;
 
 *-------------Read And Get Atomic Data-------------*
 
@@ -440,7 +506,7 @@ triang   = 0.4765625 * plasma separatrix triangularity (calculated if `ishape = 
 
 isweep   = 5 * Number of scan points to calculate
 nsweep   = 3 * Switch denoting quantity to scan;<UL>
-sweep    = 1000.0, 1000.0, 1000.0, 1000.0, 1000.0 * sweep(ipnscns) /;;/; actual values to use in scan
+sweep    = 500.0, 500.0, 500.0, 500.0, 500.0 * sweep(ipnscns) /;;/; actual values to use in scan
 
 *-----------------Sctfcoil Module------------------*
 
@@ -465,34 +531,34 @@ sweep    = 1000.0, 1000.0, 1000.0, 1000.0, 1000.0 * sweep(ipnscns) /;;/; actual 
 
 *-----------------Tfcoil Variables-----------------*
 
-sig_tf_case_max = 7d8 * Allowable maximum shear stress (Tresca criterion) in TF coil case (Pa)
-sig_tf_wp_max = 7d8 * Allowable maximum shear stress (Tresca criterion) in TF coil conduit (Pa)
-casthi   = 0.022 * inboard TF coil case plasma side thickness (m) (calculated for stellarators)
-cpttf    = 10.5e3 * TF coil current per turn (A); (calculated for stellarators) (calculated for
-dhecoil  = 2e-3 * diameter of central helium channel in TF winding (m)
-fcutfsu  = 0.165 * copper fraction of cable conductor (TF coils)
-i_tf_stress_model = 2 * Switch for the TF coil stress model
-i_tf_wp_geom = 2 * Switch for TF WP geometry selection
-i_tf_sc_mat = 8 * Switch for superconductor material in TF coils;
-i_tf_sup = 1 * Switch for TF coil conductor model;
-i_tf_cond_eyoung_axial = 2 * Switch for the behavior of the TF coil conductor elastic axial properties
-i_tf_bucking = 1 * Switch for TF inboard suport structure design;
-ripmax   = 1.0 * aximum allowable toroidal field ripple amplitude at plasma edge (%)
-tfinsgap = 1e-9 * TF coil WP insertion gap (m)
-frhocp   = 1.0 * Centrepost resistivity enhancement factor; For `itart=0`; this factor
-n_tf     = 12 * Number of TF coils (default = 50 for stellarators); Number of TF coils outer legs for ST
-tftmp    = 20 * peak helium coolant temperature in TF coils and PF coils (K)
-thicndut = 1e-5 * conduit insulation thickness (m)
-thkcas   = 0.2 * inboard TF coil case outer (non-plasma side) thickness (m) (`iteration variable 57`)
-thwcndut = 1.5e-3 * TF coil conduit case thickness (m) (`iteration variable 58`)
-tinstf   = 0.0 * Thickness of the ground insulation layer surrounding (m)
-tmpcry   = 20 * coil temperature for cryogenic plant power calculation (K)
-vftf     = 1e-9 * coolant fraction of TFC 'cable' (`i_tf_sup=1`); or of TFC leg (`i_tf_ssup=0`)
+casthi   = 0.06 * inboard TF coil case plasma side thickness (m) (calculated for stellarators)
+casths   = 0.05 * inboard TF coil sidewall case thickness (m) (calculated for stellarators)
+cpttf    = 6.5000e+04 * TF coil current per turn (A); (calculated for stellarators) (calculated for
+dhecoil  = 0.010 * diameter of central helium channel in TF winding (m)
+fcutfsu  = 8.0884e-01 * copper fraction of cable conductor (TF coils)
+i_tf_turns_integer = 1 * Switch for TF coil integer/non-integer turns;
+i_tf_sc_mat = 5 * Switch for superconductor material in TF coils;
+n_pancake = 20 * Number of pancakes in TF coil; Only used if `i_tf_turns_integer=1`
+n_layer  = 10 * Number of layers in TF coil; Only used if `i_tf_turns_integer=1`
+oacdcp   = 8.6739e+06 * Overall current density in TF coil inboard legs midplane (A/m2)
+ripmax   = 0.6 * aximum allowable toroidal field ripple amplitude at plasma edge (%)
+tdmptf   = 2.5829e+01 * fast discharge time for TF coil in event of quench (s) (`iteration variable 56`)
+n_tf     = 16 * Number of TF coils (default = 50 for stellarators); Number of TF coils outer legs for ST
+tftmp    = 4.750 * peak helium coolant temperature in TF coils and PF coils (K)
+thicndut = 2.0d-3 * conduit insulation thickness (m)
+thkcas   = 5.2465e-01 * inboard TF coil case outer (non-plasma side) thickness (m) (`iteration variable 57`)
+thwcndut = 8.0000e-03 * TF coil conduit case thickness (m) (`iteration variable 58`)
+tinstf   = 0.008 * Thickness of the ground insulation layer surrounding (m)
+tmargmin = 1.500 * minimum allowable temperature margin ; TFC AND CS (K)
+vdalw    = 1.0000e+01 * max voltage across TF coil during quench (kV) (`iteration variable 52`)
+vftf     = 0.300 * coolant fraction of TFC 'cable' (`i_tf_sup=1`); or of TFC leg (`i_tf_ssup=0`)
 
 *-----------------Times Variables------------------*
 
-tburn    = 1000.0 * burn time (s) (calculated if `lpulse=1`)
-tdwell   = 100.0 * time between pulses in a pulsed reactor (s) (`iteration variable 17`)
+pulsetimings = 0 * Switch for pulse timings (if lpulse=1);
+tburn    = 1.0d4 * burn time (s) (calculated if `lpulse=1`)
+tdwell   = 0 * time between pulses in a pulsed reactor (s) (`iteration variable 17`)
+tramp    = 500.0 * initial PF coil charge time (s); if pulsed; = tohs
 
 *---------------Torga Curgap Module----------------*
 
@@ -505,6 +571,7 @@ tdwell   = 100.0 * time between pulses in a pulsed reactor (s) (`iteration varia
 
 *-------------------Vmcon Module-------------------*
 
+gamma    = 0.3 * Ejima coefficient for resistive startup V-s formula
 
 *--------------Water Usage Variables---------------*
 

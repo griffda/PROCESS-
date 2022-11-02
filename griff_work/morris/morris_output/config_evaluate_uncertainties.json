@@ -1,34 +1,68 @@
 {
     "_description": "Configuration file for uncertainties evaluation in PROCESS",
-    "_author": "Tom Griffiths",
+    "_author": "Alex Pearce",
     "config": {
-        "runtitle": "testrun for morris uncertainty tool",
+        "runtitle": "testrun for uncertainty tool",
         "IN.DAT_path": "/home/griff/process/griff_work/morris/ref_IN.DAT",
         "working_directory": "/home/griff/process/griff_work/morris/morris_output",
         "pseudorandom_seed": 2,
-        "no_iter": 1,
-        "factor": 1.5
+        "no_iter": 1
     },
-    "vary_iteration_variables": false,
     "uncertainties": [
-
+        {
+            "Varname": "boundu(9)",
+            "Errortype": "LowerHalfGaussian",
+            "Mean": 1.2,
+            "Std": 0.1
+        },
+        {
+            "Varname": "boundu(10)",
+            "Errortype": "LowerHalfGaussian",
+            "Mean": 1.1,
+            "Std": 0.1
+        },
         {
             "Varname": "coreradius",
-            "Errortype": "Uniform",
-            "Lowerbound": 0.6,
-            "Upperbound": 0.9
+            "Errortype": "Gaussian",
+            "Mean": 0.6,
+            "Std": 0.15
+        },
+        {
+            "Varname": "fimp(2)",
+            "Errortype": "Gaussian",
+            "Mean": 0.1,
+            "Std": 0.025
+        },
+        {
+            "Varname": "fimp(14)",
+            "Errortype": "Gaussian",
+            "Mean": 1.0e-4,
+            "Std": 5.0e-5
         }
     ],
     "output_vars": [
-        
+        "rmajor",
+        "dene",
+        "te",
+        "bt"
     ],
-    "no_samples": 5,
-    "no_scans": 1,
+    "no_samples": 1,
     "output_mean": 8056.98,
     "figure_of_merit": "rmajor",
     "latin_hypercube_level": 4,
+    "sobol_uncertainties": {
+        "bounds": [
+            [
+                1.1,
+                1.3
+            ]
+        ],
+        "names": [
+            "hfact"
+        ],
+        "num_vars": 1
+    },
     "morris_uncertainties": {
-        
         "bounds": [
             [
                 1.1,
@@ -37,22 +71,12 @@
             [
                 1.0,
                 1.2
-            ],
-            [
-                0.45,
-                0.75
-            ],
-            [
-                0.085,
-                0.115
             ]
         ],
         "names": [
             "boundu(9)",
-            "hfact",
-            "coreradius",
-            "fimp(2)"
+            "hfact"
         ],
-        "num_vars": 4
+        "num_vars": 2
     }
 }
