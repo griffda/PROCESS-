@@ -1,6 +1,8 @@
 import logging
 import math
 
+import numpy as np
+
 from process.utilities.f2py_string_patch import f2py_compatible_to_string
 
 from process.fortran import constants
@@ -382,12 +384,10 @@ class Vacuum:
         l3 = 2.0e0  # Length of ducts from elbow to hi-vac pumps (m)
         ltot = l1 + l2 + l3
 
-        ITERATIONS_OVER_I = 4
+        ceff = np.zeros((4,))
+        d = np.zeros((4,))
 
-        ceff = [None for _ in range(ITERATIONS_OVER_I)]
-        d = [None for _ in range(ITERATIONS_OVER_I)]
-
-        for i in range(ITERATIONS_OVER_I):
+        for i in range(4):
 
             sss = nduct / (
                 1.0e0 / sp[i] / pumpn + 1.0e0 / cmax * xmult[i] / xmult[imax]
@@ -497,7 +497,7 @@ class Vacuum:
         #  snet(3) - net pump speed (He) provided (m^3/s)
         #  snet(4) - snet(2)
         snet = []
-        for i in range(ITERATIONS_OVER_I):
+        for i in range(4):
             ceff1 = ceff[imax] * nduct
             snet.append(
                 1.0e0
