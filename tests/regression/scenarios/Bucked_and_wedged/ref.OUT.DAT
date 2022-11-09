@@ -7,12 +7,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.4.0-689-gb3615aabe
+   Tag No. : v2.4.0-693-ga4e2f9c18
     Branch : HEAD
-   Git log : Merge branch |1748-baseline-2019-slow-after-divertor-ode-conversion| into |develop|
- Date/time :  3 Nov 2022 16:45:43 +00:00(hh:mm) UTC
+   Git log : Merge branch |1740-create-documenation-detailing-numba-and-our-policy-on-it| into |develop|
+ Date/time :  9 Nov 2022 11:58:20 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-9dc50af2-project-20-concurrent-0
+  Computer : runner-91be33e7-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_Bucked_and_wedge0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')
