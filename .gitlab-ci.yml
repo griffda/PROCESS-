@@ -72,9 +72,8 @@ default:
           changes:
               - docker/ci/Dockerfile
               - requirements.txt
-    # when testing CI, re-build the containers
+        # when testing CI, re-build the containers
         - if: $CI_TEST_BUILD && $CI_DOCKER_BUILD
-
 
 build_docker_ci_image:
     extends: .build_docker_image
@@ -92,7 +91,6 @@ build_docker_dev_image:
         IMAGE_TAG: latest
     before_script:
         - cd docker/dev
-
 
 # a CI deploy token only allows registry access, but not repository write access (it can provide read)
 # https://docs.gitlab.com/ee/user/project/deploy_tokens/
@@ -134,7 +132,6 @@ build_docker_dev_image:
     git config --global user.name "${CI_RUNNER_DESCRIPTION}"
     git config --global user.email "${CI_RUNNER_ID}@git.ccfe.ac.uk"
 
-
 #-----------------
 #  Build
 #-----------------
@@ -149,9 +146,9 @@ make-py38:
             - build/CMakeFiles/process.dir/source/fortran/*.gcno
             - lcov_results
             - python_modules.txt
-      # keeping untracked process files (ie .so and .json files)
-      # allows a quick reinstall of Process to be made when
-      # _fortran.py is created in the pages job
+            # keeping untracked process files (ie .so and .json files)
+            # allows a quick reinstall of Process to be made when
+            # _fortran.py is created in the pages job
             - process/
         expire_in: 1 week
     script:
@@ -160,7 +157,6 @@ make-py38:
         - python3 setup.py sdist -d process_dist
         - python3 setup.py bdist_wheel -d process_dist
         - python -m pip freeze > python_modules.txt
-
 
 #-----------------
 #  Testing
@@ -262,9 +258,7 @@ baseline_2019-py38:
     extends: .test_template
     stage: testing
     script:
-        # - process -i tracking/baseline_2019/baseline_2019_IN.DAT
-        # Disable baseline 2019 as part of hotfix #1748
-        - touch tracking/baseline_2019/baseline_2019_MFILE.DAT
+        - process -i tracking/baseline_2019/baseline_2019_IN.DAT
     artifacts:
         paths:
             - tracking/baseline_2019/baseline_2019_MFILE.DAT
@@ -272,7 +266,7 @@ baseline_2019-py38:
     rules:
         - if: $CI_COMMIT_BRANCH == "develop"
           when: on_success
-    # when testing CI, baseline 2019 is needed for tracking
+        # when testing CI, baseline 2019 is needed for tracking
         - if: $CI_TEST_BUILD
 
 baseline_2018-py38:
@@ -287,9 +281,8 @@ baseline_2018-py38:
     rules:
         - if: $CI_COMMIT_BRANCH == "develop"
           when: on_success
-    # when testing CI, baseline 2018 is needed for tracking
+        # when testing CI, baseline 2018 is needed for tracking
         - if: $CI_TEST_BUILD
-
 
 starfire-py38:
     extends: .test_template
@@ -304,7 +297,7 @@ starfire-py38:
     rules:
         - if: $CI_COMMIT_BRANCH == "develop"
           when: on_success
-    # when testing CI, starfire is needed for tracking
+        # when testing CI, starfire is needed for tracking
         - if: $CI_TEST_BUILD
 
 #-----------------
@@ -348,15 +341,15 @@ tracking_rtv:
         - *setup-ssh
         - pip install pandas
         - pip install bokeh
-    # clone the database repo into a known location
+        # clone the database repo into a known location
         - git clone git@git.ccfe.ac.uk:tnunn/process-tracking-database.git ${CI_PROJECT_DIR}/process_rtv_data/
-    # write new tracking json files for each of our baseline tracking jobs
+        # write new tracking json files for each of our baseline tracking jobs
         - python ${CI_PROJECT_DIR}/tracking/tracking_data.py track ${CI_PROJECT_DIR}/process_rtv_data/ --mfile ${CI_PROJECT_DIR}/tracking/baseline_2018/baseline_2018_MFILE.DAT
-        # - python ${CI_PROJECT_DIR}/tracking/tracking_data.py track ${CI_PROJECT_DIR}/process_rtv_data/ --mfile ${CI_PROJECT_DIR}/tracking/baseline_2019/baseline_2019_MFILE.DAT
+        - python ${CI_PROJECT_DIR}/tracking/tracking_data.py track ${CI_PROJECT_DIR}/process_rtv_data/ --mfile ${CI_PROJECT_DIR}/tracking/baseline_2019/baseline_2019_MFILE.DAT
         - python ${CI_PROJECT_DIR}/tracking/tracking_data.py track ${CI_PROJECT_DIR}/process_rtv_data/ --mfile ${CI_PROJECT_DIR}/tracking/starfire_MFILE.DAT
-    # create the new tracking dashboard
+        # create the new tracking dashboard
         - python ${CI_PROJECT_DIR}/tracking/tracking_data.py plot ${CI_PROJECT_DIR}/process_rtv_data/ --out ${CI_PROJECT_DIR}/tracking.html
-    # commit the new .json data files to the database repo and pushes them
+        # commit the new .json data files to the database repo and pushes them
         - cd ${CI_PROJECT_DIR}/process_rtv_data/
         - git add .
         - git commit -m "${CI_PIPELINE_URL} - ${CI_PIPELINE_CREATED_AT}"
@@ -368,14 +361,13 @@ tracking_rtv:
     rules:
         - if: $CI_COMMIT_BRANCH == "develop"
           when: on_success
-    # when testing CI, run the tracker
+        # when testing CI, run the tracker
         - if: $CI_TEST_BUILD
     dependencies:
         - make-py38
         - baseline_2018-py38
         - baseline_2019-py38
         - starfire-py38
-
 
 #-----------------
 #  Pages
@@ -386,39 +378,38 @@ pages:
     variables:
         PY_VERSION: py38
     script:
-
-    # FORD documentation
+        # FORD documentation
         - ford documentation/ford/index.md
 
-    # python docs documentation
+        # python docs documentation
         - python3 -m pip install mkdocstrings==0.18.0
         - python3 ${CI_PROJECT_DIR}/scripts/document_fortran_interface.py
         - python3 ${CI_PROJECT_DIR}/scripts/vardes.py
-    # mkdocstrings imports process to write its documentation,
-    # process must be reinstalled with _fortran.py available
-    # otherwise mkdcostrings won't be able to find it
+        # mkdocstrings imports process to write its documentation,
+        # process must be reinstalled with _fortran.py available
+        # otherwise mkdcostrings won't be able to find it
         - python3 -m pip install -e .
 
-    # Build the MkDocs site (after FORD has been used to create the vardes)
+        # Build the MkDocs site (after FORD has been used to create the vardes)
         - mkdocs build
 
-    # Publish the MkDocs and FORD sites
+        # Publish the MkDocs and FORD sites
         - ls site
         - mv site public
         - mv ford_site public
-    # if tracking.html doesn't exist, put an error404 in its place
+        # if tracking.html doesn't exist, put an error404 in its place
         - mv tracking.html public || cp public/404.html public/tracking.html
 
-    # Install requirements for Code Quality
+        # Install requirements for Code Quality
         - python3 -m pip install flinter==0.3.0
         - apt-get install bc -y
 
-    # Setup badges
+        # Setup badges
         # TODO Use installed anybadge in all cases: coverage and quality scripts
         # require modification first
         - git clone https://github.com/jmorris-uk/anybadge.git
         - pip install anybadge
-    # checks for the tag on the most up-to-date branch (master)
+        # checks for the tag on the most up-to-date branch (master)
         - MASTER_VERSION=$(git describe $(git rev-list --tags --max-count=1))
         - DEVELOP_VERSION=$(git describe)
         - declare -i CONTRIBUTORS=$(git shortlog -s -n --all | wc -l)
@@ -459,14 +450,12 @@ pages:
     rules:
         - if: $CI_COMMIT_BRANCH == "develop"
           when: on_success
-    # when testing CI, generate the documentation
+        # when testing CI, generate the documentation
         - if: $CI_TEST_BUILD
     dependencies:
         - make-py38
         - tracking_rtv # needed to ensure tracking.html is present in this job
         - unit-py38 # .coverage artefact required for coverage badge
-
-
 
 #-----------------
 #  STEP
@@ -481,5 +470,5 @@ step_trigger:
     rules:
         - if: $CI_COMMIT_BRANCH == "develop"
           when: on_success
-    # when testing CI, test this hook only if also CI_TEST_EXTERNAL
+        # when testing CI, test this hook only if also CI_TEST_EXTERNAL
         - if: $CI_TEST_BUILD && $CI_TEST_EXTERNAL

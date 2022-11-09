@@ -1,6 +1,4 @@
-from typing import Callable
 import numpy as np
-from scipy.integrate import solve_ivp
 
 from process.fortran import (
     build_variables,
@@ -16,6 +14,7 @@ from process.fortran import (
     process_output as po,
     numerics,
 )
+from process.utilities.f2py_string_patch import f2py_compatible_to_string
 
 STEP_NUM = 200
 
@@ -394,7 +393,17 @@ class DivertorOde:
         # Use logarithmic spacing for the x values along the SOL
         factor = 10.0e0 ** (np.log10(lcon / step0) / STEP_NUM)
         time_steps = [step0 * factor**i for i in range(STEP_NUM + 1)]
-        f = self._get_differential(
+
+        # python implementation of ODE removed 13/10/22
+
+        imp_labels = [
+            f2py_compatible_to_string(i) for i in impurity_radiation_module.imp_label
+        ]
+
+        yout = divertor_ode.solve_ode(
+            y0,
+            time_steps,
+            0.0002,
             divertor_ode.eightemi48,
             div_kal_vars.netau_sol,
             divertor_ode.lengthofwidesol,
@@ -407,25 +416,11 @@ class DivertorOde:
             divertor_ode.v02,
             divertor_ode.zeff_div,
             divertor_ode_var.impurity_concs,
+            impurity_radiation_module.nimp,
+            imp_labels,
         )
 
-        # Radau algorithm chosen because it provides the closest values
-        # to the Fortran ODE solver. This tracks with the fact Radau is
-        # appropriate for stiff problems, of which this is.
-        # BDF is another algorithm that appears to work equally as well.
-        # However, Radau is marginally quicker in my testing.
-
-        # Allowing the solver to choose its own "method", again, works
-        # but slows the solving process down by about 3x.
-        ode_solution = solve_ivp(
-            f,
-            (0, time_steps[-1]),
-            y0,
-            t_eval=time_steps,
-            method="Radau",
-            rtol=1e-4,
-            atol=1e-4,
-        )
+        y = yout[:, -1]
 
         # we want the following variables to be set within the loop
         # and be available after the loop as their value in the last
@@ -453,8 +448,6 @@ class DivertorOde:
         qperp_conducted0 = qperp_total0 - qperp_conv0  # Conducted heat flux [W/m2]
         ptarget_conv0 = qperp_conv0 * a_cross
         ptarget_cond0 = qperp_conducted0 * a_cross
-
-        y = ode_solution.y[:, -1]
 
         # Derived quantities need to be recalculated at each data point and converted to SI units
         n01 = y[0] * 1e20
@@ -489,20 +482,6 @@ class DivertorOde:
             n, te, divertor_ode.aplas, verbose=False
         )
 
-        # cxrate = rcx * n * n0  # charge exchange rate
-        # ionrate1 = s * n * n01  # ionisation of neutrals: velocity group 1
-        # ionrate2 = s * n * n02  # ionisation of neutrals: velocity group 2
-        # recrate = al * nelsquared  # volume recombination rate
-        # plossdenscx = (
-        #     constants.echarge * te * cxrate
-        # )  # energy conservation: equation 4, charge exchange term
-        # plossion = (
-        #     ionrate1 + ionrate2
-        # ) * divertor_ode.eleion  # energy conservation: equation 4, ionisation term
-        # radHdens = (
-        #     (plt + prb) * n0 * n
-        # )  # radiation loss density for neutral hydrogenic species
-
         raddens = 0
 
         for i in range(1, 14):
@@ -529,12 +508,12 @@ class DivertorOde:
 
         qtarget_isotropic = 0
         tmp_x = 0
-        for (i, tmp_xout) in enumerate(ode_solution.t):
+        for (i, tmp_xout) in enumerate(time_steps):
 
             if tmp_x < sab and tmp_xout > sab:
-                tmp_y7 = ode_solution.y[6, i] - 1
-                tmp_y8 = ode_solution.y[7, i] - 1
-                tmp_y9 = ode_solution.y[8, i] - 1
+                tmp_y7 = yout[6, i] - 1
+                tmp_y8 = yout[7, i] - 1
+                tmp_y9 = yout[8, i] - 1
                 qtarget_isotropic = (
                     0.5
                     * 1e6
@@ -1039,157 +1018,3 @@ class DivertorOde:
             # write(self.outfile, '(a17, 13es9.1)')'Fraction in SOL', (impurity_concs(i), i=2,14)
             # write(self.outfile, '(a17, 13es9.1)')'Enrichment', (impurity_enrichment(i), i=2,14)
         return psep_kallenbach, te, n
-
-    def _get_differential(
-        self,
-        eightemi48,
-        netau_sol,
-        lengthofwidesol,
-        area_target,
-        area_omp,
-        mi,
-        aplas,
-        eleion,
-        v01,
-        v02,
-        zeff_div,
-        impurity_concs,
-    ) -> Callable[[np.floating, np.ndarray], np.ndarray]:
-        """Creates the differential equation to solve.
-
-        It does this by taking parameters as inputs to this function
-        and injecting them into the nested `differential`. This means
-        the differential only has to take `t` and `y` as inputs, as
-        stipulated by the SciPy ODE solver API.
-
-        :param eightemi48: 8 * electron charge * mi * 10^48
-        :type eightemi48: float
-        :param netau_sol: Parameter describing the departure from local ionisation equilibrium in the SOL.
-        :type netau_sol: float
-        :param lengthofwidesol: Length of broadened downstream part of SOL [m]
-        :type lengthofwidesol: float
-        :param area_target: SOL area (normal to B) at target [m2]
-        :type area_target: float
-        :param area_omp: SOL area (normal to B) at outer midplane [m2]
-        :type area_omp: float
-        :param mi: ion mass [kg]
-        :type mi: float
-        :param aplas: relative ion mass
-        :type aplas: float
-        :param eleion: Eion (electron energy loss due to ionization) * electron charge
-        :type eleion: float
-        :param v01: eutral velocity along the flux bundle for group 1
-        :type v01: float
-        :param v02: eutral velocity along the flux bundle for group 2
-        :type v02: float
-        :param zeff_div: Zeff for divertor region
-        :type zeff_div: float
-        :param impurity_concs: The concentrations of each impurity in the divertor region
-        :type impurity_concs: ndarray[float]
-        """
-
-        def differential(t, y):
-            # output vector
-            yp = np.zeros((len(y),))
-
-            # Rescale to SI units
-            n01 = y[0] * 1e20
-            n02 = y[1] * 1e20
-            te = y[2]
-            nv = y[3] * 1e24
-            pressure = y[4]
-            power = y[5] * 1e6
-            nv24 = y[3]
-
-            bracket = max(pressure**2 - eightemi48 * te * nv24**2, 0)
-
-            n = (pressure + np.sqrt(bracket)) / (4 * constants.echarge * te)
-
-            v = nv / n  # plasma velocity
-            n0 = n01 + n02  # neutral density = sum of the two velocity groups
-
-            lz_total = 0
-            for i in range(1, impurity_radiation_module.nimp):
-                if impurity_concs[i] == 0:
-                    continue
-
-                lz = read_radiation.read_lz(
-                    impurity_radiation_module.imp_label[i],
-                    te,
-                    netau_sol,
-                    mean_z=False,
-                    mean_qz=False,
-                    verbose=False,
-                )
-                lz_total += lz * impurity_concs[i]
-
-            # impurity radiation loss density
-            raddens = lz_total * n**2
-
-            # The area of the flux tube, measured perpendicular to B
-            # This is set to a step function as in Kallenbach
-
-            A_cross = area_target if t < lengthofwidesol else area_omp
-
-            qperp_total = power / A_cross
-            # Convective heat flux is positive
-            qperp_conv = -(5 * constants.echarge * te + 0.5 * mi * v**2) * nv
-            # conducted heat flux
-            qperp_conducted = qperp_total - qperp_conv
-
-            (s, al, rcx, plt, prb) = read_and_get_atomic_data.get_h_rates(
-                n, te, aplas, verbose=False
-            )
-
-            cxrate = rcx * n * n0  # charge exchange rate
-            ionrate1 = s * n * n01  # ionisation of neutrals: velocity group 1
-            ionrate2 = s * n * n02  # ionisation of neutrals: velocity group 2
-            recrate = al * n**2  # volume recombination rate
-            plossdenscx = (
-                constants.echarge * te * cxrate
-            )  # energy conservation: equation 4, charge exchange term
-            plossion = (
-                ionrate1 + ionrate2
-            ) * eleion  # energy conservation: equation 4, ionisation term
-            radHdens = (
-                (plt + prb) * n0 * n
-            )  # radiation loss density for neutral hydrogenic species
-
-            yp[0] = 1e-20 * (-ionrate1 + recrate) / v01  # dn01dx - neutral continuity
-
-            # TODO: why isnt it (-ionrate2 + recrate) as above? TN
-            yp[1] = 1e-20 * (-ionrate2) / v02  # dn02dx - neutral continuity
-            dnvdx = ionrate1 + ionrate2 - recrate  # dnvdx - ion continuity
-            yp[3] = 1e-24 * dnvdx
-            # dpdx = (
-            #     -(cxrate / n + recrate / n) * nv * mi
-            # )  # dpressuredx - momentum conservation
-
-            # Parallel thermal conductivity! Issue #497
-            # Revised formula from Huber and Chankin.
-            kappa0 = (8788 / zeff_div) * (zeff_div + 0.21) / (zeff_div + 4.2)
-            # dtedx Equation 5 - thermal conduction equation
-            dtdx = qperp_conducted / te**2.5 / kappa0
-            yp[2] = dtdx
-
-            yp[4] = -(cxrate / n + al * n) * nv * mi
-            yp[5] = (
-                1e-6 * (raddens + radHdens + plossdenscx + plossion) * A_cross
-            )  # dPowerdx - energy conservation
-
-            # Derivatives of the power loss integrals - these are for information only.
-            # They don't affect the results Y(1-6)
-            yp[6] = 1e-6 * raddens * A_cross  # integral of impurity radiation loss [MW]
-            yp[7] = (
-                1e-6 * radHdens * A_cross
-            )  # integral of radiation loss from hydrogenic species [MW]
-            yp[8] = (
-                1e-6 * plossdenscx * A_cross
-            )  # integral of power loss due to charge exchange [MW]
-            yp[9] = (
-                1e-6 * plossion * A_cross
-            )  # integral of power loss due to electron impact ionisation [MW]
-
-            return yp
-
-        return differential
