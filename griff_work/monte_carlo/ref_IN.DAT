@@ -20,6 +20,13 @@
 * cswanson@pppl.gov
 * Coauthors are Ken Hammond and Mike Zarnstorff, PPPL
 
+* EDITED BY TOM GRIFFITHD 2022 
+* INCLUSIONS: 
+* ITERATION VARIABLES: Toroidal Magnetic field strength (bt), fusion power limits
+* CONSTRAINT VAIRBALES: net electrical power, fusion power
+* HEAT TRANSPORT VARIABLES: Thermal to electric conversion efficiency
+
+
 *---------------Constraint Equations---------------*
 
 icc = 1             *Beta (consistency equation)
@@ -38,6 +45,9 @@ icc = 33            *TF coil operating/critical J upper limit
 icc = 56            *Pseparatrix / Rmajor upper limit
 
 *---------------Iteration Variables----------------*
+
+ixc = 2             *Toroidal Magnetic field strength (bt)
+bt = 2.0            *Toroidal field on axis (T)
 
 ixc = 4             *te
 te = 7.6110E+00     *Volume averaged electron temperature (keV)
@@ -64,6 +74,11 @@ fwalld = 1.2684E-01 *f-value for maximum wall load
 ixc = 18            *q. If commented out, prescribes the q exactly
 q = 6.0901E+00      *Safety factor 'near' plasma edge
 boundl(18) = 3.0    
+
+ixc = 26            *ffuspow
+powfmax = 1300      *Fusion power limits
+boundl(26) = 0.98
+boundu(26) = 1.02
 
 ixc = 28             *fradpwr
 fradpwr = 5.9465E-01 *f-value for core radiation power limit
@@ -112,6 +127,9 @@ pseprmax = 20.0     *Maximum ratio of power crossing the separatrix to plasma ma
 walalw   = 10.0     *Allowable wall-load (MW/m2) (constraint equation 8) 
 fbetatry = 0.84     *Troyon fraction. Found via agreement to Menard aspect ratio scan
 fdene    = 0.95     *Greenwald fraction. Found via agreement to Menard aspect ratio scan
+fpnetel  = 1.0      *F-value for net electric power
+pnetelin = 500.0    * Required net electric power (mw)
+ffuspow  = 1        * F-value for maximum fusion power
 
 *----------------Physics Variables-----------------*
 
@@ -296,7 +314,7 @@ ucme          = 3.0E8    *Unit cost of maintenance equipment ($/W**0.3)
 *---------------Heat Transport Variables-----------*
 
 secondary_cycle = 2      * Switch for power conversion cycle (2: user input thermal-electric efficiency (etath))
-etath           = 0.45   *Thermal to electric conversion efficiency
+etath           = 0.50   *Thermal to electric conversion efficiency
 ipowerflow      = 0      *Switch for power flow model (0: pre-2014 version)
 
 *------------Impurity Radiation Variables----------*
