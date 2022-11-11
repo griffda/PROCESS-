@@ -92,7 +92,7 @@ step_ref = np.array(
 
 
 @pytest.fixture
-def cost_funcs(monkeypatch):
+def cost_model_base(monkeypatch):
     """Fixture to mock commonly used dependencies in cost subroutines.
 
     Create CostsStep instance and mock Fortran module variables to aid testing.
@@ -102,34 +102,27 @@ def cost_funcs(monkeypatch):
     :return: CostsStep model object
     :rtype: process.costs_step.CostsStep
     """
-    cost_funcs = CostModelBase()
+    cost_model_base = CostModelBase()
 
     # Mock commonly-used Fortran module vars for testing
     monkeypatch.setattr(cv, "step_ref", step_ref)
     monkeypatch.setattr(cv, "step_con", 1.5e-1)
     monkeypatch.setattr(bldgsv, "efloor", 1e4)
     monkeypatch.setattr(htv, "pgrossmw", 5e2)
-    monkeypatch.setattr(cost_funcs, "vfi", 6.737e3)
-    monkeypatch.setattr(cost_funcs, "vfi_star", 6.737e3)
-    monkeypatch.setattr(cost_funcs, "pth", 4.15e3)
-    monkeypatch.setattr(cost_funcs, "ptherm_star", 4.15e3)
-    monkeypatch.setattr(cost_funcs, "rmajor_star", 7.0)
-    monkeypatch.setattr(cost_funcs, "rminor_star", 7 / 3.6)
+    monkeypatch.setattr(cost_model_base, "vfi", 6.737e3)
+    monkeypatch.setattr(cost_model_base, "vfi_star", 6.737e3)
+    monkeypatch.setattr(cost_model_base, "pth", 4.15e3)
+    monkeypatch.setattr(cost_model_base, "ptherm_star", 4.15e3)
+    monkeypatch.setattr(cost_model_base, "rmajor_star", 7.0)
+    monkeypatch.setattr(cost_model_base, "rminor_star", 7 / 3.6)
     monkeypatch.setattr(tfv, "n_tf_turn", 104.6)
     monkeypatch.setattr(tfv, "tfleng", 34.63)
     # vfi values taken from Starfire reference in costs_step_module
 
-    return cost_funcs
+    return cost_model_base
 
 
-@pytest.fixture
-def check_fkind(autouse=True):
-    assert cv.fkind == 1.0
-    yield
-    assert cv.fkind == 1.0
-
-
-def test_site_permits_costs(monkeypatch, cost_funcs):
+def test_site_permits_costs(monkeypatch, cost_model_base):
     """Validate sum of cost account 12.
 
     :param: monkeypatch: mocking fixture
@@ -138,17 +131,17 @@ def test_site_permits_costs(monkeypatch, cost_funcs):
     :type costs_step: process.costs_step.CostsStep
     """
     # Mock module vars
-    # monkeypatch.setattr(cost_funcs, "site_permits_cost", 0.0)
+    # monkeypatch.setattr(cost_model_base, "site_permits_cost", 0.0)
     monkeypatch.setattr(cv, "site_permits", 1e8)
 
     # Run and assert result in M$
-    cost_funcs.site_permits_costs()
+    cost_model_base.site_permits_costs()
     exp = 1.0e2
-    obs = cost_funcs.site_permits_cost
+    obs = cost_model_base.site_permits_cost
     assert pytest.approx(obs) == exp
 
 
-def test_plant_license_costs(monkeypatch, cost_funcs):
+def test_plant_license_costs(monkeypatch, cost_model_base):
     """Validate sum of cost account 12.
 
     :param: monkeypatch: mocking fixture
@@ -161,13 +154,13 @@ def test_plant_license_costs(monkeypatch, cost_funcs):
     monkeypatch.setattr(cv, "plant_licensing", 1e8)
 
     # Run and assert result in M$
-    cost_funcs.plant_license_costs()
+    cost_model_base.plant_license_costs()
     exp = 1.0e2
-    obs = cost_funcs.plant_license_cost
+    obs = cost_model_base.plant_license_cost
     assert pytest.approx(obs) == exp
 
 
-def test_land_and_rights_costs(monkeypatch, cost_funcs):
+def test_land_and_rights_costs(monkeypatch, cost_model_base):
     """Validate sum of cost account 20.
 
     :param monkeypatch: mocking fixture
@@ -176,13 +169,13 @@ def test_land_and_rights_costs(monkeypatch, cost_funcs):
     :type costs_step: process.costs_step.CostsStep
     """
     # Mock module vars
-    # monkeypatch.setattr(cost_funcs, "step20", 0.0)
+    # monkeypatch.setattr(cost_model_base, "step20", 0.0)
     monkeypatch.setattr(cv, "sitecost", 1e8)
 
     # Run and assert result in M$
-    cost_funcs.land_and_rights_costs()
+    cost_model_base.land_and_rights_costs()
     exp = 1.003e2
-    obs = cost_funcs.land_and_rights_cost
+    obs = cost_model_base.land_and_rights_cost
     assert pytest.approx(obs) == exp
 
 
@@ -191,7 +184,7 @@ def test_land_and_rights_costs(monkeypatch, cost_funcs):
     ((0, 0, 0, 0, 3.020832e3), (1, 1, 1, 1, 2.950832e3), (2, 0, 0, 0, 2.940832e3)),
 )
 def test_site_improvements_costs(
-    monkeypatch, cost_funcs, isitetype, isiteaccomm, igridconn, irailaccess, exp
+    monkeypatch, cost_model_base, isitetype, isiteaccomm, igridconn, irailaccess, exp
 ):
     """Validate sum of cost account 21.
 
@@ -208,315 +201,315 @@ def test_site_improvements_costs(
     monkeypatch.setattr(cv, "irailaccess", irailaccess)
 
     # Run and assert result in M$
-    cost_funcs.site_improvements_costs()
-    obs = cost_funcs.site_improvements_cost
+    cost_model_base.site_improvements_costs()
+    obs = cost_model_base.site_improvements_cost
     assert pytest.approx(obs) == exp
 
 
-def test_reactor_bldg_costs(monkeypatch, cost_funcs):
+def test_reactor_bldg_costs(monkeypatch, cost_model_base):
     """Validate sum of Reactor Building Costs
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
-    :param cost_funcs: fixture to mock commonly-used cost vars
-    :type cost_funcs: process.cost_funcs.CostModelBase
+    :param cost_model_base: fixture to mock commonly-used cost vars
+    :type cost_model_base: process.cost_model_base.CostModelBase
     """
     # Mock module vars
     monkeypatch.setattr(bldgsv, "a_reactor_bldg", 1e2)
 
     # Run and assert result in M$
-    cost_funcs.reactor_bldg_costs()
+    cost_model_base.reactor_bldg_costs()
     exp = 2.31296237
-    obs = cost_funcs.reactor_bldg_cost
+    obs = cost_model_base.reactor_bldg_cost
     assert pytest.approx(obs) == exp
 
 
-def test_turbine_bldg_costs(monkeypatch, cost_funcs):
+def test_turbine_bldg_costs(monkeypatch, cost_model_base):
     """Validate sum of Reactor Building Costs
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
-    :param cost_funcs: fixture to mock commonly-used cost vars
-    :type cost_funcs: process.cost_funcs.CostModelBase
+    :param cost_model_base: fixture to mock commonly-used cost vars
+    :type cost_model_base: process.cost_model_base.CostModelBase
     """
     # Mock module vars
     # monkeypatch.setattr(htv, "pgrossmw", 1e2)
 
     # Run and assert result in M$
-    cost_funcs.turbine_bldg_costs()
+    cost_model_base.turbine_bldg_costs()
     exp = 157.155
-    obs = cost_funcs.turbine_bldg_cost
+    obs = cost_model_base.turbine_bldg_cost
     assert pytest.approx(obs) == exp
 
 
-def test_cooling_sys_struct_costs(monkeypatch, cost_funcs):
+def test_cooling_sys_struct_costs(monkeypatch, cost_model_base):
     """Validate sum of Reactor Building Costs
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
-    :param cost_funcs: fixture to mock commonly-used cost vars
-    :type cost_funcs: process.cost_funcs.CostModelBase
+    :param cost_model_base: fixture to mock commonly-used cost vars
+    :type cost_model_base: process.cost_model_base.CostModelBase
     """
     # Mock module vars
     # monkeypatch.setattr(htv, "pgrossmw", 1e2)
 
     # Run and assert result in M$
-    cost_funcs.cooling_sys_struct_costs()
+    cost_model_base.cooling_sys_struct_costs()
     exp = 54.0775
-    obs = cost_funcs.cooling_sys_struct_cost
+    obs = cost_model_base.cooling_sys_struct_cost
     assert pytest.approx(obs) == exp
 
 
-def test_electrical_and_power_bldg_costs(monkeypatch, cost_funcs):
+def test_electrical_and_power_bldg_costs(monkeypatch, cost_model_base):
     """Validate sum of Reactor Building Costs
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
-    :param cost_funcs: fixture to mock commonly-used cost vars
-    :type cost_funcs: process.cost_funcs.CostModelBase
+    :param cost_model_base: fixture to mock commonly-used cost vars
+    :type cost_model_base: process.cost_model_base.CostModelBase
     """
     # Mock module vars
     monkeypatch.setattr(bldgsv, "a_ee_ps_bldg", 1e2)
 
     # Run and assert result in M$
-    cost_funcs.electrical_and_power_bldg_costs()
+    cost_model_base.electrical_and_power_bldg_costs()
     exp = 3.65476699
-    obs = cost_funcs.electrical_and_power_bldg_cost
+    obs = cost_model_base.electrical_and_power_bldg_cost
     assert pytest.approx(obs) == exp
 
 
-def test_aux_services_bldg_costs(monkeypatch, cost_funcs):
+def test_aux_services_bldg_costs(monkeypatch, cost_model_base):
     """Validate sum of Reactor Building Costs
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
-    :param cost_funcs: fixture to mock commonly-used cost vars
-    :type cost_funcs: process.cost_funcs.CostModelBase
+    :param cost_model_base: fixture to mock commonly-used cost vars
+    :type cost_model_base: process.cost_model_base.CostModelBase
     """
     # Mock module vars
     monkeypatch.setattr(bldgsv, "a_aux_services_bldg", 1e2)
 
     # Run and assert result in M$
-    cost_funcs.aux_services_bldg_costs()
+    cost_model_base.aux_services_bldg_costs()
     exp = 1.51692499
-    obs = cost_funcs.aux_services_bldg_cost
+    obs = cost_model_base.aux_services_bldg_cost
     assert pytest.approx(obs) == exp
 
 
-def test_hot_cell_costs(monkeypatch, cost_funcs):
+def test_hot_cell_costs(monkeypatch, cost_model_base):
     """Validate sum of Reactor Building Costs
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
-    :param cost_funcs: fixture to mock commonly-used cost vars
-    :type cost_funcs: process.cost_funcs.CostModelBase
+    :param cost_model_base: fixture to mock commonly-used cost vars
+    :type cost_model_base: process.cost_model_base.CostModelBase
     """
     # Mock module vars
     monkeypatch.setattr(bldgsv, "a_hot_cell_bldg", 1e2)
 
     # Run and assert result in M$
-    cost_funcs.hot_cell_costs()
+    cost_model_base.hot_cell_costs()
     exp = 7.952725
-    obs = cost_funcs.hot_cell_cost
+    obs = cost_model_base.hot_cell_cost
     assert pytest.approx(obs) == exp
 
 
-def test_reactor_serv_bldg_costs(monkeypatch, cost_funcs):
+def test_reactor_serv_bldg_costs(monkeypatch, cost_model_base):
     """Validate sum of Reactor Building Costs
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
-    :param cost_funcs: fixture to mock commonly-used cost vars
-    :type cost_funcs: process.cost_funcs.CostModelBase
+    :param cost_model_base: fixture to mock commonly-used cost vars
+    :type cost_model_base: process.cost_model_base.CostModelBase
     """
     # Mock module vars
     monkeypatch.setattr(bldgsv, "a_reactor_service_bldg", 1e2)
 
     # Run and assert result in M$
-    cost_funcs.reactor_serv_bldg_costs()
+    cost_model_base.reactor_serv_bldg_costs()
     exp = 4.513624
-    obs = cost_funcs.reactor_serv_bldg_cost
+    obs = cost_model_base.reactor_serv_bldg_cost
     assert pytest.approx(obs) == exp
 
 
-def test_service_water_bldg_costs(monkeypatch, cost_funcs):
+def test_service_water_bldg_costs(monkeypatch, cost_model_base):
     """Validate sum of Reactor Building Costs
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
-    :param cost_funcs: fixture to mock commonly-used cost vars
-    :type cost_funcs: process.cost_funcs.CostModelBase
+    :param cost_model_base: fixture to mock commonly-used cost vars
+    :type cost_model_base: process.cost_model_base.CostModelBase
     """
     # Mock module vars
     monkeypatch.setattr(bldgsv, "a_service_water_bldg", 1e2)
 
     # Run and assert result in M$
-    cost_funcs.service_water_bldg_costs()
+    cost_model_base.service_water_bldg_costs()
     exp = 0.64798899
-    obs = cost_funcs.service_water_bldg_cost
+    obs = cost_model_base.service_water_bldg_cost
     assert pytest.approx(obs) == exp
 
 
-def test_fuel_handling_bldg_costs(monkeypatch, cost_funcs):
+def test_fuel_handling_bldg_costs(monkeypatch, cost_model_base):
     """Validate sum of Reactor Building Costs
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
-    :param cost_funcs: fixture to mock commonly-used cost vars
-    :type cost_funcs: process.cost_funcs.CostModelBase
+    :param cost_model_base: fixture to mock commonly-used cost vars
+    :type cost_model_base: process.cost_model_base.CostModelBase
     """
     # Mock module vars
     monkeypatch.setattr(bldgsv, "a_fuel_handling_bldg", 1e2)
 
     # Run and assert result in M$
-    cost_funcs.fuel_handling_bldg_costs()
+    cost_model_base.fuel_handling_bldg_costs()
     exp = 12.334301
-    obs = cost_funcs.fuel_handling_bldg_cost
+    obs = cost_model_base.fuel_handling_bldg_cost
     assert pytest.approx(obs) == exp
 
 
-def test_control_room_costs(monkeypatch, cost_funcs):
+def test_control_room_costs(monkeypatch, cost_model_base):
     """Validate sum of Reactor Building Costs
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
-    :param cost_funcs: fixture to mock commonly-used cost vars
-    :type cost_funcs: process.cost_funcs.CostModelBase
+    :param cost_model_base: fixture to mock commonly-used cost vars
+    :type cost_model_base: process.cost_model_base.CostModelBase
     """
     # Mock module vars
     monkeypatch.setattr(bldgsv, "a_control_room_bldg", 1e2)
 
     # Run and assert result in M$
-    cost_funcs.control_room_costs()
+    cost_model_base.control_room_costs()
     exp = 3.16419
-    obs = cost_funcs.control_room_cost
+    obs = cost_model_base.control_room_cost
     assert pytest.approx(obs) == exp
 
 
-def test_ac_power_bldg_costs(monkeypatch, cost_funcs):
+def test_ac_power_bldg_costs(monkeypatch, cost_model_base):
     """Validate sum of Reactor Building Costs
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
-    :param cost_funcs: fixture to mock commonly-used cost vars
-    :type cost_funcs: process.cost_funcs.CostModelBase
+    :param cost_model_base: fixture to mock commonly-used cost vars
+    :type cost_model_base: process.cost_model_base.CostModelBase
     """
     # Mock module vars
     monkeypatch.setattr(bldgsv, "a_ac_ps_bldg", 1e2)
 
     # Run and assert result in M$
-    cost_funcs.ac_power_bldg_costs()
+    cost_model_base.ac_power_bldg_costs()
     exp = 16.566771
-    obs = cost_funcs.ac_power_bldg_cost
+    obs = cost_model_base.ac_power_bldg_cost
     assert pytest.approx(obs) == exp
 
 
-def test_admin_bldg_costs(monkeypatch, cost_funcs):
+def test_admin_bldg_costs(monkeypatch, cost_model_base):
     """Validate sum of Reactor Building Costs
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
-    :param cost_funcs: fixture to mock commonly-used cost vars
-    :type cost_funcs: process.cost_funcs.CostModelBase
+    :param cost_model_base: fixture to mock commonly-used cost vars
+    :type cost_model_base: process.cost_model_base.CostModelBase
     """
     # Mock module vars
     monkeypatch.setattr(bldgsv, "a_admin_bldg", 1e2)
 
     # Run and assert result in M$
-    cost_funcs.admin_bldg_costs()
+    cost_model_base.admin_bldg_costs()
     exp = 3.358777
-    obs = cost_funcs.admin_bldg_cost
+    obs = cost_model_base.admin_bldg_cost
     assert pytest.approx(obs) == exp
 
 
-def test_site_service_bldg_costs(monkeypatch, cost_funcs):
+def test_site_service_bldg_costs(monkeypatch, cost_model_base):
     """Validate sum of Reactor Building Costs
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
-    :param cost_funcs: fixture to mock commonly-used cost vars
-    :type cost_funcs: process.cost_funcs.CostModelBase
+    :param cost_model_base: fixture to mock commonly-used cost vars
+    :type cost_model_base: process.cost_model_base.CostModelBase
     """
     # Mock module vars
     monkeypatch.setattr(bldgsv, "a_site_service_bldg", 1e2)
 
     # Run and assert result in M$
-    cost_funcs.site_service_bldg_costs()
+    cost_model_base.site_service_bldg_costs()
     exp = 1.57774899
-    obs = cost_funcs.site_service_bldg_cost
+    obs = cost_model_base.site_service_bldg_cost
     assert pytest.approx(obs) == exp
 
 
-def test_cryo_and_inert_gas_bldg_costs(monkeypatch, cost_funcs):
+def test_cryo_and_inert_gas_bldg_costs(monkeypatch, cost_model_base):
     """Validate sum of Reactor Building Costs
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
-    :param cost_funcs: fixture to mock commonly-used cost vars
-    :type cost_funcs: process.cost_funcs.CostModelBase
+    :param cost_model_base: fixture to mock commonly-used cost vars
+    :type cost_model_base: process.cost_model_base.CostModelBase
     """
     # Mock module vars
     monkeypatch.setattr(bldgsv, "a_cryo_inert_gas_bldg", 1e2)
 
     # Run and assert result in M$
-    cost_funcs.cryo_and_inert_gas_bldg_costs()
+    cost_model_base.cryo_and_inert_gas_bldg_costs()
     exp = 1.522104
-    obs = cost_funcs.cryo_and_inert_gas_bldg_cost
+    obs = cost_model_base.cryo_and_inert_gas_bldg_cost
     assert pytest.approx(obs) == exp
 
 
-def test_security_bldg_costs(monkeypatch, cost_funcs):
+def test_security_bldg_costs(monkeypatch, cost_model_base):
     """Validate sum of Reactor Building Costs
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
-    :param cost_funcs: fixture to mock commonly-used cost vars
-    :type cost_funcs: process.cost_funcs.CostModelBase
+    :param cost_model_base: fixture to mock commonly-used cost vars
+    :type cost_model_base: process.cost_model_base.CostModelBase
     """
     # Mock module vars
     monkeypatch.setattr(bldgsv, "a_security_bldg", 1e2)
 
     # Run and assert result in M$
-    cost_funcs.security_bldg_costs()
+    cost_model_base.security_bldg_costs()
     exp = 0.529504
-    obs = cost_funcs.security_bldg_cost
+    obs = cost_model_base.security_bldg_cost
     assert pytest.approx(obs) == exp
 
 
-def test_vent_stack_costs(monkeypatch, cost_funcs):
+def test_vent_stack_costs(monkeypatch, cost_model_base):
     """Validate sum of Reactor Building Costs
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
-    :param cost_funcs: fixture to mock commonly-used cost vars
-    :type cost_funcs: process.cost_funcs.CostModelBase
+    :param cost_model_base: fixture to mock commonly-used cost vars
+    :type cost_model_base: process.cost_model_base.CostModelBase
     """
     # Mock module vars
-    # monkeypatch.setattr(cost_funcs, "pth", 4.15e3)
-    # monkeypatch.setattr(cost_funcs, "ptherm_star", 4.15e3)
+    # monkeypatch.setattr(cost_model_base, "pth", 4.15e3)
+    # monkeypatch.setattr(cost_model_base, "ptherm_star", 4.15e3)
 
     # Run and assert result in M$
-    cost_funcs.vent_stack_costs()
+    cost_model_base.vent_stack_costs()
     exp = 1.81
-    obs = cost_funcs.vent_stack_cost
+    obs = cost_model_base.vent_stack_cost
     assert pytest.approx(obs) == exp
 
 
-def test_waste_fac_bldg_costs(monkeypatch, cost_funcs):
+def test_waste_fac_bldg_costs(monkeypatch, cost_model_base):
     """Validate sum of Reactor Building Costs
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
-    :param cost_funcs: fixture to mock commonly-used cost vars
-    :type cost_funcs: process.cost_funcs.CostModelBase
+    :param cost_model_base: fixture to mock commonly-used cost vars
+    :type cost_model_base: process.cost_model_base.CostModelBase
     """
     # Mock module vars
     monkeypatch.setattr(cv, "wfbuilding", 1e2)
 
     # Run and assert result in M$
-    cost_funcs.waste_fac_bldg_costs()
+    cost_model_base.waste_fac_bldg_costs()
     exp = 0.0001
-    obs = cost_funcs.waste_fac_bldg_cost
+    obs = cost_model_base.waste_fac_bldg_cost
     assert pytest.approx(obs) == exp
 
 
@@ -525,7 +518,7 @@ def test_waste_fac_bldg_costs(monkeypatch, cost_funcs):
     ((1, 5.0e-5, 0.095, 0.09505), (0.5, 2.5e-5, 0.0475, 0.047525)),
 )
 def test_blanket_first_wall_costs(
-    monkeypatch, cost_funcs, fkind, fwallcst_exp, blkcst_exp, exp
+    monkeypatch, cost_model_base, fkind, fwallcst_exp, blkcst_exp, exp
 ):
     """Validate sum of cost account 22.01.01.
 
@@ -560,7 +553,7 @@ def test_blanket_first_wall_costs(
         blk_multi_mat_cost,
         blk_breed_mat_cost,
         blk_steel_cost,
-    ) = cost_funcs.blanket_first_wall_costs()
+    ) = cost_model_base.blanket_first_wall_costs()
     fwallcst_obs = cv.fwallcst
     assert pytest.approx(fwallcst_obs) == fwallcst_exp
 
@@ -575,7 +568,7 @@ def test_blanket_first_wall_costs(
 
 
 @pytest.mark.parametrize("fkind, exp", ((1, 6.38925762e1), (0.5, 3.19462881e1)))
-def test_ib_shield_costs(monkeypatch, cost_funcs, fkind, exp):
+def test_ib_shield_costs(monkeypatch, cost_model_base, fkind, exp):
     """Validate sum of cost account 22.01.02.
 
     :param monkeypatch: mocking fixture
@@ -604,8 +597,8 @@ def test_ib_shield_costs(monkeypatch, cost_funcs, fkind, exp):
     monkeypatch.setattr(pv, "idivrt", 1)
     monkeypatch.setattr(cv, "fkind", fkind)
 
-    cost_funcs.ib_shield_costs()
-    obs = cost_funcs.ib_shield_cost
+    cost_model_base.ib_shield_costs()
+    obs = cost_model_base.ib_shield_cost
     assert pytest.approx(obs) == exp
 
 
@@ -613,7 +606,9 @@ def test_ib_shield_costs(monkeypatch, cost_funcs, fkind, exp):
     "fkind, cop_exp, sc_exp, cryoal_exp",
     ((1, 629.24550, 507.24287, 15.552), (0.5, 314.62275, 253.621435, 7.776)),
 )
-def test_tf_coils_costs(monkeypatch, cost_funcs, fkind, cop_exp, sc_exp, cryoal_exp):
+def test_tf_coils_costs(
+    monkeypatch, cost_model_base, fkind, cop_exp, sc_exp, cryoal_exp
+):
     """Cost of TF coils for different materials (22.01.03.01).
 
     :param monkeypatch: fixture for mocking variables
@@ -655,30 +650,30 @@ def test_tf_coils_costs(monkeypatch, cost_funcs, fkind, cop_exp, sc_exp, cryoal_
 
     # Copper coils
     monkeypatch.setattr(tfv, "i_tf_sup", 0)
-    cost_funcs.tf_coils_costs()
-    observed = cost_funcs.tf_coils_cost
+    cost_model_base.tf_coils_costs()
+    observed = cost_model_base.tf_coils_cost
     assert pytest.approx(observed) == cop_exp
 
     # Superconducting coils
     monkeypatch.setattr(tfv, "i_tf_sup", 1)
-    cost_funcs.tf_coils_costs()
+    cost_model_base.tf_coils_costs()
     # expected = 4129.54087
     # expected = 507.24287
-    observed = cost_funcs.tf_coils_cost
+    observed = cost_model_base.tf_coils_cost
     assert pytest.approx(observed) == sc_exp
 
     # Cryo-aluminium coils
     monkeypatch.setattr(tfv, "i_tf_sup", 2)
-    cost_funcs.tf_coils_costs()
+    cost_model_base.tf_coils_costs()
     # expected = 15.552
-    obs = cost_funcs.tf_coils_cost
+    obs = cost_model_base.tf_coils_cost
     assert pytest.approx(obs) == cryoal_exp
 
 
 @pytest.mark.parametrize(
     "fkind, exp", [(1, 11.682954760169723), (0.5, 5.84147738008486)]
 )
-def test_pf_coils_costs(monkeypatch, cost_funcs, fkind, exp):
+def test_pf_coils_costs(monkeypatch, cost_model_base, fkind, exp):
     """Test evaluation of account 22.01.03.02 (PF magnet) costs
     :param monkeypatch: fixture for mocking variables
     :type monkeypatch: MonkeyPatch
@@ -697,13 +692,13 @@ def test_pf_coils_costs(monkeypatch, cost_funcs, fkind, exp):
     monkeypatch.setattr(pfv, "rjconpf", np.full(22, 1.0e7, order="F"))
     monkeypatch.setattr(cv, "fkind", fkind)
 
-    cost_funcs.pf_coils_costs()
-    obs = cost_funcs.pf_total_cost
+    cost_model_base.pf_coils_costs()
+    obs = cost_model_base.pf_total_cost
     assert pytest.approx(obs) == exp
 
 
 @pytest.mark.parametrize("fkind, exp", ((1, 59), (0.5, 29.5)))
-def test_central_sol_costs(monkeypatch, cost_funcs, fkind, exp):
+def test_central_sol_costs(monkeypatch, cost_model_base, fkind, exp):
     """Validate sum of cost account 20.
 
     :param monkeypatch: mocking fixture
@@ -712,21 +707,21 @@ def test_central_sol_costs(monkeypatch, cost_funcs, fkind, exp):
     :type costs_step: process.costs_step.CostsStep
     """
     # Mock module vars
-    # monkeypatch.setattr(cost_funcs, "step20", 0.0)
+    # monkeypatch.setattr(cost_model_base, "step20", 0.0)
     monkeypatch.setattr(cv, "step_ref", np.zeros(70, order="F"))
     cv.step_ref[23] = 5.9e1
     monkeypatch.setattr(cv, "fkind", fkind)
 
     # Run and assert result in M$
-    cost_funcs.central_sol_costs()
+    cost_model_base.central_sol_costs()
     # exp = 5.9e1
-    obs = cost_funcs.central_sol_cost
+    obs = cost_model_base.central_sol_cost
     assert pytest.approx(obs) == exp
 
 
 #
 @pytest.mark.parametrize("fkind, exp", ((1, 32.54), (0.5, 16.27)))
-def test_control_coils_costs(monkeypatch, cost_funcs, fkind, exp):
+def test_control_coils_costs(monkeypatch, cost_model_base, fkind, exp):
     """Validate sum of cost account 20.
 
     :param monkeypatch: mocking fixture
@@ -735,21 +730,21 @@ def test_control_coils_costs(monkeypatch, cost_funcs, fkind, exp):
     :type costs_step: process.costs_step.CostsStep
     """
     # Mock module vars
-    # monkeypatch.setattr(cost_funcs, "step20", 0.0)
+    # monkeypatch.setattr(cost_model_base, "step20", 0.0)
     monkeypatch.setattr(cv, "step_ref", np.zeros(70, order="F"))
     cv.step_ref[24] = 3.254e1
     monkeypatch.setattr(cv, "fkind", fkind)
 
     # Run and assert result in M$
-    cost_funcs.control_coils_costs()
+    cost_model_base.control_coils_costs()
     # exp = 4.0
-    obs = cost_funcs.control_coils_cost
+    obs = cost_model_base.control_coils_cost
     assert pytest.approx(obs) == exp
 
 
 #
 @pytest.mark.parametrize("fkind, exp", ((1, 2.04634910e3), (0.5, 1.02317455e3)))
-def test_hcd_costs(monkeypatch, cost_funcs, fkind, exp):
+def test_hcd_costs(monkeypatch, cost_model_base, fkind, exp):
     """Test evaluation of account costs: 22.01.04
     (Auxiliary Heating and Current Drive)
 
@@ -772,14 +767,14 @@ def test_hcd_costs(monkeypatch, cost_funcs, fkind, exp):
     cv.step_ref[68] = 19.21
     cv.step_ref[69] = 12.85
 
-    cost_funcs.hcd_costs()
-    obs = cost_funcs.hcd_cost
+    cost_model_base.hcd_costs()
+    obs = cost_model_base.hcd_cost
     assert pytest.approx(obs) == exp
 
 
 #
 @pytest.mark.parametrize("fkind, exp", ((1, 429.2), (0.5, 214.6)))
-def test_primary_structure_costs(monkeypatch, cost_funcs, fkind, exp):
+def test_primary_structure_costs(monkeypatch, cost_model_base, fkind, exp):
     """Validate sum of cost account 20.
 
     :param monkeypatch: mocking fixture
@@ -788,21 +783,21 @@ def test_primary_structure_costs(monkeypatch, cost_funcs, fkind, exp):
     :type costs_step: process.costs_step.CostsStep
     """
     # Mock module vars
-    # monkeypatch.setattr(cost_funcs, "step20", 0.0)
+    # monkeypatch.setattr(cost_model_base, "step20", 0.0)
     monkeypatch.setattr(cv, "step_ref", np.zeros(70, order="F"))
     cv.step_ref[26] = 4.292e2
     monkeypatch.setattr(cv, "fkind", fkind)
 
     # Run and assert result in M$
-    cost_funcs.primary_structure_costs()
+    cost_model_base.primary_structure_costs()
     # exp = 52.74
-    obs = cost_funcs.primary_structure_cost
+    obs = cost_model_base.primary_structure_cost
     assert pytest.approx(obs) == exp
 
 
 #
 @pytest.mark.parametrize("fkind, exp", ((1, 39.55), (0.5, 19.775)))
-def test_reactor_vacuum_sys_costs(monkeypatch, cost_funcs, fkind, exp):
+def test_reactor_vacuum_sys_costs(monkeypatch, cost_model_base, fkind, exp):
     """Validate sum of cost account 20.
 
     :param monkeypatch: mocking fixture
@@ -811,19 +806,19 @@ def test_reactor_vacuum_sys_costs(monkeypatch, cost_funcs, fkind, exp):
     :type costs_step: process.costs_step.CostsStep
     """
     # Mock module vars
-    # monkeypatch.setattr(cost_funcs, "step20", 0.0)
+    # monkeypatch.setattr(cost_model_base, "step20", 0.0)
     monkeypatch.setattr(cv, "step_ref", np.zeros(70, order="F"))
     cv.step_ref[27] = 3.955e1
     monkeypatch.setattr(cv, "fkind", fkind)
 
     # Run and assert result in M$
-    cost_funcs.reactor_vacuum_sys_costs()
+    cost_model_base.reactor_vacuum_sys_costs()
     # exp = 4.86
-    obs = cost_funcs.reactor_vacuum_sys_cost
+    obs = cost_model_base.reactor_vacuum_sys_cost
     assert pytest.approx(obs) == exp
 
 
-def test_power_supplies_costs(monkeypatch, cost_funcs):
+def test_power_supplies_costs(monkeypatch, cost_model_base):
     """Validate sum of cost account 20.
 
     :param monkeypatch: mocking fixture
@@ -832,18 +827,18 @@ def test_power_supplies_costs(monkeypatch, cost_funcs):
     :type costs_step: process.costs_step.CostsStep
     """
     # Mock module vars
-    # monkeypatch.setattr(cost_funcs, "step20", 0.0)
+    # monkeypatch.setattr(cost_model_base, "step20", 0.0)
 
     # Run and assert result in M$
-    cost_funcs.power_supplies_costs()
+    cost_model_base.power_supplies_costs()
     exp = 52.9
-    obs = cost_funcs.power_supplies_cost
+    obs = cost_model_base.power_supplies_cost
     assert pytest.approx(obs) == exp
 
 
 #
 @pytest.mark.parametrize("fkind, exp", ((1, 227.48664416), (0.5, 113.74332208)))
-def test_divertor_costs(monkeypatch, cost_funcs, fkind, exp):
+def test_divertor_costs(monkeypatch, cost_model_base, fkind, exp):
     """Validate sum of cost account 20.
 
     :param monkeypatch: mocking fixture
@@ -852,7 +847,7 @@ def test_divertor_costs(monkeypatch, cost_funcs, fkind, exp):
     :type costs_step: process.costs_step.CostsStep
     """
     # Mock module vars
-    # monkeypatch.setattr(cost_funcs, "step20", 0.0)
+    # monkeypatch.setattr(cost_model_base, "step20", 0.0)
     monkeypatch.setattr(dv, "divleg_profile_inner", 1.0)
     monkeypatch.setattr(dv, "divleg_profile_outer", 2.0)
     monkeypatch.setattr(pv, "rmajor", 6.0)
@@ -862,15 +857,15 @@ def test_divertor_costs(monkeypatch, cost_funcs, fkind, exp):
     cv.step_ref[31] = 1.364e2
 
     # Run and assert result in M$
-    cost_funcs.divertor_costs()
+    cost_model_base.divertor_costs()
     # exp = 227.48664416
-    obs = cost_funcs.divertor_cost
+    obs = cost_model_base.divertor_cost
     assert pytest.approx(obs) == exp
 
 
 #
 @pytest.mark.parametrize("fkind, exp", ((1, 4.611899e1), (0.5, 2.3059495e1)))
-def test_heat_transfer_sys_costs(monkeypatch, cost_funcs, fkind, exp):
+def test_heat_transfer_sys_costs(monkeypatch, cost_model_base, fkind, exp):
     """Validate sum of cost account 22.02.
 
     :param costs_step: fixture to mock commonly-used cost vars
@@ -879,12 +874,12 @@ def test_heat_transfer_sys_costs(monkeypatch, cost_funcs, fkind, exp):
     # Mock module vars used in subroutine
     monkeypatch.setattr(cv, "fkind", fkind)
 
-    cost_funcs.heat_transfer_sys_costs()
-    obs = cost_funcs.heat_transfer_sys_cost
+    cost_model_base.heat_transfer_sys_costs()
+    obs = cost_model_base.heat_transfer_sys_cost
     assert pytest.approx(obs) == exp
 
 
-def test_cryo_sys_costs(monkeypatch, cost_funcs):
+def test_cryo_sys_costs(monkeypatch, cost_model_base):
     """Validate sum of cost account 22.03.
 
     :param monkeypatch: mocking fixture
@@ -895,15 +890,15 @@ def test_cryo_sys_costs(monkeypatch, cost_funcs):
     # Mock module var set in subroutine
     monkeypatch.setattr(tfv, "cryo_cool_req", 10.0)
 
-    cost_funcs.cryo_sys_costs()
-    obs = cost_funcs.cryo_sys_cost
+    cost_model_base.cryo_sys_costs()
+    obs = cost_model_base.cryo_sys_cost
     exp = 26.1919825
     assert pytest.approx(obs) == exp
 
 
 #
 @pytest.mark.parametrize("fkind, exp", ((1, 4.8e0), (0.5, 2.4e0)))
-def test_waste_disposal_costs(monkeypatch, cost_funcs, fkind, exp):
+def test_waste_disposal_costs(monkeypatch, cost_model_base, fkind, exp):
     """Validate sum of cost account 22.04.
 
     :param costs_step: fixture to mock commonly-used cost vars
@@ -912,8 +907,8 @@ def test_waste_disposal_costs(monkeypatch, cost_funcs, fkind, exp):
     # Mock module var set in subroutine
     monkeypatch.setattr(cv, "fkind", fkind)
 
-    cost_funcs.waste_disposal_costs()
-    obs = cost_funcs.waste_disposal_cost
+    cost_model_base.waste_disposal_costs()
+    obs = cost_model_base.waste_disposal_cost
     assert pytest.approx(obs) == exp
 
 
@@ -921,7 +916,7 @@ def test_waste_disposal_costs(monkeypatch, cost_funcs, fkind, exp):
 @pytest.mark.parametrize(
     "fkind, exp1, exp2", ((1, 3.86e1, 1.940036), (0.5, 1.93e1, 0.970018))
 )
-def test_fuel_handling_costs(monkeypatch, cost_funcs, fkind, exp1, exp2):
+def test_fuel_handling_costs(monkeypatch, cost_model_base, fkind, exp1, exp2):
     """Validate sum of cost account 22.05.
 
     :param costs_step: fixture to mock commonly-used cost vars
@@ -930,14 +925,14 @@ def test_fuel_handling_costs(monkeypatch, cost_funcs, fkind, exp1, exp2):
     # Mock module var set in subroutine
     monkeypatch.setattr(cv, "fkind", fkind)
 
-    fuel_handling_cost, spares = cost_funcs.fuel_handling_costs()
+    fuel_handling_cost, spares = cost_model_base.fuel_handling_costs()
     assert pytest.approx(fuel_handling_cost) == exp1
     assert pytest.approx(spares) == exp2
 
 
 #
 @pytest.mark.parametrize("fkind, exp1", ((1, 5.45e0), (0.5, 2.725)))
-def test_other_reactor_equip_costs(monkeypatch, cost_funcs, fkind, exp1):
+def test_other_reactor_equip_costs(monkeypatch, cost_model_base, fkind, exp1):
     """Validate sum of cost account 22.06.
 
     :param costs_step: fixture to mock commonly-used cost vars
@@ -947,14 +942,14 @@ def test_other_reactor_equip_costs(monkeypatch, cost_funcs, fkind, exp1):
     monkeypatch.setattr(cv, "fkind", fkind)
 
     exp2 = 8.3e-1
-    other_reactor_equip_cost, spares = cost_funcs.other_reactor_equip_costs()
+    other_reactor_equip_cost, spares = cost_model_base.other_reactor_equip_costs()
     assert pytest.approx(other_reactor_equip_cost) == exp1
     assert pytest.approx(spares) == exp2
 
 
 #
 @pytest.mark.parametrize("fkind, exp", ((1, 2.341e1), (0.5, 1.1705e1)))
-def test_instrument_and_control_costs(monkeypatch, cost_funcs, fkind, exp):
+def test_instrument_and_control_costs(monkeypatch, cost_model_base, fkind, exp):
     """Validate sum of cost account 22.07.
 
     :param costs_step: fixture to mock commonly-used cost vars
@@ -963,12 +958,12 @@ def test_instrument_and_control_costs(monkeypatch, cost_funcs, fkind, exp):
     # Mock module var set in subroutine
     monkeypatch.setattr(cv, "fkind", fkind)
 
-    cost_funcs.instrument_and_control_costs()
-    obs = cost_funcs.instrument_and_control_cost
+    cost_model_base.instrument_and_control_costs()
+    obs = cost_model_base.instrument_and_control_cost
     assert pytest.approx(obs) == exp
 
 
-def test_turbine_sys_costs(monkeypatch, cost_funcs):
+def test_turbine_sys_costs(monkeypatch, cost_model_base):
     """Validate sum of cost account 22.02.
 
     :param costs_step: fixture to mock commonly-used cost vars
@@ -976,13 +971,13 @@ def test_turbine_sys_costs(monkeypatch, cost_funcs):
     """
     # Mock module vars used in subroutine
 
-    cost_funcs.turbine_sys_costs()
-    obs = cost_funcs.turbine_sys_cost
+    cost_model_base.turbine_sys_costs()
+    obs = cost_model_base.turbine_sys_cost
     exp = 277.71999999
     assert pytest.approx(obs) == exp
 
 
-def test_heat_reject_costs(monkeypatch, cost_funcs):
+def test_heat_reject_costs(monkeypatch, cost_model_base):
     """Validate sum of cost account 22.02.
 
     :param costs_step: fixture to mock commonly-used cost vars
@@ -990,13 +985,13 @@ def test_heat_reject_costs(monkeypatch, cost_funcs):
     """
     # Mock module vars used in subroutine
 
-    cost_funcs.heat_reject_costs()
-    obs = cost_funcs.heat_reject_cost
+    cost_model_base.heat_reject_costs()
+    obs = cost_model_base.heat_reject_cost
     exp = 62.48339499
     assert pytest.approx(obs) == exp
 
 
-def test_electric_plant_equip_costs(monkeypatch, cost_funcs):
+def test_electric_plant_equip_costs(monkeypatch, cost_model_base):
     """Validate sum of cost account 24.
 
     :param monkeypatch: mocking fixture
@@ -1006,13 +1001,13 @@ def test_electric_plant_equip_costs(monkeypatch, cost_funcs):
     """
     # Mock module var set in subroutine
 
-    cost_funcs.electric_plant_equip_costs()
-    obs = cost_funcs.electric_plant_equip_cost
+    cost_model_base.electric_plant_equip_costs()
+    obs = cost_model_base.electric_plant_equip_cost
     exp = 9.168104e1
     assert pytest.approx(obs) == exp
 
 
-def test_misc_equip_costs(monkeypatch, cost_funcs):
+def test_misc_equip_costs(monkeypatch, cost_model_base):
     """Validate sum of cost account 25.
 
     :param monkeypatch: mocking fixture
@@ -1023,15 +1018,15 @@ def test_misc_equip_costs(monkeypatch, cost_funcs):
     # Mock module var set in subroutine
     monkeypatch.setattr(bldgsv, "wgt", 5e2)
 
-    cost_funcs.misc_equip_costs()
-    obs = cost_funcs.misc_equip_cost
+    cost_model_base.misc_equip_costs()
+    obs = cost_model_base.misc_equip_cost
     exp = 82.89063225
     assert pytest.approx(obs) == exp
 
 
 #
 @pytest.mark.parametrize("fkind, exp", ((1, 50.0), (0.5, 25.0)))
-def test_remote_handling_costs(monkeypatch, cost_funcs, fkind, exp):
+def test_remote_handling_costs(monkeypatch, cost_model_base, fkind, exp):
     """Validate sum of cost account 27.
 
     :param monkeypatch: mocking fixture
@@ -1044,12 +1039,12 @@ def test_remote_handling_costs(monkeypatch, cost_funcs, fkind, exp):
     monkeypatch.setattr(cv, "cdirt", 1.0e3)
     monkeypatch.setattr(cv, "fkind", fkind)
 
-    cost_funcs.remote_handling_costs()
-    obs = cost_funcs.remote_handling_cost
+    cost_model_base.remote_handling_costs()
+    obs = cost_model_base.remote_handling_cost
     assert pytest.approx(obs) == exp
 
 
-def test_indirect_costs(monkeypatch, cost_funcs):
+def test_indirect_costs(monkeypatch, cost_model_base):
     """Validate sum of cost account 25.
 
     :param monkeypatch: mocking fixture
@@ -1060,16 +1055,16 @@ def test_indirect_costs(monkeypatch, cost_funcs):
     # Mock module var set in subroutine
     monkeypatch.setattr(cv, "cdirt", 1.0e3)
 
-    cost_funcs.indirect_costs()
+    cost_model_base.indirect_costs()
 
-    obs_con = cost_funcs.construct_facs_cost
+    obs_con = cost_model_base.construct_facs_cost
     exp_con = 300
     assert pytest.approx(obs_con) == exp_con
 
-    obs_eng = cost_funcs.eng_construct_manage_cost
+    obs_eng = cost_model_base.eng_construct_manage_cost
     exp_eng = 325
     assert pytest.approx(obs_eng) == exp_eng
 
-    obs_other = cost_funcs.other_cost
+    obs_other = cost_model_base.other_cost
     exp_other = 150
     assert pytest.approx(obs_other) == exp_other
