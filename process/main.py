@@ -328,7 +328,10 @@ class SingleRun:
         self.models = Models()
 
     def run(self):
-        """Run PROCESS"""
+        """Run PROCESS
+
+        This is separate from init to allow model instances to be modified before a run.
+        """
         self.set_filenames()
         self.initialise()
         self.run_hare_tests()
