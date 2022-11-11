@@ -1,6 +1,6 @@
 from process.variables import AnnotatedVariable
 
-from process.cost_funcs import CostModelBase
+from process.cost_model_base import CostModelBase
 
 from process import fortran as ft
 from process.fortran import constants

@@ -1,4 +1,4 @@
-from process.cost_funcs import CostModelBase
+from process.cost_model_base import CostModelBase
 from process.fortran import tfcoil_variables as tfv
 from process.fortran import cost_variables as cv
 from process.fortran import buildings_variables as bldgsv
