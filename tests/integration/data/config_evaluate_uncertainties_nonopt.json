@@ -45,7 +45,7 @@
         "te",
         "bt"
     ],
-    "no_samples": 1,
+    "no_samples": 2,
     "output_mean": 8056.98,
     "figure_of_merit": "rmajor",
     "latin_hypercube_level": 4,
