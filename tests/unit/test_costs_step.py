@@ -143,55 +143,6 @@ def test_init_costs_step():
     assert costs_step_object.pth == 0
 
 
-def test_costs_step(monkeypatch, costs_step):
-    """Test the costs_step subroutine
-
-    :param monkeypatch: mocking fixture
-    :type monkeypatch: MonkeyPatch
-    :param costs_step: fixture to mock commonly-used cost vars
-    :type costs_step: process.costs_step.CostsStep
-    """
-    # Mock module vars
-    monkeypatch.setattr(cv, "cdirt", 0.0)
-    monkeypatch.setattr(cv, "concost", 0.0)
-    monkeypatch.setattr(bv, "r_tf_outboard_mid", 10.0)
-    monkeypatch.setattr(bv, "tfthko", 10.0)
-    monkeypatch.setattr(bv, "hpfu", 10.0)
-    monkeypatch.setattr(bv, "hmax", 10.0)
-    monkeypatch.setattr(bv, "tfcth", 10.0)
-    monkeypatch.setattr(pv, "powfmw", 10.0)
-    monkeypatch.setattr(fwbsv, "emultmw", 10.0)
-    monkeypatch.setattr(htv, "pinjwp", 10.0)
-    monkeypatch.setattr(costs_step, "vfi", 5e3)
-    monkeypatch.setattr(costs_step, "vfi_star", 6.737e3)
-
-    costs_step.run()
-
-    # Test that module variables are calculated correctly
-    obs_vfi = costs_step.vfi
-    exp_vfi = 2.120575e4
-    assert pytest.approx(obs_vfi) == exp_vfi
-    obs_pth = costs_step.pth
-    exp_pth = 30.0
-    assert pytest.approx(obs_pth) == exp_pth
-
-    # Test that module variables are assigned correctly
-    assert costs_step.vfi_star == 6.737e3
-    assert costs_step.ptherm_star == 4.15e3
-    assert costs_step.rmajor_star == 7.0e0
-    assert costs_step.rminor_star == 7.0 / 3.6
-
-    # Total plant direct cost with remote handling
-    exp = 7150.8739399
-    obs = cv.cdirt
-    assert pytest.approx(obs) == exp
-
-    # Constructed cost
-    exp_concost = 12692.8012433
-    obs_concost = cv.concost
-    assert pytest.approx(obs_concost) == exp_concost
-
-
 @pytest.mark.parametrize(
     "isitetype, isiteaccomm, igridconn, irailaccess, exp",
     ((0, 0, 0, 0, 5.6742341e3), (1, 1, 1, 1, 5.5921241e3), (2, 0, 0, 0, 5.5803941e3)),
