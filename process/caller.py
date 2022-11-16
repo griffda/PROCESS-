@@ -4,25 +4,33 @@ from process import fortran as ft
 class Caller:
     """Calls physics and engineering models."""
 
-    def __init__(self, models):
-        """Initialise with Python model objects.
+    def __init__(self, models, x):
+        """Initialise all physics and engineering models.
+
+        To ensure that, at the start of a run, all physics/engineering
+        variables are fully initialised with consistent values, the models are
+        called with the initial optimisation paramters, x.
 
         :param models: physics and engineering model objects
         :type models: process.main.Models
+        :param x: optimisation parameters
+        :type x: np.ndarray
         """
         self.models = models
+        self.call_models(x)
 
-    def call_models(self, xc, nvars):
+    def call_models(self, xc):
         """Call the physics and engineering models.
 
         This method is the principal caller of all the physics and
         engineering models. Some are Fortran subroutines within modules, others
         will be methods on Python model objects.
-        :param xc: Array of iteration variables, shape (ipnvars)
-        :type xc: numpy.array
-        :param nvars: Number of active iteration variables
-        :type nvars: int
+        :param xc: Array of optimisation parameters
+        :type xc: np.array
         """
+        # Number of active iteration variables
+        nvars = xc.shape[0]
+
         # Increment the call counter
         ft.numerics.ncalls = ft.numerics.ncalls + 1
 
