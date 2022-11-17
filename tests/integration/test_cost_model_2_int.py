@@ -92,23 +92,7 @@ step_ref = np.array(
 )
 
 
-@pytest.fixture
-def cost_model_2(monkeypatch):
-    """Fixture to mock commonly used dependencies in cost subroutines.
-
-    Create CostModel2 instance and mock Fortran module variables to aid testing.
-    The values are intended to be realistic.
-    :param monkeypatch: mocking fixture
-    :type monkeypatch: MonkeyPatch
-    :return: CostModel2 model object
-    :rtype: process.cost_model_2.CostModel2
-    """
-    cost_model_2 = CostModel2()
-
-    return cost_model_2
-
-
-def test_cost_model_2(monkeypatch, cost_model_2):
+def test_cost_model_2(monkeypatch):
     """Test the cost_model_2 subroutine
 
     :param monkeypatch: mocking fixture
@@ -116,6 +100,9 @@ def test_cost_model_2(monkeypatch, cost_model_2):
     :param cost_model_2: fixture to mock commonly-used cost vars
     :type cost_model_2: process.cost_model_2.CostModel2
     """
+    # Create instance of cost model 2
+    cost_model_2 = CostModel2()
+
     # Mock module vars
     monkeypatch.setattr(cv, "step_ref", step_ref)
     monkeypatch.setattr(cv, "step_con", 1.5e-1)
