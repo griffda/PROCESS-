@@ -14,7 +14,7 @@ from process.fortran import times_variables as tv
 from process.utilities.f2py_string_patch import f2py_compatible_to_string
 
 
-class CostsStep(CostModelBase):
+class CostModel2(CostModelBase):
     """STEP fusion power plant costings.
 
     Module containing STEP fusion power plant costing algorithms
@@ -77,14 +77,14 @@ class CostsStep(CostModelBase):
         )
 
     def run(self):
-        """Run main costs_step subroutine."""
+        """Run main cost_model_2 subroutine."""
         self.iprint = 0
-        self.costs_step()
+        self.cost_model_2()
 
     def output(self):
-        """Run main costs_step subroutine and write output."""
+        """Run main cost_model_2 subroutine and write output."""
         self.iprint = 1
-        self.costs_step()
+        self.cost_model_2()
         self.print_output()
 
     def bldg_and_site_service_infra_costs(self):
@@ -347,7 +347,7 @@ class CostsStep(CostModelBase):
         self.contingency = cv.step_con * self.turbine_plant_equip_cost
         self.turbine_plant_equip_cost += self.contingency
 
-    def costs_step(self):
+    def cost_model_2(self):
         """STEP cost accounting for a fusion power plant.
 
         This method performs the cost accounting for a fusion power plant.

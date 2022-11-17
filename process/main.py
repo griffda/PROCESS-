@@ -55,7 +55,7 @@ from process.structure import Structure
 from process.build import Build
 from process.utilities.f2py_string_patch import string_to_f2py_compatible
 import argparse
-from process.costs_step import CostsStep
+from process.cost_model_2 import CostModel2
 from process.pfcoil import PFCoil
 from process.tfcoil import TFcoil
 from process.divertor import Divertor
@@ -525,7 +525,7 @@ class Models:
 
         This also initialises module variables in the Fortran for that module.
         """
-        self.costs_step = CostsStep()
+        self.costs_step = CostModel2()
         self.cs_fatigue = CsFatigue()
         self.pfcoil = PFCoil(cs_fatigue=self.cs_fatigue)
         self.power = Power()

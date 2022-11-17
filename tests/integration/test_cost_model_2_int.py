@@ -1,4 +1,4 @@
-from process.costs_step import CostsStep
+from process.cost_model_2 import CostModel2
 from process.fortran import tfcoil_variables as tfv
 from process.fortran import cost_variables as cv
 from process.fortran import buildings_variables as bldgsv
@@ -93,40 +93,40 @@ step_ref = np.array(
 
 
 @pytest.fixture
-def costs_step(monkeypatch):
+def cost_model_2(monkeypatch):
     """Fixture to mock commonly used dependencies in cost subroutines.
 
-    Create CostsStep instance and mock Fortran module variables to aid testing.
+    Create CostModel2 instance and mock Fortran module variables to aid testing.
     The values are intended to be realistic.
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
-    :return: CostsStep model object
-    :rtype: process.costs_step.CostsStep
+    :return: CostModel2 model object
+    :rtype: process.cost_model_2.CostModel2
     """
-    costs_step = CostsStep()
+    cost_model_2 = CostModel2()
 
-    return costs_step
+    return cost_model_2
 
 
-def test_costs_step(monkeypatch, costs_step):
-    """Test the costs_step subroutine
+def test_cost_model_2(monkeypatch, cost_model_2):
+    """Test the cost_model_2 subroutine
 
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
-    :param costs_step: fixture to mock commonly-used cost vars
-    :type costs_step: process.costs_step.CostsStep
+    :param cost_model_2: fixture to mock commonly-used cost vars
+    :type cost_model_2: process.cost_model_2.CostModel2
     """
     # Mock module vars
     monkeypatch.setattr(cv, "step_ref", step_ref)
     monkeypatch.setattr(cv, "step_con", 1.5e-1)
     monkeypatch.setattr(bldgsv, "efloor", 1e4)
     monkeypatch.setattr(htv, "pgrossmw", 5e2)
-    monkeypatch.setattr(costs_step, "vfi", 6.737e3)
-    monkeypatch.setattr(costs_step, "vfi_star", 6.737e3)
-    monkeypatch.setattr(costs_step, "pth", 4.15e3)
-    monkeypatch.setattr(costs_step, "ptherm_star", 4.15e3)
-    monkeypatch.setattr(costs_step, "rmajor_star", 7.0)
-    monkeypatch.setattr(costs_step, "rminor_star", 7 / 3.6)
+    monkeypatch.setattr(cost_model_2, "vfi", 6.737e3)
+    monkeypatch.setattr(cost_model_2, "vfi_star", 6.737e3)
+    monkeypatch.setattr(cost_model_2, "pth", 4.15e3)
+    monkeypatch.setattr(cost_model_2, "ptherm_star", 4.15e3)
+    monkeypatch.setattr(cost_model_2, "rmajor_star", 7.0)
+    monkeypatch.setattr(cost_model_2, "rminor_star", 7 / 3.6)
     monkeypatch.setattr(tfv, "n_tf_turn", 104.6)
     monkeypatch.setattr(tfv, "tfleng", 34.63)
     monkeypatch.setattr(cv, "site_permits", 1e8)
@@ -250,7 +250,7 @@ def test_costs_step(monkeypatch, costs_step):
     monkeypatch.setattr(cv, "fcr0", 10.0)
     monkeypatch.setattr(cv, "discount_rate", 0.5)
     monkeypatch.setattr(fwbsv, "bktlife", 10.0)
-    monkeypatch.setattr(costs_step, "fwblkcost", 10.0)
+    monkeypatch.setattr(cost_model_2, "fwblkcost", 10.0)
     monkeypatch.setattr(cv, "fcap0cp", 10.0)
     monkeypatch.setattr(cv, "divlife", 2.0)
     monkeypatch.setattr(cv, "divcst", 2.0)
@@ -282,21 +282,21 @@ def test_costs_step(monkeypatch, costs_step):
     monkeypatch.setattr(cv, "step93_per", 1.5e-1)
     monkeypatch.setattr(cv, "fkind", 1.0)
 
-    costs_step.run()
+    cost_model_2.run()
 
     # Test that module variables are calculated correctly
-    obs_vfi = costs_step.vfi
+    obs_vfi = cost_model_2.vfi
     exp_vfi = 2.120575e4
     assert pytest.approx(obs_vfi) == exp_vfi
-    obs_pth = costs_step.pth
+    obs_pth = cost_model_2.pth
     exp_pth = 30.0
     assert pytest.approx(obs_pth) == exp_pth
 
     # Test that module variables are assigned correctly
-    assert costs_step.vfi_star == 6.737e3
-    assert costs_step.ptherm_star == 4.15e3
-    assert costs_step.rmajor_star == 7.0e0
-    assert costs_step.rminor_star == 7.0 / 3.6
+    assert cost_model_2.vfi_star == 6.737e3
+    assert cost_model_2.ptherm_star == 4.15e3
+    assert cost_model_2.rmajor_star == 7.0e0
+    assert cost_model_2.rminor_star == 7.0 / 3.6
 
     # Total plant direct cost with remote handling
     exp = 5195.55897756

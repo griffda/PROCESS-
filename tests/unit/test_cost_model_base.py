@@ -95,12 +95,12 @@ step_ref = np.array(
 def cost_model_base(monkeypatch):
     """Fixture to mock commonly used dependencies in cost subroutines.
 
-    Create CostsStep instance and mock Fortran module variables to aid testing.
+    Create CostModel2 instance and mock Fortran module variables to aid testing.
     The values are intended to be realistic.
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
-    :return: CostsStep model object
-    :rtype: process.costs_step.CostsStep
+    :return: CostModel2 model object
+    :rtype: process.costs_step.CostModel2
     """
     cost_model_base = CostModelBase()
 
@@ -128,7 +128,7 @@ def test_site_permits_costs(monkeypatch, cost_model_base):
     :param: monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
     :para costs_step: fixture to mock commonly-used cost vars
-    :type costs_step: process.costs_step.CostsStep
+    :type costs_step: process.costs_step.CostModel2
     """
     # Mock module vars
     # monkeypatch.setattr(cost_model_base, "site_permits_cost", 0.0)
@@ -147,7 +147,7 @@ def test_plant_license_costs(monkeypatch, cost_model_base):
     :param: monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
     :para costs_step: fixture to mock commonly-used cost vars
-    :type costs_step: process.costs_step.CostsStep
+    :type costs_step: process.costs_step.CostModel2
     """
     # Mock module vars
     # monkeypatch.setattr(costs_step, "plant_license_cost", 0.0)
@@ -166,7 +166,7 @@ def test_land_and_rights_costs(monkeypatch, cost_model_base):
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
     :param costs_step: fixture to mock commonly-used cost vars
-    :type costs_step: process.costs_step.CostsStep
+    :type costs_step: process.costs_step.CostModel2
     """
     # Mock module vars
     # monkeypatch.setattr(cost_model_base, "step20", 0.0)
@@ -191,7 +191,7 @@ def test_site_improvements_costs(
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
     :param costs_step: fixture to mock commonly-used cost vars
-    :type costs_step: process.costs_step.CostsStep
+    :type costs_step: process.costs_step.CostModel2
     """
     # Mock module vars
     # monkeypatch.setattr(costs_step, "step21", 0.0)
@@ -525,7 +525,7 @@ def test_blanket_first_wall_costs(
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
     :param costs_step: fixture to mock commonly-used cost vars
-    :type costs_step: process.costs_step.CostsStep
+    :type costs_step: process.costs_step.CostModel2
     """
     monkeypatch.setattr(cv, "fwallcst", 0.0)
     monkeypatch.setattr(fwbsv, "fw_armour_mass", 5.0)
@@ -574,7 +574,7 @@ def test_ib_shield_costs(monkeypatch, cost_model_base, fkind, exp):
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
     :param costs_step: fixture to mock commonly-used cost vars
-    :type costs_step: process.costs_step.CostsStep
+    :type costs_step: process.costs_step.CostModel2
     """
     monkeypatch.setattr(bv, "rsldi", 1.0)
     monkeypatch.setattr(bv, "shldith", 0.5)
@@ -614,7 +614,7 @@ def test_tf_coils_costs(
     :param monkeypatch: fixture for mocking variables
     :type monkeypatch: MonkeyPatch
     :param costs_step: fixture to mock commonly-used cost vars
-    :type costs_step: process.costs_step.CostsStep
+    :type costs_step: process.costs_step.CostModel2
     """
     # Mock dependencies with realistic values
     monkeypatch.setattr(cv, "step_ref", np.zeros(70, order="F"))
@@ -678,7 +678,7 @@ def test_pf_coils_costs(monkeypatch, cost_model_base, fkind, exp):
     :param monkeypatch: fixture for mocking variables
     :type monkeypatch: MonkeyPatch
     :param costs_step: fixture to mock commonly-used cost vars
-    :type costs_step: process.costs_step.CostsStep
+    :type costs_step: process.costs_step.CostModel2
     """
     # Mock module vars used in subroutine
     monkeypatch.setattr(pfv, "nohc", 2.0)
@@ -704,7 +704,7 @@ def test_central_sol_costs(monkeypatch, cost_model_base, fkind, exp):
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
     :param costs_step: fixture to mock commonly-used cost vars
-    :type costs_step: process.costs_step.CostsStep
+    :type costs_step: process.costs_step.CostModel2
     """
     # Mock module vars
     # monkeypatch.setattr(cost_model_base, "step20", 0.0)
@@ -727,7 +727,7 @@ def test_control_coils_costs(monkeypatch, cost_model_base, fkind, exp):
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
     :param costs_step: fixture to mock commonly-used cost vars
-    :type costs_step: process.costs_step.CostsStep
+    :type costs_step: process.costs_step.CostModel2
     """
     # Mock module vars
     # monkeypatch.setattr(cost_model_base, "step20", 0.0)
@@ -751,7 +751,7 @@ def test_hcd_costs(monkeypatch, cost_model_base, fkind, exp):
     :param monkeypatch: fixture for mocking variables
     :type monkeypatch: MonkeyPatch
     :param costs_step: fixture to mock commonly-used cost vars
-    :type costs_step: process.costs_step.CostsStep
+    :type costs_step: process.costs_step.CostModel2
     """
     # Mock module vars used in subroutine
     monkeypatch.setattr(cv, "fcdfuel", 0.1)
@@ -780,7 +780,7 @@ def test_primary_structure_costs(monkeypatch, cost_model_base, fkind, exp):
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
     :param costs_step: fixture to mock commonly-used cost vars
-    :type costs_step: process.costs_step.CostsStep
+    :type costs_step: process.costs_step.CostModel2
     """
     # Mock module vars
     # monkeypatch.setattr(cost_model_base, "step20", 0.0)
@@ -803,7 +803,7 @@ def test_reactor_vacuum_sys_costs(monkeypatch, cost_model_base, fkind, exp):
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
     :param costs_step: fixture to mock commonly-used cost vars
-    :type costs_step: process.costs_step.CostsStep
+    :type costs_step: process.costs_step.CostModel2
     """
     # Mock module vars
     # monkeypatch.setattr(cost_model_base, "step20", 0.0)
@@ -824,7 +824,7 @@ def test_power_supplies_costs(monkeypatch, cost_model_base):
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
     :param costs_step: fixture to mock commonly-used cost vars
-    :type costs_step: process.costs_step.CostsStep
+    :type costs_step: process.costs_step.CostModel2
     """
     # Mock module vars
     # monkeypatch.setattr(cost_model_base, "step20", 0.0)
@@ -844,7 +844,7 @@ def test_divertor_costs(monkeypatch, cost_model_base, fkind, exp):
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
     :param costs_step: fixture to mock commonly-used cost vars
-    :type costs_step: process.costs_step.CostsStep
+    :type costs_step: process.costs_step.CostModel2
     """
     # Mock module vars
     # monkeypatch.setattr(cost_model_base, "step20", 0.0)
@@ -869,7 +869,7 @@ def test_heat_transfer_sys_costs(monkeypatch, cost_model_base, fkind, exp):
     """Validate sum of cost account 22.02.
 
     :param costs_step: fixture to mock commonly-used cost vars
-    :type costs_step: process.costs_step.CostsStep
+    :type costs_step: process.costs_step.CostModel2
     """
     # Mock module vars used in subroutine
     monkeypatch.setattr(cv, "fkind", fkind)
@@ -885,7 +885,7 @@ def test_cryo_sys_costs(monkeypatch, cost_model_base):
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
     :param costs_step: fixture to mock commonly-used cost vars
-    :type costs_step: process.costs_step.CostsStep
+    :type costs_step: process.costs_step.CostModel2
     """
     # Mock module var set in subroutine
     monkeypatch.setattr(tfv, "cryo_cool_req", 10.0)
@@ -902,7 +902,7 @@ def test_waste_disposal_costs(monkeypatch, cost_model_base, fkind, exp):
     """Validate sum of cost account 22.04.
 
     :param costs_step: fixture to mock commonly-used cost vars
-    :type costs_step: process.costs_step.CostsStep
+    :type costs_step: process.costs_step.CostModel2
     """
     # Mock module var set in subroutine
     monkeypatch.setattr(cv, "fkind", fkind)
@@ -920,7 +920,7 @@ def test_fuel_handling_costs(monkeypatch, cost_model_base, fkind, exp1, exp2):
     """Validate sum of cost account 22.05.
 
     :param costs_step: fixture to mock commonly-used cost vars
-    :type costs_step: process.costs_step.CostsStep
+    :type costs_step: process.costs_step.CostModel2
     """
     # Mock module var set in subroutine
     monkeypatch.setattr(cv, "fkind", fkind)
@@ -936,7 +936,7 @@ def test_other_reactor_equip_costs(monkeypatch, cost_model_base, fkind, exp1):
     """Validate sum of cost account 22.06.
 
     :param costs_step: fixture to mock commonly-used cost vars
-    :type costs_step: process.costs_step.CostsStep
+    :type costs_step: process.costs_step.CostModel2
     """
     # Mock module var set in subroutine
     monkeypatch.setattr(cv, "fkind", fkind)
@@ -953,7 +953,7 @@ def test_instrument_and_control_costs(monkeypatch, cost_model_base, fkind, exp):
     """Validate sum of cost account 22.07.
 
     :param costs_step: fixture to mock commonly-used cost vars
-    :type costs_step: process.costs_step.CostsStep
+    :type costs_step: process.costs_step.CostModel2
     """
     # Mock module var set in subroutine
     monkeypatch.setattr(cv, "fkind", fkind)
@@ -967,7 +967,7 @@ def test_turbine_sys_costs(monkeypatch, cost_model_base):
     """Validate sum of cost account 22.02.
 
     :param costs_step: fixture to mock commonly-used cost vars
-    :type costs_step: process.costs_step.CostsStep
+    :type costs_step: process.costs_step.CostModel2
     """
     # Mock module vars used in subroutine
 
@@ -981,7 +981,7 @@ def test_heat_reject_costs(monkeypatch, cost_model_base):
     """Validate sum of cost account 22.02.
 
     :param costs_step: fixture to mock commonly-used cost vars
-    :type costs_step: process.costs_step.CostsStep
+    :type costs_step: process.costs_step.CostModel2
     """
     # Mock module vars used in subroutine
 
@@ -997,7 +997,7 @@ def test_electric_plant_equip_costs(monkeypatch, cost_model_base):
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
     :param costs_step: fixture to mock commonly-used cost vars
-    :type costs_step: process.costs_step.CostsStep
+    :type costs_step: process.costs_step.CostModel2
     """
     # Mock module var set in subroutine
 
@@ -1013,7 +1013,7 @@ def test_misc_equip_costs(monkeypatch, cost_model_base):
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
     :param costs_step: fixture to mock commonly-used cost vars
-    :type costs_step: process.costs_step.CostsStep
+    :type costs_step: process.costs_step.CostModel2
     """
     # Mock module var set in subroutine
     monkeypatch.setattr(bldgsv, "wgt", 5e2)
@@ -1032,7 +1032,7 @@ def test_remote_handling_costs(monkeypatch, cost_model_base, fkind, exp):
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
     :param costs_step: fixture to mock commonly-used cost vars
-    :type costs_step: process.costs_step.CostsStep
+    :type costs_step: process.costs_step.CostModel2
     """
     # Mock dependencies with realistic values
     monkeypatch.setattr(cv, "step_rh_costfrac", 0.05)
@@ -1050,7 +1050,7 @@ def test_indirect_costs(monkeypatch, cost_model_base):
     :param monkeypatch: mocking fixture
     :type monkeypatch: MonkeyPatch
     :param costs_step: fixture to mock commonly-used cost vars
-    :type costs_step: process.costs_step.CostsStep
+    :type costs_step: process.costs_step.CostModel2
     """
     # Mock module var set in subroutine
     monkeypatch.setattr(cv, "cdirt", 1.0e3)
