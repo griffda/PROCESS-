@@ -6,12 +6,12 @@
  
    Program :
    Version : 2.4.0   Release Date :: 2022-05-18
-   Tag No. : v2.4.0-696-g03f917a79
+   Tag No. : v2.4.0-708-g9e4c58108
     Branch : HEAD
-   Git log : Merge branch |1765-problems-in-vacuum-py| into |develop|
- Date/time :  9 Nov 2022 13:54:41 +00:00(hh:mm) UTC
+   Git log : Merge branch |1729-create-solver-interface-2| into |develop|
+ Date/time : 16 Nov 2022 16:32:29 +00:00(hh:mm) UTC
       User : root
-  Computer : runner-djp-xucf-project-20-concurrent-0
+  Computer : runner-nkpubsxk-project-20-concurrent-0
  Directory : /builds/process/process
      Input : /tmp/pytest-of-root/pytest-0/test_scenario_Hybrid_mode_0/IN.DAT
  Run title : Run Title (change this line using input variable 'runtitle')

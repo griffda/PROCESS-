@@ -2,8 +2,6 @@ from logging import getLogger
 from process.fortran import vmcon_module
 from process.fortran import numerics
 from process.fortran import global_variables
-from process.fortran import define_iteration_variables
-from process.evaluators import Evaluators
 import numpy as np
 
 logger = getLogger(__name__)
@@ -12,15 +10,49 @@ logger = getLogger(__name__)
 class Vmcon:
     """Driver for Fortran vmcon module."""
 
-    def __init__(self, models):
+    def __init__(
+        self,
+        evaluators,
+        x,
+        ilower,
+        iupper,
+        bndl,
+        bndu,
+        m,
+        meq,
+        ifail,
+        tolerance,
+    ):
         """Initialise vars for input/output with Fortran vmcon module.
 
-        :param models: physics and engineering model objects
-        :type models: process.main.Models
+        :param evaluators: evaluates objective and constraint functions and
+        gradient functions
+        :type evaluators: process.evaluators.Evaluators
+        :param x: iteration variables
+        :type x: np.ndarray
+        :param ilower: array of 0s and 1s to activate lower bounds on iteration
+        vars in x
+        :type ilower: np.ndarray
+        :param iupper: array of 0s and 1s to activate upper bounds on iteration
+        vars in x
+        :type iupper: np.ndarray
+        :param bndl: lower bounds for the iteration variables
+        :type bndl: np.ndarray
+        :param bndu: upper bounds for the iteration variables
+        :type bndu: np.ndarray
+        :param m: number of constraint equations
+        :type m: int
+        :param meq: of the constraint equations, how many are equalities
+        :type meq: int
+        :param ifail: previous exit code for the solver
+        :type ifail: int
+        :param tolerance: tolerance for termination of solver
+        :type tolerance: float
         """
-        self.evaluators = Evaluators(models)
+        self.evaluators = evaluators
 
         # Vars for array dimensions
+        # TODO Turn all of these external dependencies into args?
         ipnvars = numerics.ipnvars
         ippn1 = ipnvars + 1
         ipeqns = numerics.ipeqns
@@ -31,17 +63,17 @@ class Vmcon:
 
         # Attributes used by vmcon
         self.mode = 0
-        self.n = numerics.nvar
-        self.m = numerics.neqns + numerics.nineqns
-        self.xtol = numerics.epsvmc
+        self.n = x.shape[0]
+        self.m = m
+        self.xtol = tolerance
         self.lb = ippn1
         self.lcnorm = ippn1
         self.ldel = ipldel
         self.lh = iplh
         self.lwa = iplh
         self.liwa = ipliwa
-        self.meq = numerics.neqns
-        self.ifail = 0
+        self.meq = meq
+        self.ifail = ifail
         # ifail is the returned error code: 1 is OK
         self.f = 0.0
         # f is the value of objective function at the output point
@@ -53,18 +85,18 @@ class Vmcon:
 
         self.cnorm = np.zeros((ippn1, ipeqns), dtype=np.float64, order="F")
 
-        self.x = np.zeros(ipnvars, dtype=np.float64, order="F")
+        self.x = x
         self.fgrd = np.zeros(ipnvars, dtype=np.float64, order="F")
         self.glag = np.zeros(ipnvars, dtype=np.float64, order="F")
         self.glaga = np.zeros(ipnvars, dtype=np.float64, order="F")
         self.gamma = np.zeros(ipnvars, dtype=np.float64, order="F")
         self.bdelta = np.zeros(ipnvars, dtype=np.float64, order="F")
-        self.bndl = np.zeros(self.n, dtype=np.float64, order="F")
-        self.bndu = np.zeros(self.n, dtype=np.float64, order="F")
+        self.bndl = bndl
+        self.bndu = bndu
         self.eta = np.zeros(ipnvars, dtype=np.float64, order="F")
         self.xa = np.zeros(ipnvars, dtype=np.float64, order="F")
-        self.iupper = np.zeros(self.n, dtype=np.float64, order="F")
-        self.ilower = np.zeros(self.n, dtype=np.float64, order="F")
+        self.iupper = iupper
+        self.ilower = ilower
 
         self.bdl = np.zeros(ippn1, dtype=np.float64, order="F")
         self.bdu = np.zeros(ippn1, dtype=np.float64, order="F")
@@ -83,25 +115,8 @@ class Vmcon:
 
         self.iwa = np.zeros(ipliwa, dtype=np.int32, order="F")
 
-        for i in range(self.n):
-            self.ilower[i] = 1
-            self.iupper[i] = 1
-
         # Counter for fcnvmc1 calls
         self.fcnvmc1_calls = 0
-        self.fcnvmc1_first_call = True
-
-    def load_iter_vars(self):
-        """Load Fortran iteration variables, then initialise Python arrays."""
-        # Set up variables to be iterated
-        define_iteration_variables.loadxc()
-        define_iteration_variables.boundxc()
-
-        # Initialise arrays: relies on arrays in numerics being loaded above
-        for i in range(self.n):
-            self.bndl[i] = numerics.bondl[i]
-            self.bndu[i] = numerics.bondu[i]
-            self.x[i] = numerics.xcm[i]
 
     def run(self):
         """Load vars into vmcon, run it and extract results."""
@@ -346,11 +361,8 @@ class Vmcon:
         See comments on differing array sizes in fcnvmc1_wrapper().
         """
         self.objf, self.conf[0 : self.m] = self.evaluators.fcnvmc1(
-            self.n, self.m, self.x, self.ifail, self.fcnvmc1_first_call
+            self.n, self.m, self.x, self.ifail
         )
-
-        if self.fcnvmc1_first_call is True:
-            self.fcnvmc1_first_call = False
 
     def fcnvmc2_wrapper(self):
         """Call fcnvmc2, synchronising variables before and after.
@@ -401,7 +413,7 @@ class Vmcon:
 
         See comments on differing array sizes in fcnvmc1_wrapper().
         """
-        (
-            self.fgrd[0 : self.n],
-            self.cnorm[0 : self.lcnorm, 0 : self.m],
-        ) = self.evaluators.fcnvmc2(self.n, self.m, self.x, self.lcnorm)
+        fgrd, cnorm = self.evaluators.fcnvmc2(self.n, self.m, self.x, self.lcnorm)
+
+        self.fgrd[: self.n] = fgrd
+        self.cnorm[: cnorm.shape[0], : self.m] = cnorm
