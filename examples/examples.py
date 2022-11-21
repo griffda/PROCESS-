@@ -70,6 +70,8 @@ temp_dir, temp_input_path = copy_to_temp_dir(input_rel)
 # Run process on an input file in a temporary directory
 single_run = SingleRun(str(temp_input_path))
 
+single_run.run()
+
 
 # %% [markdown]
 # ## Plot summary
@@ -101,7 +103,7 @@ temp_dir.cleanup()
 
 # %% [markdown]
 # ## View key output variables
-# Run the Starfire scenario using `SingleRun` to set some values on the `CostsStep` instance and then print them.
+# Run the Starfire scenario using `SingleRun` to set some values on the `CostModel2` instance and then print them.
 
 # %%
 # Define input file name relative to project dir
@@ -113,7 +115,7 @@ single_run = SingleRun(str(temp_input_path))
 
 
 # %%
-# Print some values on the CostsStep instance
+# Print some values on the CostModel2 instance
 print(
     f"Building and Site Service Infrastructure: {single_run.models.costs_step.step21:.3e} M$"
 )

@@ -152,15 +152,15 @@ class ProcessTracker:
         "dnitot",
         "tburn",
         "divlife",
-        "CostsStep.step20",
-        "CostsStep.step21",
-        "CostsStep.step2101",
-        "CostsStep.step2202",
-        "CostsStep.step2203",
-        "CostsStep.step22",
-        "CostsStep.step23",
-        "CostsStep.step24",
-        "CostsStep.step25",
+        "CostModel2.step20",
+        "CostModel2.step21",
+        "CostModel2.step2101",
+        "CostModel2.step2202",
+        "CostModel2.step2203",
+        "CostModel2.step22",
+        "CostModel2.step23",
+        "CostModel2.step24",
+        "CostModel2.step25",
         "cdirt",
         "concost",
     }
@@ -492,7 +492,7 @@ def plot_tracking_data(database):
 
     panels = []
 
-    # each module/overriden name e.g. CostsStep has a panel which holds graphs for all variables under that scope
+    # each module/overriden name e.g. CostModel2 has a panel which holds graphs for all variables under that scope
     for parent_module_name, figs in figures.items():
         if len(figs) % 2 != 0:
             gplot = gridplot([figs[i : i + 2] for i in range(0, len(figs), 2)])

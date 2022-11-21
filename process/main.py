@@ -55,7 +55,7 @@ from process.structure import Structure
 from process.build import Build
 from process.utilities.f2py_string_patch import string_to_f2py_compatible
 import argparse
-from process.costs_step import CostsStep
+from process.cost_model_2 import CostModel2
 from process.pfcoil import PFCoil
 from process.tfcoil import TFcoil
 from process.divertor import Divertor
@@ -197,6 +197,7 @@ class Process:
             self.run = VaryRun(self.args.varyiterparamsconfig)
         else:
             self.run = SingleRun(self.args.input)
+            self.run.run()
 
     def post_process(self):
         """Perform post-run actions, like plotting the mfile."""
@@ -316,7 +317,7 @@ class SingleRun:
     """Perform a single run of PROCESS."""
 
     def __init__(self, input_file):
-        """Read input file, initialise variables and run PROCESS.
+        """Read input file and initialise variables.
 
         :param input_file: input file named <optional_name>IN.DAT
         :type input_file: str
@@ -325,6 +326,12 @@ class SingleRun:
         self.validate_input()
         self.init_module_vars()
         self.models = Models()
+
+    def run(self):
+        """Run PROCESS
+
+        This is separate from init to allow model instances to be modified before a run.
+        """
         self.set_filenames()
         self.initialise()
         self.run_hare_tests()
@@ -518,7 +525,7 @@ class Models:
 
         This also initialises module variables in the Fortran for that module.
         """
-        self.costs_step = CostsStep()
+        self.costs_step = CostModel2()
         self.cs_fatigue = CsFatigue()
         self.pfcoil = PFCoil(cs_fatigue=self.cs_fatigue)
         self.power = Power()
