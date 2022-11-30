@@ -436,13 +436,16 @@ class SingleRun:
         else:
             # If no optimisation will be done, compute the OP variables now
             if fortran.numerics.ioptimz == -2:
-                caller = Caller(self.models)
+                # Get optimisation parameters x, perform first evaluation of models
                 fortran.define_iteration_variables.loadxc()
-                caller.call_models(fortran.numerics.xcm, fortran.numerics.nvar)
+                n = fortran.numerics.nvar
+                x = fortran.numerics.xcm[:n]
+                caller = Caller(self.models, x)
+
                 # To ensure that, at the start of a run, all physics/engineering
                 # variables are fully initialised with consistent values, we perform
                 # a second evaluation call here
-                caller.call_models(fortran.numerics.xcm, fortran.numerics.nvar)
+                caller.call_models(x)
                 self.ifail = 6
 
             final.finalise(self.models, self.ifail)
