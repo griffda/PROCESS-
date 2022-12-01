@@ -613,7 +613,8 @@ def main(args=None):
                         color="red",
                     )
             if output_names2 != []:
-                plt.grid(True)
+                ax2.yaxis.grid(True)
+                ax.xaxis.grid(True)
                 ax.set_ylabel(
                     labels[output_name], fontsize=axis_font_size, color="blue"
                 )
