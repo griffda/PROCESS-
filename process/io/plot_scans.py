@@ -598,6 +598,8 @@ def main(args=None):
                         color="blue" if output_names2 != [] else None,
                         label=labl,
                     )
+                    plt.xticks(size=axis_tick_size)
+                    plt.yticks(size=axis_tick_size)
                 if output_names2 != []:
                     ax2 = ax.twinx()
                     ax2.plot(
@@ -629,8 +631,6 @@ def main(args=None):
                 plt.xlabel(labels[scan_var_name], fontsize=axis_font_size)
             if len(input_files) != 1:
                 plt.legend(loc="best", fontsize=legend_size)
-            plt.xticks(size=axis_tick_size)
-            plt.yticks(size=axis_tick_size)
             plt.tight_layout()
 
             # Output file naming
