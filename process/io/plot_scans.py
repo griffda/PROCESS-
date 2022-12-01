@@ -503,7 +503,7 @@ def main(args=None):
                 output_arrays[input_file][output_name] = ouput_array
 
             # Second variable scan
-            if output_names2 != "":
+            if output_names2 != []:
                 for output_name2 in output_names2:
                     ouput_array2 = np.zeros(n_scan)
 
@@ -534,24 +534,25 @@ def main(args=None):
                     output_arrays2[input_file][output_name2] = ouput_array2
             # Terminal output
             if term_output:
-                print()
-                print("{} scan output".format(input_file))
-                print(
-                    "scan var {} : {}".format(scan_var_name, scan_var_array[input_file])
-                )
+                print(f"\n{input_file} scan output\n")
+                print("X-axis:")
+                print(f"scan var {scan_var_name} : {scan_var_array[input_file]}\n")
+                print("Y-axis:")
                 for output_name in output_names:
 
                     # Check if the output variable exists in the MFILE
                     if output_name not in m_file.data.keys():
                         continue
 
+                    print(f"{output_name} : {output_arrays[input_file][output_name]}")
+                print()
+                if output_names2 != []:
                     print(
-                        "{} : {}".format(
-                            output_name, output_arrays[input_file][output_name]
+                        (
+                            "Y2-Axis\n "
+                            + f" {output_name2} : {output_arrays2[input_file][output_name2]}\n"
                         )
                     )
-                print()
-
         # Plot section
         # -----------
 
@@ -607,7 +608,9 @@ def main(args=None):
                         label=labl,
                     )
                     ax2.set_ylabel(
-                        labels[output_name2], fontsize=axis_font_size, color="red"
+                        labels[output_name2],
+                        fontsize=axis_font_size,
+                        color="red",
                     )
             if output_names2 != []:
                 plt.grid(True)
@@ -623,7 +626,6 @@ def main(args=None):
                     color="red" if output_names2 != [] else "black",
                 )
                 plt.xlabel(labels[scan_var_name], fontsize=axis_font_size)
-
             if len(input_files) != 1:
                 plt.legend(loc="best", fontsize=legend_size)
             plt.xticks(size=axis_tick_size)
@@ -636,21 +638,23 @@ def main(args=None):
                     f"{args.outputdir}/scan_{scan_var_name}_vs_plascur"
                     + f"_vs_{output_name2}"
                     if output_names2 != []
-                    else "" + f".{save_format}"
+                    else f"{args.outputdir}/scan_{scan_var_name}_vs_plascur"
+                    + f".{save_format}"
                 )
             elif output_name == "pdivtbt/qar":
                 plt.savefig(
                     f"{args.outputdir}/scan_{scan_var_name}_vs_pdivtbtqar"
                     + f"_vs_{output_name2}"
                     if output_names2 != []
-                    else "" + ".{save_format}"
+                    else "" + f".{save_format}"
                 )
             else:
                 plt.savefig(
                     f"{args.outputdir}/scan_{scan_var_name}_vs_{output_name}"
                     + f"_vs_{output_name2}"
                     if output_names2 != []
-                    else "" + ".{save_format}"
+                    else f"{args.outputdir}/scan_{scan_var_name}_vs_{output_name}"
+                    + f".{save_format}"
                 )
 
             # Display plot (used in Jupyter notebooks)
