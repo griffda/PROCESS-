@@ -74,6 +74,17 @@ def parse_args(args):
     )
 
     parser.add_argument(
+        "-yv2",
+        "--y_vars2",
+        default="",
+        help=(
+            "Select the 2nd axis output variable\n "
+            "eg: -yv2 'var'\n 2nd variable will be plotted on shared figure "
+            "inputs"
+        ),
+    )
+
+    parser.add_argument(
         "-o",
         "--outputdir",
         default=Path.cwd(),
@@ -130,6 +141,7 @@ def main(args=None):
     # ---------------------------------------
     input_files = str(args.input_files)
     output_names = str(args.y_vars)
+    output_names2 = str(args.y_vars2)
     save_format = str(args.save_format)
     term_output = args.term_output
     label_name = str(args.label_name)
@@ -141,6 +153,10 @@ def main(args=None):
     output_names = output_names.split(" ")
     while "" in output_names:
         output_names.remove("")
+
+    output_names2 = output_names2.split(" ")
+    while "" in output_names2:
+        output_names2.remove("")
 
     input_files = input_files.split(" ")
     while "" in input_files:
@@ -401,6 +417,7 @@ def main(args=None):
 
         # Loop over the MFILEs
         output_arrays = dict()
+        output_arrays2 = dict()
         scan_var_array = dict()
         for input_file in input_files:
 
@@ -446,9 +463,9 @@ def main(args=None):
             # Updating the number of scans
             n_scan = len(conv_i)
             # ---
-
             # Scanned variable
             scan_var_array[input_file] = np.zeros(n_scan)
+
             for ii in range(n_scan):
                 scan_var_array[input_file][ii] = m_file.data[scan_var_name].get_scan(
                     conv_i[ii]
@@ -456,6 +473,8 @@ def main(args=None):
 
             # output list declaration
             output_arrays[input_file] = dict()
+            output_arrays2[input_file] = dict()
+            # First variable scan
             for output_name in output_names:
                 ouput_array = np.zeros(n_scan)
 
@@ -483,6 +502,36 @@ def main(args=None):
                     ouput_array[ii] = m_file.data[output_name].get_scan(conv_i[ii])
                 output_arrays[input_file][output_name] = ouput_array
 
+            # Second variable scan
+            if output_names2 != "":
+                for output_name2 in output_names2:
+                    ouput_array2 = np.zeros(n_scan)
+
+                    # Check if the output variable exists in the MFILE
+                    if output_name2 not in m_file.data.keys():
+                        print(
+                            "Warning : `{}` does not exist in PROCESS dicts".format(
+                                output_name2
+                            )
+                        )
+                        print("Warning : `{}` will not be output".format(output_name2))
+                        continue
+
+                    # Check if the output LaTeX variable label exist
+                    if output_name2 not in labels:
+                        print(
+                            "Warning : The {} variable LaTeX label is not defined".format(
+                                output_name2
+                            )
+                        )
+                        print("Warning : Please update the 'label' dict")
+                        labels[output_name2] = output_name2
+
+                    for ii in range(n_scan):
+                        ouput_array2[ii] = m_file.data[output_name2].get_scan(
+                            conv_i[ii]
+                        )
+                    output_arrays2[input_file][output_name2] = ouput_array2
             # Terminal output
             if term_output:
                 print()
@@ -504,7 +553,8 @@ def main(args=None):
                 print()
 
         # Plot section
-        # ------------
+        # -----------
+
         for output_name in output_names:
 
             # reset counter for label_name
@@ -530,38 +580,77 @@ def main(args=None):
                     kk = kk + 1
 
                 # Plot the graph
-                plt.plot(
-                    scan_var_array[input_file],
-                    output_arrays[input_file][output_name],
-                    "--o",
-                    label=labl,
+                if output_names2 != []:
+                    fig, ax = plt.subplots()
+                    ax.plot(
+                        scan_var_array[input_file],
+                        output_arrays[input_file][output_name],
+                        "--o",
+                        color="blue",
+                        label=labl,
+                    )
+                else:
+                    plt.plot(
+                        scan_var_array[input_file],
+                        output_arrays[input_file][output_name],
+                        "--o",
+                        color="blue" if output_names2 != [] else None,
+                        label=labl,
+                    )
+                if output_names2 != []:
+                    ax2 = ax.twinx()
+                    ax2.plot(
+                        scan_var_array[input_file],
+                        output_arrays2[input_file][output_name2],
+                        "--o",
+                        color="red",
+                        label=labl,
+                    )
+                    ax2.set_ylabel(
+                        labels[output_name2], fontsize=axis_font_size, color="red"
+                    )
+            if output_names2 != []:
+                plt.grid(True)
+                ax.set_ylabel(
+                    labels[output_name], fontsize=axis_font_size, color="blue"
                 )
+                ax.set_xlabel(labels[scan_var_name], fontsize=axis_font_size)
+            else:
+                plt.grid(True)
+                plt.ylabel(
+                    labels[output_name],
+                    fontsize=axis_font_size,
+                    color="red" if output_names2 != [] else "black",
+                )
+                plt.xlabel(labels[scan_var_name], fontsize=axis_font_size)
 
-            plt.grid(True)
-            plt.ylabel(labels[output_name], fontsize=axis_font_size)
-            plt.xlabel(labels[scan_var_name], fontsize=axis_font_size)
             if len(input_files) != 1:
                 plt.legend(loc="best", fontsize=legend_size)
             plt.xticks(size=axis_tick_size)
             plt.yticks(size=axis_tick_size)
             plt.tight_layout()
+
+            # Output file naming
             if output_name == "plascur/1d6":
                 plt.savefig(
-                    "{}/scan_{}_vs_{}.{}".format(
-                        args.outputdir, scan_var_name, "plascur", save_format
-                    )
+                    f"{args.outputdir}/scan_{scan_var_name}_vs_plascur"
+                    + f"_vs_{output_name2}"
+                    if output_names2 != []
+                    else "" + f".{save_format}"
                 )
             elif output_name == "pdivtbt/qar":
                 plt.savefig(
-                    "{}/scan_{}_vs_{}.{}".format(
-                        args.outputdir, scan_var_name, "pdivtbtqar", save_format
-                    )
+                    f"{args.outputdir}/scan_{scan_var_name}_vs_pdivtbtqar"
+                    + f"_vs_{output_name2}"
+                    if output_names2 != []
+                    else "" + ".{save_format}"
                 )
             else:
                 plt.savefig(
-                    "{}/scan_{}_vs_{}.{}".format(
-                        args.outputdir, scan_var_name, output_name, save_format
-                    )
+                    f"{args.outputdir}/scan_{scan_var_name}_vs_{output_name}"
+                    + f"_vs_{output_name2}"
+                    if output_names2 != []
+                    else "" + ".{save_format}"
                 )
 
             # Display plot (used in Jupyter notebooks)
