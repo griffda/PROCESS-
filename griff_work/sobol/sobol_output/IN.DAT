@@ -419,7 +419,7 @@ fgwped   = 0.85 * fraction of Greenwald density to set as pedestal-top density; 
 fkzohm   = 1.0245 * Zohm elongation scaling adjustment factor (`ishape=2; 3`)
 fvsbrnni = 3.9566e-01 * fraction of the plasma current produced by non-inductive means (`iteration variable 44`)
 gamma    = 0.3 * Ejima coefficient for resistive startup V-s formula
-hfact    = 1.19375 * H factor on energy confinement times; radiation corrected (`iteration variable 10`); If
+hfact    = 1.29375 * H factor on energy confinement times; radiation corrected (`iteration variable 10`); If
 ibss     = 4 * switch for bootstrap current scaling
 iculbl   = 1 * switch for beta limit scaling (`constraint equation 24`)
 icurr    = 4 * switch for plasma current scaling to use
