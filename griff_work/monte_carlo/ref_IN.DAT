@@ -20,7 +20,7 @@
 * cswanson@pppl.gov
 * Coauthors are Ken Hammond and Mike Zarnstorff, PPPL
 
-* EDITED BY TOM GRIFFITHD 2022 
+* EDITED BY TOM GRIFFITHS 2022 
 * INCLUSIONS: 
 * ITERATION VARIABLES: Toroidal Magnetic field strength (bt), fusion power limits
 * CONSTRAINT VAIRBALES: net electrical power, fusion power
