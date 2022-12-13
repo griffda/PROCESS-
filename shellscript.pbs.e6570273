@@ -1,0 +1,14 @@
+/rds/general/user/tgg120/home/process/process/sctfcoil.py:4168: NumbaPerformanceWarning: '@' is faster on contiguous arrays, called on (array(float64, 1d, C), array(float64, 2d, A))
+  ) = extended_plane_strain(
+/rds/general/user/tgg120/home/process/process/sctfcoil.py:4168: NumbaPerformanceWarning: '@' is faster on contiguous arrays, called on (array(float64, 2d, A), array(float64, 1d, C))
+  ) = extended_plane_strain(
+/rds/general/user/tgg120/home/process/process/sctfcoil.py:4168: NumbaPerformanceWarning: '@' is faster on contiguous arrays, called on (array(float64, 2d, A), array(float64, 2d, A))
+  ) = extended_plane_strain(
+/rds/general/user/tgg120/home/process/process/sctfcoil.py:4168: NumbaPerformanceWarning: '@' is faster on contiguous arrays, called on (array(float64, 2d, A), array(float64, 2d, C))
+  ) = extended_plane_strain(
+/rds/general/user/tgg120/home/process/process/sctfcoil.py:4168: NumbaPerformanceWarning: '@' is faster on contiguous arrays, called on (array(float64, 2d, C), array(float64, 2d, A))
+  ) = extended_plane_strain(
+/rds/general/user/tgg120/home/process/process/pfcoil.py:2938: RuntimeWarning: divide by zero encountered in double_scalars
+  rcv.copperaoh_m2 = ioheof / (pfv.awpoh * (1.0 - pfv.vfohc) * pfv.fcuohsu)
+/rds/general/user/tgg120/home/process/process/pfcoil.py:2994: RuntimeWarning: divide by zero encountered in double_scalars
+  ttest = ttest - 2.0e0 * delt * (jcrit0 - jsc) / (jcritp - jcritm)

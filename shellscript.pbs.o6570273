@@ -1,0 +1,63 @@
+ 
+ **************************************************************************************************************
+ ************************************************** PROCESS ***************************************************
+ ************************************** Power Reactor Optimisation Code ***************************************
+ **************************************************************************************************************
+ 
+   Program :
+   Version : 2.4.0   Release Date :: 2022-05-18
+   Tag No. : v2.4.0-730-g530bb7d42
+    Branch : develop
+ Warning in routine OCMMNT :
+  Git log : Overwrite regression references for |Merge branch |1782-fix-flake8-config-extend-ignore-api-change| into |develop||
+This is longer than 110 columns.
+   Git log : Overwrite regression references for |Merge branch |1782-fix-flake8-config-extend-ignore-api-change| into |develop||
+ Date/time :  1 Dec 2022 16:14:59 +00:00(hh:mm) UTC
+      User : tgg120
+  Computer : cx3-12-0.cx3.hpc.ic.ac.uk
+ Directory : /rds/general/user/tgg120/home/process
+     Input : /rds/general/user/tgg120/home/process/tests/regression/scenarios/Menard_HTS-PP/IN.DAT
+ Run title : Pilot Plant Menard et al. 2016, Section 5
+  Run type : Reactor concept design: Tight aspect ratio tokamak model, (c) CCFE
+ 
+ **************************************************************************************************************
+ 
+   Equality constraints : 14
+ Inequality constraints : 00
+      Total constraints : 14
+    Iteration variables : 15
+         Max iterations : 400
+       Figure of merit  : -17  -- maximise net electrical output.
+  Convergence parameter : 1.00E-07
+ 
+ **************************************************************************************************************
+ Warning in routine OCMMNT :
+  Git log : Overwrite regression references for |Merge branch |1782-fix-flake8-config-extend-ignore-api-change| into |develop||
+This is longer than 110 columns.
+ 
+==>    2  vmcon iterations. Normalised FoM =  0.1257  Residuals (sqsumsq) = 1.4E-01  Convergence param = 4.2E-02==>    3  vmcon iterations. Normalised FoM =  0.1035  Residuals (sqsumsq) = 2.2E-01  Convergence param = 4.2E-02==>    4  vmcon iterations. Normalised FoM =  0.1056  Residuals (sqsumsq) = 5.0E-02  Convergence param = 7.5E-03==>    5  vmcon iterations. Normalised FoM =  0.1076  Residuals (sqsumsq) = 4.1E-03  Convergence param = 5.9E-04==>    6  vmcon iterations. Normalised FoM =  0.1075  Residuals (sqsumsq) = 1.3E-03  Convergence param = 1.6E-04==>    7  vmcon iterations. Normalised FoM =  0.1075  Residuals (sqsumsq) = 4.4E-04  Convergence param = 5.2E-05==>    8  vmcon iterations. Normalised FoM =  0.1075  Residuals (sqsumsq) = 3.9E-05  Convergence param = 4.6E-06==>    9  vmcon iterations. Normalised FoM =  0.1075  Residuals (sqsumsq) = 9.6E-06  Convergence param = 1.1E-06==>   10  vmcon iterations. Normalised FoM =  0.1075  Residuals (sqsumsq) = 3.5E-06  Convergence param = 4.2E-07==>   11  vmcon iterations. Normalised FoM =  0.1075  Residuals (sqsumsq) = 3.6E-07  Convergence param = 4.2E-08==>   12  vmcon iterations. Normalised FoM =  0.1075  Residuals (sqsumsq) = 6.7E-08  Convergence param = 7.8E-09 
+ ************************************* PROCESS found a feasible solution **************************************
+ 
+ 
+ ******************************************** Errors and Warnings *********************************************
+ 
+ PROCESS status flag:   Warning messages                                  
+ 
+ ID  LEVEL  MESSAGE
+155     2   CHECK: dene used as iteration variable without constraint 81 (neped<ne0)        
+  
+272     2   Double-null: Upper vertical build forced to match lower                         
+  
+233     1   CHECK: Joints res not cal. for SC (itart = 1) TF (i_tf_sup = 1),                
+  
+ 39     1   CHECK: Operating with a single null in a double null machine                    
+  
+266     2   REBCO : Field on superconductor > 14 T (outside of interpolation range)         
+  
+277     2   CHECK: One or more collision between TF and PF coils. Check PF placement.       
+The IN.DAT file contains obsolete variables from the OBS_VARS dictionary.
+The obsolete variables in your IN.DAT file are: {'casthi'}. Please change them to the corresponding new variable(s) before continuing.
+  
+ 
+ ******************************************* End of PROCESS Output ********************************************
+ 

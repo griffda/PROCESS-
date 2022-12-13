@@ -1,0 +1,17 @@
+Description,Varname,Value
+Wall_plug_to_injector_efficiency,etacd,0.4
+Current_drive_efficiency_(A/W),effcd,0.048696
+"Normalised_current_drive_efficiency,_gamma_(10^20_A/W-m2)",gamcd,0.3
+Net_electrical_output_(MW)	,pnetelmw,500.0
+Safety_factor_on_axis,q0,1.0
+Safety_factor_at_95%_flux_surface,q95,3.5
+Cylindrical_safety_factor_(qcyl),qstar,2.9256
+Total_plasma_beta,beta,0.032018
+Total_poloidal_beta,betap,1.26
+Fast_alpha_beta,betaft,0.004623
+Beam_ion_beta,betanb,0.0
+(Fast_alpha_+_beam_beta)/(thermal_beta),gammaft,0.16875
+2nd_stability_beta_:_beta_p_/_(R/a),eps*betap,0.40645
+2nd_stability_beta_upper_limit,epbetmax,1.38
+Beta_g_coefficient,dnbeta,4.8522
+Thermal_to_electric_conversion_efficiency_of_the_power_conversion_cycle,etath,0.375
