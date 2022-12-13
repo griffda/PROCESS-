@@ -88,7 +88,7 @@ def main(args=None):
     pd.plotting.scatter_matrix(
         data_set_converge[output_names], alpha=0.2, diagonal="kde"
     )
-    savefig("uncertainties." + args.save_format)
+    savefig("/home/griff/process/griff_work/monte_carlo/monte_carlo_output/MC_uncertainties." + args.save_format)
 
 
 if __name__ == "__main__":

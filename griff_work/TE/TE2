@@ -20,11 +20,9 @@
 * cswanson@pppl.gov
 * Coauthors are Ken Hammond and Mike Zarnstorff, PPPL
 
-* EDITED BY TOM GRIFFITHS 2022 
-* INCLUSIONS: 
-* ITERATION VARIABLES: Toroidal Magnetic field strength (bt), fusion power limits
-* CONSTRAINT VAIRBALES: net electrical power, fusion power
-* HEAT TRANSPORT VARIABLES: Thermal to electric conversion efficiency
+*** EDITED BY TOM GRIFFITHS & ROB SLADE (TE) 2022 
+*** INCLUSIONS: 
+* SEE Build Variables marked with **
 
 
 *---------------Constraint Equations---------------*
@@ -177,29 +175,29 @@ tburn    = 1000.0   *Burn time (s)
 tdwell   = 100.0    *Time between pulses in a pulsed reactor (s)
 
 *-----------------Build Variables------------------*
-bore     = 0.02     *central solenoid inboard radius (m) From Menard private communcation
-ohcth    = 0.213    *Central solenoid thickness (m) (`iteration variable 16`) From Menard private communcation
-gapoh    = 0.01     *gap between central solenoid and TF coil (m) From Menard private communcation
-thkcas   = 0.2      *Inboard TF coil case outer (non-plasma side) thickness (m) From Menard private communcation
+bore     = 0.02     *central solenoid inboard radius (m) From Menard private communcation **RS TE (RsolID): 0.4518m 
+ohcth    = 0.213    *Central solenoid thickness (m) (`iteration variable 16`) From Menard private communcation **RS TE (RsolOD-RsolID): 0.1326m 
+gapoh    = 0.01     *gap between central solenoid and TF coil (m) From Menard private communcation ( LEFT AS 0.01)
+thkcas   = 0.2      *Inboard TF coil case outer (non-plasma side) thickness (m) From Menard private communcation **RS TE (dR_CS_TF - gapoh): 0.19m ()
 blnkith  = 0.0      *Inboard blanket thickness (m) Not set because not used, but 10 cm from Menard private communication
-blnkoth  = 1.0      *Outboard blanket thickness (m)
-d_vv_in  = 0.024    *Inboard vacuum vessel thickness (m)
-d_vv_out = 0.024    *Outboard vacuum vessel thickness (m)
-d_vv_top = 0.024    *Topside vacuum vessel thickness  (m)
-d_vv_bot = 0.024    *Underside vacuum vessel thickness (m)
-gapds    = 0.0      *Gap between inboard vacuum vessel and thermal shield (m)
-gapomin  = 0.0      *Minimum gap between outboard vacuum vessel and TF coil (m)
+blnkoth  = 1.0      *Outboard blanket thickness (m) **RS TE: SAME AS FNSF
+d_vv_in  = 0.024    *Inboard vacuum vessel thickness (m) **RS TE: Total thickness of Inboard Vacuum Vessel tIVC = 0.02m
+d_vv_out = 0.024    *Outboard vacuum vessel thickness (m) **RE TE: Assumed to be the same
+d_vv_top = 0.024    *Topside vacuum vessel thickness  (m) **SAME AS ABOVE
+d_vv_bot = 0.024    *Underside vacuum vessel thickness (m) **SAME AS ABOVE
+gapds    = 0.0      *Gap between inboard vacuum vessel and thermal shield (m) **RS TE: tVacGap 0.02m
+gapomin  = 0.0      *Minimum gap between outboard vacuum vessel and TF coil (m) **Included in the above
 iprecomp = 0        *Switch for existence of central solenoid pre-compression structure (0: no pre-compression structure)
-scraplo  = 0.12     *Gap between plasma and first wall outboard side (m) 
-shldith  = 0.60     *Inboard shield thickness (m) 
-shldoth  = 0.45     *Outboard shield thickness (m)
-shldtth  = 0.2      *Upper/lower shield thickness (m)
-scrapli  = 7.8E-02  *Gap between plasma and first wall inboard side (m) Set to make winding pack thickness agree
-tfootfi  = 1.0      *TF coil outboard leg / inboard leg radial thickness ratio tfootfi 
+scraplo  = 0.12     *Gap between plasma and first wall outboard side (m) **RS TE: pGap : 0.03m
+shldith  = 0.60     *Inboard shield thickness (m) **RS TE: tShield 0.7m
+shldoth  = 0.45     *Outboard shield thickness (m) **RS TE: (Not specified) 0.45m
+shldtth  = 0.2      *Upper/lower shield thickness (m)  **RS TE: (Not specified) 0.2m
+scrapli  = 7.8E-02  *Gap between plasma and first wall inboard side (m) Set to make winding pack thickness agree **RS TE: (Not specified) 7.8E-02m
+tfootfi  = 1.0      *TF coil outboard leg / inboard leg radial thickness ratio tfootfi **RS TE: (Not Specified =1m)
 thshield_ib = 0.0   *TF-VV thermal shield thickness Inboard(m)
 thshield_ob = 0.0   *TF-VV thermal shield thickness Outboard (m)
 thshield_vb = 0.0   *TF-VV thermal shield thickness Vertical (m)
-vgap     = 0.5      *Vertical gap between x-point and divertor (m)
+vgap     = 0.5      *Vertical gap between x-point and divertor (m) **RS TE: (Not specified = 0.5m)
 vgap2    = 0.0      *Vertical gap between vacuum vessel and TF coil (m)
 vvblgap  = 0.0      *Gap between vacuum vessel and blanket (m)
 
@@ -210,10 +208,10 @@ casthi      = 0.022 *inboard TF coil case outer (non-plasma side) thickness (m) 
 tinstf      = 0.0   *Centrepost insulation thickness (no inusltion in this case)
 frhocp      = 1.0   *Centrepost resistivity enhancement factor 
 i_tf_sup    = 1     *Switch for TF coil conductor model (1: superconductor)
-i_tf_sc_mat = 8     *Switch for superconductor material in TF coils (8: Durham Ginzburg-Landau critical surface model for REBCO)
-ripmax      = 1.0   *Maximum allowable toroidal field ripple amplitude at plasma edge (%)
-n_tf        = 12    *Number of TF coil  
-vftf        = 1e-9  *Coolant fraction of TFC 'cable' (i_tf_sup=1) or of TFC leg (i_tf_sup=0)
+i_tf_sc_mat = 8     *Switch for superconductor material in TF coils (8: Durham Ginzburg-Landau critical surface model for REBCO) **(This will be pessimistic value maybe add multiplier)
+ripmax      = 1.0   *Maximum allowable toroidal field ripple amplitude at plasma edge (%) **RS TE: (ripple) 0.3%
+n_tf        = 12    *Number of TF coil **RS TE: (Nlimbs) 18 
+vftf        = 1e-9  *Coolant fraction of TFC 'cable' (i_tf_sup=1) or of TFC leg (i_tf_sup=0) **RS TE: (leave small as TE not cooling cable)
 
 i_tf_stress_model      = 2 * Switch for the TF coil stress model (2: Newer axisymmetric extended plane strain formulation)
 i_tf_bucking           = 1 * Switch for TF inboard suport structure design (1: Free standing TF with a case/bucking cylinder)
@@ -335,6 +333,7 @@ fimp(10) = 0.0       *Iron
 fimp(11) = 0.0       *Nickel
 fimp(12) = 0.0       *Krypton
 fimp(14) = 5e-05     *Tungsten
+
 
 
 
