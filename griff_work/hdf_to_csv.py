@@ -26,8 +26,8 @@ def parse_args(args):
     )
 
     parser.add_argument(
-        "-i",
-        "--inputfile",
+        "-f",
+        "--hdf5file",
         default="uncertainties_data.h5",
         help="input hdf5 file (default=uncertainties_data.h5)",
     )
@@ -59,67 +59,67 @@ def get_vars(vfile="mfile_to_csv_vars.json"):
 
     return vars
 
-def read_mfile(h5filename="uncertainties_data.h5", vars=[]):
-    """specified variable values from identified file.
+# def read_mfile(h5filename="uncertainties_data.h5", vars=[]):
+#     """specified variable values from identified file.
 
-    :param args: input filename, variable names
-    :type args: string, list
-    :return: variable descriptions, names, and values
-    :rtype: list of tuples"""
-    print("Reading from H5File:", h5filename)
+#     :param args: input filename, variable names
+#     :type args: string, list
+#     :return: variable descriptions, names, and values
+#     :rtype: list of tuples"""
+#     print("Reading from H5File:", h5filename)
 
-    # m_file = MFile(h5filename)
+#     # m_file = MFile(h5filename)
 
-    output_vars = []
+#     output_vars = []
 
-    # for each variable named in the input varfile, get the description and data value
-    # for var_name in vars:
-    #     if var_name not in m_file.data.keys():
-    #         print(
-    #             "Variable '{}' not in MFILE. Skipping and moving on...".format(var_name)
-    #         )
-    #     else:
-    #         # In case of a file containing multiple scans, (scan = -1) uses the last scan value
-    #         var_val = m_file.data[var_name].get_scan(-1)
-    #         description = m_file.data[var_name].var_description
-    #         var_data = (description, var_name, var_val)
-    #         output_vars.append(var_data)
-    return output_vars
+#     # for each variable named in the input varfile, get the description and data value
+#     # for var_name in vars:
+#     #     if var_name not in m_file.data.keys():
+#     #         print(
+#     #             "Variable '{}' not in MFILE. Skipping and moving on...".format(var_name)
+#     #         )
+#     #     else:
+#     #         # In case of a file containing multiple scans, (scan = -1) uses the last scan value
+#     #         var_val = m_file.data[var_name].get_scan(-1)
+#     #         description = m_file.data[var_name].var_description
+#     #         var_data = (description, var_name, var_val)
+#     #         output_vars.append(var_data)
+#     return output_vars
 
-def get_savenamepath(h5filename="uncertainties_data.h5"):
-    """Returns path/filename.csv for file saving.
+# def get_savenamepath(h5filename="uncertainties_data.h5"):
+#     """Returns path/filename.csv for file saving.
 
-    :param args: input filename
-    :type args: string
-    :return: output filename
-    :rtype: pathlib.PurePosixPath
-    """
+#     :param args: input filename
+#     :type args: string
+#     :return: output filename
+#     :rtype: pathlib.PurePosixPath
+#     """
 
-    if h5filename == "uncertainties_data.h5":
-        # save it locally
-        dirname = Path.cwd()
-    else:
-        # output the csv file to the directory of the input file
-        dirname = PurePath(h5filename).parent
+#     if h5filename == "uncertainties_data.h5":
+#         # save it locally
+#         dirname = Path.cwd()
+#     else:
+#         # output the csv file to the directory of the input file
+#         dirname = PurePath(h5filename).parent
 
-    csv_filename = PurePath(h5filename).stem
-    csv_outfile = PurePath(dirname, csv_filename + ".csv")
+#     csv_filename = PurePath(h5filename).stem
+#     csv_outfile = PurePath(dirname, csv_filename + ".csv")
 
-    return csv_outfile  
+#     return csv_outfile  
 
-def write_to_csv(csv_outfile, output_data=[]):
-    """Write to csv file.
+# def write_to_csv(csv_outfile, output_data=[]):
+#     """Write to csv file.
 
-    :param args: input filename, variable data
-    :type args: string, list of tuples
-    """
-    with open(csv_outfile, "w") as csv_file:
-        print("Writing to csv file:", csv_outfile)
-        writer = csv.writer(csv_file, delimiter=",")
-        writer.writerow(["Description", "Varname", "Value"])
+#     :param args: input filename, variable data
+#     :type args: string, list of tuples
+#     """
+#     with open(csv_outfile, "w") as csv_file:
+#         print("Writing to csv file:", csv_outfile)
+#         writer = csv.writer(csv_file, delimiter=",")
+#         writer.writerow(["Description", "Varname", "Value"])
 
-        for vardesc in output_data:
-            writer.writerow(vardesc)
+#         for vardesc in output_data:
+#             writer.writerow(vardesc)
 
 def main(args=None):
     """reads inputfile and creates csv as outputfile
@@ -127,13 +127,10 @@ def main(args=None):
     :param args: None
     :return: None
     """
-    args = parse_args(args)
+    # if args.print:
+    #     print(data_set)
 
-    data_set = pd.read_hdf(args.inputfile)
-    if args.print:
-        print(data_set)
-
-    output_names = args.vars
+    # output_names = args.vars
 
     # Select only the converged runs for creating KDF plots
     # see if we can only use if ifail = 1 for the KDF
@@ -157,13 +154,15 @@ def main(args=None):
     jvars = get_vars(args.varfile)
 
     # read required data from input mfile
-    output_data = read_mfile(args.mfile, jvars)
+    # output_data = read_mfile(args.mfile, jvars)
+    data_set = pd.read_hdf(args.hdf5file, jvars)
+    data_set.to_csv('hdf5.csv', index=True)
 
     # identify save location
-    output_file = get_savenamepath(args.mfile)
+    # output_file = get_savenamepath(args)
 
     # write to csv
-    write_to_csv(output_file, output_data)
+    # write_to_csv(output_file, data_set)
 
     # write final line to screen
     print("Complete.")

@@ -76,7 +76,7 @@ gapoh    = 0.01 * gap between central solenoid and TF coil (m) (`iteration varia
 gapomin  = 0.0 * minimum gap between outboard vacuum vessel and TF coil (m) (`iteration variable 31`)
 iohcl    = 1 * Switch for existence of central solenoid;
 iprecomp = 0 * Switch for existence of central solenoid pre-compression structure;
-ohcth    = 0.19888293855659028 * Central solenoid thickness (m) (`iteration variable 16`)
+ohcth    = 0.1952973770450989 * Central solenoid thickness (m) (`iteration variable 16`)
 scrapli  = 7.8e-02 * Gap between plasma and first wall; inboard side (m) (if `iscrp=1`)
 scraplo  = 0.12 * Gap between plasma and first wall; outboard side (m) (if `iscrp=1`)
 shldith  = 0.60 * inboard shield thickness (m) (`iteration variable 93`)
@@ -106,7 +106,7 @@ vvblgap  = 0.0 * gap between vacuum vessel and blanket (m)
 *---------------Constraint Variables---------------*
 
 fbetatry = 0.84 * f-value for beta limit (`constraint equation 24`; `iteration variable 36`)
-fdene    = 0.8812387713614716 * f-value for density limit (`constraint equation 5`; `iteration variable 9`)
+fdene    = 0.8578782772695873 * f-value for density limit (`constraint equation 5`; `iteration variable 9`)
 ffuspow  = 1 * f-value for maximum fusion power (`constraint equation 9`; `iteration variable 26`)
 fiooic   = 6.1777e-01 * f-value for TF coil operating current / critical current ratio
 flhthresh = 1.6248e+00 * f-value for L-H power threshold (`constraint equation 15`; `iteration variable 103`)
@@ -143,7 +143,7 @@ lsa      = 2 * Level of safety assurance switch (generally; use 3 or 4);
 output_costs = 1 * Switch for costs output;
 discount_rate = 0.08 * effective cost of money in constant dollars
 ucblvd   = 280.0 * unit cost for blanket vanadium ($/kg)
-ucdiv    = 3287181.189212076 * cost of divertor blade ($)
+ucdiv    = 682722.9132006416 * cost of divertor blade ($)
 ucme     = 3.0e8 * cost of maintenance equipment ($)
 
 *----------------------Costs-----------------------*
@@ -162,7 +162,7 @@ ucme     = 3.0e8 * cost of maintenance equipment ($)
 
 beamwd   = 0.31 * width of neutral beam duct where it passes between the TF coils (m)
 bscfmax  = 0.88 * maximum fraction of plasma current from bootstrap; if `bscfmax < 0`;
-cboot    = 0.9159290954018122 * bootstrap current fraction multiplier (`ibss=1`)
+cboot    = 1.0058284188554079 * bootstrap current fraction multiplier (`ibss=1`)
 enbeam   = 500.0 * neutral beam energy (keV) (`iteration variable 19`)
 etanbi   = 0.3 * neutral beam wall plug to injector efficiency
 feffcd   = 1.0 * current drive efficiency fudge factor (`iteration variable 47`)
@@ -247,7 +247,7 @@ ipowerflow = 0 * switch for power flow model;
 
 *------------Impurity Radiation Module-------------*
 
-coreradius = 0.68004818253086 * coreradius /0;6/ ; normalised radius defining the 'core' region
+coreradius = 0.6077778695483674 * coreradius /0;6/ ; normalised radius defining the 'core' region
 coreradiationfraction = 0.6 * coreradiationfraction /1;0/ ; fraction of radiation from 'core' region that is subtracted from the loss power
 fimp(1) = 1.0
 fimp(2) = 0.1
