@@ -1,0 +1,62 @@
+{
+    "_description": "Configuration file for uncertainties evaluation in PROCESS",
+    "_author": "Tom Griffiths",
+    "config": {
+        "runtitle": "testrun for monte carlo uncertainty tool",
+        "IN.DAT_path": "/rds/general/user/tgg120/home/process/griff_work/HPC/monte_carlo/ref_IN.DAT",
+        "working_directory": "/rds/general/user/tgg120/home/process/griff_work/HPC/monte_carlo/monte_carlo_output",
+        "pseudorandom_seed": 2,
+        "no_iter": 1,
+        "factor": 1.5
+    },
+    "vary_iteration_variables": "True",
+    "uncertainties": [
+        {
+            "Varname": "rmajor",
+            "Errortype": "Uniform",
+            "Lowerbound": 2.5,
+            "Upperbound": 3.5
+        }
+        
+    ],
+    "output_vars": [
+        "powfmw",
+        "fwoutlet",
+        "coe",
+        "precircmw"        
+    ],
+    "no_samples": 100,
+    "no_scans": 1,
+    "output_mean": 8056.98,
+    "figure_of_merit": "coe",
+    "latin_hypercube_level": 4,
+    "sobol_uncertainties": {
+        "bounds": [
+            [
+                1.1,
+                1.3
+            ]
+        ],
+        "names": [
+            "hfact"
+        ],
+        "num_vars": 1
+    },
+    "morris_uncertainties": {
+        "bounds": [
+            [
+                1.1,
+                1.3
+            ],
+            [
+                1.0,
+                1.2
+            ]
+        ],
+        "names": [
+            "boundu(9)",
+            "hfact"
+        ],
+        "num_vars": 2
+    }
+}
